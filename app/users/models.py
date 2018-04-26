@@ -7,6 +7,7 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.db.models.signals import post_save
 from rest_framework.authtoken.models import Token
 
+# This needs to change
 
 @python_2_unicode_compatible
 class User(AbstractUser):
