@@ -1,10 +1,5 @@
 [run]
-branch = True
-omit = *migrations*,
-       *urls*,
-       *test*,
-       *admin*,
-       ./manage.py,
-       ./app/config/*,
-       ./app/wsgi.py,
-       *__init__*
+include = api/*
+omit = *migrations*, *tests*
+plugins =
+    django_coverage_plugin
