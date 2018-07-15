@@ -3,3 +3,6 @@ venv
 staticfiles
 .env
 *.sqlite3
+
+# VS Code
+.vscode

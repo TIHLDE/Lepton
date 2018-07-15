@@ -19,6 +19,8 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', include('rest_framework.urls')),
+    # Our endpoints
     path('authentication/', include('app.authentication.urls')),
     path('v1/', include('app.content.urls')),
 ]
