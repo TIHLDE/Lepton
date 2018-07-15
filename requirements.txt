@@ -1,5 +1,0 @@
-dj_database_url==0.5.0
-Django==2.0.7
-django_heroku==0.3.1
-djangorestframework==3.8.2
-django-cors-headers==2.3.0
