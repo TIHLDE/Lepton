@@ -14,8 +14,6 @@ class News(Item):
     header = models.CharField(max_length=200)
     body = models.TextField()
 
-
 class Event(Item):
     name = models.CharField(max_length=200)
     start = models.DateTimeField()
-

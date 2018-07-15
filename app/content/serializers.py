@@ -20,10 +20,14 @@ class EventSerializer(serializers.ModelSerializer):
 class ItemSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
+        representation = None
         if hasattr(instance, 'news'):
-            return NewsSerializer(instance.news).data
+            representation = NewsSerializer(instance.news).data
+            representation['type'] = 'news'
         elif hasattr(instance, 'event'):
-            return EventSerializer(instance.event).data
+            representation = EventSerializer(instance.event).data
+            representation['type'] = 'event'
+        return representation
 
     class Meta:
         model = Item
