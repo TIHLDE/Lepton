@@ -43,12 +43,18 @@ INSTALLED_APPS = [
     # Third party
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist', # blacklisting of JWT tokens
+    'corsheaders',
     # Our apps
     'app.authentication',
     'app.content',
 ]
 
 MIDDLEWARE = [
+    # Django Cors Headers
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
+
+    # Base Middleware
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -166,6 +172,8 @@ STATIC_URL = '/static/'
 # STATICFILES_DIRS = [
 #     os.path.join(PROJECT_ROOT, 'static'),
 # ]
+
+CORS_ORIGIN_ALLOW_ALL = True
 
 # Simplified static file serving.
 # https://warehouse.python.org/project/whitenoise/
