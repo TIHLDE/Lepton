@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     # Our apps
     'app.authentication',
     'app.content',
+    'app.util',
 ]
 
 MIDDLEWARE = [
