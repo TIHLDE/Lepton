@@ -1,15 +1,19 @@
 from django.db import models
 
-from app.util.models import BaseModel, GridItem
-
 # Create your models here.
 
 
+class Item(models.Model):
+    '''
+    Is a grid item
+    '''
+    height = models.IntegerField()
+    width = models.IntegerField()
 
-class News(BaseModel, GridItem):
+class News(Item):
     header = models.CharField(max_length=200)
     body = models.TextField()
 
-class Event(BaseModel, GridItem):
+class Event(Item):
     name = models.CharField(max_length=200)
     start = models.DateTimeField()
