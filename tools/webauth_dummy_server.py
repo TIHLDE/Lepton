@@ -7,6 +7,8 @@ from aiohttp import web
 import secrets
 import json
 
+from logzero import logger
+
 app = web.Application()
 
 # Use the following credentials for
@@ -21,12 +23,16 @@ users = {
     'abcdef': {
         'password': 'test'
     },
+    'super': {
+        'password': 'super'
+    }
 }
 
 sessions = {}
 
 def create_session(username):
     token = secrets.token_hex(64)
+    logger.info('Created session for user {}'.format(username))
     sessions[token] = {
         "memberof_group": [
             "list",
@@ -54,6 +60,7 @@ async def auth(request):
     body = await request.json()
     if 'username' in body or 'password' in body:
         username, password = body['username'], body['password']
+        logger.info('Recieved auth username: {}, password: {}'.format(username, password))
         if username in users:
             user = users[username]
             if user['password'] == password:
@@ -67,6 +74,8 @@ async def auth(request):
 
 async def logout(request):
     token = request.headers.get('X-CSRF-Token')
+    logger.info('Recieved logout: token: {}'.format(token))
+
     if token in sessions:
         session = sessions.pop(token)
         return web.Response(status=200, body=json.dumps(session),
@@ -80,6 +89,7 @@ async def setpw(request):
     token = request.headers.get('X-CSRF-Token')
     session = sessions.get(token, None)
     body = await request.json()
+    logger.info('Recieved setpw: token: {}, body: {}'.format(token, body))
     if not session:
         return web.Response(
             status=401,
@@ -92,7 +102,7 @@ async def setpw(request):
             body=json.dumps({'msg': 'invalid request'}),
             content_type='application/json')
 
-    username = session['uid']
+    username = session['uid'][0]
     user = users[username]
     if user['password'] != body['old-password']:
         return web.Response(
@@ -113,6 +123,7 @@ async def setpw(request):
 
 async def verify(request):
     token = request.headers.get('X-CSRF-Token')
+    logger.info('Recieved verify: token: {}'.format(token))
     if token in sessions:
         session = sessions[token]
         return web.Response(
