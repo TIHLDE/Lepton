@@ -11,7 +11,8 @@ python_version = "3.6"
 django-heroku = "*"
 gunicorn = "*"
 django-rest-framework = "*"
-djangorestframework-simplejwt = "*"
 django-cors-headers = "*"
+requests = "*"
+logzero = "*"
 
 [dev-packages]

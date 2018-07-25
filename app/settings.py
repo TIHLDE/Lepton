@@ -42,13 +42,19 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # Third party
     'rest_framework',
-    'rest_framework_simplejwt.token_blacklist', # blacklisting of JWT tokens
+    'rest_framework.authtoken',
     'corsheaders',
     # Our apps
     'app.authentication',
     'app.content',
     'app.util',
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'webauth.Authentication',
+    )
+}
 
 MIDDLEWARE = [
     # Django Cors Headers
@@ -182,3 +188,11 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Activate Django-Heroku.
 django_heroku.settings(locals())
+
+
+# WebAuth
+WEB_AUTH = {
+    'api_url': 'http://localhost:3444/api/v1/',
+    'token_header': 'X-CSRF-Token',
+    'django_token_header': 'HTTP_X_CSRF_TOKEN',
+}
