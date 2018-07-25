@@ -97,8 +97,9 @@ class Authentication(authentication.BaseAuthentication):
                 # it is not to be accessed directly anyway.
                 user.password = secrets.token_bytes(64)
                 user.save()
-                logger.debug('Created local user "{}"'.format(username))
-            logger.debug('Authenticated user "{}" using WebAuth token'.format(username))
+                logger.info('Created local user from WebAuth "{}"'.format(username))
+            if settings.DEBUG:
+                logger.debug('Authenticated user "{}" using WebAuth token'.format(username))
         except ValueError:
             raise exceptions.AuthenticationFailed('Not a valid username')
         except User.DoesNotExist:
