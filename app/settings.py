@@ -161,7 +161,7 @@ django_heroku.settings(locals())
 
 # WebAuth
 WEB_AUTH = {
-    'api_url': 'http://localhost:3444/api/v1/',
+    'api_url': 'https://tihlde-webauth.herokuapp.com/api/v1/',
     'token_header': 'X-CSRF-Token',
     'django_token_header': 'HTTP_X_CSRF_TOKEN',
 }
