@@ -14,5 +14,6 @@ django-rest-framework = "*"
 django-cors-headers = "*"
 requests = "*"
 logzero = "*"
+aiohttp-cors = "*"
 
 [dev-packages]

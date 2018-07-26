@@ -4,6 +4,7 @@
 # Modified from github.com/tihlde/WebAuth
 
 from aiohttp import web
+import aiohttp_cors
 import secrets
 import json
 
@@ -70,7 +71,8 @@ async def auth(request):
                             content_type='application/json')
 
     return web.Response(status=401,
-                        body=json.dumps({'msg': 'invalid credentials'}))
+                        body=json.dumps({'msg': 'invalid credentials'}),
+                        content_type='application/json')
 
 async def logout(request):
     token = request.headers.get('X-CSRF-Token')
@@ -138,10 +140,30 @@ async def verify(request):
         content_type='application/json'
     )
 
+cors = aiohttp_cors.setup(app, defaults={
+    "*": aiohttp_cors.ResourceOptions(
+        allow_credentials=True,
+        expose_headers="*",
+        allow_headers="*",)
+})
 
-if __name__ == '__main__':
-    app.router.add_post('/api/v1/auth', auth)
-    app.router.add_post('/api/v1/logout', logout)
-    app.router.add_post('/api/v1/setpw', setpw)
-    app.router.add_get('/api/v1/verify', verify)
-    web.run_app(app, host='0.0.0.0', port=3444)
+cors = aiohttp_cors.setup(app, defaults={
+    "*": aiohttp_cors.ResourceOptions(
+        allow_credentials=True,
+        expose_headers="*",
+        allow_headers="*",)
+})
+
+app.router.add_post('/api/v1/auth', auth)
+app.router.add_post('/api/v1/logout', logout)
+app.router.add_post('/api/v1/setpw', setpw)
+app.router.add_get('/api/v1/verify', verify)
+
+for route in list(app.router.routes()):
+    cors.add(route)
+
+from os import environ
+port = environ.get('PORT', 3444)
+
+
+web.run_app(app, host='0.0.0.0', port=port)
