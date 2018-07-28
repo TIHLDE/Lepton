@@ -7,7 +7,6 @@ router = routers.DefaultRouter()
 # Register content viewpoints here
 
 router.register('items', ItemViewSet)
-router.register('items:<id>', ItemViewSet)
 router.register('news', NewsViewSet)
 router.register('events', EventViewSet)
 router.register('eventlist', EventListViewSet)
