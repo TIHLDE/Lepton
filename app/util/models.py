@@ -1,4 +1,5 @@
 from django.db import models
+import uuid
 
 # Create your models here.
 class Gridable(models.Model):
@@ -20,6 +21,13 @@ class BaseModel(models.Model):
     class Meta:
         abstract = True
 
+class UUIDModel(models.Model):
+    """Abstract model with a UUID id primary key"""
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
+    class Meta:
+        abstract = True
+
 class OptionalImage(models.Model):
     """Abstract model for models containing an image"""
     # Should the image file be stored on this server (ImageField),
@@ -36,5 +44,4 @@ class OptionalAction(models.Model):
     action_text = models.CharField(max_length=200, null=True)
 
     class Meta:
-        abstract = True
         abstract = True
