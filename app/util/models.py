@@ -1,5 +1,4 @@
 from django.db import models
-import uuid
 
 # Create your models here.
 class Gridable(models.Model):
@@ -17,13 +16,6 @@ class Gridable(models.Model):
 class BaseModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True, editable=False)
-
-    class Meta:
-        abstract = True
-
-class UUIDModel(models.Model):
-    """Abstract model with a UUID id primary key"""
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
     class Meta:
         abstract = True
