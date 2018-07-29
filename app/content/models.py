@@ -24,6 +24,6 @@ class Event(BaseModel):
     eventlist = models.ForeignKey(EventList, related_name='events', on_delete=models.CASCADE)
 
 class Poster(Item, OptionalImage, OptionalAction):
-    header = models.CharField(max_length=200)
-    subheader = models.CharField(max_length=200)
-    color = models.CharField(max_length=7)
+    header = models.CharField(max_length=200, blank=True)
+    subheader = models.CharField(max_length=200, blank=True)
+    color = models.CharField(max_length=7, blank=True)

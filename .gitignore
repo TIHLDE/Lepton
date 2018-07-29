@@ -3,6 +3,7 @@ venv
 staticfiles
 .env
 *.sqlite3
+__pycache__
 
 # VS Code
 .vscode

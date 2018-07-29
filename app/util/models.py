@@ -32,7 +32,7 @@ class OptionalImage(models.Model):
     """Abstract model for models containing an image"""
     # Should the image file be stored on this server (ImageField),
     # or as an URL to another service?
-    image = models.URLField(max_length=200, null=True)
+    image = models.URLField(max_length=400, null=True)
     image_alt = models.CharField(max_length=200, null=True)
 
     class Meta:
@@ -40,8 +40,8 @@ class OptionalImage(models.Model):
 
 class OptionalAction(models.Model):
     """Abstract model for models with an action"""
-    action = models.URLField(null=True)
-    action_text = models.CharField(max_length=200, null=True)
+    action = models.URLField(null=True, blank=True)
+    action_text = models.CharField(max_length=200, null=True, blank=True)
 
     class Meta:
         abstract = True

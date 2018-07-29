@@ -48,11 +48,11 @@ INSTALLED_APPS = [
     'app.util',
 ]
 
-REST_FRAMEWORK = {
+""" REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'webauth.Authentication',
     )
-}
+} """
 
 MIDDLEWARE = [
     # Django Cors Headers
@@ -161,8 +161,8 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 django_heroku.settings(locals())
 
 # WebAuth
-WEB_AUTH = {
+""" WEB_AUTH = {
     'api_url': 'https://tihlde-webauth.herokuapp.com/api/v1/',
     'token_header': 'X-CSRF-Token',
     'django_token_header': 'HTTP_X_CSRF_TOKEN',
-}
+} """
