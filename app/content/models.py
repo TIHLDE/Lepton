@@ -1,9 +1,8 @@
 from django.db import models
 
-from app.util.models import (BaseModel, Gridable, UUIDModel,
-                             OptionalImage, OptionalAction)
+from app.util.models import BaseModel, Gridable, OptionalImage, OptionalAction
 
-class Item(BaseModel, Gridable, UUIDModel):
+class Item(BaseModel, Gridable):
     pass
 
 class News(Item, OptionalImage):
@@ -35,6 +34,7 @@ class Event(BaseModel):
         fmt_str = '{} - starting {} at {} [{}]'
         return fmt_str.format(self.title, self.start,
                               self.location, self.eventlist.name)
+
 
 class Poster(Item, OptionalImage, OptionalAction):
     header = models.CharField(max_length=200, blank=True)
