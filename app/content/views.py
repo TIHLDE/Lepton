@@ -7,7 +7,7 @@ from .serializers import (ItemSerializer, NewsSerializer, EventSerializer,
 from app.util.models import Gridable
 
 class ItemViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
-    queryset = Item.objects.all().select_related('news', 'eventlist', 'poster').order_by('order')
+    queryset = Item.objects.all().select_related('news', 'eventlist', 'poster', 'imagegallery').order_by('order')
     serializer_class = ItemSerializer
 
 class NewsViewSet(viewsets.ModelViewSet):
