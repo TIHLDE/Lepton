@@ -49,7 +49,6 @@ class Poster(Item, OptionalImage, OptionalAction):
         fmt_str = '{} - {} - [color {}]'
         return fmt_str.format(self.header, self.subheader, self.color)
 
-
 class Grid(BaseModel):
     """An ordered list of items with a given name."""
     # The name of the grid. e.g. frontpage, news, ...
@@ -104,3 +103,21 @@ class RecentFirstGrid(Grid):
 
     class Meta:
         ordering = ['-created_at']
+
+class ImageGallery(Item):
+    name = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.name
+
+class Image(BaseModel):
+    image = models.URLField(max_length=400, null=True)
+    image_alt = models.CharField(max_length=200, null=True)
+
+    created_at = models.DateTimeField(auto_now_add=True, editable=False)
+    gallery = models.ForeignKey(ImageGallery,
+                                related_name='images',
+                                on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.image} - Created at: {self.created_at}'

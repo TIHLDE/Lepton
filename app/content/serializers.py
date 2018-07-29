@@ -1,7 +1,8 @@
 from rest_framework import serializers
 
 from .models import (Item, News, Event, EventList,
-                     Poster, Grid, ManualGrid, RecentFirstGrid)
+                     Poster, Grid, ManualGrid, RecentFirstGrid,
+                     ImageGallery, Image)
 
 from logzero import logger
 
@@ -29,6 +30,17 @@ class PosterSerializer(serializers.ModelSerializer):
 class ItemBaseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Item
+        fields = '__all__'
+
+class ImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Image
+        fields = '__all__'
+
+class ImageGallerySerializer(serializers.ModelSerializer):
+    images = ImageSerializer(many=True, read_only=True)
+    class Meta:
+        model = ImageGallery
         fields = '__all__'
 
 class ItemSerializer(serializers.ModelSerializer):
