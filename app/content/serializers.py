@@ -52,7 +52,8 @@ class ItemSerializer(serializers.ModelSerializer):
         types = [
             ('news', NewsSerializer),
             ('eventlist', EventListSerializer),
-            ('poster', PosterSerializer)
+            ('poster', PosterSerializer),
+            ('imagegallery', ImageGallerySerializer),
         ]
 
         type = None
