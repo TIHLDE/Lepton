@@ -3,6 +3,8 @@ from rest_framework import serializers
 from .models import (Item, News, Event, EventList,
                      Poster, Grid, ManualGrid, RecentFirstGrid)
 
+from logzero import logger
+
 class NewsSerializer(serializers.ModelSerializer):
     class Meta:
         model = News
@@ -47,9 +49,12 @@ class ItemSerializer(serializers.ModelSerializer):
                 type = t
                 break
 
-        datarep = type[1](getattr(instance, type[0])).data
-        representation['data'] = {f: datarep[f] for f in datarep if f not in exclude and datarep[f]}
-        representation['type'] = type[0]
+        if type:
+            datarep = type[1](getattr(instance, type[0])).data
+            representation['data'] = {f: datarep[f] for f in datarep if f not in exclude and datarep[f]}
+            representation['type'] = type[0]
+        else:
+            logger.warning('Unable to recognize type for item: {}, are you sure it is in the list of types?'.format(instance))
 
         return representation
 
