@@ -1,8 +1,9 @@
 from rest_framework import viewsets, mixins, permissions, generics
 
-from .models import Item, News, Event, EventList, Poster
+from .models import Item, News, Event, EventList, Poster, ImageGallery, Image
 from .serializers import (ItemSerializer, NewsSerializer, EventSerializer,
-                          EventListSerializer, PosterSerializer)
+                          EventListSerializer, PosterSerializer,
+                          ImageGallerySerializer, ImageSerializer)
 from app.util.models import Gridable
 
 class ItemViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
@@ -26,4 +27,14 @@ class EventListViewSet(viewsets.ModelViewSet):
 class PosterViewSet(viewsets.ModelViewSet):
     queryset = Poster.objects.all()
     serializer_class = PosterSerializer
+    permission_classes = [permissions.IsAdminUser]
+
+class ImageGalleryViewSet(viewsets.ModelViewSet):
+    queryset = ImageGallery.objects.all()
+    serializer_class = ImageGallerySerializer
+    permission_classes = [permissions.IsAdminUser]
+
+class ImageViewSet(viewsets.ModelViewSet):
+    queryset = Image.objects.all()
+    serializer_class = ImageSerializer
     permission_classes = [permissions.IsAdminUser]
