@@ -1,6 +1,6 @@
 from rest_framework import routers
 
-from .views import ItemViewSet, NewsViewSet, EventViewSet, EventListViewSet, PosterViewSet, ImageGalleryViewSet, ImageViewSet
+from .views import ItemViewSet, NewsViewSet, EventViewSet, EventListViewSet, PosterViewSet, GridViewSet
 
 router = routers.DefaultRouter()
 
@@ -10,7 +10,6 @@ router.register('news', NewsViewSet)
 router.register('events', EventViewSet)
 router.register('eventlist', EventListViewSet)
 router.register('posters', PosterViewSet)
-router.register('images', ImageViewSet)
-router.register('imagegallery', ImageGalleryViewSet)
+router.register('grids', GridViewSet)
 
 urlpatterns = router.urls
