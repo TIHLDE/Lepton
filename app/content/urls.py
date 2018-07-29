@@ -5,7 +5,6 @@ from .views import ItemViewSet, NewsViewSet, EventViewSet, EventListViewSet, Pos
 router = routers.DefaultRouter()
 
 # Register content viewpoints here
-
 router.register('items', ItemViewSet)
 router.register('news', NewsViewSet)
 router.register('events', EventViewSet)
