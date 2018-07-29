@@ -1,18 +1,9 @@
 from rest_framework import viewsets, mixins, permissions, generics
 
 from .models import Item, News, Event, EventList, Poster
-from .serializers import ItemSerializer, NewsSerializer, EventSerializer, EventListSerializer, PosterSerializer
+from .serializers import (ItemSerializer, NewsSerializer, EventSerializer,
+                          EventListSerializer, PosterSerializer)
 from app.util.models import Gridable
-
-# Create your views here.
-
-
-# class ModelViewSet(mixins.CreateModelMixin,
-#                    mixins.RetrieveModelMixin,
-#                    mixins.UpdateModelMixin,
-#                    mixins.DestroyModelMixin,
-#                    mixins.ListModelMixin,
-#                    GenericViewSet)
 
 class ItemViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = Item.objects.all().select_related('news', 'eventlist', 'poster').order_by('order')
