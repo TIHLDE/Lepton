@@ -33,7 +33,7 @@ class Event(BaseModel):
     eventlist = models.ForeignKey(EventList,
                                   related_name='events',
                                   on_delete=models.CASCADE)
-    description = models.TextField(blank=True)
+    description = models.TextField(default='', blank=True)
     sign_up = models.BooleanField(default=False)
 
     def __str__(self):
