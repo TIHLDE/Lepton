@@ -41,7 +41,7 @@ class Event(BaseModel, OptionalImage):
         (1, 'Normal'),
         (2, 'High'),
     )
-    priority = models.IntegerField(default=0, choices=PRIORITIES)
+    priority = models.IntegerField(default=0, choices=PRIORITIES, null=True)
  
     def __str__(self):
         fmt_str = '{} - starting {} at {} [{}]'
