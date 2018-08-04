@@ -36,6 +36,13 @@ class Event(BaseModel, OptionalImage):
     description = models.TextField(default='', blank=True)
     sign_up = models.BooleanField(default=False)
 
+    PRIORITIES = (
+        (0, 'Low'),
+        (1, 'Normal'),
+        (2, 'High'),
+    )
+    priority = models.IntegerField(default=0, choices=PRIORITIES)
+ 
     def __str__(self):
         fmt_str = '{} - starting {} at {} [{}]'
         return fmt_str.format(self.title, self.start,
