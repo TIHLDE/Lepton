@@ -17,7 +17,6 @@ class NewsViewSet(viewsets.ModelViewSet):
 class EventViewSet(viewsets.ModelViewSet):
     queryset = Event.objects.all()
     serializer_class = EventSerializer
-    permission_classes = [permissions.IsAdminUser]
 
 class EventListViewSet(viewsets.ModelViewSet):
     queryset = EventList.objects.all()
