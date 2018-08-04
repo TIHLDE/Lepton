@@ -26,7 +26,7 @@ class EventList(Item):
         num_events = len(Event.objects.all().filter(eventlist=self))
         return '{} [{} events]'.format(self.name, num_events)
 
-class Event(BaseModel):
+class Event(BaseModel, OptionalImage):
     title = models.CharField(max_length=200)
     start = models.DateTimeField()
     location = models.CharField(max_length=200, null=True)
@@ -106,12 +106,14 @@ class RecentFirstGrid(Grid):
     class Meta:
         ordering = ['-created_at']
 
+# ImageGallery 
 class ImageGallery(Item):
     name = models.CharField(max_length=200)
 
     def __str__(self):
         return self.name
 
+# Images in ImageGallery
 class Image(BaseModel):
     image = models.URLField(max_length=400, null=True)
     image_alt = models.CharField(max_length=200, null=True)
