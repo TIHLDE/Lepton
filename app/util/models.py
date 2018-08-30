@@ -9,6 +9,7 @@ class Gridable(models.Model):
     height = models.IntegerField()
     width = models.IntegerField()
     order = models.IntegerField(unique=False) # Make unique?
+    hide_on_mobile = models.BooleanField(default=False)
 
     class Meta:
         abstract = True
