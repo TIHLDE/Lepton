@@ -13,15 +13,17 @@ class ItemViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
 class NewsViewSet(viewsets.ModelViewSet):
     queryset = News.objects.all()
     serializer_class = NewsSerializer
+    # permission_classes = [permissions.IsAdminUser]
 
 class EventViewSet(viewsets.ModelViewSet):
     queryset = Event.objects.all()
     serializer_class = EventSerializer
+    # permission_classes = [permissions.IsAdminUser]
 
 class EventListViewSet(viewsets.ModelViewSet):
     queryset = EventList.objects.all()
     serializer_class = EventListSerializer
-    permission_classes = [permissions.IsAdminUser]
+    # permission_classes = [permissions.IsAdminUser]
 
 class PosterViewSet(viewsets.ModelViewSet):
     queryset = Poster.objects.all()
