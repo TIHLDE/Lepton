@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from .models import (Item, News, Event, EventList,
                      Poster, Grid, ManualGrid, RecentFirstGrid,
-                     ImageGallery, Image)
+                     ImageGallery, Image, Warning)
 
 from logzero import logger
 
@@ -121,4 +121,9 @@ class GridSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Grid
+        fields = '__all__'
+
+class WarningSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Warning
         fields = '__all__'
