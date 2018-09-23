@@ -59,8 +59,8 @@ class WarningViewSet(APIView):
 
     def get(self, request, format=None):
         warnings = Warning.objects.all()
-        serializer = WarningSerializer()
-        return HttpResponse(content=serializer.serialize('json', warnings), status=200)
+        serializer = WarningSerializer(data=warnings)
+        return HttpResponse(content=serializer, status=200)
 
     def post(self, request, format=None):
 
