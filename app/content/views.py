@@ -59,6 +59,7 @@ class WarningViewSet(APIView):
 
     def get(self, request, format=None):
         warnings = Warning.objects.all()
+        print(warnings)
         serializer = WarningSerializer(data=warnings)
         print(serializer.is_valid())
         if serializer.is_valid():
