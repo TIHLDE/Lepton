@@ -62,7 +62,8 @@ class WarningViewSet(APIView):
         serializer = WarningSerializer(data=warnings)
         print(serializer.is_valid())
         if serializer.is_valid():
-            return HttpResponse(content=serializer.data, status=200)
+            print("Data is good")
+            return HttpResponse(serializer.data, status=200)
         else:
             return HttpResponse(status=500)
 
