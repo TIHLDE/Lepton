@@ -60,12 +60,12 @@ class WarningViewSet(APIView):
     def get(self, request, format=None):
         warnings = Warning.objects.all()
         serializer = WarningSerializer(data=warnings)
-        
+        print(warnings)
         if serializer.is_valid():
             print(serializer.data)
             return HttpResponse(content=serializer.data, status=200)
         else:
-            return HttpResponse(status=500, message='Not valid')
+            return HttpResponse(status=500)
 
     def post(self, request, format=None):
 
