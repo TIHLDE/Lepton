@@ -6,42 +6,52 @@ from .models import (Item, News, Event, EventList,
 
 from logzero import logger
 
+
 class NewsSerializer(serializers.ModelSerializer):
     class Meta:
         model = News
-        fields = '__all__'
+        fields = '__all__'  # bad form
+
 
 class EventSerializer(serializers.ModelSerializer):
     class Meta:
         model = Event
-        fields = '__all__'
+        fields = '__all__'  # bad form
+
 
 class EventListSerializer(serializers.ModelSerializer):
     events = EventSerializer(many=True, read_only=True)
+
     class Meta:
         model = EventList
-        fields = '__all__'
+        fields = '__all__'  # bad form
+
 
 class PosterSerializer(serializers.ModelSerializer):
     class Meta:
         model = Poster
-        fields = '__all__'
+        fields = '__all__'  # bad form
+
 
 class ItemBaseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Item
-        fields = '__all__'
+        fields = '__all__'  # bad form
+
 
 class ImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Image
-        fields = '__all__'
+        fields = '__all__'  # bad form
+
 
 class ImageGallerySerializer(serializers.ModelSerializer):
     images = ImageSerializer(many=True, read_only=True)
+
     class Meta:
         model = ImageGallery
-        fields = '__all__'
+        fields = '__all__'  # bad form
+
 
 class ItemSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
@@ -73,29 +83,37 @@ class ItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Item
-        fields = '__all__'
+        fields = '__all__'  # bad form
         depth = 1
 
+
 class GridBaseSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Grid
-        fields = '__all__'
+        fields = '__all__'  # bad form
+
 
 class ManualGridSerializer(serializers.ModelSerializer):
+
     items = ItemSerializer(many=True)
 
     class Meta:
         model = ManualGrid
-        fields = '__all__'
+        fields = '__all__'  # bad form
+
 
 class RecentFirstGridSerializer(serializers.ModelSerializer):
+
     items = ItemSerializer(many=True)
 
     class Meta:
         model = RecentFirstGrid
-        fields = '__all__'
+        fields = '__all__'  # bad form
+
 
 class GridSerializer(serializers.ModelSerializer):
+
     def to_representation(self, instance):
         # TODO: Remove duplicate code
         representation = GridBaseSerializer(instance).data
@@ -121,9 +139,11 @@ class GridSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Grid
-        fields = '__all__'
+        fields = '__all__'  # bad form
+
 
 class WarningSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Warning
-        fields = '__all__'
+        fields = '__all__'  # bad form
