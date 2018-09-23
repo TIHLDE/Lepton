@@ -7,7 +7,7 @@ from .serializers import (ItemSerializer, NewsSerializer, EventSerializer,
                           ImageSerializer, ImageGallerySerializer, WarningSerializer)
 from app.util.models import Gridable
 
-from django.http import HttpResponse, HttpResponseNotAllowed
+from django.http import HttpResponse, HttpResponseNotAllowed, JsonResponse
 
 class ItemViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = Item.objects.all().select_related('news', 'eventlist', 'poster', 'imagegallery').order_by('order')
@@ -63,8 +63,7 @@ class WarningViewSet(APIView):
         serializer = WarningSerializer(data=warnings)
         print(serializer.is_valid())
         if serializer.is_valid():
-            print("Data is good")
-            return HttpResponse(serializer.data, status=200)
+            return HttpResponse(content=serializer.data, status=200)
         else:
             return HttpResponse(status=500)
 
