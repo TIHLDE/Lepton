@@ -1,4 +1,5 @@
 from rest_framework import viewsets, mixins, permissions, generics
+from rest_framework.views import APIView
 
 from .models import Item, News, Event, EventList, Poster, Grid, Image, ImageGallery, Warning
 from .serializers import (ItemSerializer, NewsSerializer, EventSerializer,
@@ -6,7 +7,7 @@ from .serializers import (ItemSerializer, NewsSerializer, EventSerializer,
                           ImageSerializer, ImageGallerySerializer, WarningSerializer)
 from app.util.models import Gridable
 
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseNotAllowed
 
 class ItemViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = Item.objects.all().select_related('news', 'eventlist', 'poster', 'imagegallery').order_by('order')
@@ -47,30 +48,46 @@ class ImageViewSet(viewsets.ModelViewSet):
     serializer_class = ImageSerializer
     permission_classes = [permissions.IsAdminUser]
 
-def warning(request):
-    if request.method == 'POST':
+class WarningViewSet(APIView):
 
-        text = request.POST['text']
-        t = request.POST['type']
+    queryset = Warning.objects.all()
+    serializer_class = WarningSerializer
+
+    @classmethod
+    def get_extra_actions(cls):
+        return []
+
+    def get(self, request, format=None):
         warnings = Warning.objects.all()
+        serializer = WarningSerializer()
+        return HttpResponse(content=warnings, status=200)
 
-        if(warnings.count() == 0):
-            # Create new warning
-            w = Warning(text=text, type=t)
-            w.save()
+    def post(self, request, format=None):
 
-        else:
-            # Overwrite existing
-            w = warnings.first()
-            w.text = text
-            w.type = t
-            w.save()
+        
+        serializer = WarningSerializer(data=request.data)
 
-        return HTTPResponse(status=200)
+        if serializer.is_valid():
+            text = serializer.data.get('text')
+            t = serializer.data.get('type')
 
-    elif request.method == 'DELETE':
+            if Warning.objects.count() == 0:
+                # Create new warning
+                w = Warning(text=text, type=t)
+                w.save()
+
+            else:
+                # Overwrite existing
+                w = warnings.first()
+                w.text = text
+                w.type = t
+                w.save()
+            
+            return HttpResponse(status=200)
+        return HttpResponse(status=400)
+       
+
+    def delete(self, request, format=None):
         Warning.objects.all().delete()
 
-        return HTTPResponse(status=200)
-    
-    return HttpResponseNotAllowed(['POST'])
+        return HttpResponse(status=200)

@@ -24,5 +24,4 @@ urlpatterns = [
     path('', include('rest_framework.urls')),
     # Our endpoints
     path('v1/', include('app.content.urls')),
-    path('warning/', views.warning),
 ]

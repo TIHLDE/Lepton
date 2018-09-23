@@ -1,6 +1,8 @@
 from rest_framework import routers
+from django.conf.urls import url
+from django.conf.urls import include
 
-from .views import ItemViewSet, NewsViewSet, EventViewSet, EventListViewSet, PosterViewSet, GridViewSet, ImageGalleryViewSet, ImageViewSet
+from .views import ItemViewSet, NewsViewSet, EventViewSet, EventListViewSet, PosterViewSet, GridViewSet, ImageGalleryViewSet, ImageViewSet, WarningViewSet
 
 router = routers.DefaultRouter()
 
@@ -13,5 +15,9 @@ router.register('posters', PosterViewSet)
 router.register('grids', GridViewSet)
 router.register('images', ImageViewSet)
 router.register('imagegallery', ImageGalleryViewSet)
+router.register('warning', WarningViewSet, base_name='warning')
 
-urlpatterns = router.urls
+urlpatterns = [
+    url(r'^warning/', WarningViewSet.as_view()),
+    url(r'', include(router.urls))
+]
