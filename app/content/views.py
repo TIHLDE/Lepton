@@ -78,7 +78,7 @@ class WarningViewSet(APIView):
 
             else:
                 # Overwrite existing
-                w = warnings.first()
+                w = Warning.objects.first()
                 w.text = text
                 w.type = t
                 w.save()
