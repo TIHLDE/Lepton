@@ -1,5 +1,4 @@
 from rest_framework import viewsets, mixins, permissions, generics
-from rest_framework.views import APIView
 
 from .models import Item, News, Event, EventList, Poster, Grid, Image, ImageGallery, Warning
 from .serializers import (ItemSerializer, NewsSerializer, EventSerializer,
@@ -48,51 +47,9 @@ class ImageViewSet(viewsets.ModelViewSet):
     serializer_class = ImageSerializer
     permission_classes = [permissions.IsAdminUser]
 
-class WarningViewSet(APIView):
+class WarningViewSet(viewsets.ModelViewSet):
 
     queryset = Warning.objects.all()
     serializer_class = WarningSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
-    @classmethod
-    def get_extra_actions(cls):
-        return []
-
-    def get(self, request, format=None):
-        warnings = Warning.objects.all()
-        print(warnings)
-        serializer = WarningSerializer(data=warnings)
-        print(serializer.is_valid())
-        if serializer.is_valid():
-            return HttpResponse(content=serializer.data, status=200)
-        else:
-            return HttpResponse(status=500)
-
-    def post(self, request, format=None):
-
-        
-        serializer = WarningSerializer(data=request.data)
-
-        if serializer.is_valid():
-            text = serializer.data.get('text')
-            t = serializer.data.get('type')
-
-            if Warning.objects.count() == 0:
-                # Create new warning
-                w = Warning(text=text, type=t)
-                w.save()
-
-            else:
-                # Overwrite existing
-                w = Warning.objects.first()
-                w.text = text
-                w.type = t
-                w.save()
-            
-            return HttpResponse(status=200)
-        return HttpResponse(status=400)
-       
-
-    def delete(self, request, format=None):
-        Warning.objects.all().delete()
-
-        return HttpResponse(status=200)

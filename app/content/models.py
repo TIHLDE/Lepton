@@ -4,10 +4,12 @@ from app.util.models import BaseModel, Gridable, OptionalImage, OptionalAction
 
 import importlib # RecentFirstGrid
 
+
 class Item(BaseModel, Gridable):
     def __str__(self):
         return '{} [{},{} - {}, {}]'.format(self.__class__.__name__, self.height, self.width, self.created_at, self.updated_at)
     pass
+
 
 class News(Item, OptionalImage):
     title = models.CharField(max_length=200)
@@ -18,6 +20,7 @@ class News(Item, OptionalImage):
         return '{} - {} [{} characters]'.format(self.title,
                                                 self.header, len(self.body))
 
+
 class EventList(Item):
     """A collection of events to be displayed together"""
     name = models.CharField(max_length=200)
@@ -25,6 +28,7 @@ class EventList(Item):
     def __str__(self):
         num_events = len(Event.objects.all().filter(eventlist=self))
         return '{} [{} events]'.format(self.name, num_events)
+
 
 class Event(BaseModel, OptionalImage):
     title = models.CharField(max_length=200)
@@ -42,7 +46,7 @@ class Event(BaseModel, OptionalImage):
         (2, 'High'),
     )
     priority = models.IntegerField(default=0, choices=PRIORITIES, null=True)
- 
+
     def __str__(self):
         fmt_str = '{} - starting {} at {} [{}]'
         return fmt_str.format(self.title, self.start,
@@ -58,6 +62,7 @@ class Poster(Item, OptionalImage, OptionalAction):
         fmt_str = '{} - {} - [color {}]'
         return fmt_str.format(self.header, self.subheader, self.color)
 
+
 class Grid(BaseModel):
     """An ordered list of items with a given name."""
     # The name of the grid. e.g. frontpage, news, ...
@@ -65,6 +70,7 @@ class Grid(BaseModel):
 
     def __str__(self):
         return '{}'.format(self.name)
+
 
 class ManualGridItem(BaseModel):
     """
@@ -81,12 +87,14 @@ class ManualGridItem(BaseModel):
     class Meta:
         ordering = ['-priority']
 
+
 class ManualGrid(Grid):
     """A manually ordered grid"""
     items = models.ManyToManyField(Item, through='ManualGridItem')
 
     def __str__(self):
         return '{} [{} items]'.format(self.name, self.items.all().count())
+
 
 class RecentFirstGrid(Grid):
     """
@@ -113,14 +121,14 @@ class RecentFirstGrid(Grid):
     class Meta:
         ordering = ['-created_at']
 
-# ImageGallery 
+
 class ImageGallery(Item):
     name = models.CharField(max_length=200)
 
     def __str__(self):
         return self.name
 
-# Images in ImageGallery
+
 class Image(BaseModel):
     image = models.URLField(max_length=400, null=True)
     image_alt = models.CharField(max_length=200, null=True)
@@ -133,7 +141,7 @@ class Image(BaseModel):
     def __str__(self):
         return f'{self.image} - Created at: {self.created_at}'
 
-# Warnings
+
 class Warning(BaseModel):
     text = models.CharField(max_length=400, null=True)
     TYPES = (

@@ -18,6 +18,5 @@ router.register('imagegallery', ImageGalleryViewSet)
 router.register('warning', WarningViewSet, base_name='warning')
 
 urlpatterns = [
-    url(r'^warning/', WarningViewSet.as_view()),
     url(r'', include(router.urls))
 ]
