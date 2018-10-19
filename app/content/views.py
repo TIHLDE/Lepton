@@ -35,6 +35,8 @@ class EventViewSet(viewsets.ModelViewSet):
 
         if(self.request.method == 'GET' and 'search' in self.request.GET):
             queryset = Event.objects.all().filter(title__startswith=self.request.GET.get('search')).order_by('-start')
+        
+        return queryset
 
 
 class EventListViewSet(viewsets.ModelViewSet):
