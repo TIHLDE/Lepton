@@ -10,6 +10,8 @@ from app.util.models import Gridable
 
 from django.http import HttpResponse, HttpResponseNotAllowed, JsonResponse
 
+from datetime import datetime, timedelta
+
 
 class ItemViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = Item.objects.all().select_related(
@@ -26,7 +28,7 @@ class NewsViewSet(viewsets.ModelViewSet):
 
 
 class EventViewSet(viewsets.ModelViewSet):
-    queryset = Event.objects.all()
+    queryset = Event.objects.all().filter(start=datetime.now()-timedelta(days=1)).order_by('-start')
     serializer_class = EventSerializer
 
 
