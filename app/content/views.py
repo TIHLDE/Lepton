@@ -28,7 +28,7 @@ class NewsViewSet(viewsets.ModelViewSet):
 
 
 class EventViewSet(viewsets.ModelViewSet):
-    queryset = Event.objects.all().filter(start=datetime.now()-timedelta(days=1)).order_by('-start')
+    queryset = Event.objects.all().filter(start__gte=datetime.now()-timedelta(days=1)).order_by('-start')
     serializer_class = EventSerializer
 
 
