@@ -28,8 +28,13 @@ class NewsViewSet(viewsets.ModelViewSet):
 
 
 class EventViewSet(viewsets.ModelViewSet):
-    queryset = Event.objects.all().filter(start__gte=datetime.now()-timedelta(days=1)).order_by('-start')
     serializer_class = EventSerializer
+
+    def get_queryset(self):
+        queryset = Event.objects.all().filter(start__gte=datetime.now()-timedelta(days=1)).order_by('-start')
+
+        if(self.request.GET['search'] is not None):
+            queryset = Event.objects.all().filter(title__startswith=self.request.GET['search']).order_by('-start')
 
 
 class EventListViewSet(viewsets.ModelViewSet):
