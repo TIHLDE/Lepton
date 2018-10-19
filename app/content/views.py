@@ -33,8 +33,8 @@ class EventViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = Event.objects.all().filter(start__gte=datetime.now()-timedelta(days=1)).order_by('-start')
 
-        if(self.request.method == 'GET' and 'search' in self.request.GET):
-            queryset = Event.objects.all().filter(title__startswith=self.request.GET.get('search')).order_by('-start')
+        ##if(self.request.method == 'GET' and 'search' in self.request.GET):
+        ##    queryset = Event.objects.filter(title__startswith=self.request.GET.get('search')).order_by('-start')
         
         return queryset
 
