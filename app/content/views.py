@@ -11,6 +11,7 @@ from app.util.models import Gridable
 from django.http import HttpResponse, HttpResponseNotAllowed, JsonResponse
 
 from datetime import datetime, timedelta
+from django.db.models import Q  
 
 
 class ItemViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
@@ -34,7 +35,7 @@ class EventViewSet(viewsets.ModelViewSet):
         queryset = Event.objects.all().filter(start__gte=datetime.now()-timedelta(days=1)).order_by('-start')
 
         if self.request.method == 'GET' and 'search' in self.request.GET:
-            return Event.objects.filter(title__startswith=self.request.GET.get('search') | title__contains=self.request.GET.get('search')).order_by('-start')[:25]
+            return Event.objects.filter(Q(title__startswith=self.request.GET.get('search')) | Q(title__contains=self.request.GET.get('search'))).order_by('-start')[:25]
         elif self.request.method == 'GET' and 'expired' in self.request.GET:
             return Event.objects.filter(start__lte=datetime.now()-timedelta(days=1)).order_by('-start')[:25]
 
