@@ -47,7 +47,8 @@ class Event(BaseModel, OptionalImage):
     )
     priority = models.IntegerField(default=0, choices=PRIORITIES, null=True)
 
-    
+    category = models.ForeignKey(Category, related_name='category',blank=True, null=True)
+
     @property
     def expired(self):
         return self.start <= datetime.now(tz=timezone.utc)-timedelta(days=1)
@@ -158,3 +159,9 @@ class Warning(BaseModel):
 
     def __str__(self):
         return f'Warning: {self.type} - Text: {self.text}'
+
+class Category(BaseModel):
+    category = models.CharField(max_length=200, null=True)
+
+    def __str__(self):
+        return f'{self.category}'

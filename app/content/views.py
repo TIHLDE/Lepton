@@ -1,11 +1,11 @@
 from rest_framework import viewsets, mixins, permissions, generics
 
 from .models import Item, News, Event, EventList, Poster, Grid, Image, \
-                    ImageGallery, Warning
+                    ImageGallery, Warning, Category
 from .serializers import ItemSerializer, NewsSerializer, EventSerializer, \
                          EventListSerializer, PosterSerializer, \
                          GridSerializer, ImageSerializer, \
-                         ImageGallerySerializer, WarningSerializer
+                         ImageGallerySerializer, WarningSerializer, CategorySerializer
 from app.util.models import Gridable
 
 from django.http import HttpResponse, HttpResponseNotAllowed, JsonResponse
@@ -77,4 +77,9 @@ class WarningViewSet(viewsets.ModelViewSet):
     queryset = Warning.objects.all()
     serializer_class = WarningSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+class CategoryViewSet(viewsets.ModelViewSet):
+
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
 

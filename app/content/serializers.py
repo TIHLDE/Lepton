@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from .models import (Item, News, Event, EventList,
                      Poster, Grid, ManualGrid, RecentFirstGrid,
-                     ImageGallery, Image, Warning)
+                     ImageGallery, Image, Warning, Category)
 
 from logzero import logger
 
@@ -149,4 +149,10 @@ class WarningSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Warning
+        fields = '__all__'  # bad form
+
+class CategorySerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Category
         fields = '__all__'  # bad form
