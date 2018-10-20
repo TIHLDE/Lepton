@@ -52,7 +52,7 @@ class Event(BaseModel, OptionalImage):
     )
     priority = models.IntegerField(default=0, choices=PRIORITIES, null=True)
 
-    category = models.ForeignKey(Category, related_name='category',blank=True, null=True, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, related_name='category',blank=True, null=True, default=None, on_delete=models.CASCADE)
 
     @property
     def expired(self):
