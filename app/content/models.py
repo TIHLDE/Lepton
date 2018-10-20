@@ -30,10 +30,10 @@ class EventList(Item):
         return '{} [{} events]'.format(self.name, num_events)
 
 class Category(BaseModel):
-    category = models.CharField(max_length=200, null=True)
+    text = models.CharField(max_length=200, null=True)
 
     def __str__(self):
-        return f'{self.category}'
+        return f'{self.text}'
 
 class Event(BaseModel, OptionalImage):
     title = models.CharField(max_length=200)
@@ -52,7 +52,7 @@ class Event(BaseModel, OptionalImage):
     )
     priority = models.IntegerField(default=0, choices=PRIORITIES, null=True)
 
-    category = models.ForeignKey(Category, related_name='category',blank=True, null=True)
+    category = models.ForeignKey(Category, related_name='category',blank=True, null=True, on_delete=models.CASCADE)
 
     @property
     def expired(self):
