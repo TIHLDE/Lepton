@@ -30,7 +30,7 @@ class EventListSerializer(serializers.ModelSerializer):
         fields = '__all__'  # bad form
 
     def get_events(self, list):
-        events = (e for e in Event.objects.filter(eventlist=list) if not e.expired)
+        events = (e for e in Event.objects.filter(eventlist=list).order_by('start') if not e.expired)
         serializer = EventSerializer(instance=events, many=True)
         return serializer.data
 
