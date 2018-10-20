@@ -47,9 +47,10 @@ class Event(BaseModel, OptionalImage):
     )
     priority = models.IntegerField(default=0, choices=PRIORITIES, null=True)
 
+    
     @property
     def expired(self):
-        return self.start > datetime.now()-timedelta(days=1)
+        return self.start >= datetime.now()-timedelta(days=1)
 
     def __str__(self):
         fmt_str = '{} - starting {} at {} [{}]'
