@@ -36,6 +36,8 @@ class EventViewSet(viewsets.ModelViewSet):
 
         if self.request.method == 'GET' and 'newest' in self.request.GET:
             return Event.objects.filter(start__gte=datetime.now()-timedelta(days=1)).order_by('start')
+        elif self.request.method == 'GET' and 'category' in self.request.GET:
+            return Event.objects.filter(category=self.request.GET.get('category')).order_by('start')[:25]
         elif self.request.method == 'GET' and 'search' in self.request.GET:
             return Event.objects.filter(Q(title__istartswith=self.request.GET.get('search')) | Q(title__icontains=self.request.GET.get('search'))).order_by('start')[:25]
         elif self.request.method == 'GET' and 'expired' in self.request.GET:
