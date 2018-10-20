@@ -55,8 +55,7 @@ class Event(BaseModel, OptionalImage):
     category = models.ForeignKey(Category, blank=True,
                                     null=True, default=None,
                                     on_delete=models.CASCADE)
-
-   @property
+    @property
     def expired(self):
         return self.start <= datetime.now(tz=timezone.utc)-timedelta(days=1)
 
