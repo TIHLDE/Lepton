@@ -56,9 +56,9 @@ class Event(BaseModel, OptionalImage):
                                     null=True, default=None,
                                     on_delete=models.CASCADE)
 
-   """  @property
-    def expired(self):
-        return self.start <= datetime.now(tz=timezone.utc)-timedelta(days=1) """
+    ## @property
+    ## def expired(self):
+    ##    return self.start <= datetime.now(tz=timezone.utc)-timedelta(days=1)
 
     def __str__(self):
         fmt_str = '{} - starting {} at {} [{}]'
