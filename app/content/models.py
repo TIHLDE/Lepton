@@ -29,6 +29,11 @@ class EventList(Item):
         num_events = len(Event.objects.all().filter(eventlist=self))
         return '{} [{} events]'.format(self.name, num_events)
 
+class Category(BaseModel):
+    category = models.CharField(max_length=200, null=True)
+
+    def __str__(self):
+        return f'{self.category}'
 
 class Event(BaseModel, OptionalImage):
     title = models.CharField(max_length=200)
@@ -159,9 +164,3 @@ class Warning(BaseModel):
 
     def __str__(self):
         return f'Warning: {self.type} - Text: {self.text}'
-
-class Category(BaseModel):
-    category = models.CharField(max_length=200, null=True)
-
-    def __str__(self):
-        return f'{self.category}'
