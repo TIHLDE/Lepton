@@ -14,6 +14,9 @@ class NewsSerializer(serializers.ModelSerializer):
 
 
 class EventSerializer(serializers.ModelSerializer):
+
+    expired = serializers.BooleanField(default=False)
+
     class Meta:
         model = Event
         fields = '__all__'  # bad form

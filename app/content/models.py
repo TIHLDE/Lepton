@@ -3,7 +3,7 @@ from django.db import models
 from app.util.models import BaseModel, Gridable, OptionalImage, OptionalAction
 
 import importlib # RecentFirstGrid
-
+from datetime import datetime, timedelta
 
 class Item(BaseModel, Gridable):
     def __str__(self):
@@ -46,6 +46,10 @@ class Event(BaseModel, OptionalImage):
         (2, 'High'),
     )
     priority = models.IntegerField(default=0, choices=PRIORITIES, null=True)
+
+    @priority
+    def expired(self):
+        return self.start > datetime.now()-timedelta(days=1)
 
     def __str__(self):
         fmt_str = '{} - starting {} at {} [{}]'
