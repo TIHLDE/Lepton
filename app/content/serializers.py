@@ -23,11 +23,16 @@ class EventSerializer(serializers.ModelSerializer):
 
 
 class EventListSerializer(serializers.ModelSerializer):
-    events = EventSerializer(many=True, read_only=True)
+    events = serializers.SerializerMethodField()
 
     class Meta:
         model = EventList
         fields = '__all__'  # bad form
+
+    def get_events(self, list):
+        events = (e for e in Event.objects.filter(eventlist=list) if not e.expired())
+        serializer = EventSerializer(instance=events, many=True)
+        return serializer.data
 
 
 class PosterSerializer(serializers.ModelSerializer):
