@@ -19,7 +19,7 @@ class EventSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Event
-        fields = '__all__'  # bad form
+        fields = 'title, start, location, eventlist, description, sign_up, priority, category, expired'
 
 
 class EventListSerializer(serializers.ModelSerializer):
