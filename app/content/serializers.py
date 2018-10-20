@@ -15,11 +15,11 @@ class NewsSerializer(serializers.ModelSerializer):
 
 class EventSerializer(serializers.ModelSerializer):
 
-    expired = serializers.BooleanField(default=False)
+    ## expired = serializers.BooleanField(default=False)
 
     class Meta:
         model = Event
-        fields = ['id', 'title', 'start', 'location', 'eventlist', 'description', 'sign_up', 'priority', 'category', 'expired']
+        fields = ['id', 'title', 'start', 'location', 'eventlist', 'description', 'sign_up', 'priority', 'category']
 
 
 class EventListSerializer(serializers.ModelSerializer):
