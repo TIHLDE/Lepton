@@ -3,7 +3,7 @@ from django.db import models
 from app.util.models import BaseModel, Gridable, OptionalImage, OptionalAction
 
 import importlib # RecentFirstGrid
-from datetime import datetime, timedelta
+from django.utils import timezone
 
 class Item(BaseModel, Gridable):
     def __str__(self):
@@ -50,7 +50,7 @@ class Event(BaseModel, OptionalImage):
     
     @property
     def expired(self):
-        return self.start >= datetime.now()-timedelta(days=1)
+        return self.start >= timezone.now()-timedelta(days=1)
 
     def __str__(self):
         fmt_str = '{} - starting {} at {} [{}]'
