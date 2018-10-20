@@ -47,7 +47,7 @@ class Event(BaseModel, OptionalImage):
     )
     priority = models.IntegerField(default=0, choices=PRIORITIES, null=True)
 
-    @priority
+    @property
     def expired(self):
         return self.start > datetime.now()-timedelta(days=1)
 
