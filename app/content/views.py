@@ -90,7 +90,6 @@ class CategoryViewSet(viewsets.ModelViewSet):
 
 @csrf_exempt
 def auth_password(request):
-    print(request.POST)
     print(request.body.password)
     if request.method == 'POST' and 'password' in request.POST:
         hash_object = hashlib.sha256(str(request.POST['password']).strip('\n ').encode())
