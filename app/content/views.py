@@ -15,6 +15,7 @@ from datetime import datetime, timedelta
 from django.db.models import Q  
 
 import hashlib
+import json
 
 class ItemViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = Item.objects.all().select_related(
@@ -91,7 +92,10 @@ class CategoryViewSet(viewsets.ModelViewSet):
 @csrf_exempt
 def auth_password(request):
     
-    print(request.body['password'])
+    body_unicode = request.body.decode('utf-8')
+    body = json.loads(body_unicode)
+    content = body['password']
+    print(content)
 
     if request.method == 'POST' and 'password' in request.POST:
         hash_object = hashlib.sha256(str(request.POST['password']).strip('\n ').encode())
