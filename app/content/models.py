@@ -41,7 +41,8 @@ class Event(BaseModel, OptionalImage):
     location = models.CharField(max_length=200, null=True)
     eventlist = models.ForeignKey(EventList,
                                   related_name='events',
-                                  on_delete=models.CASCADE)
+                                  null=True,
+                                  on_delete=models.SET_NULL)
     description = models.TextField(default='', blank=True)
     sign_up = models.BooleanField(default=False)
 
@@ -54,7 +55,7 @@ class Event(BaseModel, OptionalImage):
 
     category = models.ForeignKey(Category, blank=True,
                                     null=True, default=None,
-                                    on_delete=models.CASCADE)
+                                    on_delete=models.SET_NULL)
     @property
     def expired(self):
         return self.start <= datetime.now(tz=timezone.utc)-timedelta(days=1)
