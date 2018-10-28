@@ -110,4 +110,5 @@ def auth_password(request):
         }
         return JsonResponse(data)
 
+    # Method is not allowed
     return HttpResponseNotAllowed(['POST'])
