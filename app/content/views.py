@@ -92,16 +92,22 @@ class CategoryViewSet(viewsets.ModelViewSet):
 @csrf_exempt
 def auth_password(request):
     
-    body_unicode = request.body.decode('utf-8')
-    body = json.loads(body_unicode)
-    content = body['password']
+    
     print(content)
 
-    if request.method == 'POST' and 'password' in request.POST:
-        hash_object = hashlib.sha256(str(request.POST['password']).strip('\n ').encode())
-        password = hash_object.hexdigest()
+    if request.method == 'POST':
+        # Retrieve password from body
+        body_unicode = request.body.decode('utf-8')
+        body = json.loads(body_unicode)
+        password = body['password']
+
+        # Hash password
+        hash_object = hashlib.sha256(str(password).strip('\n ').encode())
+        hashedPassword = hash_object.hexdigest()
+
+        # Evaluate password
         realPassword = "3216f62cf30ce48c631f87ba5147f3fc3b1c1c87f8f3f416e568a917f6b9298d"
-        authenticated = password == realPassword
+        authenticated = hashedPassword == realPassword
         data = {
             'authenticated': authenticated,
         }
