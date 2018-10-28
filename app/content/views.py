@@ -9,6 +9,7 @@ from .serializers import ItemSerializer, NewsSerializer, EventSerializer, \
 from app.util.models import Gridable
 
 from django.http import HttpResponse, HttpResponseNotAllowed, JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 from datetime import datetime, timedelta
 from django.db.models import Q  
@@ -85,3 +86,16 @@ class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
 
+
+@csrf_exempt
+def auth_password(request):
+    if request.method == 'POST' and 'password' in request.POST:
+        password = str(request.POST['password']).strip('\n ')
+        realPassword = "C0C3144FCA83F5130386443E586784663CB5A460A119A38BD2E6FF468BDA9B23"
+        authenticated = password == realPassword
+        data = {
+            'authenticated': authenticated,
+        }
+        return JsonResponse(data)
+
+    return HttpResponseNotAllowed(['POST'])

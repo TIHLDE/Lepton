@@ -1,8 +1,9 @@
 from rest_framework import routers
 from django.conf.urls import url
+from django.urls import path
 from django.conf.urls import include
 
-from .views import ItemViewSet, NewsViewSet, EventViewSet, EventListViewSet, PosterViewSet, GridViewSet, ImageGalleryViewSet, ImageViewSet, WarningViewSet, CategoryViewSet
+from .views import ItemViewSet, NewsViewSet, EventViewSet, EventListViewSet, PosterViewSet, GridViewSet, ImageGalleryViewSet, ImageViewSet, WarningViewSet, CategoryViewSet, auth_password
 
 router = routers.DefaultRouter()
 
@@ -19,5 +20,6 @@ router.register('warning', WarningViewSet, base_name='warning')
 router.register('category', CategoryViewSet)
 
 urlpatterns = [
-    url(r'', include(router.urls))
+    url(r'', include(router.urls)),
+    path('authenticate/', auth_password),
 ]
