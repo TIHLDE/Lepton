@@ -92,9 +92,6 @@ class CategoryViewSet(viewsets.ModelViewSet):
 @csrf_exempt
 def auth_password(request):
     
-    
-    print(content)
-
     if request.method == 'POST':
         # Retrieve password from body
         body_unicode = request.body.decode('utf-8')
