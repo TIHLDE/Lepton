@@ -14,6 +14,7 @@ from django.views.decorators.csrf import csrf_exempt
 from datetime import datetime, timedelta
 from django.db.models import Q  
 
+import hashlib
 
 class ItemViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = Item.objects.all().select_related(
@@ -90,8 +91,9 @@ class CategoryViewSet(viewsets.ModelViewSet):
 @csrf_exempt
 def auth_password(request):
     if request.method == 'POST' and 'password' in request.POST:
-        password = str(request.POST['password']).strip('\n ')
-        realPassword = "C0C3144FCA83F5130386443E586784663CB5A460A119A38BD2E6FF468BDA9B23"
+        hash_object = hashlib.sha256(str(request.POST['password']).strip('\n ').encode())
+        password = hash_object.hexdigest()
+        realPassword = "3216f62cf30ce48c631f87ba5147f3fc3b1c1c87f8f3f416e568a917f6b9298d"
         authenticated = password == realPassword
         data = {
             'authenticated': authenticated,
