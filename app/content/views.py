@@ -123,7 +123,7 @@ def accept_form(request):
     if request.method == 'POST':
 
         try:
-            server = smtplib.SMTP_SSL('smtp.mailtrap.io', 2525)
+            server = smtplib.SMTP('smtp.mailtrap.io', 2525)
             server.ehlo()
             server.login('75ecff025dcb39', '8b1a00e838d6b7')
 
