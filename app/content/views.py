@@ -145,7 +145,8 @@ def accept_form(request):
 
             return HttpResponse(status = 200)
 
-        except:
+        except Error:
             print('Something went wrong...')
+            raise
             return HttpResponse(status = 500)
 
