@@ -166,3 +166,11 @@ django_heroku.settings(locals())
     'token_header': 'X-CSRF-Token',
     'django_token_header': 'HTTP_X_CSRF_TOKEN',
 } """
+
+
+#EMAIL SMTP Server setup
+EMAIL_HOST = "smtp.mailtrap.io"
+EMAIL_PORT = "2525"
+
+EMAIL_HOST_USER = "75ecff025dcb39"
+EMAIL_HOST_PASSWORD = "8b1a00e838d6b7"

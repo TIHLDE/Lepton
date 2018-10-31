@@ -17,3 +17,4 @@ logzero = "*"
 aiohttp-cors = "*"
 
 [dev-packages]
+pylint = "*"

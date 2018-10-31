@@ -117,3 +117,54 @@ def auth_password(request):
 
     # Method is not allowed
     return HttpResponseNotAllowed(['POST'])
+
+
+# Method for accepting company interest forms from the company page
+
+from django.core.mail import send_mail
+
+@csrf_exempt
+def accept_form(request):
+    if request.method == 'POST':
+        try:
+            #Get body from request
+            body_unicode = request.body.decode('utf-8')
+            body = json.loads(body_unicode)
+
+            #Define mail content
+            sent_from = 'no-reply@tihlde.org'
+            to = 'orakel@tihlde.org'
+            subject = body["info"]['bedrift'] + " vil ha " + ", ".join(body["type"][:-2] + [" og ".join(body["type"][-2:])]) + " i " + ", ".join(body["time"][:-2] + [" og ".join(body["time"][-2:])])
+            email_body = """\
+Bedrift-navn:
+%s
+
+Kontaktperson:
+navn: %s
+epost: %s
+
+Valgt semester:
+%s
+
+Valg arrangement:
+%s
+
+Kommentar:
+%s
+            """ % (body["info"]["bedrift"], body["info"]["kontaktperson"], body["info"]["epost"], ", ".join(body["time"]), ", ".join(body["type"]), body["comment"])
+
+            send_mail(
+                subject,
+                email_body,
+                sent_from,
+                [to],
+                fail_silently = False
+            )
+
+            return JsonResponse({})
+
+        except:
+            print('Something went wrong...')
+            raise
+            #return HttpResponse(status = 500)
+

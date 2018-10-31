@@ -4,7 +4,7 @@ from django.urls import path
 from django.conf.urls import include
 
 from .views import (ItemViewSet, NewsViewSet, EventViewSet, EventListViewSet, PosterViewSet, GridViewSet,
-ImageGalleryViewSet, ImageViewSet, WarningViewSet, CategoryViewSet, auth_password, JobPostViewSet)
+ImageGalleryViewSet, ImageViewSet, WarningViewSet, CategoryViewSet, auth_password, accept_form, JobPostViewSet)
 
 router = routers.DefaultRouter()
 
@@ -24,4 +24,5 @@ router.register('jobpost', JobPostViewSet)
 urlpatterns = [
     url(r'', include(router.urls)),
     path('authenticate/', auth_password),
+    path('accept-form/', accept_form),
 ]
