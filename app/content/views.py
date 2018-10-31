@@ -27,7 +27,7 @@ class ItemViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
 
 
 class NewsViewSet(viewsets.ModelViewSet):
-    queryset = News.objects.all()
+    queryset = News.objects.all().order_by('-created_at')
     serializer_class = NewsSerializer
 
 
