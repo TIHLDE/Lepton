@@ -161,6 +161,7 @@ Kommentar:
             msg['Subject'] = subject
             msg['From'] = sent_from
             msg['To'] = to
+            msg.add_header('reply-to', body["info"]["epost"])
 
             #Send the email and close the connection
             server.send_message(msg)
