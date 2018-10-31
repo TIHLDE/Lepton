@@ -137,21 +137,21 @@ def accept_form(request):
             to = 'orakel@tihlde.org'
             subject = body["info"]['bedrift'] + " vil ha " + ", ".join(body["type"][:-2] + [" og ".join(body["type"][-2:])]) + " i " + ", ".join(body["time"][:-2] + [" og ".join(body["time"][-2:])])
             body = """\
-                Bedrift-navn:
-                %s
+Bedrift-navn:
+%s
 
-                Kontaktperson:
-                navn: %s
-                epost: %s
+Kontaktperson:
+navn: %s
+epost: %s
 
-                Valgt semester:
-                %s
+Valgt semester:
+%s
 
-                Valg arrangement:
-                %s
+Valg arrangement:
+%s
 
-                Kommentar:
-                %s
+Kommentar:
+%s
             """ % (body["info"]["bedrift"], body["info"]["kontaktperson"], body["info"]["epost"], ", ".join(body["time"]), ", ".join(body["type"]), body["comment"])
 
             #Init mail
