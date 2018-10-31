@@ -22,7 +22,7 @@ class ItemViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
         'news',
         'eventlist',
         'poster',
-        'imagegallery').order_by('order')
+        'imagegallery').order_by('order', '-created_at')
     serializer_class = ItemSerializer
 
 
