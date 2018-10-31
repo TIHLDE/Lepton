@@ -1,11 +1,11 @@
 from rest_framework import viewsets, mixins, permissions, generics
 
 from .models import Item, News, Event, EventList, Poster, Grid, Image, \
-                    ImageGallery, Warning, Category
+                    ImageGallery, Warning, Category, JobPost
 from .serializers import ItemSerializer, NewsSerializer, EventSerializer, \
                          EventListSerializer, PosterSerializer, \
                          GridSerializer, ImageSerializer, \
-                         ImageGallerySerializer, WarningSerializer, CategorySerializer
+                         ImageGallerySerializer, WarningSerializer, CategorySerializer, JobPostSerializer
 from app.util.models import Gridable
 
 from django.http import HttpResponse, HttpResponseNotAllowed, JsonResponse
@@ -87,6 +87,11 @@ class CategoryViewSet(viewsets.ModelViewSet):
 
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+
+class JobPostViewSet(viewsets.ModelViewSet):
+
+    queryset = JobPost.objects.all()
+    serializer_class = JobPostSerializer
 
 
 @csrf_exempt
