@@ -138,13 +138,7 @@ def accept_form(request):
             subject = 'Test melding'
             body = 'Dette er en test melding \n' + str(body)
 
-            email_text = """\
-            From: %s
-            To: %s
-            Subject: %s
-
-            %s
-            """ % (sent_from, to, subject, body)
+            email_text = "\r\n".join([sent_from, to, subject, "", body])
 
             #Send the email and close the connection
             server.sendmail(sent_from, to, email_text)
