@@ -116,7 +116,7 @@ def auth_password(request):
 
 # Method for accepting company interest forms from the company page
 
-import django.core.mail import send_mail
+from django.core.mail import send_mail
 
 @csrf_exempt
 def accept_form(request):
