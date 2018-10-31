@@ -141,7 +141,7 @@ def accept_form(request):
             email_text = "\r\n".join([sent_from, to, subject, "", body])
 
             #Send the email and close the connection
-            server.sendmail(sent_from, to, email_text)
+            server.sendmail(sent_from, to, email_text.encode("utf8"))
             server.close()
 
             return HttpResponse(status = 200)
