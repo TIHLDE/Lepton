@@ -75,66 +75,6 @@ class Poster(Item, OptionalImage, OptionalAction):
         fmt_str = '{} - {} - [color {}]'
         return fmt_str.format(self.header, self.subheader, self.color)
 
-
-class Grid(BaseModel):
-    """An ordered list of items with a given name."""
-    # The name of the grid. e.g. frontpage, news, ...
-    name = models.CharField(max_length=200)
-
-    def __str__(self):
-        return '{}'.format(self.name)
-
-
-class ManualGridItem(BaseModel):
-    """
-    Extra fields on the many-to-many relation between
-    Grid and Item.
-    """
-    grid = models.ForeignKey('ManualGrid', on_delete='CASCADE')
-    item = models.ForeignKey(Item, on_delete='CASCADE')
-
-    # The item with the hightest priority will
-    # be placed at the top of the grid.
-    priority = models.IntegerField()
-
-    class Meta:
-        ordering = ['-priority']
-
-
-class ManualGrid(Grid):
-    """A manually ordered grid"""
-    items = models.ManyToManyField(Item, through='ManualGridItem')
-
-    def __str__(self):
-        return '{} [{} items]'.format(self.name, self.items.all().count())
-
-
-class RecentFirstGrid(Grid):
-    """
-    A grid which orders and generates itself automatically based upon the
-    creation_time of the item.
-    """
-    # e.g. 'app.content.Models.News' (subclass of BareModel)
-    item_class = models.CharField(max_length=200)
-
-    @property
-    def items(self):
-        return self.objects.all()
-
-    @property
-    def objects(self):
-        module_str, class_str = self.item_class.rsplit('.', 1)
-        class_ = getattr(importlib.import_module(module_str), class_str)
-        return class_.objects
-
-    def __str__(self):
-        return '{} [{} - {}]'.format(self.name, self.item_class,
-                                     len(self.items))
-
-    class Meta:
-        ordering = ['-created_at']
-
-
 class ImageGallery(Item):
     name = models.CharField(max_length=200)
 

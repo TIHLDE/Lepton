@@ -3,7 +3,7 @@ from django.conf.urls import url
 from django.urls import path
 from django.conf.urls import include
 
-from .views import (ItemViewSet, NewsViewSet, EventViewSet, EventListViewSet, PosterViewSet, GridViewSet,
+from .views import (ItemViewSet, NewsViewSet, EventViewSet, EventListViewSet, PosterViewSet,
 ImageGalleryViewSet, ImageViewSet, WarningViewSet, CategoryViewSet, auth_password, accept_form, JobPostViewSet)
 
 router = routers.DefaultRouter()
@@ -14,7 +14,6 @@ router.register('news', NewsViewSet)
 router.register('events', EventViewSet, base_name='event')
 router.register('eventlist', EventListViewSet)
 router.register('posters', PosterViewSet)
-router.register('grids', GridViewSet)
 router.register('images', ImageViewSet)
 router.register('imagegallery', ImageGalleryViewSet)
 router.register('warning', WarningViewSet, base_name='warning')

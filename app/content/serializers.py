@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from .models import (Item, News, Event, EventList,
-                     Poster, Grid, ManualGrid, RecentFirstGrid,
+                     Poster,
                      ImageGallery, Image, Warning, Category, JobPost)
 
 from logzero import logger
@@ -93,62 +93,6 @@ class ItemSerializer(serializers.ModelSerializer):
         model = Item
         fields = '__all__'  # bad form
         depth = 1
-
-
-class GridBaseSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Grid
-        fields = '__all__'  # bad form
-
-
-class ManualGridSerializer(serializers.ModelSerializer):
-
-    items = ItemSerializer(many=True)
-
-    class Meta:
-        model = ManualGrid
-        fields = '__all__'  # bad form
-
-
-class RecentFirstGridSerializer(serializers.ModelSerializer):
-
-    items = ItemSerializer(many=True)
-
-    class Meta:
-        model = RecentFirstGrid
-        fields = '__all__'  # bad form
-
-
-class GridSerializer(serializers.ModelSerializer):
-
-    def to_representation(self, instance):
-        # TODO: Remove duplicate code
-        representation = GridBaseSerializer(instance).data
-
-        exclude = set(representation)
-
-        types = [
-            ('manualgrid', ManualGridSerializer),
-            ('recentfirstgrid', RecentFirstGridSerializer),
-        ]
-
-        type = None
-        for t in types:
-            if hasattr(instance, t[0]):
-                type = t
-                break
-
-        datarep = type[1](getattr(instance, type[0])).data
-        representation['data'] = {f: datarep[f] for f in datarep if f not in exclude and datarep[f]}
-        representation['type'] = type[0]
-
-        return representation
-
-    class Meta:
-        model = Grid
-        fields = '__all__'  # bad form
-
 
 class WarningSerializer(serializers.ModelSerializer):
 
