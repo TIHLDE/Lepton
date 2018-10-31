@@ -117,11 +117,11 @@ def auth_password(request):
 # Method for accepting company interest forms from the company page
 
 import smtplib
+from email.message import EmailMessage
 
 @csrf_exempt
 def accept_form(request):
     if request.method == 'POST':
-
         try:
             #Init SMTP server (currently using mailtrap for development and debug purposes)
             server = smtplib.SMTP('smtp.mailtrap.io', 2525)
@@ -138,12 +138,17 @@ def accept_form(request):
             subject = 'Test melding'
             body = 'Dette er en test melding \n' + str(body)
 
-            email_text = "\r\n".join([sent_from, to, subject, "", body])
+            #Init mail
+            msg = EmailMessage()
+            msg.set_content(body)
+
+            msg['Subject'] = subject
+            msg['From'] = sent_from
+            msg['To'] = to
 
             #Send the email and close the connection
-            server.sendmail(sent_from, to, email_text.encode("utf8"))
-            server.close()
-
+            server.send_message(msg)
+            server.quit()
             return HttpResponse(status = 200)
 
         except:
