@@ -123,14 +123,20 @@ def accept_form(request):
     if request.method == 'POST':
 
         try:
+            #Init SMTP server (currently using mailtrap for development and debug purposes)
             server = smtplib.SMTP('smtp.mailtrap.io', 2525)
             server.ehlo()
             server.login('75ecff025dcb39', '8b1a00e838d6b7')
 
+            #Get body from request
+            body_unicode = request.body.decode('utf-8')
+            body = json.loads(body_unicode)
+
+            #Define mail content
             sent_from = '29797b65b2-4220f2@inbox.mailtrap.io'
             to = 'sveinungg.overlandd@gmail.com'
             subject = 'Test melding'
-            body = 'Dette er en test melding \n' + request
+            body = 'Dette er en test melding \n' + body
 
             email_text = """\
             From: %s
@@ -140,13 +146,14 @@ def accept_form(request):
             %s
             """ % (sent_from, to, subject, body)
 
+            #Send the email and close the connection
             server.sendmail(sent_from, to, email_text)
             server.close()
 
             return HttpResponse(status = 200)
 
-        except Error:
+        except:
             print('Something went wrong...')
             raise
-            return HttpResponse(status = 500)
+            #return HttpResponse(status = 500)
 
