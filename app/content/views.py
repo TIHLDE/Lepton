@@ -149,7 +149,7 @@ def accept_form(request):
             #Send the email and close the connection
             server.send_message(msg)
             server.quit()
-            return HttpResponse(status = 200)
+            return JsonResponse({})
 
         except:
             print('Something went wrong...')
