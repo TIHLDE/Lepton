@@ -133,10 +133,26 @@ def accept_form(request):
             body = json.loads(body_unicode)
 
             #Define mail content
-            sent_from = '29797b65b2-4220f2@inbox.mailtrap.io'
-            to = 'sveinungg.overlandd@gmail.com'
-            subject = 'Test melding'
-            body = 'Dette er en test melding \n' + str(body)
+            sent_from = 'no-reply@tihlde.org'
+            to = 'orakel@tihlde.org'
+            subject = body["info"]['bedrift'] + " vil ha " + ", ".join(body["type"][:-2] + [" og ".join(body["type"][-2:])]) + " i " + ", ".join(body["time"][:-2] + [" og ".join(body["time"][-2:])])
+            body = """\
+                Bedrift-navn:
+                %s
+
+                Kontaktperson:
+                navn: %s
+                epost: %s
+
+                Valgt semester:
+                %s
+
+                Valg arrangement:
+                %s
+
+                Kommentar:
+                %s
+            """ % (body["info"]["bedrift"], body["info"]["kontaktperson"], body["info"]["epost"], ", ".join(body["time"]), ", ".join(body["type"]), body["comment"])
 
             #Init mail
             msg = EmailMessage()
