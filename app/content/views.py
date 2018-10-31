@@ -136,7 +136,7 @@ def accept_form(request):
             sent_from = '29797b65b2-4220f2@inbox.mailtrap.io'
             to = 'sveinungg.overlandd@gmail.com'
             subject = 'Test melding'
-            body = 'Dette er en test melding \n' + body
+            body = 'Dette er en test melding \n' + str(body)
 
             email_text = """\
             From: %s
