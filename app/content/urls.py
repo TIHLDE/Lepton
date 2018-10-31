@@ -3,7 +3,7 @@ from django.conf.urls import url
 from django.urls import path
 from django.conf.urls import include
 
-from .views import ItemViewSet, NewsViewSet, EventViewSet, EventListViewSet, PosterViewSet, GridViewSet, ImageGalleryViewSet, ImageViewSet, WarningViewSet, CategoryViewSet, auth_password
+from .views import ItemViewSet, NewsViewSet, EventViewSet, EventListViewSet, PosterViewSet, GridViewSet, ImageGalleryViewSet, ImageViewSet, WarningViewSet, CategoryViewSet, auth_password, accept_form
 
 router = routers.DefaultRouter()
 
@@ -22,4 +22,5 @@ router.register('category', CategoryViewSet)
 urlpatterns = [
     url(r'', include(router.urls)),
     path('authenticate/', auth_password),
+    path('accept-form/', accept_form),
 ]

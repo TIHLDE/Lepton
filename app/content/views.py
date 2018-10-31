@@ -112,3 +112,40 @@ def auth_password(request):
 
     # Method is not allowed
     return HttpResponseNotAllowed(['POST'])
+
+
+# Method for accepting company interest forms from the company page
+
+import smtplib
+
+@csrf_exempt
+def accept_form(request):
+    if request.method == 'POST':
+
+        try:
+            server = smtplib.SMTP_SSL('smtp.mailtrap.io', 2525)
+            server.ehlo()
+            server.login('75ecff025dcb39', '8b1a00e838d6b7')
+
+            sent_from = '29797b65b2-4220f2@inbox.mailtrap.io'
+            to = 'sveinungg.overlandd@gmail.com'
+            subject = 'Test melding'
+            body = 'Dette er en test melding \n' + request
+
+            email_text = """\
+            From: %s
+            To: %s
+            Subject: %s
+
+            %s
+            """ % (sent_from, to, subject, body)
+
+            server.sendmail(sent_from, to, email_text)
+            server.close()
+
+            return HttpResponse(status = 200)
+
+        except:
+            print('Something went wrong...')
+            return HttpResponse(status = 500)
+
