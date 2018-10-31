@@ -116,18 +116,12 @@ def auth_password(request):
 
 # Method for accepting company interest forms from the company page
 
-import smtplib
-from email.message import EmailMessage
+import django.core.mail import send_mail
 
 @csrf_exempt
 def accept_form(request):
     if request.method == 'POST':
         try:
-            #Init SMTP server (currently using mailtrap for development and debug purposes)
-            server = smtplib.SMTP('smtp.mailtrap.io', 2525)
-            server.ehlo()
-            server.login('75ecff025dcb39', '8b1a00e838d6b7')
-
             #Get body from request
             body_unicode = request.body.decode('utf-8')
             body = json.loads(body_unicode)
@@ -136,7 +130,7 @@ def accept_form(request):
             sent_from = 'no-reply@tihlde.org'
             to = 'orakel@tihlde.org'
             subject = body["info"]['bedrift'] + " vil ha " + ", ".join(body["type"][:-2] + [" og ".join(body["type"][-2:])]) + " i " + ", ".join(body["time"][:-2] + [" og ".join(body["time"][-2:])])
-            body = """\
+            email_body = """\
 Bedrift-navn:
 %s
 
@@ -154,17 +148,14 @@ Kommentar:
 %s
             """ % (body["info"]["bedrift"], body["info"]["kontaktperson"], body["info"]["epost"], ", ".join(body["time"]), ", ".join(body["type"]), body["comment"])
 
-            #Init mail
-            msg = EmailMessage()
-            msg.set_content(body)
+            send_mail(
+                subject,
+                email_body,
+                sent_from,
+                [to],
+                fail_silently = False
+            )
 
-            msg['Subject'] = subject
-            msg['From'] = sent_from
-            msg['To'] = to
-
-            #Send the email and close the connection
-            server.send_message(msg)
-            server.quit()
             return JsonResponse({})
 
         except:
