@@ -84,8 +84,19 @@ class CategoryViewSet(viewsets.ModelViewSet):
 
 class JobPostViewSet(viewsets.ModelViewSet):
 
-    queryset = JobPost.objects.all()
     serializer_class = JobPostSerializer
+
+    def get_queryset(self):
+        queryset = JobPost.objects.all()
+
+        if self.request.method == 'GET' and 'newest' in self.request.GET:
+            return JobPost.objects.filter(deadline__gte=datetime.now()-timedelta(days=1)).order_by('deadline')[:25]
+        elif self.request.method == 'GET' and 'search' in self.request.GET:
+            return JobPost.objects.filter(Q(title__icontains=self.request.GET.get('search')) | Q(company_icontains=self.request.GET.get('search'))).order_by('deadline')[:25]
+        elif self.request.method == 'GET' and 'expired' in self.request.GET:
+            return JobPost.objects.filter(deadline__lte=datetime.now()-timedelta(days=1)).order_by('deadline')[:25]
+
+        return queryset
 
 
 @csrf_exempt
