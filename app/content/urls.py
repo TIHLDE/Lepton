@@ -18,7 +18,7 @@ router.register('images', ImageViewSet)
 router.register('imagegallery', ImageGalleryViewSet)
 router.register('warning', WarningViewSet, base_name='warning')
 router.register('category', CategoryViewSet)
-router.register('jobpost', JobPostViewSet)
+router.register('jobpost', JobPostViewSet, base_name='jobpost')
 
 urlpatterns = [
     url(r'', include(router.urls)),
