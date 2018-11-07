@@ -108,6 +108,8 @@ class CategorySerializer(serializers.ModelSerializer):
 
 class JobPostSerializer(serializers.ModelSerializer):
 
+    expired = serializers.BooleanField(read_only=True)
+
     class Meta:
         model = JobPost
         fields = '__all__'  # bad form

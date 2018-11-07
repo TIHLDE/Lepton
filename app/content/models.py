@@ -120,6 +120,10 @@ class JobPost(BaseModel, OptionalImage):
     email = models.EmailField(blank=True, null=True)
     link = models.URLField(max_length=300, blank=True, null=True)
 
+    @property
+    def expired(self):
+        return self.deadline <= datetime.now(tz=timezone.utc)-timedelta(days=1)
+
     def __str__(self):
         return f'JobPost: {self.company}  - {self.title}'
 
