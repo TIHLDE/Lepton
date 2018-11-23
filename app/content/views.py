@@ -1,5 +1,10 @@
 from rest_framework import viewsets, mixins, permissions, generics
 
+# HTTP imports
+from django.http import HttpResponse, HttpResponseNotAllowed, JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+
+# Models and serializer imports
 from .models import Item, News, Event, EventList, Poster, Image, \
                     ImageGallery, Warning, Category, JobPost
 from .serializers import ItemSerializer, NewsSerializer, EventSerializer, \
@@ -8,12 +13,12 @@ from .serializers import ItemSerializer, NewsSerializer, EventSerializer, \
                          ImageGallerySerializer, WarningSerializer, CategorySerializer, JobPostSerializer
 from app.util.models import Gridable
 
-from django.http import HttpResponse, HttpResponseNotAllowed, JsonResponse
-from django.views.decorators.csrf import csrf_exempt
+# Permission imports
+from .permissions import IsMemberOrSafe
 
+# Datetime, hash, and other imports
 from datetime import datetime, timedelta
-from django.db.models import Q  
-
+from django.db.models import Q
 import hashlib
 import json
 
@@ -29,10 +34,12 @@ class ItemViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
 class NewsViewSet(viewsets.ModelViewSet):
     queryset = News.objects.all().order_by('-created_at')
     serializer_class = NewsSerializer
+    permission_classes = [IsMemberOrSafe]
 
 
 class EventViewSet(viewsets.ModelViewSet):
     serializer_class = EventSerializer
+    permission_classes = [IsMemberOrSafe]
 
     def get_queryset(self):
         queryset = Event.objects.all()
@@ -52,23 +59,24 @@ class EventViewSet(viewsets.ModelViewSet):
 class EventListViewSet(viewsets.ModelViewSet):
     queryset = EventList.objects.all()
     serializer_class = EventListSerializer
+    permission_classes = [IsMemberOrSafe]
 
 
 class PosterViewSet(viewsets.ModelViewSet):
     queryset = Poster.objects.all()
     serializer_class = PosterSerializer
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [IsMemberOrSafe]
 
 class ImageGalleryViewSet(viewsets.ModelViewSet):
     queryset = ImageGallery.objects.all()
     serializer_class = ImageGallerySerializer
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [IsMemberOrSafe]
 
 
 class ImageViewSet(viewsets.ModelViewSet):
     queryset = Image.objects.all()
     serializer_class = ImageSerializer
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [IsMemberOrSafe]
 
 
 class WarningViewSet(viewsets.ModelViewSet):
@@ -81,10 +89,12 @@ class CategoryViewSet(viewsets.ModelViewSet):
 
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+    permission_classes = [IsMemberOrSafe]
 
 class JobPostViewSet(viewsets.ModelViewSet):
 
     serializer_class = JobPostSerializer
+    permission_classes = [IsMemberOrSafe]
 
     def get_queryset(self):
         queryset = JobPost.objects.all()
