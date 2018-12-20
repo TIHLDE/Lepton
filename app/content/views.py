@@ -63,7 +63,7 @@ class EventViewSet(viewsets.ModelViewSet):
 class EventListViewSet(viewsets.ModelViewSet):
     queryset = EventList.objects.all()
     serializer_class = EventListSerializer
-    permission_classes = [IsMemberOrSafe]
+    permission_classes = [HS_Drift_Promo]
 
 
 class PosterViewSet(viewsets.ModelViewSet):
@@ -86,7 +86,7 @@ class WarningViewSet(viewsets.ModelViewSet):
 
     queryset = Warning.objects.all()
     serializer_class = WarningSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [HS_Drift_Promo]
 
 class CategoryViewSet(viewsets.ModelViewSet):
 
