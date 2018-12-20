@@ -15,6 +15,7 @@ django-cors-headers = "*"
 requests = "*"
 logzero = "*"
 aiohttp-cors = "*"
+django-dotenv = "*"
 
 [dev-packages]
 pylint = "*"

@@ -1,10 +1,12 @@
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
-from rest_framework import status
+from rest_framework import status, viewsets
 from rest_framework.decorators import api_view
 
-from .serializers import AuthSerializer
+from .serializers import AuthSerializer, GroupSerializer, ConnectionSerializer
+from .models import Group, Connection
+from .permissions import IsHSorDrift
 
 # http-lib import
 import requests
@@ -15,6 +17,16 @@ TOKEN_URL = API_URL + '/auth'
 VERIFY_URL = API_URL + '/verify'
 LOGOUT_URL = API_URL + '/logout'
 
+
+class GroupViewSet(viewsets.ModelViewSet):
+    queryset = Group.objects.all().order_by('-created_at')
+    serializer_class = GroupSerializer
+    permission_classes = [IsHSorDrift]
+
+class ConnectionViewSet(viewsets.ModelViewSet):
+    queryset = Connection.objects.all().order_by('-created_at')
+    serializer_class = ConnectionSerializer
+    permission_classes = [IsHSorDrift]
 
 @api_view(['POST'])
 def login(request):

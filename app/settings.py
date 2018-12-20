@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     # Our apps
+    'app.authentication',
     'app.content',
     'app.util',
 ]
@@ -160,17 +161,9 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # Activate Django-Heroku.
 django_heroku.settings(locals())
 
-# WebAuth
-""" WEB_AUTH = {
-    'api_url': 'https://tihlde-webauth.herokuapp.com/api/v1/',
-    'token_header': 'X-CSRF-Token',
-    'django_token_header': 'HTTP_X_CSRF_TOKEN',
-} """
-
-
 #EMAIL SMTP Server setup
-EMAIL_HOST = "smtp.mailtrap.io"
-EMAIL_PORT = "2525"
+EMAIL_HOST = os.environ.get('EMAIL_HOST') or "smtp.mailtrap.io"
+EMAIL_PORT = os.environ.get('EMAIL_HOST') or "2525"
 
-EMAIL_HOST_USER = "75ecff025dcb39"
-EMAIL_HOST_PASSWORD = "8b1a00e838d6b7"
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST') or "75ecff025dcb39"
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST') or "8b1a00e838d6b7"
