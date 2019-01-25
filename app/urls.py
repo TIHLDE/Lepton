@@ -21,8 +21,8 @@ from .content import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('rest_framework.urls')),
+    path('api/', include('rest_framework.urls')),
     # Our endpoints
-    path('v1/', include('app.content.urls')),
-    path('v1/auth/', include('app.authentication.urls')),
+    path('api/v1/', include('app.content.urls')),
+    path('api/v1/auth/', include('app.authentication.urls')),
 ]
