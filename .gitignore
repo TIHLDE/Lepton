@@ -9,3 +9,6 @@ __pycache__
 .vscode
 
 .idea/
+volume/
+
+.DS_STORE

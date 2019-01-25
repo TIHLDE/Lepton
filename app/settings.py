@@ -23,7 +23,7 @@ PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "t2#dd&^i4^ehi8k_#ru=9$%%1!4nxa*#tp269ek(*t&x%k*l60"
+SECRET_KEY = os.environ.get('DJANGO_SECRET') 
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -49,12 +49,6 @@ INSTALLED_APPS = [
     'app.content',
     'app.util',
 ]
-
-""" REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'webauth.Authentication',
-    )
-} """
 
 MIDDLEWARE = [
     # Django Cors Headers
@@ -102,7 +96,7 @@ WSGI_APPLICATION = 'app.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'NAME': os.path.join(BASE_DIR, 'volume/db.sqlite3'),
     }
 }
 
