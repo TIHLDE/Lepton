@@ -16,6 +16,8 @@ RUN \
 # expose
 EXPOSE 8000
 
+VOLUME /usr/src/app/volume
+
 # # Migrates the database, uploads staticfiles, and runs the production server
 CMD ./manage.py migrate && \
     ./manage.py collectstatic --noinput && \
