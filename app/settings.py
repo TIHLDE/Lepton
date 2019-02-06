@@ -79,7 +79,6 @@ TEMPLATES = [
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
-                'django.core.context_processors.static',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
@@ -138,6 +137,7 @@ ALLOWED_HOSTS = ['*']
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 # STATIC_ROOT = os.path.join(PROJECT_ROOT, 'staticfiles')
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/api/static/'
 
 # Extra places for collectstatic to find static files.
@@ -154,7 +154,7 @@ CORS_ALLOW_HEADERS = default_headers + ('X-CSRF-Token',)
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Activate Django-Heroku.
-django_heroku.settings(locals())
+# django_heroku.settings(locals())
 
 #EMAIL SMTP Server setup
 EMAIL_HOST = os.environ.get('EMAIL_HOST') or "smtp.mailtrap.io"
