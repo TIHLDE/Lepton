@@ -20,7 +20,7 @@ from django.urls import path, include
 from .content import views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('api/admin/', admin.site.urls),
     path('api/', include('rest_framework.urls')),
     # Our endpoints
     path('api/v1/', include('app.content.urls')),
