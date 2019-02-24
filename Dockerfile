@@ -9,9 +9,8 @@ WORKDIR /usr/src/app
 RUN \
  apk add --no-cache postgresql-libs && \
  apk add --no-cache --virtual .build-deps gcc musl-dev postgresql-dev && \
- apk add mariadb-dev && \
+ apk add --no-cache mariadb-dev && \
  python3 -m pip install pipenv --no-cache-dir && \
- pip install --no-cache-dir MySQL-python==1.2.3rc1 && \
  pipenv install --deploy --system --ignore-pipfile && \
  apk --purge del .build-deps
 
