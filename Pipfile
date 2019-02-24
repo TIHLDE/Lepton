@@ -15,6 +15,7 @@ django-cors-headers = "*"
 requests = "*"
 logzero = "*"
 aiohttp-cors = "*"
+mysqlclient = "*"
 
 [dev-packages]
 pylint = "*"
