@@ -6,4 +6,11 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - "./volume:/usr/src/app/volume"    
+      - "./volume:/usr/src/app/volume"  
+      
+    environment:
+      - DATABASE_USER=nettside
+      - DATABASE_PORT=3306
+      - DATABASE_PASSWORD=fUh01zNzdfq8
+      - DATABASE_HOST=https://tihlde.org
+      - DATABASE_NAME=nettside
