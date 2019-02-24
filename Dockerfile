@@ -9,7 +9,7 @@ WORKDIR /usr/src/app
 RUN \
  apk add --no-cache postgresql-libs && \
  apk add --no-cache --virtual .build-deps gcc musl-dev postgresql-dev && \
- apk add py-mysqldb \
+ apk add py-mysqldb && \
  python3 -m pip install pipenv --no-cache-dir && \
  pipenv install --deploy --system --ignore-pipfile && \
  apk --purge del .build-deps
