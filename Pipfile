@@ -19,9 +19,9 @@ django-rest-framework = "*"
 django-cors-headers = "*"
 requests = "*"
 logzero = "*"
-aiohttp-cors = "*"
+aiohttp_cors = "*"
 wheel = "*"
-
+mysqlclient = "*"
 
 [dev-packages]
 
