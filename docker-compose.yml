@@ -7,3 +7,5 @@ services:
       - "8000:8000"
     volumes:
       - "./volume:/usr/src/app/volume"
+    env_file:
+      - .env

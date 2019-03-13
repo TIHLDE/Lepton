@@ -167,6 +167,8 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 #EMAIL SMTP Server setup
 EMAIL_HOST = os.environ.get('EMAIL_HOST') or "smtp.mailtrap.io"
 EMAIL_PORT = os.environ.get('EMAIL_PORT') or "2525"
+EMAIL_USE_TLS = True
 
 EMAIL_HOST_USER = os.environ.get('EMAIL_USER') or "75ecff025dcb39"
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASSWORD') or "8b1a00e838d6b7"
+EMAIL_RECEIVER = os.environ.get('EMAIL_RECEIVER')

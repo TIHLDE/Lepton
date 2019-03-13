@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Bedriftkontakt</title>
+</head>
+<body>
+    <strong>{{ companyName }}</strong> vil ha kontakt med TIHLDE.
+
+    <div>
+        <span>
+            <strong>Kontaktperson:</strong>
+            {{ contactName }}
+        </span>
+        <span>
+            <strong>Epost:</strong>
+            {{ emailAddress }}
+        </span>
+    </div>
+    <div>
+        <span>
+            <strong>Valg semester:</strong>
+            {{ semester }}
+        </span>
+        <span>
+            <strong>Valg arrangementtype:</strong>
+            {{ eventType }}
+        </span>
+    </div>
+    <div>
+        {{ comment }}
+    </div>
+</body>
+</html>

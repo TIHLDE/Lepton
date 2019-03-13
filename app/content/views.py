@@ -1,4 +1,5 @@
 from rest_framework import viewsets, mixins, permissions, generics
+import os
 
 # HTTP imports
 from django.http import HttpResponse, HttpResponseNotAllowed, JsonResponse
@@ -129,7 +130,8 @@ def accept_form(request):
 
             #Define mail content
             sent_from = 'no-reply@tihlde.org'
-            to = 'orakel@tihlde.org'
+            to = os.environ.get('EMAIL_RECEIVER') or 'orakel@tihlde.org'
+            print(to)
             subject = body["info"]['bedrift'] + " vil ha " + ", ".join(body["type"][:-2] + [" og ".join(body["type"][-2:])]) + " i " + ", ".join(body["time"][:-2] + [" og ".join(body["time"][-2:])])
             email_body = """\
 Bedrift-navn:
@@ -149,15 +151,15 @@ Kommentar:
 %s
             """ % (body["info"]["bedrift"], body["info"]["kontaktperson"], body["info"]["epost"], ", ".join(body["time"]), ", ".join(body["type"]), body["comment"])
 
-            send_mail(
+            numOfSentMails = send_mail(
                 subject,
                 email_body,
                 sent_from,
                 [to],
                 fail_silently = False
             )
-
-            return JsonResponse({})
+            print(numOfSentMails)
+            return JsonResponse({}, status= 200 if numOfSentMails > 0 else 500)
 
         except:
             print('Something went wrong...')

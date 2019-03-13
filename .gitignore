@@ -12,3 +12,6 @@ __pycache__
 volume/
 
 .DS_STORE
+
+# Env
+.env
