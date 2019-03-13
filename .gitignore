@@ -14,4 +14,4 @@ volume/
 .DS_STORE
 
 # Env
-.env
+.env.development
