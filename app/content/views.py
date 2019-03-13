@@ -131,7 +131,6 @@ def accept_form(request):
             #Define mail content
             sent_from = 'no-reply@tihlde.org'
             to = os.environ.get('EMAIL_RECEIVER') or 'orakel@tihlde.org'
-            print(to)
             subject = body["info"]['bedrift'] + " vil ha " + ", ".join(body["type"][:-2] + [" og ".join(body["type"][-2:])]) + " i " + ", ".join(body["time"][:-2] + [" og ".join(body["time"][-2:])])
             email_body = """\
 Bedrift-navn:
@@ -158,7 +157,6 @@ Kommentar:
                 [to],
                 fail_silently = False
             )
-            print(numOfSentMails)
             return JsonResponse({}, status= 200 if numOfSentMails > 0 else 500)
 
         except:
