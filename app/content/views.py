@@ -117,7 +117,6 @@ class JobPostViewSet(viewsets.ModelViewSet):
 
 
 # Method for accepting company interest forms from the company page
-
 from django.core.mail import send_mail
 
 @csrf_exempt
