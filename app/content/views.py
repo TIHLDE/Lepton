@@ -6,12 +6,11 @@ from django.http import HttpResponse, HttpResponseNotAllowed, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
 # Models and serializer imports
-from .models import Item, News, Event, EventList, Poster, Image, \
-                    ImageGallery, Warning, Category, JobPost
+from .models import Item, News, Event, EventList, Poster, \
+                    Warning, Category, JobPost
 from .serializers import ItemSerializer, NewsSerializer, EventSerializer, \
                          EventListSerializer, PosterSerializer, \
-                         ImageSerializer, \
-                         ImageGallerySerializer, WarningSerializer, CategorySerializer, JobPostSerializer
+                         WarningSerializer, CategorySerializer, JobPostSerializer
 from app.util.models import Gridable
 
 # Permission imports
@@ -27,8 +26,7 @@ class ItemViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = Item.objects.all().select_related(
         'news',
         'eventlist',
-        'poster',
-        'imagegallery').order_by('order', '-created_at')
+        'poster').order_by('order', '-created_at')
     serializer_class = ItemSerializer
 
 
@@ -70,17 +68,6 @@ class EventListViewSet(viewsets.ModelViewSet):
 class PosterViewSet(viewsets.ModelViewSet):
     queryset = Poster.objects.all()
     serializer_class = PosterSerializer
-    permission_classes = [HS_Drift_Promo]
-
-class ImageGalleryViewSet(viewsets.ModelViewSet):
-    queryset = ImageGallery.objects.all()
-    serializer_class = ImageGallerySerializer
-    permission_classes = [HS_Drift_Promo]
-
-
-class ImageViewSet(viewsets.ModelViewSet):
-    queryset = Image.objects.all()
-    serializer_class = ImageSerializer
     permission_classes = [HS_Drift_Promo]
 
 class WarningViewSet(viewsets.ModelViewSet):

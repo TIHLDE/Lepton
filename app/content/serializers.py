@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from .models import (Item, News, Event, EventList,
                      Poster,
-                     ImageGallery, Image, Warning, Category, JobPost)
+                     Warning, Category, JobPost)
 
 from logzero import logger
 
@@ -46,21 +46,6 @@ class ItemBaseSerializer(serializers.ModelSerializer):
         model = Item
         fields = '__all__'  # bad form
 
-
-class ImageSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Image
-        fields = '__all__'  # bad form
-
-
-class ImageGallerySerializer(serializers.ModelSerializer):
-    images = ImageSerializer(many=True, read_only=True)
-
-    class Meta:
-        model = ImageGallery
-        fields = '__all__'  # bad form
-
-
 class ItemSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         representation = ItemBaseSerializer(instance).data
@@ -71,7 +56,6 @@ class ItemSerializer(serializers.ModelSerializer):
             ('news', NewsSerializer),
             ('eventlist', EventListSerializer),
             ('poster', PosterSerializer),
-            ('imagegallery', ImageGallerySerializer),
         ]
 
         type = None

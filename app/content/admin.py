@@ -8,9 +8,6 @@ admin.site.register(models.EventList)
 admin.site.register(models.News)
 admin.site.register(models.Poster)
 
-admin.site.register(models.Image)
-admin.site.register(models.ImageGallery)
-
 admin.site.register(models.Warning)
 admin.site.register(models.Category)
 admin.site.register(models.JobPost)

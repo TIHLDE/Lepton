@@ -30,6 +30,7 @@ class ConnectionViewSet(viewsets.ModelViewSet):
 
 @api_view(['POST'])
 def login(request):
+    
     # Serialize data and check if valid
     serializer = AuthSerializer(data=request.data)
     if(not serializer.is_valid()):
@@ -41,6 +42,7 @@ def login(request):
 
     # Send token-request to web-auth API
     r = requests.post(TOKEN_URL, json={'username': username, 'password': password}, verify=False)
+    r.raise_for_status()
     response = r.json()
     
     # Send response back
