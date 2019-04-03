@@ -4,7 +4,7 @@ TIHLDEs API is the API TIHLDE's webiste. The API is made using [Django](https://
 ## Contents
 1. [Basic info](#basic-info)
 2. [Getting started](#getting-started)
-3. [Todo](#todo)
+3. [Database Map (ER-Model)](#database-map)
 4. [Future plans](#future-plans)
 5. [Rules](#rules)
 
@@ -69,3 +69,6 @@ EMAIL_PORT= PORT (normally 587)
 EMAIL_USER= EMAIL_USER
 EMAIL_PASSWORD= EMAIL_PASSWORD
 ```
+
+### Database Map (Simplified ER-Model)
+![ER-model](https://user-images.githubusercontent.com/31648998/55506006-b4149480-5654-11e9-8a17-0c8d6d48ac64.png)
