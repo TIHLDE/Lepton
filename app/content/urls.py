@@ -4,7 +4,7 @@ from django.urls import path
 from django.conf.urls import include
 
 from .views import (ItemViewSet, NewsViewSet, EventViewSet, EventListViewSet, PosterViewSet,
-WarningViewSet, CategoryViewSet, accept_form, JobPostViewSet)
+    WarningViewSet, CategoryViewSet, accept_form, JobPostViewSet)
 
 router = routers.DefaultRouter()
 
