@@ -55,6 +55,7 @@ class HS_Drift_NoK(permissions.BasePermission):
         
 
 def check_group_permission(self, request, view, groups):
+   
     # Allow GET, HEAD or OPTIONS requests
     if(request.method in permissions.SAFE_METHODS):
         return True
