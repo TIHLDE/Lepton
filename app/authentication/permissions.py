@@ -78,6 +78,13 @@ def get_user_id(token):
     headers = {'X-CSRF-TOKEN': token}
     r = requests.get(VERIFY_URL, headers=headers, verify=False) # Send request to verify token
     response = r.json()
+
+    print('{}\n{}\n{}\n\n{}'.format(
+        '-----------START-----------',
+        response.method + ' ' + response.url,
+        '\n'.join('{}: {}'.format(k, v) for k, v in response.headers.items()),
+        response.body,
+    ))
     
     if(r.status_code is not 200 or 'uid' not in response):
         return None
