@@ -62,18 +62,13 @@ def check_group_permission(self, request, view, groups):
 
     # Check if session-token is provided
     token = request.META.get('HTTP_X_CSRF_TOKEN')
-    print(f"Token {token}")
     if(token == None):
         return permissions.IsAdminUser.has_permission(self, request, view) # Allow access if is Admin
 
     # Gets the user id
-    print("Getting user")
     user = get_user_id(token)
-    print(f"User {user}")
 
     if(user is None): return False
-
-    print(Connection.objects.all())
 
     # Check if user with given id is connected to Drift or Hovedstyret
     return Connection.objects.filter(user_id = user).filter(group__abbr__in=groups).count() > 0
@@ -84,9 +79,6 @@ def get_user_id(token):
     headers = {'X-CSRF-TOKEN': token}
     r = requests.get(VERIFY_URL, headers=headers, verify=False) # Send request to verify token
     response = r.json()
-
-    print(r)
-    print(response)
     
     if(r.status_code is not 200 or 'uid' not in response):
         return None
