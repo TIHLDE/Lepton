@@ -2,8 +2,13 @@
 import os
 import sys
 
+import dotenv
 
 if __name__ == "__main__":
+    try:
+        dotenv.read_dotenv()
+    except:
+        print("Could not read .env file")
 
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "app.settings")
     
