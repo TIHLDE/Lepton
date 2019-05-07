@@ -43,9 +43,7 @@ class Event(BaseModel, OptionalImage):
         return self.start <= datetime.now(tz=timezone.utc)-timedelta(days=1)
 
     def __str__(self):
-        fmt_str = '{} - starting {} at {} [{}]'
-        return fmt_str.format(self.title, self.start,
-                              self.location)
+        return f'{self.title} - starting {self.start} at {self.location}'
 
 class Warning(BaseModel):
     text = models.CharField(max_length=400, null=True)
