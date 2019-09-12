@@ -1,0 +1,726 @@
+[12/Sep/2019 14:40:48] ERROR [django.request:228] Internal Server Error: /api/v1/events/
+Traceback (most recent call last):
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\core\handlers\exception.py", line 34, in inner
+    response = get_response(request)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\core\handlers\base.py", line 156, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\core\handlers\base.py", line 154, in _get_response
+    response = response.render()
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\response.py", line 106, in render
+    self.content = self.rendered_content
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\rest_framework\response.py", line 72, in rendered_content
+    ret = renderer.render(self.data, accepted_media_type, context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\rest_framework\renderers.py", line 734, in render
+    ret = template.render(context, request=renderer_context['request'])
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\backends\django.py", line 61, in render
+    return self.template.render(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 171, in render
+    return self._render(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 163, in _render
+    return self.nodelist.render(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 937, in render
+    bit = node.render_annotated(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 904, in render_annotated
+    return self.render(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\loader_tags.py", line 150, in render
+    return compiled_parent._render(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 163, in _render
+    return self.nodelist.render(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 937, in render
+    bit = node.render_annotated(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 904, in render_annotated
+    return self.render(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\loader_tags.py", line 62, in render
+    result = block.nodelist.render(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 937, in render
+    bit = node.render_annotated(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 904, in render_annotated
+    return self.render(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\loader_tags.py", line 62, in render
+    result = block.nodelist.render(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 937, in render
+    bit = node.render_annotated(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 904, in render_annotated
+    return self.render(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\loader_tags.py", line 62, in render
+    result = block.nodelist.render(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 937, in render
+    bit = node.render_annotated(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 904, in render_annotated
+    return self.render(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\templatetags\static.py", line 106, in render
+    url = self.url(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\templatetags\static.py", line 103, in url
+    return self.handle_simple(path)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\templatetags\static.py", line 118, in handle_simple
+    return staticfiles_storage.url(path)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\contrib\staticfiles\storage.py", line 152, in url
+    return self._url(self.stored_name, name, force)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\contrib\staticfiles\storage.py", line 131, in _url
+    hashed_name = hashed_name_func(*args)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\contrib\staticfiles\storage.py", line 419, in stored_name
+    raise ValueError("Missing staticfiles manifest entry for '%s'" % clean_name)
+ValueError: Missing staticfiles manifest entry for 'rest_framework/css/bootstrap.min.css'
+[12/Sep/2019 14:40:48] ERROR [django.server:154] "GET /api/v1/events/ HTTP/1.1" 500 27
+[12/Sep/2019 14:40:48] WARNING [django.request:228] Not Found: /favicon.ico
+[12/Sep/2019 14:40:48] WARNING [django.server:154] "GET /favicon.ico HTTP/1.1" 404 77
+[12/Sep/2019 14:42:01] ERROR [django.request:228] Internal Server Error: /api/v1/events/
+Traceback (most recent call last):
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\core\handlers\exception.py", line 34, in inner
+    response = get_response(request)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\core\handlers\base.py", line 156, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\core\handlers\base.py", line 154, in _get_response
+    response = response.render()
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\response.py", line 106, in render
+    self.content = self.rendered_content
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\rest_framework\response.py", line 72, in rendered_content
+    ret = renderer.render(self.data, accepted_media_type, context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\rest_framework\renderers.py", line 734, in render
+    ret = template.render(context, request=renderer_context['request'])
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\backends\django.py", line 61, in render
+    return self.template.render(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 171, in render
+    return self._render(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 163, in _render
+    return self.nodelist.render(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 937, in render
+    bit = node.render_annotated(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 904, in render_annotated
+    return self.render(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\loader_tags.py", line 150, in render
+    return compiled_parent._render(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 163, in _render
+    return self.nodelist.render(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 937, in render
+    bit = node.render_annotated(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 904, in render_annotated
+    return self.render(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\loader_tags.py", line 62, in render
+    result = block.nodelist.render(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 937, in render
+    bit = node.render_annotated(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 904, in render_annotated
+    return self.render(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\loader_tags.py", line 62, in render
+    result = block.nodelist.render(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 937, in render
+    bit = node.render_annotated(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 904, in render_annotated
+    return self.render(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\loader_tags.py", line 62, in render
+    result = block.nodelist.render(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 937, in render
+    bit = node.render_annotated(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 904, in render_annotated
+    return self.render(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\templatetags\static.py", line 106, in render
+    url = self.url(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\templatetags\static.py", line 103, in url
+    return self.handle_simple(path)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\templatetags\static.py", line 118, in handle_simple
+    return staticfiles_storage.url(path)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\contrib\staticfiles\storage.py", line 152, in url
+    return self._url(self.stored_name, name, force)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\contrib\staticfiles\storage.py", line 131, in _url
+    hashed_name = hashed_name_func(*args)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\contrib\staticfiles\storage.py", line 419, in stored_name
+    raise ValueError("Missing staticfiles manifest entry for '%s'" % clean_name)
+ValueError: Missing staticfiles manifest entry for 'rest_framework/css/bootstrap.min.css'
+[12/Sep/2019 14:42:01] ERROR [django.server:154] "GET /api/v1/events/ HTTP/1.1" 500 27
+[12/Sep/2019 14:42:01] WARNING [django.request:228] Not Found: /favicon.ico
+[12/Sep/2019 14:42:01] WARNING [django.server:154] "GET /favicon.ico HTTP/1.1" 404 77
+[12/Sep/2019 14:42:02] ERROR [django.request:228] Internal Server Error: /api/v1/events/
+Traceback (most recent call last):
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\core\handlers\exception.py", line 34, in inner
+    response = get_response(request)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\core\handlers\base.py", line 156, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\core\handlers\base.py", line 154, in _get_response
+    response = response.render()
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\response.py", line 106, in render
+    self.content = self.rendered_content
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\rest_framework\response.py", line 72, in rendered_content
+    ret = renderer.render(self.data, accepted_media_type, context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\rest_framework\renderers.py", line 734, in render
+    ret = template.render(context, request=renderer_context['request'])
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\backends\django.py", line 61, in render
+    return self.template.render(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 171, in render
+    return self._render(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 163, in _render
+    return self.nodelist.render(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 937, in render
+    bit = node.render_annotated(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 904, in render_annotated
+    return self.render(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\loader_tags.py", line 150, in render
+    return compiled_parent._render(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 163, in _render
+    return self.nodelist.render(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 937, in render
+    bit = node.render_annotated(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 904, in render_annotated
+    return self.render(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\loader_tags.py", line 62, in render
+    result = block.nodelist.render(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 937, in render
+    bit = node.render_annotated(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 904, in render_annotated
+    return self.render(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\loader_tags.py", line 62, in render
+    result = block.nodelist.render(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 937, in render
+    bit = node.render_annotated(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 904, in render_annotated
+    return self.render(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\loader_tags.py", line 62, in render
+    result = block.nodelist.render(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 937, in render
+    bit = node.render_annotated(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 904, in render_annotated
+    return self.render(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\templatetags\static.py", line 106, in render
+    url = self.url(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\templatetags\static.py", line 103, in url
+    return self.handle_simple(path)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\templatetags\static.py", line 118, in handle_simple
+    return staticfiles_storage.url(path)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\contrib\staticfiles\storage.py", line 152, in url
+    return self._url(self.stored_name, name, force)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\contrib\staticfiles\storage.py", line 131, in _url
+    hashed_name = hashed_name_func(*args)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\contrib\staticfiles\storage.py", line 419, in stored_name
+    raise ValueError("Missing staticfiles manifest entry for '%s'" % clean_name)
+ValueError: Missing staticfiles manifest entry for 'rest_framework/css/bootstrap.min.css'
+[12/Sep/2019 14:42:02] ERROR [django.server:154] "GET /api/v1/events/ HTTP/1.1" 500 27
+[12/Sep/2019 14:42:02] WARNING [django.request:228] Not Found: /favicon.ico
+[12/Sep/2019 14:42:02] WARNING [django.server:154] "GET /favicon.ico HTTP/1.1" 404 77
+[12/Sep/2019 14:42:02] ERROR [django.request:228] Internal Server Error: /api/v1/events/
+Traceback (most recent call last):
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\core\handlers\exception.py", line 34, in inner
+    response = get_response(request)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\core\handlers\base.py", line 156, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\core\handlers\base.py", line 154, in _get_response
+    response = response.render()
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\response.py", line 106, in render
+    self.content = self.rendered_content
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\rest_framework\response.py", line 72, in rendered_content
+    ret = renderer.render(self.data, accepted_media_type, context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\rest_framework\renderers.py", line 734, in render
+    ret = template.render(context, request=renderer_context['request'])
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\backends\django.py", line 61, in render
+    return self.template.render(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 171, in render
+    return self._render(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 163, in _render
+    return self.nodelist.render(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 937, in render
+    bit = node.render_annotated(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 904, in render_annotated
+    return self.render(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\loader_tags.py", line 150, in render
+    return compiled_parent._render(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 163, in _render
+    return self.nodelist.render(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 937, in render
+    bit = node.render_annotated(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 904, in render_annotated
+    return self.render(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\loader_tags.py", line 62, in render
+    result = block.nodelist.render(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 937, in render
+    bit = node.render_annotated(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 904, in render_annotated
+    return self.render(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\loader_tags.py", line 62, in render
+    result = block.nodelist.render(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 937, in render
+    bit = node.render_annotated(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 904, in render_annotated
+    return self.render(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\loader_tags.py", line 62, in render
+    result = block.nodelist.render(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 937, in render
+    bit = node.render_annotated(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 904, in render_annotated
+    return self.render(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\templatetags\static.py", line 106, in render
+    url = self.url(context)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\templatetags\static.py", line 103, in url
+    return self.handle_simple(path)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\templatetags\static.py", line 118, in handle_simple
+    return staticfiles_storage.url(path)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\contrib\staticfiles\storage.py", line 152, in url
+    return self._url(self.stored_name, name, force)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\contrib\staticfiles\storage.py", line 131, in _url
+    hashed_name = hashed_name_func(*args)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\contrib\staticfiles\storage.py", line 419, in stored_name
+    raise ValueError("Missing staticfiles manifest entry for '%s'" % clean_name)
+ValueError: Missing staticfiles manifest entry for 'rest_framework/css/bootstrap.min.css'
+[12/Sep/2019 14:42:02] ERROR [django.server:154] "GET /api/v1/events/ HTTP/1.1" 500 27
+[12/Sep/2019 14:42:02] WARNING [django.request:228] Not Found: /favicon.ico
+[12/Sep/2019 14:42:02] WARNING [django.server:154] "GET /favicon.ico HTTP/1.1" 404 77
+[12/Sep/2019 14:44:35] INFO [django.server:154] "GET /api/v1/events/ HTTP/1.1" 200 6095
+[12/Sep/2019 14:44:35] INFO [django.server:154] "GET /api/static/rest_framework/css/bootstrap-tweaks.46ed116b0edd.css HTTP/1.1" 200 1268
+[12/Sep/2019 14:44:35] INFO [django.server:154] "GET /api/static/rest_framework/css/bootstrap.min.77017a69879a.css HTTP/1.1" 200 19646
+[12/Sep/2019 14:44:35] INFO [django.server:154] "GET /api/static/rest_framework/css/prettify.a987f72342ee.css HTTP/1.1" 200 390
+[12/Sep/2019 14:44:35] INFO [django.server:154] "GET /api/static/rest_framework/css/default.8d5591a6aabc.css HTTP/1.1" 200 596
+[12/Sep/2019 14:44:35] INFO [django.server:154] "GET /api/static/rest_framework/js/jquery-3.3.1.min.a09e13ee94d5.js HTTP/1.1" 200 30288
+[12/Sep/2019 14:44:35] INFO [django.server:154] "GET /api/static/rest_framework/js/ajax-form.0ea6e6052ab5.js HTTP/1.1" 200 1540
+[12/Sep/2019 14:44:35] INFO [django.server:154] "GET /api/static/rest_framework/js/default.5b08897dbdc3.js HTTP/1.1" 200 571
+[12/Sep/2019 14:44:35] INFO [django.server:154] "GET /api/static/rest_framework/js/csrf.753b7a1f2ee7.js HTTP/1.1" 200 791
+[12/Sep/2019 14:44:35] INFO [django.server:154] "GET /api/static/rest_framework/js/prettify-min.709bfcc456c6.js HTTP/1.1" 200 6025
+[12/Sep/2019 14:44:35] INFO [django.server:154] "GET /api/static/rest_framework/js/bootstrap.min.3d8308804264.js HTTP/1.1" 200 9996
+[12/Sep/2019 14:44:35] INFO [django.server:154] "GET /api/static/rest_framework/img/grid.a4b938cf382b.png HTTP/1.1" 200 1458
+[12/Sep/2019 14:44:35] WARNING [django.request:228] Not Found: /favicon.ico
+[12/Sep/2019 14:44:35] WARNING [django.server:154] "GET /favicon.ico HTTP/1.1" 404 77
+[12/Sep/2019 14:45:14] DEBUG [django.db.backends:111] (0.003) SELECT @@SQL_AUTO_IS_NULL; args=None
+[12/Sep/2019 14:45:14] DEBUG [django.db.backends:111] (0.003) SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED; args=None
+[12/Sep/2019 14:45:14] DEBUG [django.db.backends:111] (0.003) SHOW FULL TABLES; args=None
+[12/Sep/2019 14:45:14] DEBUG [django.db.backends:111] (0.003) SELECT `django_migrations`.`app`, `django_migrations`.`name` FROM `django_migrations`; args=()
+[12/Sep/2019 14:45:24] DEBUG [django.db.backends:111] (0.003) SELECT @@SQL_AUTO_IS_NULL; args=None
+[12/Sep/2019 14:45:24] DEBUG [django.db.backends:111] (0.002) SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED; args=None
+[12/Sep/2019 14:45:24] DEBUG [django.db.backends:111] (0.003) SHOW FULL TABLES; args=None
+[12/Sep/2019 14:45:24] DEBUG [django.db.backends:111] (0.004) SELECT `django_migrations`.`app`, `django_migrations`.`name` FROM `django_migrations`; args=()
+[12/Sep/2019 14:45:26] DEBUG [django.db.backends:111] (0.003) SELECT @@SQL_AUTO_IS_NULL; args=None
+[12/Sep/2019 14:45:26] DEBUG [django.db.backends:111] (0.003) SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED; args=None
+[12/Sep/2019 14:45:26] DEBUG [django.db.backends:111] (0.004) SELECT `content_event`.`id`, `content_event`.`created_at`, `content_event`.`updated_at`, `content_event`.`image`, `content_event`.`image_alt`, `content_event`.`title`, `content_event`.`start`, `content_event`.`location`, `content_event`.`description`, `content_event`.`sign_up`, `content_event`.`priority`, `content_event`.`category_id` FROM `content_event`; args=()
+[12/Sep/2019 14:45:26] INFO [django.server:154] "GET /api/v1/events/ HTTP/1.1" 200 5965
+[12/Sep/2019 14:45:26] INFO [django.server:154] "GET /api/static/rest_framework/css/bootstrap-tweaks.css HTTP/1.1" 200 3385
+[12/Sep/2019 14:45:26] INFO [django.server:154] "GET /api/static/rest_framework/css/bootstrap.min.css HTTP/1.1" 200 121457
+[12/Sep/2019 14:45:26] INFO [django.server:154] "GET /api/static/rest_framework/css/prettify.css HTTP/1.1" 200 817
+[12/Sep/2019 14:45:26] INFO [django.server:154] "GET /api/static/rest_framework/css/default.css HTTP/1.1" 200 1131
+[12/Sep/2019 14:45:26] INFO [django.server:154] "GET /api/static/rest_framework/js/csrf.js HTTP/1.1" 200 1735
+[12/Sep/2019 14:45:26] INFO [django.server:154] "GET /api/static/rest_framework/js/prettify-min.js HTTP/1.1" 200 13632
+[12/Sep/2019 14:45:26] INFO [django.server:154] "GET /api/static/rest_framework/js/ajax-form.js HTTP/1.1" 200 3597
+[12/Sep/2019 14:45:26] INFO [django.server:154] "GET /api/static/rest_framework/js/bootstrap.min.js HTTP/1.1" 200 37608
+[12/Sep/2019 14:45:26] INFO [django.server:154] "GET /api/static/rest_framework/js/jquery-3.3.1.min.js HTTP/1.1" 200 86927
+[12/Sep/2019 14:45:26] INFO [django.server:154] "GET /api/static/rest_framework/js/default.js HTTP/1.1" 200 1268
+[12/Sep/2019 14:45:26] INFO [django.server:154] "GET /api/static/rest_framework/img/grid.png HTTP/1.1" 200 1458
+[12/Sep/2019 14:45:26] DEBUG [django.template:872] Exception while resolving variable 'name' in template 'unknown'.
+Traceback (most recent call last):
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\core\handlers\exception.py", line 34, in inner
+    response = get_response(request)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\core\handlers\base.py", line 111, in _get_response
+    resolver_match = resolver.resolve(request.path_info)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\urls\resolvers.py", line 520, in resolve
+    raise Resolver404({'tried': tried, 'path': new_path})
+django.urls.exceptions.Resolver404: {'tried': [[<URLResolver <URLPattern list> (admin:admin) 'api/admin/'>], [<URLResolver <module 'rest_framework.urls' from 'C:\\Users\\Eier\\.virtualenvs\\API-MPXWwPEX\\lib\\site-packages\\rest_framework\\urls.py'> (rest_framework:rest_framework) 'api/'>], [<URLResolver <module 'app.content.urls' from 'C:\\Users\\Eier\\Documents\\NettKom\\API\\app\\content\\urls.py'> (None:None) 'api/v1/'>], [<URLResolver <module 'app.authentication.urls' from 'C:\\Users\\Eier\\Documents\\NettKom\\API\\app\\authentication\\urls.py'> (None:None) 'api/v1/auth/'>]], 'path': 'favicon.ico'}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 829, in _resolve_lookup
+    current = current[bit]
+TypeError: 'URLResolver' object is not subscriptable
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 837, in _resolve_lookup
+    current = getattr(current, bit)
+AttributeError: 'URLResolver' object has no attribute 'name'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 843, in _resolve_lookup
+    current = current[int(bit)]
+ValueError: invalid literal for int() with base 10: 'name'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 850, in _resolve_lookup
+    (bit, current))  # missing attribute
+django.template.base.VariableDoesNotExist: Failed lookup for key [name] in <URLResolver <URLPattern list> (admin:admin) 'api/admin/'>
+[12/Sep/2019 14:45:26] DEBUG [django.template:872] Exception while resolving variable 'name' in template 'unknown'.
+Traceback (most recent call last):
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\core\handlers\exception.py", line 34, in inner
+    response = get_response(request)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\core\handlers\base.py", line 111, in _get_response
+    resolver_match = resolver.resolve(request.path_info)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\urls\resolvers.py", line 520, in resolve
+    raise Resolver404({'tried': tried, 'path': new_path})
+django.urls.exceptions.Resolver404: {'tried': [[<URLResolver <URLPattern list> (admin:admin) 'api/admin/'>], [<URLResolver <module 'rest_framework.urls' from 'C:\\Users\\Eier\\.virtualenvs\\API-MPXWwPEX\\lib\\site-packages\\rest_framework\\urls.py'> (rest_framework:rest_framework) 'api/'>], [<URLResolver <module 'app.content.urls' from 'C:\\Users\\Eier\\Documents\\NettKom\\API\\app\\content\\urls.py'> (None:None) 'api/v1/'>], [<URLResolver <module 'app.authentication.urls' from 'C:\\Users\\Eier\\Documents\\NettKom\\API\\app\\authentication\\urls.py'> (None:None) 'api/v1/auth/'>]], 'path': 'favicon.ico'}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 829, in _resolve_lookup
+    current = current[bit]
+TypeError: 'URLResolver' object is not subscriptable
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 837, in _resolve_lookup
+    current = getattr(current, bit)
+AttributeError: 'URLResolver' object has no attribute 'name'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 843, in _resolve_lookup
+    current = current[int(bit)]
+ValueError: invalid literal for int() with base 10: 'name'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 850, in _resolve_lookup
+    (bit, current))  # missing attribute
+django.template.base.VariableDoesNotExist: Failed lookup for key [name] in <URLResolver <module 'rest_framework.urls' from 'C:\\Users\\Eier\\.virtualenvs\\API-MPXWwPEX\\lib\\site-packages\\rest_framework\\urls.py'> (rest_framework:rest_framework) 'api/'>
+[12/Sep/2019 14:45:26] DEBUG [django.template:872] Exception while resolving variable 'name' in template 'unknown'.
+Traceback (most recent call last):
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\core\handlers\exception.py", line 34, in inner
+    response = get_response(request)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\core\handlers\base.py", line 111, in _get_response
+    resolver_match = resolver.resolve(request.path_info)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\urls\resolvers.py", line 520, in resolve
+    raise Resolver404({'tried': tried, 'path': new_path})
+django.urls.exceptions.Resolver404: {'tried': [[<URLResolver <URLPattern list> (admin:admin) 'api/admin/'>], [<URLResolver <module 'rest_framework.urls' from 'C:\\Users\\Eier\\.virtualenvs\\API-MPXWwPEX\\lib\\site-packages\\rest_framework\\urls.py'> (rest_framework:rest_framework) 'api/'>], [<URLResolver <module 'app.content.urls' from 'C:\\Users\\Eier\\Documents\\NettKom\\API\\app\\content\\urls.py'> (None:None) 'api/v1/'>], [<URLResolver <module 'app.authentication.urls' from 'C:\\Users\\Eier\\Documents\\NettKom\\API\\app\\authentication\\urls.py'> (None:None) 'api/v1/auth/'>]], 'path': 'favicon.ico'}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 829, in _resolve_lookup
+    current = current[bit]
+TypeError: 'URLResolver' object is not subscriptable
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 837, in _resolve_lookup
+    current = getattr(current, bit)
+AttributeError: 'URLResolver' object has no attribute 'name'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 843, in _resolve_lookup
+    current = current[int(bit)]
+ValueError: invalid literal for int() with base 10: 'name'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 850, in _resolve_lookup
+    (bit, current))  # missing attribute
+django.template.base.VariableDoesNotExist: Failed lookup for key [name] in <URLResolver <module 'app.content.urls' from 'C:\\Users\\Eier\\Documents\\NettKom\\API\\app\\content\\urls.py'> (None:None) 'api/v1/'>
+[12/Sep/2019 14:45:26] DEBUG [django.template:872] Exception while resolving variable 'name' in template 'unknown'.
+Traceback (most recent call last):
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\core\handlers\exception.py", line 34, in inner
+    response = get_response(request)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\core\handlers\base.py", line 111, in _get_response
+    resolver_match = resolver.resolve(request.path_info)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\urls\resolvers.py", line 520, in resolve
+    raise Resolver404({'tried': tried, 'path': new_path})
+django.urls.exceptions.Resolver404: {'tried': [[<URLResolver <URLPattern list> (admin:admin) 'api/admin/'>], [<URLResolver <module 'rest_framework.urls' from 'C:\\Users\\Eier\\.virtualenvs\\API-MPXWwPEX\\lib\\site-packages\\rest_framework\\urls.py'> (rest_framework:rest_framework) 'api/'>], [<URLResolver <module 'app.content.urls' from 'C:\\Users\\Eier\\Documents\\NettKom\\API\\app\\content\\urls.py'> (None:None) 'api/v1/'>], [<URLResolver <module 'app.authentication.urls' from 'C:\\Users\\Eier\\Documents\\NettKom\\API\\app\\authentication\\urls.py'> (None:None) 'api/v1/auth/'>]], 'path': 'favicon.ico'}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 829, in _resolve_lookup
+    current = current[bit]
+TypeError: 'URLResolver' object is not subscriptable
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 837, in _resolve_lookup
+    current = getattr(current, bit)
+AttributeError: 'URLResolver' object has no attribute 'name'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 843, in _resolve_lookup
+    current = current[int(bit)]
+ValueError: invalid literal for int() with base 10: 'name'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 850, in _resolve_lookup
+    (bit, current))  # missing attribute
+django.template.base.VariableDoesNotExist: Failed lookup for key [name] in <URLResolver <module 'app.authentication.urls' from 'C:\\Users\\Eier\\Documents\\NettKom\\API\\app\\authentication\\urls.py'> (None:None) 'api/v1/auth/'>
+[12/Sep/2019 14:45:26] WARNING [django.request:228] Not Found: /favicon.ico
+[12/Sep/2019 14:45:26] WARNING [django.server:154] "GET /favicon.ico HTTP/1.1" 404 2296
+[12/Sep/2019 14:45:29] DEBUG [django.template:872] Exception while resolving variable 'name' in template 'rest_framework/login.html'.
+Traceback (most recent call last):
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 829, in _resolve_lookup
+    current = current[bit]
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\context.py", line 83, in __getitem__
+    raise KeyError(key)
+KeyError: 'name'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 835, in _resolve_lookup
+    if isinstance(current, BaseContext) and getattr(type(current), bit):
+AttributeError: type object 'RequestContext' has no attribute 'name'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 843, in _resolve_lookup
+    current = current[int(bit)]
+ValueError: invalid literal for int() with base 10: 'name'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 850, in _resolve_lookup
+    (bit, current))  # missing attribute
+django.template.base.VariableDoesNotExist: Failed lookup for key [name] in [{'True': True, 'False': False, 'None': None}, {'csrf_token': <SimpleLazyObject: <function csrf.<locals>._get_val at 0x04EE3CD8>>, 'request': <WSGIRequest: GET '/api/login/?next=/api/v1/events/'>, 'user': <SimpleLazyObject: <function AuthenticationMiddleware.process_request.<locals>.<lambda> at 0x04F65D20>>, 'perms': <django.contrib.auth.context_processors.PermWrapper object at 0x04F24BF0>, 'messages': <django.contrib.messages.storage.fallback.FallbackStorage object at 0x04F24030>, 'DEFAULT_MESSAGE_LEVELS': {'DEBUG': 10, 'INFO': 20, 'SUCCESS': 25, 'WARNING': 30, 'ERROR': 40}}, {}, {'form': <AuthenticationForm bound=False, valid=Unknown, fields=(username;password)>, 'view': <django.contrib.auth.views.LoginView object at 0x04F24D30>, 'next': '/api/v1/events/', 'site': <django.contrib.sites.requests.RequestSite object at 0x04F24CB0>, 'site_name': '127.0.0.1:8080'}, {'block': <Block Node: head. Contents: [<TextNode: '\n\n      '>, <Block Node: meta. Contents: [<TextNode: '\n        <meta http-equiv'>]>, <TextNode: '\n\n      <title>'>, <Block Node: title. Contents: [<IfNode>, <TextNode: 'Django REST framework'>]>, <TextNode: '</title>\n\n      '>, <Block Node: style. Contents: [<TextNode: '\n        '>, <Block Node: bootstrap_theme. Contents: [<TextNode: '\n          <link rel="sty'>, <django.templatetags.static.StaticNode object at 0x04FBC330>, <TextNode: '"/>\n          <link rel="'>, <django.templatetags.static.StaticNode object at 0x04FBC390>, <TextNode: '"/>\n        '>]>, <TextNode: '\n\n        <link rel="styl'>, <django.templatetags.static.StaticNode object at 0x04FBC3F0>, <TextNode: '"/>\n        <link rel="st'>, <django.templatetags.static.StaticNode object at 0x04FBC490>, <TextNode: '"/>\n        '>, <IfNode>, <TextNode: '\n      '>]>, <TextNode: '\n\n    '>]>}, {'block': <Block Node: title. Contents: [<IfNode>, <TextNode: 'Django REST framework'>]>}]
+[12/Sep/2019 14:45:29] DEBUG [django.template:872] Exception while resolving variable 'code_style' in template 'rest_framework/login.html'.
+Traceback (most recent call last):
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 829, in _resolve_lookup
+    current = current[bit]
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\context.py", line 83, in __getitem__
+    raise KeyError(key)
+KeyError: 'code_style'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 835, in _resolve_lookup
+    if isinstance(current, BaseContext) and getattr(type(current), bit):
+AttributeError: type object 'RequestContext' has no attribute 'code_style'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 843, in _resolve_lookup
+    current = current[int(bit)]
+ValueError: invalid literal for int() with base 10: 'code_style'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 850, in _resolve_lookup
+    (bit, current))  # missing attribute
+django.template.base.VariableDoesNotExist: Failed lookup for key [code_style] in [{'True': True, 'False': False, 'None': None}, {'csrf_token': <SimpleLazyObject: <function csrf.<locals>._get_val at 0x04EE3CD8>>, 'request': <WSGIRequest: GET '/api/login/?next=/api/v1/events/'>, 'user': <SimpleLazyObject: <function AuthenticationMiddleware.process_request.<locals>.<lambda> at 0x04F65D20>>, 'perms': <django.contrib.auth.context_processors.PermWrapper object at 0x04F24BF0>, 'messages': <django.contrib.messages.storage.fallback.FallbackStorage object at 0x04F24030>, 'DEFAULT_MESSAGE_LEVELS': {'DEBUG': 10, 'INFO': 20, 'SUCCESS': 25, 'WARNING': 30, 'ERROR': 40}}, {}, {'form': <AuthenticationForm bound=False, valid=Unknown, fields=(username;password)>, 'view': <django.contrib.auth.views.LoginView object at 0x04F24D30>, 'next': '/api/v1/events/', 'site': <django.contrib.sites.requests.RequestSite object at 0x04F24CB0>, 'site_name': '127.0.0.1:8080'}, {'block': <Block Node: head. Contents: [<TextNode: '\n\n      '>, <Block Node: meta. Contents: [<TextNode: '\n        <meta http-equiv'>]>, <TextNode: '\n\n      <title>'>, <Block Node: title. Contents: [<IfNode>, <TextNode: 'Django REST framework'>]>, <TextNode: '</title>\n\n      '>, <Block Node: style. Contents: [<TextNode: '\n        '>, <Block Node: bootstrap_theme. Contents: [<TextNode: '\n          <link rel="sty'>, <django.templatetags.static.StaticNode object at 0x04FBC330>, <TextNode: '"/>\n          <link rel="'>, <django.templatetags.static.StaticNode object at 0x04FBC390>, <TextNode: '"/>\n        '>]>, <TextNode: '\n\n        <link rel="styl'>, <django.templatetags.static.StaticNode object at 0x04FBC3F0>, <TextNode: '"/>\n        <link rel="st'>, <django.templatetags.static.StaticNode object at 0x04FBC490>, <TextNode: '"/>\n        '>, <IfNode>, <TextNode: '\n      '>]>, <TextNode: '\n\n    '>]>}, {'block': <Block Node: style. Contents: [<TextNode: '\n        '>, <Block Node: bootstrap_theme. Contents: [<TextNode: '\n          <link rel="sty'>, <django.templatetags.static.StaticNode object at 0x04FBC330>, <TextNode: '"/>\n          <link rel="'>, <django.templatetags.static.StaticNode object at 0x04FBC390>, <TextNode: '"/>\n        '>]>, <TextNode: '\n\n        <link rel="styl'>, <django.templatetags.static.StaticNode object at 0x04FBC3F0>, <TextNode: '"/>\n        <link rel="st'>, <django.templatetags.static.StaticNode object at 0x04FBC490>, <TextNode: '"/>\n        '>, <IfNode>, <TextNode: '\n      '>]>}]
+[12/Sep/2019 14:45:29] INFO [django.server:154] "GET /api/login/?next=/api/v1/events/ HTTP/1.1" 200 2726
+[12/Sep/2019 14:45:29] INFO [django.server:154] "GET /api/static/rest_framework/css/bootstrap.min.css HTTP/1.1" 304 0
+[12/Sep/2019 14:45:29] INFO [django.server:154] "GET /api/static/rest_framework/css/prettify.css HTTP/1.1" 304 0
+[12/Sep/2019 14:45:29] INFO [django.server:154] "GET /api/static/rest_framework/css/bootstrap-tweaks.css HTTP/1.1" 304 0
+[12/Sep/2019 14:45:29] INFO [django.server:154] "GET /api/static/rest_framework/css/default.css HTTP/1.1" 304 0
+[12/Sep/2019 14:46:04] DEBUG [django.db.backends:111] (0.004) SELECT @@SQL_AUTO_IS_NULL; args=None
+[12/Sep/2019 14:46:04] DEBUG [django.db.backends:111] (0.003) SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED; args=None
+[12/Sep/2019 14:46:04] DEBUG [django.db.backends:111] (0.005) SELECT `auth_user`.`id`, `auth_user`.`password`, `auth_user`.`last_login`, `auth_user`.`is_superuser`, `auth_user`.`username`, `auth_user`.`first_name`, `auth_user`.`last_name`, `auth_user`.`email`, `auth_user`.`is_staff`, `auth_user`.`is_active`, `auth_user`.`date_joined` FROM `auth_user` WHERE `auth_user`.`username` = 'tihlde'; args=('tihlde',)
+[12/Sep/2019 14:46:04] DEBUG [django.template:872] Exception while resolving variable 'name' in template 'rest_framework/login.html'.
+Traceback (most recent call last):
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 829, in _resolve_lookup
+    current = current[bit]
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\context.py", line 83, in __getitem__
+    raise KeyError(key)
+KeyError: 'name'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 835, in _resolve_lookup
+    if isinstance(current, BaseContext) and getattr(type(current), bit):
+AttributeError: type object 'RequestContext' has no attribute 'name'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 843, in _resolve_lookup
+    current = current[int(bit)]
+ValueError: invalid literal for int() with base 10: 'name'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 850, in _resolve_lookup
+    (bit, current))  # missing attribute
+django.template.base.VariableDoesNotExist: Failed lookup for key [name] in [{'True': True, 'False': False, 'None': None}, {'csrf_token': <SimpleLazyObject: <function csrf.<locals>._get_val at 0x04FAC390>>, 'request': <WSGIRequest: POST '/api/login/'>, 'user': <SimpleLazyObject: <function AuthenticationMiddleware.process_request.<locals>.<lambda> at 0x04A08810>>, 'perms': <django.contrib.auth.context_processors.PermWrapper object at 0x04F147D0>, 'messages': <django.contrib.messages.storage.fallback.FallbackStorage object at 0x04F148D0>, 'DEFAULT_MESSAGE_LEVELS': {'DEBUG': 10, 'INFO': 20, 'SUCCESS': 25, 'WARNING': 30, 'ERROR': 40}}, {}, {'form': <AuthenticationForm bound=True, valid=False, fields=(username;password)>, 'view': <django.contrib.auth.views.LoginView object at 0x04F14990>, 'next': '/api/v1/events/', 'site': <django.contrib.sites.requests.RequestSite object at 0x0327D710>, 'site_name': '127.0.0.1:8080'}, {'block': <Block Node: head. Contents: [<TextNode: '\n\n      '>, <Block Node: meta. Contents: [<TextNode: '\n        <meta http-equiv'>]>, <TextNode: '\n\n      <title>'>, <Block Node: title. Contents: [<IfNode>, <TextNode: 'Django REST framework'>]>, <TextNode: '</title>\n\n      '>, <Block Node: style. Contents: [<TextNode: '\n        '>, <Block Node: bootstrap_theme. Contents: [<TextNode: '\n          <link rel="sty'>, <django.templatetags.static.StaticNode object at 0x04F7D710>, <TextNode: '"/>\n          <link rel="'>, <django.templatetags.static.StaticNode object at 0x04F7D770>, <TextNode: '"/>\n        '>]>, <TextNode: '\n\n        <link rel="styl'>, <django.templatetags.static.StaticNode object at 0x04F7D7D0>, <TextNode: '"/>\n        <link rel="st'>, <django.templatetags.static.StaticNode object at 0x04F7D890>, <TextNode: '"/>\n        '>, <IfNode>, <TextNode: '\n      '>]>, <TextNode: '\n\n    '>]>}, {'block': <Block Node: title. Contents: [<IfNode>, <TextNode: 'Django REST framework'>]>}]
+[12/Sep/2019 14:46:04] DEBUG [django.template:872] Exception while resolving variable 'code_style' in template 'rest_framework/login.html'.
+Traceback (most recent call last):
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 829, in _resolve_lookup
+    current = current[bit]
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\context.py", line 83, in __getitem__
+    raise KeyError(key)
+KeyError: 'code_style'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 835, in _resolve_lookup
+    if isinstance(current, BaseContext) and getattr(type(current), bit):
+AttributeError: type object 'RequestContext' has no attribute 'code_style'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 843, in _resolve_lookup
+    current = current[int(bit)]
+ValueError: invalid literal for int() with base 10: 'code_style'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 850, in _resolve_lookup
+    (bit, current))  # missing attribute
+django.template.base.VariableDoesNotExist: Failed lookup for key [code_style] in [{'True': True, 'False': False, 'None': None}, {'csrf_token': <SimpleLazyObject: <function csrf.<locals>._get_val at 0x04FAC390>>, 'request': <WSGIRequest: POST '/api/login/'>, 'user': <SimpleLazyObject: <function AuthenticationMiddleware.process_request.<locals>.<lambda> at 0x04A08810>>, 'perms': <django.contrib.auth.context_processors.PermWrapper object at 0x04F147D0>, 'messages': <django.contrib.messages.storage.fallback.FallbackStorage object at 0x04F148D0>, 'DEFAULT_MESSAGE_LEVELS': {'DEBUG': 10, 'INFO': 20, 'SUCCESS': 25, 'WARNING': 30, 'ERROR': 40}}, {}, {'form': <AuthenticationForm bound=True, valid=False, fields=(username;password)>, 'view': <django.contrib.auth.views.LoginView object at 0x04F14990>, 'next': '/api/v1/events/', 'site': <django.contrib.sites.requests.RequestSite object at 0x0327D710>, 'site_name': '127.0.0.1:8080'}, {'block': <Block Node: head. Contents: [<TextNode: '\n\n      '>, <Block Node: meta. Contents: [<TextNode: '\n        <meta http-equiv'>]>, <TextNode: '\n\n      <title>'>, <Block Node: title. Contents: [<IfNode>, <TextNode: 'Django REST framework'>]>, <TextNode: '</title>\n\n      '>, <Block Node: style. Contents: [<TextNode: '\n        '>, <Block Node: bootstrap_theme. Contents: [<TextNode: '\n          <link rel="sty'>, <django.templatetags.static.StaticNode object at 0x04F7D710>, <TextNode: '"/>\n          <link rel="'>, <django.templatetags.static.StaticNode object at 0x04F7D770>, <TextNode: '"/>\n        '>]>, <TextNode: '\n\n        <link rel="styl'>, <django.templatetags.static.StaticNode object at 0x04F7D7D0>, <TextNode: '"/>\n        <link rel="st'>, <django.templatetags.static.StaticNode object at 0x04F7D890>, <TextNode: '"/>\n        '>, <IfNode>, <TextNode: '\n      '>]>, <TextNode: '\n\n    '>]>}, {'block': <Block Node: style. Contents: [<TextNode: '\n        '>, <Block Node: bootstrap_theme. Contents: [<TextNode: '\n          <link rel="sty'>, <django.templatetags.static.StaticNode object at 0x04F7D710>, <TextNode: '"/>\n          <link rel="'>, <django.templatetags.static.StaticNode object at 0x04F7D770>, <TextNode: '"/>\n        '>]>, <TextNode: '\n\n        <link rel="styl'>, <django.templatetags.static.StaticNode object at 0x04F7D7D0>, <TextNode: '"/>\n        <link rel="st'>, <django.templatetags.static.StaticNode object at 0x04F7D890>, <TextNode: '"/>\n        '>, <IfNode>, <TextNode: '\n      '>]>}]
+[12/Sep/2019 14:46:04] INFO [django.server:154] "POST /api/login/ HTTP/1.1" 200 2965
+[12/Sep/2019 14:46:04] INFO [django.server:154] "GET /api/static/rest_framework/css/bootstrap.min.css HTTP/1.1" 304 0
+[12/Sep/2019 14:46:04] INFO [django.server:154] "GET /api/static/rest_framework/css/bootstrap-tweaks.css HTTP/1.1" 304 0
+[12/Sep/2019 14:46:04] INFO [django.server:154] "GET /api/static/rest_framework/css/prettify.css HTTP/1.1" 304 0
+[12/Sep/2019 14:46:04] INFO [django.server:154] "GET /api/static/rest_framework/css/default.css HTTP/1.1" 304 0
+[12/Sep/2019 14:46:17] DEBUG [django.db.backends:111] (0.004) SELECT @@SQL_AUTO_IS_NULL; args=None
+[12/Sep/2019 14:46:17] DEBUG [django.db.backends:111] (0.003) SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED; args=None
+[12/Sep/2019 14:46:17] DEBUG [django.db.backends:111] (0.008) SELECT `auth_user`.`id`, `auth_user`.`password`, `auth_user`.`last_login`, `auth_user`.`is_superuser`, `auth_user`.`username`, `auth_user`.`first_name`, `auth_user`.`last_name`, `auth_user`.`email`, `auth_user`.`is_staff`, `auth_user`.`is_active`, `auth_user`.`date_joined` FROM `auth_user` WHERE `auth_user`.`username` = 'tihlde'; args=('tihlde',)
+[12/Sep/2019 14:46:17] DEBUG [django.template:872] Exception while resolving variable 'name' in template 'rest_framework/login.html'.
+Traceback (most recent call last):
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 829, in _resolve_lookup
+    current = current[bit]
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\context.py", line 83, in __getitem__
+    raise KeyError(key)
+KeyError: 'name'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 835, in _resolve_lookup
+    if isinstance(current, BaseContext) and getattr(type(current), bit):
+AttributeError: type object 'RequestContext' has no attribute 'name'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 843, in _resolve_lookup
+    current = current[int(bit)]
+ValueError: invalid literal for int() with base 10: 'name'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 850, in _resolve_lookup
+    (bit, current))  # missing attribute
+django.template.base.VariableDoesNotExist: Failed lookup for key [name] in [{'True': True, 'False': False, 'None': None}, {'csrf_token': <SimpleLazyObject: <function csrf.<locals>._get_val at 0x04FAC2B8>>, 'request': <WSGIRequest: POST '/api/login/'>, 'user': <SimpleLazyObject: <function AuthenticationMiddleware.process_request.<locals>.<lambda> at 0x04EE3E88>>, 'perms': <django.contrib.auth.context_processors.PermWrapper object at 0x04F1D290>, 'messages': <django.contrib.messages.storage.fallback.FallbackStorage object at 0x04F1DF30>, 'DEFAULT_MESSAGE_LEVELS': {'DEBUG': 10, 'INFO': 20, 'SUCCESS': 25, 'WARNING': 30, 'ERROR': 40}}, {}, {'form': <AuthenticationForm bound=True, valid=False, fields=(username;password)>, 'view': <django.contrib.auth.views.LoginView object at 0x04F1D030>, 'next': '/api/v1/events/', 'site': <django.contrib.sites.requests.RequestSite object at 0x04A5E750>, 'site_name': '127.0.0.1:8080'}, {'block': <Block Node: head. Contents: [<TextNode: '\n\n      '>, <Block Node: meta. Contents: [<TextNode: '\n        <meta http-equiv'>]>, <TextNode: '\n\n      <title>'>, <Block Node: title. Contents: [<IfNode>, <TextNode: 'Django REST framework'>]>, <TextNode: '</title>\n\n      '>, <Block Node: style. Contents: [<TextNode: '\n        '>, <Block Node: bootstrap_theme. Contents: [<TextNode: '\n          <link rel="sty'>, <django.templatetags.static.StaticNode object at 0x04F141B0>, <TextNode: '"/>\n          <link rel="'>, <django.templatetags.static.StaticNode object at 0x04F147B0>, <TextNode: '"/>\n        '>]>, <TextNode: '\n\n        <link rel="styl'>, <django.templatetags.static.StaticNode object at 0x04F142D0>, <TextNode: '"/>\n        <link rel="st'>, <django.templatetags.static.StaticNode object at 0x04F144B0>, <TextNode: '"/>\n        '>, <IfNode>, <TextNode: '\n      '>]>, <TextNode: '\n\n    '>]>}, {'block': <Block Node: title. Contents: [<IfNode>, <TextNode: 'Django REST framework'>]>}]
+[12/Sep/2019 14:46:17] DEBUG [django.template:872] Exception while resolving variable 'code_style' in template 'rest_framework/login.html'.
+Traceback (most recent call last):
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 829, in _resolve_lookup
+    current = current[bit]
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\context.py", line 83, in __getitem__
+    raise KeyError(key)
+KeyError: 'code_style'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 835, in _resolve_lookup
+    if isinstance(current, BaseContext) and getattr(type(current), bit):
+AttributeError: type object 'RequestContext' has no attribute 'code_style'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 843, in _resolve_lookup
+    current = current[int(bit)]
+ValueError: invalid literal for int() with base 10: 'code_style'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 850, in _resolve_lookup
+    (bit, current))  # missing attribute
+django.template.base.VariableDoesNotExist: Failed lookup for key [code_style] in [{'True': True, 'False': False, 'None': None}, {'csrf_token': <SimpleLazyObject: <function csrf.<locals>._get_val at 0x04FAC2B8>>, 'request': <WSGIRequest: POST '/api/login/'>, 'user': <SimpleLazyObject: <function AuthenticationMiddleware.process_request.<locals>.<lambda> at 0x04EE3E88>>, 'perms': <django.contrib.auth.context_processors.PermWrapper object at 0x04F1D290>, 'messages': <django.contrib.messages.storage.fallback.FallbackStorage object at 0x04F1DF30>, 'DEFAULT_MESSAGE_LEVELS': {'DEBUG': 10, 'INFO': 20, 'SUCCESS': 25, 'WARNING': 30, 'ERROR': 40}}, {}, {'form': <AuthenticationForm bound=True, valid=False, fields=(username;password)>, 'view': <django.contrib.auth.views.LoginView object at 0x04F1D030>, 'next': '/api/v1/events/', 'site': <django.contrib.sites.requests.RequestSite object at 0x04A5E750>, 'site_name': '127.0.0.1:8080'}, {'block': <Block Node: head. Contents: [<TextNode: '\n\n      '>, <Block Node: meta. Contents: [<TextNode: '\n        <meta http-equiv'>]>, <TextNode: '\n\n      <title>'>, <Block Node: title. Contents: [<IfNode>, <TextNode: 'Django REST framework'>]>, <TextNode: '</title>\n\n      '>, <Block Node: style. Contents: [<TextNode: '\n        '>, <Block Node: bootstrap_theme. Contents: [<TextNode: '\n          <link rel="sty'>, <django.templatetags.static.StaticNode object at 0x04F141B0>, <TextNode: '"/>\n          <link rel="'>, <django.templatetags.static.StaticNode object at 0x04F147B0>, <TextNode: '"/>\n        '>]>, <TextNode: '\n\n        <link rel="styl'>, <django.templatetags.static.StaticNode object at 0x04F142D0>, <TextNode: '"/>\n        <link rel="st'>, <django.templatetags.static.StaticNode object at 0x04F144B0>, <TextNode: '"/>\n        '>, <IfNode>, <TextNode: '\n      '>]>, <TextNode: '\n\n    '>]>}, {'block': <Block Node: style. Contents: [<TextNode: '\n        '>, <Block Node: bootstrap_theme. Contents: [<TextNode: '\n          <link rel="sty'>, <django.templatetags.static.StaticNode object at 0x04F141B0>, <TextNode: '"/>\n          <link rel="'>, <django.templatetags.static.StaticNode object at 0x04F147B0>, <TextNode: '"/>\n        '>]>, <TextNode: '\n\n        <link rel="styl'>, <django.templatetags.static.StaticNode object at 0x04F142D0>, <TextNode: '"/>\n        <link rel="st'>, <django.templatetags.static.StaticNode object at 0x04F144B0>, <TextNode: '"/>\n        '>, <IfNode>, <TextNode: '\n      '>]>}]
+[12/Sep/2019 14:46:17] INFO [django.server:154] "POST /api/login/ HTTP/1.1" 200 2965
+[12/Sep/2019 14:46:17] INFO [django.server:154] "GET /api/static/rest_framework/css/bootstrap.min.css HTTP/1.1" 304 0
+[12/Sep/2019 14:46:17] INFO [django.server:154] "GET /api/static/rest_framework/css/bootstrap-tweaks.css HTTP/1.1" 304 0
+[12/Sep/2019 14:46:17] INFO [django.server:154] "GET /api/static/rest_framework/css/default.css HTTP/1.1" 304 0
+[12/Sep/2019 14:46:17] INFO [django.server:154] "GET /api/static/rest_framework/css/prettify.css HTTP/1.1" 304 0
+[12/Sep/2019 14:46:20] DEBUG [django.db.backends:111] (0.002) SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED; args=None
+[12/Sep/2019 14:46:20] DEBUG [django.db.backends:111] (0.004) SELECT `auth_user`.`id`, `auth_user`.`password`, `auth_user`.`last_login`, `auth_user`.`is_superuser`, `auth_user`.`username`, `auth_user`.`first_name`, `auth_user`.`last_name`, `auth_user`.`email`, `auth_user`.`is_staff`, `auth_user`.`is_active`, `auth_user`.`date_joined` FROM `auth_user` WHERE `auth_user`.`username` = 'tihlde'; args=('tihlde',)
+[12/Sep/2019 14:46:20] DEBUG [django.template:872] Exception while resolving variable 'name' in template 'rest_framework/login.html'.
+Traceback (most recent call last):
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 829, in _resolve_lookup
+    current = current[bit]
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\context.py", line 83, in __getitem__
+    raise KeyError(key)
+KeyError: 'name'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 835, in _resolve_lookup
+    if isinstance(current, BaseContext) and getattr(type(current), bit):
+AttributeError: type object 'RequestContext' has no attribute 'name'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 843, in _resolve_lookup
+    current = current[int(bit)]
+ValueError: invalid literal for int() with base 10: 'name'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 850, in _resolve_lookup
+    (bit, current))  # missing attribute
+django.template.base.VariableDoesNotExist: Failed lookup for key [name] in [{'True': True, 'False': False, 'None': None}, {'csrf_token': <SimpleLazyObject: <function csrf.<locals>._get_val at 0x04FAC390>>, 'request': <WSGIRequest: POST '/api/login/'>, 'user': <SimpleLazyObject: <function AuthenticationMiddleware.process_request.<locals>.<lambda> at 0x04F65DF8>>, 'perms': <django.contrib.auth.context_processors.PermWrapper object at 0x05CA7170>, 'messages': <django.contrib.messages.storage.fallback.FallbackStorage object at 0x04F2C5F0>, 'DEFAULT_MESSAGE_LEVELS': {'DEBUG': 10, 'INFO': 20, 'SUCCESS': 25, 'WARNING': 30, 'ERROR': 40}}, {}, {'form': <AuthenticationForm bound=True, valid=False, fields=(username;password)>, 'view': <django.contrib.auth.views.LoginView object at 0x04F2C2F0>, 'next': '/api/v1/events/', 'site': <django.contrib.sites.requests.RequestSite object at 0x05CA7D10>, 'site_name': '127.0.0.1:8080'}, {'block': <Block Node: head. Contents: [<TextNode: '\n\n      '>, <Block Node: meta. Contents: [<TextNode: '\n        <meta http-equiv'>]>, <TextNode: '\n\n      <title>'>, <Block Node: title. Contents: [<IfNode>, <TextNode: 'Django REST framework'>]>, <TextNode: '</title>\n\n      '>, <Block Node: style. Contents: [<TextNode: '\n        '>, <Block Node: bootstrap_theme. Contents: [<TextNode: '\n          <link rel="sty'>, <django.templatetags.static.StaticNode object at 0x05C8CA30>, <TextNode: '"/>\n          <link rel="'>, <django.templatetags.static.StaticNode object at 0x05C8CAB0>, <TextNode: '"/>\n        '>]>, <TextNode: '\n\n        <link rel="styl'>, <django.templatetags.static.StaticNode object at 0x05C8CAD0>, <TextNode: '"/>\n        <link rel="st'>, <django.templatetags.static.StaticNode object at 0x05C8CA10>, <TextNode: '"/>\n        '>, <IfNode>, <TextNode: '\n      '>]>, <TextNode: '\n\n    '>]>}, {'block': <Block Node: title. Contents: [<IfNode>, <TextNode: 'Django REST framework'>]>}]
+[12/Sep/2019 14:46:20] DEBUG [django.template:872] Exception while resolving variable 'code_style' in template 'rest_framework/login.html'.
+Traceback (most recent call last):
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 829, in _resolve_lookup
+    current = current[bit]
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\context.py", line 83, in __getitem__
+    raise KeyError(key)
+KeyError: 'code_style'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 835, in _resolve_lookup
+    if isinstance(current, BaseContext) and getattr(type(current), bit):
+AttributeError: type object 'RequestContext' has no attribute 'code_style'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 843, in _resolve_lookup
+    current = current[int(bit)]
+ValueError: invalid literal for int() with base 10: 'code_style'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\template\base.py", line 850, in _resolve_lookup
+    (bit, current))  # missing attribute
+django.template.base.VariableDoesNotExist: Failed lookup for key [code_style] in [{'True': True, 'False': False, 'None': None}, {'csrf_token': <SimpleLazyObject: <function csrf.<locals>._get_val at 0x04FAC390>>, 'request': <WSGIRequest: POST '/api/login/'>, 'user': <SimpleLazyObject: <function AuthenticationMiddleware.process_request.<locals>.<lambda> at 0x04F65DF8>>, 'perms': <django.contrib.auth.context_processors.PermWrapper object at 0x05CA7170>, 'messages': <django.contrib.messages.storage.fallback.FallbackStorage object at 0x04F2C5F0>, 'DEFAULT_MESSAGE_LEVELS': {'DEBUG': 10, 'INFO': 20, 'SUCCESS': 25, 'WARNING': 30, 'ERROR': 40}}, {}, {'form': <AuthenticationForm bound=True, valid=False, fields=(username;password)>, 'view': <django.contrib.auth.views.LoginView object at 0x04F2C2F0>, 'next': '/api/v1/events/', 'site': <django.contrib.sites.requests.RequestSite object at 0x05CA7D10>, 'site_name': '127.0.0.1:8080'}, {'block': <Block Node: head. Contents: [<TextNode: '\n\n      '>, <Block Node: meta. Contents: [<TextNode: '\n        <meta http-equiv'>]>, <TextNode: '\n\n      <title>'>, <Block Node: title. Contents: [<IfNode>, <TextNode: 'Django REST framework'>]>, <TextNode: '</title>\n\n      '>, <Block Node: style. Contents: [<TextNode: '\n        '>, <Block Node: bootstrap_theme. Contents: [<TextNode: '\n          <link rel="sty'>, <django.templatetags.static.StaticNode object at 0x05C8CA30>, <TextNode: '"/>\n          <link rel="'>, <django.templatetags.static.StaticNode object at 0x05C8CAB0>, <TextNode: '"/>\n        '>]>, <TextNode: '\n\n        <link rel="styl'>, <django.templatetags.static.StaticNode object at 0x05C8CAD0>, <TextNode: '"/>\n        <link rel="st'>, <django.templatetags.static.StaticNode object at 0x05C8CA10>, <TextNode: '"/>\n        '>, <IfNode>, <TextNode: '\n      '>]>, <TextNode: '\n\n    '>]>}, {'block': <Block Node: style. Contents: [<TextNode: '\n        '>, <Block Node: bootstrap_theme. Contents: [<TextNode: '\n          <link rel="sty'>, <django.templatetags.static.StaticNode object at 0x05C8CA30>, <TextNode: '"/>\n          <link rel="'>, <django.templatetags.static.StaticNode object at 0x05C8CAB0>, <TextNode: '"/>\n        '>]>, <TextNode: '\n\n        <link rel="styl'>, <django.templatetags.static.StaticNode object at 0x05C8CAD0>, <TextNode: '"/>\n        <link rel="st'>, <django.templatetags.static.StaticNode object at 0x05C8CA10>, <TextNode: '"/>\n        '>, <IfNode>, <TextNode: '\n      '>]>}]
+[12/Sep/2019 14:46:20] INFO [django.server:154] "POST /api/login/ HTTP/1.1" 200 2965
+[12/Sep/2019 14:46:20] INFO [django.server:154] "GET /api/static/rest_framework/css/bootstrap.min.css HTTP/1.1" 304 0
+[12/Sep/2019 14:46:20] INFO [django.server:154] "GET /api/static/rest_framework/css/bootstrap-tweaks.css HTTP/1.1" 304 0
+[12/Sep/2019 14:46:20] INFO [django.server:154] "GET /api/static/rest_framework/css/prettify.css HTTP/1.1" 304 0
+[12/Sep/2019 14:46:20] INFO [django.server:154] "GET /api/static/rest_framework/css/default.css HTTP/1.1" 304 0
+[12/Sep/2019 14:46:35] INFO [django.server:154] "GET /api/v1/accept-form HTTP/1.1" 301 0
+[12/Sep/2019 14:46:35] ERROR [django.request:228] Internal Server Error: /api/v1/accept-form/
+Traceback (most recent call last):
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\core\handlers\exception.py", line 34, in inner
+    response = get_response(request)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\core\handlers\base.py", line 137, in _get_response
+    "returned None instead." % (callback.__module__, view_name)
+ValueError: The view app.content.views.accept_form didn't return an HttpResponse object. It returned None instead.
+[12/Sep/2019 14:46:35] ERROR [django.server:154] "GET /api/v1/accept-form/ HTTP/1.1" 500 67777
+[12/Sep/2019 14:48:23] ERROR [django.request:228] Internal Server Error: /api/v1/accept-form/
+Traceback (most recent call last):
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\core\handlers\exception.py", line 34, in inner
+    response = get_response(request)
+  File "C:\Users\Eier\.virtualenvs\API-MPXWwPEX\lib\site-packages\django\core\handlers\base.py", line 137, in _get_response
+    "returned None instead." % (callback.__module__, view_name)
+ValueError: The view app.content.views.accept_form didn't return an HttpResponse object. It returned None instead.
+[12/Sep/2019 14:48:23] ERROR [django.server:154] "GET /api/v1/accept-form/ HTTP/1.1" 500 27
+[12/Sep/2019 14:48:24] WARNING [django.request:228] Not Found: /favicon.ico
+[12/Sep/2019 14:48:24] WARNING [django.server:154] "GET /favicon.ico HTTP/1.1" 404 77
+[12/Sep/2019 14:48:31] INFO [django.server:154] "GET /api/v1/ HTTP/1.1" 200 6035
+[12/Sep/2019 14:48:34] INFO [django.server:154] "GET /api/v1/events/ HTTP/1.1" 200 6095
+[12/Sep/2019 14:50:10] WARNING [django.request:228] Method Not Allowed: /api/v1/accept-form/
+[12/Sep/2019 14:50:10] WARNING [django.server:154] "GET /api/v1/accept-form/ HTTP/1.1" 405 5902

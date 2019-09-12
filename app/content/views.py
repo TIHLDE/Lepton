@@ -1,5 +1,6 @@
 from rest_framework import viewsets, mixins, permissions, generics
 import os
+from rest_framework.decorators import api_view
 
 # HTTP imports
 from django.http import HttpResponse, HttpResponseNotAllowed, JsonResponse
@@ -87,18 +88,18 @@ class JobPostViewSet(viewsets.ModelViewSet):
 from django.core.mail import send_mail
 
 @csrf_exempt
+@api_view(['POST'])
 def accept_form(request):
-    if request.method == 'POST':
-        try:
-            #Get body from request
-            body_unicode = request.body.decode('utf-8')
-            body = json.loads(body_unicode)
+    try:
+        #Get body from request
+        body_unicode = request.body.decode('utf-8')
+        body = json.loads(body_unicode)
 
-            #Define mail content
-            sent_from = 'no-reply@tihlde.org'
-            to = os.environ.get('EMAIL_RECEIVER') or 'orakel@tihlde.org'
-            subject = body["info"]['bedrift'] + " vil ha " + ", ".join(body["type"][:-2] + [" og ".join(body["type"][-2:])]) + " i " + ", ".join(body["time"][:-2] + [" og ".join(body["time"][-2:])])
-            email_body = """\
+        #Define mail content
+        sent_from = 'no-reply@tihlde.org'
+        to = os.environ.get('EMAIL_RECEIVER') or 'orakel@tihlde.org'
+        subject = body["info"]['bedrift'] + " vil ha " + ", ".join(body["type"][:-2] + [" og ".join(body["type"][-2:])]) + " i " + ", ".join(body["time"][:-2] + [" og ".join(body["time"][-2:])])
+        email_body = """\
 Bedrift-navn:
 %s
 
@@ -114,19 +115,19 @@ Valg arrangement:
 
 Kommentar:
 %s
-            """ % (body["info"]["bedrift"], body["info"]["kontaktperson"], body["info"]["epost"], ", ".join(body["time"]), ", ".join(body["type"]), body["comment"])
+        """ % (body["info"]["bedrift"], body["info"]["kontaktperson"], body["info"]["epost"], ", ".join(body["time"]), ", ".join(body["type"]), body["comment"])
 
-            numOfSentMails = send_mail(
-                subject,
-                email_body,
-                sent_from,
-                [to],
-                fail_silently = False
-            )
-            return JsonResponse({}, status= 200 if numOfSentMails > 0 else 500)
+        numOfSentMails = send_mail(
+            subject,
+            email_body,
+            sent_from,
+            [to],
+            fail_silently = False
+        )
+        return JsonResponse({}, status= 200 if numOfSentMails > 0 else 500)
 
-        except:
-            print('Something went wrong...')
-            raise
-            #return HttpResponse(status = 500)
+    except:
+        print('Something went wrong...')
+        raise
+        #return HttpResponse(status = 500)
 
