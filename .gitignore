@@ -16,3 +16,5 @@ volume/
 # Env
 .env
 .env.development
+
+mysite.log
