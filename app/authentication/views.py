@@ -42,7 +42,6 @@ def login(request):
 
     # Send token-request to web-auth API
     r = requests.post(TOKEN_URL, json={'username': username, 'password': password}, verify=False)
-    r.raise_for_status()
     response = r.json()
     
     # Send response back

@@ -1,17 +1,11 @@
 from django.db import models
 
-from app.util.models import BaseModel, Gridable, OptionalImage, OptionalAction
+from app.util.models import BaseModel, OptionalImage, OptionalAction
 
 import importlib # RecentFirstGrid
 from datetime import datetime, timezone, timedelta
 
-class Item(BaseModel, Gridable):
-    def __str__(self):
-        return '{} [{},{} - {}, {}]'.format(self.__class__.__name__, self.height, self.width, self.created_at, self.updated_at)
-    pass
-
-
-class News(Item, OptionalImage):
+class News(BaseModel, OptionalImage):
     title = models.CharField(max_length=200)
     header = models.CharField(max_length=200)
     body = models.TextField()
@@ -19,15 +13,6 @@ class News(Item, OptionalImage):
     def __str__(self):
         return '{} - {} [{} characters]'.format(self.title,
                                                 self.header, len(self.body))
-
-
-class EventList(Item):
-    """A collection of events to be displayed together"""
-    name = models.CharField(max_length=200)
-
-    def __str__(self):
-        num_events = len(Event.objects.all().filter(eventlist=self))
-        return '{} [{} events]'.format(self.name, num_events)
 
 class Category(BaseModel):
     text = models.CharField(max_length=200, null=True)
@@ -39,10 +24,7 @@ class Event(BaseModel, OptionalImage):
     title = models.CharField(max_length=200)
     start = models.DateTimeField()
     location = models.CharField(max_length=200, null=True)
-    eventlist = models.ForeignKey(EventList,
-                                  related_name='events',
-                                  null=True,
-                                  on_delete=models.SET_NULL)
+
     description = models.TextField(default='', blank=True)
     sign_up = models.BooleanField(default=False)
 
@@ -61,19 +43,7 @@ class Event(BaseModel, OptionalImage):
         return self.start <= datetime.now(tz=timezone.utc)-timedelta(days=1)
 
     def __str__(self):
-        fmt_str = '{} - starting {} at {} [{}]'
-        return fmt_str.format(self.title, self.start,
-                              self.location, self.eventlist.name)
-
-
-class Poster(Item, OptionalImage, OptionalAction):
-    header = models.CharField(max_length=200, blank=True)
-    subheader = models.CharField(max_length=200, blank=True)
-    color = models.CharField(max_length=7, blank=True)
-
-    def __str__(self):
-        fmt_str = '{} - {} - [color {}]'
-        return fmt_str.format(self.header, self.subheader, self.color)
+        return f'{self.title} - starting {self.start} at {self.location}'
 
 class Warning(BaseModel):
     text = models.CharField(max_length=400, null=True)
@@ -90,7 +60,7 @@ class Warning(BaseModel):
 
 class JobPost(BaseModel, OptionalImage):
     title = models.CharField(max_length=200)
-    ingress = models.CharField(max_length=600)
+    ingress = models.CharField(max_length=800)
     body = models.TextField(blank=True, default='')
     location = models.CharField(max_length=200)
 

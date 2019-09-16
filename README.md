@@ -71,6 +71,11 @@ EMAIL_USER= EMAIL_USER
 EMAIL_PASSWORD= EMAIL_PASSWORD
 ```
 
+**IN PRODUCTION** you have to set an extra environment variable to set debug-mode to false. This is done my doing the following:
+```
+PROD=True
+```
+
 ### Database Map (Simplified ER-Model)
 ![ER-model](https://user-images.githubusercontent.com/31648998/55506006-b4149480-5654-11e9-8a17-0c8d6d48ac64.png)
 
