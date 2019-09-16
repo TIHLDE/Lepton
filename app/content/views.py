@@ -29,7 +29,6 @@ class NewsViewSet(viewsets.ModelViewSet):
     queryset = News.objects.all().order_by('-created_at')
     serializer_class = NewsSerializer
     permission_classes = [HS_Drift_Promo]
-    pagination_class = TwentyFivePagination
 
 class EventViewSet(viewsets.ModelViewSet):
     serializer_class = EventSerializer
@@ -70,6 +69,7 @@ class JobPostViewSet(viewsets.ModelViewSet):
 
     serializer_class = JobPostSerializer
     permission_classes = [HS_Drift_NoK]
+    pagination_class = TwentyFivePagination
 
     def get_queryset(self):
         queryset = JobPost.objects.all()
