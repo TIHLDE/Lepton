@@ -1,6 +1,9 @@
-from rest_framework import viewsets, mixins, permissions, generics
 import os
+
+# Rest Framework
+from rest_framework import viewsets, mixins, permissions, generics
 from rest_framework.decorators import api_view
+from django_filters.rest_framework import DjangoFilterBackend
 
 # HTTP imports
 from django.http import HttpResponse, HttpResponseNotAllowed, JsonResponse
@@ -17,7 +20,7 @@ from app.util.models import Gridable
 from app.authentication.permissions import IsMemberOrSafe, IsHSorDrift, HS_Drift_Promo, HS_Drift_NoK
 
 # Datetime, hash, and other imports
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from django.db.models import Q
 import hashlib
 import json
@@ -29,26 +32,18 @@ class NewsViewSet(viewsets.ModelViewSet):
 
 
 class EventViewSet(viewsets.ModelViewSet):
+    """
+    Endre desciption
+    Søk skal vise utgåtte arrangementer
+    """
+    queryset = Event.objects.filter(start__gt=datetime.now(tz=timezone.utc) - timedelta(days=1)).order_by('start') # + expired=True
     serializer_class = EventSerializer
     permission_classes = [HS_Drift_Promo]
-
-    def get_queryset(self):
-        queryset = Event.objects.all()
-
-        if self.request.method == 'GET' and 'newest' in self.request.GET:
-            # Returns the newest events ordered by 'start'
-            return Event.objects.filter(start__gte=datetime.now()-timedelta(days=1)).order_by('start')
-        elif self.request.method == 'GET' and 'category' in self.request.GET:
-            # Returns events by category ordered by 'start'
-            return Event.objects.filter(category=self.request.GET.get('category')).order_by('start')[:25]
-        elif self.request.method == 'GET' and 'search' in self.request.GET:
-            # Returns events matching a search word, ordered by 'start'
-            return Event.objects.filter(Q(title__istartswith=self.request.GET.get('search')) | Q(title__icontains=self.request.GET.get('search'))).order_by('start')[:25]
-        elif self.request.method == 'GET' and 'expired' in self.request.GET:
-            # Returns events that is expired, ordered by 'start'
-            return Event.objects.filter(start__lte=datetime.now()-timedelta(days=1)).order_by('start')[:25]
-
-        return queryset
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = [
+       'title', 'category'
+    ]
+    # get_queryset() { sort by start and not expired first and then get expired sorted by start }
 
 class WarningViewSet(viewsets.ModelViewSet):
 
