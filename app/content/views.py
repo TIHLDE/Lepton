@@ -1,9 +1,9 @@
 import os
 
 # Rest Framework
-from rest_framework import viewsets, mixins, permissions, generics
+from rest_framework import viewsets, mixins, permissions, generics, filters
 from rest_framework.decorators import api_view
-from django_filters.rest_framework import DjangoFilterBackend
+from django_filters.rest_framework import DjangoFilterBackend, BooleanFilter, FilterSet
 
 # HTTP imports
 from django.http import HttpResponse, HttpResponseNotAllowed, JsonResponse
@@ -21,7 +21,8 @@ from app.authentication.permissions import IsMemberOrSafe, IsHSorDrift, HS_Drift
 
 # Datetime, hash, and other imports
 from datetime import datetime, timedelta, timezone
-from django.db.models import Q
+from django.db.models import Q, F
+from itertools import chain
 import hashlib
 import json
 
@@ -30,20 +31,36 @@ class NewsViewSet(viewsets.ModelViewSet):
     serializer_class = NewsSerializer
     permission_classes = [HS_Drift_Promo]
 
+class EventFilter(FilterSet):
+    expired = BooleanFilter(method='filter_expired', label='Expired')
+    
+    class Meta:
+        model = Event 
+        fields = ['category', 'expired']
+
+    def filter_expired(self, queryset, name, value): 
+        """
+        @param value: boolean for determining if expired or not found in querystring
+        """
+        queryset = Event.objects.all()
+        if value:
+            return queryset.filter(start__lt=datetime.now(tz=timezone.utc)-timedelta(days=1)).order_by('-start')
+        return queryset.filter(start__gte=datetime.now(tz=timezone.utc)-timedelta(days=1)).order_by('start')
 
 class EventViewSet(viewsets.ModelViewSet):
     """
-    Endre desciption
-    Søk skal vise utgåtte arrangementer
+    API endpoint to display all upcoming events and filter them by title, expired and category
+        Excludes expired events by default
+
+        TODO:
+            - when searching/filtering, expired postings should also appear - ordered by expired and start
     """
-    queryset = Event.objects.filter(start__gt=datetime.now(tz=timezone.utc) - timedelta(days=1)).order_by('start') # + expired=True
     serializer_class = EventSerializer
     permission_classes = [HS_Drift_Promo]
-    filter_backends = [DjangoFilterBackend]
-    filterset_fields = [
-       'title', 'category'
-    ]
-    # get_queryset() { sort by start and not expired first and then get expired sorted by start }
+    queryset = Event.objects.filter(start__gte=datetime.now(tz=timezone.utc)-timedelta(days=1)).order_by('start')
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filterset_class = EventFilter
+    search_fields = ['title']
 
 class WarningViewSet(viewsets.ModelViewSet):
 
@@ -58,6 +75,10 @@ class CategoryViewSet(viewsets.ModelViewSet):
     permission_classes = [HS_Drift_Promo]
 
 class JobPostViewSet(viewsets.ModelViewSet):
+    """
+    TODO:
+        - Implement search and filtering here as well
+    """
 
     serializer_class = JobPostSerializer
     permission_classes = [HS_Drift_NoK]
