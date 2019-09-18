@@ -17,7 +17,7 @@ from app.util.models import Gridable
 from app.authentication.permissions import IsMemberOrSafe, IsHSorDrift, HS_Drift_Promo, HS_Drift_NoK
 
 # Pagination imports
-from .pagination import TwentyFivePagination
+from .pagination import BasePagination
 
 # Datetime, hash, and other imports
 from datetime import datetime, timedelta
@@ -33,7 +33,7 @@ class NewsViewSet(viewsets.ModelViewSet):
 class EventViewSet(viewsets.ModelViewSet):
     serializer_class = EventSerializer
     permission_classes = [HS_Drift_Promo]
-    pagination_class = TwentyFivePagination
+    pagination_class = BasePagination
 
     def get_queryset(self):
         queryset = Event.objects.all()
@@ -69,7 +69,7 @@ class JobPostViewSet(viewsets.ModelViewSet):
 
     serializer_class = JobPostSerializer
     permission_classes = [HS_Drift_NoK]
-    pagination_class = TwentyFivePagination
+    pagination_class = BasePagination
 
     def get_queryset(self):
         queryset = JobPost.objects.all()
