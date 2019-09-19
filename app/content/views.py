@@ -20,7 +20,7 @@ from app.util.models import Gridable
 from app.authentication.permissions import IsMemberOrSafe, IsHSorDrift, HS_Drift_Promo, HS_Drift_NoK
 
 # Datetime, hash, and other imports
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 from django.db.models import Q
 import hashlib
 import json
@@ -51,14 +51,6 @@ class EventViewSet(viewsets.ModelViewSet):
     """
     API endpoint to display all upcoming events and filter them by title, category and expired
         Excludes expired events by default, but includes them in search results
-        
-        - kun search - ferdig
-        - kun category - ferdig
-        - kun expired - ferdig 
-        - search og expired - ferdig
-        - search og category - ferdig
-        - search, category og expired - ferdig
-        - category og expired - ferdig
     """
     serializer_class = EventSerializer
     permission_classes = [HS_Drift_Promo]
