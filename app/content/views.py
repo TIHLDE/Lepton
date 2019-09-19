@@ -21,10 +21,11 @@ from app.authentication.permissions import IsMemberOrSafe, IsHSorDrift, HS_Drift
 
 # Datetime, hash, and other imports
 from datetime import datetime, timedelta, timezone
-from django.db.models import Q, F
-from itertools import chain
+from django.db.models import Q
 import hashlib
 import json
+
+CHECK_IF_EXPIRED = datetime.now()-timedelta(days=1)
 
 class NewsViewSet(viewsets.ModelViewSet):
     queryset = News.objects.all().order_by('-created_at')
@@ -38,29 +39,40 @@ class EventFilter(FilterSet):
         model = Event 
         fields = ['category', 'expired']
 
+    """
+    @param value: boolean for determining if expired or not is found in querystring
+    """
     def filter_expired(self, queryset, name, value): 
-        """
-        @param value: boolean for determining if expired or not found in querystring
-        """
-        queryset = Event.objects.all()
         if value:
-            return queryset.filter(start__lt=datetime.now(tz=timezone.utc)-timedelta(days=1)).order_by('-start')
-        return queryset.filter(start__gte=datetime.now(tz=timezone.utc)-timedelta(days=1)).order_by('start')
+            return queryset.filter(start__lt=CHECK_IF_EXPIRED).order_by('-start')
+        return queryset
 
 class EventViewSet(viewsets.ModelViewSet):
     """
-    API endpoint to display all upcoming events and filter them by title, expired and category
-        Excludes expired events by default
-
-        TODO:
-            - when searching/filtering, expired postings should also appear - ordered by expired and start
+    API endpoint to display all upcoming events and filter them by title, category and expired
+        Excludes expired events by default, but includes them in search results
+        
+        - kun search - ferdig
+        - kun category - ferdig
+        - kun expired - ferdig 
+        - search og expired - ferdig
+        - search og category - ferdig
+        - search, category og expired - ferdig
+        - category og expired - ferdig
     """
     serializer_class = EventSerializer
     permission_classes = [HS_Drift_Promo]
-    queryset = Event.objects.filter(start__gte=datetime.now(tz=timezone.utc)-timedelta(days=1)).order_by('start')
+    queryset = Event.objects.filter(start__gte=CHECK_IF_EXPIRED).order_by('start')
+
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_class = EventFilter
     search_fields = ['title']
+
+    def get_queryset(self):
+        query = self.request.query_params;
+        if ('search' in query):
+            return Event.objects.filter(title__icontains=query['search']).order_by('start')
+        return self.queryset 
 
 class WarningViewSet(viewsets.ModelViewSet):
 
@@ -75,10 +87,6 @@ class CategoryViewSet(viewsets.ModelViewSet):
     permission_classes = [HS_Drift_Promo]
 
 class JobPostViewSet(viewsets.ModelViewSet):
-    """
-    TODO:
-        - Implement search and filtering here as well
-    """
 
     serializer_class = JobPostSerializer
     permission_classes = [HS_Drift_NoK]
@@ -88,13 +96,13 @@ class JobPostViewSet(viewsets.ModelViewSet):
 
         if self.request.method == 'GET' and 'newest' in self.request.GET:
             # Returns the newest job posts ordered by deadline
-            return JobPost.objects.filter(deadline__gte=datetime.now()-timedelta(days=1)).order_by('deadline')[:25]
+            return JobPost.objects.filter(deadline__gte=CHECK_IF_EXPIRED).order_by('deadline')[:25]
         elif self.request.method == 'GET' and 'search' in self.request.GET:
             # Returns job posts matching a search word, ordered by deadline
             return JobPost.objects.filter(Q(title__icontains=self.request.GET.get('search')) | Q(company__icontains=self.request.GET.get('search'))).order_by('deadline')[:25]
         elif self.request.method == 'GET' and 'expired' in self.request.GET:
             # Returns expired job posts, ordered by deadline
-            return JobPost.objects.filter(deadline__lte=datetime.now()-timedelta(days=1)).order_by('deadline')[:25]
+            return JobPost.objects.filter(deadline__lte=CHECK_IF_EXPIRED).order_by('deadline')[:25]
 
         return queryset
 
