@@ -1,11 +1,21 @@
 version: '3'
 
 services:
-  server:
+  db:
+    image: mysql:5.7
+    ports:
+      - '3306:3306'
+    environment:
+       MYSQL_DATABASE: 'database'
+       MYSQL_USER: 'root'
+       MYSQL_PASSWORD: 'password'
+       MYSQL_ROOT_PASSWORD: 'password'
+  web:
     build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./volume:/usr/src/app/volume
     ports:
       - "8000:8000"
-    volumes:
-      - "./volume:/usr/src/app/volume"
-    env_file:
-      - .env
+    depends_on:
+      - db

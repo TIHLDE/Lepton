@@ -8,7 +8,7 @@ coverage:
         threshold: 80%
   ignore:
     - manage.py
-    - web/settings.py
+    - app/settings.py
     - **/apps.py
     - **/tests.py
     - **/wsgi.py

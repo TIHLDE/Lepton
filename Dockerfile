@@ -1,26 +1,13 @@
-FROM python:3.6.6-alpine
+FROM python:3.6
 ENV PYTHONUNBUFFERED 1
 
-# Adds our application code to the image
-COPY . /usr/src/app 
-WORKDIR /usr/src/app 
+RUN mkdir /usr/src/app/
+WORKDIR /usr/src/app/
+ADD requirements.txt /my_app_dir/
 
-# Install postgres bindings
-RUN \
- apk add --no-cache postgresql-libs && \
- apk add --no-cache --virtual .build-deps gcc musl-dev postgresql-dev && \
- apk add --no-cache mariadb-dev && \
- python3 -m pip install pipenv --no-cache-dir && \
- pipenv install --deploy --system --ignore-pipfile && \
- apk --purge del .build-deps
 
-# expose
-EXPOSE 8000
-
+RUN pip install — upgrade pip && pip install -r 
+ADD . /usr/src/app/
 
 VOLUME /usr/src/app/volume
 
-# # Migrates the database, uploads staticfiles, and runs the production server
-CMD ./manage.py migrate && \
-    ./manage.py collectstatic --noinput && \
-    gunicorn -w 3 --bind 0.0.0.0:8000 --access-logfile - app.wsgi:application
