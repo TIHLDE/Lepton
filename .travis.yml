@@ -26,21 +26,19 @@ env:
 install:
   - pip install pipenv
   - pipenv install
+  - pip install coverage codecov
 
 # Create DB
 before_script:
   - mysql -e 'create database test;' -u root
 
-# Running unit tests
-script: 
-  - ./manage.py test
 
+script:
+  - coverage run --source='.' manage.py test
 
-#script: # => 7
-#  - coverage run --source='.' manage.py test
+after_success:
+  - codecov
 
-#after_script:
-#  - codecov
 
 
 #services: 
