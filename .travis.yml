@@ -34,7 +34,7 @@ before_script:
 
 
 script:
-  - coverage run --source='.' manage.py test
+  - coverage run manage.py test
 
 after_success:
   - codecov
