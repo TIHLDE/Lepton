@@ -1,7 +1,7 @@
 notifications:
   email: false
 
-language: python # => 1
+language: python
 
 # safelist
 branches:
@@ -10,24 +10,37 @@ branches:
   - Ops
   - dev
 
-python: # => 2
+python:
   - "3.6"
-services: # => 3
+
+#Adding services
+services: 
   - mysql
-env: # => 4
+
+#Init envs
+env:
   - DJANGO=2.1.7 
   - DB=mysql
-install: # => 5
+
+#Installing the pipenv and using it to install via pipfile
+install:
   - pip install pipenv
   - pipenv install
-before_script: # => 6
+
+# Create DB
+before_script:
   - mysql -e 'create database test;' -u root
 
-script: # => 7
-  - coverage run --source='.' manage.py test
+# Running unit tests
+script: 
+  - ./manage.py test
 
-after_script:
-  - codecov
+
+#script: # => 7
+#  - coverage run --source='.' manage.py test
+
+#after_script:
+#  - codecov
 
 
 #services: 
