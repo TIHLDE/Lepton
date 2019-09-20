@@ -26,7 +26,7 @@ env:
 install:
   - pip install pipenv
   - pipenv install
-  - pip install coverage codecov
+  - pip install coverage
 
 # Create DB
 before_script:
