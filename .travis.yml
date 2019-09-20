@@ -3,6 +3,12 @@ notifications:
 
 language: python # => 1
 
+# safelist
+branches:
+  only:
+  - master
+  - stable
+
 python: # => 2
   - "3.6"
 services: # => 3
@@ -13,7 +19,7 @@ env: # => 4
 install: # => 5
   - pip install -r
 before_script: # => 6
-  - mysql -e 'create database test;' -u root
+  - mysql -e 'create database test if not exist;' -u root
 
 script: # => 7
   - coverage run --source='.' manage.py test
