@@ -11,3 +11,8 @@ language: python # => 1
       - mysql -e 'create database test;' -u root
     script: # => 7
       - python manage.py test
+      
+branches:
+    only:
+    - master
+    - dev
