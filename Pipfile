@@ -23,6 +23,7 @@ aiohttp-cors = "*"
 wheel = "*"
 mysqlclient = "==1.3.12"
 django-dotenv = "*"
+codecov = "*"
 
 
 [dev-packages]
