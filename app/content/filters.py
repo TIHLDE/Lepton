@@ -4,10 +4,13 @@ from django_filters.rest_framework import DjangoFilterBackend, BooleanFilter, Fi
 # Model imports
 from .models import Event
 
-# Datetime and other import
-from datetime import datetime, timedelta, timezone
+# Django imports
+from django.utils import timezone
 
-CHECK_IF_EXPIRED = lambda : datetime.now()-timedelta(days=1)
+# Datetime and other import
+from datetime import timedelta
+
+CHECK_IF_EXPIRED = lambda : timezone.now()-timedelta(days=1)
 
 class EventFilter(FilterSet):
     """

@@ -46,11 +46,7 @@ class EventViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         query = self.request.query_params
 
-        if ('search' in query):
-            return self.queryset.filter(title__icontains=query['search']).order_by('start')
-        elif ('pk' in self.kwargs): 
-            return self.queryset.filter(pk=self.kwargs['pk'])
-        elif (not len(query) and not len(self.kwargs)):
+        if (not len(query) and not len(self.kwargs)):
             return Event.objects.filter(start__gte=CHECK_IF_EXPIRED()).order_by('start')
         return Event.objects.all().order_by('start')
  
