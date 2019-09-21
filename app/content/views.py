@@ -2,8 +2,8 @@ import os
 
 # Rest Framework
 from rest_framework import viewsets, mixins, permissions, generics, filters
-from rest_framework.decorators import api_view
-from django_filters.rest_framework import DjangoFilterBackend, BooleanFilter, FilterSet
+from rest_framework.decorators import api_view, action
+from django_filters.rest_framework import DjangoFilterBackend
 
 # HTTP imports
 from django.http import HttpResponse, HttpResponseNotAllowed, JsonResponse
@@ -15,37 +15,20 @@ from .models import News, Event, \
 from .serializers import NewsSerializer, EventSerializer, \
                          WarningSerializer, CategorySerializer, JobPostSerializer
 from app.util.models import Gridable
+from .filters import CHECK_IF_EXPIRED, EventFilter 
 
 # Permission imports
 from app.authentication.permissions import IsMemberOrSafe, IsHSorDrift, HS_Drift_Promo, HS_Drift_NoK
 
-# Datetime, hash, and other imports
-from datetime import datetime, timedelta
+# Hash, and other imports
 from django.db.models import Q
 import hashlib
 import json
-
-CHECK_IF_EXPIRED = datetime.now()-timedelta(days=1)
 
 class NewsViewSet(viewsets.ModelViewSet):
     queryset = News.objects.all().order_by('-created_at')
     serializer_class = NewsSerializer
     permission_classes = [HS_Drift_Promo]
-
-class EventFilter(FilterSet):
-    expired = BooleanFilter(method='filter_expired', label='Expired')
-    
-    class Meta:
-        model = Event 
-        fields = ['category', 'expired']
-
-    """
-    @param value: boolean for determining if expired or not is found in querystring
-    """
-    def filter_expired(self, queryset, name, value): 
-        if value:
-            return queryset.filter(start__lt=CHECK_IF_EXPIRED).order_by('-start')
-        return queryset
 
 class EventViewSet(viewsets.ModelViewSet):
     """
@@ -54,17 +37,23 @@ class EventViewSet(viewsets.ModelViewSet):
     """
     serializer_class = EventSerializer
     permission_classes = [HS_Drift_Promo]
-    queryset = Event.objects.filter(start__gte=CHECK_IF_EXPIRED).order_by('start')
+    queryset = Event.objects.all()
 
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_class = EventFilter
     search_fields = ['title']
 
     def get_queryset(self):
-        query = self.request.query_params;
+        query = self.request.query_params
+
         if ('search' in query):
-            return Event.objects.filter(title__icontains=query['search']).order_by('start')
-        return self.queryset 
+            return self.queryset.filter(title__icontains=query['search']).order_by('start')
+        elif ('pk' in self.kwargs): 
+            return self.queryset.filter(pk=self.kwargs['pk'])
+        elif (not len(query) and not len(self.kwargs)):
+            return Event.objects.filter(start__gte=CHECK_IF_EXPIRED()).order_by('start')
+        return Event.objects.all().order_by('start')
+ 
 
 class WarningViewSet(viewsets.ModelViewSet):
 
@@ -88,13 +77,13 @@ class JobPostViewSet(viewsets.ModelViewSet):
 
         if self.request.method == 'GET' and 'newest' in self.request.GET:
             # Returns the newest job posts ordered by deadline
-            return JobPost.objects.filter(deadline__gte=CHECK_IF_EXPIRED).order_by('deadline')[:25]
+            return JobPost.objects.filter(deadline__gte=CHECK_IF_EXPIRED()).order_by('deadline')[:25]
         elif self.request.method == 'GET' and 'search' in self.request.GET:
             # Returns job posts matching a search word, ordered by deadline
             return JobPost.objects.filter(Q(title__icontains=self.request.GET.get('search')) | Q(company__icontains=self.request.GET.get('search'))).order_by('deadline')[:25]
         elif self.request.method == 'GET' and 'expired' in self.request.GET:
             # Returns expired job posts, ordered by deadline
-            return JobPost.objects.filter(deadline__lte=CHECK_IF_EXPIRED).order_by('deadline')[:25]
+            return JobPost.objects.filter(deadline__lte=CHECK_IF_EXPIRED()).order_by('deadline')[:25]
 
         return queryset
 
