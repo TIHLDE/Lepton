@@ -1,6 +1,6 @@
 # TIHLDE API
 TIHLDEs API is the API TIHLDE's webiste. The API is made using [Django](https://www.djangoproject.com/), a Python Web framework.
-
+[![Build Status](https://travis-ci.org/tihlde/API.svg?branch=master)](https://travis-ci.org/tihlde/API)
 ## Contents
 1. [Basic info](#basic-info)
 2. [Getting started](#getting-started)

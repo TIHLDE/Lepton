@@ -20,6 +20,9 @@ from .filters import CHECK_IF_EXPIRED, EventFilter
 # Permission imports
 from app.authentication.permissions import IsMemberOrSafe, IsHSorDrift, HS_Drift_Promo, HS_Drift_NoK
 
+# Pagination imports
+from .pagination import BasePagination
+
 # Hash, and other imports
 from django.db.models import Q
 import hashlib
@@ -38,6 +41,7 @@ class EventViewSet(viewsets.ModelViewSet):
     serializer_class = EventSerializer
     permission_classes = [HS_Drift_Promo]
     queryset = Event.objects.all()
+    pagination_class = BasePagination
 
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_class = EventFilter
@@ -67,6 +71,7 @@ class JobPostViewSet(viewsets.ModelViewSet):
 
     serializer_class = JobPostSerializer
     permission_classes = [HS_Drift_NoK]
+    pagination_class = BasePagination
 
     def get_queryset(self):
         queryset = JobPost.objects.all()
