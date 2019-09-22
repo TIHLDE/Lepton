@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "03405f542d1ea6858052a70bb3ace4356db185ed768e992ec814cb02ff5ca7b5"
+            "sha256": "0b8fb271884e10d987d227acccb3234e739a827b0209df9cc10474c0712b46df"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -69,6 +69,14 @@
                 "sha256:fc323ffcaeaed0e0a02bf4d117757b98aed530d9ed4531e3e15460124c106691"
             ],
             "version": "==3.0.4"
+        },
+        "colorama": {
+            "hashes": [
+                "sha256:05eed71e2e327246ad6b38c540c4a3117230b19679b875190486ddd2d721422d",
+                "sha256:f8ac84de7840f5b9c4e3347b3c1eaa50f7e49c2b07596221daec5edaabbd7c48"
+            ],
+            "markers": "sys_platform == 'win32'",
+            "version": "==0.4.1"
         },
         "codecov": {
             "hashes": [
@@ -145,6 +153,14 @@
             ],
             "index": "pypi",
             "version": "==1.4.2"
+        },
+        "django-filter": {
+            "hashes": [
+                "sha256:558c727bce3ffa89c4a7a0b13bc8976745d63e5fd576b3a9a851650ef11c401b",
+                "sha256:c3deb57f0dd7ff94d7dce52a047516822013e2b441bed472b722a317658cfd14"
+            ],
+            "index": "pypi",
+            "version": "==2.2.0"
         },
         "django-heroku": {
             "hashes": [
