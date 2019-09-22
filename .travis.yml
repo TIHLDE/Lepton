@@ -1,3 +1,5 @@
+dist: xenial
+
 notifications:
   email: false
 
@@ -26,18 +28,16 @@ env:
 install:
   - pip install pipenv
   - pipenv install
-  - pip install coverage
 
 # Create DB
 before_script:
   - mysql -e 'create database test;' -u root
 
-
 script:
-#  - coverage run manage.py test
+  - pipenv run coverage run manage.py test
 
 after_success:
-#  - codecov
+  - codecov
 
 
 

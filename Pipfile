@@ -16,9 +16,11 @@ requests = "*"
 logzero = "*"
 aiohttp-cors = "*"
 wheel = "*"
-mysqlclient = "==1.3.12"
+mysqlclient = "==1.4.4"
 django-dotenv = "*"
 codecov = "*"
+coverage = "*"
+travis = "*"
 
 [dev-packages]
 pylint = "*"
