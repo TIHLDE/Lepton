@@ -16,7 +16,7 @@ class EventFilter(FilterSet):
     """
         Filters events by category and expired. Works with search query
     """
-    expired = BooleanFilter(method='filter_expired', label='Expired')
+    expired = BooleanFilter(method='filter_expired', label='Newest')
 
     class Meta:
         model = Event 

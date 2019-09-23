@@ -40,20 +40,12 @@ class EventViewSet(viewsets.ModelViewSet):
     """
     serializer_class = EventSerializer
     permission_classes = [HS_Drift_Promo]
-    queryset = Event.objects.all()
+    queryset = Event.objects.all().order_by('start')
     pagination_class = BasePagination
 
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_class = EventFilter
     search_fields = ['title']
-
-    def get_queryset(self):
-        query = self.request.query_params
-
-        if (not len(query) and not len(self.kwargs)):
-            return Event.objects.filter(start__gte=CHECK_IF_EXPIRED()).order_by('start')
-        return Event.objects.all().order_by('start')
- 
 
 class WarningViewSet(viewsets.ModelViewSet):
 
