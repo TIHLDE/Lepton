@@ -36,7 +36,7 @@ class NewsViewSet(viewsets.ModelViewSet):
 class EventViewSet(viewsets.ModelViewSet):
     """
     API endpoint to display all upcoming events and filter them by title, category and expired
-        Excludes expired events by default, but includes them in search results
+        Includes expired events by default, but includes them in search results
     """
     serializer_class = EventSerializer
     permission_classes = [HS_Drift_Promo]
