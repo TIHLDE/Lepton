@@ -36,16 +36,22 @@ class NewsViewSet(viewsets.ModelViewSet):
 class EventViewSet(viewsets.ModelViewSet):
     """
     API endpoint to display all upcoming events and filter them by title, category and expired
-        Includes expired events by default, but includes them in search results
+        Excludes expired events by default, but includes them in search results
     """
     serializer_class = EventSerializer
     permission_classes = [HS_Drift_Promo]
-    queryset = Event.objects.all().order_by('start')
+    queryset = Event.objects.filter(start__gte=CHECK_IF_EXPIRED()).order_by('start')
     pagination_class = BasePagination
 
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_class = EventFilter
     search_fields = ['title']
+
+    def get_queryset(self):
+            
+        if (self.kwargs or 'expired' in self.request.query_params):
+            return Event.objects.all().order_by('start')
+        return self.queryset
 
 class WarningViewSet(viewsets.ModelViewSet):
 
