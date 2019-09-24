@@ -76,6 +76,12 @@ EMAIL_PASSWORD= EMAIL_PASSWORD
 PROD=True
 ```
 
+#### Missing static folder ####
+If you are not able to run the API or are getting lots of 500 errors with the configuration over it might be because you are missing the static folder. In the root of the project create a folder named _staticfiles_ and run the command:
+```
+python manage.py collectstatic
+```
+
 ### Database Map (Simplified ER-Model)
 ![ER-model](https://user-images.githubusercontent.com/31648998/55506006-b4149480-5654-11e9-8a17-0c8d6d48ac64.png)
 
