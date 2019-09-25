@@ -36,7 +36,7 @@ class NewsViewSet(viewsets.ModelViewSet):
 class EventViewSet(viewsets.ModelViewSet):
     """
     API endpoint to display all upcoming events and filter them by title, category and expired
-        Excludes expired events by default: to include expired in results, add '?expired=true'
+        Excludes expired events by default: to include expired in results, add '&expired=true'
     """
     serializer_class = EventSerializer
     permission_classes = [HS_Drift_Promo]
@@ -68,7 +68,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
 class JobPostViewSet(viewsets.ModelViewSet):
     """
     API endpoint to display all upcoming events and filter them by title, category and expired
-        Excludes expired events by default. To include them in search results, add '?expired=true'
+        Excludes expired events by default: to include expired in search results, add '&expired=true'
     """
 
     serializer_class = JobPostSerializer
