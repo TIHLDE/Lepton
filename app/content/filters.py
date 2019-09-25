@@ -1,5 +1,6 @@
 # Django Filters and Rest Framework imports
-from django_filters.rest_framework import DjangoFilterBackend, BooleanFilter, FilterSet
+from django_filters.rest_framework import DjangoFilterBackend, BooleanFilter, CharFilter, FilterSet
+from rest_framework import filters
 
 # Model imports
 from .models import Event, JobPost
@@ -38,7 +39,7 @@ class JobPostFilter(FilterSet):
 
     class Meta:
         model: JobPost
-        fields = ['company', 'expired']
+        fields = ['expired']
 
     """
     @param value: boolean for determining if expired or not is found in querystring
@@ -47,5 +48,3 @@ class JobPostFilter(FilterSet):
         if value:
             return queryset.filter(deadline__lt=CHECK_IF_EXPIRED()).order_by('-deadline')
         return queryset.filter(deadline__gte=CHECK_IF_EXPIRED()).order_by('deadline')
-
-

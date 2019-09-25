@@ -69,14 +69,8 @@ class CategoryViewSet(viewsets.ModelViewSet):
 
 class JobPostViewSet(viewsets.ModelViewSet):
     """
-        Returns newest by default
-        Returns the newest job posts ordered by deadline
-        Returns job posts matching a search word, ordered by deadline
-        Returns expired job posts, ordered by deadline
-
-        TODO: 
-            - Should be able to search by company by adding '?company='
-                instead of '?search={company}'?
+    API endpoint to display all upcoming events and filter them by title, category and expired
+        Excludes expired events by default. To include them in search results, add '?expired=true'
     """
 
     serializer_class = JobPostSerializer
@@ -92,21 +86,6 @@ class JobPostViewSet(viewsets.ModelViewSet):
         if (self.kwargs or 'expired' in self.request.query_params):
             return JobPost.objects.all().order_by('deadline')
         return self.queryset
-
-    # def get_queryset(self):
-    #     queryset = JobPost.objects.all()
-
-    #     if self.request.method == 'GET' and 'newest' in self.request.GET:
-    #         # Returns the newest job posts ordered by deadline
-    #         return JobPost.objects.filter(deadline__gte=CHECK_IF_EXPIRED()).order_by('deadline')[:25]
-    #     elif self.request.method == 'GET' and 'search' in self.request.GET:
-    #         # Returns job posts matching a search word, ordered by deadline
-    #         return JobPost.objects.filter(Q(title__icontains=self.request.GET.get('search')) | Q(company__icontains=self.request.GET.get('search'))).order_by('deadline')[:25]
-    #     elif self.request.method == 'GET' and 'expired' in self.request.GET:
-    #         # Returns expired job posts, ordered by deadline
-    #         return JobPost.objects.filter(deadline__lte=CHECK_IF_EXPIRED()).order_by('deadline')[:25]
-
-    #     return queryset
 
 
 # Method for accepting company interest forms from the company page
