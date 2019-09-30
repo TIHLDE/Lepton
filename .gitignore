@@ -18,3 +18,5 @@ volume/
 .env.development
 
 mysite.log
+
+*.lock

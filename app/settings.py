@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     # Third party
     'rest_framework',
     'corsheaders',
+    'django_filters',
     # Our apps
     'app.authentication',
     'app.content',
@@ -102,6 +103,14 @@ DATABASES = {
         'HOST': os.environ.get('DATABASE_HOST'),
         'PORT': os.environ.get('DATABASE_PORT'),
         'OPTIONS': {'charset': 'utf8mb4', 'use_unicode': True},
+    },    
+    'replica': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'myproject',
+        'HOST': 'dbreplica',
+        'TEST': {
+            'MIRROR': 'default',
+        },
     }
 }
 

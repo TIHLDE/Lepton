@@ -1,6 +1,6 @@
 # TIHLDE API
 TIHLDEs API is the API TIHLDE's webiste. The API is made using [Django](https://www.djangoproject.com/), a Python Web framework.
-
+[![Build Status](https://travis-ci.org/tihlde/API.svg?branch=master)](https://travis-ci.org/tihlde/API)
 ## Contents
 1. [Basic info](#basic-info)
 2. [Getting started](#getting-started)
@@ -74,6 +74,12 @@ EMAIL_PASSWORD= EMAIL_PASSWORD
 **IN PRODUCTION** you have to set an extra environment variable to set debug-mode to false. This is done my doing the following:
 ```
 PROD=True
+```
+
+#### Missing static folder ####
+If you are not able to run the API or are getting lots of 500 errors with the configuration over it might be because you are missing the static folder. In the root of the project create a folder named _staticfiles_ and run the command:
+```
+python manage.py collectstatic
 ```
 
 ### Database Map (Simplified ER-Model)
