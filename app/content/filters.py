@@ -48,3 +48,22 @@ class JobPostFilter(FilterSet):
         if value:
             return queryset.filter(deadline__lt=CHECK_IF_EXPIRED()).order_by('-deadline')
         return queryset.filter(deadline__gte=CHECK_IF_EXPIRED()).order_by('deadline')
+        
+
+class UserFilter(FilterSet):
+    """
+        Filters job posts by expired
+    """
+    expired = BooleanFilter(method='filter_expired', label='Expired')
+
+    class Meta:
+        model: JobPost
+        fields = ['user_id']
+
+    """
+    @param value: boolean for determining if expired or not is found in querystring
+    """
+    def filter_expired(self, queryset, name, value): 
+        if value:
+            return queryset.filter(deadline__lt=CHECK_IF_EXPIRED()).order_by('-deadline')
+        return queryset.filter(deadline__gte=CHECK_IF_EXPIRED()).order_by('deadline')

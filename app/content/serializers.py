@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from .models import (News, Event,
-                     Warning, Category, JobPost)
+                     Warning, Category, JobPost, User)
 
 from logzero import logger
 
@@ -39,3 +39,8 @@ class JobPostSerializer(serializers.ModelSerializer):
     class Meta:
         model = JobPost
         fields = '__all__'  # bad form
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['user_id', 'first_name', 'last_name', 'email', 'cell', 'em_nr', 'home_busstop', 'gender', 'user_class', 'user_study', 'allergy', 'tool']
