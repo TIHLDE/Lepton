@@ -15,7 +15,7 @@ from .models import News, Event, \
 from .serializers import NewsSerializer, EventSerializer, \
                          WarningSerializer, CategorySerializer, JobPostSerializer
 from app.util.models import Gridable
-from .filters import CHECK_IF_EXPIRED, EventFilter 
+from .filters import CHECK_IF_EXPIRED, EventFilter, JobPostFilter
 
 # Permission imports
 from app.authentication.permissions import IsMemberOrSafe, IsHSorDrift, HS_Drift_Promo, HS_Drift_NoK
@@ -36,7 +36,7 @@ class NewsViewSet(viewsets.ModelViewSet):
 class EventViewSet(viewsets.ModelViewSet):
     """
     API endpoint to display all upcoming events and filter them by title, category and expired
-        Excludes expired events by default: to include expired in results, add '?expired=true'
+        Excludes expired events by default: to include expired in results, add '&expired=true'
     """
     serializer_class = EventSerializer
     permission_classes = [HS_Drift_Promo]
@@ -66,25 +66,24 @@ class CategoryViewSet(viewsets.ModelViewSet):
     permission_classes = [HS_Drift_Promo]
 
 class JobPostViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint to display all upcoming events and filter them by title, category and expired
+        Excludes expired events by default: to include expired in search results, add '&expired=true'
+    """
 
     serializer_class = JobPostSerializer
     permission_classes = [HS_Drift_NoK]
     pagination_class = BasePagination
 
+    queryset = JobPost.objects.filter(deadline__gte=CHECK_IF_EXPIRED()).order_by('deadline')
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filterset_class = JobPostFilter
+    search_fields = ['title', 'company']
+
     def get_queryset(self):
-        queryset = JobPost.objects.all()
-
-        if self.request.method == 'GET' and 'newest' in self.request.GET:
-            # Returns the newest job posts ordered by deadline
-            return JobPost.objects.filter(deadline__gte=CHECK_IF_EXPIRED()).order_by('deadline')[:25]
-        elif self.request.method == 'GET' and 'search' in self.request.GET:
-            # Returns job posts matching a search word, ordered by deadline
-            return JobPost.objects.filter(Q(title__icontains=self.request.GET.get('search')) | Q(company__icontains=self.request.GET.get('search'))).order_by('deadline')[:25]
-        elif self.request.method == 'GET' and 'expired' in self.request.GET:
-            # Returns expired job posts, ordered by deadline
-            return JobPost.objects.filter(deadline__lte=CHECK_IF_EXPIRED()).order_by('deadline')[:25]
-
-        return queryset
+        if (self.kwargs or 'expired' in self.request.query_params):
+            return JobPost.objects.all().order_by('deadline')
+        return self.queryset
 
 
 # Method for accepting company interest forms from the company page
