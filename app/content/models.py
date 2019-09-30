@@ -26,7 +26,6 @@ class Event(BaseModel, OptionalImage):
     location = models.CharField(max_length=200, null=True)
 
     description = models.TextField(default='', blank=True)
-    sign_up = models.BooleanField(default=False)
 
     PRIORITIES = (
         (0, 'Low'),
@@ -39,15 +38,11 @@ class Event(BaseModel, OptionalImage):
                                     null=True, default=None,
                                     on_delete=models.SET_NULL)
 
-    """
-    Registration list:
-        - signUp
-        - limit
-        - closed 
-        - 
-    
-    """
-
+    # Registration list:
+    sign_up = models.BooleanField(default=False)
+    limit = models.IntegerField(default=0) # 0=no limit
+    closed = models.BooleanField(default=False) # improve name?
+    registered_users_list = models.ManyToManyField('User', through='UserEvent', through_fields=('event', 'user'), null=True, default=None) 
 
     @property
     def expired(self):
@@ -68,15 +63,17 @@ class Warning(BaseModel):
     def __str__(self):
         return f'Warning: {self.type} - Text: {self.text}'  
 
-
-"""
-UserEvent
-    user(s) that are signed up to an event
-    - userId
-    - eventId --> event
-    - isOnWait
-    - hasAttended
-"""
+class UserEvent(BaseModel):
+    """
+    UserEvent
+        A RegistrationList can have 0 or many UserEvents. 
+        UserId (your school id) and regListId have to be primary keys in the UserEvents.
+    """
+    event = models.ForeignKey(Event, primary_key=True, on_delete=models.CASCADE) 
+    user = models.ForeignKey('User', primary_key=True, unique=True, on_delete=models.CASCADE) # Users is not defined yet
+    # if event limit reached set this to true
+    is_on_wait = models.BooleanField(default=False) 
+    has_attended = models.BooleanField(default=False)
 
 class JobPost(BaseModel, OptionalImage):
     title = models.CharField(max_length=200)
