@@ -48,7 +48,7 @@ class EventViewSet(viewsets.ModelViewSet):
     search_fields = ['title']
 
     def get_queryset(self):
-            
+
         if (self.kwargs or 'expired' in self.request.query_params):
             return Event.objects.all().order_by('start')
         return self.queryset
