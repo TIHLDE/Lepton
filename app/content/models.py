@@ -95,3 +95,39 @@ class JobPost(BaseModel, OptionalImage):
         return f'JobPost: {self.company}  - {self.title}'
 
 
+class User(BaseModel, OptionalImage):
+    user_id = models.CharField(max_length=15, primary_key=True)
+    first_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=50)
+
+    email = models.EmailField(max_length=254)
+    cell = models.CharField(max_length=8)
+
+    em_nr = models.CharField(max_length=12)
+    home_busstop = models.IntegerField()
+
+    GENDER = (
+        (1, 'Mann'),
+        (2, 'Kvinne'),
+        (3, 'Annet'),
+    )
+    gender = models.IntegerField(default=0, choices=GENDER, null=True)
+    CLASS = (
+        (1, 'Første'),
+        (2, 'Andre'),
+        (3, 'Tredje'),
+        (4, 'Fjerde'),
+        (5, 'Femte'),
+    )
+    user_class = models.IntegerField(default=0, choices=CLASS, null=True)
+
+    STUDY = (
+        (1, 'Data'),
+        (2, 'DigFor'),
+        (3, 'Cyber'),
+        (4, 'Master'),
+    )
+    user_study = models.IntegerField(default=0, choices=STUDY, null=True)
+    allergy = models.TextField()
+
+    tool = models.CharField(max_length=100)
