@@ -84,7 +84,7 @@ class User(BaseModel, OptionalImage):
     last_name = models.CharField(max_length=50)
 
     email = models.EmailField(max_length=254)
-    cell = models.PhoneNumberField()
+    cell = models.CharField(max_length=8)
 
     em_nr = models.CharField(max_length=12)
     home_busstop = models.IntegerField()
@@ -94,7 +94,7 @@ class User(BaseModel, OptionalImage):
         (2, 'Kvinne'),
         (3, 'Annet'),
     )
-    gender = models.IntegerField(default=0, choices=PRIORITIES, null=True)
+    gender = models.IntegerField(default=0, choices=GENDER, null=True)
     CLASS = (
         (1, 'Første'),
         (2, 'Andre'),
@@ -102,7 +102,7 @@ class User(BaseModel, OptionalImage):
         (4, 'Fjerde'),
         (5, 'Femte'),
     )
-    user_class = models.IntegerField(default=0, choices=PRIORITIES, null=True)
+    user_class = models.IntegerField(default=0, choices=CLASS, null=True)
 
     STUDY = (
         (1, 'Data'),
@@ -110,7 +110,7 @@ class User(BaseModel, OptionalImage):
         (3, 'Cyber'),
         (4, 'Master'),
     )
-    user_study = models.IntegerField(default=0, choices=PRIORITIES, null=True)
+    user_study = models.IntegerField(default=0, choices=STUDY, null=True)
     allergy = models.TextField()
 
     tool = models.CharField(max_length=100)
