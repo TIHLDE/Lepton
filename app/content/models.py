@@ -1,6 +1,6 @@
 from django.db import models
 
-from app.util.models import BaseModel, OptionalImage, OptionalAction
+from app.util.models import BaseModel, OptionalImage
 
 import importlib # RecentFirstGrid
 from datetime import datetime, timezone, timedelta
@@ -20,37 +20,6 @@ class Category(BaseModel):
     def __str__(self):
         return f'{self.text}'
 
-class Event(BaseModel, OptionalImage):
-    title = models.CharField(max_length=200)
-    start = models.DateTimeField()
-    location = models.CharField(max_length=200, null=True)
-
-    description = models.TextField(default='', blank=True)
-
-    PRIORITIES = (
-        (0, 'Low'),
-        (1, 'Normal'),
-        (2, 'High'),
-    )
-    priority = models.IntegerField(default=0, choices=PRIORITIES, null=True)
-
-    category = models.ForeignKey(Category, blank=True,
-                                    null=True, default=None,
-                                    on_delete=models.SET_NULL)
-
-    # Registration list:
-    sign_up = models.BooleanField(default=False)
-    limit = models.IntegerField(default=0) # 0=no limit
-    closed = models.BooleanField(default=False) # improve name?
-    registered_users_list = models.ManyToManyField('User', through='UserEvent', through_fields=('event', 'user'), null=True, default=None) 
-
-    @property
-    def expired(self):
-        return self.start <= datetime.now(tz=timezone.utc)-timedelta(days=1)
-
-    def __str__(self):
-        return f'{self.title} - starting {self.start} at {self.location}'
-
 class Warning(BaseModel):
     text = models.CharField(max_length=400, null=True)
     TYPES = (
@@ -62,18 +31,6 @@ class Warning(BaseModel):
 
     def __str__(self):
         return f'Warning: {self.type} - Text: {self.text}'  
-
-class UserEvent(BaseModel):
-    """
-    UserEvent
-        A RegistrationList can have 0 or many UserEvents. 
-        UserId (your school id) and regListId have to be primary keys in the UserEvents.
-    """
-    event = models.ForeignKey(Event, primary_key=True, on_delete=models.CASCADE) 
-    user = models.ForeignKey('User', primary_key=True, unique=True, on_delete=models.CASCADE) # Users is not defined yet
-    # if event limit reached set this to true
-    is_on_wait = models.BooleanField(default=False) 
-    has_attended = models.BooleanField(default=False)
 
 class JobPost(BaseModel, OptionalImage):
     title = models.CharField(max_length=200)
@@ -131,3 +88,44 @@ class User(BaseModel, OptionalImage):
     allergy = models.TextField()
 
     tool = models.CharField(max_length=100)
+
+class Event(BaseModel, OptionalImage):
+    title = models.CharField(max_length=200)
+    start = models.DateTimeField()
+    location = models.CharField(max_length=200, null=True)
+
+    description = models.TextField(default='', blank=True)
+
+    PRIORITIES = (
+        (0, 'Low'),
+        (1, 'Normal'),
+        (2, 'High'),
+    )
+    priority = models.IntegerField(default=0, choices=PRIORITIES, null=True)
+
+    category = models.ForeignKey(Category, blank=True,
+                                    null=True, default=None,
+                                    on_delete=models.SET_NULL)
+
+    sign_up = models.BooleanField(default=False)
+    limit = models.IntegerField(default=0) # 0=no limit
+    closed = models.BooleanField(default=False) # improve name?
+    registered_users_list = models.ManyToManyField('User', through='UserEvent', through_fields=('event', 'user'), default=None) 
+
+    @property
+    def expired(self):
+        return self.start <= datetime.now(tz=timezone.utc)-timedelta(days=1)
+
+    def __str__(self):
+        return f'{self.title} - starting {self.start} at {self.location}'
+
+class UserEvent(BaseModel):
+    """
+    UserEvent
+        A RegistrationList can have 0 or many UserEvents. 
+        UserId (your school id) and regListId have to be primary keys in the UserEvents.
+    """
+    event = models.ForeignKey(Event, on_delete=models.CASCADE) 
+    user = models.OneToOneField('User', primary_key=True, on_delete=models.CASCADE) 
+    is_on_wait = models.BooleanField(default=False) # if event limit reached set this to true
+    has_attended = models.BooleanField(default=False)
