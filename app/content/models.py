@@ -38,6 +38,17 @@ class Event(BaseModel, OptionalImage):
     category = models.ForeignKey(Category, blank=True,
                                     null=True, default=None,
                                     on_delete=models.SET_NULL)
+
+    """
+    Registration list:
+        - signUp
+        - limit
+        - closed 
+        - 
+    
+    """
+
+
     @property
     def expired(self):
         return self.start <= datetime.now(tz=timezone.utc)-timedelta(days=1)
@@ -57,6 +68,15 @@ class Warning(BaseModel):
     def __str__(self):
         return f'Warning: {self.type} - Text: {self.text}'  
 
+
+"""
+UserEvent
+    user(s) that are signed up to an event
+    - userId
+    - eventId --> event
+    - isOnWait
+    - hasAttended
+"""
 
 class JobPost(BaseModel, OptionalImage):
     title = models.CharField(max_length=200)
