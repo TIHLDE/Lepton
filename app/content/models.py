@@ -87,14 +87,14 @@ class User(BaseModel, OptionalImage):
     cell = models.CharField(max_length=8, blank=True)
 
     em_nr = models.CharField(max_length=12, blank=True)
-    home_busstop = models.IntegerField(blank=True)
+    home_busstop = models.IntegerField(null=True, blank=True)
 
     GENDER = (
         (1, 'Mann'),
         (2, 'Kvinne'),
         (3, 'Annet'),
     )
-    gender = models.IntegerField(default=3, choices=GENDER, null=True, blank=True)
+    gender = models.IntegerField(default=0, choices=GENDER, null=True, blank=True)
     CLASS = (
         (1, '1. Klasse'),
         (2, '2. Klasse'),
@@ -102,18 +102,18 @@ class User(BaseModel, OptionalImage):
         (4, '4. Klasse'),
         (5, '5. Klasse'),
     )
-    user_class = models.IntegerField(default=3, choices=CLASS, null=True, blank=True)
+    user_class = models.IntegerField(default=1, choices=CLASS, null=True, blank=True)
 
     STUDY = (
-        (1, 'Data'),
+        (1, 'Dataing'),
         (2, 'DigFor'),
-        (3, 'Cyber'),
-        (4, 'Master'),
+        (3, 'DigInc'),
+        (4, 'DigSam'),
     )
-    user_study = models.IntegerField(default=0, choices=STUDY, null=True, blank=True)
+    user_study = models.IntegerField(default=1, choices=STUDY, null=True, blank=True)
     allergy = models.TextField(blank=True)
 
     tool = models.CharField(max_length=100, blank=True)
 
     def __str__(self):
-        return f'User {self.user_id}: {self.first_name} {self.last_name}, {self.study}-{self.user_class}'
+        return f'User - {self.user_id}: {self.first_name} {self.last_name}'

@@ -101,7 +101,7 @@ class IsMember(permissions.BasePermission):
 
         user_id = get_user_id(token)
 
-        if(user is None): return False
+        if(user_id is None): return False
         
         request.user_id = user_id
         
