@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, primary_key=True, serialize=False, to='content.User')),
+                ('user',models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, primary_key=True, serialize=False, to='content.User')),
                 ('is_on_wait', models.BooleanField(default=False)),
                 ('has_attended', models.BooleanField(default=False)),
                 ('event', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='content.Event')),
@@ -38,6 +38,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='event',
             name='registered_users_list',
-            field=models.ManyToManyField(default=None, through='content.UserEvent', to='content.User'),
+            field=models.ManyToManyField(blank=True, default=None, through='content.UserEvent', to='content.User'),
         ),
     ]
