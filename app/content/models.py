@@ -110,7 +110,7 @@ class Event(BaseModel, OptionalImage):
     sign_up = models.BooleanField(default=False)
     limit = models.IntegerField(default=0) # 0=no limit
     closed = models.BooleanField(default=False) # improve name?
-    registered_users_list = models.ManyToManyField('User', through='UserEvent', through_fields=('event', 'user'), default=None) 
+    registered_users_list = models.ManyToManyField(User, through='UserEvent', through_fields=('event', 'user'), default=None) 
 
     @property
     def expired(self):
@@ -126,6 +126,6 @@ class UserEvent(BaseModel):
         UserId (your school id) and regListId have to be primary keys in the UserEvents.
     """
     event = models.ForeignKey(Event, on_delete=models.CASCADE) 
-    user = models.OneToOneField('User', primary_key=True, on_delete=models.CASCADE) 
+    user = models.ForeignKey(User, primary_key=True, on_delete=models.CASCADE) 
     is_on_wait = models.BooleanField(default=False) # if event limit reached set this to true
     has_attended = models.BooleanField(default=False)
