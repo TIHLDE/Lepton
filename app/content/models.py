@@ -1,6 +1,6 @@
 from django.db import models
 
-from app.util.models import BaseModel, OptionalImage, OptionalAction
+from app.util.models import BaseModel, OptionalImage
 
 import importlib # RecentFirstGrid
 from datetime import datetime, timezone, timedelta
@@ -20,31 +20,6 @@ class Category(BaseModel):
     def __str__(self):
         return f'{self.text}'
 
-class Event(BaseModel, OptionalImage):
-    title = models.CharField(max_length=200)
-    start = models.DateTimeField()
-    location = models.CharField(max_length=200, null=True)
-
-    description = models.TextField(default='', blank=True)
-    sign_up = models.BooleanField(default=False)
-
-    PRIORITIES = (
-        (0, 'Low'),
-        (1, 'Normal'),
-        (2, 'High'),
-    )
-    priority = models.IntegerField(default=0, choices=PRIORITIES, null=True)
-
-    category = models.ForeignKey(Category, blank=True,
-                                    null=True, default=None,
-                                    on_delete=models.SET_NULL)
-    @property
-    def expired(self):
-        return self.start <= datetime.now(tz=timezone.utc)-timedelta(days=1)
-
-    def __str__(self):
-        return f'{self.title} - starting {self.start} at {self.location}'
-
 class Warning(BaseModel):
     text = models.CharField(max_length=400, null=True)
     TYPES = (
@@ -56,7 +31,6 @@ class Warning(BaseModel):
 
     def __str__(self):
         return f'Warning: {self.type} - Text: {self.text}'  
-
 
 class JobPost(BaseModel, OptionalImage):
     title = models.CharField(max_length=200)
@@ -117,3 +91,54 @@ class User(BaseModel, OptionalImage):
 
     def __str__(self):
         return f'User - {self.user_id}: {self.first_name} {self.last_name}'
+
+class Event(BaseModel, OptionalImage):
+    title = models.CharField(max_length=200)
+    start = models.DateTimeField()
+    location = models.CharField(max_length=200, null=True)
+    description = models.TextField(default='', blank=True)
+
+    PRIORITIES = (
+        (0, 'Low'),
+        (1, 'Normal'),
+        (2, 'High'),
+    )
+    priority = models.IntegerField(default=0, choices=PRIORITIES, null=True)
+
+    category = models.ForeignKey(Category, blank=True,
+                                    null=True, default=None,
+                                    on_delete=models.SET_NULL)
+
+    sign_up = models.BooleanField(default=False)
+    limit = models.IntegerField(default=0) # 0=no limit
+    closed = models.BooleanField(default=False) # improve name?
+    registered_users_list = models.ManyToManyField(User, through='UserEvent', through_fields=('event', 'user'), blank=True, default=None) 
+
+    @property
+    def expired(self):
+        return self.start <= datetime.now(tz=timezone.utc)-timedelta(days=1)
+
+    def __str__(self):
+        return f'{self.title} - starting {self.start} at {self.location}'
+
+class UserEvent(BaseModel):
+    """
+    UserEvent
+        A RegistrationList can have 0 or many UserEvents. 
+        UserId (your school id) and regListId have to be primary keys in the UserEvents.
+    """
+    event = models.ForeignKey(Event, on_delete=models.CASCADE) 
+    user = models.ForeignKey(User, primary_key=True, on_delete=models.CASCADE) 
+    is_on_wait = models.BooleanField(default=False) # if event limit reached set this to true
+    has_attended = models.BooleanField(default=False)
+
+    def set_user_on_wait(self):
+        # self.limit = self.event.limit is not 0 and self.event.registered_users_list > self.event.limit
+        # self.save()
+        pass
+
+    def set_has_attended(self):
+        pass
+
+    def __str__(self):
+        return f'{self.user.email} - is to attend {self.event} and is { "on the waitinglist" if self.is_on_wait else "on the list"}'

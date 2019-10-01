@@ -14,7 +14,6 @@ from .models import News, Event, \
                     Warning, Category, JobPost, User
 from .serializers import NewsSerializer, EventSerializer, \
                          WarningSerializer, CategorySerializer, JobPostSerializer, UserSerializer
-from app.util.models import Gridable
 from .filters import CHECK_IF_EXPIRED, EventFilter, JobPostFilter
 
 # Permission imports
