@@ -90,7 +90,7 @@ class UserViewSet(viewsets.ModelViewSet):
     API endpoint to display one user'
     """
     serializer_class = UserSerializer
-    permission_classes = [IsMember]
+    permission_classes = []#IsMember]
     queryset = User.objects.all()
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
 
