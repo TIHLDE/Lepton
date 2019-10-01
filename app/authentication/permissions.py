@@ -79,7 +79,7 @@ def get_user_id(token):
     headers = {'X-CSRF-TOKEN': token}
     r = requests.get(VERIFY_URL, headers=headers, verify=False) # Send request to verify token
     response = r.json()
-    
+
     if(r.status_code is not 200 or 'uid' not in response):
         return None
 
@@ -87,6 +87,17 @@ def get_user_id(token):
     user = response['uid'][0]
 
     return user
+
+def get_user_info(token):
+    # Get user ID from token
+    headers = {'X-CSRF-TOKEN': token}
+    r = requests.get(VERIFY_URL, headers=headers, verify=False) # Send request to verify token
+    response = r.json()
+
+    if(r.status_code is not 200 or 'uid' not in response):
+        return None
+
+    return response
 
 
 class IsMember(permissions.BasePermission):
@@ -99,10 +110,14 @@ class IsMember(permissions.BasePermission):
         if(token == None):
             return False
 
-        user_id = get_user_id(token)
+        info = get_user_info(token)
 
-        if(user_id is None): return False
-        
-        request.user_id = user_id
-        
+        if(info is None):
+            return False
+
+        request.user_id = info['uid'][0]
+        request.first_name = info['givenname'][0]
+        request.last_name = info['sn'][0]
+        request.email = info['mail'][0]
+
         return True
