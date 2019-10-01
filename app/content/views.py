@@ -11,9 +11,9 @@ from django.views.decorators.csrf import csrf_exempt
 
 # Models and serializer imports
 from .models import News, Event, \
-                    Warning, Category, JobPost, User
+                    Warning, Category, JobPost, User, UserEvent
 from .serializers import NewsSerializer, EventSerializer, \
-                         WarningSerializer, CategorySerializer, JobPostSerializer, UserSerializer
+                         WarningSerializer, CategorySerializer, JobPostSerializer, UserSerializer, UserEventSerializer
 from .filters import CHECK_IF_EXPIRED, EventFilter, JobPostFilter
 
 # Permission imports
@@ -97,7 +97,17 @@ class UserViewSet(viewsets.ModelViewSet):
         user = self.request.user_id
         return self.queryset.filter(user_id = user)
 
+class UserEventViewSet(viewsets.ModelViewSet):
+    """ 
+        API endpoint to display all users signed up to an event
+            blir opprettet når man melder seg på
+    """
+    serializer_class = UserEventSerializer
+    permission_classes = [HS_Drift_NoK]
+    queryset = UserEvent.objects.all()
 
+    # def perform_create(self, serializer):
+    #     serializer.save(user=User.objects.get(user=self.user))
 
 # Method for accepting company interest forms from the company page
 # TODO: MOVE TO TEMPLATE

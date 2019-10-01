@@ -112,6 +112,7 @@ class Event(BaseModel, OptionalImage):
     sign_up = models.BooleanField(default=False)
     limit = models.IntegerField(default=0) # 0=no limit
     closed = models.BooleanField(default=False) # improve name?
+    # just registered_users?
     registered_users_list = models.ManyToManyField(User, through='UserEvent', through_fields=('event', 'user'), blank=True, default=None) 
 
     @property
@@ -127,10 +128,16 @@ class UserEvent(BaseModel):
         A RegistrationList can have 0 or many UserEvents. 
         UserId (your school id) and regListId have to be primary keys in the UserEvents.
     """
-    event = models.ForeignKey(Event, on_delete=models.CASCADE) 
     user = models.ForeignKey(User, primary_key=True, on_delete=models.CASCADE) 
+    event = models.ForeignKey(Event, on_delete=models.CASCADE) 
     is_on_wait = models.BooleanField(default=False) # if event limit reached set this to true
     has_attended = models.BooleanField(default=False)
+
+    # def create(self, user_id):
+    #     user = User.object.get(user_id=user_id)
+    #     user_event = UserEvent(user=user)
+    #     print(user_id)
+    #     return user_event
 
     def set_user_on_wait(self):
         # self.limit = self.event.limit is not 0 and self.event.registered_users_list > self.event.limit
