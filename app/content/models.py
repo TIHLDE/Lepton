@@ -112,7 +112,7 @@ class Event(BaseModel, OptionalImage):
     sign_up = models.BooleanField(default=False)
     limit = models.IntegerField(default=0) # 0=no limit
     closed = models.BooleanField(default=False) # improve name?
-    registered_users_list = models.ManyToManyField(User, through='UserEvent', through_fields=('event', 'user'), null=True, default=None) 
+    registered_users_list = models.ManyToManyField(User, through='UserEvent', through_fields=('event', 'user'), blank=True, default=None) 
 
     @property
     def expired(self):
@@ -135,6 +135,9 @@ class UserEvent(BaseModel):
     def set_user_on_wait(self):
         # self.limit = self.event.limit is not 0 and self.event.registered_users_list > self.event.limit
         # self.save()
+        pass
+
+    def set_has_attended(self):
         pass
 
     def __str__(self):
