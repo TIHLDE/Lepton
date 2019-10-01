@@ -89,5 +89,20 @@ def get_user_id(token):
     return user
 
 
+class IsMember(permissions.BasePermission):
+    message = 'You are not a member'
 
+    def has_permission(self, request, view):
+
+        # Check if session-token is provided
+        token = request.META.get('HTTP_X_CSRF_TOKEN')
+        if(token == None):
+            return False
+
+        user_id = get_user_id(token)
+
+        if(user_id is None): return False
         
+        request.user_id = user_id
+        
+        return True
