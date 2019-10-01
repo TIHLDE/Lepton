@@ -11,14 +11,14 @@ from django.views.decorators.csrf import csrf_exempt
 
 # Models and serializer imports
 from .models import News, Event, \
-                    Warning, Category, JobPost
+                    Warning, Category, JobPost, User
 from .serializers import NewsSerializer, EventSerializer, \
-                         WarningSerializer, CategorySerializer, JobPostSerializer
+                         WarningSerializer, CategorySerializer, JobPostSerializer, UserSerializer
 from app.util.models import Gridable
 from .filters import CHECK_IF_EXPIRED, EventFilter, JobPostFilter
 
 # Permission imports
-from app.authentication.permissions import IsMemberOrSafe, IsHSorDrift, HS_Drift_Promo, HS_Drift_NoK
+from app.authentication.permissions import IsMemberOrSafe, IsMember, IsHSorDrift, HS_Drift_Promo, HS_Drift_NoK
 
 # Pagination imports
 from .pagination import BasePagination
@@ -48,7 +48,7 @@ class EventViewSet(viewsets.ModelViewSet):
     search_fields = ['title']
 
     def get_queryset(self):
-            
+
         if (self.kwargs or 'expired' in self.request.query_params):
             return Event.objects.all().order_by('start')
         return self.queryset
@@ -84,6 +84,20 @@ class JobPostViewSet(viewsets.ModelViewSet):
         if (self.kwargs or 'expired' in self.request.query_params):
             return JobPost.objects.all().order_by('deadline')
         return self.queryset
+
+class UserViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint to display one user'
+    """
+    serializer_class = UserSerializer
+    permission_classes = [IsMember]
+    queryset = User.objects.all()
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+
+    def get_object(self):
+        user = self.request.user_id
+        return self.queryset.filter(user_id = user)
+
 
 
 # Method for accepting company interest forms from the company page
