@@ -46,8 +46,8 @@ class UserSerializer(serializers.ModelSerializer):
 
 class UserEventSerializer(serializers.ModelSerializer):
 
-    user_id = serializers.CharField() # makes it possible to add by name
+    # user_id = serializers.CharField() # makes it possible to add by name
 
     class Meta:
         model = UserEvent
-        fields = ['event', 'user_id', 'is_on_wait', 'has_attended']
+        fields = ['event', 'user', 'is_on_wait', 'has_attended']

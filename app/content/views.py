@@ -4,6 +4,7 @@ import os
 from rest_framework import viewsets, mixins, permissions, generics, filters
 from rest_framework.decorators import api_view, action
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.response import Response
 
 # HTTP imports
 from django.http import HttpResponse, HttpResponseNotAllowed, JsonResponse
@@ -26,6 +27,7 @@ from .pagination import BasePagination
 from django.db.models import Q
 import hashlib
 import json
+from django.utils.translation import gettext as _
 
 class NewsViewSet(viewsets.ModelViewSet):
     queryset = News.objects.all().order_by('-created_at')
@@ -101,13 +103,41 @@ class UserEventViewSet(viewsets.ModelViewSet):
     """ 
         API endpoint to display all users signed up to an event
             blir opprettet når man melder seg på
+            '/user-event/event_id/user_id
     """
     serializer_class = UserEventSerializer
     permission_classes = [HS_Drift_NoK]
     queryset = UserEvent.objects.all()
+    lookup_field = 'user_id'
 
-    # def perform_create(self, serializer):
-    #     serializer.save(user=User.objects.get(user=self.user))
+    def list(self, request, event_id):
+        """ Returns all user events for given event """
+        print(event_id)
+        try:
+            event = Event.objects.get(pk=event_id)
+        except Event.DoesNotExist:
+            return Response({'detail': _('The event does not exist.')}, status=404)
+        self.check_object_permissions(self.request, event)
+        user_event = self.queryset.filter(event__pk=event_id)
+        serializer = UserEventSerializer(user_event, context={'request': request}, many=True)
+        return Response(serializer.data)
+
+    def retrieve(self, request, event_id, user_id): 
+        """Returns a given user event for the specified event """
+        print(user_id)
+        try:
+            event = Event.objects.get(pk=event_id)
+        except Event.DoesNotExist:
+            return Response({'detail': _('The user event does not exist.')}, status=404)
+        self.check_object_permissions(self.request, event)
+        try:
+            user_event = UserEvent.objects.get(event__pk=event_id, user_id=user_id)
+            serializer = UserEventSerializer(user_event, context={'request': request}, many=False)
+            return Response(serializer.data)
+        except UserEvent.DoesNotExist:
+            return Response({'detail': _('The user event has not been found.')}, status=404)
+
+
 
 # Method for accepting company interest forms from the company page
 # TODO: MOVE TO TEMPLATE

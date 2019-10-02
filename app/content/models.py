@@ -129,7 +129,7 @@ class UserEvent(BaseModel):
         UserId (your school id) and regListId have to be primary keys in the UserEvents.
     """
     user = models.ForeignKey(User, primary_key=True, on_delete=models.CASCADE) 
-    event = models.ForeignKey(Event, on_delete=models.CASCADE) 
+    event = models.ForeignKey(Event, on_delete=models.CASCADE) #-> event_id
     is_on_wait = models.BooleanField(default=False) # if event limit reached set this to true
     has_attended = models.BooleanField(default=False)
 
@@ -138,6 +138,10 @@ class UserEvent(BaseModel):
     #     user_event = UserEvent(user=user)
     #     print(user_id)
     #     return user_event
+
+    class Meta:
+        """ Configure the name displayed in the admin panel """
+        # verbose_name = ''
 
     def set_user_on_wait(self):
         # self.limit = self.event.limit is not 0 and self.event.registered_users_list > self.event.limit
