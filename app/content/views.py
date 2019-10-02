@@ -17,7 +17,7 @@ from .serializers import NewsSerializer, EventSerializer, \
 from .filters import CHECK_IF_EXPIRED, EventFilter, JobPostFilter
 
 # Permission imports
-from app.authentication.permissions import IsMemberOrSafe, IsMember, IsHSorDrift, HS_Drift_Promo, HS_Drift_NoK
+from app.authentication.permissions import IsMemberOrSafe, IsMember, IsHSorDrift, HS_Drift_Promo, HS_Drift_NoK, ActionBasedPermission
 
 # Pagination imports
 from .pagination import BasePagination
@@ -92,7 +92,11 @@ class UserViewSet(viewsets.ModelViewSet):
     API endpoint to display one user'
     """
     serializer_class = UserSerializer
-    permission_classes = [IsMember]
+    permission_classes = [ActionBasedPermission]
+    action_permission = {
+        IsHSorDrift: ['create', 'list', 'update', 'destory'],
+        IsMember: ['partial_update', 'retrive']
+    }
     queryset = User.objects.all()
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
 
@@ -113,8 +117,6 @@ class UserViewSet(viewsets.ModelViewSet):
             if serializer.is_valid():
                 serializer.save()
         return self.queryset.filter(user_id = id)
-
-
 
 
 
