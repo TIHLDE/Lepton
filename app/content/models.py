@@ -133,22 +133,16 @@ class UserEvent(BaseModel):
     is_on_wait = models.BooleanField(default=False) # if event limit reached set this to true
     has_attended = models.BooleanField(default=False)
 
-    # def create(self, user_id):
-    #     user = User.object.get(user_id=user_id)
-    #     user_event = UserEvent(user=user)
-    #     print(user_id)
-    #     return user_event
-
-    class Meta:
-        """ Configure the name displayed in the admin panel """
-        # verbose_name = ''
-
     def set_user_on_wait(self):
         # self.limit = self.event.limit is not 0 and self.event.registered_users_list > self.event.limit
         # self.save()
         pass
 
     def set_has_attended(self):
+        # trenger annen logikk hvis bruker møtte opp og tok plassen til noen som 
+        # ikke møtte opp
+        # if event.expired() and not is_on_wait:
+        #     self.has_attended = False
         pass
 
     def __str__(self):

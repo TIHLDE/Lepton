@@ -24,10 +24,13 @@ from app.authentication.permissions import IsMemberOrSafe, IsMember, IsHSorDrift
 from .pagination import BasePagination
 
 # Hash, and other imports
+from django.utils.translation import gettext as _
+from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 import hashlib
 import json
-from django.utils.translation import gettext as _
+
+
 
 class NewsViewSet(viewsets.ModelViewSet):
     queryset = News.objects.all().order_by('-created_at')
@@ -112,7 +115,6 @@ class UserEventViewSet(viewsets.ModelViewSet):
 
     def list(self, request, event_id):
         """ Returns all user events for given event """
-        print(event_id)
         try:
             event = Event.objects.get(pk=event_id)
         except Event.DoesNotExist:
@@ -124,20 +126,32 @@ class UserEventViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request, event_id, user_id): 
         """Returns a given user event for the specified event """
-        print(user_id)
         try:
             event = Event.objects.get(pk=event_id)
         except Event.DoesNotExist:
             return Response({'detail': _('The user event does not exist.')}, status=404)
         self.check_object_permissions(self.request, event)
         try:
-            user_event = UserEvent.objects.get(event__pk=event_id, user_id=user_id)
+            user_event = UserEvent.objects.get(event__pk=event_id, user__user_id=user_id)
             serializer = UserEventSerializer(user_event, context={'request': request}, many=False)
             return Response(serializer.data)
         except UserEvent.DoesNotExist:
             return Response({'detail': _('The user event has not been found.')}, status=404)
 
 
+    def create(self, request, event_id):
+        """ Creates a new user-event with the specified event_id and user_id """
+        try:
+            event = Event.objects.get(pk=event_id)
+            user = User.objects.get(user_id=request.data['user_id']) # or user object or email?
+        except ObjectDoesNotExist:
+            return Response({'detail': _('The provided event and or user does not exist')}, status=404)
+        UserEvent(user=user, event=event)
+        return Response({'detail': 'The user event has been created.'})
+
+    def update(self, request, event_id, user_id):
+        """ Put someone down on the waitinglist for example """
+        pass 
 
 # Method for accepting company interest forms from the company page
 # TODO: MOVE TO TEMPLATE
