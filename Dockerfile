@@ -5,7 +5,7 @@ WORKDIR /usr/src/app/
 
 
 
-RUN pip install — upgrade pip && pip install pipenv
+RUN pip install --upgrade pip && pip install pipenv
 RUN pipenv install
 ADD . /usr/src/app/
 
