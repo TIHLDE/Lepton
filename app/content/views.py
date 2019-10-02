@@ -152,7 +152,11 @@ class UserEventViewSet(viewsets.ModelViewSet):
         UserEvent(user=user, event=event)
         return Response({'detail': 'The user event has been created.'})
 
-    def update(self, request, event_id, user_id):
+    def partial_update(self, request, event_id, user_id):
+        print('\n\n')
+        print(request)
+        print(request.is_on_wait)
+        print('\n\n')
         """ Updates the is_on_wait field """
         try:
             event = Event.objects.get(pk=event_id)
@@ -160,7 +164,7 @@ class UserEventViewSet(viewsets.ModelViewSet):
         except ObjectDoesNotExist:
             return Response({'detail': 'Event or user does not exist'}, status=404)
         user_event = UserEvent.objects.get(event=event, user=user)
-        user_event.is_on_waiting_list = request.data['is_on_wait']
+        user_event.is_on_wait = request.data['is_on_wait']
         user_event.has_attended = request.data['has_attended']
         user_event.save()
         serializer = UserEventSerializer(user_event, context={'request': request})

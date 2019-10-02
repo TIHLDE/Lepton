@@ -10,6 +10,9 @@ class News(BaseModel, OptionalImage):
     header = models.CharField(max_length=200)
     body = models.TextField()
 
+    class Meta:
+        verbose_name_plural = 'News'
+
     def __str__(self):
         return '{} - {} [{} characters]'.format(self.title,
                                                 self.header, len(self.body))
@@ -17,6 +20,9 @@ class News(BaseModel, OptionalImage):
 class Category(BaseModel):
     text = models.CharField(max_length=200, null=True)
 
+    class Meta:
+        verbose_name_plural = 'Categories'
+        
     def __str__(self):
         return f'{self.text}'
 
