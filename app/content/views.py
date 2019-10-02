@@ -41,6 +41,9 @@ class EventViewSet(viewsets.ModelViewSet):
     """
     API endpoint to display all upcoming events and filter them by title, category and expired
         Excludes expired events by default: to include expired in results, add '&expired=true'
+        
+        TODO:
+            - Legg til funksjonalitet for påmelding
     """
     serializer_class = EventSerializer
     permission_classes = [HS_Drift_Promo]
@@ -55,7 +58,7 @@ class EventViewSet(viewsets.ModelViewSet):
 
         if (self.kwargs or 'expired' in self.request.query_params):
             return Event.objects.all().order_by('start')
-        return self.queryset
+        return self.queryset      
 
 class WarningViewSet(viewsets.ModelViewSet):
 
@@ -150,8 +153,18 @@ class UserEventViewSet(viewsets.ModelViewSet):
         return Response({'detail': 'The user event has been created.'})
 
     def update(self, request, event_id, user_id):
-        """ Put someone down on the waitinglist for example """
-        pass 
+        """ Updates the is_on_wait field """
+        try:
+            event = Event.objects.get(pk=event_id)
+            user = User.objects.get(user_id=request.data['user_id'])
+        except ObjectDoesNotExist:
+            return Response({'detail': 'Event or user does not exist'}, status=404)
+        user_event = UserEvent.objects.get(event=event, user=user)
+        user_event.is_on_waiting_list = request.data['is_on_wait']
+        user_event.has_attended = request.data['has_attended']
+        user_event.save()
+        serializer = UserEventSerializer(user_event, context={'request': request})
+        return Response({'user_event': serializer.data})
 
 # Method for accepting company interest forms from the company page
 # TODO: MOVE TO TEMPLATE

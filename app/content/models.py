@@ -110,10 +110,13 @@ class Event(BaseModel, OptionalImage):
                                     on_delete=models.SET_NULL)
 
     sign_up = models.BooleanField(default=False)
-    limit = models.IntegerField(default=0) # 0=no limit
+    limit = models.IntegerField(default=0) 
     closed = models.BooleanField(default=False) # improve name?
     # just registered_users?
     registered_users_list = models.ManyToManyField(User, through='UserEvent', through_fields=('event', 'user'), blank=True, default=None) 
+
+    def add_registration_list(self):
+        self.signup = True  
 
     @property
     def expired(self):
