@@ -11,11 +11,20 @@ services:
        PASSWORD: $DATABASE_PASSWORD
        HOST: $DATABASE_HOST
        PORT: $DATABASE_PORT
+       MYSQL_RANDOM_ROOT_PASSWORD: 'true'
   web:
+    env_file:
+      - .env
+    environment:
+      DATABASE_NAME: $DATABASE_NAME
+      DATABASE_USER: $DATABASE_USER
+      DATABASE_PASSWORD: $DATABASE_PASSWORD
+      DATABASE_HOST: $DATABASE_HOST
+      DATABASE_PORT: $DATABASE_PORT
     build: .
-    command: python manage.py runserver 0.0.0.0:8000
+    command: pipenv run python manage.py runserver 0.0.0.0:8000
     volumes:
-      - ./volume:/usr/src/app/volume
+      - .:/usr/src/
     ports:
       - "8000:8000"
     depends_on:
