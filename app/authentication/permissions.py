@@ -36,7 +36,7 @@ class IsHSorDrift(permissions.BasePermission):
     message = 'You are not in HS or Drift'
 
     def has_permission(self, request, view):
-        return check_group_permission(self, request, view, ['HS', 'Drift'])
+        return check_group_permission(self, request, view, ['HS', 'Drift', 'NetKom'])
 
 
 # Checks if the user is in HS, Drift, or Promo
@@ -53,10 +53,10 @@ class HS_Drift_NoK(permissions.BasePermission):
 
     def has_permission(self, request, view):
         return check_group_permission(self, request, view, ['HS', 'Drift', 'NoK'])
-        
+
 
 def check_group_permission(self, request, view, groups):
-   
+
     # Allow GET, HEAD or OPTIONS requests
     if(request.method in permissions.SAFE_METHODS):
         return True
@@ -122,13 +122,3 @@ class IsMember(permissions.BasePermission):
         request.email = info['mail'][0]
 
         return True
-
-class ActionBasedPermission(permissions.AllowAny):
-    """
-    Grant or deny access to a view, based on a mapping in view.action_permissions
-    """
-    def has_permission(self, request, view):
-        for klass, actions in getattr(view, 'action_permissions', {}).items():
-            if view.action in actions:
-                return klass().has_permission(request, view)
-        return False
