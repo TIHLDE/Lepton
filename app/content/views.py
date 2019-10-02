@@ -44,6 +44,8 @@ class EventViewSet(viewsets.ModelViewSet):
         
         TODO:
             - Legg til funksjonalitet for påmelding
+                - legg til en add_user_to_list som kaller på UserEventViewSet.create med
+                    event_id og user_id 
     """
     serializer_class = EventSerializer
     permission_classes = [HS_Drift_Promo]
@@ -143,20 +145,28 @@ class UserEventViewSet(viewsets.ModelViewSet):
 
 
     def create(self, request, event_id):
-        """ Creates a new user-event with the specified event_id and user_id """
+        """ 
+        Creates a new user-event with the specified event_id and user_id 
+            TODO: check if user is alreaady signed up to the event
+                - validate data
+                - doesnt work in django rest framework page
+        """
         try:
             event = Event.objects.get(pk=event_id)
             user = User.objects.get(user_id=request.data['user_id']) # or user object or email?
         except ObjectDoesNotExist:
             return Response({'detail': _('The provided event and or user does not exist')}, status=404)
-        UserEvent(user=user, event=event)
-        return Response({'detail': 'The user event has been created.'})
+        
+        # test this
+        is_on_wait = (event.limit < len(event.registered_users_list.all()) + 1) and event.limit is not 0
+        serializer = UserEventSerializer(data=request.data)
+        if serializer.is_valid():
+            UserEvent(user=user, event=event, is_on_wait=is_on_wait).save()
+            return Response({'detail': 'The user event has been created.'})
+        else:
+            return Response({'detail': serializer.errors}, status=400)
 
     def partial_update(self, request, event_id, user_id):
-        print('\n\n')
-        print(request)
-        print(request.is_on_wait)
-        print('\n\n')
         """ Updates the is_on_wait field """
         try:
             event = Event.objects.get(pk=event_id)

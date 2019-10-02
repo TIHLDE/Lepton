@@ -46,7 +46,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 class UserEventSerializer(serializers.ModelSerializer):
 
-    user_id = serializers.CharField() # makes it possible to add by name
+    user_id = serializers.CharField() # makes it possible to add by user id, reason for admin log error?
 
     class Meta:
         model = UserEvent

@@ -22,7 +22,7 @@ class Category(BaseModel):
 
     class Meta:
         verbose_name_plural = 'Categories'
-        
+
     def __str__(self):
         return f'{self.text}'
 
@@ -146,6 +146,12 @@ class UserEvent(BaseModel):
         # self.limit = self.event.limit is not 0 and self.event.registered_users_list > self.event.limit
         # self.save()
         pass
+
+    # def save(self, *args, **kwargs):
+    #     """ Automaticly sets is_on_wait if too many påmeldte """
+    #     limit = self.event.limit
+    #     if (limit is not 0 and len(self.event.regired_users_list) > limit):
+    #         self.
 
     def set_has_attended(self):
         # trenger annen logikk hvis bruker møtte opp og tok plassen til noen som 
