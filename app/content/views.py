@@ -148,7 +148,6 @@ class UserEventViewSet(viewsets.ModelViewSet):
         """ 
         Creates a new user-event with the specified event_id and user_id 
             TODO: check if user is alreaady signed up to the event
-                - validate data
                 - doesnt work in django rest framework page
         """
         try:
@@ -156,8 +155,6 @@ class UserEventViewSet(viewsets.ModelViewSet):
             user = User.objects.get(user_id=request.data['user_id']) # or user object or email?
         except ObjectDoesNotExist:
             return Response({'detail': _('The provided event and or user does not exist')}, status=404)
-        
-        # test this
         is_on_wait = (event.limit < len(event.registered_users_list.all()) + 1) and event.limit is not 0
         serializer = UserEventSerializer(data=request.data)
         if serializer.is_valid():
@@ -166,19 +163,23 @@ class UserEventViewSet(viewsets.ModelViewSet):
         else:
             return Response({'detail': serializer.errors}, status=400)
 
-    def partial_update(self, request, event_id, user_id):
-        """ Updates the is_on_wait field """
+    def update(self, request, *args, **kwargs):
+        """ Updates fields passed in request """
         try:
-            event = Event.objects.get(pk=event_id)
-            user = User.objects.get(user_id=request.data['user_id'])
+            self.check_object_permissions(self.request, self.get_object())
+            serializer = UserEventSerializer(self.get_object(), context={'request': request}, many=False, data=request.data)
+            if serializer.is_valid():
+                self.perform_update(serializer)
+                return Response({'detail': _('User event successfully updated.')})
+            else:
+                return Response({'detail': _('Could not perform update')}, status=400)
         except ObjectDoesNotExist:
-            return Response({'detail': 'Event or user does not exist'}, status=404)
-        user_event = UserEvent.objects.get(event=event, user=user)
-        user_event.is_on_wait = request.data['is_on_wait']
-        user_event.has_attended = request.data['has_attended']
-        user_event.save()
-        serializer = UserEventSerializer(user_event, context={'request': request})
-        return Response({'user_event': serializer.data})
+            return Response({'detail': 'Could not find event'}, status=400)
+
+
+
+    def destroy(self, request, event_id, user_id):
+        pass
 
 # Method for accepting company interest forms from the company page
 # TODO: MOVE TO TEMPLATE
