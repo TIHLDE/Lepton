@@ -105,32 +105,16 @@ class UserViewSet(viewsets.ModelViewSet):
     def get_object(self):
         user = self.request.user_id
         return self.queryset.filter(user_id = user)
-    
-
-    def retrieve(self, request, user_id): 
-        """Returns a given user event for the specified event """
-        try:
-            user = user.objects.get(user_id=user_id)
-        except User.DoesNotExist:
-            return Response({'detail': _('The user does not exist.')}, status=404)
-        self.check_object_permissions(self.request, user)
-        try:
-            user = User.objects.get(user_id=user_id)
-            serializer = UserSerializer(user, context={'request': request}, many=False)
-            return Response(serializer.data)
-        except User.DoesNotExist:
-            return Response({'detail': _('The user has not been found.')}, status=404)
 
 class UserEventViewSet(viewsets.ModelViewSet):
     """ 
         API endpoint to display all users signed up to an event
-            object should be created when user signes up to an event
-            Endpoint lies at '/events/:id/users'
+            TODO: object should be created when user signes up to an event
     """
     serializer_class = UserEventSerializer
     permission_classes = [HS_Drift_NoK]
     queryset = UserEvent.objects.all()
-    lookup_field = 'user_id' # user_event_id?
+    lookup_field = 'user_id' 
 
     def list(self, request, event_id):
         """ Returns all user events for given event """
@@ -159,16 +143,16 @@ class UserEventViewSet(viewsets.ModelViewSet):
 
 
     def create(self, request, event_id):
-        """ 
-        Creates a new user-event with the specified event_id and user_id 
-            TODO: check if user is alreaady signed up to the event
-                - doesnt work in django rest framework page
-        """
+        """ Creates a new user-event with the specified event_id and user_id """
         try:
             event = Event.objects.get(pk=event_id)
             user = User.objects.get(user_id=request.data['user_id']) # or user object or email?
         except ObjectDoesNotExist:
             return Response({'detail': _('The provided event and or user does not exist')}, status=404)
+        
+        if  self.queryset.filter(user=user, event=event).exists():
+            return Response({'detail': _('The user event could not be created')}, status=404)
+        
         is_on_wait = (event.limit < len(event.registered_users_list.all()) + 1) and event.limit is not 0
         serializer = UserEventSerializer(data=request.data)
         if serializer.is_valid():

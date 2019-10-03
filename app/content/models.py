@@ -153,8 +153,10 @@ class UserEvent(BaseModel):
         return super(UserEvent, self).save(*args, **kwargs)
 
     def set_has_attended(self):
-        # if event.expired() and not is_on_wait:
+        # when should this be called?
+        # if self.event.expired() and not is_on_wait:
         #     self.has_attended = False
+        # return self.save()
         pass
 
     def __str__(self):

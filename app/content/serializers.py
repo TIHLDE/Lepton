@@ -45,7 +45,7 @@ class UserEventSerializer(serializers.ModelSerializer):
 
 class EventSerializer(serializers.ModelSerializer):
     expired = serializers.BooleanField(read_only=True)
-    registered_users_list = serializers.SerializerMethodField() # Fix: not send every time
+    registered_users_list = serializers.SerializerMethodField() 
 
     class Meta:
         model = Event
