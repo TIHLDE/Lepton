@@ -117,8 +117,7 @@ class Event(BaseModel, OptionalImage):
 
     sign_up = models.BooleanField(default=False)
     limit = models.IntegerField(default=0) 
-    closed = models.BooleanField(default=False) # improve name?
-    # just registered_users?
+    closed = models.BooleanField(default=False) 
     registered_users_list = models.ManyToManyField(User, through='UserEvent', through_fields=('event', 'user'), blank=True, default=None) 
 
     def add_registration_list(self):
@@ -137,25 +136,23 @@ class UserEvent(BaseModel):
         A RegistrationList can have 0 or many UserEvents. 
         UserId (your school id) and regListId have to be primary keys in the UserEvents.
     """
-    user = models.ForeignKey(User, primary_key=True, on_delete=models.CASCADE) 
-    event = models.ForeignKey(Event, on_delete=models.CASCADE) #-> event_id
-    is_on_wait = models.BooleanField(default=False) # if event limit reached set this to true
+    user_event_id = models.AutoField(primary_key=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE) 
+    event = models.ForeignKey(Event, on_delete=models.CASCADE) 
+    is_on_wait = models.BooleanField(default=False) 
     has_attended = models.BooleanField(default=False)
 
-    def set_user_on_wait(self):
-        # self.limit = self.event.limit is not 0 and self.event.registered_users_list > self.event.limit
-        # self.save()
-        pass
+    class Meta:
+        unique_together = ('user', 'event')
+        verbose_name = "User event"
+        verbose_name_plural = 'User events'
 
-    # def save(self, *args, **kwargs):
-    #     """ Automaticly sets is_on_wait if too many påmeldte """
-    #     limit = self.event.limit
-    #     if (limit is not 0 and len(self.event.regired_users_list) > limit):
-    #         self.
+    def save(self, *args, **kwargs):
+        """ Validate and save instance """
+        super(UserEvent, self).clean(*args, **kwargs)
+        return super(UserEvent, self).save(*args, **kwargs)
 
     def set_has_attended(self):
-        # trenger annen logikk hvis bruker møtte opp og tok plassen til noen som 
-        # ikke møtte opp
         # if event.expired() and not is_on_wait:
         #     self.has_attended = False
         pass
