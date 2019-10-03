@@ -44,16 +44,18 @@ class UserEventSerializer(serializers.ModelSerializer):
         fields = ['user_event_id', 'user_id', 'event', 'is_on_wait', 'has_attended']
 
 class EventSerializer(serializers.ModelSerializer):
-    """ TODO: check if user is authenticated and if so, send reguserlist """
     expired = serializers.BooleanField(read_only=True)
-    registered_users_list = UserSerializer(many=True) # Fix: not send every time
+    registered_users_list = serializers.SerializerMethodField() # Fix: not send every time
 
     class Meta:
         model = Event
         fields = ['id', 'title', 'start', 'location', 'description', 'sign_up', 'priority', 'category', 'expired', 'limit', 'closed', 'registered_users_list', 'image', 'image_alt']
 
-    # def get_registered_users_list(self, obj):
-    #     # check permission/ownership of event
-    #     if self.context['request'].user.is_authenticated:
-    #         return UserSerializer(obj.registered_users_list.all())
-    #     return None
+    def get_registered_users_list(self, obj):
+        """ Check permission/ownership of event """
+        if self.context['request'].user.is_authenticated:
+            try:
+                return [str(item) for item in obj.registered_users_list.all()]
+            except User.DoesNotExist:
+                return None
+        return None
