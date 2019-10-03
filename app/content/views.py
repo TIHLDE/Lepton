@@ -57,7 +57,6 @@ class EventViewSet(viewsets.ModelViewSet):
     search_fields = ['title']
 
     def get_queryset(self):
-
         if (self.kwargs or 'expired' in self.request.query_params):
             return Event.objects.all().order_by('start')
         return self.queryset      
@@ -96,7 +95,7 @@ class JobPostViewSet(viewsets.ModelViewSet):
 
 class UserViewSet(viewsets.ModelViewSet):
     """
-    API endpoint to display one user'
+    API endpoint to display one user
     """
     serializer_class = UserSerializer
     permission_classes = []#IsMember]
@@ -106,17 +105,32 @@ class UserViewSet(viewsets.ModelViewSet):
     def get_object(self):
         user = self.request.user_id
         return self.queryset.filter(user_id = user)
+    
+
+    def retrieve(self, request, user_id): 
+        """Returns a given user event for the specified event """
+        try:
+            user = user.objects.get(user_id=user_id)
+        except User.DoesNotExist:
+            return Response({'detail': _('The user does not exist.')}, status=404)
+        self.check_object_permissions(self.request, user)
+        try:
+            user = User.objects.get(user_id=user_id)
+            serializer = UserSerializer(user, context={'request': request}, many=False)
+            return Response(serializer.data)
+        except User.DoesNotExist:
+            return Response({'detail': _('The user has not been found.')}, status=404)
 
 class UserEventViewSet(viewsets.ModelViewSet):
     """ 
         API endpoint to display all users signed up to an event
-            blir opprettet når man melder seg på
-            '/user-event/event_id/user_id
+            object should be created when user signes up to an event
+            Endpoint lies at '/events/:id/users'
     """
     serializer_class = UserEventSerializer
     permission_classes = [HS_Drift_NoK]
     queryset = UserEvent.objects.all()
-    lookup_field = 'user_id'
+    lookup_field = 'user_id' # user_event_id?
 
     def list(self, request, event_id):
         """ Returns all user events for given event """
