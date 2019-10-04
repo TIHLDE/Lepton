@@ -34,7 +34,20 @@ class JobPostSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['user_id', 'first_name', 'last_name', 'email', 'cell', 'em_nr', 'home_busstop', 'gender', 'user_class', 'user_study', 'allergy', 'tool']
+        fields = (
+            'user_id',
+            'first_name',
+            'last_name',
+            'email',
+            'cell',
+            'em_nr',
+            'home_busstop',
+            'gender',
+            'user_class',
+            'user_study',
+            'allergy',
+            'tool'
+            )
 
 class UserEventSerializer(serializers.ModelSerializer):
     user_id = serializers.CharField() # makes it possible to add by user id
@@ -49,7 +62,12 @@ class EventSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Event
-        fields = ['id', 'title', 'start', 'location', 'description', 'sign_up', 'priority', 'category', 'expired', 'limit', 'closed', 'registered_users_list', 'image', 'image_alt']
+        fields = [
+            'id', 'title', 'start', 'location', 
+            'description', 'sign_up', 'priority', 
+            'category', 'expired', 'limit', 'closed', 
+            'registered_users_list', 'image', 'image_alt'
+        ]
 
     def get_registered_users_list(self, obj):
         """ Check permission/ownership of event """
@@ -59,3 +77,4 @@ class EventSerializer(serializers.ModelSerializer):
             except User.DoesNotExist:
                 return None
         return None
+

@@ -93,18 +93,51 @@ class JobPostViewSet(viewsets.ModelViewSet):
             return JobPost.objects.all().order_by('deadline')
         return self.queryset
 
+
 class UserViewSet(viewsets.ModelViewSet):
     """
     API endpoint to display one user
     """
     serializer_class = UserSerializer
-    permission_classes = []#IsMember]
+    permission_classes = [IsMember]
     queryset = User.objects.all()
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
 
     def get_object(self):
         user = self.request.user_id
         return self.queryset.filter(user_id = user)
+
+    def get_permissions(self):
+        # Your logic should be all here
+        if self.request.method == 'POST':
+            self.permission_classes = [IsHSorDrift, ]
+        else:
+            self.permission_classes = [IsMember, ]
+        return super(UserViewSet, self).get_permissions()
+
+    def get_queryset(self):
+        """Returns one application"""
+        id = self.request.user_id
+
+        try:
+            User.objects.get(user_id = id)
+        except User.DoesNotExist:
+            new_data = {
+                'user_id': id,
+                'first_name': self.request.first_name,
+                'last_name': self.request.last_name,
+                'email': self.request.email
+            }
+            serializer = UserSerializer(data=new_data)
+            if serializer.is_valid():
+                serializer.save()
+        return self.queryset.filter(user_id = id)
+
+    def perform_create(self, serializer):
+        serializer = UserSerializer(data=self.request.data)
+        if serializer.is_valid():
+            serializer.save()
+
 
 class UserEventViewSet(viewsets.ModelViewSet):
     """ 
@@ -124,8 +157,6 @@ class UserEventViewSet(viewsets.ModelViewSet):
             return Response({'detail': _('The event does not exist.')}, status=404)
         self.check_object_permissions(self.request, event)
         user_event = self.queryset.filter(event__pk=event_id)
-        print(event_id )
-        print(user_event.count())
         if not user_event.count():
             return Response({'detail': _('No users signed up for this event.')}, status=404)
         serializer = UserEventSerializer(user_event, context={'request': request}, many=True)
@@ -182,6 +213,7 @@ class UserEventViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, event_id, user_id):
         pass
+
 
 # Method for accepting company interest forms from the company page
 # TODO: MOVE TO TEMPLATE

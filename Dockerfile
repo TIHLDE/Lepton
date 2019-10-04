@@ -11,8 +11,7 @@ RUN apk add --no-cache --virtual .build-deps gcc libc-dev linux-headers
 # Copy over the source
 ADD . /usr/src
 
-# Install Pytohon packages
-RUN sh -c "pip install --upgrade pip && pip install pipenv"
+RUN pip install --upgrade pip && pip install pipenv
 RUN pipenv install
 
 # Remove dependencies that are no longer needed.
