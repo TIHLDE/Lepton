@@ -109,7 +109,7 @@ class UserViewSet(viewsets.ModelViewSet):
 class UserEventViewSet(viewsets.ModelViewSet):
     """ 
         API endpoint to display all users signed up to an event
-            TODO: object should be created when user signes up to an event
+            TODO: object should be created when user signes up to an event - done at frontend?
     """
     serializer_class = UserEventSerializer
     permission_classes = [HS_Drift_NoK]
@@ -124,6 +124,10 @@ class UserEventViewSet(viewsets.ModelViewSet):
             return Response({'detail': _('The event does not exist.')}, status=404)
         self.check_object_permissions(self.request, event)
         user_event = self.queryset.filter(event__pk=event_id)
+        print(event_id )
+        print(user_event.count())
+        if not user_event.count():
+            return Response({'detail': _('No users signed up for this event.')}, status=404)
         serializer = UserEventSerializer(user_event, context={'request': request}, many=True)
         return Response(serializer.data)
 
@@ -153,7 +157,7 @@ class UserEventViewSet(viewsets.ModelViewSet):
         if  self.queryset.filter(user=user, event=event).exists():
             return Response({'detail': _('The user event could not be created')}, status=404)
         
-        is_on_wait = (event.limit < len(event.registered_users_list.all()) + 1) and event.limit is not 0
+        is_on_wait = (event.limit < event.registered_users_list.all().count() + 1) and event.limit is not 0
         serializer = UserEventSerializer(data=request.data)
         if serializer.is_valid():
             UserEvent(user=user, event=event, is_on_wait=is_on_wait).save()
