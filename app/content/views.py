@@ -4,6 +4,7 @@ import os
 from rest_framework import viewsets, mixins, permissions, generics, filters
 from rest_framework.decorators import api_view, action
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.response import Response
 
 # HTTP imports
 from django.http import HttpResponse, HttpResponseNotAllowed, JsonResponse
@@ -11,9 +12,9 @@ from django.views.decorators.csrf import csrf_exempt
 
 # Models and serializer imports
 from .models import News, Event, \
-                    Warning, Category, JobPost, User
+                    Warning, Category, JobPost, User, UserEvent
 from .serializers import NewsSerializer, EventSerializer, \
-                         WarningSerializer, CategorySerializer, JobPostSerializer, UserSerializer
+                         WarningSerializer, CategorySerializer, JobPostSerializer, UserSerializer, UserEventSerializer
 from .filters import CHECK_IF_EXPIRED, EventFilter, JobPostFilter
 
 # Permission imports
@@ -23,9 +24,13 @@ from app.authentication.permissions import IsMemberOrSafe, IsMember, IsHSorDrift
 from .pagination import BasePagination
 
 # Hash, and other imports
+from django.utils.translation import gettext as _
+from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 import hashlib
 import json
+
+
 
 class NewsViewSet(viewsets.ModelViewSet):
     queryset = News.objects.all().order_by('-created_at')
@@ -36,6 +41,11 @@ class EventViewSet(viewsets.ModelViewSet):
     """
     API endpoint to display all upcoming events and filter them by title, category and expired
         Excludes expired events by default: to include expired in results, add '&expired=true'
+        
+        TODO:
+            - Legg til funksjonalitet for påmelding
+                - legg til en add_user_to_list som kaller på UserEventViewSet.create med
+                    event_id og user_id 
     """
     serializer_class = EventSerializer
     permission_classes = [HS_Drift_Promo]
@@ -47,10 +57,9 @@ class EventViewSet(viewsets.ModelViewSet):
     search_fields = ['title']
 
     def get_queryset(self):
-
         if (self.kwargs or 'expired' in self.request.query_params):
             return Event.objects.all().order_by('start')
-        return self.queryset
+        return self.queryset      
 
 class WarningViewSet(viewsets.ModelViewSet):
 
@@ -85,16 +94,18 @@ class JobPostViewSet(viewsets.ModelViewSet):
         return self.queryset
 
 
-
-
 class UserViewSet(viewsets.ModelViewSet):
     """
-    API endpoint to display one user'
+    API endpoint to display one user
     """
     serializer_class = UserSerializer
     permission_classes = [IsMember]
     queryset = User.objects.all()
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+
+    def get_object(self):
+        user = self.request.user_id
+        return self.queryset.filter(user_id = user)
 
     def get_permissions(self):
         # Your logic should be all here
@@ -126,6 +137,83 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer = UserSerializer(data=self.request.data)
         if serializer.is_valid():
             serializer.save()
+
+
+class UserEventViewSet(viewsets.ModelViewSet):
+    """ 
+        API endpoint to display all users signed up to an event
+            TODO: object should be created when user signes up to an event - done at frontend?
+    """
+    serializer_class = UserEventSerializer
+    permission_classes = [HS_Drift_NoK]
+    queryset = UserEvent.objects.all()
+    lookup_field = 'user_id' 
+
+    def list(self, request, event_id):
+        """ Returns all user events for given event """
+        try:
+            event = Event.objects.get(pk=event_id)
+        except Event.DoesNotExist:
+            return Response({'detail': _('The event does not exist.')}, status=404)
+        self.check_object_permissions(self.request, event)
+        user_event = self.queryset.filter(event__pk=event_id)
+        if not user_event.count():
+            return Response({'detail': _('No users signed up for this event.')}, status=404)
+        serializer = UserEventSerializer(user_event, context={'request': request}, many=True)
+        return Response(serializer.data)
+
+    def retrieve(self, request, event_id, user_id): 
+        """Returns a given user event for the specified event """
+        try:
+            event = Event.objects.get(pk=event_id)
+        except Event.DoesNotExist:
+            return Response({'detail': _('The user event does not exist.')}, status=404)
+        self.check_object_permissions(self.request, event)
+        try:
+            user_event = UserEvent.objects.get(event__pk=event_id, user__user_id=user_id)
+            serializer = UserEventSerializer(user_event, context={'request': request}, many=False)
+            return Response(serializer.data)
+        except UserEvent.DoesNotExist:
+            return Response({'detail': _('The user event has not been found.')}, status=404)
+
+
+    def create(self, request, event_id):
+        """ Creates a new user-event with the specified event_id and user_id """
+        try:
+            event = Event.objects.get(pk=event_id)
+            user = User.objects.get(user_id=request.data['user_id']) # or user object or email?
+        except ObjectDoesNotExist:
+            return Response({'detail': _('The provided event and or user does not exist')}, status=404)
+        
+        if  self.queryset.filter(user=user, event=event).exists():
+            return Response({'detail': _('The user event could not be created')}, status=404)
+        
+        is_on_wait = (event.limit < event.registered_users_list.all().count() + 1) and event.limit is not 0
+        serializer = UserEventSerializer(data=request.data)
+        if serializer.is_valid():
+            UserEvent(user=user, event=event, is_on_wait=is_on_wait).save()
+            return Response({'detail': 'The user event has been created.'})
+        else:
+            return Response({'detail': serializer.errors}, status=400)
+
+    def update(self, request, *args, **kwargs):
+        """ Updates fields passed in request """
+        try:
+            self.check_object_permissions(self.request, self.get_object())
+            serializer = UserEventSerializer(self.get_object(), context={'request': request}, many=False, data=request.data)
+            if serializer.is_valid():
+                self.perform_update(serializer)
+                return Response({'detail': _('User event successfully updated.')})
+            else:
+                return Response({'detail': _('Could not perform update')}, status=400)
+        except ObjectDoesNotExist:
+            return Response({'detail': 'Could not find event'}, status=400)
+
+
+
+    def destroy(self, request, event_id, user_id):
+        pass
+
 
 # Method for accepting company interest forms from the company page
 # TODO: MOVE TO TEMPLATE

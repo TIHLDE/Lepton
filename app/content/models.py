@@ -10,12 +10,18 @@ class News(BaseModel, OptionalImage):
     header = models.CharField(max_length=200)
     body = models.TextField()
 
+    class Meta:
+        verbose_name_plural = 'News'
+
     def __str__(self):
         return '{} - {} [{} characters]'.format(self.title,
                                                 self.header, len(self.body))
 
 class Category(BaseModel):
     text = models.CharField(max_length=200, null=True)
+
+    class Meta:
+        verbose_name_plural = 'Categories'
 
     def __str__(self):
         return f'{self.text}'
@@ -110,9 +116,12 @@ class Event(BaseModel, OptionalImage):
                                     on_delete=models.SET_NULL)
 
     sign_up = models.BooleanField(default=False)
-    limit = models.IntegerField(default=0) # 0=no limit
-    closed = models.BooleanField(default=False) # improve name?
+    limit = models.IntegerField(default=0) 
+    closed = models.BooleanField(default=False) 
     registered_users_list = models.ManyToManyField(User, through='UserEvent', through_fields=('event', 'user'), blank=True, default=None) 
+
+    def add_registration_list(self):
+        self.signup = True  
 
     @property
     def expired(self):
@@ -127,17 +136,27 @@ class UserEvent(BaseModel):
         A RegistrationList can have 0 or many UserEvents. 
         UserId (your school id) and regListId have to be primary keys in the UserEvents.
     """
+    user_event_id = models.AutoField(primary_key=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE) 
     event = models.ForeignKey(Event, on_delete=models.CASCADE) 
-    user = models.ForeignKey(User, primary_key=True, on_delete=models.CASCADE) 
-    is_on_wait = models.BooleanField(default=False) # if event limit reached set this to true
+    is_on_wait = models.BooleanField(default=False) 
     has_attended = models.BooleanField(default=False)
 
-    def set_user_on_wait(self):
-        # self.limit = self.event.limit is not 0 and self.event.registered_users_list > self.event.limit
-        # self.save()
-        pass
+    class Meta:
+        unique_together = ('user', 'event')
+        verbose_name = "User event"
+        verbose_name_plural = 'User events'
+
+    def save(self, *args, **kwargs):
+        """ Validate and save instance """
+        super(UserEvent, self).clean(*args, **kwargs)
+        return super(UserEvent, self).save(*args, **kwargs)
 
     def set_has_attended(self):
+        # when should this be called?
+        # if self.event.expired() and not is_on_wait:
+        #     self.has_attended = False
+        # return self.save()
         pass
 
     def __str__(self):

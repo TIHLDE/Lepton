@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from .models import (News, Event,
-                     Warning, Category, JobPost, User)
+                     Warning, Category, JobPost, User, UserEvent)
 
 from logzero import logger
 
@@ -10,15 +10,6 @@ class NewsSerializer(serializers.ModelSerializer):
     class Meta:
         model = News
         fields = '__all__'  # bad form
-
-
-class EventSerializer(serializers.ModelSerializer):
-
-    expired = serializers.BooleanField(read_only=True)
-
-    class Meta:
-        model = Event
-        fields = ['id', 'title', 'start', 'location', 'description', 'sign_up', 'priority', 'category', 'expired', 'image', 'image_alt']
 
 class WarningSerializer(serializers.ModelSerializer):
 
@@ -57,3 +48,33 @@ class UserSerializer(serializers.ModelSerializer):
             'allergy',
             'tool'
             )
+
+class UserEventSerializer(serializers.ModelSerializer):
+    user_id = serializers.CharField() # makes it possible to add by user id
+
+    class Meta:
+        model = UserEvent
+        fields = ['user_event_id', 'user_id', 'event', 'is_on_wait', 'has_attended']
+
+class EventSerializer(serializers.ModelSerializer):
+    expired = serializers.BooleanField(read_only=True)
+    registered_users_list = serializers.SerializerMethodField() 
+
+    class Meta:
+        model = Event
+        fields = [
+            'id', 'title', 'start', 'location', 
+            'description', 'sign_up', 'priority', 
+            'category', 'expired', 'limit', 'closed', 
+            'registered_users_list', 'image', 'image_alt'
+        ]
+
+    def get_registered_users_list(self, obj):
+        """ Check permission/ownership of event """
+        if self.context['request'].user.is_authenticated:
+            try:
+                return [str(item) for item in obj.registered_users_list.all()]
+            except User.DoesNotExist:
+                return None
+        return None
+
