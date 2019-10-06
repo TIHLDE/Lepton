@@ -5,13 +5,8 @@ from rest_framework import filters
 # Model imports
 from .models import Event, JobPost
 
-# Django imports
-from django.utils import timezone
-
 # Datetime and other import
-from datetime import timedelta
-
-CHECK_IF_EXPIRED = lambda : timezone.now()-timedelta(days=1) 
+from datetime import datetime, timedelta, timezone
 
 class EventFilter(FilterSet):
     """
@@ -28,8 +23,8 @@ class EventFilter(FilterSet):
     """
     def filter_expired(self, queryset, name, value): 
         if value:
-            return queryset.filter(start__lt=CHECK_IF_EXPIRED()).order_by('-start')
-        return queryset.filter(start__gte=CHECK_IF_EXPIRED()).order_by('start')
+            return queryset.filter(start__lt=datetime.now(tz=timezone.utc)-timedelta(days=1)).order_by('-start')
+        return queryset.filter(start__gte=datetime.now(tz=timezone.utc)-timedelta(days=1)).order_by('start')
 
 class JobPostFilter(FilterSet):
     """
@@ -46,5 +41,5 @@ class JobPostFilter(FilterSet):
     """
     def filter_expired(self, queryset, name, value): 
         if value:
-            return queryset.filter(deadline__lt=CHECK_IF_EXPIRED()).order_by('-deadline')
-        return queryset.filter(deadline__gte=CHECK_IF_EXPIRED()).order_by('deadline')
+            return queryset.filter(deadline__lt=datetime.now(tz=timezone.utc)-timedelta(days=1)).order_by('-deadline')
+        return queryset.filter(deadline__gte=datetime.now(tz=timezone.utc)-timedelta(days=1)).order_by('deadline')
