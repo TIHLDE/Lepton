@@ -24,10 +24,10 @@ class Migration(migrations.Migration):
                 ('cell', models.CharField(blank=True, max_length=8)),
                 ('em_nr', models.CharField(blank=True, max_length=12)),
                 ('home_busstop', models.IntegerField(blank=True, null=True)),
-                ('gender', models.IntegerField(blank=True, choices=[(1, 'Mann'), (2, 'Kvinne'), (3, 'Annet')], default=0, null=True)),
+                ('gender', models.IntegerField(blank=True, choices=[(1, 'Mann'), (2, 'Kvinne'), (3, 'Annet')], default=2, null=True)),
                 ('user_class', models.IntegerField(blank=True, choices=[(1, '1. Klasse'), (2, '2. Klasse'), (3, '3. Klasse'), (4, '4. Klasse'), (5, '5. Klasse')], default=1, null=True)),
                 ('user_study', models.IntegerField(blank=True, choices=[(1, 'Dataing'), (2, 'DigFor'), (3, 'DigInc'), (4, 'DigSam')], default=1, null=True)),
-                ('allergy', models.TextField(blank=True)),
+                ('allergy', models.CharField(blank=True, max_length=250)),
                 ('tool', models.CharField(blank=True, max_length=100)),
             ],
             options={

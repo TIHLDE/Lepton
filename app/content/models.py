@@ -74,7 +74,7 @@ class User(BaseModel, OptionalImage):
         (2, 'Kvinne'),
         (3, 'Annet'),
     )
-    gender = models.IntegerField(default=0, choices=GENDER, null=True, blank=True)
+    gender = models.IntegerField(default=2, choices=GENDER, null=True, blank=True)
     CLASS = (
         (1, '1. Klasse'),
         (2, '2. Klasse'),
@@ -91,7 +91,7 @@ class User(BaseModel, OptionalImage):
         (4, 'DigSam'),
     )
     user_study = models.IntegerField(default=1, choices=STUDY, null=True, blank=True)
-    allergy = models.TextField(blank=True)
+    allergy = models.CharField(max_length=250, blank=True)
 
     tool = models.CharField(max_length=100, blank=True)
 
@@ -116,12 +116,12 @@ class Event(BaseModel, OptionalImage):
                                     on_delete=models.SET_NULL)
 
     sign_up = models.BooleanField(default=False)
-    limit = models.IntegerField(default=0) 
-    closed = models.BooleanField(default=False) 
+    limit = models.IntegerField(default=0)
+    closed = models.BooleanField(default=False)
     registered_users_list = models.ManyToManyField(User, through='UserEvent', through_fields=('event', 'user'), blank=True, default=None) 
 
     def add_registration_list(self):
-        self.signup = True  
+        self.signup = True
 
     @property
     def expired(self):
