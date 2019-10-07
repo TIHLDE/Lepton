@@ -9,7 +9,8 @@ RUN apk add --no-cache bash postgresql-dev postgresql-client mariadb-dev \
 RUN apk add --no-cache --virtual .build-deps gcc libc-dev linux-headers
 
 # Copy over the source
-ADD . /usr/src
+
+COPY . .
 
 RUN pip install --upgrade pip && pip install pipenv
 RUN pipenv install
