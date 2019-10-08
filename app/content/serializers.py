@@ -49,6 +49,30 @@ class UserSerializer(serializers.ModelSerializer):
             'tool'
             )
 
+class UserMemberSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = (
+            'user_id',
+            'first_name',
+            'last_name',
+            'email',
+            'cell',
+            'em_nr',
+            'home_busstop',
+            'gender',
+            'user_class',
+            'user_study',
+            'allergy',
+            'tool'
+            )
+        extra_kwargs = {
+            'user_id': {'read_only': True},
+            'first_name': {'read_only': True},
+            'last_name': {'read_only': True},
+            'email': {'read_only': True}
+        }
+
 class UserEventSerializer(serializers.ModelSerializer):
     user_id = serializers.CharField() # makes it possible to add by user id
 

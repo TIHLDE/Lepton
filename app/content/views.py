@@ -14,7 +14,7 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import News, Event, \
                     Warning, Category, JobPost, User, UserEvent
 from .serializers import NewsSerializer, EventSerializer, \
-                         WarningSerializer, CategorySerializer, JobPostSerializer, UserSerializer, UserEventSerializer
+                         WarningSerializer, CategorySerializer, JobPostSerializer, UserSerializer, UserEventSerializer, UserMemberSerializer
 from .filters import CHECK_IF_EXPIRED, EventFilter, JobPostFilter
 
 # Permission imports
@@ -138,9 +138,26 @@ class UserViewSet(viewsets.ModelViewSet):
         if serializer.is_valid():
             serializer.save()
 
+    def update(self, request, pk, *args, **kwargs):
+        """ Updates fields passed in request """
+        try:
+            self.check_object_permissions(self.request, User.objects.get(user_id=pk))
+            if self.request.user_id == pk:
+                serializer = UserMemberSerializer(User.objects.get(user_id=pk), context={'request': request}, many=False, data=request.data)
+                if serializer.is_valid():
+                    self.perform_update(serializer)
+                    return Response({'detail': _('User successfully updated.')})
+                else:
+                    return Response({'detail': _('Could not perform user update')}, status=400)
+            else:
+                return Response({'detail': _('Not authenticated to perform user update')}, status=400)
+        except ObjectDoesNotExist:
+            return Response({'detail': 'Could not find user'}, status=400)
+
+
 
 class UserEventViewSet(viewsets.ModelViewSet):
-    """ 
+    """
         API endpoint to display all users signed up to an event
             TODO: object should be created when user signes up to an event - done at frontend?
     """
@@ -162,7 +179,7 @@ class UserEventViewSet(viewsets.ModelViewSet):
         serializer = UserEventSerializer(user_event, context={'request': request}, many=True)
         return Response(serializer.data)
 
-    def retrieve(self, request, event_id, user_id): 
+    def retrieve(self, request, event_id, user_id):
         """Returns a given user event for the specified event """
         try:
             event = Event.objects.get(pk=event_id)
@@ -184,10 +201,10 @@ class UserEventViewSet(viewsets.ModelViewSet):
             user = User.objects.get(user_id=request.data['user_id']) # or user object or email?
         except ObjectDoesNotExist:
             return Response({'detail': _('The provided event and or user does not exist')}, status=404)
-        
+
         if  self.queryset.filter(user=user, event=event).exists():
             return Response({'detail': _('The user event could not be created')}, status=404)
-        
+
         is_on_wait = (event.limit < event.registered_users_list.all().count() + 1) and event.limit is not 0
         serializer = UserEventSerializer(data=request.data)
         if serializer.is_valid():
@@ -208,8 +225,6 @@ class UserEventViewSet(viewsets.ModelViewSet):
                 return Response({'detail': _('Could not perform update')}, status=400)
         except ObjectDoesNotExist:
             return Response({'detail': 'Could not find event'}, status=400)
-
-
 
     def destroy(self, request, event_id, user_id):
         pass
