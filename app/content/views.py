@@ -216,8 +216,27 @@ class UserEventViewSet(viewsets.ModelViewSet):
         else:
             return Response({'detail': serializer.errors}, status=400)
 
+    def partial_update(self, request, *args, **kwargs):
+        """ https://www.django-rest-framework.org/api-guide/serializers/#partial-updates """
+        try:
+            user_event = self.get_object()
+            self.check_object_permissions(self.request, user_event)
+            serializer = UserEventSerializer(user_event, data=request.data, partial=True)
+
+            if serializer.is_valid():
+                self.perform_update(serializer)
+                return Response({'detail': _('User event successfully updated.')})
+            else:
+                return Response({'detail': _('Could not perform update')}, status=400)
+        except ObjectDoesNotExist:
+            return Response({'detail': 'Could not find event'}, status=400)
+
     def update(self, request, *args, **kwargs):
-        """ Updates fields passed in request """
+        """ 
+        Updates fields passed in request 
+        TODO: Update only fields passed in request, without the need of sending the endtire object
+        """
+
         try:
             self.check_object_permissions(self.request, self.get_object())
             serializer = UserEventSerializer(self.get_object(), context={'request': request}, many=False, data=request.data)
