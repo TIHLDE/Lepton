@@ -166,6 +166,9 @@ class UserEventViewSet(viewsets.ModelViewSet):
     queryset = UserEvent.objects.all()
     lookup_field = 'user_id' 
 
+    def get_object(self):
+        return UserEvent.objects.get(user__user_id=self.kwargs['user_id'], event__pk=self.kwargs['event_id'])
+
     def list(self, request, event_id):
         """ Returns all user events for given event """
         try:
