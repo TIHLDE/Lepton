@@ -157,9 +157,8 @@ class UserViewSet(viewsets.ModelViewSet):
 
 
 class UserEventViewSet(viewsets.ModelViewSet):
-    """
-        API endpoint to display all users signed up to an event
-            TODO: object should be created when user signes up to an event - done at frontend?
+    """ 
+    API endpoint to administrate registration, waiting lists and attendence for events 
     """
     serializer_class = UserEventSerializer
     permission_classes = [HS_Drift_NoK]
@@ -167,6 +166,7 @@ class UserEventViewSet(viewsets.ModelViewSet):
     lookup_field = 'user_id' 
 
     def get_object(self):
+        """ Get object with event_id and user_id from url """
         return UserEvent.objects.get(user__user_id=self.kwargs['user_id'], event__pk=self.kwargs['event_id'])
 
     def list(self, request, event_id):
@@ -183,7 +183,7 @@ class UserEventViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def retrieve(self, request, event_id, user_id):
-        """Returns a given user event for the specified event """
+        """ Returns a given user event for the specified event """
         try:
             event = Event.objects.get(pk=event_id)
         except Event.DoesNotExist:
@@ -201,7 +201,7 @@ class UserEventViewSet(viewsets.ModelViewSet):
         """ Creates a new user-event with the specified event_id and user_id """
         try:
             event = Event.objects.get(pk=event_id)
-            user = User.objects.get(user_id=request.data['user_id']) # or user object or email?
+            user = User.objects.get(user_id=request.data['user_id'])
         except ObjectDoesNotExist:
             return Response({'detail': _('The provided event and or user does not exist')}, status=404)
 
@@ -216,37 +216,21 @@ class UserEventViewSet(viewsets.ModelViewSet):
         else:
             return Response({'detail': serializer.errors}, status=400)
 
-    def partial_update(self, request, *args, **kwargs):
-        """ https://www.django-rest-framework.org/api-guide/serializers/#partial-updates """
+    def update(self, request, *args, **kwargs):
+        """ Updates fields passed in request """
         try:
             user_event = self.get_object()
             self.check_object_permissions(self.request, user_event)
-            serializer = UserEventSerializer(user_event, data=request.data, partial=True)
+            serializer = UserEventSerializer(user_event, data=request.data, partial=True, many=False)
 
             if serializer.is_valid():
                 self.perform_update(serializer)
                 return Response({'detail': _('User event successfully updated.')})
             else:
                 return Response({'detail': _('Could not perform update')}, status=400)
-        except ObjectDoesNotExist:
-            return Response({'detail': 'Could not find event'}, status=400)
 
-    def update(self, request, *args, **kwargs):
-        """ 
-        Updates fields passed in request 
-        TODO: Update only fields passed in request, without the need of sending the endtire object
-        """
-
-        try:
-            self.check_object_permissions(self.request, self.get_object())
-            serializer = UserEventSerializer(self.get_object(), context={'request': request}, many=False, data=request.data)
-            if serializer.is_valid():
-                self.perform_update(serializer)
-                return Response({'detail': _('User event successfully updated.')})
-            else:
-                return Response({'detail': _('Could not perform update')}, status=400)
         except ObjectDoesNotExist:
-            return Response({'detail': 'Could not find event'}, status=400)
+            return Response({'detail': 'Could not find user event'}, status=400)
 
     def destroy(self, request, event_id, user_id):
         pass

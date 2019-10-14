@@ -78,7 +78,7 @@ class UserEventSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserEvent
-        fields = ['user_event_id', 'user_id', 'event', 'is_on_wait', 'has_attended']
+        fields = ['user_id', 'is_on_wait', 'has_attended']
 
 class EventSerializer(serializers.ModelSerializer):
     expired = serializers.BooleanField(read_only=True)
