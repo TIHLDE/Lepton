@@ -165,10 +165,6 @@ class UserEventViewSet(viewsets.ModelViewSet):
     queryset = UserEvent.objects.all()
     lookup_field = 'user_id' 
 
-    def get_object(self):
-        """ Get object with event_id and user_id from url """
-        return UserEvent.objects.get(user__user_id=self.kwargs['user_id'], event__pk=self.kwargs['event_id'])
-
     def list(self, request, event_id):
         """ Returns all user events for given event """
         try:
@@ -217,14 +213,10 @@ class UserEventViewSet(viewsets.ModelViewSet):
         else:
             return Response({'detail': serializer.errors}, status=400)
 
-    def update(self, request, *args, **kwargs):
-        """ 
-        Updates fields passed in request
-        http://localhost:8080/api/v1/events/3/users/ : data in request.body/data
-        """
-        
+    def update(self, request, event_id, user_id, *args, **kwargs):
+        """ Updates fields passed in request """
         try:
-            user_event = self.get_object()
+            user_event = UserEvent.objects.get(event__pk=event_id, user__user_id=user_id)
             self.check_object_permissions(self.request, user_event)
             serializer = UserEventSerializer(user_event, data=request.data, partial=True, many=False)
 
@@ -234,7 +226,7 @@ class UserEventViewSet(viewsets.ModelViewSet):
             else:
                 return Response({'detail': _('Could not perform update')}, status=400)
 
-        except ObjectDoesNotExist:
+        except UserEvent.DoesNotExist:
             return Response({'detail': 'Could not find user event'}, status=400)
             
     def destroy(self, request, event_id, user_id):
