@@ -161,7 +161,7 @@ class UserEventViewSet(viewsets.ModelViewSet):
     API endpoint to administrate registration, waiting lists and attendence for events 
     """
     serializer_class = UserEventSerializer
-    permission_classes = [HS_Drift_NoK]
+    permission_classes = [IsMember]
     queryset = UserEvent.objects.all()
     lookup_field = 'user_id' 
 
@@ -201,7 +201,7 @@ class UserEventViewSet(viewsets.ModelViewSet):
         """ Creates a new user-event with the specified event_id and user_id """
         try:
             event = Event.objects.get(pk=event_id)
-            user = User.objects.get(user_id=request.data['user_id'])
+            user = User.objects.get(user_id=request.data['user_id']) 
         except ObjectDoesNotExist:
             return Response({'detail': _('The provided event and or user does not exist')}, status=404)
 
@@ -210,6 +210,7 @@ class UserEventViewSet(viewsets.ModelViewSet):
 
         is_on_wait = (event.limit < event.registered_users_list.all().count() + 1) and event.limit is not 0
         serializer = UserEventSerializer(data=request.data)
+
         if serializer.is_valid():
             UserEvent(user=user, event=event, is_on_wait=is_on_wait).save()
             return Response({'detail': 'The user event has been created.'})
@@ -217,7 +218,11 @@ class UserEventViewSet(viewsets.ModelViewSet):
             return Response({'detail': serializer.errors}, status=400)
 
     def update(self, request, *args, **kwargs):
-        """ Updates fields passed in request """
+        """ 
+        Updates fields passed in request
+        http://localhost:8080/api/v1/events/3/users/ : data in request.body/data
+        """
+        
         try:
             user_event = self.get_object()
             self.check_object_permissions(self.request, user_event)
@@ -231,9 +236,18 @@ class UserEventViewSet(viewsets.ModelViewSet):
 
         except ObjectDoesNotExist:
             return Response({'detail': 'Could not find user event'}, status=400)
-
+            
     def destroy(self, request, event_id, user_id):
-        pass
+        """ 
+            Deletes the user event specified with provided event_id and user_id.
+        """
+        try:
+            user_event = UserEvent.objects.get(event__pk=event_id, user__user_id=user_id)
+            self.check_object_permissions(request, user_event)
+            user_event.delete()
+            return Response({'detail': 'User event deleted.'})
+        except UserEvent.DoesNotExist:
+            return Response({'detail': 'Could not delete user event.'}, status=400)
 
 
 # Method for accepting company interest forms from the company page
