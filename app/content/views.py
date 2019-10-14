@@ -162,7 +162,7 @@ class UserEventViewSet(viewsets.ModelViewSet):
             TODO: object should be created when user signes up to an event - done at frontend?
     """
     serializer_class = UserEventSerializer
-    permission_classes = [HS_Drift_NoK]
+    permission_classes = [IsMember]
     queryset = UserEvent.objects.all()
     lookup_field = 'user_id' 
 
@@ -198,7 +198,7 @@ class UserEventViewSet(viewsets.ModelViewSet):
         """ Creates a new user-event with the specified event_id and user_id """
         try:
             event = Event.objects.get(pk=event_id)
-            user = User.objects.get(user_id=request.data['user_id']) # or user object or email?
+            user = User.objects.get(user_id=request.data['user_id']) 
         except ObjectDoesNotExist:
             return Response({'detail': _('The provided event and or user does not exist')}, status=404)
 
@@ -207,6 +207,7 @@ class UserEventViewSet(viewsets.ModelViewSet):
 
         is_on_wait = (event.limit < event.registered_users_list.all().count() + 1) and event.limit is not 0
         serializer = UserEventSerializer(data=request.data)
+
         if serializer.is_valid():
             UserEvent(user=user, event=event, is_on_wait=is_on_wait).save()
             return Response({'detail': 'The user event has been created.'})
@@ -227,7 +228,16 @@ class UserEventViewSet(viewsets.ModelViewSet):
             return Response({'detail': 'Could not find event'}, status=400)
 
     def destroy(self, request, event_id, user_id):
-        pass
+        """ 
+            Deletes the user event specified with provided event_id and user_id.
+        """
+        try:
+            user_event = UserEvent.objects.get(event__pk=event_id, user__user_id=user_id)
+            self.check_object_permissions(request, user_event)
+            user_event.delete()
+            return Response({'detail': 'User event deleted.'})
+        except ObjectDoesNotExist:
+            return Response({'detail': 'Could not delete user event.'}, status=400)
 
 
 # Method for accepting company interest forms from the company page
