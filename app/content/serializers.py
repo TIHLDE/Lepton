@@ -74,11 +74,11 @@ class UserMemberSerializer(serializers.ModelSerializer):
         }
 
 class UserEventSerializer(serializers.ModelSerializer):
-    user_id = serializers.CharField() # makes it possible to add by user id
+    user_id = serializers.CharField() 
 
     class Meta:
         model = UserEvent
-        fields = ['user_event_id', 'user_id', 'event', 'is_on_wait', 'has_attended']
+        fields = ['user_event_id', 'user_id', 'is_on_wait', 'has_attended']
 
 class EventSerializer(serializers.ModelSerializer):
     expired = serializers.BooleanField(read_only=True)
