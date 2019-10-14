@@ -236,7 +236,7 @@ class UserEventViewSet(viewsets.ModelViewSet):
             self.check_object_permissions(request, user_event)
             user_event.delete()
             return Response({'detail': 'User event deleted.'})
-        except ObjectDoesNotExist:
+        except UserEvent.DoesNotExist:
             return Response({'detail': 'Could not delete user event.'}, status=400)
 
 
