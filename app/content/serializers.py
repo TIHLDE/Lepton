@@ -31,7 +31,10 @@ class JobPostSerializer(serializers.ModelSerializer):
         model = JobPost
         fields = '__all__'  # bad form
 
+
 class UserSerializer(serializers.ModelSerializer):
+    events = serializers.SerializerMethodField()
+
     class Meta:
         model = User
         fields = (
@@ -46,8 +49,15 @@ class UserSerializer(serializers.ModelSerializer):
             'user_class',
             'user_study',
             'allergy',
-            'tool'
+            'tool',
+            'events'
             )
+    
+    def get_events(self, obj):
+        user_events = UserEvent.objects.filter(user__user_id=obj.user_id)
+        events = [user_event.event for user_event in user_events]
+        return EventSerializer(events, many=True).data
+
 
 class UserMemberSerializer(serializers.ModelSerializer):
     class Meta:
