@@ -98,6 +98,7 @@ class User(BaseModel, OptionalImage):
     def __str__(self):
         return f'User - {self.user_id}: {self.first_name} {self.last_name}'
 
+
 class Event(BaseModel, OptionalImage):
     title = models.CharField(max_length=200)
     start = models.DateTimeField()
@@ -120,9 +121,6 @@ class Event(BaseModel, OptionalImage):
     closed = models.BooleanField(default=False)
     registered_users_list = models.ManyToManyField(User, through='UserEvent', through_fields=('event', 'user'), blank=True, default=None) 
 
-    def add_registration_list(self):
-        self.signup = True
-
     @property
     def expired(self):
         return self.start <= datetime.now(tz=timezone.utc)-timedelta(days=1)
@@ -130,12 +128,9 @@ class Event(BaseModel, OptionalImage):
     def __str__(self):
         return f'{self.title} - starting {self.start} at {self.location}'
 
+
 class UserEvent(BaseModel):
-    """
-    UserEvent
-        A RegistrationList can have 0 or many UserEvents. 
-        UserId (your school id) and regListId have to be primary keys in the UserEvents.
-    """
+    """ Model for users registrating for an event """
     user_event_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE) 
     event = models.ForeignKey(Event, on_delete=models.CASCADE) 
@@ -151,13 +146,6 @@ class UserEvent(BaseModel):
         """ Validate and save instance """
         super(UserEvent, self).clean(*args, **kwargs)
         return super(UserEvent, self).save(*args, **kwargs)
-
-    def set_has_attended(self):
-        # when should this be called?
-        # if self.event.expired() and not is_on_wait:
-        #     self.has_attended = False
-        # return self.save()
-        pass
 
     def __str__(self):
         return f'{self.user.email} - is to attend {self.event} and is { "on the waitinglist" if self.is_on_wait else "on the list"}'
