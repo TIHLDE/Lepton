@@ -41,11 +41,6 @@ class EventViewSet(viewsets.ModelViewSet):
     """
     API endpoint to display all upcoming events and filter them by title, category and expired
         Excludes expired events by default: to include expired in results, add '&expired=true'
-        
-        TODO:
-            - Legg til funksjonalitet for påmelding
-                - legg til en add_user_to_list som kaller på UserEventViewSet.create med
-                    event_id og user_id 
     """
     serializer_class = EventSerializer
     permission_classes = [HS_Drift_Promo]
@@ -60,6 +55,22 @@ class EventViewSet(viewsets.ModelViewSet):
         if (self.kwargs or 'expired' in self.request.query_params):
             return Event.objects.all().order_by('start')
         return self.queryset      
+
+    def update(self, request, pk, *args, **kwargs):
+        """ Updates fields passed in request """
+        try:
+            event = Event.objects.get(pk=pk)
+            self.check_object_permissions(self.request, event)
+            serializer = EventSerializer(event, data=request.data, partial=True, many=False)
+
+            if serializer.is_valid():
+                self.perform_update(serializer)
+                return Response({'detail': _('Event successfully updated.')})
+            else:
+                return Response({'detail': _('Could not perform update')}, status=400)
+
+        except Event.DoesNotExist:
+            return Response({'detail': 'Could not find event'}, status=400)
 
 class WarningViewSet(viewsets.ModelViewSet):
 
@@ -200,6 +211,9 @@ class UserEventViewSet(viewsets.ModelViewSet):
             user = User.objects.get(user_id=request.data['user_id']) 
         except ObjectDoesNotExist:
             return Response({'detail': _('The provided event and or user does not exist')}, status=404)
+
+        if event.closed:
+            return Response({'detail': _('The queue for this event is closed')})
 
         if  self.queryset.filter(user=user, event=event).exists():
             return Response({'detail': _('The user event could not be created')}, status=404)
