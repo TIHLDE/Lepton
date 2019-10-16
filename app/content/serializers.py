@@ -82,7 +82,7 @@ class UserEventSerializer(serializers.ModelSerializer):
 
 class EventSerializer(serializers.ModelSerializer):
     expired = serializers.BooleanField(read_only=True)
-    registered_users_list = serializers.SerializerMethodField() 
+    registered_users_list = serializers.SerializerMethodField()
 
     class Meta:
         model = Event
@@ -94,11 +94,14 @@ class EventSerializer(serializers.ModelSerializer):
         ]
 
     def get_registered_users_list(self, obj):
-        """ Check permission/ownership of event """
+        """ Check permission/ownership of event and return only some user fields"""
         if self.context['request'].user.is_authenticated:
             try:
-                return [str(item) for item in obj.registered_users_list.all()]
+                return [{
+                    'user_id': user.user_id, 
+                    'first_name': user.first_name, 
+                    'last_name': user.last_name
+                    } for user in obj.registered_users_list.all()]        
             except User.DoesNotExist:
                 return None
         return None
-
