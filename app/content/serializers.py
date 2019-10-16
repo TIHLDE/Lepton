@@ -54,6 +54,11 @@ class UserSerializer(serializers.ModelSerializer):
             )
     
     def get_events(self, obj):
+        """
+            Lists all events user is to attend or has attended
+            param obj: the current user object
+            return: a list of serialized events 
+        """
         user_events = UserEvent.objects.filter(user__user_id=obj.user_id)
         events = [user_event.event for user_event in user_events]
         return EventSerializer(events, many=True).data
