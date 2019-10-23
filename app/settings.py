@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'django_filters',
+    'rest_framework_swagger',
     # Our apps
     'app.authentication',
     'app.content',
@@ -203,3 +204,6 @@ LOGGING = {
         },
     }
 }
+
+# Django rest framework
+REST_FRAMEWORK = { 'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema' }
