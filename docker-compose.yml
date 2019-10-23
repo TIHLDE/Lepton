@@ -4,23 +4,21 @@ services:
   db:
     image: mysql:5.7
     ports:
-      - '3306:3306'
+      - "3306:3306"
     environment:
-       NAME: $DATABASE_NAME
-       USER: $DATABASE_USER
-       PASSWORD: $DATABASE_PASSWORD
-       HOST: $DATABASE_HOST
-       PORT: $DATABASE_PORT
-       MYSQL_RANDOM_ROOT_PASSWORD: 'true'
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_USER=dev
+      - MYSQL_PASSWORD=password
+      - MYSQL_DATABASE=nettside-dev
   web:
     env_file:
       - .env
     environment:
-      DATABASE_NAME: $DATABASE_NAME
-      DATABASE_USER: $DATABASE_USER
-      DATABASE_PASSWORD: $DATABASE_PASSWORD
-      DATABASE_HOST: $DATABASE_HOST
-      DATABASE_PORT: $DATABASE_PORT
+      DATABASE_NAME: $DATABASE_DEV_NAME
+      DATABASE_USER: $DATABASE_DEV_USER
+      DATABASE_PASSWORD: $DATABASE_DEV_PASSWORD
+      DATABASE_HOST: $DATABASE_DEV_HOST
+      DATABASE_PORT: $DATABASE_DEV_PORT
     build: .
     command: pipenv run python manage.py runserver 0.0.0.0:8000
     volumes:
