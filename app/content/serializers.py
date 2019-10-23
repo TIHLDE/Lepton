@@ -110,10 +110,8 @@ class EventSerializer(serializers.ModelSerializer):
 
     def get_registered_users_list(self, obj):
         """ Check permission/ownership of event """
-        if self.context['request'].user.is_authenticated:
-            try:
-                return [str(item) for item in obj.registered_users_list.all()]
-            except User.DoesNotExist:
-                return None
-        return None
+        try:
+            return [str(item) for item in obj.registered_users_list.all()]
+        except User.DoesNotExist:
+            return None
 
