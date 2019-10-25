@@ -19,11 +19,11 @@ router.register('user', UserViewSet, base_name='user')
 router.register(r'events/(?P<event_id>\d+)/users', UserEventViewSet, base_name='user_event')
 
 # Swagger 
-schema_view = get_swagger_view(title='TIHLDE API', url='/api/v1/all')
+schema_view = get_swagger_view(title='TIHLDE API')
 
 
 urlpatterns = [
-    url(r'all', schema_view),
+    url(r'docs', schema_view),
     url(r'', include(router.urls)),
     path('accept-form/', accept_form),
 ]
