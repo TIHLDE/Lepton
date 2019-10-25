@@ -31,7 +31,10 @@ class JobPostSerializer(serializers.ModelSerializer):
         model = JobPost
         fields = '__all__'  # bad form
 
+
 class UserSerializer(serializers.ModelSerializer):
+    events = serializers.SerializerMethodField()
+
     class Meta:
         model = User
         fields = (
@@ -46,8 +49,20 @@ class UserSerializer(serializers.ModelSerializer):
             'user_class',
             'user_study',
             'allergy',
-            'tool'
+            'tool',
+            'events'
             )
+    
+    def get_events(self, obj):
+        """
+            Lists all events user is to attend or has attended
+            param obj: the current user object
+            return: a list of serialized events 
+        """
+        user_events = UserEvent.objects.filter(user__user_id=obj.user_id)
+        events = [user_event.event for user_event in user_events]
+        return EventSerializer(events, many=True).data
+
 
 class UserMemberSerializer(serializers.ModelSerializer):
     class Meta:
@@ -95,13 +110,11 @@ class EventSerializer(serializers.ModelSerializer):
 
     def get_registered_users_list(self, obj):
         """ Check permission/ownership of event and return only some user fields"""
-        if self.context['request'].user.is_authenticated:
-            try:
-                return [{
-                    'user_id': user.user_id, 
-                    'first_name': user.first_name, 
-                    'last_name': user.last_name
-                    } for user in obj.registered_users_list.all()]        
-            except User.DoesNotExist:
-                return None
-        return None
+        try:
+            return [{
+                'user_id': user.user_id, 
+                'first_name': user.first_name, 
+                'last_name': user.last_name
+                } for user in obj.registered_users_list.all()]        
+        except User.DoesNotExist:
+            return None
