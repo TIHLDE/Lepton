@@ -9,25 +9,6 @@ import requests
 API_URL = 'https://web-auth.tihlde.org/api/v1'
 VERIFY_URL = API_URL + '/verify'
 
-# class IsMemberOrSafe(permissions.BasePermission):
-#     message = 'You are not a member'
-
-#     def has_permission(self, request, view):
-#         # Allow GET, HEAD or OPTIONS requests
-#         if(request.method in permissions.SAFE_METHODS):
-#             return True
-
-#         # Check if session-token is provided
-#         token = request.META.get('HTTP_X_CSRF_TOKEN')
-#         if(token == None):
-#             return permissions.IsAdminUser.has_permission(self, request, view) # Allow access if is Admin
-
-#         # Verify user
-#         headers = {'X-CSRF-TOKEN': token}
-#         authReq = requests.get(VERIFY_URL, headers=headers, verify=False)
-#         status_code = authReq.status_code
-#         return status_code == 200
-
 # Checks if the user is a member
 class IsMember(permissions.BasePermission):
     message = 'You are not a member'
@@ -44,11 +25,6 @@ class IsMember(permissions.BasePermission):
             return False
 
         request.info = info
-        # request.user_id = info['uid'][0]
-        # request.first_name = info['givenname'][0]
-        # request.last_name = info['sn'][0]
-        # request.email = info['mail'][0]
-
         return True
 
 # Checks if the user is in HS or Drift
@@ -107,20 +83,6 @@ def check_group_permission(self, request, view, groups):
     # Check if user with given id is connected to Groups
     return User.objects.filter(user_id = user).filter(groups=groups).count() > 0
 
-
-# def get_user_id(token):
-#     # Get user ID from token
-#     headers = {'X-CSRF-TOKEN': token}
-#     r = requests.get(VERIFY_URL, headers=headers, verify=False) # Send request to verify token
-#     response = r.json()
-
-#     if(r.status_code is not 200 or 'uid' not in response):
-#         return None
-
-#     # User id
-#     user = response['uid'][0]
-
-#     return user
 
 def get_user_info(token):
     # Get user ID from token
