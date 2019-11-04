@@ -57,11 +57,11 @@ class UserSerializer(serializers.ModelSerializer):
         """
             Lists all events user is to attend or has attended
             param obj: the current user object
-            return: a list of serialized events 
+            return: a list of serialized events
         """
         user_events = UserEvent.objects.filter(user__user_id=obj.user_id)
-        events = [user_event.event for user_event in user_events]
-        return EventSerializer(events, many=True).data
+        events = [user_event.event for user_event in user_events if not user_event.event.expired]
+        return EventInUserSerializer(events, many=True).data
 
 
 class UserMemberSerializer(serializers.ModelSerializer):
@@ -112,9 +112,19 @@ class EventSerializer(serializers.ModelSerializer):
         """ Check permission/ownership of event and return only some user fields"""
         try:
             return [{
-                'user_id': user.user_id, 
-                'first_name': user.first_name, 
+                'user_id': user.user_id,
+                'first_name': user.first_name,
                 'last_name': user.last_name
-                } for user in obj.registered_users_list.all()]        
+                } for user in obj.registered_users_list.all()]
         except User.DoesNotExist:
             return None
+
+class EventInUserSerializer(EventSerializer):
+    expired = serializers.BooleanField(read_only=True)
+
+    class Meta:
+        model = Event
+        fields = [
+            'id', 'title', 'start', 'location', 'priority', 'limit',
+            'description', 'expired', 'image', 'image_alt'
+        ]
