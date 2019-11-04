@@ -18,7 +18,7 @@ from .serializers import NewsSerializer, EventSerializer, \
 from .filters import CHECK_IF_EXPIRED, EventFilter, JobPostFilter
 
 # Permission imports
-from app.authentication.permissions import IsMemberOrSafe, IsMember, IsHSorDrift, HS_Drift_Promo, HS_Drift_NoK
+from .permissions import IsMember, IsDev, IsHS, IsNoK, IsPromo, IsNoKorPromo
 
 # Pagination imports
 from .pagination import BasePagination
@@ -35,7 +35,7 @@ import json
 class NewsViewSet(viewsets.ModelViewSet):
     queryset = News.objects.all().order_by('-created_at')
     serializer_class = NewsSerializer
-    permission_classes = [HS_Drift_Promo]
+    permission_classes = [IsNoK]
 
 class EventViewSet(viewsets.ModelViewSet):
     """
@@ -43,7 +43,7 @@ class EventViewSet(viewsets.ModelViewSet):
         Excludes expired events by default: to include expired in results, add '&expired=true'
     """
     serializer_class = EventSerializer
-    permission_classes = [HS_Drift_Promo]
+    permission_classes = [IsNoKorPromo]
     queryset = Event.objects.filter(start__gte=CHECK_IF_EXPIRED()).order_by('start')
     pagination_class = BasePagination
 
@@ -54,7 +54,7 @@ class EventViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         if (self.kwargs or 'expired' in self.request.query_params):
             return Event.objects.all().order_by('start')
-        return self.queryset      
+        return self.queryset
 
     def update(self, request, pk, *args, **kwargs):
         """ Updates fields passed in request """
@@ -76,13 +76,13 @@ class WarningViewSet(viewsets.ModelViewSet):
 
     queryset = Warning.objects.all()
     serializer_class = WarningSerializer
-    permission_classes = [HS_Drift_Promo]
+    permission_classes = [IsDev]
 
 class CategoryViewSet(viewsets.ModelViewSet):
 
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    permission_classes = [HS_Drift_Promo]
+    permission_classes = [IsNoKorPromo]
 
 class JobPostViewSet(viewsets.ModelViewSet):
     """
@@ -91,7 +91,7 @@ class JobPostViewSet(viewsets.ModelViewSet):
     """
 
     serializer_class = JobPostSerializer
-    permission_classes = [HS_Drift_NoK]
+    permission_classes = [IsNoK]
     pagination_class = BasePagination
 
     queryset = JobPost.objects.filter(deadline__gte=CHECK_IF_EXPIRED()).order_by('deadline')
@@ -121,23 +121,23 @@ class UserViewSet(viewsets.ModelViewSet):
     def get_permissions(self):
         # Your logic should be all here
         if self.request.method == 'POST':
-            self.permission_classes = [IsHSorDrift, ]
+            self.permission_classes = [IsDev, ]
         else:
             self.permission_classes = [IsMember, ]
         return super(UserViewSet, self).get_permissions()
 
     def get_queryset(self):
         """Returns one application"""
-        id = self.request.user_id
+        id = self.request.info['uid'][0]
 
         try:
             User.objects.get(user_id = id)
         except User.DoesNotExist:
             new_data = {
                 'user_id': id,
-                'first_name': self.request.first_name,
-                'last_name': self.request.last_name,
-                'email': self.request.email
+                'first_name': self.request.info['givenname'][0],
+                'last_name': self.request.info['sn'][0],
+                'email': self.request.info['mail'][0]
             }
             serializer = UserSerializer(data=new_data)
             if serializer.is_valid():
@@ -168,13 +168,13 @@ class UserViewSet(viewsets.ModelViewSet):
 
 
 class UserEventViewSet(viewsets.ModelViewSet):
-    """ 
-    API endpoint to administrate registration, waiting lists and attendence for events 
+    """
+    API endpoint to administrate registration, waiting lists and attendence for events
     """
     serializer_class = UserEventSerializer
     permission_classes = [IsMember]
     queryset = UserEvent.objects.all()
-    lookup_field = 'user_id' 
+    lookup_field = 'user_id'
 
     def list(self, request, event_id):
         """ Returns all user events for given event """
@@ -208,7 +208,7 @@ class UserEventViewSet(viewsets.ModelViewSet):
         """ Creates a new user-event with the specified event_id and user_id """
         try:
             event = Event.objects.get(pk=event_id)
-            user = User.objects.get(user_id=request.data['user_id']) 
+            user = User.objects.get(user_id=request.info['uid'][0])
         except ObjectDoesNotExist:
             return Response({'detail': _('The provided event and or user does not exist')}, status=404)
 
@@ -242,9 +242,9 @@ class UserEventViewSet(viewsets.ModelViewSet):
 
         except UserEvent.DoesNotExist:
             return Response({'detail': 'Could not find user event'}, status=400)
-            
+
     def destroy(self, request, event_id, user_id):
-        """ 
+        """
             Deletes the user event specified with provided event_id and user_id.
         """
         try:
