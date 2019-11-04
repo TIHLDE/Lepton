@@ -14,7 +14,7 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import News, Event, \
                     Warning, Category, JobPost, User, UserEvent
 from .serializers import NewsSerializer, EventSerializer, \
-                         WarningSerializer, CategorySerializer, JobPostSerializer, UserSerializer, UserEventSerializer, UserMemberSerializer
+                         WarningSerializer, CategorySerializer, JobPostSerializer, UserSerializer, UserEventSerializer
 from .filters import CHECK_IF_EXPIRED, EventFilter, JobPostFilter
 
 # Permission imports
@@ -154,7 +154,7 @@ class UserViewSet(viewsets.ModelViewSet):
         try:
             self.check_object_permissions(self.request, User.objects.get(user_id=pk))
             if self.request.user_id == pk:
-                serializer = UserMemberSerializer(User.objects.get(user_id=pk), context={'request': request}, many=False, data=request.data)
+                serializer = UserSerializer(User.objects.get(user_id=pk), context={'request': request}, many=False, data=request.data)
                 if serializer.is_valid():
                     self.perform_update(serializer)
                     return Response({'detail': _('User successfully updated.')})
