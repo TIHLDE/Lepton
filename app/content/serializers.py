@@ -4,6 +4,8 @@ from .models import (News, Event,
                      Warning, Category, JobPost, User, UserEvent)
 from ..authentication.models import Connection
 
+from ..authentication.models import Connection
+
 from logzero import logger
 
 
@@ -71,6 +73,10 @@ class UserSerializer(serializers.ModelSerializer):
         user_events = UserEvent.objects.filter(user__user_id=obj.user_id)
         events = [user_event.event for user_event in user_events]
         return EventSerializer(events, many=True).data
+    
+    def get_groups(self, obj):
+        connections = [Connection.objects.filter(user_id=obj.user_id)]
+        return [connection.group.name for connection in connections]
 
     def get_groups(self, obj):
         connections = Connection.objects.filter(user_id=obj.user_id)
