@@ -5,6 +5,7 @@ from django.contrib.auth.models import AbstractBaseUser,BaseUserManager, Permiss
 import importlib # RecentFirstGrid
 from datetime import datetime, timezone, timedelta
 
+
 class News(BaseModel, OptionalImage):
     title = models.CharField(max_length=200)
     header = models.CharField(max_length=200)
@@ -17,6 +18,7 @@ class News(BaseModel, OptionalImage):
         return '{} - {} [{} characters]'.format(self.title,
                                                 self.header, len(self.body))
 
+
 class Category(BaseModel):
     text = models.CharField(max_length=200, null=True)
 
@@ -25,6 +27,7 @@ class Category(BaseModel):
 
     def __str__(self):
         return f'{self.text}'
+
 
 class Warning(BaseModel):
     text = models.CharField(max_length=400, null=True)
@@ -37,6 +40,7 @@ class Warning(BaseModel):
 
     def __str__(self):
         return f'Warning: {self.type} - Text: {self.text}'
+
 
 class JobPost(BaseModel, OptionalImage):
     title = models.CharField(max_length=200)
@@ -56,6 +60,7 @@ class JobPost(BaseModel, OptionalImage):
 
     def __str__(self):
         return f'JobPost: {self.company}  - {self.title}'
+
 
 class UserManager(BaseUserManager):
     use_in_migrations = True
@@ -86,6 +91,7 @@ class UserManager(BaseUserManager):
         user.admin = True
         user.save(using=self._db)
         return user
+
 
 class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
     user_id = models.CharField(max_length=15, primary_key=True)
@@ -138,6 +144,8 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
         return self.is_superuser
 
     objects = UserManager()
+
+
 class Event(BaseModel, OptionalImage):
     title = models.CharField(max_length=200)
     start = models.DateTimeField()
@@ -158,8 +166,7 @@ class Event(BaseModel, OptionalImage):
     sign_up = models.BooleanField(default=False)
     limit = models.IntegerField(default=0)
     closed = models.BooleanField(default=False)
-    registered_users_list = models.ManyToManyField(User, through='UserEvent', through_fields=('event', 'user'), blank=True, default=None) 
-
+    registered_users_list = models.ManyToManyField(User, through='UserEvent', through_fields=('event', 'user'), blank=True, default=None)
 
     @property
     def expired(self):
@@ -170,7 +177,7 @@ class Event(BaseModel, OptionalImage):
 
 
 class UserEvent(BaseModel):
-    """ Model for users registrating for an event """
+    """ Model for users registration for an event """
     user_event_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
@@ -188,4 +195,5 @@ class UserEvent(BaseModel):
         return super(UserEvent, self).save(*args, **kwargs)
 
     def __str__(self):
-        return f'{self.user.email} - is to attend {self.event} and is { "on the waitinglist" if self.is_on_wait else "on the list"}'
+        return f'{self.user.email} - is to attend {self.event} and is ' \
+               f'{ "on the waitinglist" if self.is_on_wait else "on the list"}'

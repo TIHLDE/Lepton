@@ -2,11 +2,6 @@ from rest_framework import serializers
 
 from .models import (News, Event,
                      Warning, Category, JobPost, User, UserEvent)
-from ..authentication.models import Connection
-
-from ..authentication.models import Connection
-
-from logzero import logger
 
 
 class NewsSerializer(serializers.ModelSerializer):
@@ -14,17 +9,20 @@ class NewsSerializer(serializers.ModelSerializer):
         model = News
         fields = '__all__'  # bad form
 
+
 class WarningSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Warning
         fields = '__all__'  # bad form
 
+
 class CategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Category
         fields = '__all__'  # bad form
+
 
 class JobPostSerializer(serializers.ModelSerializer):
 
@@ -75,15 +73,8 @@ class UserSerializer(serializers.ModelSerializer):
         return EventInUserSerializer(events, many=True).data
     
     def get_groups(self, obj):
-        """
-            Lists all groups a user is a member of
-        """
-        connections = [Connection.objects.filter(user_id=obj.user_id)]
-        return [connection.group.name for connection in connections]
-
-    def get_groups(self, obj):
-        connections = Connection.objects.filter(user_id=obj.user_id)
-        return [connection.group.name for connection in connections]
+        """ Lists all groups a user is a member of """
+        return [group.name for group in obj.groups.all()]
 
 
 class UserEventSerializer(serializers.ModelSerializer):
