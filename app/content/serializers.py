@@ -126,5 +126,5 @@ class EventInUserSerializer(EventSerializer):
         model = Event
         fields = [
             'id', 'title', 'start', 'location', 'priority', 'limit',
-            'description', 'expired', 'image', 'image_alt'
+            'closed', 'description', 'expired', 'image', 'image_alt'
         ]
