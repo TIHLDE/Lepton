@@ -75,6 +75,9 @@ class UserSerializer(serializers.ModelSerializer):
         return EventSerializer(events, many=True).data
     
     def get_groups(self, obj):
+        """
+            Lists all groups a user is a member of
+        """
         connections = [Connection.objects.filter(user_id=obj.user_id)]
         return [connection.group.name for connection in connections]
 
@@ -92,6 +95,9 @@ class UserEventSerializer(serializers.ModelSerializer):
         fields = ['user_event_id', 'user_id', 'user_info', 'is_on_wait', 'has_attended']
 
     def get_user_info(self, obj):
+        """
+            Gets the necessary info from user
+        """
         user = User.objects.get(user_id=obj.user_id)
         return { 
             'first_name': user.first_name,
