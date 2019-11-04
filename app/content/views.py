@@ -213,9 +213,9 @@ class UserEventViewSet(viewsets.ModelViewSet):
             return Response({'detail': _('The provided event and or user does not exist')}, status=404)
 
         if event.closed:
-            return Response({'detail': _('The queue for this event is closed')})
+            return Response({'detail': _('The queue for this event is closed')}, status=400)
 
-        if  self.queryset.filter(user=user, event=event).exists():
+        if self.queryset.filter(user=user, event=event).exists():
             return Response({'detail': _('The user event could not be created')}, status=404)
 
         is_on_wait = (event.limit < event.registered_users_list.all().count() + 1) and event.limit is not 0
