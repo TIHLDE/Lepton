@@ -53,17 +53,17 @@ class IsMember(permissions.BasePermission):
 
 # Checks if the user is in HS or Drift
 class IsDev(permissions.BasePermission):
-    message = 'You are not in NetKom or Drift'
+    message = 'You are not in DevKom'
 
     def has_permission(self, request, view):
-        return check_group_permission(self, request, view, ['Drift', 'NetKom'])
+        return check_group_permission(self, request, view, ['DevKom'])
 
 # Checks if the user is in HS or Drift
 class IsHS(permissions.BasePermission):
     message = 'You are not in HS'
 
     def has_permission(self, request, view):
-        return check_group_permission(self, request, view, ['HS', 'Drift', 'NetKom'])
+        return check_group_permission(self, request, view, ['HS', 'DevKom'])
 
 
 # Checks if the user is in HS, Drift, or Promo
@@ -71,7 +71,7 @@ class IsPromo(permissions.BasePermission):
     message = 'You are not in Promo'
 
     def has_permission(self, request, view):
-        return check_group_permission(self, request, view, ['HS', 'Drift', 'NetKom', 'Promo'])
+        return check_group_permission(self, request, view, ['HS', 'DevKom' 'Promo'])
 
 
 # Checks if the user is in HS, Drift, or NoK
@@ -79,18 +79,17 @@ class IsNoK(permissions.BasePermission):
     message = 'You are not in NoK'
 
     def has_permission(self, request, view):
-        return check_group_permission(self, request, view, ['HS', 'Drift', 'NetKom', 'NoK'])
+        return check_group_permission(self, request, view, ['HS', 'DevKom', 'NoK'])
 
 # Checks if the user is in HS, Drift, or NoK
 class IsNoKorPromo(permissions.BasePermission):
     message = 'You are not in NoK'
 
     def has_permission(self, request, view):
-        return check_group_permission(self, request, view, ['HS', 'Drift', 'NetKom', 'NoK', 'Promo'])
+        return check_group_permission(self, request, view, ['HS', 'DevKom', 'NoK', 'Promo'])
 
 
 def check_group_permission(self, request, view, groups):
-  
     # Allow GET, HEAD or OPTIONS requests
     if(request.method in permissions.SAFE_METHODS):
         return True

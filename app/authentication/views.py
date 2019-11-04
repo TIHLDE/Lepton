@@ -4,9 +4,7 @@ from django.urls import reverse
 from rest_framework import status, viewsets
 from rest_framework.decorators import api_view
 
-from .serializers import AuthSerializer, GroupSerializer, ConnectionSerializer
-from .models import Group, Connection
-from .permissions import IsHSorDrift
+from .serializers import AuthSerializer
 
 # http-lib import
 import requests
@@ -18,19 +16,9 @@ VERIFY_URL = API_URL + '/verify'
 LOGOUT_URL = API_URL + '/logout'
 
 
-class GroupViewSet(viewsets.ModelViewSet):
-    queryset = Group.objects.all().order_by('-created_at')
-    serializer_class = GroupSerializer
-    permission_classes = [IsHSorDrift]
-
-class ConnectionViewSet(viewsets.ModelViewSet):
-    queryset = Connection.objects.all().order_by('-created_at')
-    serializer_class = ConnectionSerializer
-    permission_classes = [IsHSorDrift]
-
 @api_view(['POST'])
 def login(request):
-    
+
     # Serialize data and check if valid
     serializer = AuthSerializer(data=request.data)
     if(not serializer.is_valid()):
@@ -43,7 +31,7 @@ def login(request):
     # Send token-request to web-auth API
     r = requests.post(TOKEN_URL, json={'username': username, 'password': password}, verify=False)
     response = r.json()
-    
+
     # Send response back
     if(r.status_code == 200 or r.status_code == 401):
         return JsonResponse(data=response, status=r.status_code)
