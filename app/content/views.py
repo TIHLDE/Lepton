@@ -52,7 +52,7 @@ class EventViewSet(viewsets.ModelViewSet):
             
         if (self.kwargs or 'expired' in self.request.query_params):
             return Event.objects.all().order_by('start')
-        return self.queryset
+        return Event.objects.filter(start__gte=datetime.now(tz=timezone.utc) - timedelta(days=1)).order_by('start')
 
 class WarningViewSet(viewsets.ModelViewSet):
 
@@ -84,7 +84,7 @@ class JobPostViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         if (self.kwargs or 'expired' in self.request.query_params):
             return JobPost.objects.all().order_by('deadline')
-        return self.queryset
+        return JobPost.objects.filter(deadline__gte=datetime.now(tz=timezone.utc) - timedelta(days=1)).order_by('deadline')
 
 
 # Method for accepting company interest forms from the company page
