@@ -5,6 +5,11 @@ from app.util.models import BaseModel, OptionalImage, OptionalAction
 import importlib # RecentFirstGrid
 from datetime import datetime, timezone, timedelta
 
+
+def yesterday():
+    return datetime.now(tz=timezone.utc)-timedelta(days=1)
+
+
 class News(BaseModel, OptionalImage):
     title = models.CharField(max_length=200)
     header = models.CharField(max_length=200)
@@ -40,7 +45,7 @@ class Event(BaseModel, OptionalImage):
                                     on_delete=models.SET_NULL)
     @property
     def expired(self):
-        return self.start <= datetime.now(tz=timezone.utc)-timedelta(days=1)
+        return self.start <= yesterday()
 
     def __str__(self):
         return f'{self.title} - starting {self.start} at {self.location}'
@@ -72,7 +77,7 @@ class JobPost(BaseModel, OptionalImage):
 
     @property
     def expired(self):
-        return self.deadline <= datetime.now(tz=timezone.utc)-timedelta(days=1)
+        return self.deadline <= yesterday()
 
     def __str__(self):
         return f'JobPost: {self.company}  - {self.title}'

@@ -3,7 +3,7 @@ from django_filters.rest_framework import DjangoFilterBackend, BooleanFilter, Ch
 from rest_framework import filters
 
 # Model imports
-from .models import Event, JobPost
+from .models import Event, JobPost, yesterday
 
 # Datetime and other import
 from datetime import datetime, timedelta, timezone
@@ -23,8 +23,8 @@ class EventFilter(FilterSet):
     """
     def filter_expired(self, queryset, name, value): 
         if value:
-            return queryset.filter(start__lt=datetime.now(tz=timezone.utc)-timedelta(days=1)).order_by('-start')
-        return queryset.filter(start__gte=datetime.now(tz=timezone.utc)-timedelta(days=1)).order_by('start')
+            return queryset.filter(start__lt=yesterday()).order_by('-start')
+        return queryset.filter(start__gte=yesterday()).order_by('start')
 
 class JobPostFilter(FilterSet):
     """
@@ -41,5 +41,5 @@ class JobPostFilter(FilterSet):
     """
     def filter_expired(self, queryset, name, value): 
         if value:
-            return queryset.filter(deadline__lt=datetime.now(tz=timezone.utc)-timedelta(days=1)).order_by('-deadline')
-        return queryset.filter(deadline__gte=datetime.now(tz=timezone.utc)-timedelta(days=1)).order_by('deadline')
+            return queryset.filter(deadline__lt=yesterday()).order_by('-deadline')
+        return queryset.filter(deadline__gte=yesterday()).order_by('deadline')
