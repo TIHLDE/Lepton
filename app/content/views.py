@@ -140,6 +140,7 @@ class UserViewSet(viewsets.ModelViewSet):
                 'email': self.request.info['mail'][0]
             }
             serializer = UserSerializer(data=new_data)
+            print(data)
             if serializer.is_valid():
                 serializer.save()
         return self.queryset.filter(user_id = id)
