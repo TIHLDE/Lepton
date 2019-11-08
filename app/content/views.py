@@ -1,13 +1,13 @@
 import os
 
 # Rest Framework
-from rest_framework import viewsets, mixins, permissions, generics, filters
-from rest_framework.decorators import api_view, action
+from rest_framework import viewsets, filters
+from rest_framework.decorators import api_view
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
 
 # HTTP imports
-from django.http import HttpResponse, HttpResponseNotAllowed, JsonResponse
+from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
 # Models and serializer imports
@@ -18,7 +18,7 @@ from .serializers import NewsSerializer, EventSerializer, \
 from .filters import CHECK_IF_EXPIRED, EventFilter, JobPostFilter
 
 # Permission imports
-from .permissions import IsMember, IsDev, IsHS, IsNoK, IsPromo, IsNoKorPromo
+from .permissions import IsMember, IsDev, IsNoK, IsNoKorPromo
 
 # Pagination imports
 from .pagination import BasePagination
@@ -26,10 +26,7 @@ from .pagination import BasePagination
 # Hash, and other imports
 from django.utils.translation import gettext as _
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import Q
-import hashlib
 import json
-
 
 
 class NewsViewSet(viewsets.ModelViewSet):
@@ -37,9 +34,10 @@ class NewsViewSet(viewsets.ModelViewSet):
     serializer_class = NewsSerializer
     permission_classes = [IsNoK]
 
+
 class EventViewSet(viewsets.ModelViewSet):
     """
-    API endpoint to display all upcoming events and filter them by title, category and expired
+        Display all upcoming events and filter them by title, category and expired
         Excludes expired events by default: to include expired in results, add '&expired=true'
     """
     serializer_class = EventSerializer
@@ -72,11 +70,13 @@ class EventViewSet(viewsets.ModelViewSet):
         except Event.DoesNotExist:
             return Response({'detail': 'Could not find event'}, status=400)
 
+
 class WarningViewSet(viewsets.ModelViewSet):
 
     queryset = Warning.objects.all()
     serializer_class = WarningSerializer
     permission_classes = [IsDev]
+
 
 class CategoryViewSet(viewsets.ModelViewSet):
 
@@ -84,9 +84,10 @@ class CategoryViewSet(viewsets.ModelViewSet):
     serializer_class = CategorySerializer
     permission_classes = [IsNoKorPromo]
 
+
 class JobPostViewSet(viewsets.ModelViewSet):
     """
-    API endpoint to display all upcoming events and filter them by title, category and expired
+        Display all upcoming events and filter them by title, category and expired
         Excludes expired events by default: to include expired in search results, add '&expired=true'
     """
 
@@ -106,9 +107,7 @@ class JobPostViewSet(viewsets.ModelViewSet):
 
 
 class UserViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint to display one user
-    """
+    """ API endpoint to display one user """
     serializer_class = UserSerializer
     permission_classes = [IsMember]
     queryset = User.objects.all()
@@ -167,11 +166,8 @@ class UserViewSet(viewsets.ModelViewSet):
             return Response({'detail': 'Could not find user'}, status=400)
 
 
-
 class UserEventViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint to administrate registration, waiting lists and attendence for events
-    """
+    """ Administrate registration, waiting lists and attendance for events """
     serializer_class = UserEventSerializer
     permission_classes = [IsMember]
     queryset = UserEvent.objects.all()
@@ -183,8 +179,10 @@ class UserEventViewSet(viewsets.ModelViewSet):
             event = Event.objects.get(pk=event_id)
         except Event.DoesNotExist:
             return Response({'detail': _('The event does not exist.')}, status=404)
+
         self.check_object_permissions(self.request, event)
         user_event = self.queryset.filter(event__pk=event_id)
+
         if not user_event.count():
             return Response({'detail': _('No users signed up for this event.')}, status=404)
         serializer = UserEventSerializer(user_event, context={'request': request}, many=True)
@@ -203,7 +201,6 @@ class UserEventViewSet(viewsets.ModelViewSet):
             return Response(serializer.data)
         except UserEvent.DoesNotExist:
             return Response({'detail': _('The user event has not been found.')}, status=404)
-
 
     def create(self, request, event_id):
         """ Creates a new user-event with the specified event_id and user_id """

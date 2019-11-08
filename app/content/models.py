@@ -2,7 +2,6 @@ from django.db import models
 
 from app.util.models import BaseModel, OptionalImage
 from django.contrib.auth.models import AbstractBaseUser,BaseUserManager, PermissionsMixin
-import importlib # RecentFirstGrid
 from datetime import datetime, timezone, timedelta
 
 

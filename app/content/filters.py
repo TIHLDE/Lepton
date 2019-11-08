@@ -1,6 +1,5 @@
 # Django Filters and Rest Framework imports
-from django_filters.rest_framework import DjangoFilterBackend, BooleanFilter, CharFilter, FilterSet
-from rest_framework import filters
+from django_filters.rest_framework import BooleanFilter, FilterSet
 
 # Model imports
 from .models import Event, JobPost
