@@ -55,12 +55,6 @@ class UserSerializer(serializers.ModelSerializer):
             'events',
             'groups'
             )
-        extra_kwargs = {
-            'user_id': {'read_only': True},
-            'first_name': {'read_only': True},
-            'last_name': {'read_only': True},
-            'email': {'read_only': True}
-        }
     
     def get_events(self, obj):
         """
@@ -75,6 +69,18 @@ class UserSerializer(serializers.ModelSerializer):
     def get_groups(self, obj):
         """ Lists all groups a user is a member of """
         return [group.name for group in obj.groups.all()]
+
+
+class UserMemberSerializer(UserSerializer):
+    """Serializer for user update to prevent them from updating extra_kwargs fields"""
+    class Meta(UserSerializer.Meta):
+        fields = UserSerializer.Meta.fields
+        extra_kwargs = {
+            'user_id': {'read_only': True},
+            'first_name': {'read_only': True},
+            'last_name': {'read_only': True},
+            'email': {'read_only': True}
+        }
 
 
 class UserEventSerializer(serializers.ModelSerializer):

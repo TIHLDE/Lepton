@@ -14,7 +14,7 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import News, Event, \
                     Warning, Category, JobPost, User, UserEvent
 from .serializers import NewsSerializer, EventSerializer, \
-                         WarningSerializer, CategorySerializer, JobPostSerializer, UserSerializer, UserEventSerializer
+                         WarningSerializer, CategorySerializer, JobPostSerializer, UserSerializer, UserEventSerializer, UserMemberSerializer
 from .filters import CHECK_IF_EXPIRED, EventFilter, JobPostFilter
 
 # Permission imports
@@ -140,7 +140,6 @@ class UserViewSet(viewsets.ModelViewSet):
                 'email': self.request.info['mail'][0]
             }
             serializer = UserSerializer(data=new_data)
-            print(data)
             if serializer.is_valid():
                 serializer.save()
         return self.queryset.filter(user_id = id)
@@ -154,8 +153,8 @@ class UserViewSet(viewsets.ModelViewSet):
         """ Updates fields passed in request """
         try:
             self.check_object_permissions(self.request, User.objects.get(user_id=pk))
-            if self.request.user_id == pk:
-                serializer = UserSerializer(User.objects.get(user_id=pk), context={'request': request}, many=False, data=request.data)
+            if self.request.info['uid'][0] == pk:
+                serializer = UserMemberSerializer(User.objects.get(user_id=pk), context={'request': request}, many=False, data=request.data)
                 if serializer.is_valid():
                     self.perform_update(serializer)
                     return Response({'detail': _('User successfully updated.')})

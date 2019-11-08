@@ -188,12 +188,7 @@ class UserEvent(BaseModel):
         unique_together = ('user', 'event')
         verbose_name = "User event"
         verbose_name_plural = 'User events'
-
-    def save(self, *args, **kwargs):
-        """ Validate and save instance """
-        super(UserEvent, self).clean(*args, **kwargs)
-        return super(UserEvent, self).save(*args, **kwargs)
-
+    
     def __str__(self):
         return f'{self.user.email} - is to attend {self.event} and is ' \
                f'{ "on the waitinglist" if self.is_on_wait else "on the list"}'
