@@ -129,6 +129,18 @@ class EventSerializer(serializers.ModelSerializer):
         except User.DoesNotExist:
             return None
 
+    def validate_limit(self, limit):
+        """
+            Check that the event limit is greater or equal to 0 and
+            that the number of registered users is not lower than the limit
+        """
+        if limit < 0:
+            raise serializers.ValidationError("Event limit can not a negative integer")
+        elif self.get_registered_users_count(self.instance) <= limit:
+            raise serializers.ValidationError("Event limit can not be lower than number of registered users.")
+        return limit
+
+
 class EventInUserSerializer(EventSerializer):
     expired = serializers.BooleanField(read_only=True)
 
