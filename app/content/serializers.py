@@ -132,7 +132,7 @@ class EventSerializer(serializers.ModelSerializer):
     def validate_limit(self, limit):
         """
             Check that the event limit is greater or equal to 0 and
-            that the number of registered users is not lower than the limit
+            that the limit can not be lower than the number of registered users
         """
         if limit < 0:
             raise serializers.ValidationError("Event limit can not a negative integer")
