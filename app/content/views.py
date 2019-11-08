@@ -23,10 +23,9 @@ from app.authentication.permissions import IsMemberOrSafe, IsHSorDrift, HS_Drift
 # Pagination imports
 from .pagination import BasePagination
 
+from ..util.utils import yesterday
+
 # Datetime, hash, and other imports
-from datetime import datetime, timedelta, timezone
-from django.db.models import Q
-import hashlib
 import json
 
 class NewsViewSet(viewsets.ModelViewSet):
@@ -41,7 +40,7 @@ class EventViewSet(viewsets.ModelViewSet):
     """
     serializer_class = EventSerializer
     permission_classes = [HS_Drift_Promo]
-    queryset = Event.objects.filter(start__gte=datetime.now(tz=timezone.utc)-timedelta(days=1)).order_by('start')
+    queryset = Event.objects.filter(start__gte=yesterday()).order_by('start')
     pagination_class = BasePagination
 
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
@@ -52,7 +51,7 @@ class EventViewSet(viewsets.ModelViewSet):
             
         if (self.kwargs or 'expired' in self.request.query_params):
             return Event.objects.all().order_by('start')
-        return self.queryset
+        return Event.objects.filter(start__gte=yesterday()).order_by('start')
 
 class WarningViewSet(viewsets.ModelViewSet):
 
@@ -76,7 +75,7 @@ class JobPostViewSet(viewsets.ModelViewSet):
     permission_classes = [HS_Drift_NoK]
     pagination_class = BasePagination
 
-    queryset = JobPost.objects.filter(deadline__gte=datetime.now(tz=timezone.utc)-timedelta(days=1)).order_by('deadline')
+    queryset = JobPost.objects.filter(deadline__gte=yesterday()).order_by('deadline')
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_class = JobPostFilter
     search_fields = ['title', 'company']
@@ -84,7 +83,7 @@ class JobPostViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         if (self.kwargs or 'expired' in self.request.query_params):
             return JobPost.objects.all().order_by('deadline')
-        return self.queryset
+        return JobPost.objects.filter(deadline__gte=yesterday()).order_by('deadline')
 
 
 # Method for accepting company interest forms from the company page
