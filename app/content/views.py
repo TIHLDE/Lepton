@@ -11,7 +11,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 # Models and serializer imports
 from .models import News, Event, \
-                    Warning, Category, JobPost, yesterday
+                    Warning, Category, JobPost
 from .serializers import NewsSerializer, EventSerializer, \
                          WarningSerializer, CategorySerializer, JobPostSerializer
 from app.util.models import Gridable
@@ -23,10 +23,9 @@ from app.authentication.permissions import IsMemberOrSafe, IsHSorDrift, HS_Drift
 # Pagination imports
 from .pagination import BasePagination
 
+from ..util.utils import yesterday
+
 # Datetime, hash, and other imports
-from datetime import datetime, timedelta, timezone
-from django.db.models import Q
-import hashlib
 import json
 
 class NewsViewSet(viewsets.ModelViewSet):

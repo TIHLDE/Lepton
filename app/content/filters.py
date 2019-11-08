@@ -3,7 +3,8 @@ from django_filters.rest_framework import DjangoFilterBackend, BooleanFilter, Ch
 from rest_framework import filters
 
 # Model imports
-from .models import Event, JobPost, yesterday
+from .models import Event, JobPost
+from ..util.utils import yesterday
 
 # Datetime and other import
 from datetime import datetime, timedelta, timezone

@@ -1,13 +1,7 @@
 from django.db import models
 
 from app.util.models import BaseModel, OptionalImage, OptionalAction
-
-import importlib # RecentFirstGrid
-from datetime import datetime, timezone, timedelta
-
-
-def yesterday():
-    return datetime.now(tz=timezone.utc)-timedelta(days=1)
+from ..util.utils import yesterday
 
 
 class News(BaseModel, OptionalImage):
