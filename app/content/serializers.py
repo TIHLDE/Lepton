@@ -55,12 +55,6 @@ class UserSerializer(serializers.ModelSerializer):
             'events',
             'groups'
             )
-        extra_kwargs = {
-            'user_id': {'read_only': True},
-            'first_name': {'read_only': True},
-            'last_name': {'read_only': True},
-            'email': {'read_only': True}
-        }
     
     def get_events(self, obj):
         """
@@ -77,10 +71,17 @@ class UserSerializer(serializers.ModelSerializer):
         return [group.name for group in obj.groups.all()]
 
 
+class UserMemberSerializer(UserSerializer):
+    """Serializer for user update to prevent them from updating extra_kwargs fields"""
+    class Meta(UserSerializer.Meta):
+        fields = UserSerializer.Meta.fields
+        read_only_fields = ('user_id', 'first_name', 'last_name', 'email',)
+
+
 class UserEventSerializer(serializers.ModelSerializer):
     user_id = serializers.CharField()
     user_info = serializers.SerializerMethodField()
-    
+
     class Meta:
         model = UserEvent
         fields = ['user_event_id', 'user_id', 'user_info', 'is_on_wait', 'has_attended']
@@ -90,9 +91,9 @@ class UserEventSerializer(serializers.ModelSerializer):
             Gets the necessary info from user
         """
         user = User.objects.get(user_id=obj.user_id)
-        return { 
+        return {
             'first_name': user.first_name,
-            'last_name': user.last_name, 
+            'last_name': user.last_name,
             'user_class': user.user_class,
             'user_study': user.user_study,
             'allergy': user.allergy
@@ -107,10 +108,10 @@ class EventSerializer(serializers.ModelSerializer):
     class Meta:
         model = Event
         fields = [
-            'id', 'title', 'start', 'location', 
-            'description', 'sign_up', 'priority', 
-            'category', 'expired', 'limit', 'closed', 
-            'registered_users_list', 'registered_users_count', 
+            'id', 'title', 'start', 'location',
+            'description', 'sign_up', 'priority',
+            'category', 'expired', 'limit', 'closed',
+            'registered_users_list', 'registered_users_count',
             'image', 'image_alt'
         ]
 
