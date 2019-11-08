@@ -136,7 +136,7 @@ class EventSerializer(serializers.ModelSerializer):
         """
         if limit < 0:
             raise serializers.ValidationError("Event limit can not a negative integer")
-        elif self.get_registered_users_count(self.instance) <= limit:
+        elif limit <= self.get_registered_users_count(self.instance):
             raise serializers.ValidationError("Event limit can not be lower than number of registered users.")
         return limit
 
