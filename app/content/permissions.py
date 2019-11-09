@@ -9,6 +9,7 @@ import requests
 API_URL = 'https://web-auth.tihlde.org/api/v1'
 VERIFY_URL = API_URL + '/verify'
 
+
 # Checks if the user is a member
 class IsMember(permissions.BasePermission):
     message = 'You are not a member'
@@ -16,16 +17,17 @@ class IsMember(permissions.BasePermission):
     def has_permission(self, request, view):
         # Check if session-token is provided
         token = request.META.get('HTTP_X_CSRF_TOKEN')
-        if(token == None):
+        if token is None:
             return False
 
         info = get_user_info(token)
 
-        if(info is None):
+        if info is None:
             return False
 
         request.info = info
         return True
+
 
 # Checks if the user is in HS or Drift
 class IsDev(permissions.BasePermission):
@@ -33,6 +35,7 @@ class IsDev(permissions.BasePermission):
 
     def has_permission(self, request, view):
         return check_group_permission(self, request, view, ['DevKom'])
+
 
 # Checks if the user is in HS or Drift
 class IsHS(permissions.BasePermission):
@@ -57,6 +60,7 @@ class IsNoK(permissions.BasePermission):
     def has_permission(self, request, view):
         return check_group_permission(self, request, view, ['HS', 'DevKom', 'NoK'])
 
+
 # Checks if the user is in HS, Drift, or NoK
 class IsNoKorPromo(permissions.BasePermission):
     message = 'You are not in NoK'
@@ -67,30 +71,33 @@ class IsNoKorPromo(permissions.BasePermission):
 
 def check_group_permission(self, request, view, groups):
     # Allow GET, HEAD or OPTIONS requests
-    if(request.method in permissions.SAFE_METHODS):
+    if request.method in permissions.SAFE_METHODS:
         return True
 
     # Check if session-token is provided
     token = request.META.get('HTTP_X_CSRF_TOKEN')
-    if(token == None):
+    if token is None:
         return permissions.IsAdminUser.has_permission(self, request, view) # Allow access if is Admin
 
     # Gets the user id
-    user = get_user_info(token)['uid'][0]
+    user = get_user_info(token)
 
-    if(user is None): return False
+    if user is None:
+        return False
+
+    user_id = user['uid'][0]
 
     # Check if user with given id is connected to Groups
-    return User.objects.filter(user_id = user).filter(groups=groups).count() > 0
+    return User.objects.filter(user_id=user_id).filter(groups__name__in=groups).count() > 0
 
 
 def get_user_info(token):
     # Get user ID from token
     headers = {'X-CSRF-TOKEN': token}
-    r = requests.get(VERIFY_URL, headers=headers, verify=False) # Send request to verify token
+    r = requests.get(VERIFY_URL, headers=headers, verify=False)  # Send request to verify token
     response = r.json()
 
-    if(r.status_code is not 200 or 'uid' not in response):
+    if r.status_code is not 200 or 'uid' not in response:
         return None
 
     return response
