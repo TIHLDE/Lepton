@@ -129,17 +129,21 @@ class EventSerializer(serializers.ModelSerializer):
                 } for user in obj.registered_users_list.all()]
         except User.DoesNotExist:
             return None
-
     def validate_limit(self, limit):
         """
             Check that the event limit is greater or equal to 0 and
             that the limit can not be lower than the number of registered users
         """
-        if limit < 0:
-            raise serializers.ValidationError("Event limit can not a negative integer")
-        elif limit <= self.get_registered_users_count(self.instance):
-            raise serializers.ValidationError("Event limit can not be lower than number of registered users.")
-        return limit
+        try:
+            if limit < 0:
+                raise serializers.ValidationError("Event limit can not a negative integer")
+            elif limit <= self.get_registered_users_count(self.instance):
+                raise serializers.ValidationError("Event limit can not be lower than number of registered users.")
+            return limit
+        except AttributeError:
+            return limit
+
+
 
 
 class EventInUserSerializer(EventSerializer):
