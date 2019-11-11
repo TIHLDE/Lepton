@@ -29,7 +29,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     def get_events(self, obj):
         """ Lists all events user is to attend or has attended """
-        user_events = UserEvent.objects.filter(user__user_id=obj.user_id)
+        user_events = UserEvent.objects.filter(user__user_id=obj.user_id).order_by('event__start')
         events = [user_event.event for user_event in user_events if not user_event.event.expired]
         return EventInUserSerializer(events, many=True).data
 
