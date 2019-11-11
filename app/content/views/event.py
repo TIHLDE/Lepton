@@ -1,5 +1,3 @@
-from datetime import time
-
 from django.utils.translation import gettext as _
 
 from django_filters.rest_framework import DjangoFilterBackend
@@ -12,17 +10,6 @@ from ..serializers import EventSerializer
 from ..filters import EventFilter
 from ..pagination import BasePagination
 from app.util.utils import yesterday
-
-
-def timing(f):
-    def wrap(*args):
-        time1 = time.time()
-        ret = f(*args)
-        time2 = time.time()
-        print('{:s} function took {:.3f} ms'.format(f.__name__, (time2-time1)*1000.0))
-
-        return ret
-    return wrap
 
 
 class EventViewSet(viewsets.ModelViewSet):
