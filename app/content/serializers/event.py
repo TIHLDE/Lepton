@@ -1,12 +1,13 @@
 from rest_framework import serializers
 
-from ..models import Event, User
+from ..models import Event, User, UserEvent
 
 
 class EventSerializer(serializers.ModelSerializer):
     expired = serializers.BooleanField(read_only=True)
     registered_users_list = serializers.SerializerMethodField()
     registered_users_count = serializers.SerializerMethodField()
+    is_user_registered = serializers.SerializerMethodField()
 
     class Meta:
         model = Event
@@ -15,7 +16,7 @@ class EventSerializer(serializers.ModelSerializer):
             'description', 'sign_up', 'priority',
             'category', 'expired', 'limit', 'closed',
             'registered_users_list', 'registered_users_count',
-            'image', 'image_alt'
+            'is_user_registered', 'image', 'image_alt'
         ]
 
     def get_registered_users_count(self, obj):
@@ -32,6 +33,7 @@ class EventSerializer(serializers.ModelSerializer):
                 } for user in obj.registered_users_list.all()]
         except User.DoesNotExist:
             return None
+
     def validate_limit(self, limit):
         """
             Check that the event limit is greater or equal to 0 and
@@ -46,7 +48,12 @@ class EventSerializer(serializers.ModelSerializer):
         except AttributeError:
             return limit
 
-
+    def get_is_user_registered(self, obj):
+        try:
+            user_id = self.context['request'].user.user_id
+            return UserEvent.objects.filter(event__pk=obj.pk, user__user_id=user_id).count() > 0
+        except AttributeError:
+            return False
 
 
 class EventInUserSerializer(EventSerializer):
