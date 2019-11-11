@@ -109,13 +109,9 @@ class JobPostViewSet(viewsets.ModelViewSet):
 class UserViewSet(viewsets.ModelViewSet):
     """ API endpoint to display one user """
     serializer_class = UserSerializer
-    permission_classes = [IsMember]
+    permission_classes = [IsMember, ]
     queryset = User.objects.all()
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
-
-    def get_object(self):
-        user = self.request.user_id
-        return self.queryset.filter(user_id = user)
 
     def get_permissions(self):
         # Your logic should be all here
@@ -125,7 +121,7 @@ class UserViewSet(viewsets.ModelViewSet):
             self.permission_classes = [IsMember, ]
         return super(UserViewSet, self).get_permissions()
 
-    def get_queryset(self):
+    def get_object(self):
         """Returns one application"""
         id = self.request.info['uid'][0]
 
@@ -141,7 +137,14 @@ class UserViewSet(viewsets.ModelViewSet):
             serializer = UserSerializer(data=new_data)
             if serializer.is_valid():
                 serializer.save()
-        return self.queryset.filter(user_id = id)
+
+    def list(self, request):
+        if IsMember.isDev(self, request):
+            serializer = UserSerializer(self.get_queryset(), many=True)
+            return Response(serializer.data)
+        return Response({'detail': _('Not authenticated to see all users')}, status=400)
+
+
 
     def perform_create(self, serializer):
         serializer = UserSerializer(data=self.request.data)
