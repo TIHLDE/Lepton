@@ -137,6 +137,7 @@ class UserViewSet(viewsets.ModelViewSet):
             serializer = UserSerializer(data=new_data)
             if serializer.is_valid():
                 serializer.save()
+        return User.objects.get(user_id = id)
 
     def list(self, request):
         if IsMember.isDev(self, request):
