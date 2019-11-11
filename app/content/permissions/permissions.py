@@ -1,7 +1,7 @@
 from rest_framework import permissions
 from django.db.models import Q
 
-from .models import User
+from app.content.models import User
 
 import requests
 

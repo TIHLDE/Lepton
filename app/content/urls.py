@@ -5,7 +5,8 @@ from django.conf.urls import include
 
 from rest_framework_swagger.views import get_swagger_view
 
-from .views import (NewsViewSet, EventViewSet, WarningViewSet, CategoryViewSet, accept_form, JobPostViewSet, UserViewSet, UserEventViewSet)
+from .views import NewsViewSet, EventViewSet, WarningViewSet, CategoryViewSet, accept_form, \
+    JobPostViewSet, UserViewSet, UserEventViewSet
 
 router = routers.DefaultRouter()
 
