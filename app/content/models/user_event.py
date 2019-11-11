@@ -10,7 +10,7 @@ class UserEvent(BaseModel):
     user_event_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
-    is_on_wait = models.BooleanField(default=False)
+    is_on_wait = models.BooleanField(default=False, verbose_name='waiting list')
     has_attended = models.BooleanField(default=False)
 
     class Meta:
