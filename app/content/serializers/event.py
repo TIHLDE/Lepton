@@ -7,8 +7,7 @@ class EventSerializer(serializers.ModelSerializer):
     expired = serializers.BooleanField(read_only=True)
     registered_users_list = serializers.SerializerMethodField()
     registered_users_count = serializers.SerializerMethodField()
-    # TODO: come up with a better name
-    is_current_user_signed_up = serializers.SerializerMethodField()
+    is_user_registered = serializers.SerializerMethodField()
 
     class Meta:
         model = Event
@@ -17,7 +16,7 @@ class EventSerializer(serializers.ModelSerializer):
             'description', 'sign_up', 'priority',
             'category', 'expired', 'limit', 'closed',
             'registered_users_list', 'registered_users_count',
-            'is_current_user_signed_up', 'image', 'image_alt'
+            'is_user_registered', 'image', 'image_alt'
         ]
 
     def get_registered_users_count(self, obj):
@@ -49,7 +48,7 @@ class EventSerializer(serializers.ModelSerializer):
         except AttributeError:
             return limit
 
-    def get_is_current_user_signed_up(self, obj):
+    def get_is_user_registered(self, obj):
         try:
             user_id = self.context['request'].user.user_id
             return UserEvent.objects.filter(event__pk=obj.pk, user__user_id=user_id).count() > 0
