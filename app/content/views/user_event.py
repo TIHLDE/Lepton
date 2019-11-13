@@ -52,23 +52,18 @@ class UserEventViewSet(viewsets.ModelViewSet):
         try:
             event = Event.objects.get(pk=event_id)
             user = User.objects.get(user_id=request.info['uid'][0])
-        except ObjectDoesNotExist:
-            return Response({'detail': _('The provided event and or user does not exist')}, status=404)
+            serializer = UserEventSerializer(data=request.data)
+            if serializer.is_valid():
+                UserEvent(user=user, event=event).save()
+                return Response({'detail': 'The user event has been created.'})
+            else:
+                return Response({'detail': serializer.errors}, status=400)
 
-        if event.closed:
-            return Response({'detail': _('The queue for this event is closed')}, status=400)
+        except Event.DoesNotExist:
+            return Response({'detail': _('The provided event does not exist')}, status=404)
+        except User.DoesNotExist:
+            return Response({'detail': _('The provided user does not exist')}, status=404)
 
-        if self.queryset.filter(user=user, event=event).exists():
-            return Response({'detail': _('The user event could not be created')}, status=404)
-
-        is_on_wait = (event.limit < event.registered_users_list.all().count() + 1) and event.limit is not 0
-        serializer = UserEventSerializer(data=request.data)
-
-        if serializer.is_valid():
-            UserEvent(user=user, event=event, is_on_wait=is_on_wait).save()
-            return Response({'detail': 'The user event has been created.'})
-        else:
-            return Response({'detail': serializer.errors}, status=400)
 
     def update(self, request, event_id, user_id, *args, **kwargs):
         """ Updates fields passed in request """

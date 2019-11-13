@@ -76,6 +76,7 @@ def check_group_permission(self, request, view, groups):
 	# Allow GET, HEAD or OPTIONS requests
 	if request.method in permissions.SAFE_METHODS:
 		return True
+
 	# Check if session-token is provided
 	user = get_user_info(request)
 
