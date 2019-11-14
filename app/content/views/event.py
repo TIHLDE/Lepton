@@ -18,7 +18,7 @@ class EventViewSet(viewsets.ModelViewSet):
         Excludes expired events by default: to include expired in results, add '&expired=true'
     """
     serializer_class = EventSerializer
-    permission_classes = []
+    permission_classes = [IsNoKorPromo]
     queryset = Event.objects.filter(start__gte=yesterday()).order_by('start')
     pagination_class = BasePagination
 

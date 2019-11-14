@@ -25,17 +25,28 @@ class UserEvent(BaseModel):
 
     def clean(self):
         """
-        Is called when the instance is saved
-        Determines whether user is on the waiting list or not when the instance is created.
+        Validates models fields and is called when the object is saved.
+        Determines whether user is on the waiting list or not when the instance is created and if the user
+        is allowed to be moved up from the waiting list.
 
-        :raises ValidationError if the event is closed. If so, the UserEvent will not be created
+        :raises ValidationError if the user is moved up from the waiting list and the event limit has been reached.
+        :raises ValidationError if the event is closed upon creation. If so, the object will not be created
 
         """
         event = self.event
+        is_limit_reached = event.limit <= event.registered_users_list.all().count() and event.limit is not 0
+
+        # Object is being updated
+        if self.user_event_id:
+            if not self.is_on_wait and is_limit_reached:
+                raise ValidationError('The queue for this event is full')
+            return None
+
+        # Object is being created
+        self.is_on_wait = is_limit_reached
+
         if event.closed:
-            raise ValidationError({'detail': _('The queue for this event is closed')})
-        if not self.user_event_id:
-            self.is_on_wait = event.limit <= event.registered_users_list.all().count() and event.limit is not 0
+            raise ValidationError('The queue for this event is closed')
 
     def __str__(self):
         return f'{self.user.email} - is to attend {self.event} and is ' \
