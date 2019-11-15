@@ -42,7 +42,6 @@ class EventViewSet(viewsets.ModelViewSet):
                 self.perform_update(serializer)
                 return Response({'detail': _('Event successfully updated.')})
             else:
-                print(serializer.errors)
                 return Response({'detail': _('Could not perform update')}, status=400)
 
         except Event.DoesNotExist:

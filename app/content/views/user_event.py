@@ -86,7 +86,6 @@ class UserEventViewSet(viewsets.ModelViewSet):
         except ValidationError as e:
             return Response({'detail': _(e.message)}, status=404)
 
-
     def destroy(self, request, event_id, user_id):
         """ Deletes the user event specified with provided event_id and user_id """
         try:

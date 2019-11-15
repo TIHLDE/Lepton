@@ -4,7 +4,6 @@ from django.core.exceptions import ValidationError
 from app.util.models import BaseModel
 from .user import User
 
-
 class UserEvent(BaseModel):
     """ Model for user registration for an event """
     user_event_id = models.AutoField(primary_key=True)
@@ -19,33 +18,33 @@ class UserEvent(BaseModel):
         verbose_name_plural = 'User events'
 
     def save(self, *args, **kwargs):
-        self.clean()
-        return super(UserEvent, self).save(*args, **kwargs)
+        if self.user_event_id:
+            return self.create(*args, **kwargs)
+        return self.update(*args, **kwargs)
 
-    def clean(self):
-        """
-        Validates models fields.
-        Determines whether user is on the waiting list or not when the instance is created and if the user
-        is allowed to be moved up from the waiting list.
-
-        :raises ValidationError if the user is moved up from the waiting list and the event limit has been reached.
-        :raises ValidationError if the event is closed upon creation. If so, the object will not be created
-
-        """
+    def create(self, *args, **kwargs):
         event = self.event
         is_limit_reached = event.limit <= event.registered_users_list.all().count() and event.limit is not 0
-
-        # Object is being updated
-        if self.user_event_id:
-            if not self.is_on_wait and is_limit_reached:
-                raise ValidationError('The queue for this event is full')
-            return None
-
-        # Object is being created
         self.is_on_wait = is_limit_reached
 
         if event.closed:
             raise ValidationError('The queue for this event is closed')
+
+        return super(UserEvent, self).save(*args, **kwargs)
+
+    def update(self, *args, **kwargs):
+        event = self.event
+        is_limit_reached = event.limit <= event.registered_users_list.all().count() and event.limit is not 0
+
+        if not self.is_on_wait and is_limit_reached:
+            raise ValidationError('The queue for this event is full')
+
+        allowed_attributes = {'is_on_wait', 'has_attended'}
+        for name, value in kwargs.items():
+            if name in allowed_attributes:
+                self.name = value
+
+        return super(UserEvent, self).save(*args, **kwargs)
 
     def __str__(self):
         return f'{self.user.email} - is to attend {self.event} and is ' \
