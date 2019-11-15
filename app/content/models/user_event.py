@@ -5,6 +5,7 @@ from django.utils.translation import gettext as _
 from app.util.models import BaseModel
 from .user import User
 
+
 class UserEvent(BaseModel):
     """ Model for user registration for an event """
     user_event_id = models.AutoField(primary_key=True)
@@ -22,7 +23,7 @@ class UserEvent(BaseModel):
         """ Determines whether the object is being created or updated """
         if not self.user_event_id:
             return self.create(*args, **kwargs)
-        return self.update(*args, **kwargs)
+        return super(UserEvent, self).save(*args, **kwargs)
 
     def create(self, *args, **kwargs): 
         """
@@ -36,21 +37,6 @@ class UserEvent(BaseModel):
 
         if event.closed:
             raise ValidationError(_('is_on_wait: The queue for this event is closed'))
-
-        return super(UserEvent, self).save(*args, **kwargs)
-
-    def update(self, *args, **kwargs):
-        """
-        Validates model fields upon update.
-        Determines is if the user is allowed to be moved up from the waiting list.
-        :raises ValidationError if the user is moved up from the waiting list and the event limit has been reached.
-                If so, the object will not be updated.
-        """
-        event = self.event
-        is_limit_reached = event.limit <= event.registered_users_list.all().count() and event.limit is not 0
-
-        if not self.is_on_wait and is_limit_reached:
-            raise ValidationError(_('is_on_wait: The queue for this event is full'))
 
         return super(UserEvent, self).save(*args, **kwargs)
 

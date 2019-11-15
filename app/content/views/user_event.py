@@ -56,7 +56,7 @@ class UserEventViewSet(viewsets.ModelViewSet):
             serializer = UserEventSerializer(data=request.data)
 
             if serializer.is_valid():
-                UserEvent(user=user, event=event).save()  # works
+                UserEvent(user=user, event=event).save()
                 return Response({'detail': 'User event created.'})
             else:
                 return Response({'detail': serializer.errors}, status=400)
@@ -77,7 +77,6 @@ class UserEventViewSet(viewsets.ModelViewSet):
 
             if serializer.is_valid():
                 self.perform_update(serializer)
-                # user_event.save()
                 return Response({'detail': _('User event successfully updated.')})
             else:
                 return Response({'detail': _('Could not perform update')}, status=400)
