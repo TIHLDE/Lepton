@@ -1,6 +1,5 @@
 from django.db import models
 from django.core.exceptions import ValidationError
-from django.utils.translation import gettext as _
 
 from app.util.models import BaseModel
 from .user import User
@@ -25,7 +24,7 @@ class UserEvent(BaseModel):
 
     def clean(self):
         """
-        Validates models fields and is called when the object is saved.
+        Validates models fields.
         Determines whether user is on the waiting list or not when the instance is created and if the user
         is allowed to be moved up from the waiting list.
 

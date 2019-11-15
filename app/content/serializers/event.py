@@ -33,13 +33,13 @@ class EventSerializer(serializers.ModelSerializer):
     def validate_limit(self, limit):
         """
             Check that the event limit is greater or equal to 0 and
-            that the limit can not be lower than the number of registered users
-            TODO: Move this to model field validation
+            that the limit can not be lower than the number of registered users.
+            If the limit is already 0, then do not let that effect updating other fields
         """
         try:
             if limit < 0:
                 raise serializers.ValidationError("Event limit can not a negative integer")
-            elif limit < self.instance.registered_users_list.all().count():
+            elif limit < self.instance.registered_users_list.all().count() and self.instance.limit is not 0:
                 raise serializers.ValidationError("Event limit can not be lower than number of registered users.")
             return limit
         except AttributeError:

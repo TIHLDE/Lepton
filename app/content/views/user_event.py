@@ -57,7 +57,7 @@ class UserEventViewSet(viewsets.ModelViewSet):
 
             if serializer.is_valid():
                 UserEvent(user=user, event=event).save()
-                return Response({'detail': 'The user event has been created.'})
+                return Response({'detail': 'User event created.'})
             else:
                 return Response({'detail': serializer.errors}, status=400)
 
