@@ -1,4 +1,4 @@
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ValidationError
 from django.utils.translation import gettext as _
 
 from rest_framework import viewsets
@@ -52,23 +52,21 @@ class UserEventViewSet(viewsets.ModelViewSet):
         try:
             event = Event.objects.get(pk=event_id)
             user = User.objects.get(user_id=request.info['uid'][0])
-        except ObjectDoesNotExist:
-            return Response({'detail': _('The provided event and or user does not exist')}, status=404)
 
-        if event.closed:
-            return Response({'detail': _('The queue for this event is closed')}, status=400)
+            serializer = UserEventSerializer(data=request.data)
 
-        if self.queryset.filter(user=user, event=event).exists():
-            return Response({'detail': _('The user event could not be created')}, status=404)
+            if serializer.is_valid():
+                UserEvent(user=user, event=event).save()
+                return Response({'detail': 'User event created.'})
+            else:
+                return Response({'detail': serializer.errors}, status=400)
 
-        is_on_wait = (event.limit < event.registered_users_list.all().count() + 1) and event.limit is not 0
-        serializer = UserEventSerializer(data=request.data)
-
-        if serializer.is_valid():
-            UserEvent(user=user, event=event, is_on_wait=is_on_wait).save()
-            return Response({'detail': 'The user event has been created.'})
-        else:
-            return Response({'detail': serializer.errors}, status=400)
+        except Event.DoesNotExist:
+            return Response({'detail': _('The provided event does not exist')}, status=404)
+        except User.DoesNotExist:
+            return Response({'detail': _('The provided user does not exist')}, status=404)
+        except ValidationError as e:
+            return Response({'detail': _(e.message)}, status=404)
 
     def update(self, request, event_id, user_id, *args, **kwargs):
         """ Updates fields passed in request """
@@ -85,6 +83,8 @@ class UserEventViewSet(viewsets.ModelViewSet):
 
         except UserEvent.DoesNotExist:
             return Response({'detail': 'Could not find user event'}, status=400)
+        except ValidationError as e:
+            return Response({'detail': _(e.message)}, status=404)
 
     def destroy(self, request, event_id, user_id):
         """ Deletes the user event specified with provided event_id and user_id """
