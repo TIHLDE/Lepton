@@ -7,7 +7,7 @@ from app.util.models import BaseModel, OptionalImage
 class UserManager(BaseUserManager):
     use_in_migrations = True
 
-    def create_user(self, user_id, password=None):
+    def create_user(self, user_id, password):
         user = self.model(
             user_id=user_id,
         )
@@ -15,7 +15,7 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_staffuser(self, user_id, password=None):
+    def create_staffuser(self, user_id, password):
         user = self.create_user(
             user_id=user_id,
             password=password,

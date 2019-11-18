@@ -43,3 +43,8 @@ class UserMemberSerializer(UserSerializer):
     class Meta(UserSerializer.Meta):
         fields = UserSerializer.Meta.fields
         read_only_fields = ('user_id', 'first_name', 'last_name', 'email',)
+
+class CreateUserSerializer(UserSerializer):
+    """Serializer for user update to prevent them from updating extra_kwargs fields"""
+    class Meta(UserSerializer.Meta):
+        fields = UserSerializer.Meta.fields + ('password')
