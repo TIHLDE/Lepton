@@ -3,6 +3,7 @@ version: '3'
 services:
   db:
     image: mysql:5.7
+    container_name: db
     ports:
       - "3306:3306"
     environment:
@@ -13,13 +14,8 @@ services:
   web:
     env_file:
       - .env
-    environment:
-      DATABASE_NAME: $DATABASE_NAME
-      DATABASE_USER: $DATABASE_USER
-      DATABASE_PASSWORD: $DATABASE_PASSWORD
-      DATABASE_HOST: $DATABASE_HOST
-      DATABASE_PORT: $DATABASE_PORT
     build: .
+    container_name: web
     command: pipenv run python manage.py runserver 0.0.0.0:8000
     volumes:
       - .:/usr/src/

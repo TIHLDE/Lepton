@@ -1,20 +1,29 @@
 ## Start the webserver with docker on http://localhost:8000
-docker-compose = docker-compose run web python manage.py
-
-## TODO: fix issue with pipenv not starting
-makemigrations:
-	$(docker-compose) showmigrations
-	$(docker-compose) makemigrations ${app-label} --name ${name}
-
-migrate:
-	$(docker-compose) migrate
-
 start:
 	docker-compose up
 
+restart:
+	docker-compose build
+	docker-compose up
+
 start-fresh:
-	docker-compose down
-	docker-compose up --build
+	docker-compose build
 	make makemigrations
 	make migrate
-	make start
+	make loaddata
+	docker-compose up
+
+createsuperuser: ##@Docker Create a superuser
+	docker-compose run --rm web pipenv run python manage.py createsuperuser
+
+makemigrations: ##@Docker Set up migration files
+	docker-compose run --rm web pipenv run python manage.py makemigrations
+
+migrate: ##@Docker Perform migrations to database
+	docker-compose run --rm web pipenv run python manage.py migrate
+
+dumpdata:
+	docker-compose run --rm web pipenv run python manage.py dumpdata > ./app/fixture.json
+
+loaddata:
+	docker-compose run --rm web pipenv run python manage.py loaddata ./app/fixture.json
