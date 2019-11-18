@@ -3,19 +3,22 @@ version: '3'
 services:
   db:
     image: mysql:5.7
+    container_name: db
     ports:
-      - '3306:3306'
+      - "3306:3306"
     environment:
-       NAME: $DATABASE_NAME
-       USER: $DATABASE_USER
-       PASSWORD: $DATABASE_PASSWORD
-       HOST: $DATABASE_HOST
-       PORT: $DATABASE_PORT
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_USER=dev
+      - MYSQL_PASSWORD=password
+      - MYSQL_DATABASE=nettside-dev
   web:
+    env_file:
+      - .env
     build: .
-    command: python manage.py runserver 0.0.0.0:8000
+    container_name: web
+    command: pipenv run python manage.py runserver 0.0.0.0:8000
     volumes:
-      - ./volume:/usr/src/app/volume
+      - .:/usr/src/
     ports:
       - "8000:8000"
     depends_on:

@@ -23,7 +23,7 @@ PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('DJANGO_SECRET') 
+SECRET_KEY = os.environ.get('DJANGO_SECRET')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('PROD') != None
@@ -45,8 +45,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'django_filters',
+    'rest_framework_swagger',
     # Our apps
-    'app.authentication',
     'app.content',
     'app.util',
 ]
@@ -67,9 +67,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-
 ROOT_URLCONF = 'app.urls'
-
 
 TEMPLATES = [
     {
@@ -90,7 +88,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'app.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
@@ -103,16 +100,10 @@ DATABASES = {
         'HOST': os.environ.get('DATABASE_HOST'),
         'PORT': os.environ.get('DATABASE_PORT'),
         'OPTIONS': {'charset': 'utf8mb4', 'use_unicode': True},
-    },    
-    'replica': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'myproject',
-        'HOST': 'dbreplica',
-        'TEST': {
-            'MIRROR': 'default',
-        },
     }
 }
+
+AUTH_USER_MODEL = 'content.User'
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -211,3 +202,6 @@ LOGGING = {
         },
     }
 }
+
+# Django rest framework
+REST_FRAMEWORK = { 'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema' }
