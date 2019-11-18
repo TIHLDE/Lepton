@@ -6,7 +6,7 @@ from rest_framework import viewsets, filters
 from rest_framework.response import Response
 
 from ..models import User
-from ..permissions import IsMember, IsDev
+from ..permissions import IsMember, IsDev, check_is_admin
 from ..serializers import UserSerializer, UserMemberSerializer
 
 
@@ -26,7 +26,7 @@ class UserViewSet(viewsets.ModelViewSet):
         return super(UserViewSet, self).get_permissions()
 
     def get_object(self):
-        """Returns one application"""
+        """ Returns one user """
         id = self.request.info['uid'][0]
 
         try:
@@ -44,7 +44,7 @@ class UserViewSet(viewsets.ModelViewSet):
         return User.objects.get(user_id=id)
 
     def list(self, request):
-        if IsMember.isDev(self, request):
+        if check_is_admin(request):
             serializer = UserSerializer(self.get_queryset(), many=True)
             return Response(serializer.data)
         return Response({'detail': _('Not authenticated to see all users')}, status=400)

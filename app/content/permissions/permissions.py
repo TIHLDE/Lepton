@@ -10,8 +10,8 @@ API_URL = 'https://web-auth.tihlde.org/api/v1'
 VERIFY_URL = API_URL + '/verify'
 
 
-# Checks if the user is a member
 class IsMember(permissions.BasePermission):
+	""" Checks if the user is a member """
 	message = 'You are not a member'
 
 	def has_permission(self, request, view):
@@ -24,48 +24,69 @@ class IsMember(permissions.BasePermission):
 		request.info = user
 		return True
 
-	def isDev(self, request):
+
+class IsAccessingItself(permissions.BasePermission):
+	""" Checks if user is accessing themselves """
+	message = 'You are not trying to access yourself'
+
+	def has_permission(self, request, view):
+		# Allow GET, CREATE, HEAD or OPTIONS requests
+		if request.method in ['GET', 'CREATE', 'HEAD', 'OPTIONS']:
+			return True
+		elif request.method == 'PUT':
+			return False
+
+		# Check if session-token is provided
 		user = get_user_info(request)
+
 		if user is None:
 			return False
-		user_id = user['uid'][0]
-		return User.objects.filter(user_id=user_id).filter(groups__name__in= ['DevKom','HS']).count() > 0
+
+		request.info = user
+
+		# Check for other user in url
+		try:
+			other_user = view.kwargs['user_id']
+		except KeyError:
+			other_user = None
+
+		return request.info['uid'][0] == other_user
 
 
-# Checks if the user is in HS or Drift
 class IsDev(permissions.BasePermission):
+	""" Checks if the user is in HS or Drift """
 	message = 'You are not in DevKom'
 
 	def has_permission(self, request, view):
 		return check_group_permission(self, request, view, ['DevKom'])
 
 
-# Checks if the user is in HS or Drift
 class IsHS(permissions.BasePermission):
+	""" Checks if the user is in HS or Drift """
 	message = 'You are not in HS'
 
 	def has_permission(self, request, view):
 		return check_group_permission(self, request, view, ['HS', 'DevKom'])
 
 
-# Checks if the user is in HS, Drift, or Promo
 class IsPromo(permissions.BasePermission):
+	""" Checks if the user is in HS, Drift, or Promo """
 	message = 'You are not in Promo'
 
 	def has_permission(self, request, view):
 		return check_group_permission(self, request, view, ['HS', 'DevKom' 'Promo'])
 
 
-# Checks if the user is in HS, Drift, or NoK
 class IsNoK(permissions.BasePermission):
+	""" Checks if the user is in HS, Drift, or NoK """
 	message = 'You are not in NoK'
 
 	def has_permission(self, request, view):
 		return check_group_permission(self, request, view, ['HS', 'DevKom', 'NoK'])
 
 
-# Checks if the user is in HS, Drift, or NoK
 class IsNoKorPromo(permissions.BasePermission):
+	""" Checks if the user is in HS, Drift, or NoK """
 	message = 'You are not in NoK'
 
 	def has_permission(self, request, view):
@@ -103,3 +124,13 @@ def get_user_info(request):
 		return None
 
 	return response
+
+
+def check_is_admin(request):
+	""" Checks if user is in dev or HS """
+	user = get_user_info(request)
+	if user is None:
+		return False
+	user_id = user['uid'][0]
+	return User.objects.filter(user_id=user_id).filter(groups__name__in=['DevKom', 'HS']).count() > 0
+

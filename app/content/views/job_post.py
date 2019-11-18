@@ -3,11 +3,10 @@ from rest_framework import viewsets, filters
 
 from ..models import JobPost
 from ..serializers import JobPostSerializer
-from ..permissions import IsNoK
+from ..permissions import IsDev, IsNoK
 from ..filters import JobPostFilter
 from ..pagination import BasePagination
 from app.util.utils import yesterday
-
 
 
 class JobPostViewSet(viewsets.ModelViewSet):
@@ -17,7 +16,7 @@ class JobPostViewSet(viewsets.ModelViewSet):
     """
 
     serializer_class = JobPostSerializer
-    permission_classes = [IsNoK]
+    permission_classes = [IsDev | IsNoK]
     pagination_class = BasePagination
     queryset = JobPost.objects.filter(deadline__gte=yesterday()).order_by('deadline')
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
