@@ -36,7 +36,7 @@ class IsAccessingItself(permissions.BasePermission):
 		# Check if session-token is provided
 		user_id = get_user_id(request)
 
-		if user is None:
+		if user_id is None:
 			return False
 
 		# Check for other user in url

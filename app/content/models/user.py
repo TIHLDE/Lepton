@@ -16,7 +16,7 @@ class UserManager(BaseUserManager):
         user = self.model(
             user_id=user_id,
         )
-        user.set_password(password)
+        user.set_password(make_password(password))
         user.save(using=self._db)
         return user
 
@@ -72,6 +72,7 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
         (2, 'DigFor'),
         (3, 'DigInc'),
         (4, 'DigSam'),
+        (5, 'Drift'),
     )
     user_study = models.IntegerField(default=1, choices=STUDY, null=True, blank=True)
     allergy = models.CharField(max_length=250, blank=True)
