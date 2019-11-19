@@ -19,8 +19,6 @@ class IsMember(permissions.BasePermission):
 		if user_id is None:
 			return False
 
-		requests.info = user_id
-
 		return True
 
 
@@ -110,11 +108,13 @@ def get_user_id(request):
 	if token is None:
 		return None
 
-	user_id = Token.objects.get(key=token).user_id
+	try:
+		userToken = Token.objects.get(key=token)
+	except Token.DoesNotExist:
+		return None
+	request.id = userToken.user_id
 
-	request.id = user_id
-
-	return user_id
+	return userToken.user_id
 
 
 def check_is_admin(request):
