@@ -1,0 +1,794 @@
+[
+  {
+    "model": "content.category",
+    "pk": 1,
+    "fields": {
+      "created_at": "2019-11-10T18:44:41.524Z",
+      "updated_at": "2019-11-10T18:44:41.524Z",
+      "text": "Fest"
+    }
+  },
+  {
+    "model": "content.category",
+    "pk": 2,
+    "fields": {
+      "created_at": "2019-11-10T18:45:37.001Z",
+      "updated_at": "2019-11-10T18:45:37.001Z",
+      "text": "Kurs"
+    }
+  },
+  {
+    "model": "content.category",
+    "pk": 3,
+    "fields": {
+      "created_at": "2019-11-10T18:47:53.005Z",
+      "updated_at": "2019-11-10T18:47:53.005Z",
+      "text": "Allm\u00f8te"
+    }
+  },
+  {
+    "model": "content.category",
+    "pk": 4,
+    "fields": {
+      "created_at": "2019-11-10T18:55:53.628Z",
+      "updated_at": "2019-11-10T18:55:53.628Z",
+      "text": "Alkoholfritt"
+    }
+  },
+  {
+    "model": "content.warning",
+    "pk": 1,
+    "fields": {
+      "created_at": "2019-11-10T19:01:17.555Z",
+      "updated_at": "2019-11-10T19:01:17.555Z",
+      "text": "Server er nede",
+      "type": 1
+    }
+  },
+  {
+    "model": "content.jobpost",
+    "pk": 1,
+    "fields": {
+      "created_at": "2019-11-10T18:57:50.504Z",
+      "updated_at": "2019-11-10T18:57:50.504Z",
+      "image": "https://interactive-examples.mdn.mozilla.net/media/examples/grapefruit-slice-332-332.jpg",
+      "image_alt": "postman",
+      "title": "Postman",
+      "ingress": "Bli en viktig mann",
+      "body": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a ultrices tortor. Sed vitae feugiat diam. Suspendisse potenti. Maecenas congue aliquet vulputate. Aenean eu euismod ligula, quis rhoncus purus. Praesent ac odio diam. Praesent eleifend ullamcorper erat ut bibendum. Phasellus fringilla neque eu mollis eleifend. Etiam pretium, lacus ac ultrices interdum, enim ante consequat diam, ut congue arcu eros quis lorem. Proin non tempus arcu. Suspendisse mauris nulla, lobortis non commodo id, ultricies eu turpis. Praesent maximus euismod accumsan. In aliquam dictum purus ac condimentum. Pellentesque mattis felis vitae urna aliquet pretium. Pellentesque dapibus nisi non lorem tempus commodo.\r\n\r\nAenean at magna rhoncus, aliquet erat et, auctor eros. Suspendisse vitae varius ex, at mollis felis. Proin non tincidunt nunc. Nunc erat eros, tempor vitae blandit eu, convallis ut justo. Aenean luctus ante sit amet pellentesque venenatis. Cras malesuada, massa in sollicitudin cursus, urna tortor ultrices justo, egestas aliquam lacus lorem id arcu. Phasellus ultricies dapibus dui, at lacinia ex gravida ac. Proin mattis aliquet quam, et finibus magna dictum sed. Praesent at elementum orci. Fusce rutrum arcu orci, malesuada maximus odio sodales nec. Fusce sodales eu elit ut semper. Fusce blandit neque vel augue auctor, vel maximus sem fermentum. Nunc cursus odio vel ligula cursus, luctus finibus dui lacinia. Curabitur pharetra, quam vitae eleifend elementum, libero ipsum vulputate eros, vel pretium nisl diam nec enim. Suspendisse ante dui, viverra a est eu, viverra finibus magna.",
+      "location": "Bring",
+      "deadline": "2020-12-10T19:23:56Z",
+      "company": "Bring",
+      "email": "bring@bring.com",
+      "link": "http://www.bring.nob"
+    }
+  },
+  {
+    "model": "content.jobpost",
+    "pk": 2,
+    "fields": {
+      "created_at": "2019-11-10T18:59:28.298Z",
+      "updated_at": "2019-11-10T18:59:28.298Z",
+      "image": "https://analyticsindiamag.com/wp-content/uploads/2018/12/image.jpg",
+      "image_alt": "hacker",
+      "title": "Hackerman",
+      "ingress": "Turn off and on",
+      "body": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a ultrices tortor. Sed vitae feugiat diam. Suspendisse potenti. Maecenas congue aliquet vulputate. Aenean eu euismod ligula, quis rhoncus purus. Praesent ac odio diam. Praesent eleifend ullamcorper erat ut bibendum. Phasellus fringilla neque eu mollis eleifend. Etiam pretium, lacus ac ultrices interdum, enim ante consequat diam, ut congue arcu eros quis lorem. Proin non tempus arcu. Suspendisse mauris nulla, lobortis non commodo id, ultricies eu turpis. Praesent maximus euismod accumsan. In aliquam dictum purus ac condimentum. Pellentesque mattis felis vitae urna aliquet pretium. Pellentesque dapibus nisi non lorem tempus commodo.\r\n\r\nAenean at magna rhoncus, aliquet erat et, auctor eros. Suspendisse vitae varius ex, at mollis felis. Proin non tincidunt nunc. Nunc erat eros, tempor vitae blandit eu, convallis ut justo. Aenean luctus ante sit amet pellentesque venenatis. Cras malesuada, massa in sollicitudin cursus, urna tortor ultrices justo, egestas aliquam lacus lorem id arcu. Phasellus ultricies dapibus dui, at lacinia ex gravida ac. Proin mattis aliquet quam, et finibus magna dictum sed. Praesent at elementum orci. Fusce rutrum arcu orci, malesuada maximus odio sodales nec. Fusce sodales eu elit ut semper. Fusce blandit neque vel augue auctor, vel maximus sem fermentum. Nunc cursus odio vel ligula cursus, luctus finibus dui lacinia. Curabitur pharetra, quam vitae eleifend elementum, libero ipsum vulputate eros, vel pretium nisl diam nec enim. Suspendisse ante dui, viverra a est eu, viverra finibus magna.",
+      "location": "Void",
+      "deadline": "2020-11-10T19:25:01Z",
+      "company": "Illuminati",
+      "email": "random@mail.com",
+      "link": "http://random.com"
+    }
+  },
+  {
+    "model": "content.jobpost",
+    "pk": 3,
+    "fields": {
+      "created_at": "2019-11-10T19:00:43.257Z",
+      "updated_at": "2019-11-10T19:00:43.257Z",
+      "image": "https://media.sproutsocial.com/uploads/2017/02/10x-featured-social-media-image-size.png",
+      "image_alt": "photoshop",
+      "title": "Photoshop legende",
+      "ingress": "Edit your way to money",
+      "body": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a ultrices tortor. Sed vitae feugiat diam. Suspendisse potenti. Maecenas congue aliquet vulputate. Aenean eu euismod ligula, quis rhoncus purus. Praesent ac odio diam. Praesent eleifend ullamcorper erat ut bibendum. Phasellus fringilla neque eu mollis eleifend. Etiam pretium, lacus ac ultrices interdum, enim ante consequat diam, ut congue arcu eros quis lorem. Proin non tempus arcu. Suspendisse mauris nulla, lobortis non commodo id, ultricies eu turpis. Praesent maximus euismod accumsan. In aliquam dictum purus ac condimentum. Pellentesque mattis felis vitae urna aliquet pretium. Pellentesque dapibus nisi non lorem tempus commodo.\r\n\r\nAenean at magna rhoncus, aliquet erat et, auctor eros. Suspendisse vitae varius ex, at mollis felis. Proin non tincidunt nunc. Nunc erat eros, tempor vitae blandit eu, convallis ut justo. Aenean luctus ante sit amet pellentesque venenatis. Cras malesuada, massa in sollicitudin cursus, urna tortor ultrices justo, egestas aliquam lacus lorem id arcu. Phasellus ultricies dapibus dui, at lacinia ex gravida ac. Proin mattis aliquet quam, et finibus magna dictum sed. Praesent at elementum orci. Fusce rutrum arcu orci, malesuada maximus odio sodales nec. Fusce sodales eu elit ut semper. Fusce blandit neque vel augue auctor, vel maximus sem fermentum. Nunc cursus odio vel ligula cursus, luctus finibus dui lacinia. Curabitur pharetra, quam vitae eleifend elementum, libero ipsum vulputate eros, vel pretium nisl diam nec enim. Suspendisse ante dui, viverra a est eu, viverra finibus magna.",
+      "location": "Trondheim",
+      "deadline": "2020-11-10T19:26:57Z",
+      "company": "Photoshop",
+      "email": "photo@shop.com",
+      "link": "http://www.adobe.com"
+    }
+  },
+  {
+    "model": "content.event",
+    "pk": 1,
+    "fields": {
+      "created_at": "2019-11-10T18:44:48.066Z",
+      "updated_at": "2019-11-10T18:44:48.066Z",
+      "image": "https://images.pexels.com/photos/67636/rose-blue-flower-rose-blooms-67636.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
+      "image_alt": "Rose",
+      "title": "Roses are blue",
+      "start": "2019-11-10T19:10:30Z",
+      "location": "Jungle",
+      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a ultrices tortor. Sed vitae feugiat diam. Suspendisse potenti. Maecenas congue aliquet vulputate. Aenean eu euismod ligula, quis rhoncus purus. Praesent ac odio diam. Praesent eleifend ullamcorper erat ut bibendum. Phasellus fringilla neque eu mollis eleifend. Etiam pretium, lacus ac ultrices interdum, enim ante consequat diam, ut congue arcu eros quis lorem. Proin non tempus arcu. Suspendisse mauris nulla, lobortis non commodo id, ultricies eu turpis. Praesent maximus euismod accumsan. In aliquam dictum purus ac condimentum. Pellentesque mattis felis vitae urna aliquet pretium. Pellentesque dapibus nisi non lorem tempus commodo.\r\n\r\nAenean at magna rhoncus, aliquet erat et, auctor eros. Suspendisse vitae varius ex, at mollis felis. Proin non tincidunt nunc. Nunc erat eros, tempor vitae blandit eu, convallis ut justo. Aenean luctus ante sit amet pellentesque venenatis. Cras malesuada, massa in sollicitudin cursus, urna tortor ultrices justo, egestas aliquam lacus lorem id arcu. Phasellus ultricies dapibus dui, at lacinia ex gravida ac. Proin mattis aliquet quam, et finibus magna dictum sed. Praesent at elementum orci. Fusce rutrum arcu orci, malesuada maximus odio sodales nec. Fusce sodales eu elit ut semper. Fusce blandit neque vel augue auctor, vel maximus sem fermentum. Nunc cursus odio vel ligula cursus, luctus finibus dui lacinia. Curabitur pharetra, quam vitae eleifend elementum, libero ipsum vulputate eros, vel pretium nisl diam nec enim. Suspendisse ante dui, viverra a est eu, viverra finibus magna.",
+      "priority": 1,
+      "category": 1,
+      "sign_up": true,
+      "limit": 100,
+      "closed": false
+    }
+  },
+  {
+    "model": "content.event",
+    "pk": 2,
+    "fields": {
+      "created_at": "2019-11-10T18:45:40.569Z",
+      "updated_at": "2019-11-10T18:45:40.569Z",
+      "image": "https://images.unsplash.com/photo-1499084732479-de2c02d45fcc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&w=1000&q=80",
+      "image_alt": "Sky",
+      "title": "The vast sky",
+      "start": "2019-11-20T19:11:49Z",
+      "location": "Akrinn",
+      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a ultrices tortor. Sed vitae feugiat diam. Suspendisse potenti. Maecenas congue aliquet vulputate. Aenean eu euismod ligula, quis rhoncus purus. Praesent ac odio diam. Praesent eleifend ullamcorper erat ut bibendum. Phasellus fringilla neque eu mollis eleifend. Etiam pretium, lacus ac ultrices interdum, enim ante consequat diam, ut congue arcu eros quis lorem. Proin non tempus arcu. Suspendisse mauris nulla, lobortis non commodo id, ultricies eu turpis. Praesent maximus euismod accumsan. In aliquam dictum purus ac condimentum. Pellentesque mattis felis vitae urna aliquet pretium. Pellentesque dapibus nisi non lorem tempus commodo.\r\n\r\nAenean at magna rhoncus, aliquet erat et, auctor eros. Suspendisse vitae varius ex, at mollis felis. Proin non tincidunt nunc. Nunc erat eros, tempor vitae blandit eu, convallis ut justo. Aenean luctus ante sit amet pellentesque venenatis. Cras malesuada, massa in sollicitudin cursus, urna tortor ultrices justo, egestas aliquam lacus lorem id arcu. Phasellus ultricies dapibus dui, at lacinia ex gravida ac. Proin mattis aliquet quam, et finibus magna dictum sed. Praesent at elementum orci. Fusce rutrum arcu orci, malesuada maximus odio sodales nec. Fusce sodales eu elit ut semper. Fusce blandit neque vel augue auctor, vel maximus sem fermentum. Nunc cursus odio vel ligula cursus, luctus finibus dui lacinia. Curabitur pharetra, quam vitae eleifend elementum, libero ipsum vulputate eros, vel pretium nisl diam nec enim. Suspendisse ante dui, viverra a est eu, viverra finibus magna.",
+      "priority": 0,
+      "category": 2,
+      "sign_up": false,
+      "limit": 0,
+      "closed": false
+    }
+  },
+  {
+    "model": "content.event",
+    "pk": 3,
+    "fields": {
+      "created_at": "2019-11-10T18:47:58.609Z",
+      "updated_at": "2019-11-10T18:47:58.609Z",
+      "image": "https://interactive-examples.mdn.mozilla.net/media/examples/grapefruit-slice-332-332.jpg",
+      "image_alt": "appelsin",
+      "title": "Oranges are red",
+      "start": "2019-12-13T19:13:36Z",
+      "location": "Blue",
+      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a ultrices tortor. Sed vitae feugiat diam. Suspendisse potenti. Maecenas congue aliquet vulputate. Aenean eu euismod ligula, quis rhoncus purus. Praesent ac odio diam. Praesent eleifend ullamcorper erat ut bibendum. Phasellus fringilla neque eu mollis eleifend. Etiam pretium, lacus ac ultrices interdum, enim ante consequat diam, ut congue arcu eros quis lorem. Proin non tempus arcu. Suspendisse mauris nulla, lobortis non commodo id, ultricies eu turpis. Praesent maximus euismod accumsan. In aliquam dictum purus ac condimentum. Pellentesque mattis felis vitae urna aliquet pretium. Pellentesque dapibus nisi non lorem tempus commodo.\r\n\r\nAenean at magna rhoncus, aliquet erat et, auctor eros. Suspendisse vitae varius ex, at mollis felis. Proin non tincidunt nunc. Nunc erat eros, tempor vitae blandit eu, convallis ut justo. Aenean luctus ante sit amet pellentesque venenatis. Cras malesuada, massa in sollicitudin cursus, urna tortor ultrices justo, egestas aliquam lacus lorem id arcu. Phasellus ultricies dapibus dui, at lacinia ex gravida ac. Proin mattis aliquet quam, et finibus magna dictum sed. Praesent at elementum orci. Fusce rutrum arcu orci, malesuada maximus odio sodales nec. Fusce sodales eu elit ut semper. Fusce blandit neque vel augue auctor, vel maximus sem fermentum. Nunc cursus odio vel ligula cursus, luctus finibus dui lacinia. Curabitur pharetra, quam vitae eleifend elementum, libero ipsum vulputate eros, vel pretium nisl diam nec enim. Suspendisse ante dui, viverra a est eu, viverra finibus magna.",
+      "priority": 2,
+      "category": 3,
+      "sign_up": true,
+      "limit": 10,
+      "closed": false
+    }
+  },
+  {
+    "model": "content.event",
+    "pk": 4,
+    "fields": {
+      "created_at": "2019-11-10T18:55:58.939Z",
+      "updated_at": "2019-11-10T18:55:58.939Z",
+      "image": "https://cdn.pixabay.com/photo/2018/05/28/22/11/message-in-a-bottle-3437294__340.jpg",
+      "image_alt": "faskepost",
+      "title": "Arr sier piraten",
+      "start": "2019-12-10T19:21:59Z",
+      "location": "Black pearl",
+      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a ultrices tortor. Sed vitae feugiat diam. Suspendisse potenti. Maecenas congue aliquet vulputate. Aenean eu euismod ligula, quis rhoncus purus. Praesent ac odio diam. Praesent eleifend ullamcorper erat ut bibendum. Phasellus fringilla neque eu mollis eleifend. Etiam pretium, lacus ac ultrices interdum, enim ante consequat diam, ut congue arcu eros quis lorem. Proin non tempus arcu. Suspendisse mauris nulla, lobortis non commodo id, ultricies eu turpis. Praesent maximus euismod accumsan. In aliquam dictum purus ac condimentum. Pellentesque mattis felis vitae urna aliquet pretium. Pellentesque dapibus nisi non lorem tempus commodo.\r\n\r\nAenean at magna rhoncus, aliquet erat et, auctor eros. Suspendisse vitae varius ex, at mollis felis. Proin non tincidunt nunc. Nunc erat eros, tempor vitae blandit eu, convallis ut justo. Aenean luctus ante sit amet pellentesque venenatis. Cras malesuada, massa in sollicitudin cursus, urna tortor ultrices justo, egestas aliquam lacus lorem id arcu. Phasellus ultricies dapibus dui, at lacinia ex gravida ac. Proin mattis aliquet quam, et finibus magna dictum sed. Praesent at elementum orci. Fusce rutrum arcu orci, malesuada maximus odio sodales nec. Fusce sodales eu elit ut semper. Fusce blandit neque vel augue auctor, vel maximus sem fermentum. Nunc cursus odio vel ligula cursus, luctus finibus dui lacinia. Curabitur pharetra, quam vitae eleifend elementum, libero ipsum vulputate eros, vel pretium nisl diam nec enim. Suspendisse ante dui, viverra a est eu, viverra finibus magna.",
+      "priority": 2,
+      "category": 4,
+      "sign_up": true,
+      "limit": 1,
+      "closed": false
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 1,
+    "fields": {
+      "name": "Can add log entry",
+      "content_type": 1,
+      "codename": "add_logentry"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 2,
+    "fields": {
+      "name": "Can change log entry",
+      "content_type": 1,
+      "codename": "change_logentry"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 3,
+    "fields": {
+      "name": "Can delete log entry",
+      "content_type": 1,
+      "codename": "delete_logentry"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 4,
+    "fields": {
+      "name": "Can view log entry",
+      "content_type": 1,
+      "codename": "view_logentry"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 5,
+    "fields": {
+      "name": "Can add permission",
+      "content_type": 2,
+      "codename": "add_permission"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 6,
+    "fields": {
+      "name": "Can change permission",
+      "content_type": 2,
+      "codename": "change_permission"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 7,
+    "fields": {
+      "name": "Can delete permission",
+      "content_type": 2,
+      "codename": "delete_permission"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 8,
+    "fields": {
+      "name": "Can view permission",
+      "content_type": 2,
+      "codename": "view_permission"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 9,
+    "fields": {
+      "name": "Can add group",
+      "content_type": 3,
+      "codename": "add_group"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 10,
+    "fields": {
+      "name": "Can change group",
+      "content_type": 3,
+      "codename": "change_group"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 11,
+    "fields": {
+      "name": "Can delete group",
+      "content_type": 3,
+      "codename": "delete_group"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 12,
+    "fields": {
+      "name": "Can view group",
+      "content_type": 3,
+      "codename": "view_group"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 13,
+    "fields": {
+      "name": "Can add content type",
+      "content_type": 4,
+      "codename": "add_contenttype"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 14,
+    "fields": {
+      "name": "Can change content type",
+      "content_type": 4,
+      "codename": "change_contenttype"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 15,
+    "fields": {
+      "name": "Can delete content type",
+      "content_type": 4,
+      "codename": "delete_contenttype"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 16,
+    "fields": {
+      "name": "Can view content type",
+      "content_type": 4,
+      "codename": "view_contenttype"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 17,
+    "fields": {
+      "name": "Can add session",
+      "content_type": 5,
+      "codename": "add_session"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 18,
+    "fields": {
+      "name": "Can change session",
+      "content_type": 5,
+      "codename": "change_session"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 19,
+    "fields": {
+      "name": "Can delete session",
+      "content_type": 5,
+      "codename": "delete_session"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 20,
+    "fields": {
+      "name": "Can view session",
+      "content_type": 5,
+      "codename": "view_session"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 21,
+    "fields": {
+      "name": "Can add user",
+      "content_type": 6,
+      "codename": "add_user"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 22,
+    "fields": {
+      "name": "Can change user",
+      "content_type": 6,
+      "codename": "change_user"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 23,
+    "fields": {
+      "name": "Can delete user",
+      "content_type": 6,
+      "codename": "delete_user"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 24,
+    "fields": {
+      "name": "Can view user",
+      "content_type": 6,
+      "codename": "view_user"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 25,
+    "fields": {
+      "name": "Can add category",
+      "content_type": 7,
+      "codename": "add_category"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 26,
+    "fields": {
+      "name": "Can change category",
+      "content_type": 7,
+      "codename": "change_category"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 27,
+    "fields": {
+      "name": "Can delete category",
+      "content_type": 7,
+      "codename": "delete_category"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 28,
+    "fields": {
+      "name": "Can view category",
+      "content_type": 7,
+      "codename": "view_category"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 29,
+    "fields": {
+      "name": "Can add event",
+      "content_type": 8,
+      "codename": "add_event"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 30,
+    "fields": {
+      "name": "Can change event",
+      "content_type": 8,
+      "codename": "change_event"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 31,
+    "fields": {
+      "name": "Can delete event",
+      "content_type": 8,
+      "codename": "delete_event"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 32,
+    "fields": {
+      "name": "Can view event",
+      "content_type": 8,
+      "codename": "view_event"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 33,
+    "fields": {
+      "name": "Can add job post",
+      "content_type": 9,
+      "codename": "add_jobpost"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 34,
+    "fields": {
+      "name": "Can change job post",
+      "content_type": 9,
+      "codename": "change_jobpost"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 35,
+    "fields": {
+      "name": "Can delete job post",
+      "content_type": 9,
+      "codename": "delete_jobpost"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 36,
+    "fields": {
+      "name": "Can view job post",
+      "content_type": 9,
+      "codename": "view_jobpost"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 37,
+    "fields": {
+      "name": "Can add news",
+      "content_type": 10,
+      "codename": "add_news"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 38,
+    "fields": {
+      "name": "Can change news",
+      "content_type": 10,
+      "codename": "change_news"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 39,
+    "fields": {
+      "name": "Can delete news",
+      "content_type": 10,
+      "codename": "delete_news"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 40,
+    "fields": {
+      "name": "Can view news",
+      "content_type": 10,
+      "codename": "view_news"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 41,
+    "fields": {
+      "name": "Can add warning",
+      "content_type": 11,
+      "codename": "add_warning"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 42,
+    "fields": {
+      "name": "Can change warning",
+      "content_type": 11,
+      "codename": "change_warning"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 43,
+    "fields": {
+      "name": "Can delete warning",
+      "content_type": 11,
+      "codename": "delete_warning"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 44,
+    "fields": {
+      "name": "Can view warning",
+      "content_type": 11,
+      "codename": "view_warning"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 45,
+    "fields": {
+      "name": "Can add User event",
+      "content_type": 12,
+      "codename": "add_userevent"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 46,
+    "fields": {
+      "name": "Can change User event",
+      "content_type": 12,
+      "codename": "change_userevent"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 47,
+    "fields": {
+      "name": "Can delete User event",
+      "content_type": 12,
+      "codename": "delete_userevent"
+    }
+  },
+  {
+    "model": "auth.permission",
+    "pk": 48,
+    "fields": {
+      "name": "Can view User event",
+      "content_type": 12,
+      "codename": "view_userevent"
+    }
+  },
+  {
+    "model": "auth.group",
+    "pk": 2,
+    "fields": {
+      "name": "DevKom",
+      "permissions": [
+        1,
+        2,
+        3,
+        4,
+        9,
+        10,
+        11,
+        12,
+        5,
+        6,
+        7,
+        8,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        21,
+        22,
+        23,
+        24,
+        45,
+        46,
+        47,
+        48,
+        41,
+        42,
+        43,
+        44,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ]
+    }
+  },
+  {
+    "model": "auth.group",
+    "pk": 3,
+    "fields": {
+      "name": "HS",
+      "permissions": [
+        9,
+        10,
+        11,
+        12,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        45,
+        46,
+        47,
+        48,
+        41,
+        42,
+        43,
+        44
+      ]
+    }
+  },
+  {
+    "model": "auth.group",
+    "pk": 4,
+    "fields": {
+      "name": "NoK",
+      "permissions": [
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        45,
+        46,
+        47,
+        48
+      ]
+    }
+  },
+  {
+    "model": "auth.group",
+    "pk": 5,
+    "fields": {
+      "name": "Promo",
+      "permissions": [
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        37,
+        38,
+        39,
+        40,
+        45,
+        46,
+        47,
+        48
+      ]
+    }
+  },
+  {
+    "model": "content.user",
+    "pk": "devkom",
+    "fields": {
+      "password": "pbkdf2_sha256$150000$0K7u3UV5nCr1$K6MSLWX3yzoXU1PmWYrTajzWGJ354th6rl+bRRu9GNI=",
+      "last_login": "2019-11-10T18:35:06.870Z",
+      "is_superuser": true,
+      "created_at": "2019-11-10T18:31:23.803Z",
+      "updated_at": "2019-11-10T18:31:23.811Z",
+      "image": null,
+      "image_alt": null,
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "cell": "",
+      "em_nr": "",
+      "home_busstop": null,
+      "gender": 2,
+      "user_class": 1,
+      "user_study": 1,
+      "allergy": "",
+      "tool": "",
+      "is_staff": true,
+      "is_active": true,
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "content.userevent",
+    "pk": 1,
+    "fields": {
+      "created_at": "2019-11-10T19:01:40.513Z",
+      "updated_at": "2019-11-10T19:02:02.014Z",
+      "user": "devkom",
+      "event": 3,
+      "is_on_wait": false,
+      "has_attended": false
+    }
+  }
+]

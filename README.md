@@ -44,6 +44,12 @@ python manage.py runserver 0:8080
 pipenv shell
 ```
 
+You can also run the API by typing the following commands if you have Docker installed:
+```
+docker-compose build
+docker-compose up
+```
+
 #### Required Enviornment variables
 For the API to run you have to configure some enviornment variables. These variables can for example be put in a
 _.env_ file.
@@ -107,7 +113,7 @@ First we need to describe how the Todo-entity should look like. This description
 ![Entity](https://user-images.githubusercontent.com/31648998/55508062-5c2c5c80-5659-11e9-9ffd-9639e9df0cd9.png)
 
 #### 2. Auto-generate endpoints
-For creating the basic CRUD-endpoints (GET, POST, PUT, PATCH and DELETE) for the Todo-entity we have to tell Django to auto-generate them. Open the _views.py_ file and write the following: 
+For creating the basic CRUD-endpoints (GET, POST, PUT, PATCH and DELETE) for the Todo-entity we have to tell Django to auto-generate them. Open the _views.py_ file and write the following:
 
 ![View](https://user-images.githubusercontent.com/31648998/55508726-c396dc00-565a-11e9-847a-78f60b88c4fe.png)
 By making a class inheriting django.viewsets.ModelViewSet, Django will auto-generate the wanted endpoints. But you can see we are setting something called a _serializer_class_ equal to _TodoSerializer_. What is a serializer?
@@ -115,12 +121,12 @@ By making a class inheriting django.viewsets.ModelViewSet, Django will auto-gene
 #### 3. Model serializiation
 When the website sends data to the API, the data is most likely in the form of JSON. But the API is writtin in python and does not support JSON-format in the language, like in Javascript. This means Django have to convert the data from JSON-format to a valid python format (and the other way around). This is done by something called a _Serializer_. In Django we just simply have to create a Serializer-Class, and tell it which Model to serializer.
 
-Open _serializers.py_ and write the following: 
+Open _serializers.py_ and write the following:
 
 ![Serializers](https://user-images.githubusercontent.com/31648998/55508839-fc36b580-565a-11e9-95a9-73a77b23fc43.png)
 
 #### 4. Specifying a route to your endpoints
-So far you have created a _view_ for auto-generating endpoints, but you have to specify the route for the clients to go to for accessing these endpoints. Open _urls.py_ and write the following: 
+So far you have created a _view_ for auto-generating endpoints, but you have to specify the route for the clients to go to for accessing these endpoints. Open _urls.py_ and write the following:
 
 ![Url-registration](https://user-images.githubusercontent.com/31648998/55509086-9ac31680-565b-11e9-8b16-410658bab256.png)
 
