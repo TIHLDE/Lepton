@@ -48,8 +48,8 @@ class EventSerializer(serializers.ModelSerializer):
     def get_is_user_registered(self, obj):
         """ Check if user loading event is signed up """
         request = self.context.get('request')
-        if request and hasattr(request, 'info'):
-            user_id = request.info
+        if request and hasattr(request, 'id'):
+            user_id = request.id
             return UserEvent.objects.filter(event__pk=obj.pk, user__user_id=user_id).count() > 0
         return None
 
