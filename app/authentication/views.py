@@ -28,7 +28,7 @@ def login(request):
 	if user.check_password(password):
 		try:
 			token = Token.objects.get(user_id=user_id).key
-			return Response({'token': token}, status=400)
+			return Response({'token': token}, status=200)
 		except Token.DoesNotExist:
 			return Response({'detail': ('Not a TIHLDE member')}, status=400)
 	else:
@@ -49,9 +49,9 @@ def makeMember(request):
 	if user is not None:
 		try:
 			token = Token.objects.get(user_id=user_id)
-			return Response({'detail': ('Already a TIHLDE member')}, status=500)
+			return Response({'detail': ('Already a TIHLDE member')}, status=400)
 		except Token.DoesNotExist:
 			Token.objects.create(user=user)
-			return Response({'detail': ('New TIHLDE member added')}, status=500)
+			return Response({'detail': ('New TIHLDE member added')}, status=200)
 	else:
-		return Response({'detail': ('Incorrect user_id')}, status=500)
+		return Response({'detail': ('Incorrect user_id')}, status=400)

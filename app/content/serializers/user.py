@@ -47,10 +47,19 @@ class UserMemberSerializer(UserSerializer):
 		fields = UserSerializer.Meta.fields
 		read_only_fields = ('user_id', 'first_name', 'last_name', 'email',)
 
-class UserCreateSerializer(UserSerializer):
+class UserCreateSerializer(serializers.ModelSerializer):
 	"""Serializer for creating user """
-	class Meta(UserSerializer.Meta):
-		fields = UserSerializer.Meta.fields + ('password', )
+	class Meta:
+			model = User
+			fields = (
+			'user_id',
+			'password',
+			'first_name',
+			'last_name',
+			'email',
+			'user_class',
+			'user_study',
+			)
 
 	def create(self, validated_data):
 		user = User.objects.create(
@@ -59,13 +68,8 @@ class UserCreateSerializer(UserSerializer):
 			first_name=validated_data['first_name'],
 			last_name=validated_data['last_name'],
 			email=validated_data['email'],
-			cell=validated_data['cell'],
-			em_nr=validated_data['em_nr'],
-			gender=validated_data['gender'],
 			user_class=validated_data['user_class'],
 			user_study=validated_data['user_study'],
-			allergy=validated_data['allergy'],
-			tool=validated_data['tool'],
 		)
 		user.set_password(validated_data['password'])
 		user.save()
