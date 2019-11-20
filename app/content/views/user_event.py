@@ -51,7 +51,7 @@ class UserEventViewSet(viewsets.ModelViewSet):
         """ Registers a user with the specified event_id and user_id """
         try:
             event = Event.objects.get(pk=event_id)
-            user = User.objects.get(user_id=request.info['uid'][0])
+            user = User.objects.get(user_id=request.id)
 
             serializer = UserEventSerializer(data=request.data)
 
