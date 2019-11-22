@@ -22,32 +22,6 @@ class IsMember(permissions.BasePermission):
 		return True
 
 
-class IsAccessingItself(permissions.BasePermission):
-	""" Checks if user is accessing themselves """
-	message = 'You are not trying to access yourself'
-
-	def has_permission(self, request, view):
-		# Allow GET, CREATE, HEAD or OPTIONS requests
-		if request.method in ['GET', 'CREATE', 'HEAD', 'OPTIONS']:
-			return True
-		elif request.method == 'PUT':
-			return False
-
-		# Check if session-token is provided
-		user_id = get_user_id(request)
-
-		if user_id is None:
-			return False
-
-		# Check for other user in url
-		try:
-			other_user = view.kwargs['user_id']
-		except KeyError:
-			other_user = None
-
-		return user_id == other_user
-
-
 class IsDev(permissions.BasePermission):
 	""" Checks if the user is in HS or Drift """
 	message = 'You are not in DevKom'
