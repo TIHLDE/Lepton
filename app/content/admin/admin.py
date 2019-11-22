@@ -14,4 +14,3 @@ admin.site.register(models.User)
 @admin.register(models.UserEvent)
 class UserEventAdmin(admin.ModelAdmin):
     list_display = ('user', 'event', 'is_on_wait', 'has_attended')
-    ordering = ('user', 'event', 'is_on_wait')
