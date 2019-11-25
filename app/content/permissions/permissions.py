@@ -5,9 +5,7 @@ from app.content.models import User
 
 import requests
 
-# URL to the web-auth api
-API_URL = 'https://web-auth.tihlde.org/api/v1'
-VERIFY_URL = API_URL + '/verify'
+from rest_framework.authtoken.models import Token
 
 
 class IsMember(permissions.BasePermission):
@@ -16,12 +14,11 @@ class IsMember(permissions.BasePermission):
 
 	def has_permission(self, request, view):
 		# Check if session-token is provided
-		user = get_user_info(request)
+		user_id = get_user_id(request)
 
-		if user is None:
+		if user_id is None:
 			return False
 
-		request.info = user
 		return True
 
 
@@ -37,12 +34,10 @@ class IsAccessingItself(permissions.BasePermission):
 			return False
 
 		# Check if session-token is provided
-		user = get_user_info(request)
+		user_id = get_user_id(request)
 
-		if user is None:
+		if user_id is None:
 			return False
-
-		request.info = user
 
 		# Check for other user in url
 		try:
@@ -50,7 +45,7 @@ class IsAccessingItself(permissions.BasePermission):
 		except KeyError:
 			other_user = None
 
-		return request.info['uid'][0] == other_user
+		return user_id == other_user
 
 
 class IsDev(permissions.BasePermission):
@@ -99,38 +94,33 @@ def check_group_permission(self, request, view, groups):
 		return True
 
 	# Check if session-token is provided
-	user = get_user_info(request)
+	user_id = get_user_id(request)
 
-	if user is None:
+	if user_id is None:
 		return False
-
-	request.info = user
-	user_id = user['uid'][0]
 
 	# Check if user with given id is connected to Groups
 	return User.objects.filter(user_id=user_id).filter(groups__name__in=groups).count() > 0
 
 
-def get_user_info(request):
+def get_user_id(request):
 	token = request.META.get('HTTP_X_CSRF_TOKEN')
 	if token is None:
 		return None
-	# Get user ID from token
-	headers = {'X-CSRF-TOKEN': token}
-	r = requests.get(VERIFY_URL, headers=headers, verify=False)  # Send request to verify token
-	response = r.json()
 
-	if r.status_code is not 200 or 'uid' not in response:
+	try:
+		userToken = Token.objects.get(key=token)
+	except Token.DoesNotExist:
 		return None
+	request.id = userToken.user_id
 
-	return response
+	return userToken.user_id
 
 
 def check_is_admin(request):
 	""" Checks if user is in dev or HS """
-	user = get_user_info(request)
-	if user is None:
+	user_id = get_user_id(request)
+	if user_id is None:
 		return False
-	user_id = user['uid'][0]
 	return User.objects.filter(user_id=user_id).filter(groups__name__in=['DevKom', 'HS']).count() > 0
 

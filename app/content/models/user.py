@@ -3,19 +3,24 @@ from django.db import models
 
 from app.util.models import BaseModel, OptionalImage
 
+from django.conf import settings
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from rest_framework.authtoken.models import Token
+
 
 class UserManager(BaseUserManager):
     use_in_migrations = True
 
-    def create_user(self, user_id, password=None):
+    def create_user(self, user_id, password):
         user = self.model(
             user_id=user_id,
         )
-        user.set_password(password)
+        user.set_password(make_password(password))
         user.save(using=self._db)
         return user
 
-    def create_staffuser(self, user_id, password=None):
+    def create_staffuser(self, user_id, password):
         user = self.create_user(
             user_id=user_id,
             password=password,
@@ -67,6 +72,7 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
         (2, 'DigFor'),
         (3, 'DigInc'),
         (4, 'DigSam'),
+        (5, 'Drift'),
     )
     user_study = models.IntegerField(default=1, choices=STUDY, null=True, blank=True)
     allergy = models.CharField(max_length=250, blank=True)
@@ -87,4 +93,10 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
         return self.is_superuser
 
     objects = UserManager()
+
+"""Genetare token at creation of user"""
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def create_auth_token(sender, instance=None, created=False, **kwarg):
+    if created:
+        Token.objects.create(user=instance)
 
