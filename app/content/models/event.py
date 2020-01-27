@@ -51,11 +51,29 @@ class Event(BaseModel, OptionalImage):
 
     def clean(self):
         # TODO: better response messages
-        if self.start > self.end_registration_at:
-            raise ValidationError(_('End time for registration cannot be after the event start'))
+        self.validate_start_end_registration()
 
-        if self.start_registration_at < self.end_registration_at:
+    def validate_start_end_registration(self):
+        self.check_not_signup_and_registration_times()
+        self.check_start_time_is_before_end_registration()
+        self.check_start_registration_is_before_end_registration()
+        self.check_start_registration_is_after_start_time()
+        
+    def check_not_signup_and_registration_times(self):
+        if not self.sign_up and not (self.start_registration_at or self.end_registration_at):
+            raise ValidationError(_('Enable signup to add start and end time for registration.'))
+
+    def check_start_time_is_before_end_registration(self):
+        if self.start < self.end_registration_at:
+            raise ValidationError(_('End time for registration cannot be after the event start.'))
+
+    def check_start_registration_is_before_end_registration(self):
+        if self.start_registration_at > self.end_registration_at:
             raise ValidationError(_('Start time for registration cannot be after end time.'))
+
+    def check_start_registration_is_after_start_time(self):
+        if self.start > self.start_registration_at:
+            raise ValidationError(_('Event start time cannot be after start time for registration.'))
 
     def save(self, *args, **kwargs):
         return super(Event, self).save(*args, **kwargs)

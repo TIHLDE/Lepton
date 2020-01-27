@@ -55,8 +55,16 @@ class UserEvent(BaseModel):
         if self.event.closed:
             raise ValidationError(_('The queue for this event is closed'))
 
+        self.validate_start_end_registration_time()
+
+    def validate_start_and_end_registration_time(self):
+        self.check_registration_has_started()
+        self.check_registration_has_ended()
+
+    def check_registration_has_started(self):
         if self.event.start_registration_at > today():
             raise ValidationError(_('The registration for this event has not started yet.'))
 
+    def check_registration_has_ended(self):
         if self.event.end_registration_at < today():
             raise ValidationError(_('The registration for this event has ended.'))
