@@ -60,6 +60,7 @@ class UserEvent(BaseModel):
     def validate_start_and_end_registration_time(self):
         self.check_registration_has_started()
         self.check_registration_has_ended()
+        self.check_deadline_is_after_end_time()
 
     def check_registration_has_started(self):
         if self.event.start_registration_at > today():
