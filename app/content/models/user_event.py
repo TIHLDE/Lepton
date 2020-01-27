@@ -2,9 +2,9 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext as _
 
+from app.util.utils import today
 from app.util.models import BaseModel
 from .user import User
-
 
 class UserEvent(BaseModel):
     """ Model for user registration for an event """
@@ -50,7 +50,13 @@ class UserEvent(BaseModel):
         """
         Validates model fields. Is called upon instance save.
 
-        :raises ValidationError if the event is closed. If so, the object will not be created
+        :raises ValidationError if the event is closed.
         """
         if self.event.closed:
             raise ValidationError(_('The queue for this event is closed'))
+
+        if self.event.start_registration_at > today():
+            raise ValidationError(_('The registration for this event has not started yet.'))
+
+        if self.event.end_registration_at < today():
+            raise ValidationError(_('The registration for this event has ended.'))

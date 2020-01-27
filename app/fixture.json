@@ -115,7 +115,9 @@
       "category": 1,
       "sign_up": true,
       "limit": 100,
-      "closed": false
+      "closed": false,
+      "start_registration_at": null,
+      "end_registration_at": null
     }
   },
   {
@@ -134,7 +136,9 @@
       "category": 2,
       "sign_up": false,
       "limit": 0,
-      "closed": false
+      "closed": false,
+      "start_registration_at": null,
+      "end_registration_at": null
     }
   },
   {
@@ -153,7 +157,9 @@
       "category": 3,
       "sign_up": true,
       "limit": 10,
-      "closed": false
+      "closed": false,
+      "start_registration_at": null,
+      "end_registration_at": null
     }
   },
   {
@@ -172,7 +178,9 @@
       "category": 4,
       "sign_up": true,
       "limit": 1,
-      "closed": false
+      "closed": false,
+      "start_registration_at": null,
+      "end_registration_at": null
     }
   },
   {
