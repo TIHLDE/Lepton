@@ -50,10 +50,9 @@ class Event(BaseModel, OptionalImage):
         return f'{self.title} - starting {self.start} at {self.location}'
 
     def clean(self):
-        # TODO: better response messages
-        self.validate_start_end_registration()
+        self.validate_start_end_registration_times()
 
-    def validate_start_end_registration(self):
+    def validate_start_end_registration_times(self):
         self.check_signup_and_registration_times()
         self.check_start_time_is_before_end_registration()
         self.check_start_registration_is_before_end_registration()
