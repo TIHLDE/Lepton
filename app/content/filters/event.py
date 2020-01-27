@@ -14,5 +14,5 @@ class EventFilter(FilterSet):
 
     def filter_expired(self, queryset, name, value):
         if value:
-            return queryset.filter(start__lt=yesterday()).order_by('-start')
-        return queryset.filter(start__gte=yesterday()).order_by('start')
+            return queryset.filter(start_date__lt=yesterday()).order_by('-start_date')
+        return queryset.filter(start_date__gte=yesterday()).order_by('start_date')

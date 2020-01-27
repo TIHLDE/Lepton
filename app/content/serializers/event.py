@@ -11,12 +11,13 @@ class EventSerializer(serializers.ModelSerializer):
     class Meta:
         model = Event
         fields = [
-            'id', 'title', 'start', 'location',
+            'id', 'title', 'start_date', 'end_date', 'location',
             'description', 'sign_up', 'priority',
             'category', 'expired', 'limit', 'closed',
             'registered_users_list', 'list_count',
             'waiting_list_count', 'is_user_registered',
-            'image', 'image_alt'
+            'image', 'image_alt', 'start_registration_at',
+            'end_registration_at', 'sign_off_deadline'
         ]
 
     def get_registered_users_list(self, obj):
@@ -60,6 +61,6 @@ class EventInUserSerializer(EventSerializer):
     class Meta:
         model = Event
         fields = [
-            'id', 'title', 'start', 'location', 'priority', 'limit',
-            'closed', 'description', 'expired', 'image', 'image_alt'
+            'id', 'title', 'start_date', 'end_date', 'location', 'priority',
+            'limit', 'closed', 'description', 'expired', 'image', 'image_alt'
         ]

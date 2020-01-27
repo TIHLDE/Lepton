@@ -19,7 +19,7 @@ class EventViewSet(viewsets.ModelViewSet):
     """
     serializer_class = EventSerializer
     permission_classes = [IsNoKorPromo]
-    queryset = Event.objects.filter(start__gte=yesterday()).order_by('start')
+    queryset = Event.objects.filter(start_date__gte=yesterday()).order_by('start_date')
     pagination_class = BasePagination
 
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
@@ -28,8 +28,8 @@ class EventViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         if self.kwargs or 'expired' in self.request.query_params:
-            return Event.objects.all().order_by('start')
-        return Event.objects.filter(start__gte=yesterday()).order_by('start')
+            return Event.objects.all().order_by('start_date')
+        return Event.objects.filter(start_date__gte=yesterday()).order_by('start_date')
 
     def update(self, request, pk, *args, **kwargs):
         """ Updates fields passed in request """
