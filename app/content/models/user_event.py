@@ -68,3 +68,7 @@ class UserEvent(BaseModel):
     def check_registration_has_ended(self):
         if self.event.end_registration_at < today():
             raise ValidationError(_('The registration for this event has ended.'))
+
+    def check_deadline_is_after_end_time(self):
+        if self.event.sign_off_deadline < today():
+            raise ValidationError(_('Sign off deadline cannot be after deadline.'))
