@@ -53,7 +53,7 @@ class Event(BaseModel, OptionalImage):
 
     def clean(self):
         self.validate_start_end_registration_times()
-
+        
     def validate_start_end_registration_times(self):
         self.check_signup_and_registration_times()
         self.check_start_time_is_before_end_registration()
@@ -88,7 +88,8 @@ class Event(BaseModel, OptionalImage):
             raise ValidationError(_('End time for registration cannot be after the event end_date.'))
 
     def check_start_time_is_before_end_time(self):
-        if self.end_date < self.end_registration_at:
+        if self.end_date < self.start_registration_at:
             raise ValidationError(_('End date for event cannot be before the event start_date.'))
+
     def save(self, *args, **kwargs):
         return super(Event, self).save(*args, **kwargs)
