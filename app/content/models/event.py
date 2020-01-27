@@ -54,12 +54,12 @@ class Event(BaseModel, OptionalImage):
         self.validate_start_end_registration()
 
     def validate_start_end_registration(self):
-        self.check_not_signup_and_registration_times()
+        self.check_signup_and_registration_times()
         self.check_start_time_is_before_end_registration()
         self.check_start_registration_is_before_end_registration()
         self.check_start_registration_is_after_start_time()
-        
-    def check_not_signup_and_registration_times(self):
+
+    def check_signup_and_registration_times(self):
         if not self.sign_up and not (self.start_registration_at or self.end_registration_at):
             raise ValidationError(_('Enable signup to add start and end time for registration.'))
 
@@ -72,9 +72,8 @@ class Event(BaseModel, OptionalImage):
             raise ValidationError(_('Start time for registration cannot be after end time.'))
 
     def check_start_registration_is_after_start_time(self):
-        if self.start > self.start_registration_at:
+        if self.start < self.start_registration_at:
             raise ValidationError(_('Event start time cannot be after start time for registration.'))
 
     def save(self, *args, **kwargs):
         return super(Event, self).save(*args, **kwargs)
-
