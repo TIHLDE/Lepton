@@ -55,25 +55,33 @@ class Event(BaseModel, OptionalImage):
         self.validate_start_end_registration_times()
 
     def validate_start_end_registration_times(self):
-        self.check_signup_and_registration_times()
-        self.check_start_time_is_before_end_registration()
-        self.check_start_registration_is_before_end_registration()
-        self.check_start_registration_is_after_start_time()
-        self.check_signup_and_sign_off_deadline()
-        self.check_end_time_is_before_end_registration()
-        self.check_start_time_is_before_end_time()
+        self.check_sign_up_and_registration_times()
+        self.check_if_registration_is_not_set()
+        self.check_sign_up_and_sign_off_deadline()
+        self.check_start_time_is_after_end_time()
+        if self.sign_up:
+            self.check_start_time_is_before_end_registration()
+            self.check_start_registration_is_before_end_registration()
+            self.check_start_registration_is_after_start_time()
+            self.check_start_registration_is_after_deadline()
+            self.check_end_time_is_before_end_registration()
+            self.check_start_date_is_before_deadline()
 
-    def check_signup_and_registration_times(self):
+    def check_sign_up_and_registration_times(self):
         if not self.sign_up and (self.start_registration_at or self.end_registration_at):
             raise ValidationError(_('Enable signup to add start_date and end time for registration.'))
 
-    def check_signup_and_sign_off_deadline(self):
+    def check_if_registration_is_not_set(self):
+        if self.sign_up and not (self.start_registration_at or self.end_registration_at or self.sign_off_deadline):
+            raise ValidationError(_('Set start- and end-registration and sign_off_deadline'))
+
+    def check_sign_up_and_sign_off_deadline(self):
         if not self.sign_up and self.sign_off_deadline:
             raise ValidationError(_('Enable signup to add deadline.'))
 
     def check_start_time_is_before_end_registration(self):
-        if self.start_date < self.end_registration_at:
-            raise ValidationError(_('End time for registration cannot be after the event start_date.'))
+            if self.start_date < self.end_registration_at:
+                raise ValidationError(_('End time for registration cannot be after the event start_date.'))
 
     def check_start_registration_is_before_end_registration(self):
         if self.start_registration_at > self.end_registration_at:
@@ -90,6 +98,10 @@ class Event(BaseModel, OptionalImage):
     def check_start_date_is_before_deadline(self):
         if self.start_date < self.sign_off_deadline:
             raise ValidationError(_('End time for sign_off cannot be after the event start_date.'))
+
+    def check_start_registration_is_after_deadline(self):
+        if self.start_registration_at > self.sign_off_deadline:
+            raise ValidationError(_('End time for sign_off cannot be after the event start_registration_at.'))
 
     def check_start_time_is_after_end_time(self):
         if self.end_date < self.start_date:

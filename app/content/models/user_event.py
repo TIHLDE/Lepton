@@ -54,6 +54,8 @@ class UserEvent(BaseModel):
         """
         if self.event.closed:
             raise ValidationError(_('The queue for this event is closed'))
+        if not self.event.sign_up:
+            raise ValidationError(_('Sign up is not possible'))
 
         self.validate_start_and_end_registration_time()
 
