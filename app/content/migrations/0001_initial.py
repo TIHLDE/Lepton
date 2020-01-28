@@ -136,7 +136,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='UserEvent',
             fields=[
-                ('created_at', models.DateTimeField(auto_now_add=True)),
+                ('created_at', models.DateTimeField(auto_now=True, verbose_name='Signed up on')),
                 ('updated_at', models.DateTimeField(auto_now=True)),
                 ('user_event_id', models.AutoField(primary_key=True, serialize=False)),
                 ('is_on_wait', models.BooleanField(default=False, verbose_name='waiting list')),
@@ -145,6 +145,7 @@ class Migration(migrations.Migration):
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
             options={
+                'ordering': ('event', 'is_on_wait', 'created_at'),
                 'verbose_name': 'User event',
                 'verbose_name_plural': 'User events',
                 'unique_together': {('user', 'event')},

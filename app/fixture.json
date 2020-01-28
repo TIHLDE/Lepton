@@ -108,14 +108,17 @@
       "image": "https://images.pexels.com/photos/67636/rose-blue-flower-rose-blooms-67636.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
       "image_alt": "Rose",
       "title": "Roses are blue",
-      "start": "2019-11-10T19:10:30Z",
+      "start_date": "2019-11-10T19:10:30Z",
+      "end_date": "2019-11-10T19:10:31Z",
       "location": "Jungle",
       "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a ultrices tortor. Sed vitae feugiat diam. Suspendisse potenti. Maecenas congue aliquet vulputate. Aenean eu euismod ligula, quis rhoncus purus. Praesent ac odio diam. Praesent eleifend ullamcorper erat ut bibendum. Phasellus fringilla neque eu mollis eleifend. Etiam pretium, lacus ac ultrices interdum, enim ante consequat diam, ut congue arcu eros quis lorem. Proin non tempus arcu. Suspendisse mauris nulla, lobortis non commodo id, ultricies eu turpis. Praesent maximus euismod accumsan. In aliquam dictum purus ac condimentum. Pellentesque mattis felis vitae urna aliquet pretium. Pellentesque dapibus nisi non lorem tempus commodo.\r\n\r\nAenean at magna rhoncus, aliquet erat et, auctor eros. Suspendisse vitae varius ex, at mollis felis. Proin non tincidunt nunc. Nunc erat eros, tempor vitae blandit eu, convallis ut justo. Aenean luctus ante sit amet pellentesque venenatis. Cras malesuada, massa in sollicitudin cursus, urna tortor ultrices justo, egestas aliquam lacus lorem id arcu. Phasellus ultricies dapibus dui, at lacinia ex gravida ac. Proin mattis aliquet quam, et finibus magna dictum sed. Praesent at elementum orci. Fusce rutrum arcu orci, malesuada maximus odio sodales nec. Fusce sodales eu elit ut semper. Fusce blandit neque vel augue auctor, vel maximus sem fermentum. Nunc cursus odio vel ligula cursus, luctus finibus dui lacinia. Curabitur pharetra, quam vitae eleifend elementum, libero ipsum vulputate eros, vel pretium nisl diam nec enim. Suspendisse ante dui, viverra a est eu, viverra finibus magna.",
       "priority": 1,
       "category": 1,
       "sign_up": true,
       "limit": 100,
-      "closed": false
+      "closed": false,
+      "start_registration_at": null,
+      "end_registration_at": null
     }
   },
   {
@@ -127,14 +130,17 @@
       "image": "https://images.unsplash.com/photo-1499084732479-de2c02d45fcc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&w=1000&q=80",
       "image_alt": "Sky",
       "title": "The vast sky",
-      "start": "2019-11-20T19:11:49Z",
+      "start_date": "2019-11-20T19:11:49Z",
+      "end_date": "2019-11-20T19:11:59Z",
       "location": "Akrinn",
       "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a ultrices tortor. Sed vitae feugiat diam. Suspendisse potenti. Maecenas congue aliquet vulputate. Aenean eu euismod ligula, quis rhoncus purus. Praesent ac odio diam. Praesent eleifend ullamcorper erat ut bibendum. Phasellus fringilla neque eu mollis eleifend. Etiam pretium, lacus ac ultrices interdum, enim ante consequat diam, ut congue arcu eros quis lorem. Proin non tempus arcu. Suspendisse mauris nulla, lobortis non commodo id, ultricies eu turpis. Praesent maximus euismod accumsan. In aliquam dictum purus ac condimentum. Pellentesque mattis felis vitae urna aliquet pretium. Pellentesque dapibus nisi non lorem tempus commodo.\r\n\r\nAenean at magna rhoncus, aliquet erat et, auctor eros. Suspendisse vitae varius ex, at mollis felis. Proin non tincidunt nunc. Nunc erat eros, tempor vitae blandit eu, convallis ut justo. Aenean luctus ante sit amet pellentesque venenatis. Cras malesuada, massa in sollicitudin cursus, urna tortor ultrices justo, egestas aliquam lacus lorem id arcu. Phasellus ultricies dapibus dui, at lacinia ex gravida ac. Proin mattis aliquet quam, et finibus magna dictum sed. Praesent at elementum orci. Fusce rutrum arcu orci, malesuada maximus odio sodales nec. Fusce sodales eu elit ut semper. Fusce blandit neque vel augue auctor, vel maximus sem fermentum. Nunc cursus odio vel ligula cursus, luctus finibus dui lacinia. Curabitur pharetra, quam vitae eleifend elementum, libero ipsum vulputate eros, vel pretium nisl diam nec enim. Suspendisse ante dui, viverra a est eu, viverra finibus magna.",
       "priority": 0,
       "category": 2,
       "sign_up": false,
       "limit": 0,
-      "closed": false
+      "closed": false,
+      "start_registration_at": null,
+      "end_registration_at": null
     }
   },
   {
@@ -146,14 +152,17 @@
       "image": "https://interactive-examples.mdn.mozilla.net/media/examples/grapefruit-slice-332-332.jpg",
       "image_alt": "appelsin",
       "title": "Oranges are red",
-      "start": "2019-12-13T19:13:36Z",
+      "start_date": "2019-12-13T19:13:36Z",
+      "end_date": "2019-12-13T19:13:36Z",
       "location": "Blue",
       "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a ultrices tortor. Sed vitae feugiat diam. Suspendisse potenti. Maecenas congue aliquet vulputate. Aenean eu euismod ligula, quis rhoncus purus. Praesent ac odio diam. Praesent eleifend ullamcorper erat ut bibendum. Phasellus fringilla neque eu mollis eleifend. Etiam pretium, lacus ac ultrices interdum, enim ante consequat diam, ut congue arcu eros quis lorem. Proin non tempus arcu. Suspendisse mauris nulla, lobortis non commodo id, ultricies eu turpis. Praesent maximus euismod accumsan. In aliquam dictum purus ac condimentum. Pellentesque mattis felis vitae urna aliquet pretium. Pellentesque dapibus nisi non lorem tempus commodo.\r\n\r\nAenean at magna rhoncus, aliquet erat et, auctor eros. Suspendisse vitae varius ex, at mollis felis. Proin non tincidunt nunc. Nunc erat eros, tempor vitae blandit eu, convallis ut justo. Aenean luctus ante sit amet pellentesque venenatis. Cras malesuada, massa in sollicitudin cursus, urna tortor ultrices justo, egestas aliquam lacus lorem id arcu. Phasellus ultricies dapibus dui, at lacinia ex gravida ac. Proin mattis aliquet quam, et finibus magna dictum sed. Praesent at elementum orci. Fusce rutrum arcu orci, malesuada maximus odio sodales nec. Fusce sodales eu elit ut semper. Fusce blandit neque vel augue auctor, vel maximus sem fermentum. Nunc cursus odio vel ligula cursus, luctus finibus dui lacinia. Curabitur pharetra, quam vitae eleifend elementum, libero ipsum vulputate eros, vel pretium nisl diam nec enim. Suspendisse ante dui, viverra a est eu, viverra finibus magna.",
       "priority": 2,
       "category": 3,
       "sign_up": true,
       "limit": 10,
-      "closed": false
+      "closed": false,
+      "start_registration_at": null,
+      "end_registration_at": null
     }
   },
   {
@@ -165,14 +174,17 @@
       "image": "https://cdn.pixabay.com/photo/2018/05/28/22/11/message-in-a-bottle-3437294__340.jpg",
       "image_alt": "faskepost",
       "title": "Arr sier piraten",
-      "start": "2019-12-10T19:21:59Z",
+      "start_date": "2019-12-10T19:21:59Z",
+      "end_date": "2019-12-10T19:21:59Z",
       "location": "Black pearl",
       "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a ultrices tortor. Sed vitae feugiat diam. Suspendisse potenti. Maecenas congue aliquet vulputate. Aenean eu euismod ligula, quis rhoncus purus. Praesent ac odio diam. Praesent eleifend ullamcorper erat ut bibendum. Phasellus fringilla neque eu mollis eleifend. Etiam pretium, lacus ac ultrices interdum, enim ante consequat diam, ut congue arcu eros quis lorem. Proin non tempus arcu. Suspendisse mauris nulla, lobortis non commodo id, ultricies eu turpis. Praesent maximus euismod accumsan. In aliquam dictum purus ac condimentum. Pellentesque mattis felis vitae urna aliquet pretium. Pellentesque dapibus nisi non lorem tempus commodo.\r\n\r\nAenean at magna rhoncus, aliquet erat et, auctor eros. Suspendisse vitae varius ex, at mollis felis. Proin non tincidunt nunc. Nunc erat eros, tempor vitae blandit eu, convallis ut justo. Aenean luctus ante sit amet pellentesque venenatis. Cras malesuada, massa in sollicitudin cursus, urna tortor ultrices justo, egestas aliquam lacus lorem id arcu. Phasellus ultricies dapibus dui, at lacinia ex gravida ac. Proin mattis aliquet quam, et finibus magna dictum sed. Praesent at elementum orci. Fusce rutrum arcu orci, malesuada maximus odio sodales nec. Fusce sodales eu elit ut semper. Fusce blandit neque vel augue auctor, vel maximus sem fermentum. Nunc cursus odio vel ligula cursus, luctus finibus dui lacinia. Curabitur pharetra, quam vitae eleifend elementum, libero ipsum vulputate eros, vel pretium nisl diam nec enim. Suspendisse ante dui, viverra a est eu, viverra finibus magna.",
       "priority": 2,
       "category": 4,
       "sign_up": true,
       "limit": 1,
-      "closed": false
+      "closed": false,
+      "start_registration_at": null,
+      "end_registration_at": null
     }
   },
   {
@@ -780,6 +792,34 @@
     }
   },
   {
+    "model": "content.user",
+    "pk": "test",
+    "fields": {
+      "password": "pbkdf2_sha256$150000$0K7u3UV5nCr1$K6MSLWX3yzoXU1PmWYrTajzWGJ354th6rl+bRRu9GNI=",
+      "last_login": "2019-11-10T18:35:06.870Z",
+      "is_superuser": true,
+      "created_at": "2019-11-10T18:31:23.803Z",
+      "updated_at": "2019-11-10T18:31:23.811Z",
+      "image": null,
+      "image_alt": null,
+      "first_name": "Test",
+      "last_name": "Testesen",
+      "email": "",
+      "cell": "",
+      "em_nr": "",
+      "home_busstop": null,
+      "gender": 2,
+      "user_class": 1,
+      "user_study": 1,
+      "allergy": "",
+      "tool": "",
+      "is_staff": true,
+      "is_active": true,
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
     "model": "content.userevent",
     "pk": 1,
     "fields": {
@@ -787,6 +827,30 @@
       "updated_at": "2019-11-10T19:02:02.014Z",
       "user": "devkom",
       "event": 3,
+      "is_on_wait": false,
+      "has_attended": false
+    }
+  },
+  {
+    "model": "content.userevent",
+    "pk": 2,
+    "fields": {
+      "created_at": "2019-11-10T19:01:40.513Z",
+      "updated_at": "2019-11-10T19:02:02.014Z",
+      "user": "test",
+      "event": 4,
+      "is_on_wait": true,
+      "has_attended": false
+    }
+  },
+  {
+    "model": "content.userevent",
+    "pk": 3,
+    "fields": {
+      "created_at": "2019-11-10T19:01:40.513Z",
+      "updated_at": "2019-11-10T19:02:02.014Z",
+      "user": "devkom",
+      "event": 4,
       "is_on_wait": false,
       "has_attended": false
     }
