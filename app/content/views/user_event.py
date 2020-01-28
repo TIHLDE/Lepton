@@ -1,7 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext as _
 
-from app.util.utils import today
 from rest_framework import viewsets
 from rest_framework.response import Response
 
@@ -54,13 +53,6 @@ class UserEventViewSet(viewsets.ModelViewSet):
         """ Registers a user with the specified event_id and user_id """
         try:
             event = Event.objects.get(pk=event_id)
-            if event.start_registration_at > today():
-                return Response({'detail': 'The registration for this event has not started yet.'}, status=400)
-            if event.end_registration_at < today():
-                return Response({'detail': 'The registration for this event has ended.'}, status=400)
-            if event.sign_off_deadline < today():
-                return Response({'detail': 'Sign off deadline cannot be after deadline.'}, status=400)
-
             user = User.objects.get(user_id=request.id)
             serializer = UserEventSerializer(data=request.data)
 
