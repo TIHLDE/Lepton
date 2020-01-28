@@ -80,8 +80,8 @@ class Event(BaseModel, OptionalImage):
             raise ValidationError(_('Enable signup to add deadline.'))
 
     def check_start_time_is_before_end_registration(self):
-            if self.start_date < self.end_registration_at:
-                raise ValidationError(_('End time for registration cannot be after the event start_date.'))
+        if self.start_date < self.end_registration_at:
+            raise ValidationError(_('End time for registration cannot be after the event start_date.'))
 
     def check_start_registration_is_before_end_registration(self):
         if self.start_registration_at > self.end_registration_at:
