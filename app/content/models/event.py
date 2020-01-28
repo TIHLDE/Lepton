@@ -72,7 +72,7 @@ class Event(BaseModel, OptionalImage):
             raise ValidationError(_('Enable signup to add start_date and end time for registration.'))
 
     def check_if_registration_is_not_set(self):
-        if self.sign_up and not (self.start_registration_at or self.end_registration_at or self.sign_off_deadline):
+        if self.sign_up and not (self.start_registration_at and self.end_registration_at and self.sign_off_deadline):
             raise ValidationError(_('Set start- and end-registration and sign_off_deadline'))
 
     def check_sign_up_and_sign_off_deadline(self):
