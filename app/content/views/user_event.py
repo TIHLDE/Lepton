@@ -3,6 +3,7 @@ from django.utils.translation import gettext as _
 
 from rest_framework import viewsets
 from rest_framework.response import Response
+from app.util.utils import today
 
 from ..models import UserEvent, Event, User
 from ..permissions import IsMember, IsDev, IsHS, check_is_admin
@@ -97,6 +98,9 @@ class UserEventViewSet(viewsets.ModelViewSet):
         """ Unregisters the user specified with provided event_id and user_id """
         try:
             user_event = UserEvent.objects.get(event__pk=event_id, user__user_id=user_id)
+            event = Event.objects.get(pk=event_id)
+            if event.sign_off_deadline < today():
+                return Response({'detail': 'Sign off deadline cannot be after deadline.'}, status=400)
 
             if request.id == user_id:
                 return Response({'detail': user_event.delete()}, status=200)
@@ -110,5 +114,7 @@ class UserEventViewSet(viewsets.ModelViewSet):
 
         except UserEvent.DoesNotExist:
             msg, status = _('Could not delete user event.'), 404
+        except Event.DoesNotExist:
+            msg = _('The provided event does not exist')
 
         return Response({'detail': msg}, status=status)
