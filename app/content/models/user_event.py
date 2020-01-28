@@ -28,9 +28,10 @@ class UserEvent(BaseModel):
 
     def save(self, *args, **kwargs):
         """ Determines whether the object is being created or updated and acts accordingly """
+        self.clean()
         if not self.user_event_id:
             return self.create(*args, **kwargs)
-        
+
         return super(UserEvent, self).save(*args, **kwargs)
 
     def create(self, *args, **kwargs):

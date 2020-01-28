@@ -54,12 +54,10 @@ class UserEventViewSet(viewsets.ModelViewSet):
         try:
             event = Event.objects.get(pk=event_id)
             user = User.objects.get(user_id=request.id)
-
             serializer = UserEventSerializer(data=request.data)
 
             if serializer.is_valid():
                 UserEvent(user=user, event=event).save()
-
                 return Response({'detail': 'User event created.'}, status=200)
             else:
                 return Response({'detail': serializer.errors}, status=400)
