@@ -57,7 +57,7 @@ class UserEventViewSet(viewsets.ModelViewSet):
             if event.start_registration_at > today():
                 return Response({'detail': 'The registration for this event has not started yet.'}, status=400)
             if event.end_registration_at < today():
-                print("2")
+                return Response({'detail': 'The registration for this event has ended.'}, status=400)
             if event.sign_off_deadline < today():
                 return Response({'detail': 'Sign off deadline cannot be after deadline.'}, status=400)
 
