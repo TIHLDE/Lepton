@@ -1,4 +1,5 @@
 from datetime import datetime, timezone, timedelta
+from pytz import timezone as pytz_timezone
 
 
 def yesterday():
@@ -6,4 +7,4 @@ def yesterday():
 
 
 def today():
-    return datetime.now(tz=timezone.utc)
+    return datetime.now(tz=pytz_timezone('Europe/Oslo'))
