@@ -24,7 +24,7 @@ class UserViewSet(viewsets.ModelViewSet):
         if self.request.method == 'POST':
             self.permission_classes = [AllowAny, ]
         else:
-            self.permission_classes = [IsMember, ]
+            self.permission_classes = [IsDev, ]
         return super(UserViewSet, self).get_permissions()
 
     def get_object(self):
