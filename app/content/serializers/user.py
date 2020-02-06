@@ -26,6 +26,7 @@ class UserSerializer(serializers.ModelSerializer):
 			'user_study',
 			'allergy',
 			'tool',
+			'app_token',
 			'events',
 			'groups'
 		)
