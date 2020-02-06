@@ -9,6 +9,8 @@ from ..models import UserEvent, Event, User
 from ..permissions import IsMember, IsDev, IsHS, check_is_admin
 from ..serializers import UserEventSerializer
 
+from ...util.mailer import send_user_event_mail
+
 
 class UserEventViewSet(viewsets.ModelViewSet):
     """ Administrates registration, waiting lists and attendance for events """
@@ -78,18 +80,21 @@ class UserEventViewSet(viewsets.ModelViewSet):
         """ Updates fields passed in request """
         try:
             user_event = UserEvent.objects.get(event__pk=event_id, user__user_id=user_id)
-
             self.check_object_permissions(self.request, user_event)
             serializer = UserEventSerializer(user_event, data=request.data, partial=True, many=False)
-
             if serializer.is_valid():
                 self.perform_update(serializer)
-                return Response({'detail': _('User event successfully updated.')})
+                if not request.data.get("has_attended"):
+                    send_user_event_mail(request.data.get("is_on_wait"), Event.objects.get(pk=event_id).title, [User.objects.get(user_id=user_id).email])
+                return Response({'detail': _('User event successfully updated.')}, status=201)
             else:
                 return Response({'detail': _('Could not perform update')}, status=400)
-
         except UserEvent.DoesNotExist:
             return Response({'detail': _('Could not find user event')}, status=404)
+        except User.DoesNotExist:
+            return Response({'detail': _('Could not find user')}, status=404)
+        except Event.DoesNotExist:
+            return Response({'detail': _('Could not find event')}, status=404)
 
         except ValidationError as e:
             return Response({'detail': _(e.message)}, status=404)

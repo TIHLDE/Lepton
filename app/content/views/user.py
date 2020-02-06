@@ -30,7 +30,6 @@ class UserViewSet(viewsets.ModelViewSet):
     def get_object(self):
         """ Returns one user """
         id = self.request.id
-
         try:
             User.objects.get(user_id = id)
         except User.DoesNotExist:
