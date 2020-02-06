@@ -24,13 +24,12 @@ class UserViewSet(viewsets.ModelViewSet):
         if self.request.method == 'POST':
             self.permission_classes = [AllowAny, ]
         else:
-            self.permission_classes = [IsDev, ]
+            self.permission_classes = [IsMember, ]
         return super(UserViewSet, self).get_permissions()
 
     def get_object(self):
         """ Returns one user """
         id = self.request.id
-
         try:
             User.objects.get(user_id = id)
         except User.DoesNotExist:
