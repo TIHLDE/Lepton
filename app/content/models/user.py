@@ -74,10 +74,13 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
         (4, 'DigSam'),
         (5, 'Drift'),
     )
+
     user_study = models.IntegerField(default=1, choices=STUDY, null=True, blank=True)
     allergy = models.CharField(max_length=250, blank=True)
 
     tool = models.CharField(max_length=100, blank=True)
+
+    app_token = models.CharField(max_length=60, blank=True, null=True)
 
     USERNAME_FIELD = 'user_id'
     is_staff = models.BooleanField(default=False)
