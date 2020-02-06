@@ -47,6 +47,7 @@ INSTALLED_APPS = [
 	'django_filters',
 	'rest_framework_swagger',
 	'rest_framework.authtoken',
+	'rest_auth',
 	# Our apps
 	'app.content',
 	'app.util',
@@ -62,6 +63,11 @@ REST_FRAMEWORK = {
 	'DEFAULT_PERMISSION_CLASSES': [
 		'rest_framework.permissions.AllowAny',
 	]
+}
+
+# Django rest auth framework
+REST_AUTH_SERIALIZERS = {
+	'PASSWORD_RESET_SERIALIZER' : 'app.content.serializers.reset_password.PasswordResetSerializer' 
 }
 
 

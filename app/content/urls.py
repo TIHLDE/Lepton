@@ -25,6 +25,7 @@ schema_view = get_swagger_view(title='TIHLDE API')
 
 urlpatterns = [
     url(r'docs', schema_view),
+    url(r'^rest-auth/', include('rest_auth.urls')),
     url(r'', include(router.urls)),
     path('accept-form/', accept_form),
 ]
