@@ -65,7 +65,6 @@ REST_FRAMEWORK = {
 }
 
 
-
 MIDDLEWARE = [
 	# Django Cors Headers
 	'corsheaders.middleware.CorsMiddleware',
