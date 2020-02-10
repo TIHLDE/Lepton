@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from app.util.utils import today
 
 from ..models import UserEvent, Event, User
-from ..permissions import IsMember, IsDev, IsHS, check_is_admin
+from ..permissions import IsMember, IsDev, IsHS, is_admin_user
 from ..serializers import UserEventSerializer
 
 from ...util.mailer import send_user_event_mail
@@ -112,7 +112,7 @@ class UserEventViewSet(viewsets.ModelViewSet):
 
             self.check_object_permissions(request, user_event)
 
-            if check_is_admin(request):
+            if is_admin_user(request):
                 msg, status = user_event.delete(), 200
             else:
                 msg, status = _('You can only unregister yourself'), 403

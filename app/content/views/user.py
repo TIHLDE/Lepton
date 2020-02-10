@@ -1,52 +1,40 @@
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import gettext as _
-
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, filters
 from rest_framework.response import Response
 
-from rest_framework.permissions import AllowAny
-
 from ..models import User
-from ..permissions import IsMember, IsDev, check_is_admin
+from ..permissions import UserPermission
 from ..serializers import UserSerializer, UserMemberSerializer, UserCreateSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):
     """ API endpoint to display one user """
     serializer_class = UserSerializer
-    permission_classes = [IsMember, ]
+    permission_classes = [UserPermission]
     queryset = User.objects.all()
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filterset_fields = ['user_class', 'user_study']
+    search_fields = ['user_id']
 
-    def get_permissions(self):
-        # Your logic should be all here
-        if self.request.method == 'POST':
-            self.permission_classes = [AllowAny, ]
-        else:
-            self.permission_classes = [IsMember, ]
-        return super(UserViewSet, self).get_permissions()
-
-    def get_object(self):
-        """ Returns one user """
-        id = self.request.id
+    def retrieve(self, request, pk, *args, **kwargs):
         try:
-            User.objects.get(user_id = id)
-        except User.DoesNotExist:
-            return Response({'detail': _('User not found')}, status=400)
-        return User.objects.get(user_id=id)
+            user = User.objects.get(pk=pk)
+            self.check_object_permissions(self.request, user)
+            serializer = UserSerializer(user, context={'request': self.request}, many=False)
 
-    def list(self, request):
-        if check_is_admin(request):
-            serializer = UserSerializer(self.get_queryset(), many=True)
             return Response(serializer.data)
-        return Response({'detail': _('Not authenticated to see all users')}, status=400)
+        except User.DoesNotExist:
+            return Response({'detail': _('User not found.')}, status=404)
 
-    def create(self, serializer):
+    def create(self, request, *args, **kwargs):
         serializer = UserCreateSerializer(data=self.request.data)
+
         if serializer.is_valid():
             serializer.save()
-            return Response({'detail': _('User created')}, status=200)
+            return Response({'detail': _('User created')}, status=201)
+
         return Response({'detail': serializer.errors}, status=400)
 
     def update(self, request, pk, *args, **kwargs):
