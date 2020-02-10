@@ -183,6 +183,7 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # django_heroku.settings(locals())
 
 #EMAIL SMTP Server setup
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = os.environ.get('EMAIL_HOST') or "smtp.mailtrap.io"
 EMAIL_PORT = os.environ.get('EMAIL_PORT') or "2525"
 EMAIL_USE_TLS = True
