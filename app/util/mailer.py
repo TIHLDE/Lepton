@@ -1,10 +1,11 @@
 import os
-from django.core.mail import send_mass_mail
+from django.core.mail import send_mass_mail, send_mail
 
 
 def send_tihlde_email(subject, message, mail_list):
   message = (subject, message, os.environ.get('EMAIL_USER'), mail_list)
-  send_mass_mail((message,), fail_silently=False)
+  send_mail((message,), fail_silently=False)
+  return None
 
 
 def send_user_event_mail(is_on_wait, event, user):
@@ -20,3 +21,4 @@ def send_user_event_mail(is_on_wait, event, user):
       "Gratulerer, du har fått plass på eventet " + (event),
       user
     )
+  return None

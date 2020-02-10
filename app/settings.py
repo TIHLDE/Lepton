@@ -30,6 +30,7 @@ DEBUG = os.environ.get('PROD') == None
 
 # Application definition
 
+
 INSTALLED_APPS = [
 	'django.contrib.admin',
 	'django.contrib.auth',
@@ -224,3 +225,7 @@ LOGGING = {
 	}
 }
 
+CELERY_BROKER_URL = os.environ.get('CELERY_URL')
+
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
