@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from ..models import User
 from ..permissions import UserPermission
 from ..serializers import UserSerializer, UserMemberSerializer, UserCreateSerializer
+from ..pagination import BasePagination
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -14,10 +15,11 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     permission_classes = [UserPermission]
     queryset = User.objects.all()
+    pagination_class = BasePagination
 
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_fields = ['user_class', 'user_study']
-    search_fields = ['user_id']
+    search_fields = ['user_id', 'first_name', 'last_name', 'vipps_transaction_id']
 
     def retrieve(self, request, *args, **kwargs):
         try:

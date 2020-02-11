@@ -26,6 +26,7 @@ class UserSerializer(serializers.ModelSerializer):
 			'user_study',
 			'allergy',
 			'tool',
+			'vipps_transaction_id',
 			'app_token',
 			'events',
 			'groups'
@@ -46,7 +47,7 @@ class UserMemberSerializer(UserSerializer):
 	"""Serializer for user update to prevent them from updating extra_kwargs fields"""
 	class Meta(UserSerializer.Meta):
 		fields = UserSerializer.Meta.fields
-		read_only_fields = ('user_id', 'first_name', 'last_name', 'email',)
+		read_only_fields = ('user_id', 'first_name', 'last_name', 'email', 'vipps_transaction_id',)
 
 class UserCreateSerializer(serializers.ModelSerializer):
 	"""Serializer for creating user """
@@ -58,6 +59,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
 			'first_name',
 			'last_name',
 			'email',
+			'vipps_transaction_id',
 			'user_class',
 			'user_study',
 			)
@@ -69,6 +71,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
 			first_name=validated_data['first_name'],
 			last_name=validated_data['last_name'],
 			email=validated_data['email'],
+			vipps_transaction_id=validated_data['vipps_transaction_id'],
 			user_class=validated_data['user_class'],
 			user_study=validated_data['user_study'],
 		)
