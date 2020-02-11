@@ -17,7 +17,6 @@ class PasswordResetSerializer(serializers.Serializer):
             if not self.reset_form.is_valid():
                 raise serializers.ValidationError(self.reset_form.errors)
         except Exception as e:
-            print(e)
             raise
         return value
 
@@ -36,5 +35,4 @@ class PasswordResetSerializer(serializers.Serializer):
             self.reset_form.save(**opts)
        
         except Exception as e:
-            print(e)
             raise
