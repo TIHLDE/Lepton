@@ -8,12 +8,7 @@ class PasswordResetSerializer(serializers.Serializer):
     Serializer for requesting a password reset e-mail.
     """
     email = serializers.EmailField()
-
     password_reset_form_class = PasswordResetForm
-
-    def get_email_options(self):
-        """Override this method to change default e-mail options"""
-        return {}
 
     def validate_email(self, value):
         # Create PasswordResetForm with the serializer
@@ -35,9 +30,9 @@ class PasswordResetSerializer(serializers.Serializer):
                 'from_email': os.environ.get('EMAIL_USER') or None,
                 'request': request,
                 'html_email_template_name': 'passwordResetEmail.html',
+                'subject_template_name': 'password_reset_subject.txt',
             }
 
-            opts.update(self.get_email_options())
             self.reset_form.save(**opts)
        
         except Exception as e:
