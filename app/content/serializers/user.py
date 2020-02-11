@@ -51,27 +51,17 @@ class UserMemberSerializer(UserSerializer):
 		fields = UserSerializer.Meta.fields
 		read_only_fields = ('user_id', 'first_name', 'last_name', 'email', 'vipps_transaction_id', 'is_TIHLDE_member',)
 
-class UserAdminSerializer(UserSerializer):
-	"""Serializer for user update to prevent them from updating extra_kwargs fields"""
-	class Meta(UserSerializer.Meta):
-		fields = UserSerializer.Meta.fields
-		read_only_fields = (
+class UserAdminSerializer(serializers.ModelSerializer):
+	"""Serializer for admin update to prevent them from updating extra_kwargs fields"""
+	class Meta:
+		model = User
+		fields = (
 			'user_id',
 			'first_name',
 			'last_name',
-			'email',
-			'cell',
-			'em_nr',
-			'home_busstop',
-			'gender',
-			'user_class',
-			'user_study',
-			'allergy',
-			'tool',
-			'vipps_transaction_id',
-			'app_token',
-			'events',
-			)
+			'is_TIHLDE_member',
+		)
+		read_only_fields = ('user_id', 'first_name', 'last_name',)
 
 class UserCreateSerializer(serializers.ModelSerializer):
 	"""Serializer for creating user """
