@@ -9,6 +9,10 @@ from .user import User
 from .user_event import UserEvent
 from .prioritiy import Priority
 
+from ..tasks.event import event_unregister_deadline_mail
+from celery import shared_task
+from celery.task.control import revoke
+
 
 class Event(BaseModel, OptionalImage):
     title = models.CharField(max_length=200)
@@ -35,6 +39,11 @@ class Event(BaseModel, OptionalImage):
     sign_off_deadline = models.DateTimeField(blank=True, null=True, default=None)
 
     registration_priorities = models.ManyToManyField(Priority, blank=True, default=None, related_name='priorities')
+    start_date_schedular_id = models.CharField(max_length=100, blank=True, null=True)
+    start_registration_schedular_id = models.CharField(max_length=100, blank=True, null=True)
+    sign_off_deadline_schedular_id = models.CharField(max_length=100, blank=True, null=True)
+
+
 
     @property
     def expired(self):
@@ -123,4 +132,11 @@ class Event(BaseModel, OptionalImage):
             raise ValidationError(_('End date for event cannot be before the event start_date.'))
 
     def save(self, *args, **kwargs):
+        try:
+            self.start_date_schedular_id = event_unregister_deadline_mail.delay(time=self.start_date)
+            # if self.sign_up:
+            #     self.start_registration_schedular_id = event_unregister_deadline_mail.delay(time=self.start_registration_at)
+            #     self.sign_off_deadline_schedular_id = event_unregister_deadline_mail.delay(time=self.sign_off_deadline)
+        except Exception as e:
+            print(e)
         return super(Event, self).save(*args, **kwargs)
