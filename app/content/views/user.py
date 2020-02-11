@@ -14,13 +14,14 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     permission_classes = [UserPermission]
     queryset = User.objects.all()
+
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_fields = ['user_class', 'user_study']
     search_fields = ['user_id']
 
-    def retrieve(self, request, pk, *args, **kwargs):
+    def retrieve(self, request, *args, **kwargs):
         try:
-            user = User.objects.get(pk=pk)
+            user = request.user
             self.check_object_permissions(self.request, user)
             serializer = UserSerializer(user, context={'request': self.request}, many=False)
 
