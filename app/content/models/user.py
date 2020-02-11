@@ -85,6 +85,8 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
 
     app_token = models.CharField(max_length=60, blank=True, null=True)
 
+    is_TIHLDE_member = models.BooleanField(default=False)
+
     USERNAME_FIELD = 'user_id'
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
