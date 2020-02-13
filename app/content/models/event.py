@@ -10,8 +10,12 @@ from .user_event import UserEvent
 from .prioritiy import Priority
 
 from ..tasks.event import event_unregister_deadline_mail
+
 from celery import shared_task
 from celery.task.control import revoke
+
+from ...util.utils import today
+import math
 
 
 class Event(BaseModel, OptionalImage):
@@ -133,7 +137,8 @@ class Event(BaseModel, OptionalImage):
 
     def save(self, *args, **kwargs):
         try:
-            self.start_date_schedular_id = event_unregister_deadline_mail.delay(time=self.start_date)
+            revoke(self.start_date_schedular_id, terminate=True)
+            self.start_date_schedular_id = event_unregister_deadline_mail.delay(time=math.floor((self.start_date-today()).total_seconds()))
             # if self.sign_up:
             #     self.start_registration_schedular_id = event_unregister_deadline_mail.delay(time=self.start_registration_at)
             #     self.sign_off_deadline_schedular_id = event_unregister_deadline_mail.delay(time=self.sign_off_deadline)

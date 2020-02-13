@@ -3,9 +3,7 @@ from django.core.mail import send_mass_mail, send_mail
 
 
 def send_tihlde_email(subject, message, mail_list):
-  message = (subject, message, os.environ.get('EMAIL_USER'), mail_list)
-  send_mail((message,), fail_silently=False)
-  return None
+  return send_mail(subject, message, os.environ.get('EMAIL_USER'), mail_list, fail_silently=False,)
 
 
 def send_user_event_mail(is_on_wait, event, user):
