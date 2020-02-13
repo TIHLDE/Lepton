@@ -8,6 +8,7 @@ admin.site.register(models.News)
 admin.site.register(models.Warning)
 admin.site.register(models.Category)
 admin.site.register(models.JobPost)
+admin.site.register(models.Priority)
 
 
 @admin.register(models.UserEvent)

@@ -7,6 +7,7 @@ from app.util.utils import yesterday
 from .category import Category
 from .user import User
 from .user_event import UserEvent
+from .prioritiy import Priority
 
 
 class Event(BaseModel, OptionalImage):
@@ -33,6 +34,7 @@ class Event(BaseModel, OptionalImage):
     end_registration_at = models.DateTimeField(blank=True, null=True, default=None)
     sign_off_deadline = models.DateTimeField(blank=True, null=True, default=None)
 
+    registration_priorities = models.ManyToManyField(Priority, blank=True, default=None, related_name='priorities')
 
     @property
     def expired(self):

@@ -4,7 +4,9 @@ from django.utils.translation import gettext as _
 
 from app.util.utils import today
 from app.util.models import BaseModel
+from app.content.enums import UserClass, UserStudy
 from .user import User
+
 
 class UserEvent(BaseModel):
     """ Model for user registration for an event """
@@ -38,20 +40,29 @@ class UserEvent(BaseModel):
         """
         Determines whether user is on the waiting list or not when the instance is created.
 
-        If the limit is reached or a waiting list exists, the user is automatically put on the waiting list
+        If the limit is reached or a waiting list exists, the user is automatically put on the waiting list.
+        If the user does not fit in any registration priorities, the user is also put on the waiting list.
         """
         event = self.event
 
         self.is_on_wait = event.limit <= UserEvent.objects.filter(event=event).count() and event.limit is not 0 \
-                          or UserEvent.objects.filter(event=event, is_on_wait=True).exists()
+                          or UserEvent.objects.filter(event=event, is_on_wait=True).exists() \
+                          or not self.is_user_prioritized()
 
         return super(UserEvent, self).save(*args, **kwargs)
+
+    def is_user_prioritized(self):
+
+        user_class = UserClass(int(self.user.user_class))
+        user_study = UserStudy(int(self.user.user_study))
+
+        return self.event.registration_priorities.filter(user_class=user_class, user_study=user_study).exists()
 
     def clean(self):
         """
         Validates model fields. Is called upon instance save.
 
-        :raises ValidationError if the event is closed.
+        :raises ValidationError if the event or queue is closed.
         """
         if self.event.closed:
             raise ValidationError(_('The queue for this event is closed'))
