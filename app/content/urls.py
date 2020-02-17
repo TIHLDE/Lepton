@@ -18,7 +18,7 @@ router.register('category', CategoryViewSet)
 router.register('jobpost', JobPostViewSet, base_name='jobpost')
 router.register('user', UserViewSet, base_name='user')
 router.register(r'events/(?P<event_id>\d+)/users', UserEventViewSet, base_name='user_event')
-router.register('notification', NotificationViewSet)
+router.register(r'user/(?P<user_id>[^/.]+)/notification', NotificationViewSet)
 
 # Swagger
 schema_view = get_swagger_view(title='TIHLDE API')

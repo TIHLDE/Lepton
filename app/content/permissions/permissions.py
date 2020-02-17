@@ -59,7 +59,7 @@ class IsNoKorPromo(BasePermission):
 
 
 class UserPermission(BasePermission):
-    """ Checks if user is admin or getting own self """
+    """ Checks if user is admin or getting or posting own self """
     message = "You are not an admin"
 
     def has_permission(self, request, view):
