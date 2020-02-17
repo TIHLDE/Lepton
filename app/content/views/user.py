@@ -9,9 +9,6 @@ from ..permissions import UserPermission, is_admin_user
 from ..serializers import UserSerializer, UserMemberSerializer, UserCreateSerializer, UserAdminSerializer
 from ..pagination import BasePagination
 
-from ..tasks.event import event_unregister_deadline_mail
-
-
 
 class UserViewSet(viewsets.ModelViewSet):
     """ API endpoint to display one user """

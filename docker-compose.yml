@@ -22,6 +22,21 @@ services:
     environment:
       PMA_HOST: db
       MYSQL_ROOT_PASSWORD: password
+  redis:
+    image: "redis:alpine"
+    ports:
+      - "6379:6379"
+  celery:
+    env_file:
+      - .env
+    build: .
+    container_name: celery
+    command: pipenv run celery -A app worker -l info
+    volumes:
+      - .:/usr/src/
+    depends_on:
+      - db
+      - redis
   web:
     env_file:
       - .env
@@ -34,3 +49,4 @@ services:
       - "8000:8000"
     depends_on:
       - db
+      - redis

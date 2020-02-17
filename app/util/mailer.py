@@ -1,7 +1,6 @@
 import os
 from django.core.mail import send_mass_mail, send_mail
 
-
 def send_tihlde_email(subject, message, mail_list):
   return send_mail(subject, message, os.environ.get('EMAIL_USER'), mail_list, fail_silently=False,)
 
