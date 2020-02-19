@@ -30,7 +30,6 @@ class UserEvent(BaseModel):
 
     def save(self, *args, **kwargs):
         """ Determines whether the object is being created or updated and acts accordingly """
-        self.clean()
         if not self.user_event_id:
             return self.create(*args, **kwargs)
 
@@ -38,9 +37,11 @@ class UserEvent(BaseModel):
 
     def create(self, *args, **kwargs):
         """ Determines whether user is on the waiting list or not when the instance is created. """
+        self.clean()
+
         self.is_on_wait = self.event_has_waiting_list()
 
-        if self.is_on_wait and self.event.registration_priorities.exists():
+        if self.is_on_wait and self.event.registration_priorities.all().exists() and self.is_user_prioritized():
             self.swap_users()
 
         return super(UserEvent, self).save(*args, **kwargs)
@@ -60,20 +61,22 @@ class UserEvent(BaseModel):
     def swap_users(self):
         """ Swaps a user with a spot with a prioritized user, if such user exists """
         event = self.event
-        class_priorities = [priority.user_class.value for priority in event.registration_priorities.all()]
-        study_priorities = [priority.user_study.value for priority in event.registration_priorities.all()]
+        class_priorities = [int(priority.user_class.value) for priority in event.registration_priorities.all()]
+        study_priorities = [int(priority.user_study.value) for priority in event.registration_priorities.all()]
 
-        try:
-            other_user = UserEvent.objects.filter(
-                event=event,
-                user__user_class__in=class_priorities,
-                user__user_study__in=study_priorities
-            ).first()
-        except UserEvent.DoesNotExist:
+        other_user = UserEvent.objects.filter(event=event) \
+            .exclude(
+            user__user_class__in=class_priorities,
+            user__user_study__in=study_priorities,
+            is_on_wait=False
+        ).first()
+
+        if other_user is None:
             return
 
         other_user.is_on_wait = True
         other_user.save()
+
         self.is_on_wait = False
 
     def clean(self):

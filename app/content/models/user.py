@@ -59,7 +59,6 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
     )
     gender = models.IntegerField(default=2, choices=GENDER, null=True, blank=True)
 
-    # TODO: convert these to EnumChoiceField
     CLASS = (
         (1, '1. Klasse'),
         (2, '2. Klasse'),
