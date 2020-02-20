@@ -39,3 +39,19 @@ class TestUserEventModel(TestCase):
 
         assert other_user_event.is_on_wait
         assert not self.user_event.is_on_wait
+
+    def test_swap_users_without_priorities(self):
+        """ Test that users are not swapped when event does not have any priorities """
+        self.event.registration_priorities.clear()
+
+        other_user_on_wait = UserFactory(user_class=2, user_study=2)
+        UserEvent.objects.create(event=self.event, user=other_user_on_wait)
+
+        other_user = UserFactory(user_class=2, user_study=2)
+        other_user_event = UserEvent.objects.create(event=self.event, user=other_user)
+
+        self.user_event.refresh_from_db()
+
+        assert other_user_event.is_on_wait
+        assert not self.user_event.is_on_wait
+
