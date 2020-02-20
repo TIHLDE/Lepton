@@ -47,6 +47,7 @@ INSTALLED_APPS = [
 	'django_filters',
 	'rest_framework_swagger',
 	'rest_framework.authtoken',
+	'rest_auth',
 	# Our apps
 	'app.content',
 	'app.util',
@@ -62,6 +63,11 @@ REST_FRAMEWORK = {
 	'DEFAULT_PERMISSION_CLASSES': [
 		'rest_framework.permissions.AllowAny',
 	]
+}
+
+# Django rest auth framework
+REST_AUTH_SERIALIZERS = {
+	'PASSWORD_RESET_SERIALIZER' : 'app.content.serializers.reset_password.PasswordResetSerializer' 
 }
 
 
@@ -177,6 +183,7 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # django_heroku.settings(locals())
 
 #EMAIL SMTP Server setup
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = os.environ.get('EMAIL_HOST') or "smtp.mailtrap.io"
 EMAIL_PORT = os.environ.get('EMAIL_PORT') or "2525"
 EMAIL_USE_TLS = True
