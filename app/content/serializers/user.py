@@ -1,7 +1,8 @@
 from rest_framework import serializers
 
-from ..models import User, UserEvent
+from ..models import User, UserEvent, Notification
 from .event import EventInUserSerializer
+from .notification import NotificationSerializer
 
 from django.contrib.auth.hashers import make_password
 
@@ -10,6 +11,7 @@ from django.contrib.auth.hashers import make_password
 class UserSerializer(serializers.ModelSerializer):
 	events = serializers.SerializerMethodField()
 	groups = serializers.SerializerMethodField()
+	notifications = serializers.SerializerMethodField()
 
 	class Meta:
 		model = User
@@ -28,7 +30,8 @@ class UserSerializer(serializers.ModelSerializer):
 			'tool',
 			'app_token',
 			'events',
-			'groups'
+			'groups',
+			'notifications',
 		)
 
 	def get_events(self, obj):
@@ -40,6 +43,15 @@ class UserSerializer(serializers.ModelSerializer):
 	def get_groups(self, obj):
 		""" Lists all groups a user is a member of """
 		return [group.name for group in obj.groups.all()]
+
+	def get_notifications(self, obj):
+		"""Gets all notifications for user"""
+		return [
+			{
+				'id': notification.id,
+				'message': notification.message,
+				'unread': notification.unread,	
+			} for notification in  Notification.objects.filter(user=obj)]
 
 
 class UserMemberSerializer(UserSerializer):
