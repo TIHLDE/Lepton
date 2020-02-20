@@ -7,3 +7,6 @@ class Notification(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     message = models.CharField(max_length=150)
     unread = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f'Notification for {self.user}'

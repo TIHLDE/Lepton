@@ -90,6 +90,31 @@ class UserPermission(BasePermission):
             return False
 
 
+class NotificationPermission(BasePermission):
+    """Allow users to see and edit own notifications"""
+
+    def has_permission(self, request, view):
+        get_user_id(request)
+
+        if view.action in ['list', 'create']:
+            # Only admin can list out all notifications and create new ones.
+            return is_admin_user(request)
+        elif view.action in ['retrieve', 'update', 'partial_update', 'destroy']:
+            # This is handled by has_object_permission, so pass down there.
+            return True
+        else:
+            return False
+
+    def has_object_permission(self, request, view, obj):
+        get_user_id(request)
+
+        if not request.user.is_authenticated:
+            return False
+
+        # Only allow the user to acces own notifications
+        return obj.user == request.user
+
+
 def check_group_permission(request, groups):
     # Allow GET, HEAD or OPTIONS requests
     if request.method in SAFE_METHODS:
@@ -130,3 +155,4 @@ def is_admin_user(request):
 
     return User.objects.filter(user_id=user_id).filter(groups__name__in=['DevKom', 'HS']).count() > 0 \
         or request.user.is_staff
+
