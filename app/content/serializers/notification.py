@@ -6,4 +6,4 @@ class NotificationSerializer(serializers.ModelSerializer):
     """ Serilaize all the notifcations """
     class Meta:
         model = Notification
-        fields = '__all__'
+        fields = ['user', 'message', 'read']

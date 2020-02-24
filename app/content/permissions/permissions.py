@@ -96,10 +96,10 @@ class NotificationPermission(BasePermission):
     def has_permission(self, request, view):
         get_user_id(request)
 
-        if view.action in ['list', 'create']:
+        if view.action in ['list', 'create', 'update', 'partial_update', 'destroy']:
             # Only admin can list out all notifications and create new ones.
             return is_admin_user(request)
-        elif view.action in ['retrieve', 'update', 'partial_update', 'destroy']:
+        elif view.action in ['retrieve']:
             # This is handled by has_object_permission, so pass down there.
             return True
         else:

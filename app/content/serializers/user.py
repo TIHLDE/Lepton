@@ -50,7 +50,7 @@ class UserSerializer(serializers.ModelSerializer):
 			{
 				'id': notification.id,
 				'message': notification.message,
-				'unread': notification.unread,	
+				'read': notification.read,	
 			} for notification in  Notification.objects.filter(user=obj)]
 
 

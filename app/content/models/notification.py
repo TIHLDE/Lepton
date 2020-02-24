@@ -6,7 +6,7 @@ class Notification(models.Model):
     """ Model for notifications """
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     message = models.CharField(max_length=150)
-    unread = models.BooleanField(default=True)
+    read = models.BooleanField(default=False)
 
     def __str__(self):
         return f'Notification for {self.user}'
