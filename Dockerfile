@@ -13,7 +13,7 @@ RUN apk add --no-cache --virtual .build-deps gcc libc-dev linux-headers
 COPY . .
 
 RUN pip install --upgrade pip && pip install pipenv
-RUN pipenv install
+RUN time pipenv install
 
 # Remove dependencies that are no longer needed.
 RUN apk del .build-deps

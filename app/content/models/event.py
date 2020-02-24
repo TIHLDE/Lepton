@@ -50,6 +50,19 @@ class Event(BaseModel, OptionalImage):
         """ Number of users on the waiting list """
         return UserEvent.objects.filter(event__pk=self.pk, is_on_wait=True).count()
 
+    def has_waiting_list(self):
+        return self.has_limit() and (self.is_full()
+                                     or UserEvent.objects.filter(event=self, is_on_wait=True).exists())
+
+    def has_limit(self):
+        return self.limit != 0
+
+    def is_full(self):
+        return UserEvent.objects.filter(event=self).count() >= self.limit
+
+    def has_priorities(self):
+        return self.registration_priorities.all().exists()
+
     def __str__(self):
         return f'{self.title} - starting {self.start_date} at {self.location}'
 

@@ -55,3 +55,30 @@ class TestUserEventModel(TestCase):
         assert other_user_event.is_on_wait
         assert not self.user_event.is_on_wait
 
+    def test_swap_users_register_prioritized_when_no_one_to_swap_with_and_event_is_full(self):
+        """ Test that a prioritized user is put on wait if there is no one to swap places with and the event is full
+        Legger til en ikke-prioritert bruker
+            Grensen er nådd
+        Legger til en prioritert bruker
+            Denne får plass
+            Ikke-prioritert bruker blir satt på venteliste
+            Grensen er nådd, ingen ikke-prioriterte brukere å bytte med
+        Legger til en prioritert bruker til
+            Denne får også plass
+
+        Løsning: sjekk om eventet er fullt
+        """
+
+        print('*'*50)
+        prioritized_user = UserFactory(user_class=1, user_study=1)
+        prioritized_user_event = UserEvent.objects.create(event=self.event, user=prioritized_user)
+
+        other_prioritized_user = UserFactory(user_class=1, user_study=1)
+        other_prioritized_user_event = UserEvent.objects.create(event=self.event, user=other_prioritized_user)
+
+        self.user_event.refresh_from_db()
+        other_prioritized_user.refresh_from_db()
+
+        assert self.user_event.is_on_wait
+        assert not prioritized_user_event.is_on_wait
+        assert other_prioritized_user_event.is_on_wait

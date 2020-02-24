@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.exceptions import ValidationError
+from django.db.models import Q
 from django.utils.translation import gettext as _
 
 from app.util.utils import today
@@ -39,18 +40,13 @@ class UserEvent(BaseModel):
         """ Determines whether user is on the waiting list or not when the instance is created. """
         self.clean()
 
-        self.is_on_wait = self.event_has_waiting_list()
+        self.is_on_wait = self.event.has_waiting_list()
 
-        if self.is_on_wait and self.event.registration_priorities.all().exists() and self.is_user_prioritized():
+        if self.is_on_wait and self.event.has_priorities() and self.is_user_prioritized() \
+                and self.event.is_full():
             self.swap_users()
 
         return super(UserEvent, self).save(*args, **kwargs)
-
-    def event_has_waiting_list(self):
-        """ If the limit is reached or a waiting list exists, the user is automatically put on the waiting list. """
-        event = self.event
-        return event.limit <= UserEvent.objects.filter(event=event).count() and event.limit is not 0 \
-               or UserEvent.objects.filter(event=event, is_on_wait=True).exists()
 
     def is_user_prioritized(self):
         user_class = UserClass(int(self.user.user_class))
@@ -62,15 +58,24 @@ class UserEvent(BaseModel):
         """ Swaps a user with a spot with a prioritized user, if such user exists """
         event = self.event
         class_priorities = [int(priority.user_class.value) for priority in event.registration_priorities.all()]
-        study_priorities = [int(priority.user_study.value) for priority in event.registration_priorities.all()]
+        priorities = [(int(priority.user_class.value), int(priority.user_study.value))
+                      for priority in event.registration_priorities.all()]
+        other_user = None
 
-        other_user = UserEvent.objects.filter(event=event) \
-            .exclude(
-            user__user_class__in=class_priorities,
-            user__user_study__in=study_priorities,
-            is_on_wait=False
-        ).first()
+        for user_event in UserEvent.objects.filter(event=event, is_on_wait=False):
+            user = user_event.user
+            if (user.user_class, user.user_study) in priorities:
+                other_user = user_event
 
+
+        # other_user = UserEvent.objects.filter(event=event) \
+        #     .exclude(
+        #     user__user_class__in=class_priorities,
+        #     user__user_study__in=study_priorities,
+        #     is_on_wait=True
+        # ).first()
+
+        print('--------\n', self, '\n Other:', other_user, '\n')
         if other_user is None:
             return
 
