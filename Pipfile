@@ -23,6 +23,7 @@ codecov = "*"
 coverage = "*"
 travis = "*"
 django-rest-swagger = "*"
+django-rest-auth = "*"
 
 [dev-packages]
 pylint = "*"

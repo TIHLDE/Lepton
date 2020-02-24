@@ -7,7 +7,6 @@ from .notification import NotificationSerializer
 from django.contrib.auth.hashers import make_password
 
 
-
 class UserSerializer(serializers.ModelSerializer):
 	events = serializers.SerializerMethodField()
 	groups = serializers.SerializerMethodField()
@@ -28,11 +27,15 @@ class UserSerializer(serializers.ModelSerializer):
 			'user_study',
 			'allergy',
 			'tool',
+			'vipps_transaction_id',
 			'app_token',
+			'is_TIHLDE_member',
 			'events',
 			'groups',
 			'notifications',
 		)
+		read_only_fields = ('user_id',)
+
 
 	def get_events(self, obj):
 		""" Lists all events user is to attend or has attended """
@@ -58,7 +61,19 @@ class UserMemberSerializer(UserSerializer):
 	"""Serializer for user update to prevent them from updating extra_kwargs fields"""
 	class Meta(UserSerializer.Meta):
 		fields = UserSerializer.Meta.fields
-		read_only_fields = ('user_id', 'first_name', 'last_name', 'email',)
+		read_only_fields = ('user_id', 'first_name', 'last_name', 'email', 'vipps_transaction_id', 'is_TIHLDE_member',)
+
+class UserAdminSerializer(serializers.ModelSerializer):
+	"""Serializer for admin update to prevent them from updating extra_kwargs fields"""
+	class Meta:
+		model = User
+		fields = (
+			'user_id',
+			'first_name',
+			'last_name',
+			'is_TIHLDE_member',
+		)
+		read_only_fields = ('user_id', 'first_name', 'last_name',)
 
 class UserCreateSerializer(serializers.ModelSerializer):
 	"""Serializer for creating user """
@@ -70,6 +85,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
 			'first_name',
 			'last_name',
 			'email',
+			'vipps_transaction_id',
 			'user_class',
 			'user_study',
 			)
@@ -81,6 +97,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
 			first_name=validated_data['first_name'],
 			last_name=validated_data['last_name'],
 			email=validated_data['email'],
+			vipps_transaction_id=validated_data['vipps_transaction_id'],
 			user_class=validated_data['user_class'],
 			user_study=validated_data['user_study'],
 		)

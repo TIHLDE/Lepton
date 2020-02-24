@@ -12,8 +12,8 @@ router = routers.DefaultRouter()
 
 # Register content viewpoints here
 router.register('news', NewsViewSet)
-router.register('events', EventViewSet, base_name='event')
-router.register('warning', WarningViewSet, base_name='warning')
+router.register('events', EventViewSet, basename='event')
+router.register('warning', WarningViewSet, basename='warning')
 router.register('category', CategoryViewSet)
 router.register('jobpost', JobPostViewSet, base_name='jobpost')
 router.register('user', UserViewSet, base_name='user')
@@ -26,6 +26,8 @@ schema_view = get_swagger_view(title='TIHLDE API')
 
 urlpatterns = [
     url(r'docs', schema_view),
+    url(r'^rest-auth/', include('rest_auth.urls')),
+    url(r'^', include('django.contrib.auth.urls')),
     url(r'', include(router.urls)),
     path('accept-form/', accept_form),
 ]

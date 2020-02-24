@@ -5,8 +5,9 @@ from rest_framework import viewsets, filters
 from rest_framework.response import Response
 
 from ..models import User
-from ..permissions import UserPermission
-from ..serializers import UserSerializer, UserMemberSerializer, UserCreateSerializer
+from ..permissions import UserPermission, is_admin_user
+from ..serializers import UserSerializer, UserMemberSerializer, UserCreateSerializer, UserAdminSerializer
+from ..pagination import BasePagination
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -14,13 +15,15 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     permission_classes = [UserPermission]
     queryset = User.objects.all()
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
-    filterset_fields = ['user_class', 'user_study']
-    search_fields = ['user_id']
+    pagination_class = BasePagination
 
-    def retrieve(self, request, pk, *args, **kwargs):
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filterset_fields = ['user_class', 'user_study', 'is_TIHLDE_member']
+    search_fields = ['user_id', 'first_name', 'last_name', 'vipps_transaction_id']
+
+    def retrieve(self, request, *args, **kwargs):
         try:
-            user = User.objects.get(pk=pk)
+            user = request.user
             self.check_object_permissions(self.request, user)
             serializer = UserSerializer(user, context={'request': self.request}, many=False)
 
@@ -40,15 +43,18 @@ class UserViewSet(viewsets.ModelViewSet):
     def update(self, request, pk, *args, **kwargs):
         """ Updates fields passed in request """
         try:
-            self.check_object_permissions(self.request, User.objects.get(user_id=pk))
-            if self.request.id == pk:
-                serializer = UserMemberSerializer(User.objects.get(user_id=pk), context={'request': request}, many=False, data=request.data)
-                if serializer.is_valid():
-                    self.perform_update(serializer)
-                    return Response({'detail': _('User successfully updated.')})
-                else:
-                    return Response({'detail': _('Could not perform user update')}, status=400)
+            if is_admin_user(request):
+                serializer = UserAdminSerializer(User.objects.get(user_id=pk), context={'request': request}, many=False, data=request.data)
             else:
-                return Response({'detail': _('Not authenticated to perform user update')}, status=400)
+                self.check_object_permissions(self.request, User.objects.get(user_id=pk))
+                if self.request.id == pk:
+                    serializer = UserMemberSerializer(User.objects.get(user_id=pk), context={'request': request}, many=False, data=request.data)
+                else:
+                    return Response({'detail': _('Not authenticated to perform user update')}, status=400)
+            if serializer.is_valid():
+                self.perform_update(serializer)
+                return Response({'detail': _('User successfully updated.')})
+            else:
+                return Response({'detail': _('Could not perform user update')}, status=400)
         except ObjectDoesNotExist:
             return Response({'detail': 'Could not find user'}, status=400)
