@@ -64,9 +64,8 @@ class UserEvent(BaseModel):
 
         for user_event in UserEvent.objects.filter(event=event, is_on_wait=False):
             user = user_event.user
-            if (user.user_class, user.user_study) in priorities:
+            if (user.user_class, user.user_study) not in priorities:
                 other_user = user_event
-
 
         # other_user = UserEvent.objects.filter(event=event) \
         #     .exclude(
@@ -75,7 +74,6 @@ class UserEvent(BaseModel):
         #     is_on_wait=True
         # ).first()
 
-        print('--------\n', self, '\n Other:', other_user, '\n')
         if other_user is None:
             return
 
