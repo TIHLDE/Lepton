@@ -16,8 +16,7 @@ class NotificationViewSet(viewsets.ModelViewSet):
         notification = Notification.objects.get(id=pk)
         if request.user == notification.user or is_admin_user(request):
             serializer = UpdateNotificationSerializer(notification, data=request.data)
-            serializer.is_valid()
-            serializer.save()
-            return serializer.validated_data
-        else:
-            return Response({'detail': ('Could not perform notification update')}, status=400)
+            if serializer.is_valid():
+                serializer.save()
+                return serializer.validated_data
+        return Response({'detail': ('Could not perform notification update')}, status=400)
