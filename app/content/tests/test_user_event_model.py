@@ -1,8 +1,7 @@
 import pytest
 from django.test import TestCase
 
-from ..models import UserEvent
-from ..factories import EventFactory, UserFactory, PrioritiesFactory
+from ..factories import UserEventFactory, EventFactory, UserFactory, PrioritiesFactory
 
 
 class TestUserEventModel(TestCase):
@@ -12,73 +11,71 @@ class TestUserEventModel(TestCase):
         self.event = EventFactory(limit=1)
         self.event.registration_priorities.add(PrioritiesFactory())
         self.user = UserFactory(user_class=2, user_study=2)
-        self.user_event = UserEvent.objects.create(event=self.event, user=self.user)
+        self.not_prioritized_user_event = UserEventFactory(event=self.event, user=self.user)
 
     def test_swap_users(self):
         """ Test that a non prioritized user is swapped with a prioritized user if the event is full """
         other_user_on_wait = UserFactory(user_class=2, user_study=2)
-        UserEvent.objects.create(event=self.event, user=other_user_on_wait)
+        UserEventFactory(event=self.event, user=other_user_on_wait)
 
         other_user = UserFactory(user_class=1, user_study=1)
-        other_user_event = UserEvent.objects.create(event=self.event, user=other_user)
+        other_user_event = UserEventFactory(event=self.event, user=other_user)
 
-        self.user_event.refresh_from_db()
+        self.not_prioritized_user_event.refresh_from_db()
 
         assert not other_user_event.is_on_wait
-        assert self.user_event.is_on_wait
+        assert self.not_prioritized_user_event.is_on_wait
 
     def test_swap_users_failure(self):
         """ Test that users are not swapped when new user is not prioritized """
         other_user_on_wait = UserFactory(user_class=2, user_study=2)
-        UserEvent.objects.create(event=self.event, user=other_user_on_wait)
+        UserEventFactory(event=self.event, user=other_user_on_wait)
 
         other_user = UserFactory(user_class=2, user_study=2)
-        other_user_event = UserEvent.objects.create(event=self.event, user=other_user)
+        other_user_event = UserEventFactory(event=self.event, user=other_user)
 
-        self.user_event.refresh_from_db()
+        self.not_prioritized_user_event.refresh_from_db()
 
         assert other_user_event.is_on_wait
-        assert not self.user_event.is_on_wait
+        assert not self.not_prioritized_user_event.is_on_wait
 
     def test_swap_users_without_priorities(self):
         """ Test that users are not swapped when event does not have any priorities """
         self.event.registration_priorities.clear()
 
         other_user_on_wait = UserFactory(user_class=2, user_study=2)
-        UserEvent.objects.create(event=self.event, user=other_user_on_wait)
+        UserEventFactory(event=self.event, user=other_user_on_wait)
 
         other_user = UserFactory(user_class=2, user_study=2)
-        other_user_event = UserEvent.objects.create(event=self.event, user=other_user)
+        other_user_event = UserEventFactory(event=self.event, user=other_user)
 
-        self.user_event.refresh_from_db()
+        self.not_prioritized_user_event.refresh_from_db()
 
         assert other_user_event.is_on_wait
-        assert not self.user_event.is_on_wait
+        assert not self.not_prioritized_user_event.is_on_wait
 
     def test_swap_users_register_prioritized_when_no_one_to_swap_with_and_event_is_full(self):
-        """ Test that a prioritized user is put on wait if there is no one to swap places with and the event is full
-        Legger til en ikke-prioritert bruker
-            Grensen er nådd
-        Legger til en prioritert bruker
-            Denne får plass
-            Ikke-prioritert bruker blir satt på venteliste
-            Grensen er nådd, ingen ikke-prioriterte brukere å bytte med
-        Legger til en prioritert bruker til
-            Denne får også plass
+        """ Test that a prioritized user is put on wait if there is no one to swap places with and the event is full """
 
-        Løsning: sjekk om eventet er fullt
-        """
-
-        print('*'*50)
         prioritized_user = UserFactory(user_class=1, user_study=1)
-        prioritized_user_event = UserEvent.objects.create(event=self.event, user=prioritized_user)
+        prioritized_user_event = UserEventFactory(event=self.event, user=prioritized_user)
 
         other_prioritized_user = UserFactory(user_class=1, user_study=1)
-        other_prioritized_user_event = UserEvent.objects.create(event=self.event, user=other_prioritized_user)
+        other_prioritized_user_event = UserEventFactory(event=self.event, user=other_prioritized_user)
 
-        self.user_event.refresh_from_db()
+        self.not_prioritized_user_event.refresh_from_db()
         other_prioritized_user.refresh_from_db()
 
-        assert self.user_event.is_on_wait
+        assert self.not_prioritized_user_event.is_on_wait
         assert not prioritized_user_event.is_on_wait
         assert other_prioritized_user_event.is_on_wait
+
+    def test_should_be_swapped_with_not_prioritized_user(self):
+        """ Test that user_event is put on list and other user_event is put on wait"""
+        prioritized_user = UserEventFactory(user__user_class=1, user__user_study=1)
+        prioritized_user.swap_not_prioritized_user(self.not_prioritized_user_event)
+
+        assert not prioritized_user.is_on_wait
+        assert self.not_prioritized_user_event.is_on_wait
+
+    # def test_should_be_swapped_with_not_prioritized_user(self):

@@ -42,11 +42,14 @@ class UserEvent(BaseModel):
 
         self.is_on_wait = self.event.has_waiting_list()
 
-        if self.is_on_wait and self.event.has_priorities() and self.is_user_prioritized() \
-                and self.event.is_full():
+        if self.should_be_swapped_with_not_prioritized_user():
             self.swap_users()
 
         return super(UserEvent, self).save(*args, **kwargs)
+
+    def should_be_swapped_with_not_prioritized_user(self):
+        return self.is_on_wait and self.is_user_prioritized() and self.event.has_priorities()  \
+                and self.event.is_full()
 
     def is_user_prioritized(self):
         user_class = UserClass(int(self.user.user_class))
@@ -56,30 +59,14 @@ class UserEvent(BaseModel):
 
     def swap_users(self):
         """ Swaps a user with a spot with a prioritized user, if such user exists """
-        event = self.event
-        class_priorities = [int(priority.user_class.value) for priority in event.registration_priorities.all()]
-        priorities = [(int(priority.user_class.value), int(priority.user_study.value))
-                      for priority in event.registration_priorities.all()]
-        other_user = None
+        for user_event in UserEvent.objects.filter(event=self.event, is_on_wait=False):
+            if not user_event.is_user_prioritized():
+                return self.swap_not_prioritized_user(user_event)
 
-        for user_event in UserEvent.objects.filter(event=event, is_on_wait=False):
-            user = user_event.user
-            if (user.user_class, user.user_study) not in priorities:
-                other_user = user_event
-
-        # other_user = UserEvent.objects.filter(event=event) \
-        #     .exclude(
-        #     user__user_class__in=class_priorities,
-        #     user__user_study__in=study_priorities,
-        #     is_on_wait=True
-        # ).first()
-
-        if other_user is None:
-            return
-
-        other_user.is_on_wait = True
-        other_user.save()
-
+    def swap_not_prioritized_user(self, other_user_event):
+        """ Puts own self on the list and other_user_event on wait """
+        other_user_event.is_on_wait = True
+        other_user_event.save()
         self.is_on_wait = False
 
     def clean(self):
