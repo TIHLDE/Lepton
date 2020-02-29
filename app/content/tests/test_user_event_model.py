@@ -10,8 +10,11 @@ class TestUserEventModel(TestCase):
     def setUp(self):
         self.event = EventFactory(limit=1)
         self.event.registration_priorities.add(PrioritiesFactory())
-        self.user = UserFactory(user_class=2, user_study=2)
-        self.not_prioritized_user_event = UserEventFactory(event=self.event, user=self.user)
+
+        self.prioritized_user = UserFactory(user_class=1, user_study=1)
+
+        self.not_prioritized_user = UserFactory(user_class=2, user_study=2)
+        self.not_prioritized_user_event = UserEventFactory(event=self.event, user=self.not_prioritized_user)
 
     def test_swap_users(self):
         """ Test that a non prioritized user is swapped with a prioritized user if the event is full """
@@ -78,4 +81,20 @@ class TestUserEventModel(TestCase):
         assert not prioritized_user.is_on_wait
         assert self.not_prioritized_user_event.is_on_wait
 
-    # def test_should_be_swapped_with_not_prioritized_user(self):
+    def test_should_be_swapped_with_not_prioritized_user_prioritized_user(self):
+        """ Test that method returns true when a user should be swapped with a not prioritized user """
+        prioritized_user_event = UserEventFactory(user=self.prioritized_user, event=self.event)
+        assert prioritized_user_event.should_be_swapped_with_not_prioritized_user()
+
+    def test_should_be_swapped_with_not_prioritized_user_not_prioritized_user(self):
+        """ Test that method returns true when a user should be swapped with a not prioritized user """
+        assert self.not_prioritized_user_event.should_be_swapped_with_not_prioritized_user()
+
+    def test_should_be_swapped_with_not_prioritized_user_event_is_full(self):
+        """
+        Test that method returns false when a user should be swapped with a not prioritized user
+        because the event is not full
+        """
+        prioritized_user_event = UserEventFactory(user=self.prioritized_user, event=self.event)
+
+        assert not prioritized_user_event.should_be_swapped_with_not_prioritized_user()

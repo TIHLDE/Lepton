@@ -30,6 +30,3 @@ loaddata:
 
 test:
 	docker-compose run web pipenv run python manage.py test
-
-pytest:
-	docker-compose run web pipenv run pytest
