@@ -13,7 +13,7 @@ class UserFactory(factory.DjangoModelFactory):
     last_name = factory.Faker("last_name")
 
     email = factory.lazy_attribute(
-        lambda user: f'{user.user_id}@stud.ntnu.no'
+        lambda user: f'{user.user_id}@mail.no'
     )
 
     user_class = 1

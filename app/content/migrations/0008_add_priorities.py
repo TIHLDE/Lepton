@@ -8,7 +8,7 @@ import enumchoicefield.fields
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('content', '0006_user_is_tihlde_member'),
+        ('content', '0007_merge_20200224_1700'),
     ]
 
     operations = [
