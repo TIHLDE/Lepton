@@ -1,6 +1,5 @@
 from django.db import models
 from django.core.exceptions import ValidationError
-from django.db.models import Q
 from django.utils.translation import gettext as _
 
 from app.util.utils import today
@@ -48,8 +47,7 @@ class UserEvent(BaseModel):
         return super(UserEvent, self).save(*args, **kwargs)
 
     def should_be_swapped_with_not_prioritized_user(self):
-        return self.is_on_wait and self.is_prioritized() and self.event.has_priorities()  \
-                and self.event.is_full()
+        return self.is_on_wait and self.is_prioritized() and self.event.has_priorities() and self.event.is_full()
 
     def is_prioritized(self):
         user_class = UserClass(int(self.user.user_class))
@@ -61,7 +59,6 @@ class UserEvent(BaseModel):
         """ Swaps a user with a spot with a prioritized user, if such user exists """
         for user_event in UserEvent.objects.filter(event=self.event, is_on_wait=False):
             if not user_event.is_prioritized():
-
                 return self.swap_not_prioritized_user(user_event)
 
     def swap_not_prioritized_user(self, other_user_event):
