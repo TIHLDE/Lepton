@@ -2,16 +2,16 @@ from enumchoicefield import ChoiceEnum
 
 
 class UserClass(ChoiceEnum):
-    first = '1. Klasse'
-    second = '2. Klasse'
-    third = '3. Klasse'
-    fourth = '4. Klasse'
-    fifth = '5. Klasse'
+    FIRST = '1. Klasse'
+    SECOND = '2. Klasse'
+    THIRD = '3. Klasse'
+    FOURTH = '4. Klasse'
+    FIFTH = '5. Klasse'
 
 
 class UserStudy(ChoiceEnum):
-    dataIng = 'Dataingeniør'
-    digFor = 'Digital forretningsutvikling'
-    digInc = 'Digital infrastruktur og cybersikkerhet'
-    digSam = 'Digital samhandling'
-    drift = 'Drift'
+    DATAING = 'Dataingeniør'
+    DIGFOR = 'Digital forretningsutvikling'
+    DIGINC = 'Digital infrastruktur og cybersikkerhet'
+    DIGSAM = 'Digital samhandling'
+    DRIFT = 'Drift'

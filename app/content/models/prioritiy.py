@@ -9,8 +9,8 @@ class Priority(BaseModel):
     """ Model for adding priorities to an event. """
     priority_id = models.AutoField(primary_key=True)
 
-    user_class = EnumChoiceField(UserClass, default=UserClass.first)
-    user_study = EnumChoiceField(UserStudy, default=UserStudy.dataIng)
+    user_class = EnumChoiceField(UserClass, default=UserClass.FIRST)
+    user_study = EnumChoiceField(UserStudy, default=UserStudy.DATAING)
 
     class Meta:
         ordering = ('user_class', 'user_study')

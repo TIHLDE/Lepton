@@ -9,7 +9,7 @@ class PrioritiesFactory(factory.DjangoModelFactory):
     class Meta:
         model = Priority
 
-    user_class = UserClass.first
-    user_study = UserStudy.dataIng
+    user_class = UserClass.FIRST
+    user_study = UserStudy.DATAING
 
 
