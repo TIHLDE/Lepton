@@ -57,9 +57,6 @@ INSTALLED_APPS = [
 # Django rest framework
 REST_FRAMEWORK = {
 	'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
-	'DEFAULT_AUTHENTICATION_CLASSES': [
-		'rest_framework.authentication.TokenAuthentication',
-	],
 	'DEFAULT_PERMISSION_CLASSES': [
 		'rest_framework.permissions.AllowAny',
 	]
@@ -67,8 +64,10 @@ REST_FRAMEWORK = {
 
 # Django rest auth framework
 REST_AUTH_SERIALIZERS = {
-	'PASSWORD_RESET_SERIALIZER' : 'app.content.serializers.reset_password.PasswordResetSerializer' 
+	'PASSWORD_RESET_SERIALIZER' : 'app.authentication.serializers.reset_password.PasswordResetSerializer',
+	'PASSWORD_CHANGE_SERIALIZER' : 'app.authentication.serializers.change_password.ChangePasswordSerializer',
 }
+
 
 
 MIDDLEWARE = [

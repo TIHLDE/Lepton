@@ -2,7 +2,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 
-from .serializers import AuthSerializer, MakeSerializer
+from .serializers import AuthSerializer, MakeUserSerializer
 from ..content.models.user import User
 from ..content.permissions.permissions import IsDev, IsHS
 
@@ -33,7 +33,7 @@ def login(request):
 @permission_classes([IsDev, IsHS])
 def makeMember(request):
     # Serialize data and check if valid
-    serializer = MakeSerializer(data=request.data)
+    serializer = MakeUserSerializer(data=request.data)
     if (not serializer.is_valid()):
         return Response({'detail': ('Invalid user_id')}, status=400)
 

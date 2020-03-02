@@ -1,7 +1,6 @@
 import os
 from rest_framework import serializers
-from django.template.loader import render_to_string
-from django.contrib.auth.forms import PasswordResetForm, SetPasswordForm
+from django.contrib.auth.forms import PasswordResetForm
 
 class PasswordResetSerializer(serializers.Serializer):
     """
