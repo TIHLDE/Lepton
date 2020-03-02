@@ -18,5 +18,5 @@ class NotificationViewSet(viewsets.ModelViewSet):
             serializer = UpdateNotificationSerializer(notification, data=request.data)
             if serializer.is_valid():
                 serializer.save()
-                return serializer.validated_data
+                return Response({'detail': ('User successfully updated.')}, status=204)
         return Response({'detail': ('Could not perform notification update')}, status=400)
