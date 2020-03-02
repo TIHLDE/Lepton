@@ -1,3 +1,4 @@
+from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import AbstractBaseUser,BaseUserManager, PermissionsMixin
 from django.db import models
 
@@ -80,7 +81,11 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
 
     tool = models.CharField(max_length=100, blank=True)
 
+    vipps_transaction_id = models.CharField(max_length=20, blank=True, null=True)
+
     app_token = models.CharField(max_length=60, blank=True, null=True)
+
+    is_TIHLDE_member = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'user_id'
     is_staff = models.BooleanField(default=False)

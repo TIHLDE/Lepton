@@ -1,12 +1,13 @@
 from rest_framework import serializers
 
-from ..models import Event, User, UserEvent
+from ..models import Event, User, UserEvent, Priority
 
 
 class EventSerializer(serializers.ModelSerializer):
     expired = serializers.BooleanField(read_only=True)
     registered_users_list = serializers.SerializerMethodField()
     is_user_registered = serializers.SerializerMethodField()
+    registration_priorities = serializers.SerializerMethodField()
 
     class Meta:
         model = Event
@@ -17,7 +18,8 @@ class EventSerializer(serializers.ModelSerializer):
             'registered_users_list', 'list_count',
             'waiting_list_count', 'is_user_registered',
             'image', 'image_alt', 'start_registration_at',
-            'end_registration_at', 'sign_off_deadline'
+            'end_registration_at', 'sign_off_deadline',
+            'registration_priorities'
         ]
 
     def get_registered_users_list(self, obj):
@@ -53,6 +55,15 @@ class EventSerializer(serializers.ModelSerializer):
             user_id = request.id
             return UserEvent.objects.filter(event__pk=obj.pk, user__user_id=user_id).count() > 0
         return None
+
+    def get_registration_priorities(self, obj):
+        try:
+            return [{
+                'user_class': priority.user_class.value,
+                'user_study': priority.user_study.value
+                } for priority in obj.registration_priorities.all()]
+        except Priority.DoesNotExist:
+            return None
 
 
 class EventInUserSerializer(EventSerializer):

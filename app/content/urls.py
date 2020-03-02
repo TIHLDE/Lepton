@@ -6,18 +6,19 @@ from django.conf.urls import include
 from rest_framework_swagger.views import get_swagger_view
 
 from .views import NewsViewSet, EventViewSet, WarningViewSet, CategoryViewSet, accept_form, \
-    JobPostViewSet, UserViewSet, UserEventViewSet
+    JobPostViewSet, UserViewSet, UserEventViewSet, NotificationViewSet
 
 router = routers.DefaultRouter()
 
 # Register content viewpoints here
 router.register('news', NewsViewSet)
-router.register('events', EventViewSet, base_name='event')
-router.register('warning', WarningViewSet, base_name='warning')
+router.register('events', EventViewSet, basename='event')
+router.register('warning', WarningViewSet, basename='warning')
 router.register('category', CategoryViewSet)
-router.register('jobpost', JobPostViewSet, base_name='jobpost')
-router.register('user', UserViewSet, base_name='user')
-router.register(r'events/(?P<event_id>\d+)/users', UserEventViewSet, base_name='user_event')
+router.register('jobpost', JobPostViewSet, basename='jobpost')
+router.register('user', UserViewSet, basename='user')
+router.register(r'events/(?P<event_id>\d+)/users', UserEventViewSet, basename='user_event')
+router.register('notification', NotificationViewSet, basename='notification')
 
 # Swagger
 schema_view = get_swagger_view(title='TIHLDE API')

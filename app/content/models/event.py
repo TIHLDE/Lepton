@@ -7,6 +7,7 @@ from app.util.utils import yesterday
 from .category import Category
 from .user import User
 from .user_event import UserEvent
+from .prioritiy import Priority
 
 
 class Event(BaseModel, OptionalImage):
@@ -33,6 +34,7 @@ class Event(BaseModel, OptionalImage):
     end_registration_at = models.DateTimeField(blank=True, null=True, default=None)
     sign_off_deadline = models.DateTimeField(blank=True, null=True, default=None)
 
+    registration_priorities = models.ManyToManyField(Priority, blank=True, default=None, related_name='priorities')
 
     @property
     def expired(self):
@@ -47,6 +49,19 @@ class Event(BaseModel, OptionalImage):
     def waiting_list_count(self):
         """ Number of users on the waiting list """
         return UserEvent.objects.filter(event__pk=self.pk, is_on_wait=True).count()
+
+    def has_waiting_list(self):
+        return self.has_limit() and (self.is_full()
+                                     or UserEvent.objects.filter(event=self, is_on_wait=True).exists())
+
+    def has_limit(self):
+        return self.limit != 0
+
+    def is_full(self):
+        return UserEvent.objects.filter(event=self).count() >= self.limit
+
+    def has_priorities(self):
+        return self.registration_priorities.all().exists()
 
     def __str__(self):
         return f'{self.title} - starting {self.start_date} at {self.location}'

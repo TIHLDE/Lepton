@@ -19,10 +19,16 @@ wheel = "*"
 django-filter = "*"
 mysqlclient = "==1.4.4"
 django-dotenv = "*"
-codecov = "*"
-coverage = "*"
 travis = "*"
 django-rest-swagger = "*"
+django-enumchoicefield = "*"
+django-rest-auth = "*"
+
+# Testing
+pytest-django = "*"
+factory-boy = "*"
+codecov = "*"
+coverage = "*"
 
 [dev-packages]
 pylint = "*"
