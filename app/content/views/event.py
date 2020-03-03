@@ -39,7 +39,7 @@ class EventViewSet(viewsets.ModelViewSet):
             serializer = EventSerializer(event, data=request.data, partial=True, many=False)
 
             if serializer.is_valid():
-                self.perform_update(serializer)
+                serializer.save()
                 return Response({'detail': _('Event successfully updated.')})
             else:
                 return Response({'detail': _('Could not perform update')}, status=400)
