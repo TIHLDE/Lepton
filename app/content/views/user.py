@@ -43,8 +43,8 @@ class UserViewSet(viewsets.ModelViewSet):
     def update(self, request, pk, *args, **kwargs):
         """ Updates fields passed in request """
         try:
+            self.check_object_permissions(self.request, User.objects.get(user_id=pk))
             if is_admin_user(request):
-                self.check_object_permissions(self.request, User.objects.get(user_id=pk))
                 if self.request.id == pk:
                     serializer = UserMemberSerializer(User.objects.get(user_id=pk), context={'request': request}, many=False, data=request.data)
                 else:
