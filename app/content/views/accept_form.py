@@ -17,8 +17,7 @@ def accept_form(request):
     """ Method for accepting company interest forms from the company page """
     try:
         # Get body from request
-        body_unicode = request.body.decode('utf-8')
-        body = json.loads(body_unicode)
+        body = request.data
 
         # Define mail content
         sent_from = 'no-reply@tihlde.org'
@@ -51,7 +50,7 @@ def accept_form(request):
         )
         return JsonResponse({}, status= 200 if numOfSentMails > 0 else 500)
 
-    except:
-        print('Something went wrong...')
+    except Exception as e:
+        print(e)
         raise
 
