@@ -57,6 +57,12 @@ class IsNoKorPromo(BasePermission):
     def has_permission(self, request, view):
         return check_group_permission(request, ['HS', 'DevKom', 'NoK', 'Promo'])
 
+class UserEventPermission(BasePermission):
+    message = 'You are not an admin'
+
+    def has_permission(self, request, view):
+        return is_admin_user(request)
+
 
 class UserPermission(BasePermission):
     """ Checks if user is admin or getting or posting own self """
