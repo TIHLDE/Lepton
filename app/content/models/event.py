@@ -137,9 +137,11 @@ class Event(BaseModel, OptionalImage):
 
     def save(self, *args, **kwargs):
         try:
-            revoke(self.start_date_schedular_id, terminate=True)
+            # revoke(self.start_date_schedular_id, terminate=True)
+            print(self.start_date)
             # self.start_date_schedular_id = event_unregister_deadline_schedular(self.pk)
             self.start_date_schedular_id = event_unregister_deadline_schedular.apply_async(eta=self.start_date, kwargs={'pk': self.pk})
+            print(self.start_date_schedular_id)
             # if self.sign_up:
             #     self.start_registration_schedular_id = event_unregister_deadline_mail.delay(time=self.start_registration_at)
             #     self.sign_off_deadline_schedular_id = event_unregister_deadline_mail.delay(time=self.sign_off_deadline)

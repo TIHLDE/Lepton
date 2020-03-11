@@ -18,6 +18,14 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 # Load task modules from all registered Django app configs.
 app.autodiscover_tasks()
 
+app.conf.update(
+    task_serializer='json',
+    accept_content=['json'],  # Ignore other content
+    result_serializer='json',
+    timezone='Europe/Oslo',
+    enable_utc=True,
+)
+
 
 @app.task(bind=True)
 def debug_task(self):
