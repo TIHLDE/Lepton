@@ -1,6 +1,16 @@
 import os
 from django.core.mail import send_mass_mail, send_mail
 
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+
+def send_html_email(subject, html, mail_list):
+  text_content = strip_tags(html)
+  msg = EmailMultiAlternatives(subject, text_content, os.environ.get('EMAIL_USER'), [mail_list])
+  msg.attach_alternative(html, "text/html")
+  msg.send()
+
 def send_tihlde_email(subject, message, mail_list):
   return send_mail(subject, message, os.environ.get('EMAIL_USER'), mail_list, fail_silently=False,)
 

@@ -9,7 +9,9 @@ from .user import User
 from .user_event import UserEvent
 from .prioritiy import Priority
 
-from ..tasks.event import event_unregister_deadline_schedular
+from datetime import timedelta
+
+from ..tasks.event import event_sign_off_deadline_schedular, event_end_schedular
 
 from celery import shared_task
 from celery.task.control import revoke
@@ -43,8 +45,8 @@ class Event(BaseModel, OptionalImage):
     sign_off_deadline = models.DateTimeField(blank=True, null=True, default=None)
 
     registration_priorities = models.ManyToManyField(Priority, blank=True, default=None, related_name='priorities')
-    start_date_schedular_id = models.CharField(max_length=100, blank=True, null=True)
-    start_registration_schedular_id = models.CharField(max_length=100, blank=True, null=True)
+    evaluate_link = models.CharField(max_length=200, blank=True, null=True)
+    end_date_schedular_id = models.CharField(max_length=100, blank=True, null=True)
     sign_off_deadline_schedular_id = models.CharField(max_length=100, blank=True, null=True)
 
 
@@ -137,14 +139,12 @@ class Event(BaseModel, OptionalImage):
 
     def save(self, *args, **kwargs):
         try:
-            # revoke(self.start_date_schedular_id, terminate=True)
-            print(self.start_date)
-            # self.start_date_schedular_id = event_unregister_deadline_schedular(self.pk)
-            self.start_date_schedular_id = event_unregister_deadline_schedular.apply_async(eta=self.start_date, kwargs={'pk': self.pk})
-            print(self.start_date_schedular_id)
-            # if self.sign_up:
-            #     self.start_registration_schedular_id = event_unregister_deadline_mail.delay(time=self.start_registration_at)
-            #     self.sign_off_deadline_schedular_id = event_unregister_deadline_mail.delay(time=self.sign_off_deadline)
+            revoke(self.end_date_schedular_id, terminate=True)
+            revoke(self.sign_off_deadline_schedular_id, terminate=True)
+            if self.evaluate_link:
+                self.end_date_schedular_id = event_end_schedular.apply_async(eta=self.start_date, kwargs={'pk': self.pk, 'title': self.title, 'date': self.start_date, 'evaluate_link':self.evaluate_link})
+            if self.sign_up:
+                self.sign_off_deadline_schedular_id = event_sign_off_deadline_schedular.apply_async(eta=self.sign_off_deadline - timedelta(days=1), kwargs={'pk': self.pk, 'title':self.title})
         except Exception as e:
             print(e)
         return super(Event, self).save(*args, **kwargs)
