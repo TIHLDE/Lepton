@@ -6,6 +6,9 @@ from app.util import today, EnumUtils
 from app.util.models import BaseModel
 from .user import User
 
+from app.util.mailer import send_html_email
+from django.template.loader import render_to_string
+
 
 class UserEvent(BaseModel):
     """ Model for user registration for an event """
@@ -32,6 +35,8 @@ class UserEvent(BaseModel):
         if not self.user_event_id:
             return self.create(*args, **kwargs)
 
+        print()
+        self.send_mail()
         return super(UserEvent, self).save(*args, **kwargs)
 
     def create(self, *args, **kwargs):
@@ -43,7 +48,28 @@ class UserEvent(BaseModel):
         if self.should_be_swapped_with_not_prioritized_user():
             self.swap_users()
 
+        self.send_mail()
         return super(UserEvent, self).save(*args, **kwargs)
+
+    def send_mail(self):
+        if self.is_on_wait:
+            send_html_email(
+                "Venteliste for " + self.event.title,
+                render_to_string(
+                'waitlist.html',
+                context={'user_name':self.user.first_name, 'event_name':self.event.title, 'event_deadline':self.event.sign_off_deadline}
+                ),
+                self.user.email
+            )
+        else:
+            send_html_email(
+                "Plassbekreftelse for " + self.event.title,
+                render_to_string(
+                'signed_up.html',
+                context={'user_name':self.user.first_name, 'event_name':self.event.title, 'event_time':self.event.start_date, 'event_place': self.event.location, 'event_deadline': self.event.sign_off_deadline}
+                ),
+                self.user.email
+            )
 
     def should_be_swapped_with_not_prioritized_user(self):
         return self.is_on_wait and self.is_prioritized() and self.event.has_priorities() and self.event.is_full()
@@ -74,17 +100,17 @@ class UserEvent(BaseModel):
             raise ValidationError(_('The queue for this event is closed'))
         if not self.event.sign_up:
             raise ValidationError(_('Sign up is not possible'))
-
-        self.validate_start_and_end_registration_time()
+        if self.user_event_id:
+            self.validate_start_and_end_registration_time()
 
     def validate_start_and_end_registration_time(self):
         self.check_registration_has_started()
         self.check_registration_has_ended()
 
     def check_registration_has_started(self):
-        if self.event.start_registration_at > today():
+        if self.event.start_registration_at > today() and not self.user_event_id:
             raise ValidationError(_('The registration for this event has not started yet.'))
 
     def check_registration_has_ended(self):
-        if self.event.end_registration_at < today():
+        if self.event.end_registration_at < today() and not self.user_event_id:
             raise ValidationError(_('The registration for this event has ended.'))

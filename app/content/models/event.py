@@ -141,10 +141,10 @@ class Event(BaseModel, OptionalImage):
         try:
             revoke(self.end_date_schedular_id, terminate=True)
             revoke(self.sign_off_deadline_schedular_id, terminate=True)
-            if self.evaluate_link:
-                self.end_date_schedular_id = event_end_schedular.apply_async(eta=self.start_date, kwargs={'pk': self.pk, 'title': self.title, 'date': self.start_date, 'evaluate_link':self.evaluate_link})
-            if self.sign_up:
-                self.sign_off_deadline_schedular_id = event_sign_off_deadline_schedular.apply_async(eta=self.sign_off_deadline - timedelta(days=1), kwargs={'pk': self.pk, 'title':self.title})
+            if self.evaluate_link and self.end_date < today() and not closed:
+                self.end_date_schedular_id = event_end_schedular.apply_async(eta=(self.end_date + timedelta(days=1)), kwargs={'pk': self.pk, 'title': self.title, 'date': self.start_date, 'evaluate_link':self.evaluate_link})
+            if self.sign_up and self.sign_off_deadline < today() and not closed:
+                self.sign_off_deadline_schedular_id = event_sign_off_deadline_schedular.apply_async(eta=(self.sign_off_deadline - timedelta(days=1)), kwargs={'pk': self.pk, 'title':self.title})
         except Exception as e:
             print(e)
         return super(Event, self).save(*args, **kwargs)
