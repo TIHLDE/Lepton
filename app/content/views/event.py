@@ -6,11 +6,13 @@ from rest_framework import viewsets, filters
 from rest_framework.response import Response
 
 from ..models import Event
-from ..permissions import IsNoKorPromo
-from ..serializers import EventListSerializer, EventCreateSerializer
+from ..serializers import EventListSerializer, EventCreateSerializer, EventSerializer, EventAdminSerializer
+from ..permissions import IsNoKorPromo, is_admin_user
 from ..filters import EventFilter
 from ..pagination import BasePagination
 from app.util import yesterday
+
+import json
 
 
 class EventViewSet(viewsets.ModelViewSet):
@@ -31,6 +33,20 @@ class EventViewSet(viewsets.ModelViewSet):
         if self.kwargs or 'expired' in self.request.query_params:
             return Event.objects.all().order_by('start_date')
         return Event.objects.filter(start_date__gte=yesterday()).order_by('start_date')
+
+    def retrieve(self, request, pk):
+        """ Returns a registered user for the specified event """
+        try:
+            event = Event.objects.get(pk=pk)
+            if is_admin_user(request):
+                serializer = EventAdminSerializer(event, context={'request': request}, many=False)
+            else:
+                serializer = EventSerializer(event, context={'request': request}, many=False)
+            return Response(serializer.data)
+        except Event.DoesNotExist:
+            return Response({'detail': _('User event not found.')}, status=404)
+        except Exception as e:
+            print(e)
 
     def update(self, request, pk, *args, **kwargs):
         """ Updates fields passed in request """

@@ -5,6 +5,7 @@ from django.utils.translation import gettext as _
 from app.util import today, EnumUtils
 from app.util.models import BaseModel
 from .user import User
+from .notification import Notification
 
 from app.util.mailer import send_html_email
 from django.template.loader import render_to_string
@@ -35,8 +36,7 @@ class UserEvent(BaseModel):
         if not self.user_event_id:
             return self.create(*args, **kwargs)
 
-        print()
-        self.send_mail()
+        self.send_notification_and_mail()
         return super(UserEvent, self).save(*args, **kwargs)
 
     def create(self, *args, **kwargs):
@@ -48,10 +48,10 @@ class UserEvent(BaseModel):
         if self.should_be_swapped_with_not_prioritized_user():
             self.swap_users()
 
-        self.send_mail()
+        self.send_notification_and_mail()
         return super(UserEvent, self).save(*args, **kwargs)
 
-    def send_mail(self):
+    def send_notification_and_mail(self):
         if self.is_on_wait:
             send_html_email(
                 "Venteliste for " + self.event.title,
@@ -61,6 +61,7 @@ class UserEvent(BaseModel):
                 ),
                 self.user.email
             )
+            Notification(user=self.user, message="På grunn av høy pågang er du satt på venteliste på " + self.event.title).save()
         else:
             send_html_email(
                 "Plassbekreftelse for " + self.event.title,
@@ -70,6 +71,7 @@ class UserEvent(BaseModel):
                 ),
                 self.user.email
             )
+            Notification(user=self.user, message="Du har fått plass på " + self.event.title).save()
 
     def should_be_swapped_with_not_prioritized_user(self):
         return self.is_on_wait and self.is_prioritized() and self.event.has_priorities() and self.event.is_full()

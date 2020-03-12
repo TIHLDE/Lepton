@@ -1,5 +1,5 @@
 from .news import NewsSerializer
-from .event import EventListSerializer, EventCreateSerializer
+from .event import EventListSerializer, EventCreateSerializer, EventSerializer, EventAdminSerializer
 from .warning import WarningSerializer
 from .category import CategorySerializer
 from .job_post import JobPostSerializer
