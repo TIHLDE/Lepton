@@ -138,13 +138,11 @@ class Event(BaseModel, OptionalImage):
             raise ValidationError(_('End date for event cannot be before the event start_date.'))
 
     def save(self, *args, **kwargs):
-        try:
-            revoke(self.end_date_schedular_id, terminate=True)
-            revoke(self.sign_off_deadline_schedular_id, terminate=True)
-            if self.evaluate_link and self.end_date < today() and not self.closed:
-                self.end_date_schedular_id = event_end_schedular.apply_async(eta=(self.end_date + timedelta(days=1)), kwargs={'pk': self.pk, 'title': self.title, 'date': self.start_date, 'evaluate_link':self.evaluate_link})
-            if self.sign_up and self.sign_off_deadline < today() and not self.closed:
-                self.sign_off_deadline_schedular_id = event_sign_off_deadline_schedular.apply_async(eta=(self.sign_off_deadline - timedelta(days=1)), kwargs={'pk': self.pk, 'title':self.title})
-        except Exception as e:
-            print(e)
+        revoke(self.end_date_schedular_id, terminate=True)
+        revoke(self.sign_off_deadline_schedular_id, terminate=True)
+        if self.evaluate_link and self.end_date < today() and not self.closed:
+            self.end_date_schedular_id = event_end_schedular.apply_async(eta=(self.end_date + timedelta(days=1)), kwargs={'pk': self.pk, 'title': self.title, 'date': self.start_date, 'evaluate_link':self.evaluate_link})
+        if self.sign_up and self.sign_off_deadline < today() and not self.closed:
+            self.sign_off_deadline_schedular_id = event_sign_off_deadline_schedular.apply_async(eta=(self.sign_off_deadline - timedelta(days=1)), kwargs={'pk': self.pk, 'title':self.title})
+
         return super(Event, self).save(*args, **kwargs)

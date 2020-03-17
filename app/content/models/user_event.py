@@ -35,7 +35,6 @@ class UserEvent(BaseModel):
         """ Determines whether the object is being created or updated and acts accordingly """
         if not self.user_event_id:
             return self.create(*args, **kwargs)
-
         self.send_notification_and_mail()
         return super(UserEvent, self).save(*args, **kwargs)
 
@@ -102,7 +101,7 @@ class UserEvent(BaseModel):
             raise ValidationError(_('The queue for this event is closed'))
         if not self.event.sign_up:
             raise ValidationError(_('Sign up is not possible'))
-        if self.user_event_id:
+        if not self.user_event_id:
             self.validate_start_and_end_registration_time()
 
     def validate_start_and_end_registration_time(self):
@@ -110,9 +109,9 @@ class UserEvent(BaseModel):
         self.check_registration_has_ended()
 
     def check_registration_has_started(self):
-        if self.event.start_registration_at > today() and not self.user_event_id:
+        if self.event.start_registration_at > today():
             raise ValidationError(_('The registration for this event has not started yet.'))
 
     def check_registration_has_ended(self):
-        if self.event.end_registration_at < today() and not self.user_event_id:
+        if self.event.end_registration_at < today():
             raise ValidationError(_('The registration for this event has ended.'))

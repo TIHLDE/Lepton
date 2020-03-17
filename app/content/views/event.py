@@ -45,8 +45,7 @@ class EventViewSet(viewsets.ModelViewSet):
             return Response(serializer.data)
         except Event.DoesNotExist:
             return Response({'detail': _('User event not found.')}, status=404)
-        except Exception as e:
-            print(e)
+
 
     def update(self, request, pk, *args, **kwargs):
         """ Updates fields passed in request """
