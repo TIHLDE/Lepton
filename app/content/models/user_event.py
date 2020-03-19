@@ -2,9 +2,8 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext as _
 
-from app.util.utils import today
+from app.util import today, EnumUtils
 from app.util.models import BaseModel
-from app.content.enums import UserClass, UserStudy
 from .user import User
 
 
@@ -50,9 +49,7 @@ class UserEvent(BaseModel):
         return self.is_on_wait and self.is_prioritized() and self.event.has_priorities() and self.event.is_full()
 
     def is_prioritized(self):
-        user_class = UserClass(int(self.user.user_class))
-        user_study = UserStudy(int(self.user.user_study))
-
+        user_class, user_study = EnumUtils.get_user_enums(**self.user.__dict__)
         return self.event.registration_priorities.filter(user_class=user_class, user_study=user_study).exists()
 
     def swap_users(self):
