@@ -19,7 +19,18 @@ class NotificationViewSet(viewsets.ModelViewSet):
             serializer = UpdateNotificationSerializer(notification, data=request.data)
             if serializer.is_valid():
                 serializer.save()
-                return Response({"detail": ("User successfully updated.")}, status=204)
-        return Response(
-            {"detail": ("Could not perform notification update")}, status=400
-        )
+                return Response({'detail': ('Notification successfully updated.')}, status=204)
+        return Response({'detail': ('Could not perform notification update')}, status=400)
+
+    def create(self, request):
+        if is_admin_user(request):
+            serializer = NotificationSerializer
+            if request.all_users:
+                # Create notifications for all users.
+                return Response({'detail': ('Not implementet yet.')}, status=400)
+
+            else:
+                if serializer.is_valid():
+                    serializer.save()
+                    return Response({'detail': ('Notification(s) successfully created.')}, status=201)
+        return Response({'detail': ('Not allowed to create notifications.')}, status=400)
