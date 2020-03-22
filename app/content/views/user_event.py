@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from app.util.utils import today
 
 from ..models import UserEvent, Event, User
-from ..permissions import IsMember, IsDev, IsHS, is_admin_user
+from ..permissions import IsMember, IsDev, IsHS, is_admin_user, UserEventPermission
 from ..serializers import UserEventSerializer
 
 from ...util.mailer import send_user_event_mail
@@ -15,15 +15,14 @@ from ...util.mailer import send_user_event_mail
 class UserEventViewSet(viewsets.ModelViewSet):
     """ Administrates registration, waiting lists and attendance for events """
     serializer_class = UserEventSerializer
-    permission_classes = [IsHS | IsDev]
+    permission_classes = [UserEventPermission]
     queryset = UserEvent.objects.all()
     lookup_field = 'user_id'
 
     def get_permissions(self):
         """ Allow a member to sign up/off themselves """
         if self.request.method in ['POST', 'DELETE']:
-            self.permission_classes = [IsMember, ]
-
+            permission_classes = [IsMember]
         return super(UserEventViewSet, self).get_permissions()
 
     def list(self, request, event_id):

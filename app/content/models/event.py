@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import gettext as _
 
 from app.util.models import BaseModel, OptionalImage
-from app.util.utils import yesterday
+from app.util import yesterday
 from .category import Category
 from .user import User
 from .user_event import UserEvent

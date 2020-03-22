@@ -49,7 +49,7 @@ class TestUserEventModel(TestCase):
         other_user_on_wait = UserFactory(user_class=2, user_study=2)
         UserEventFactory(event=self.event, user=other_user_on_wait)
 
-        other_user = UserFactory.create(user_class=2, user_study=2)
+        other_user = UserFactory(user_class=2, user_study=2)
         other_user_event = UserEventFactory(event=self.event, user=other_user)
 
         self.not_prioritized_user_event.refresh_from_db()
