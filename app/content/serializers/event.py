@@ -118,6 +118,9 @@ class EventListSerializer(EventSerializer):
         except Priority.DoesNotExist:
             return None
 
+class EventAdminSerializer(EventSerializer):
+    class Meta(EventSerializer.Meta):
+        fields = EventSerializer.Meta.fields + ('evaluate_link',)
 
 class EventInUserSerializer(EventSerializer):
     expired = serializers.BooleanField(read_only=True)
