@@ -10,6 +10,8 @@ admin.site.register(models.Category)
 admin.site.register(models.JobPost)
 admin.site.register(models.Priority)
 admin.site.register(models.Notification)
+admin.site.register(models.Challenge)
+admin.site.register(models.UserChallenge)
 
 
 @admin.register(models.UserEvent)
@@ -19,6 +21,7 @@ class UserEventAdmin(admin.ModelAdmin):
 
 @admin.register(models.User)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('user_id', 'first_name', 'last_name', 'user_class', 'user_study')
-    search_fields = ('user_id', 'first_name', 'last_name', 'user_class', 'user_study')
-
+    list_display = ('user_id', 'first_name', 'last_name',
+                    'user_class', 'user_study')
+    search_fields = ('user_id', 'first_name', 'last_name',
+                     'user_class', 'user_study')
