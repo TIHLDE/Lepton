@@ -23,7 +23,10 @@ class IsDev(BasePermission):
     message = 'You are not in DevKom'
 
     def has_permission(self, request, view):
-        return check_group_permission(request, ['DevKom'])
+        user_id = get_user_id(request)
+        if user_id is None:
+            return False
+        return User.objects.filter(user_id=user_id).filter(groups__name__in=['DevKom']).count() > 0
 
 
 class IsHS(BasePermission):
