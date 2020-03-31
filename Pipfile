@@ -29,6 +29,7 @@ pytest-django = "*"
 factory-boy = "*"
 codecov = "*"
 coverage = "*"
+celery = "*"
 
 [dev-packages]
 pylint = "*"

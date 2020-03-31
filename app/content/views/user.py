@@ -43,16 +43,19 @@ class UserViewSet(viewsets.ModelViewSet):
     def update(self, request, pk, *args, **kwargs):
         """ Updates fields passed in request """
         try:
+            self.check_object_permissions(self.request, User.objects.get(user_id=pk))
             if is_admin_user(request):
-                serializer = UserAdminSerializer(User.objects.get(user_id=pk), context={'request': request}, many=False, data=request.data)
+                if self.request.id == pk:
+                    serializer = UserMemberSerializer(User.objects.get(user_id=pk), context={'request': request}, many=False, data=request.data)
+                else:
+                    serializer = UserAdminSerializer(User.objects.get(user_id=pk), context={'request': request}, many=False, data=request.data)
             else:
-                self.check_object_permissions(self.request, User.objects.get(user_id=pk))
                 if self.request.id == pk:
                     serializer = UserMemberSerializer(User.objects.get(user_id=pk), context={'request': request}, many=False, data=request.data)
                 else:
                     return Response({'detail': _('Not authenticated to perform user update')}, status=400)
             if serializer.is_valid():
-                self.perform_update(serializer)
+                serializer.save()
                 return Response({'detail': _('User successfully updated.')})
             else:
                 return Response({'detail': _('Could not perform user update')}, status=400)

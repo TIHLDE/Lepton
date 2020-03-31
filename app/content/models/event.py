@@ -3,11 +3,21 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import gettext as _
 
 from app.util.models import BaseModel, OptionalImage
-from app.util.utils import yesterday
+from app.util import yesterday
 from .category import Category
 from .user import User
 from .user_event import UserEvent
 from .prioritiy import Priority
+
+from datetime import timedelta
+
+from ..tasks.event import event_sign_off_deadline_schedular, event_end_schedular
+
+from celery import shared_task
+from celery.task.control import revoke
+
+from ...util.utils import today
+import math
 
 
 class Event(BaseModel, OptionalImage):
@@ -35,6 +45,11 @@ class Event(BaseModel, OptionalImage):
     sign_off_deadline = models.DateTimeField(blank=True, null=True, default=None)
 
     registration_priorities = models.ManyToManyField(Priority, blank=True, default=None, related_name='priorities')
+    evaluate_link = models.CharField(max_length=200, blank=True, null=True)
+    end_date_schedular_id = models.CharField(max_length=100, blank=True, null=True)
+    sign_off_deadline_schedular_id = models.CharField(max_length=100, blank=True, null=True)
+
+
 
     @property
     def expired(self):
@@ -123,4 +138,11 @@ class Event(BaseModel, OptionalImage):
             raise ValidationError(_('End date for event cannot be before the event start_date.'))
 
     def save(self, *args, **kwargs):
+        revoke(self.end_date_schedular_id, terminate=True)
+        revoke(self.sign_off_deadline_schedular_id, terminate=True)
+        if self.evaluate_link and self.end_date < today() and not self.closed:
+            self.end_date_schedular_id = event_end_schedular.apply_async(eta=(self.end_date + timedelta(days=1)), kwargs={'pk': self.pk, 'title': self.title, 'date': self.start_date, 'evaluate_link':self.evaluate_link})
+        if self.sign_up and self.sign_off_deadline < today() and not self.closed:
+            self.sign_off_deadline_schedular_id = event_sign_off_deadline_schedular.apply_async(eta=(self.sign_off_deadline - timedelta(days=1)), kwargs={'pk': self.pk, 'title':self.title})
+
         return super(Event, self).save(*args, **kwargs)

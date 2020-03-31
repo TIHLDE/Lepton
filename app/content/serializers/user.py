@@ -10,6 +10,7 @@ from django.contrib.auth.hashers import make_password
 class UserSerializer(serializers.ModelSerializer):
 	events = serializers.SerializerMethodField()
 	groups = serializers.SerializerMethodField()
+	unread_notifications = serializers.SerializerMethodField()
 	notifications = serializers.SerializerMethodField()
 
 	class Meta:
@@ -32,6 +33,7 @@ class UserSerializer(serializers.ModelSerializer):
 			'is_TIHLDE_member',
 			'events',
 			'groups',
+			'unread_notifications',
 			'notifications',
 		)
 		read_only_fields = ('user_id',)
@@ -47,8 +49,12 @@ class UserSerializer(serializers.ModelSerializer):
 		""" Lists all groups a user is a member of """
 		return [group.name for group in obj.groups.all()]
 
+	def get_unread_notifications(self, obj):
+		""" Counts all unread notifications and returns the count """
+		return Notification.objects.filter(user=obj, read=False).count()
+
 	def get_notifications(self, obj):
-		"""Gets all notifications for user"""
+		""" Gets all notifications for user """
 		return [
 			{
 				'id': notification.id,

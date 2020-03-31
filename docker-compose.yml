@@ -22,6 +22,16 @@ services:
     environment:
       PMA_HOST: db
       MYSQL_ROOT_PASSWORD: password
+  celery:
+    env_file:
+      - .env
+    build: .
+    container_name: celery
+    command: pipenv run celery -A app worker -l info
+    volumes:
+      - .:/usr/src/
+    depends_on:
+      - db
   web:
     env_file:
       - .env
