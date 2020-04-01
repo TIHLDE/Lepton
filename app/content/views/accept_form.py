@@ -1,13 +1,11 @@
 import os
 import json
 
-from django.http import JsonResponse
+from rest_framework.response import Response
 from django.views.decorators.csrf import csrf_exempt
 
 from rest_framework.decorators import api_view
 
-
-# TODO: MOVE TO TEMPLATE
 from django.core.mail import send_mail
 
 
@@ -18,9 +16,8 @@ def accept_form(request):
     try:
         # Get body from request
         body = request.data
-
         # Define mail content
-        sent_from = 'no-reply@tihlde.org'
+        sent_from = os.environ.get('EMAIL_USER')
         to = os.environ.get('EMAIL_RECEIVER') or 'orakel@tihlde.org'
         subject = body["info"]['bedrift'] + " vil ha " + ", ".join(body["type"][:-2] + [" og ".join(body["type"][-2:])]) + " i " + ", ".join(body["time"][:-2] + [" og ".join(body["time"][-2:])])
         email_body = """\
@@ -48,9 +45,8 @@ def accept_form(request):
             [to],
             fail_silently = False
         )
-        return JsonResponse({}, status= 200 if numOfSentMails > 0 else 500)
+        return Response({'detail': ''}, status= 200 if numOfSentMails > 0 else 400)
 
     except Exception as e:
-        print(e)
         raise
 
