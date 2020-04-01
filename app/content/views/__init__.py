@@ -7,4 +7,5 @@ from .user import UserViewSet
 from .user_event import UserEventViewSet
 from .accept_form import accept_form
 from .notification import NotificationViewSet
+from .cheatsheet import CheatsheetViewSet
 from .user_challenge import UserChallengeViewSet

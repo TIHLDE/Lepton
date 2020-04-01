@@ -10,6 +10,7 @@ admin.site.register(models.Category)
 admin.site.register(models.JobPost)
 admin.site.register(models.Priority)
 admin.site.register(models.Notification)
+admin.site.register(models.Cheatsheet)
 admin.site.register(models.Challenge)
 admin.site.register(models.UserChallenge)
 

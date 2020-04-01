@@ -6,7 +6,7 @@ from django.conf.urls import include
 from rest_framework_swagger.views import get_swagger_view
 
 from .views import NewsViewSet, EventViewSet, WarningViewSet, CategoryViewSet, accept_form, \
-    JobPostViewSet, UserViewSet, UserEventViewSet, NotificationViewSet, UserChallengeViewSet
+    JobPostViewSet, UserViewSet, UserEventViewSet, NotificationViewSet, UserChallengeViewSet, CheatsheetViewSet
 
 router = routers.DefaultRouter()
 
@@ -17,9 +17,9 @@ router.register('warning', WarningViewSet, basename='warning')
 router.register('category', CategoryViewSet)
 router.register('jobpost', JobPostViewSet, basename='jobpost')
 router.register('user', UserViewSet, basename='user')
-router.register(r'events/(?P<event_id>\d+)/users',
-                UserEventViewSet, basename='user_event')
+router.register(r'events/(?P<event_id>\d+)/users',UserEventViewSet, basename='user_event')
 router.register('notification', NotificationViewSet, basename='notification')
+router.register(r'cheatsheet/study/(?P<study>[^\.]+)/grade/(?P<grade>[^\.]+)/file', CheatsheetViewSet, basename='cheatsheet-list')
 router.register('challenge', UserChallengeViewSet, basename='challenge')
 
 # Swagger
