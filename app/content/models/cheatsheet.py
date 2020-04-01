@@ -25,7 +25,7 @@ class Cheatsheet(BaseModel):
         verbose_name_plural = 'Cheatsheets'
 
     def __str__(self):
-        return f'Cheatsheet -{self.title} {self.desc} {self.creator} {self.sheet_course}'
+        return f'Cheatsheet -{self.title} {self.creator} {self.grade} {self.study} {self.course}'
     
 
     
