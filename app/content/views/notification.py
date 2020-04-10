@@ -24,13 +24,32 @@ class NotificationViewSet(viewsets.ModelViewSet):
 
     def create(self, request):
         if is_admin_user(request):
-            serializer = NotificationSerializer
-            if request.all_users:
-                # Create notifications for all users.
-                return Response({'detail': ('Not implementet yet.')}, status=400)
+            try:
+                if 'all_users' in request.data and request.data['all_users']:
+                    # Create notifications for all users.
+                    newData = [
+                        {
+                            'user': users.user_id,
+                            'message': request.data['message'],
+                            'read': False
+                        } for users in User.objects.filter()
+                    ]
 
-            else:
-                if serializer.is_valid():
-                    serializer.save()
-                    return Response({'detail': ('Notification(s) successfully created.')}, status=201)
-        return Response({'detail': ('Not allowed to create notifications.')}, status=400)
+                    serializer = NotificationSerializer(data=newData, many=True)
+                    if serializer.is_valid():
+                        serializer.save()
+                        return Response({'detail': ('Notification(s) successfully created.')}, status=201)
+                    else:
+                        return Response({'detail': ('Invalid data sent in.')}, status=400)
+
+                else:
+                    serializer = NotificationSerializer(data=request.data)
+                    if serializer.is_valid():
+                        serializer.save()
+                        return Response({'detail': ('Notification(s) successfully created.')}, status=201)
+                    else:
+                        return Response({'detail': ('Invalid data sent in.')}, status=400)
+            except:
+                return Response({'detail': ('Missing fields or invalid data.')}, status=400)
+
+        return Response({'detail': ('Not allowed to create notifications.')}, status=401)
