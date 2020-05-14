@@ -1,0 +1,17 @@
+from rest_framework import serializers
+
+from ..models import Cheatsheet
+
+class CheatsheetSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Cheatsheet
+        fields = [
+            'id',
+            'title',
+            'desc',
+            'creator',
+            'grade',
+            'study',
+            'course',
+            'url',
+        ]
