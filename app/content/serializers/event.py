@@ -34,8 +34,13 @@ class EventSerializer(serializers.ModelSerializer):
             'start_registration_at',
             'end_registration_at',
             'sign_off_deadline',
-            'registration_priorities'
+            'registration_priorities',
+            'evaluate_link',
         )
+
+        extra_kwargs = {
+            'evaluate_link': {'write_only': True},
+        }
 
     def get_registered_users_list(self, obj):
         """ Return only some user fields"""
@@ -56,9 +61,11 @@ class EventSerializer(serializers.ModelSerializer):
         """
         try:
             if limit < 0:
-                raise serializers.ValidationError("Event limit can not a negative integer")
+                raise serializers.ValidationError(
+                    "Event limit can not a negative integer")
             elif limit < self.instance.registered_users_list.all().count() and self.instance.limit is not 0:
-                raise serializers.ValidationError("Event limit can not be lower than number of registered users.")
+                raise serializers.ValidationError(
+                    "Event limit can not be lower than number of registered users.")
         except AttributeError:
             pass
 
@@ -78,10 +85,13 @@ class EventCreateSerializer(EventSerializer):
     registration_priorities = PrioritySerializer(many=True, required=False)
 
     class Meta(EventSerializer.Meta):
-        fields = EventSerializer.Meta.fields + ('registration_priorities',)
+        fields = EventSerializer.Meta.fields + \
+            ('registration_priorities', 'evaluate_link',)
 
     def create(self, validated_data):
-        registration_priorities_data = validated_data.pop('registration_priorities')
+        registration_priorities_data = validated_data.pop(
+            'registration_priorities')
+        print(validated_data)
         event = Event.objects.create(**validated_data)
         self.set_registration_priorities(event, registration_priorities_data)
 
@@ -89,7 +99,8 @@ class EventCreateSerializer(EventSerializer):
 
     def set_registration_priorities(self, event, registration_priorities_data):
         for registration_priority_data in registration_priorities_data:
-            registration_priority_to_add = self.get_registration_priority_from_data(registration_priority_data)
+            registration_priority_to_add = self.get_registration_priority_from_data(
+                registration_priority_data)
             event.registration_priorities.add(registration_priority_to_add)
 
     @staticmethod
@@ -118,9 +129,11 @@ class EventListSerializer(EventSerializer):
         except Priority.DoesNotExist:
             return None
 
+
 class EventAdminSerializer(EventSerializer):
     class Meta(EventSerializer.Meta):
         fields = EventSerializer.Meta.fields + ('evaluate_link',)
+
 
 class EventInUserSerializer(EventSerializer):
     expired = serializers.BooleanField(read_only=True)
