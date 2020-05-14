@@ -14,7 +14,7 @@ from app.content.enums import UserClass, UserStudy
 class CheatsheetViewSet(viewsets.ModelViewSet):
     serializer_class = CheatsheetSerializer
     permission_classes = [IsMember]
-    search_fields = ['sheet_course', 'title', 'desc']
+    search_fields = ['course', 'title', 'desc', 'creator']
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     queryset = Cheatsheet.objects.all()
     pagination_class = BasePagination
