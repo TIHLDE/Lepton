@@ -35,9 +35,6 @@ class UserEventViewSet(viewsets.ModelViewSet):
         self.check_object_permissions(self.request, event)
         user_event = self.queryset.filter(event__pk=event_id)
 
-        if not user_event.count():
-            return Response({'detail': _('No users signed up for this event.')}, status=404)
-
         serializer = UserEventSerializer(user_event, context={'request': request}, many=True)
         return Response(serializer.data)
 
