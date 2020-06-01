@@ -55,8 +55,8 @@ class EventViewSet(viewsets.ModelViewSet):
             serializer = EventListSerializer(event, data=request.data, partial=True, many=False)
 
             if serializer.is_valid():
-                serializer.save()
-                return Response({'detail': _('Event successfully updated.')}, status=204)
+                save = serializer.save()
+                return Response({'detail': _('Event successfully updated.'), 'id': save.id}, status=200)
             else:
                 return Response({'detail': _('Could not perform update')}, status=400)
 
@@ -68,8 +68,8 @@ class EventViewSet(viewsets.ModelViewSet):
             serializer = EventCreateSerializer(data=request.data)
 
             if serializer.is_valid():
-                serializer.save()
-                return Response({'detail': 'Event created'}, status=201)
+                save = serializer.save()
+                return Response({'detail': 'Event created', 'id': save.id}, status=201)
             else:
                 return Response({'detail': serializer.errors}, status=400)
         except ValidationError as e:
