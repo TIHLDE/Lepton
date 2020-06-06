@@ -83,5 +83,5 @@ class EventViewTest(TestCase):
 
         self.event.refresh_from_db()
 
-        self.assertEqual(response.status_code, 204)
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(self.event.title, updated_title)
