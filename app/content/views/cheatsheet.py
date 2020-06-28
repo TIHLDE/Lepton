@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from ..pagination import BasePagination
 
+from ..filters import CheatsheetFilter
 from ..permissions import is_admin_user, IsMember
 from ..models import Cheatsheet
 from ..serializers import CheatsheetSerializer
@@ -14,15 +15,20 @@ from app.content.enums import UserClass, UserStudy
 class CheatsheetViewSet(viewsets.ModelViewSet):
     serializer_class = CheatsheetSerializer
     permission_classes = [IsMember]
-    search_fields = ['course', 'title', 'desc', 'creator']
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     queryset = Cheatsheet.objects.all()
     pagination_class = BasePagination
+    filterset_class = CheatsheetFilter
+    search_fields = ['course', 'title', 'creator']
+
+    def filter_queryset(self, queryset):
+        for backend in list(self.filter_backends):
+            queryset = backend().filter_queryset(self.request, queryset, self)
+        return CheatsheetFilter(self.request.GET, queryset=queryset).qs
 
     def list(self, request, study, grade):
         try:
-            cheatsheet = Cheatsheet.objects.filter(
-            grade=UserClass[grade], study=UserStudy[study])
+            cheatsheet = self.filter_queryset(self.queryset).filter(grade=UserClass[grade], study=UserStudy[study])
             page = self.paginate_queryset(cheatsheet)
             if page is not None:
                 serializer = CheatsheetSerializer(page, many=True)
@@ -35,7 +41,7 @@ class CheatsheetViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request, study, grade, pk):
         try:
-            cheatsheet = Cheatsheet.objects.get(
+            cheatsheet = self.queryset.get(
                 id=pk,grade=UserClass[grade], study=UserStudy[study])
             serializer = CheatsheetSerializer(
             cheatsheet, many=False, context={'request': request})
@@ -54,7 +60,7 @@ class CheatsheetViewSet(viewsets.ModelViewSet):
     
     def update(self, request, study, grade, pk):
         try:
-            cheatsheet = Cheatsheet.objects.get(
+            cheatsheet = self.queryset.get(
                 id=pk, grade=UserClass[grade], study=UserStudy[study])
             if is_admin_user(request):
                 serializer = CheatsheetSerializer(cheatsheet, data=request.data)
@@ -67,10 +73,10 @@ class CheatsheetViewSet(viewsets.ModelViewSet):
     
     def destroy(self, request, study, grade, pk):
         try:
-            cheatsheet = Cheatsheet.objects.get(
+            cheatsheet = self.queryset.get(
                 id=pk, grade=UserClass[grade], study=UserStudy[study])
             if is_admin_user(request):
-                return Response({'detail': (cheatsheet.delete())}, status=200) 
+                return Response({'detail': (cheatsheet.delete())}, status=200)
             return Response({'detail': ('Not authenticated to perform cheatsheet deletion')}, status=204)
         except Cheatsheet.DoesNotExist:
             return Response({'details': _('Cheatsheet not found')}, status=404)

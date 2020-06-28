@@ -8,7 +8,6 @@ class CheatsheetSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'title',
-            'desc',
             'creator',
             'grade',
             'study',
