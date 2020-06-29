@@ -39,16 +39,6 @@ class CheatsheetViewSet(viewsets.ModelViewSet):
         except Cheatsheet.DoesNotExist:
             return Response({'detail': _('Cheatsheets does not exist.')}, status=404)
 
-    def retrieve(self, request, study, grade, pk):
-        try:
-            cheatsheet = self.queryset.get(
-                id=pk,grade=UserClass[grade], study=UserStudy[study])
-            serializer = CheatsheetSerializer(
-            cheatsheet, many=False, context={'request': request})
-            return Response(serializer.data,status=200)
-        except Cheatsheet.DoesNotExist:
-            return Response({'details': _('Cheatsheet not found')}, status=404)
-
     def create(self, request, *args, **kwargs):
         if is_admin_user(request):
             serializer = CheatsheetSerializer(data=self.request.data, many=False)
