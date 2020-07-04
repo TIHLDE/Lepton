@@ -23,6 +23,7 @@ travis = "*"
 django-rest-swagger = "*"
 django-enumchoicefield = "*"
 django-rest-auth = "*"
+pyocclient = "*"
 
 # Testing
 pytest-django = "*"
