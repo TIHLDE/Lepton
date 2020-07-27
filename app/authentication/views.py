@@ -20,10 +20,13 @@ def login(request):
 
     user = User.objects.get(user_id=user_id)
     if user.check_password(password):
-        try:
-            token = Token.objects.get(user_id=user_id).key
-            return Response({'token': token}, status=200)
-        except Token.DoesNotExist:
+        if user.is_TIHLDE_member:
+            try:
+                token = Token.objects.get(user_id=user_id).key
+                return Response({'token': token}, status=200)
+            except Token.DoesNotExist:
+                return Response({'detail': ('Not a TIHLDE member')}, status=400)
+        else:
             return Response({'detail': ('Not a TIHLDE member')}, status=400)
     else:
         return Response({'detail': ('Incorrect user_id or password')}, status=400)

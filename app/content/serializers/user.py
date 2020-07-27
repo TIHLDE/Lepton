@@ -21,14 +21,12 @@ class UserSerializer(serializers.ModelSerializer):
 			'last_name',
 			'email',
 			'cell',
-			'em_nr',
 			'home_busstop',
 			'gender',
 			'user_class',
 			'user_study',
 			'allergy',
 			'tool',
-			'vipps_transaction_id',
 			'app_token',
 			'is_TIHLDE_member',
 			'events',
@@ -37,6 +35,7 @@ class UserSerializer(serializers.ModelSerializer):
 			'notifications',
 		)
 		read_only_fields = ('user_id',)
+		write_only_fields = ('app_token',)
 
 
 	def get_events(self, obj):
@@ -59,7 +58,7 @@ class UserSerializer(serializers.ModelSerializer):
 			{
 				'id': notification.id,
 				'message': notification.message,
-				'read': notification.read,	
+				'read': notification.read,
 			} for notification in  Notification.objects.filter(user=obj)]
 
 
@@ -67,7 +66,7 @@ class UserMemberSerializer(UserSerializer):
 	"""Serializer for user update to prevent them from updating extra_kwargs fields"""
 	class Meta(UserSerializer.Meta):
 		fields = UserSerializer.Meta.fields
-		read_only_fields = ('user_id', 'first_name', 'last_name', 'email', 'vipps_transaction_id', 'is_TIHLDE_member',)
+		read_only_fields = ('user_id', 'first_name', 'last_name', 'email', 'is_TIHLDE_member',)
 
 class UserAdminSerializer(serializers.ModelSerializer):
 	"""Serializer for admin update to prevent them from updating extra_kwargs fields"""
@@ -91,7 +90,6 @@ class UserCreateSerializer(serializers.ModelSerializer):
 			'first_name',
 			'last_name',
 			'email',
-			'vipps_transaction_id',
 			'user_class',
 			'user_study',
 			)
@@ -103,7 +101,6 @@ class UserCreateSerializer(serializers.ModelSerializer):
 			first_name=validated_data['first_name'],
 			last_name=validated_data['last_name'],
 			email=validated_data['email'],
-			vipps_transaction_id=validated_data['vipps_transaction_id'],
 			user_class=validated_data['user_class'],
 			user_study=validated_data['user_study'],
 		)
