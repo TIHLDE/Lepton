@@ -19,7 +19,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_fields = ['user_class', 'user_study', 'is_TIHLDE_member']
-    search_fields = ['user_id', 'first_name', 'last_name', 'vipps_transaction_id']
+    search_fields = ['user_id', 'first_name', 'last_name']
 
     def retrieve(self, request, *args, **kwargs):
         try:

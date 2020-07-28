@@ -19,7 +19,7 @@ router.register('jobpost', JobPostViewSet, basename='jobpost')
 router.register('user', UserViewSet, basename='user')
 router.register(r'events/(?P<event_id>\d+)/users',UserEventViewSet, basename='user_event')
 router.register('notification', NotificationViewSet, basename='notification')
-router.register(r'cheatsheet/study/(?P<study>[^\.]+)/grade/(?P<grade>[^\.]+)/file', CheatsheetViewSet, basename='cheatsheet-list')
+router.register(r'cheatsheet/study/(?P<study>[^\.]+)/grade/(?P<grade>[^\.]+)/file', CheatsheetViewSet, basename='cheatsheet_list')
 router.register('challenge', UserChallengeViewSet, basename='challenge')
 
 # Swagger
