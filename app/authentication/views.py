@@ -12,7 +12,7 @@ def login(request):
     # Serialize data and check if valid
     serializer = AuthSerializer(data=request.data)
     if (not serializer.is_valid()):
-        return Response({'detail': ('Invalid user_id or password')}, status=400)
+        return Response({'detail': ('Feil brukernavn eller passord')}, status=401)
 
     # Get username and password
     user_id = serializer.data['user_id']
@@ -25,11 +25,11 @@ def login(request):
                 token = Token.objects.get(user_id=user_id).key
                 return Response({'token': token}, status=200)
             except Token.DoesNotExist:
-                return Response({'detail': ('Not a TIHLDE member')}, status=400)
+                return Response({'detail': ('Ikke aktivert TIHLDE medlem')}, status=401)
         else:
-            return Response({'detail': ('Not a TIHLDE member')}, status=400)
+            return Response({'detail': ('Ikke aktivert TIHLDE medlem')}, status=401)
     else:
-        return Response({'detail': ('Incorrect user_id or password')}, status=400)
+        return Response({'detail': ('Feil brukernavn eller passord')}, status=401)
 
 
 @api_view(['POST'])
