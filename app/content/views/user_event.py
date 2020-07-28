@@ -54,7 +54,6 @@ class UserEventViewSet(viewsets.ModelViewSet):
             event = Event.objects.get(pk=event_id)
             user = User.objects.get(user_id=request.id)
             serializer = UserEventSerializer(data=request.data)
-
             if serializer.is_valid():
                 UserEvent(user=user, event=event).save()
                 return Response({'detail': 'User event created.'}, status=200)
@@ -79,6 +78,8 @@ class UserEventViewSet(viewsets.ModelViewSet):
             self.check_object_permissions(self.request, user_event)
             serializer = UserEventSerializer(user_event, data=request.data, partial=True, many=False)
             if serializer.is_valid():
+                if user_event.has_attended:
+                    return Response({'detail': _('User already attended')}, status=400)
                 self.perform_update(serializer)
                 if not request.data.get("has_attended"):
                     send_user_event_mail(request.data.get("is_on_wait"), Event.objects.get(pk=event_id).title, [User.objects.get(user_id=user_id).email])

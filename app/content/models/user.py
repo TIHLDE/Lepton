@@ -49,7 +49,6 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
     email = models.EmailField(max_length=254)
     cell = models.CharField(max_length=8, blank=True)
 
-    em_nr = models.CharField(max_length=12, blank=True)
     home_busstop = models.IntegerField(null=True, blank=True)
 
     GENDER = (
@@ -80,8 +79,6 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
     allergy = models.CharField(max_length=250, blank=True)
 
     tool = models.CharField(max_length=100, blank=True)
-
-    vipps_transaction_id = models.CharField(max_length=20, blank=True, null=True)
 
     app_token = models.CharField(max_length=60, blank=True, null=True)
 
