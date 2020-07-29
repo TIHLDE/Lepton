@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from app.util.utils import today
 
 from ..models import UserEvent, Event, User
-from ..permissions import IsMember, IsDev, IsHS, is_admin_user, UserEventPermission
+from ..permissions import IsMember, IsDev, IsHS, is_admin_user, UserEventPermission, UserPermission
 from ..serializers import UserEventSerializer
 
 from ...util.mailer import send_user_event_mail
@@ -22,7 +22,7 @@ class UserEventViewSet(viewsets.ModelViewSet):
     def get_permissions(self):
         """ Allow a member to sign up/off themselves """
         if self.request.method in ['POST', 'DELETE']:
-            permission_classes = [IsMember]
+            self.permission_classes = [IsMember]
         return super(UserEventViewSet, self).get_permissions()
 
     def list(self, request, event_id):
