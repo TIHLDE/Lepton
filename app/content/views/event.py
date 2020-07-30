@@ -61,10 +61,11 @@ class EventViewSet(viewsets.ModelViewSet):
                 return Response({'detail': _('Could not perform update')}, status=400)
 
         except Event.DoesNotExist:
-            return Response({'detail': 'Could not find event'}, status=400)
+            return Response({'detail': 'Could not find event'}, status=404)
 
         except Exception as e:
-            return Response({'detail': e}, status=400)
+            print(e) 
+            return Response({'detail': 'Could not update event'}, status=400)
 
     def create(self, request, *args, **kwargs):
         try:
