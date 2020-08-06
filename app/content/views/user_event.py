@@ -78,7 +78,7 @@ class UserEventViewSet(viewsets.ModelViewSet):
             self.check_object_permissions(self.request, user_event)
             serializer = UserEventSerializer(user_event, data=request.data, partial=True, many=False)
             if serializer.is_valid():
-                if user_event.has_attended:
+                if user_event.has_attended and request.data['has_attended']:
                     return Response({'detail': _('User already attended')}, status=400)
                 self.perform_update(serializer)
                 if not request.data.get("has_attended"):
