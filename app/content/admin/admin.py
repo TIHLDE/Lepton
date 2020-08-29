@@ -1,5 +1,6 @@
 from django.contrib import admin
 
+from app.content import forms
 from app.content import models
 
 admin.site.register(models.Event)
@@ -8,10 +9,10 @@ admin.site.register(models.Warning)
 admin.site.register(models.Category)
 admin.site.register(models.JobPost)
 admin.site.register(models.Priority)
-admin.site.register(models.Notification)
 admin.site.register(models.Cheatsheet)
 admin.site.register(models.Challenge)
 admin.site.register(models.UserChallenge)
+admin.site.register(models.Notification)
 
 
 @admin.register(models.Registration)
