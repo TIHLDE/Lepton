@@ -46,18 +46,18 @@ class EventSerializer(serializers.ModelSerializer):
         """ Return only some user fields"""
         try:
             return [{
-                'user_id': user.user_id,
-                'first_name': user.first_name,
-                'last_name': user.last_name
-            } for user in obj.registered_users_list.all()]
+                    'user_id': user.user_id,
+                    'first_name': user.first_name,
+                    'last_name': user.last_name
+                    } for user in obj.registered_users_list.all()]
         except User.DoesNotExist:
             return None
 
     def validate_limit(self, limit):
         """
-            Validate that the event limit is greater or equal to 0 and
-            that the limit can not be lower than the number of registered users.
-            If the limit is already 0, then do not let that effect updating other fields
+                Validate that the event limit is greater or equal to 0 and
+                that the limit can not be lower than the number of registered users.
+                If the limit is already 0, then do not let that effect updating other fields
         """
         try:
             if limit < 0:
@@ -81,12 +81,31 @@ class EventSerializer(serializers.ModelSerializer):
         return None
 
 
-class EventCreateSerializer(EventSerializer):
+class EventCreateUpdateSerializer(serializers.ModelSerializer):
     registration_priorities = PrioritySerializer(many=True, required=False)
 
-    class Meta(EventSerializer.Meta):
-        fields = EventSerializer.Meta.fields + \
-            ('registration_priorities', 'evaluate_link',)
+    class Meta:
+        model = Event
+        fields = (
+            'title',
+            'start_date',
+            'end_date',
+            'location',
+            'description',
+            'sign_up',
+            'priority',
+            'category',
+            'expired',
+            'limit',
+            'closed',
+            'image',
+            'image_alt',
+            'start_registration_at',
+            'end_registration_at',
+            'sign_off_deadline',
+            'registration_priorities',
+            'evaluate_link',
+        )
 
     def create(self, validated_data):
         registration_priorities_data = validated_data.pop(
@@ -97,7 +116,15 @@ class EventCreateSerializer(EventSerializer):
 
         return event
 
+    def update(self, instance, validated_data):
+        registration_priorities_data = validated_data.pop(
+            'registration_priorities')
+        self.set_registration_priorities(
+            instance, registration_priorities_data)
+        return super().update(instance, validated_data)
+
     def set_registration_priorities(self, event, registration_priorities_data):
+        event.registration_priorities.clear()
         for registration_priority_data in registration_priorities_data:
             registration_priority_to_add = self.get_registration_priority_from_data(
                 registration_priority_data)
@@ -123,9 +150,9 @@ class EventListSerializer(EventSerializer):
     def get_registration_priorities(self, obj):
         try:
             return [{
-                "user_class": registration_priority.user_class.value,
-                "user_study": registration_priority.user_study.value
-            } for registration_priority in obj.registration_priorities.all()]
+                    "user_class": registration_priority.user_class.value,
+                    "user_study": registration_priority.user_study.value
+                    } for registration_priority in obj.registration_priorities.all()]
         except Priority.DoesNotExist:
             return None
 

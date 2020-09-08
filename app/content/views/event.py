@@ -6,7 +6,7 @@ from rest_framework import viewsets, filters
 from rest_framework.response import Response
 
 from ..models import Event
-from ..serializers import EventListSerializer, EventCreateSerializer, EventSerializer, EventAdminSerializer
+from ..serializers import EventListSerializer, EventSerializer, EventAdminSerializer, EventCreateUpdateSerializer
 from ..permissions import IsNoKorPromo, is_admin_user
 from ..filters import EventFilter
 from ..pagination import BasePagination
@@ -47,12 +47,12 @@ class EventViewSet(viewsets.ModelViewSet):
             return Response({'detail': _('User event not found.')}, status=404)
 
 
-    def update(self, request, pk, *args, **kwargs):
+    def update(self, request, pk):
         """ Updates fields passed in request """
         try:
             event = Event.objects.get(pk=pk)
             self.check_object_permissions(self.request, event)
-            serializer = EventListSerializer(event, data=request.data, partial=True, many=False)
+            serializer = EventCreateUpdateSerializer(event, data=request.data, partial=True)
 
             if serializer.is_valid():
                 save = serializer.save()
@@ -61,11 +61,15 @@ class EventViewSet(viewsets.ModelViewSet):
                 return Response({'detail': _('Could not perform update')}, status=400)
 
         except Event.DoesNotExist:
-            return Response({'detail': 'Could not find event'}, status=400)
+            return Response({'detail': 'Could not find event'}, status=404)
+
+        except Exception as e:
+            print(e) 
+            return Response({'detail': 'Could not update event'}, status=400)
 
     def create(self, request, *args, **kwargs):
         try:
-            serializer = EventCreateSerializer(data=request.data)
+            serializer = EventCreateUpdateSerializer(data=request.data)
 
             if serializer.is_valid():
                 save = serializer.save()

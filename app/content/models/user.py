@@ -59,6 +59,7 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
     gender = models.IntegerField(default=2, choices=GENDER, null=True, blank=True)
 
     CLASS = (
+        (-1, 'Alumni'),
         (1, '1. Klasse'),
         (2, '2. Klasse'),
         (3, '3. Klasse'),

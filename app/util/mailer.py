@@ -6,10 +6,13 @@ from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 
 def send_html_email(subject, html, mail_list):
-  text_content = strip_tags(html)
-  msg = EmailMultiAlternatives(subject, text_content, os.environ.get('EMAIL_USER'), [mail_list])
-  msg.attach_alternative(html, "text/html")
-  msg.send()
+  try:
+    text_content = strip_tags(html)
+    msg = EmailMultiAlternatives(subject, text_content, os.environ.get('EMAIL_USER'), [mail_list])
+    msg.attach_alternative(html, "text/html")
+    msg.send()
+  except Exception as e:
+    print(e)
 
 def send_tihlde_email(subject, message, mail_list):
   return send_mail(subject, message, os.environ.get('EMAIL_USER'), mail_list, fail_silently=False,)
