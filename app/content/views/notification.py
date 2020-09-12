@@ -33,7 +33,7 @@ class NotificationViewSet(viewsets.ModelViewSet):
                             'user': users.user_id,
                             'message': request.data['message'],
                             'read': False
-                        } for users in User.objects.filter()
+                        } for users in User.objects.filter(is_TIHLDE_member=True)
                     ]
                     many=True
                     
