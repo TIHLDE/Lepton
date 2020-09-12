@@ -25,30 +25,25 @@ class NotificationViewSet(viewsets.ModelViewSet):
     def create(self, request):
         if is_admin_user(request):
             try:
+                actualData = request.data
+                many = False
                 if 'all_users' in request.data and request.data['all_users']:
-                    # Create notifications for all users.
-                    newData = [
+                    actualData = [
                         {
                             'user': users.user_id,
                             'message': request.data['message'],
                             'read': False
                         } for users in User.objects.filter()
                     ]
-
-                    serializer = NotificationSerializer(data=newData, many=True)
-                    if serializer.is_valid():
-                        serializer.save()
-                        return Response({'detail': ('Notification(s) successfully created.')}, status=201)
-                    else:
-                        return Response({'detail': ('Invalid data sent in.')}, status=400)
-
+                    many=True
+                    
+                serializer = NotificationSerializer(data=actualData, many=many)
+                if serializer.is_valid():
+                    serializer.save()
+                    return Response({'detail': ('Notification(s) successfully created.')}, status=201)
                 else:
-                    serializer = NotificationSerializer(data=request.data)
-                    if serializer.is_valid():
-                        serializer.save()
-                        return Response({'detail': ('Notification(s) successfully created.')}, status=201)
-                    else:
-                        return Response({'detail': ('Invalid data sent in.')}, status=400)
+                    return Response({'detail': ('Invalid data sent in.')}, status=400)
+
             except:
                 return Response({'detail': ('Missing fields or invalid data.')}, status=400)
 
