@@ -29,4 +29,4 @@ loaddata:
 	docker-compose run --rm web pipenv run python manage.py loaddata ./app/fixture.json
 
 test:
-	docker-compose run web pipenv run python manage.py test
+	docker-compose run web pipenv run pytest
