@@ -8,7 +8,7 @@ class UserEventSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserEvent
-        fields = ['user_event_id', 'user_info', 'is_on_wait', 'has_attended']
+        fields = ['user_event_id', 'user_info', 'is_on_wait', 'has_attended', 'allow_photo']
 
     def get_user_info(self, obj):
         """ Gets the necessary info from user """
