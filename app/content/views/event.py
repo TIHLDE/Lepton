@@ -6,7 +6,7 @@ from rest_framework import viewsets, filters
 from rest_framework.response import Response
 
 from ..models import Event
-from ..serializers import EventListSerializer, EventSerializer, EventAdminSerializer, EventCreateUpdateSerializer
+from ..serializers import EventSerializer, EventAdminSerializer, EventCreateUpdateSerializer
 from ..permissions import IsNoKorPromo, is_admin_user
 from ..filters import EventFilter
 from ..pagination import BasePagination
@@ -20,7 +20,7 @@ class EventViewSet(viewsets.ModelViewSet):
         Display all upcoming events and filter them by title, category and expired
         Excludes expired events by default: to include expired in results, add '&expired=true'
     """
-    serializer_class = EventListSerializer
+    serializer_class = EventSerializer
     permission_classes = [IsNoKorPromo]
     queryset = Event.objects.filter(start_date__gte=yesterday()).order_by('start_date')
     pagination_class = BasePagination
