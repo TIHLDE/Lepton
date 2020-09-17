@@ -20,6 +20,7 @@ class UserEvent(BaseModel):
     is_on_wait = models.BooleanField(default=False, verbose_name='waiting list')
     has_attended = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now=True, verbose_name='Signed up on')
+    allow_photo = models.BooleanField(default=True)
 
     class Meta:
         ordering = ('event', 'is_on_wait', 'created_at')

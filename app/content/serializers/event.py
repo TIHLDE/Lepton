@@ -9,6 +9,8 @@ class EventSerializer(serializers.ModelSerializer):
     expired = serializers.BooleanField(read_only=True)
     registered_users_list = serializers.SerializerMethodField()
     is_user_registered = serializers.SerializerMethodField()
+    registration_priorities = serializers.SerializerMethodField()
+
 
     class Meta:
         model = Event
@@ -77,8 +79,16 @@ class EventSerializer(serializers.ModelSerializer):
         if request and hasattr(request, 'id'):
             user_id = request.id
             return UserEvent.objects.filter(event__pk=obj.pk, user__user_id=user_id).exists()
-
         return None
+    
+    def get_registration_priorities(self, obj):
+        try:
+            return [{
+                    "user_class": registration_priority.user_class.value,
+                    "user_study": registration_priority.user_study.value
+                    } for registration_priority in obj.registration_priorities.all()]
+        except Priority.DoesNotExist:
+            return None
 
 
 class EventCreateUpdateSerializer(serializers.ModelSerializer):
@@ -139,22 +149,6 @@ class EventCreateUpdateSerializer(serializers.ModelSerializer):
         )
 
         return registration_priority
-
-
-class EventListSerializer(EventSerializer):
-    registration_priorities = serializers.SerializerMethodField()
-
-    class Meta(EventSerializer.Meta):
-        fields = EventSerializer.Meta.fields + ('registration_priorities',)
-
-    def get_registration_priorities(self, obj):
-        try:
-            return [{
-                    "user_class": registration_priority.user_class.value,
-                    "user_study": registration_priority.user_study.value
-                    } for registration_priority in obj.registration_priorities.all()]
-        except Priority.DoesNotExist:
-            return None
 
 
 class EventAdminSerializer(EventSerializer):

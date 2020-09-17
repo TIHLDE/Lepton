@@ -26,11 +26,17 @@ django-rest-auth = "*"
 pyocclient = "*"
 
 # Testing
-pytest-django = "*"
-factory-boy = "*"
-codecov = "*"
 coverage = "*"
+pdbpp = "==0.10.2"
+pytest = "==6.0.0"
+pytest-cov = "==2.10.0"
+pytest-django = "==3.8.0"
+factory-boy = "==3.0.0"
+pytest-factoryboy = "==2.0.3"
+
 celery = "*"
 
 [dev-packages]
 pylint = "*"
+
+
