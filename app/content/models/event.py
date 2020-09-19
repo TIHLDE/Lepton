@@ -1,23 +1,15 @@
-from django.db import models
 from django.core.exceptions import ValidationError
+from django.db import models
+from django.db.models import signals
 from django.utils.translation import gettext as _
 
-from app.util.models import BaseModel, OptionalImage
 from app.util import yesterday
+from app.util.models import BaseModel, OptionalImage
 from .category import Category
+from .prioritiy import Priority
 from .user import User
 from .user_event import UserEvent
-from .prioritiy import Priority
-
-from datetime import timedelta
-
-from ..tasks.event import event_sign_off_deadline_schedular, event_end_schedular
-
-from celery import shared_task
-from celery.task.control import revoke
-
-from ...util.utils import today
-import math
+from ..signals import send_event_reminders
 
 
 class Event(BaseModel, OptionalImage):
@@ -49,7 +41,8 @@ class Event(BaseModel, OptionalImage):
     end_date_schedular_id = models.CharField(max_length=100, blank=True, null=True)
     sign_off_deadline_schedular_id = models.CharField(max_length=100, blank=True, null=True)
 
-
+    def __str__(self):
+        return f'{self.title} - starting {self.start_date} at {self.location}'
 
     @property
     def expired(self):
@@ -77,9 +70,6 @@ class Event(BaseModel, OptionalImage):
 
     def has_priorities(self):
         return self.registration_priorities.all().exists()
-
-    def __str__(self):
-        return f'{self.title} - starting {self.start_date} at {self.location}'
 
     def clean(self):
         self.validate_start_end_registration_times()
@@ -119,7 +109,7 @@ class Event(BaseModel, OptionalImage):
 
     def check_start_registration_is_after_start_time(self):
         if self.start_date < self.start_registration_at:
-            raise ValidationError(_('Event start_date time cannot be after start_date time for registration.'))
+            raise ValidationError(_('Event start_date time for registration cannot be after start_date time.'))
 
     def check_end_time_is_before_end_registration(self):
         if self.end_date < self.end_registration_at:
@@ -137,12 +127,5 @@ class Event(BaseModel, OptionalImage):
         if self.end_date < self.start_date:
             raise ValidationError(_('End date for event cannot be before the event start_date.'))
 
-    def save(self, *args, **kwargs):
-        revoke(self.end_date_schedular_id, terminate=True)
-        revoke(self.sign_off_deadline_schedular_id, terminate=True)
-        if self.evaluate_link and self.end_date < today() and not self.closed:
-            self.end_date_schedular_id = event_end_schedular.apply_async(eta=(self.end_date + timedelta(days=1)), kwargs={'pk': self.pk, 'title': self.title, 'date': self.start_date, 'evaluate_link':self.evaluate_link})
-        if self.sign_up and self.sign_off_deadline < today() and not self.closed:
-            self.sign_off_deadline_schedular_id = event_sign_off_deadline_schedular.apply_async(eta=(self.sign_off_deadline - timedelta(days=1)), kwargs={'pk': self.pk, 'title':self.title})
 
-        return super(Event, self).save(*args, **kwargs)
+signals.post_save.connect(receiver=send_event_reminders, sender=Event)

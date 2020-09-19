@@ -56,25 +56,30 @@ class UserEvent(BaseModel):
             send_html_email(
                 "Venteliste for " + self.event.title,
                 render_to_string(
-                'waitlist.html',
-                context={'user_name':self.user.first_name, 'event_name':self.event.title, 'event_deadline':self.event.sign_off_deadline}
+                    'waitlist.html',
+                    context={'user_name': self.user.first_name, 'event_name': self.event.title,
+                             'event_deadline': self.event.sign_off_deadline}
                 ),
                 self.user.email
             )
-            Notification(user=self.user, message="På grunn av høy pågang er du satt på venteliste på " + self.event.title).save()
+            Notification(user=self.user,
+                         message="På grunn av høy pågang er du satt på venteliste på " + self.event.title).save()
         else:
             send_html_email(
                 "Plassbekreftelse for " + self.event.title,
                 render_to_string(
-                'signed_up.html',
-                context={'user_name':self.user.first_name, 'event_name':self.event.title, 'event_time':self.event.start_date, 'event_place': self.event.location, 'event_deadline': self.event.sign_off_deadline}
+                    'signed_up.html',
+                    context={'user_name': self.user.first_name, 'event_name': self.event.title,
+                             'event_time': self.event.start_date, 'event_place': self.event.location,
+                             'event_deadline': self.event.sign_off_deadline}
                 ),
                 self.user.email
             )
             Notification(user=self.user, message="Du har fått plass på " + self.event.title).save()
 
     def should_be_swapped_with_not_prioritized_user(self):
-        return self.is_on_wait and self.is_prioritized() and self.event.has_priorities() and self.event.is_full()
+        return (self.is_on_wait and self.is_prioritized()
+                and self.event.has_priorities() and self.event.is_full())
 
     def is_prioritized(self):
         user_class, user_study = EnumUtils.get_user_enums(**self.user.__dict__)

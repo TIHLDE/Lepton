@@ -3,9 +3,9 @@ from django.test import TestCase
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIRequestFactory, force_authenticate
 
-from ..models import Event
-from ..views import EventViewSet
-from ..factories import EventFactory, UserFactory
+from app.content.models import Event
+from app.content.views import EventViewSet
+from app.content.factories import EventFactory, UserFactory
 
 EVENT_POST_BODY = {
     "title": "Test PRIORITIES on creation",

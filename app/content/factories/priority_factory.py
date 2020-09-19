@@ -1,10 +1,10 @@
-import factory.django
+from factory.django import DjangoModelFactory
 
 from ..models import Priority
 from ..enums import UserClass, UserStudy
 
 
-class PrioritiesFactory(factory.DjangoModelFactory):
+class PriorityFactory(DjangoModelFactory):
 
     class Meta:
         model = Priority

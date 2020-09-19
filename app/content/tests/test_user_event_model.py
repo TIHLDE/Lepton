@@ -1,7 +1,7 @@
 import pytest
 from django.test import TestCase
 
-from ..factories import UserEventFactory, EventFactory, UserFactory, PrioritiesFactory
+from ..factories import UserEventFactory, EventFactory, UserFactory, PriorityFactory
 
 
 class TestUserEventModel(TestCase):
@@ -9,7 +9,7 @@ class TestUserEventModel(TestCase):
     @pytest.mark.django_db
     def setUp(self):
         self.event = EventFactory(limit=1)
-        self.event.registration_priorities.add(PrioritiesFactory())
+        self.event.registration_priorities.add(PriorityFactory())
 
         self.prioritized_user = UserFactory(user_class=1, user_study=1)
 
