@@ -6,13 +6,25 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('content', '0006_refactor_user'),
+        ("content", "0006_refactor_user"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='user',
-            name='user_class',
-            field=models.IntegerField(blank=True, choices=[(-1, 'Alumni'), (1, '1. Klasse'), (2, '2. Klasse'), (3, '3. Klasse'), (4, '4. Klasse'), (5, '5. Klasse')], default=1, null=True),
+            model_name="user",
+            name="user_class",
+            field=models.IntegerField(
+                blank=True,
+                choices=[
+                    (-1, "Alumni"),
+                    (1, "1. Klasse"),
+                    (2, "2. Klasse"),
+                    (3, "3. Klasse"),
+                    (4, "4. Klasse"),
+                    (5, "5. Klasse"),
+                ],
+                default=1,
+                null=True,
+            ),
         ),
     ]

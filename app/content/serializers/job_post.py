@@ -9,4 +9,4 @@ class JobPostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = JobPost
-        fields = '__all__'  # bad form
+        fields = "__all__"  # bad form

@@ -6,23 +6,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('content', '0001_initial_squashed_0009_auto_20200302_1755'),
+        ("content", "0001_initial_squashed_0009_auto_20200302_1755"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='event',
-            name='end_date_schedular_id',
+            model_name="event",
+            name="end_date_schedular_id",
             field=models.CharField(blank=True, max_length=100, null=True),
         ),
         migrations.AddField(
-            model_name='event',
-            name='evaluate_link',
+            model_name="event",
+            name="evaluate_link",
             field=models.CharField(blank=True, max_length=200, null=True),
         ),
         migrations.AddField(
-            model_name='event',
-            name='sign_off_deadline_schedular_id',
+            model_name="event",
+            name="sign_off_deadline_schedular_id",
             field=models.CharField(blank=True, max_length=100, null=True),
         ),
     ]

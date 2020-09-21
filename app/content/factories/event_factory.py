@@ -1,15 +1,15 @@
 from datetime import timedelta
 
-import factory
-from factory.django import DjangoModelFactory
 from django.db.models import signals
 from django.utils import timezone
+
+import factory
+from factory.django import DjangoModelFactory
 
 from ..models import Event
 
 
 class EventWithSignalsFactory(DjangoModelFactory):
-
     class Meta:
         model = Event
 

@@ -1,30 +1,47 @@
-from celery import shared_task
-from app.content.models.user_event import UserEvent
-from app.content.models.notification import Notification
-from app.util.mailer import send_html_email
 from django.template.loader import render_to_string
+
+from celery import shared_task
+
+from app.content.models.notification import Notification
+from app.content.models.user_event import UserEvent
+from app.util.mailer import send_html_email
+
 
 @shared_task
 def event_sign_off_deadline_schedular(pk, title):
-  for user_event in UserEvent.objects.filter(event__pk=pk, is_on_wait=False):
-    send_html_email(
-    "Påmindelse om avmeldingsfrist for " + title,
-    render_to_string(
-      'sign_off_deadline.html',
-      context={'user_name':user_event.user.first_name, 'event_name':title, 'event_pk':pk}
-    ),
-    user_event.user.email
-    )
-    Notification.objects.create(user=user_event.user, message="Påmindelse om avmeldingsfrist for " + title)
+    for user_event in UserEvent.objects.filter(event__pk=pk, is_on_wait=False):
+        send_html_email(
+            "Påmindelse om avmeldingsfrist for " + title,
+            render_to_string(
+                "sign_off_deadline.html",
+                context={
+                    "user_name": user_event.user.first_name,
+                    "event_name": title,
+                    "event_pk": pk,
+                },
+            ),
+            user_event.user.email,
+        )
+        Notification.objects.create(
+            user=user_event.user, message="Påmindelse om avmeldingsfrist for " + title
+        )
+
 
 @shared_task
 def event_end_schedular(pk, title, date, evaluate_link):
-  [send_html_email(
-      "Evaluering av " + title,
-      render_to_string(
-        'event_evaluation.html',
-        context={'user_name':user_event.user.first_name, 'event_name':title, 'event_date':date, 'event_evaluate_link':evaluate_link}
-      ),
-      user_event.user.email
-    )for user_event in UserEvent.objects.filter(event__pk=pk, has_attended=True)]
-
+    [
+        send_html_email(
+            "Evaluering av " + title,
+            render_to_string(
+                "event_evaluation.html",
+                context={
+                    "user_name": user_event.user.first_name,
+                    "event_name": title,
+                    "event_date": date,
+                    "event_evaluate_link": evaluate_link,
+                },
+            ),
+            user_event.user.email,
+        )
+        for user_event in UserEvent.objects.filter(event__pk=pk, has_attended=True)
+    ]

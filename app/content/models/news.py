@@ -9,9 +9,7 @@ class News(BaseModel, OptionalImage):
     body = models.TextField()
 
     class Meta:
-        verbose_name_plural = 'News'
+        verbose_name_plural = "News"
 
     def __str__(self):
-        return '{} - {} [{} characters]'.format(self.title,
-                                                self.header, len(self.body))
-
+        return "{} - {} [{} characters]".format(self.title, self.header, len(self.body))

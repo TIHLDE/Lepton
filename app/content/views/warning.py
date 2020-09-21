@@ -1,8 +1,8 @@
 from rest_framework import viewsets
 
 from ..models import Warning
-from ..serializers import WarningSerializer
 from ..permissions import IsDev, IsNoK
+from ..serializers import WarningSerializer
 
 
 class WarningViewSet(viewsets.ModelViewSet):

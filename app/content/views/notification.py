@@ -1,13 +1,14 @@
 from rest_framework import viewsets
 from rest_framework.response import Response
-from django.core.exceptions import ObjectDoesNotExist
 
-from ..models import User, Notification
-from ..serializers import NotificationSerializer, UpdateNotificationSerializer, UserSerializer
+from ..models import Notification
 from ..permissions import NotificationPermission, is_admin_user
+from ..serializers import NotificationSerializer, UpdateNotificationSerializer
+
 
 class NotificationViewSet(viewsets.ModelViewSet):
     """ Get the notifications """
+
     queryset = Notification.objects.all()
     serializer_class = NotificationSerializer
     permission_classes = (NotificationPermission,)
@@ -18,5 +19,7 @@ class NotificationViewSet(viewsets.ModelViewSet):
             serializer = UpdateNotificationSerializer(notification, data=request.data)
             if serializer.is_valid():
                 serializer.save()
-                return Response({'detail': ('User successfully updated.')}, status=204)
-        return Response({'detail': ('Could not perform notification update')}, status=400)
+                return Response({"detail": ("User successfully updated.")}, status=204)
+        return Response(
+            {"detail": ("Could not perform notification update")}, status=400
+        )

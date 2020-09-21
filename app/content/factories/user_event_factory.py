@@ -7,7 +7,6 @@ from .user_factory import UserFactory
 
 
 class UserEventFactory(DjangoModelFactory):
-
     class Meta:
         model = UserEvent
 
@@ -15,5 +14,7 @@ class UserEventFactory(DjangoModelFactory):
     user = factory.SubFactory(UserFactory)
 
     is_on_wait = factory.LazyAttribute(
-        lambda user_event: False if user_event.event.limit == 0 else user_event.event.is_full()
+        lambda user_event: False
+        if user_event.event.limit == 0
+        else user_event.event.is_full()
     )

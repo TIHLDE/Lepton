@@ -1,15 +1,11 @@
-from datetime import datetime, timezone, timedelta
-
-from django.core.exceptions import ValidationError
-from django.utils import timezone
-import pytest
+from datetime import datetime, timedelta, timezone
 from unittest.mock import patch
 
-from ..factories import (
-    EventFactory,
-    UserEventFactory,
-    PriorityFactory
-)
+from django.core.exceptions import ValidationError
+
+import pytest
+
+from ..factories import EventFactory, PriorityFactory, UserEventFactory
 
 
 @pytest.fixture()
@@ -46,11 +42,7 @@ def test_expired_when_event_has_expired(event):
 @pytest.mark.django_db
 @pytest.mark.parametrize(
     "users_not_on_wait, users_on_wait, expected_list_count",
-    [
-        (0, 0, 0),
-        (5, 0, 5),
-        (1, 4, 1),
-    ]
+    [(0, 0, 0), (5, 0, 5), (1, 4, 1),],
 )
 def test_list_count(event, users_not_on_wait, users_on_wait, expected_list_count):
     """Should return the number of registered users who are to attend."""
@@ -64,14 +56,10 @@ def test_list_count(event, users_not_on_wait, users_on_wait, expected_list_count
 @pytest.mark.django_db
 @pytest.mark.parametrize(
     "users_not_on_wait, users_on_wait, expected_waiting_list_count",
-    [
-        (0, 0, 0),
-        (5, 0, 0),
-        (1, 4, 4),
-    ]
+    [(0, 0, 0), (5, 0, 0), (1, 4, 4),],
 )
 def test_waiting_list_count(
-        event, users_not_on_wait, users_on_wait, expected_waiting_list_count
+    event, users_not_on_wait, users_on_wait, expected_waiting_list_count
 ):
     """Should return the number of registered users who are on the waiting list."""
     event.limit = users_not_on_wait
@@ -123,13 +111,7 @@ def test_has_waiting_list_when_event_is_not_full(event):
 
 
 @pytest.mark.django_db
-@pytest.mark.parametrize(
-    "limit, has_limit",
-    [
-        (0, False),
-        (1, True)
-    ]
-)
+@pytest.mark.parametrize("limit, has_limit", [(0, False), (1, True)])
 def test_has_limit(event, limit, has_limit):
     """Should return True if limit is zero, else False."""
     event.limit = limit
@@ -139,12 +121,7 @@ def test_has_limit(event, limit, has_limit):
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
-    "limit, number_of_attendees, is_full",
-    [
-        (1, 1, True),
-        (1, 2, True),
-        (2, 1, False)
-    ]
+    "limit, number_of_attendees, is_full", [(1, 1, True), (1, 2, True), (2, 1, False)]
 )
 def test_is_full(event, limit, number_of_attendees, is_full):
     """
@@ -184,11 +161,7 @@ def test_clean_validates_date_times(mock_validate_start_end_registration_times, 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
     "start_registration_at, end_registration_at",
-    [
-        (None, datetime.now()),
-        (datetime.now(), None),
-        (datetime.now(), datetime.now())
-    ]
+    [(None, datetime.now()), (datetime.now(), None), (datetime.now(), datetime.now())],
 )
 def test_check_sign_up_and_registration_times_when_event_does_not_have_sign_up_raises_error(
     event, start_registration_at, end_registration_at
@@ -209,11 +182,10 @@ def test_check_sign_up_and_registration_times_when_event_does_not_have_sign_up_r
         (None, None, None),
         (None, None, datetime.now()),
         (None, datetime.now(), datetime.now()),
-
         (datetime.now(), None, None),
         (datetime.now(), None, datetime.now()),
-        (datetime.now(), datetime.now(), None)
-    ]
+        (datetime.now(), datetime.now(), None),
+    ],
 )
 def test_check_if_registration_is_not_set_when_event_has_signup_raises_error(
     event, start_registration_at, end_registration_at, sign_off_deadline
@@ -229,7 +201,9 @@ def test_check_if_registration_is_not_set_when_event_has_signup_raises_error(
 
 
 @pytest.mark.django_db
-def test_check_sign_up_and_sign_off_deadline_when_no_sign_up_but_sign_off_deadline_is_set_raises_error(event):
+def test_check_sign_up_and_sign_off_deadline_when_no_sign_up_but_sign_off_deadline_is_set_raises_error(
+    event,
+):
     """Should raise ValidationError if event has sign off dead line but no sign up."""
     event.sign_up = False
     event.sign_off_deadline = datetime.now()
@@ -296,4 +270,3 @@ def test_check_start_registration_is_after_deadline(event):
 
     with pytest.raises(ValidationError):
         event.check_start_registration_is_after_deadline()
-

@@ -6,21 +6,19 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('content', '0004_cheatsheet'),
+        ("content", "0004_cheatsheet"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='cheatsheet',
-            options={'verbose_name': 'Cheatsheet', 'verbose_name_plural': 'Cheatsheets'},
+            name="cheatsheet",
+            options={
+                "verbose_name": "Cheatsheet",
+                "verbose_name_plural": "Cheatsheets",
+            },
         ),
-        migrations.RemoveField(
-            model_name='cheatsheet',
-            name='desc',
-        ),
+        migrations.RemoveField(model_name="cheatsheet", name="desc",),
         migrations.AlterField(
-            model_name='cheatsheet',
-            name='url',
-            field=models.URLField(max_length=600),
+            model_name="cheatsheet", name="url", field=models.URLField(max_length=600),
         ),
     ]
