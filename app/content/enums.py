@@ -15,3 +15,10 @@ class UserStudy(ChoiceEnum):
     DIGINC = "Digital infrastruktur og cybersikkerhet"
     DIGSAM = "Digital samhandling"
     DRIFT = "Drift"
+
+
+class AdminGroup(ChoiceEnum):
+    HS = "HS"
+    DEVKOM = "DevKom"
+    NOK = "Nok"
+    PROMO = "Promo"

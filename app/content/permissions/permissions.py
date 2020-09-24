@@ -3,6 +3,8 @@ from rest_framework.permissions import SAFE_METHODS, BasePermission
 
 from app.content.models import User
 
+from ..enums import AdminGroup
+
 
 class IsMember(BasePermission):
     """ Checks if the user is a member """
@@ -30,7 +32,7 @@ class IsDev(BasePermission):
             return False
         return (
             User.objects.filter(user_id=user_id)
-            .filter(groups__name__in=["DevKom"])
+            .filter(groups__name__in=[AdminGroup.DEVKOM])
             .count()
             > 0
         )
@@ -42,7 +44,7 @@ class IsHS(BasePermission):
     message = "You are not in HS"
 
     def has_permission(self, request, view):
-        return check_group_permission(request, ["HS", "DevKom"])
+        return check_group_permission(request, [AdminGroup.HS, AdminGroup.DEVKOM])
 
 
 class IsPromo(BasePermission):
@@ -51,7 +53,9 @@ class IsPromo(BasePermission):
     message = "You are not in Promo"
 
     def has_permission(self, request, view):
-        return check_group_permission(request, ["HS", "DevKom" "Promo"])
+        return check_group_permission(
+            request, [AdminGroup.HS, AdminGroup.DEVKOM, AdminGroup.PROMO]
+        )
 
 
 class IsNoK(BasePermission):
@@ -60,7 +64,9 @@ class IsNoK(BasePermission):
     message = "You are not in NoK"
 
     def has_permission(self, request, view):
-        return check_group_permission(request, ["HS", "DevKom", "NoK"])
+        return check_group_permission(
+            request, [AdminGroup.HS, AdminGroup.DEVKOM, AdminGroup.NOK]
+        )
 
 
 class IsNoKorPromo(BasePermission):
@@ -69,7 +75,10 @@ class IsNoKorPromo(BasePermission):
     message = "You are not in NoK"
 
     def has_permission(self, request, view):
-        return check_group_permission(request, ["HS", "DevKom", "NoK", "Promo"])
+        return check_group_permission(
+            request,
+            [AdminGroup.HS, AdminGroup.DEVKOM, AdminGroup.NOK, AdminGroup.PROMO],
+        )
 
 
 class UserEventPermission(BasePermission):
@@ -179,7 +188,7 @@ def is_admin_user(request):
 
     return (
         User.objects.filter(user_id=user_id)
-        .filter(groups__name__in=["DevKom", "HS"])
+        .filter(groups__name__in=[AdminGroup.DEVKOM, AdminGroup.HS])
         .count()
         > 0
         or request.user.is_staff
