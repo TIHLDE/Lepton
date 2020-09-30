@@ -24,7 +24,7 @@ django-rest-swagger = "*"
 django-enumchoicefield = "*"
 django-rest-auth = "*"
 pyocclient = "*"
-celery = "*"
+celery = "~=4.4"
 # Testing
 coverage = "*"
 pdbpp = "==0.10.2"
