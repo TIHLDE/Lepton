@@ -1,8 +1,8 @@
 from rest_framework import viewsets
 
 from ..models import Category
-from ..serializers import CategorySerializer
 from ..permissions import IsNoKorPromo
+from ..serializers import CategorySerializer
 
 
 class CategoryViewSet(viewsets.ModelViewSet):

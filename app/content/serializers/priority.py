@@ -1,4 +1,5 @@
 from rest_framework import serializers
+
 from ..models import Priority
 
 
@@ -8,4 +9,4 @@ class PrioritySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Priority
-        fields = ['user_class', 'user_study']
+        fields = ["user_class", "user_study"]

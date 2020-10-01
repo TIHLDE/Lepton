@@ -7,7 +7,7 @@ from app.util.utils import yesterday
 class JobPost(BaseModel, OptionalImage):
     title = models.CharField(max_length=200)
     ingress = models.CharField(max_length=800)
-    body = models.TextField(blank=True, default='')
+    body = models.TextField(blank=True, default="")
     location = models.CharField(max_length=200)
 
     deadline = models.DateTimeField(null=True, blank=True)
@@ -21,5 +21,4 @@ class JobPost(BaseModel, OptionalImage):
         return self.deadline <= yesterday()
 
     def __str__(self):
-        return f'JobPost: {self.company}  - {self.title}'
-
+        return f"JobPost: {self.company}  - {self.title}"

@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('content', '0007_add_alumni_to_user_class'),
+        ("content", "0007_add_alumni_to_user_class"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='userevent',
-            name='allow_photo',
+            model_name="userevent",
+            name="allow_photo",
             field=models.BooleanField(default=True),
         ),
     ]

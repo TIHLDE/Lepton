@@ -1,2 +1,13 @@
-from .permissions import IsMember, IsDev, IsHS, IsNoKorPromo, IsNoK, \
-    IsPromo, is_admin_user, UserPermission, get_user_id, NotificationPermission, UserEventPermission
+from .permissions import (
+    IsDev,
+    IsHS,
+    IsMember,
+    IsNoK,
+    IsNoKorPromo,
+    IsPromo,
+    NotificationPermission,
+    UserEventPermission,
+    UserPermission,
+    get_user_id,
+    is_admin_user,
+)

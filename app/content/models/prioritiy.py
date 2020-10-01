@@ -1,8 +1,9 @@
-from enumchoicefield import EnumChoiceField
 from django.db import models
 
-from app.util.models import BaseModel
+from enumchoicefield import EnumChoiceField
+
 from app.content.enums import UserClass, UserStudy
+from app.util.models import BaseModel
 
 
 class Priority(BaseModel):
@@ -12,8 +13,8 @@ class Priority(BaseModel):
     user_study = EnumChoiceField(UserStudy, default=UserStudy.DATAING)
 
     class Meta:
-        ordering = ('user_class', 'user_study')
-        verbose_name_plural = 'Priorities'
+        ordering = ("user_class", "user_study")
+        verbose_name_plural = "Priorities"
 
     def __str__(self):
-        return f'{self.user_class} {self.user_study}'
+        return f"{self.user_class} {self.user_study}"

@@ -1,36 +1,39 @@
-from django.db import models
 from django.core.exceptions import ValidationError
+from django.db import models
+from django.template.loader import render_to_string
 from django.utils.translation import gettext as _
 
-from app.util import today, EnumUtils
-from app.util.models import BaseModel
-from .user import User
-from .notification import Notification
-
+from app.util import EnumUtils, today
 from app.util.mailer import send_html_email
-from django.template.loader import render_to_string
+from app.util.models import BaseModel
+
+from .notification import Notification
+from .user import User
 
 
 class UserEvent(BaseModel):
     """ Model for user registration for an event """
+
     user_event_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    event = models.ForeignKey('Event', on_delete=models.CASCADE)
+    event = models.ForeignKey("Event", on_delete=models.CASCADE)
 
-    is_on_wait = models.BooleanField(default=False, verbose_name='waiting list')
+    is_on_wait = models.BooleanField(default=False, verbose_name="waiting list")
     has_attended = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now=True, verbose_name='Signed up on')
+    created_at = models.DateTimeField(auto_now=True, verbose_name="Signed up on")
     allow_photo = models.BooleanField(default=True)
 
     class Meta:
-        ordering = ('event', 'is_on_wait', 'created_at')
-        unique_together = ('user', 'event')
+        ordering = ("event", "is_on_wait", "created_at")
+        unique_together = ("user", "event")
         verbose_name = "User event"
-        verbose_name_plural = 'User events'
+        verbose_name_plural = "User events"
 
     def __str__(self):
-        return f'{self.user.email} - is to attend {self.event} and is ' \
-               f'{"on the waiting list" if self.is_on_wait else "on the list"}'
+        return (
+            f"{self.user.email} - is to attend {self.event} and is "
+            f'{"on the waiting list" if self.is_on_wait else "on the list"}'
+        )
 
     def save(self, *args, **kwargs):
         """ Determines whether the object is being created or updated and acts accordingly """
@@ -56,29 +59,52 @@ class UserEvent(BaseModel):
             send_html_email(
                 "Venteliste for " + self.event.title,
                 render_to_string(
-                'waitlist.html',
-                context={'user_name':self.user.first_name, 'event_name':self.event.title, 'event_deadline':self.event.sign_off_deadline}
+                    "waitlist.html",
+                    context={
+                        "user_name": self.user.first_name,
+                        "event_name": self.event.title,
+                        "event_deadline": self.event.sign_off_deadline,
+                    },
                 ),
-                self.user.email
+                self.user.email,
             )
-            Notification(user=self.user, message="På grunn av høy pågang er du satt på venteliste på " + self.event.title).save()
+            Notification(
+                user=self.user,
+                message="På grunn av høy pågang er du satt på venteliste på "
+                + self.event.title,
+            ).save()
         else:
             send_html_email(
                 "Plassbekreftelse for " + self.event.title,
                 render_to_string(
-                'signed_up.html',
-                context={'user_name':self.user.first_name, 'event_name':self.event.title, 'event_time':self.event.start_date, 'event_place': self.event.location, 'event_deadline': self.event.sign_off_deadline}
+                    "signed_up.html",
+                    context={
+                        "user_name": self.user.first_name,
+                        "event_name": self.event.title,
+                        "event_time": self.event.start_date,
+                        "event_place": self.event.location,
+                        "event_deadline": self.event.sign_off_deadline,
+                    },
                 ),
-                self.user.email
+                self.user.email,
             )
-            Notification(user=self.user, message="Du har fått plass på " + self.event.title).save()
+            Notification(
+                user=self.user, message="Du har fått plass på " + self.event.title
+            ).save()
 
     def should_be_swapped_with_not_prioritized_user(self):
-        return self.is_on_wait and self.is_prioritized() and self.event.has_priorities() and self.event.is_full()
+        return (
+            self.is_on_wait
+            and self.is_prioritized()
+            and self.event.has_priorities()
+            and self.event.is_full()
+        )
 
     def is_prioritized(self):
         user_class, user_study = EnumUtils.get_user_enums(**self.user.__dict__)
-        return self.event.registration_priorities.filter(user_class=user_class, user_study=user_study).exists()
+        return self.event.registration_priorities.filter(
+            user_class=user_class, user_study=user_study
+        ).exists()
 
     def swap_users(self):
         """ Swaps a user with a spot with a prioritized user, if such user exists """
@@ -99,9 +125,9 @@ class UserEvent(BaseModel):
         :raises ValidationError if the event or queue is closed.
         """
         if self.event.closed:
-            raise ValidationError(_('The queue for this event is closed'))
+            raise ValidationError(_("The queue for this event is closed"))
         if not self.event.sign_up:
-            raise ValidationError(_('Sign up is not possible'))
+            raise ValidationError(_("Sign up is not possible"))
         if not self.user_event_id:
             self.validate_start_and_end_registration_time()
 
@@ -111,8 +137,10 @@ class UserEvent(BaseModel):
 
     def check_registration_has_started(self):
         if self.event.start_registration_at > today():
-            raise ValidationError(_('The registration for this event has not started yet.'))
+            raise ValidationError(
+                _("The registration for this event has not started yet.")
+            )
 
     def check_registration_has_ended(self):
         if self.event.end_registration_at < today():
-            raise ValidationError(_('The registration for this event has ended.'))
+            raise ValidationError(_("The registration for this event has ended."))

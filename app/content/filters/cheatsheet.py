@@ -8,4 +8,4 @@ class CheatsheetFilter(FilterSet):
 
     class Meta:
         model = Cheatsheet
-        fields = ['course', 'title', 'creator']
+        fields = ["course", "title", "creator"]

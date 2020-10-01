@@ -1,7 +1,7 @@
 from django.db import models
-from app.util.models import BaseModel, OptionalImage
 
-from app.content.models import User, Challenge
+from app.content.models import Challenge, User
+from app.util.models import BaseModel
 
 
 class UserChallenge(BaseModel):
@@ -9,7 +9,7 @@ class UserChallenge(BaseModel):
     challenge = models.ForeignKey(Challenge, on_delete=models.CASCADE)
 
     class Meta:
-        verbose_name_plural = 'User Challenges'
+        verbose_name_plural = "User Challenges"
 
     def __str__(self):
-        return self.challenge.title + ' - ' + self.user.user_id
+        return self.challenge.title + " - " + self.user.user_id

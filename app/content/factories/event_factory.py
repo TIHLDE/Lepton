@@ -1,17 +1,19 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
+
+from django.db.models import signals
 from django.utils import timezone
-import factory.django
+
+import factory
+from factory.django import DjangoModelFactory
 
 from ..models import Event
-from .priorities_factory import PrioritiesFactory
 
 
-class EventFactory(factory.DjangoModelFactory):
-
+class EventWithSignalsFactory(DjangoModelFactory):
     class Meta:
         model = Event
 
-    title = 'Test Event'
+    title = "Test Event"
     start_date = timezone.now() + timedelta(days=10)
     end_date = timezone.now() + timedelta(days=11)
     sign_up = True
@@ -20,11 +22,7 @@ class EventFactory(factory.DjangoModelFactory):
     end_registration_at = timezone.now() + timedelta(days=9)
     sign_off_deadline = timezone.now() + timedelta(days=8)
 
-    @factory.post_generation
-    def registration_priorities(self, create, extracted, **kwargs):
-        if not create:
-            return
 
-        if extracted:
-            for priority in extracted:
-                self.registration_priorities.add(priority)
+@factory.django.mute_signals(signals.post_save)
+class EventFactory(EventWithSignalsFactory):
+    pass
