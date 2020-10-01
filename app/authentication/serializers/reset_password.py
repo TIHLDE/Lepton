@@ -3,6 +3,8 @@ import os
 from django.contrib.auth.forms import PasswordResetForm
 from rest_framework import serializers
 
+from app.settings import DOMAIN
+
 
 class PasswordResetSerializer(serializers.Serializer):
     """
@@ -30,6 +32,7 @@ class PasswordResetSerializer(serializers.Serializer):
                 "use_https": request.is_secure(),
                 "from_email": os.environ.get("EMAIL_USER") or None,
                 "request": request,
+                "extra_email_context": {"domain": DOMAIN},
                 "html_email_template_name": "passwordResetEmail.html",
                 "subject_template_name": "password_reset_subject.txt",
             }
