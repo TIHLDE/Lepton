@@ -14,8 +14,8 @@ admin.site.register(models.Challenge)
 admin.site.register(models.UserChallenge)
 
 
-@admin.register(models.UserEvent)
-class UserEventAdmin(admin.ModelAdmin):
+@admin.register(models.Registration)
+class RegistrationAdmin(admin.ModelAdmin):
     list_display = ("user", "event", "is_on_wait", "has_attended")
 
 

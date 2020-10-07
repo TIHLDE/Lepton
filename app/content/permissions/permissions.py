@@ -81,7 +81,7 @@ class IsNoKorPromo(BasePermission):
         )
 
 
-class UserEventPermission(BasePermission):
+class RegistrationPermission(BasePermission):
     message = "You are not an admin"
 
     def has_permission(self, request, view):

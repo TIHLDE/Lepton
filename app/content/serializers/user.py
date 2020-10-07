@@ -1,7 +1,7 @@
 from django.contrib.auth.hashers import make_password
 from rest_framework import serializers
 
-from ..models import Notification, User, UserEvent
+from ..models import Notification, Registration, User
 from .event import EventInUserSerializer
 
 
@@ -37,13 +37,13 @@ class UserSerializer(serializers.ModelSerializer):
 
     def get_events(self, obj):
         """ Lists all events user is to attend or has attended """
-        user_events = UserEvent.objects.filter(user__user_id=obj.user_id).order_by(
+        registrations = Registration.objects.filter(user__user_id=obj.user_id).order_by(
             "event__start_date"
         )
         events = [
-            user_event.event
-            for user_event in user_events
-            if not user_event.event.expired
+            registration.event
+            for registration in registrations
+            if not registration.event.expired
         ]
         return EventInUserSerializer(events, many=True).data
 

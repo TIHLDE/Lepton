@@ -51,7 +51,7 @@ class EventViewSet(viewsets.ModelViewSet):
                 )
             return Response(serializer.data)
         except Event.DoesNotExist:
-            return Response({"detail": _("User event not found.")}, status=404)
+            return Response({"detail": _("Registration not found.")}, status=404)
 
     def update(self, request, pk):
         """ Updates fields passed in request """

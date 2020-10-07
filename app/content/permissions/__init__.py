@@ -1,13 +1,13 @@
 from .permissions import (
+    IsMember,
     IsDev,
     IsHS,
-    IsMember,
-    IsNoK,
     IsNoKorPromo,
+    IsNoK,
     IsPromo,
-    NotificationPermission,
-    UserEventPermission,
+    is_admin_user,
     UserPermission,
     get_user_id,
-    is_admin_user,
+    NotificationPermission,
+    RegistrationPermission,
 )

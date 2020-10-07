@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from app.util import EnumUtils
 
-from ..models import Event, Priority, User, UserEvent
+from ..models import Event, Priority, Registration, User
 from .priority import PrioritySerializer
 
 
@@ -86,9 +86,10 @@ class EventSerializer(serializers.ModelSerializer):
         request = self.context.get("request")
         if request and hasattr(request, "id"):
             user_id = request.id
-            return UserEvent.objects.filter(
+            return Registration.objects.filter(
                 event__pk=obj.pk, user__user_id=user_id
             ).exists()
+
         return None
 
     def get_registration_priorities(self, obj):
