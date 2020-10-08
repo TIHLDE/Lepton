@@ -11,6 +11,7 @@ from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 
 from app.util.models import BaseModel, OptionalImage
+from app.util.utils import disable_for_loaddata
 
 
 class UserManager(BaseUserManager):
@@ -96,10 +97,9 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
     objects = UserManager()
 
 
-"""Genetare token at creation of user"""
-
-
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
-def create_auth_token(sender, instance=None, created=False, **kwarg):
+@disable_for_loaddata
+def create_auth_token(sender, instance=None, created=False, **kwargs):
+    """Generate token at creation of user"""
     if created:
         Token.objects.create(user=instance)

@@ -2,10 +2,13 @@ from datetime import timedelta
 
 from celery.task.control import revoke
 
+from app.util.utils import disable_for_loaddata
+
 from ..util.utils import today
 from .tasks.event import event_end_schedular, event_sign_off_deadline_schedular
 
 
+@disable_for_loaddata
 def send_event_reminders(sender, instance, created, **kwargs):
     if created:
         run_celery_tasks_for_event(instance)
