@@ -20,3 +20,6 @@ volume/
 mysite.log
 
 *.lock
+
+# Coverage
+.coverage

@@ -2,7 +2,7 @@ from .category import CategorySerializer
 from .cheatsheet import CheatsheetSerializer
 from .event import (
     EventAdminSerializer,
-    EventCreateUpdateSerializer,
+    EventCreateAndUpdateSerializer,
     EventSerializer,
 )
 from .job_post import JobPostSerializer

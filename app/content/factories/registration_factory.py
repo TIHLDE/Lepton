@@ -1,11 +1,12 @@
 import factory
+from factory.django import DjangoModelFactory
 
 from ..models import Registration
 from .event_factory import EventFactory
-from .registration_factory import UserFactory
+from .user_factory import UserFactory
 
 
-class RegistrationFactory(factory.DjangoModelFactory):
+class RegistrationFactory(DjangoModelFactory):
     class Meta:
         model = Registration
 

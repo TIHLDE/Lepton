@@ -1,79 +1,181 @@
 from django.contrib.auth.models import Group
-from django.test import TestCase
-from rest_framework.authtoken.models import Token
-from rest_framework.test import APIRequestFactory, force_authenticate
+from rest_framework.test import force_authenticate
 
-from app.content.factories import EventFactory, UserFactory
-from app.content.models import Event
+import pytest
+
+from app.content.enums import AdminGroup
 from app.content.views import EventViewSet
 
-EVENT_POST_BODY = {
-    "title": "Test PRIORITIES on creation",
-    "location": "Trondheim",
-    "description": "",
-    "sign_up": True,
-    "priority": None,
-    "category": None,
-    "limit": "1",
-    "closed": False,
-    "image": "",
-    "image_alt": "",
-    "start_date": "2019-11-11T00:00",
-    "end_date": "2019-11-11T01:00",
-}
+
+def add_user_to_group_with_name(user, group_name):
+    group = Group.objects.create(name=group_name)
+    user.groups.add(group)
 
 
-class EventViewTest(TestCase):
-    def setUp(self):
-        self.api_factory = APIRequestFactory()
+def get_response(request, user=None, event=None):
+    """
+    Converts a request to a response.
 
-        self.dev_user = UserFactory(
-            user_id="dev", password="123", first_name="member", last_name="user"
+    :param request: the desired HTTP-request.
+    :param user: the user performing the request. None represents an anonymous user
+    :param event: the desired event. None represents all events.
+    :return: the HTTP-response from Django.
+    """
+
+    force_authenticate(request, user=user)
+
+    if event:
+        view = EventViewSet.as_view(
+            {"get": "retrieve", "put": "update", "delete": "destroy"}
         )
-        self.dev_user.groups.add(Group.objects.create(name="DevKom"))
-
-        self.token = Token.objects.get(user_id=self.dev_user.user_id)
-
-        self.event = EventFactory()
-
-    def test_create_event_with_registration_priorities(self):
-        """ Test that an event is successfully created with priorities """
-        EVENT_POST_BODY["registration_priorities"] = [
-            {"user_class": 1, "user_study": 1},
-            {"user_class": 2, "user_study": 1},
-        ]
-
-        data = EVENT_POST_BODY
-        request = self.api_factory.post(
-            "/events/", data=data, format="json", HTTP_X_CSRF_TOKEN=self.token.key
+        return view(request, pk=event.pk)
+    else:
+        view = EventViewSet.as_view(
+            {"get": "list", "put": "update", "delete": "destroy"}
         )
+        return view(request)
 
-        force_authenticate(request, user=self.dev_user)
-        response = EventViewSet.as_view({"post": "create"})(request).render()
 
-        self.assertEqual(response.status_code, 201)
+@pytest.mark.django_db
+def test_list_as_anonymous_user(request_factory):
+    """An anonymous user should be able to list all events."""
 
-        event = Event.objects.get(title=EVENT_POST_BODY["title"])
-        self.assertTrue(event.registration_priorities.all().exists())
+    request = request_factory.get("/events/")
+    response = get_response(request=request, user=None, event=None)
 
-    def test_update_event_as_admin(self):
-        """ Test that an event is successfully updated by an admin user """
-        updated_title = "test-update"
-        data = {"title": updated_title}
+    assert response.status_code == 200
 
-        request = self.api_factory.put(
-            f"/events/{self.event.pk}/",
-            data=data,
-            format="json",
-            HTTP_X_CSRF_TOKEN=self.token.key,
-        )
 
-        force_authenticate(request, user=self.dev_user)
-        response = EventViewSet.as_view({"put": "update"})(
-            request=request, pk=self.event.pk
-        ).render()
+@pytest.mark.django_db
+def test_retrieve_as_anonymous_user(request_factory, event):
+    """An anonymous user should be able to retrieve an event."""
 
-        self.event.refresh_from_db()
+    request = request_factory.get(f"/events/{event.pk}/")
+    response = get_response(request=request, user=None, event=event)
 
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(self.event.title, updated_title)
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    ("group_name", "expected_status_code"),
+    [(AdminGroup.HS, 200), (AdminGroup.DEVKOM, 200),],
+)
+def test_retrieve_as_admin_user(
+    request_factory, event, user, token, group_name, expected_status_code
+):
+    """An admin user should be able to retrieve an event with more data."""
+
+    add_user_to_group_with_name(user, group_name)
+
+    request = request_factory.get(f"/events/{event.pk}/", HTTP_X_CSRF_TOKEN=token.key)
+    response = get_response(request=request, user=user, event=event)
+
+    assert response.status_code == expected_status_code
+    assert "evaluate_link" in response.data.keys()
+
+
+@pytest.mark.django_db
+def test_update_as_anonymous_user(request_factory, event):
+    """An anonymous user should not be able to update an event entity."""
+
+    data = {"title": "new_title", "location": "new_location"}
+
+    request = request_factory.put(f"/events/{event.pk}/", data=data)
+    response = get_response(request=request, user=None, event=event)
+
+    assert response.status_code == 403
+
+
+@pytest.mark.django_db
+def test_update_as_user(request_factory, event, user):
+    """A user should not be able to update an event entity."""
+
+    data = {"title": "new_title", "location": "new_location"}
+
+    request = request_factory.put(f"/events/{event.pk}/", data=data)
+    response = get_response(request=request, user=user, event=event)
+
+    assert response.status_code == 403
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    ("group_name", "expected_status_code", "new_title"),
+    [
+        (AdminGroup.HS, 200, "New Title"),
+        (AdminGroup.DEVKOM, 200, "New Title"),
+        (AdminGroup.NOK, 200, "New Title"),
+        (AdminGroup.PROMO, 200, "New Title"),
+        ("Non_admin_group", 403, None),
+    ],
+)
+def test_update_as_admin_user(
+    request_factory, event, user, token, group_name, expected_status_code, new_title
+):
+    """Only users in an admin group should be able to update an event entity."""
+
+    add_user_to_group_with_name(user, group_name)
+    expected_title = new_title if new_title else event.title
+
+    data = {
+        "id": event.pk,
+        "title": "New Title",
+        "location": "New Location",
+        "registration_priorities": [{"user_class": 1, "user_study": 1}],
+    }
+
+    request = request_factory.put(
+        f"/events/{event.pk}/", data=data, format="json", HTTP_X_CSRF_TOKEN=token.key
+    )
+    response = get_response(request=request, user=user, event=event)
+    event.refresh_from_db()
+
+    assert response.status_code == expected_status_code
+    assert event.title == expected_title
+
+
+@pytest.mark.django_db
+def test_delete_as_anonymous_user(request_factory, event):
+    """An anonymous user should not be able to delete an event entity."""
+
+    request = request_factory.delete(f"/events/{event.pk}/")
+    response = get_response(request=request, user=None, event=event)
+
+    assert response.status_code == 403
+
+
+@pytest.mark.django_db
+def test_delete_as_user(request_factory, user, event):
+    """A user should not be able to to delete an event entity."""
+
+    request = request_factory.delete(f"/events/{event.pk}/")
+    response = get_response(request=request, user=user, event=event)
+
+    assert response.status_code == 403
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    ("group_name", "expected_status_code"),
+    [
+        (AdminGroup.HS, 204),
+        (AdminGroup.DEVKOM, 204),
+        (AdminGroup.NOK, 204),
+        (AdminGroup.PROMO, 204),
+        ("Non_admin_group", 403),
+    ],
+)
+def test_delete_as_group_members(
+    request_factory, event, user, token, group_name, expected_status_code
+):
+    """Only users in an admin group should be able to delete an event entity."""
+
+    add_user_to_group_with_name(user, group_name)
+
+    request = request_factory.delete(
+        f"/events/{event.pk}/", HTTP_X_CSRF_TOKEN=token.key
+    )
+    response = get_response(request=request, user=user, event=event)
+
+    assert response.status_code == expected_status_code

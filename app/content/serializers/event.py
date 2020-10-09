@@ -105,7 +105,7 @@ class EventSerializer(serializers.ModelSerializer):
             return None
 
 
-class EventCreateUpdateSerializer(serializers.ModelSerializer):
+class EventCreateAndUpdateSerializer(serializers.ModelSerializer):
     registration_priorities = PrioritySerializer(many=True, required=False)
 
     class Meta:
@@ -163,7 +163,8 @@ class EventCreateUpdateSerializer(serializers.ModelSerializer):
 
 
 class EventAdminSerializer(EventSerializer):
-    class Meta(EventSerializer.Meta):
+    class Meta:
+        model = Event
         fields = EventSerializer.Meta.fields + ("evaluate_link",)
 
 
