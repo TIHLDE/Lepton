@@ -1,20 +1,14 @@
 from rest_framework import serializers
 
-from ..models import User, UserEvent
+from ..models import Registration, User
 
 
-class UserEventSerializer(serializers.ModelSerializer):
+class RegistrationSerializer(serializers.ModelSerializer):
     user_info = serializers.SerializerMethodField()
 
     class Meta:
-        model = UserEvent
-        fields = [
-            "user_event_id",
-            "user_info",
-            "is_on_wait",
-            "has_attended",
-            "allow_photo",
-        ]
+        model = Registration
+        fields = ["registration_id", "user_info", "is_on_wait", "has_attended"]
 
     def get_user_info(self, obj):
         """ Gets the necessary info from user """

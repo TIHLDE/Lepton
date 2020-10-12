@@ -11,10 +11,10 @@ from .notification import Notification
 from .user import User
 
 
-class UserEvent(BaseModel):
+class Registration(BaseModel):
     """ Model for user registration for an event """
 
-    user_event_id = models.AutoField(primary_key=True)
+    registration_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     event = models.ForeignKey("Event", on_delete=models.CASCADE)
 
@@ -26,8 +26,8 @@ class UserEvent(BaseModel):
     class Meta:
         ordering = ("event", "is_on_wait", "created_at")
         unique_together = ("user", "event")
-        verbose_name = "User event"
-        verbose_name_plural = "User events"
+        verbose_name = "Registration"
+        verbose_name_plural = "Registrations"
 
     def __str__(self):
         return (
@@ -37,10 +37,10 @@ class UserEvent(BaseModel):
 
     def save(self, *args, **kwargs):
         """ Determines whether the object is being created or updated and acts accordingly """
-        if not self.user_event_id:
+        if not self.registration_id:
             return self.create(*args, **kwargs)
         self.send_notification_and_mail()
-        return super(UserEvent, self).save(*args, **kwargs)
+        return super(Registration, self).save(*args, **kwargs)
 
     def create(self, *args, **kwargs):
         """ Determines whether user is on the waiting list or not when the instance is created. """
@@ -52,7 +52,7 @@ class UserEvent(BaseModel):
             self.swap_users()
 
         self.send_notification_and_mail()
-        return super(UserEvent, self).save(*args, **kwargs)
+        return super(Registration, self).save(*args, **kwargs)
 
     def send_notification_and_mail(self):
         if self.is_on_wait:
@@ -108,14 +108,16 @@ class UserEvent(BaseModel):
 
     def swap_users(self):
         """ Swaps a user with a spot with a prioritized user, if such user exists """
-        for user_event in UserEvent.objects.filter(event=self.event, is_on_wait=False):
-            if not user_event.is_prioritized():
-                return self.swap_not_prioritized_user(user_event)
+        for registration in Registration.objects.filter(
+            event=self.event, is_on_wait=False
+        ):
+            if not registration.is_prioritized():
+                return self.swap_not_prioritized_user(registration)
 
-    def swap_not_prioritized_user(self, other_user_event):
-        """ Puts own self on the list and other_user_event on wait """
-        other_user_event.is_on_wait = True
-        other_user_event.save()
+    def swap_not_prioritized_user(self, other_registration):
+        """ Puts own self on the list and other_registration on wait """
+        other_registration.is_on_wait = True
+        other_registration.save()
         self.is_on_wait = False
 
     def clean(self):
@@ -128,7 +130,7 @@ class UserEvent(BaseModel):
             raise ValidationError(_("The queue for this event is closed"))
         if not self.event.sign_up:
             raise ValidationError(_("Sign up is not possible"))
-        if not self.user_event_id:
+        if not self.registration_id:
             self.validate_start_and_end_registration_time()
 
     def validate_start_and_end_registration_time(self):

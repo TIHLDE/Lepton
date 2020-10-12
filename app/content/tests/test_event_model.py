@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 
 import pytest
 
-from ..factories import EventFactory, PriorityFactory, UserEventFactory
+from ..factories import EventFactory, PriorityFactory, RegistrationFactory
 
 
 @pytest.fixture()
@@ -14,8 +14,8 @@ def event():
 
 
 @pytest.fixture()
-def user_event(event):
-    return UserEventFactory(event=event)
+def registration(event):
+    return RegistrationFactory(event=event)
 
 
 @pytest.fixture()
@@ -47,8 +47,8 @@ def test_expired_when_event_has_expired(event):
 def test_list_count(event, users_not_on_wait, users_on_wait, expected_list_count):
     """Should return the number of registered users who are to attend."""
     event.limit = users_not_on_wait
-    UserEventFactory.create_batch(users_on_wait, is_on_wait=True, event=event)
-    UserEventFactory.create_batch(users_not_on_wait, is_on_wait=False, event=event)
+    RegistrationFactory.create_batch(users_on_wait, is_on_wait=True, event=event)
+    RegistrationFactory.create_batch(users_not_on_wait, is_on_wait=False, event=event)
 
     assert event.list_count == expected_list_count
 
@@ -63,8 +63,8 @@ def test_waiting_list_count(
 ):
     """Should return the number of registered users who are on the waiting list."""
     event.limit = users_not_on_wait
-    UserEventFactory.create_batch(users_on_wait, is_on_wait=True, event=event)
-    UserEventFactory.create_batch(users_not_on_wait, is_on_wait=False, event=event)
+    RegistrationFactory.create_batch(users_on_wait, is_on_wait=True, event=event)
+    RegistrationFactory.create_batch(users_not_on_wait, is_on_wait=False, event=event)
 
     assert event.waiting_list_count == expected_waiting_list_count
 
@@ -81,7 +81,7 @@ def test_has_waiting_list_when_event_does_not_have_limit(event):
 def test_has_waiting_list_when_event_is_full(event):
     """Test that an event has a waiting list if the event is full."""
     event.limit = 1
-    UserEventFactory.create_batch(2, event=event)
+    RegistrationFactory.create_batch(2, event=event)
 
     assert event.has_waiting_list()
 
@@ -90,8 +90,8 @@ def test_has_waiting_list_when_event_is_full(event):
 def test_has_waiting_list_when_event_has_users_on_wait(event):
     """Test that an event has a waiting list if there are any users on the waiting list."""
     event.limit = 10
-    UserEventFactory(event=event)
-    waiting_list_registration = UserEventFactory(event=event)
+    RegistrationFactory(event=event)
+    waiting_list_registration = RegistrationFactory(event=event)
 
     waiting_list_registration.is_on_wait = True
     waiting_list_registration.save()
@@ -105,7 +105,7 @@ def test_has_waiting_list_when_event_is_not_full(event):
         Test that an event does not have a waiting list when there are available spots and no users on wait.
     """
     event.limit = 100
-    UserEventFactory.create_batch(1, event=event)
+    RegistrationFactory.create_batch(1, event=event)
 
     assert not event.has_waiting_list()
 
@@ -128,7 +128,7 @@ def test_is_full(event, limit, number_of_attendees, is_full):
         Should return True if number of registered users is greater than limit, else False.
     """
     event.limit = limit
-    UserEventFactory.create_batch(number_of_attendees, event=event)
+    RegistrationFactory.create_batch(number_of_attendees, event=event)
 
     assert event.is_full() == is_full
 

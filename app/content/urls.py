@@ -11,8 +11,8 @@ from .views import (
     JobPostViewSet,
     NewsViewSet,
     NotificationViewSet,
+    RegistrationViewSet,
     UserChallengeViewSet,
-    UserEventViewSet,
     UserViewSet,
     WarningViewSet,
     accept_form,
@@ -28,7 +28,7 @@ router.register("category", CategoryViewSet)
 router.register("jobpost", JobPostViewSet, basename="jobpost")
 router.register("user", UserViewSet, basename="user")
 router.register(
-    r"events/(?P<event_id>\d+)/users", UserEventViewSet, basename="user_event"
+    r"events/(?P<event_id>\d+)/users", RegistrationViewSet, basename="registration"
 )
 router.register("notification", NotificationViewSet, basename="notification")
 router.register(

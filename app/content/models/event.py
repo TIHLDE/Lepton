@@ -9,8 +9,8 @@ from app.util.models import BaseModel, OptionalImage
 from ..signals import send_event_reminders
 from .category import Category
 from .prioritiy import Priority
+from .registration import Registration
 from .user import User
-from .user_event import UserEvent
 
 
 class Event(BaseModel, OptionalImage):
@@ -35,7 +35,7 @@ class Event(BaseModel, OptionalImage):
     closed = models.BooleanField(default=False)
     registered_users_list = models.ManyToManyField(
         User,
-        through="UserEvent",
+        through="Registration",
         through_fields=("event", "user"),
         blank=True,
         default=None,
@@ -64,24 +64,24 @@ class Event(BaseModel, OptionalImage):
     @property
     def list_count(self):
         """ Number of users registered to attend the event """
-        return UserEvent.objects.filter(event__pk=self.pk, is_on_wait=False).count()
+        return Registration.objects.filter(event__pk=self.pk, is_on_wait=False).count()
 
     @property
     def waiting_list_count(self):
         """ Number of users on the waiting list """
-        return UserEvent.objects.filter(event__pk=self.pk, is_on_wait=True).count()
+        return Registration.objects.filter(event__pk=self.pk, is_on_wait=True).count()
 
     def has_waiting_list(self):
         return self.has_limit() and (
             self.is_full()
-            or UserEvent.objects.filter(event=self, is_on_wait=True).exists()
+            or Registration.objects.filter(event=self, is_on_wait=True).exists()
         )
 
     def has_limit(self):
         return self.limit != 0
 
     def is_full(self):
-        return UserEvent.objects.filter(event=self).count() >= self.limit
+        return Registration.objects.filter(event=self).count() >= self.limit
 
     def has_priorities(self):
         return self.registration_priorities.all().exists()

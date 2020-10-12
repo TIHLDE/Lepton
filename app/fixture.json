@@ -1,1550 +1,1928 @@
 [
   {
-    "model": "admin.logentry",
-    "pk": 1,
-    "fields": {
-      "action_time": "2020-09-16T11:28:33.198Z",
-      "user": "devkom",
-      "content_type": 7,
-      "object_id": "devkom",
-      "object_repr": "User - devkom: asd asd",
-      "action_flag": 2,
-      "change_message": "[{\"changed\": {\"fields\": [\"Groups\", \"First name\", \"Last name\", \"Email\", \"Is TIHLDE member\"]}}]"
-    }
-  },
-  {
-    "model": "admin.logentry",
-    "pk": 2,
-    "fields": {
-      "action_time": "2020-09-16T11:36:47.823Z",
-      "user": "devkom",
-      "content_type": 7,
-      "object_id": "devkom",
-      "object_repr": "User - devkom: Devkom Devkom",
-      "action_flag": 2,
-      "change_message": "[{\"changed\": {\"fields\": [\"Groups\"]}}]"
-    }
-  },
-  {
-    "model": "admin.logentry",
-    "pk": 3,
-    "fields": {
-      "action_time": "2020-09-16T11:36:58.695Z",
-      "user": "devkom",
-      "content_type": 12,
-      "object_id": "1",
-      "object_repr": "Warning: 1 - Text: Server er nede",
-      "action_flag": 3,
-      "change_message": ""
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 1,
-    "fields": {
-      "name": "Can add log entry",
-      "content_type": 1,
-      "codename": "add_logentry"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 2,
-    "fields": {
-      "name": "Can change log entry",
-      "content_type": 1,
-      "codename": "change_logentry"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 3,
-    "fields": {
-      "name": "Can delete log entry",
-      "content_type": 1,
-      "codename": "delete_logentry"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 4,
-    "fields": {
-      "name": "Can view log entry",
-      "content_type": 1,
-      "codename": "view_logentry"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 5,
-    "fields": {
-      "name": "Can add permission",
-      "content_type": 2,
-      "codename": "add_permission"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 6,
-    "fields": {
-      "name": "Can change permission",
-      "content_type": 2,
-      "codename": "change_permission"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 7,
-    "fields": {
-      "name": "Can delete permission",
-      "content_type": 2,
-      "codename": "delete_permission"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 8,
-    "fields": {
-      "name": "Can view permission",
-      "content_type": 2,
-      "codename": "view_permission"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 9,
-    "fields": {
-      "name": "Can add group",
-      "content_type": 3,
-      "codename": "add_group"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 10,
-    "fields": {
-      "name": "Can change group",
-      "content_type": 3,
-      "codename": "change_group"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 11,
-    "fields": {
-      "name": "Can delete group",
-      "content_type": 3,
-      "codename": "delete_group"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 12,
-    "fields": {
-      "name": "Can view group",
-      "content_type": 3,
-      "codename": "view_group"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 13,
-    "fields": {
-      "name": "Can add content type",
-      "content_type": 4,
-      "codename": "add_contenttype"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 14,
-    "fields": {
-      "name": "Can change content type",
-      "content_type": 4,
-      "codename": "change_contenttype"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 15,
-    "fields": {
-      "name": "Can delete content type",
-      "content_type": 4,
-      "codename": "delete_contenttype"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 16,
-    "fields": {
-      "name": "Can view content type",
-      "content_type": 4,
-      "codename": "view_contenttype"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 17,
-    "fields": {
-      "name": "Can add session",
-      "content_type": 5,
-      "codename": "add_session"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 18,
-    "fields": {
-      "name": "Can change session",
-      "content_type": 5,
-      "codename": "change_session"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 19,
-    "fields": {
-      "name": "Can delete session",
-      "content_type": 5,
-      "codename": "delete_session"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 20,
-    "fields": {
-      "name": "Can view session",
-      "content_type": 5,
-      "codename": "view_session"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 21,
-    "fields": {
-      "name": "Can add user",
-      "content_type": 6,
-      "codename": "add_user"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 22,
-    "fields": {
-      "name": "Can change user",
-      "content_type": 6,
-      "codename": "change_user"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 23,
-    "fields": {
-      "name": "Can delete user",
-      "content_type": 6,
-      "codename": "delete_user"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 24,
-    "fields": {
-      "name": "Can view user",
-      "content_type": 6,
-      "codename": "view_user"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 25,
-    "fields": {
-      "name": "Can add category",
-      "content_type": 7,
-      "codename": "add_category"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 26,
-    "fields": {
-      "name": "Can change category",
-      "content_type": 7,
-      "codename": "change_category"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 27,
-    "fields": {
-      "name": "Can delete category",
-      "content_type": 7,
-      "codename": "delete_category"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 28,
-    "fields": {
-      "name": "Can view category",
-      "content_type": 7,
-      "codename": "view_category"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 29,
-    "fields": {
-      "name": "Can add event",
-      "content_type": 8,
-      "codename": "add_event"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 30,
-    "fields": {
-      "name": "Can change event",
-      "content_type": 8,
-      "codename": "change_event"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 31,
-    "fields": {
-      "name": "Can delete event",
-      "content_type": 8,
-      "codename": "delete_event"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 32,
-    "fields": {
-      "name": "Can view event",
-      "content_type": 8,
-      "codename": "view_event"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 33,
-    "fields": {
-      "name": "Can add job post",
-      "content_type": 9,
-      "codename": "add_jobpost"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 34,
-    "fields": {
-      "name": "Can change job post",
-      "content_type": 9,
-      "codename": "change_jobpost"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 35,
-    "fields": {
-      "name": "Can delete job post",
-      "content_type": 9,
-      "codename": "delete_jobpost"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 36,
-    "fields": {
-      "name": "Can view job post",
-      "content_type": 9,
-      "codename": "view_jobpost"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 37,
-    "fields": {
-      "name": "Can add news",
-      "content_type": 10,
-      "codename": "add_news"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 38,
-    "fields": {
-      "name": "Can change news",
-      "content_type": 10,
-      "codename": "change_news"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 39,
-    "fields": {
-      "name": "Can delete news",
-      "content_type": 10,
-      "codename": "delete_news"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 40,
-    "fields": {
-      "name": "Can view news",
-      "content_type": 10,
-      "codename": "view_news"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 41,
-    "fields": {
-      "name": "Can add warning",
-      "content_type": 11,
-      "codename": "add_warning"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 42,
-    "fields": {
-      "name": "Can change warning",
-      "content_type": 11,
-      "codename": "change_warning"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 43,
-    "fields": {
-      "name": "Can delete warning",
-      "content_type": 11,
-      "codename": "delete_warning"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 44,
-    "fields": {
-      "name": "Can view warning",
-      "content_type": 11,
-      "codename": "view_warning"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 45,
-    "fields": {
-      "name": "Can add User event",
-      "content_type": 12,
-      "codename": "add_userevent"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 46,
-    "fields": {
-      "name": "Can change User event",
-      "content_type": 12,
-      "codename": "change_userevent"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 47,
-    "fields": {
-      "name": "Can delete User event",
-      "content_type": 12,
-      "codename": "delete_userevent"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 48,
-    "fields": {
-      "name": "Can view User event",
-      "content_type": 12,
-      "codename": "view_userevent"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 49,
-    "fields": {
-      "name": "Can add User event",
-      "content_type": 13,
-      "codename": "add_userevent"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 50,
-    "fields": {
-      "name": "Can change User event",
-      "content_type": 13,
-      "codename": "change_userevent"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 51,
-    "fields": {
-      "name": "Can delete User event",
-      "content_type": 13,
-      "codename": "delete_userevent"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 52,
-    "fields": {
-      "name": "Can view User event",
-      "content_type": 13,
-      "codename": "view_userevent"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 53,
-    "fields": {
-      "name": "Can add notification",
-      "content_type": 14,
-      "codename": "add_notification"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 54,
-    "fields": {
-      "name": "Can change notification",
-      "content_type": 14,
-      "codename": "change_notification"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 55,
-    "fields": {
-      "name": "Can delete notification",
-      "content_type": 14,
-      "codename": "delete_notification"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 56,
-    "fields": {
-      "name": "Can view notification",
-      "content_type": 14,
-      "codename": "view_notification"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 57,
-    "fields": {
-      "name": "Can add priority",
-      "content_type": 15,
-      "codename": "add_priority"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 58,
-    "fields": {
-      "name": "Can change priority",
-      "content_type": 15,
-      "codename": "change_priority"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 59,
-    "fields": {
-      "name": "Can delete priority",
-      "content_type": 15,
-      "codename": "delete_priority"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 60,
-    "fields": {
-      "name": "Can view priority",
-      "content_type": 15,
-      "codename": "view_priority"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 61,
-    "fields": {
-      "name": "Can add challenge",
-      "content_type": 16,
-      "codename": "add_challenge"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 62,
-    "fields": {
-      "name": "Can change challenge",
-      "content_type": 16,
-      "codename": "change_challenge"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 63,
-    "fields": {
-      "name": "Can delete challenge",
-      "content_type": 16,
-      "codename": "delete_challenge"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 64,
-    "fields": {
-      "name": "Can view challenge",
-      "content_type": 16,
-      "codename": "view_challenge"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 65,
-    "fields": {
-      "name": "Can add user challenge",
-      "content_type": 17,
-      "codename": "add_userchallenge"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 66,
-    "fields": {
-      "name": "Can change user challenge",
-      "content_type": 17,
-      "codename": "change_userchallenge"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 67,
-    "fields": {
-      "name": "Can delete user challenge",
-      "content_type": 17,
-      "codename": "delete_userchallenge"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 68,
-    "fields": {
-      "name": "Can view user challenge",
-      "content_type": 17,
-      "codename": "view_userchallenge"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 69,
-    "fields": {
-      "name": "Can add Cheatsheet",
-      "content_type": 18,
-      "codename": "add_cheatsheet"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 70,
-    "fields": {
-      "name": "Can change Cheatsheet",
-      "content_type": 18,
-      "codename": "change_cheatsheet"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 71,
-    "fields": {
-      "name": "Can delete Cheatsheet",
-      "content_type": 18,
-      "codename": "delete_cheatsheet"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 72,
-    "fields": {
-      "name": "Can view Cheatsheet",
-      "content_type": 18,
-      "codename": "view_cheatsheet"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 73,
-    "fields": {
-      "name": "Can add Token",
-      "content_type": 6,
-      "codename": "add_token"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 74,
-    "fields": {
-      "name": "Can change Token",
-      "content_type": 6,
-      "codename": "change_token"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 75,
-    "fields": {
-      "name": "Can delete Token",
-      "content_type": 6,
-      "codename": "delete_token"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 76,
-    "fields": {
-      "name": "Can view Token",
-      "content_type": 6,
-      "codename": "view_token"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 77,
-    "fields": {
-      "name": "Can add user",
-      "content_type": 7,
-      "codename": "add_user"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 78,
-    "fields": {
-      "name": "Can change user",
-      "content_type": 7,
-      "codename": "change_user"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 79,
-    "fields": {
-      "name": "Can delete user",
-      "content_type": 7,
-      "codename": "delete_user"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 80,
-    "fields": {
-      "name": "Can view user",
-      "content_type": 7,
-      "codename": "view_user"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 81,
-    "fields": {
-      "name": "Can add category",
-      "content_type": 8,
-      "codename": "add_category"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 82,
-    "fields": {
-      "name": "Can change category",
-      "content_type": 8,
-      "codename": "change_category"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 83,
-    "fields": {
-      "name": "Can delete category",
-      "content_type": 8,
-      "codename": "delete_category"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 84,
-    "fields": {
-      "name": "Can view category",
-      "content_type": 8,
-      "codename": "view_category"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 85,
-    "fields": {
-      "name": "Can add event",
-      "content_type": 9,
-      "codename": "add_event"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 86,
-    "fields": {
-      "name": "Can change event",
-      "content_type": 9,
-      "codename": "change_event"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 87,
-    "fields": {
-      "name": "Can delete event",
-      "content_type": 9,
-      "codename": "delete_event"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 88,
-    "fields": {
-      "name": "Can view event",
-      "content_type": 9,
-      "codename": "view_event"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 89,
-    "fields": {
-      "name": "Can add job post",
-      "content_type": 10,
-      "codename": "add_jobpost"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 90,
-    "fields": {
-      "name": "Can change job post",
-      "content_type": 10,
-      "codename": "change_jobpost"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 91,
-    "fields": {
-      "name": "Can delete job post",
-      "content_type": 10,
-      "codename": "delete_jobpost"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 92,
-    "fields": {
-      "name": "Can view job post",
-      "content_type": 10,
-      "codename": "view_jobpost"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 93,
-    "fields": {
-      "name": "Can add news",
-      "content_type": 11,
-      "codename": "add_news"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 94,
-    "fields": {
-      "name": "Can change news",
-      "content_type": 11,
-      "codename": "change_news"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 95,
-    "fields": {
-      "name": "Can delete news",
-      "content_type": 11,
-      "codename": "delete_news"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 96,
-    "fields": {
-      "name": "Can view news",
-      "content_type": 11,
-      "codename": "view_news"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 97,
-    "fields": {
-      "name": "Can add warning",
-      "content_type": 12,
-      "codename": "add_warning"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 98,
-    "fields": {
-      "name": "Can change warning",
-      "content_type": 12,
-      "codename": "change_warning"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 99,
-    "fields": {
-      "name": "Can delete warning",
-      "content_type": 12,
-      "codename": "delete_warning"
-    }
-  },
-  {
-    "model": "auth.permission",
-    "pk": 100,
-    "fields": {
-      "name": "Can view warning",
-      "content_type": 12,
-      "codename": "view_warning"
-    }
-  },
-  {
-    "model": "auth.group",
-    "pk": 2,
-    "fields": {
-      "name": "DevKom",
-      "permissions": [
-        1,
-        2,
-        3,
-        4,
-        9,
-        10,
-        11,
-        12,
-        5,
-        6,
-        7,
-        8,
-        21,
-        22,
-        23,
-        24,
-        29,
-        30,
-        31,
-        32,
-        33,
-        34,
-        35,
-        36,
-        37,
-        38,
-        39,
-        40,
-        41,
-        42,
-        43,
-        44,
-        25,
-        26,
-        27,
-        28,
-        45,
-        46,
-        47,
-        48,
-        13,
-        14,
-        15,
-        16,
-        17,
-        18,
-        19,
-        20
-      ]
-    }
-  },
-  {
-    "model": "auth.group",
-    "pk": 3,
-    "fields": {
-      "name": "HS",
-      "permissions": [
-        9,
-        10,
-        11,
-        12,
-        29,
-        30,
-        31,
-        32,
-        33,
-        34,
-        35,
-        36,
-        37,
-        38,
-        39,
-        40,
-        41,
-        42,
-        43,
-        44,
-        25,
-        26,
-        27,
-        28,
-        45,
-        46,
-        47,
-        48
-      ]
-    }
-  },
-  {
-    "model": "auth.group",
-    "pk": 4,
-    "fields": {
-      "name": "NoK",
-      "permissions": [
-        29,
-        30,
-        31,
-        32,
-        33,
-        34,
-        35,
-        36,
-        25,
-        26,
-        27,
-        28,
-        45,
-        46,
-        47,
-        48
-      ]
-    }
-  },
-  {
-    "model": "auth.group",
-    "pk": 5,
-    "fields": {
-      "name": "Promo",
-      "permissions": [
-        29,
-        30,
-        31,
-        32,
-        37,
-        38,
-        39,
-        40,
-        25,
-        26,
-        27,
-        28,
-        45,
-        46,
-        47,
-        48
-      ]
-    }
-  },
-  {
-    "model": "contenttypes.contenttype",
-    "pk": 1,
-    "fields": {
-      "app_label": "admin",
-      "model": "logentry"
-    }
-  },
-  {
-    "model": "contenttypes.contenttype",
-    "pk": 2,
-    "fields": {
-      "app_label": "auth",
-      "model": "permission"
-    }
-  },
-  {
-    "model": "contenttypes.contenttype",
-    "pk": 3,
-    "fields": {
-      "app_label": "auth",
-      "model": "group"
-    }
-  },
-  {
-    "model": "contenttypes.contenttype",
-    "pk": 4,
-    "fields": {
-      "app_label": "contenttypes",
-      "model": "contenttype"
-    }
-  },
-  {
-    "model": "contenttypes.contenttype",
-    "pk": 5,
-    "fields": {
-      "app_label": "sessions",
-      "model": "session"
-    }
-  },
-  {
-    "model": "contenttypes.contenttype",
-    "pk": 6,
-    "fields": {
-      "app_label": "authtoken",
-      "model": "token"
-    }
-  },
-  {
-    "model": "contenttypes.contenttype",
-    "pk": 7,
-    "fields": {
-      "app_label": "content",
-      "model": "user"
-    }
-  },
-  {
-    "model": "contenttypes.contenttype",
-    "pk": 8,
-    "fields": {
-      "app_label": "content",
-      "model": "category"
-    }
-  },
-  {
-    "model": "contenttypes.contenttype",
-    "pk": 9,
-    "fields": {
-      "app_label": "content",
-      "model": "event"
-    }
-  },
-  {
-    "model": "contenttypes.contenttype",
-    "pk": 10,
-    "fields": {
-      "app_label": "content",
-      "model": "jobpost"
-    }
-  },
-  {
-    "model": "contenttypes.contenttype",
-    "pk": 11,
-    "fields": {
-      "app_label": "content",
-      "model": "news"
-    }
-  },
-  {
-    "model": "contenttypes.contenttype",
-    "pk": 12,
-    "fields": {
-      "app_label": "content",
-      "model": "warning"
-    }
-  },
-  {
-    "model": "contenttypes.contenttype",
-    "pk": 13,
-    "fields": {
-      "app_label": "content",
-      "model": "userevent"
-    }
-  },
-  {
-    "model": "contenttypes.contenttype",
-    "pk": 14,
-    "fields": {
-      "app_label": "content",
-      "model": "notification"
-    }
-  },
-  {
-    "model": "contenttypes.contenttype",
-    "pk": 15,
-    "fields": {
-      "app_label": "content",
-      "model": "priority"
-    }
-  },
-  {
-    "model": "contenttypes.contenttype",
-    "pk": 16,
-    "fields": {
-      "app_label": "content",
-      "model": "challenge"
-    }
-  },
-  {
-    "model": "contenttypes.contenttype",
-    "pk": 17,
-    "fields": {
-      "app_label": "content",
-      "model": "userchallenge"
-    }
-  },
-  {
-    "model": "contenttypes.contenttype",
-    "pk": 18,
-    "fields": {
-      "app_label": "content",
-      "model": "cheatsheet"
-    }
-  },
-  {
-    "model": "sessions.session",
-    "pk": "hksrtcyj72bk73axwmeo77adyahcq2p6",
-    "fields": {
-      "session_data": ".eJxVzDsOwjAQRdG9uEbWBH8mpqRnDdHYM8EhEEtxQoPYOx-lgPrc9x6qo3XJ3Vpl7gZWB8VyH8tN7X4hUhpl-uqFpnPRqUzLPET9SfSmVZ8Ky_W4tX8HmWp-rxsmikAMzd6B8YzgBCm2ntkaMH2LyQa03DNJYxh7F4MjdAEEkvesni94WDp8:1kIVjT:OyohXAudGGrXQj5dFegIw0zwmMNxtSwfqvPeujnCjpU",
-      "expire_date": "2020-09-30T11:36:15.364Z"
-    }
-  },
-  {
-    "model": "authtoken.token",
-    "pk": "f18262d853c363fd19acc143de14201c54641b9f",
-    "fields": {
-      "user": "devkom",
-      "created": "2020-09-16T11:11:44.362Z"
-    }
-  },
-  {
-    "model": "authtoken.token",
-    "pk": "f8866481357c7d8db95fb034fd0fc4ba01c2841c",
-    "fields": {
-      "user": "test",
-      "created": "2020-09-16T11:11:44.371Z"
-    }
-  },
-  {
-    "model": "content.category",
-    "pk": 1,
-    "fields": {
-      "created_at": "2019-11-10T18:44:41.524Z",
-      "updated_at": "2019-11-10T18:44:41.524Z",
-      "text": "Fest"
-    }
-  },
-  {
-    "model": "content.category",
-    "pk": 2,
-    "fields": {
-      "created_at": "2019-11-10T18:45:37.001Z",
-      "updated_at": "2019-11-10T18:45:37.001Z",
-      "text": "Kurs"
-    }
-  },
-  {
-    "model": "content.category",
-    "pk": 3,
-    "fields": {
-      "created_at": "2019-11-10T18:47:53.005Z",
-      "updated_at": "2019-11-10T18:47:53.005Z",
-      "text": "Allmøte"
-    }
-  },
-  {
-    "model": "content.category",
-    "pk": 4,
-    "fields": {
-      "created_at": "2019-11-10T18:55:53.628Z",
-      "updated_at": "2019-11-10T18:55:53.628Z",
-      "text": "Alkoholfritt"
-    }
-  },
-  {
-    "model": "content.user",
-    "pk": "devkom",
-    "fields": {
-      "password": "pbkdf2_sha256$216000$DvKQZxcH5N8p$3No9R2HHgPSbyH8JteazBbjnAWiXQlgy5y6LLLFlVAY=",
-      "last_login": "2020-09-16T11:36:15Z",
-      "is_superuser": true,
-      "created_at": "2019-11-10T18:31:23.803Z",
-      "updated_at": "2020-09-16T11:36:47.814Z",
-      "image": null,
-      "image_alt": null,
-      "first_name": "Devkom",
-      "last_name": "Devkom",
-      "email": "devkom@devkom.com",
-      "cell": "",
-      "home_busstop": null,
-      "gender": 2,
-      "user_class": 1,
-      "user_study": 1,
-      "allergy": "",
-      "tool": "",
-      "app_token": null,
-      "is_TIHLDE_member": true,
-      "is_staff": true,
-      "is_active": true,
-      "groups": [
-        2
-      ],
-      "user_permissions": []
-    }
-  },
-  {
-    "model": "content.user",
-    "pk": "test",
-    "fields": {
-      "password": "pbkdf2_sha256$150000$0K7u3UV5nCr1$K6MSLWX3yzoXU1PmWYrTajzWGJ354th6rl+bRRu9GNI=",
-      "last_login": "2019-11-10T18:35:06.870Z",
-      "is_superuser": true,
-      "created_at": "2019-11-10T18:31:23.803Z",
-      "updated_at": "2019-11-10T18:31:23.811Z",
-      "image": null,
-      "image_alt": null,
-      "first_name": "Test",
-      "last_name": "Testesen",
-      "email": "",
-      "cell": "",
-      "home_busstop": null,
-      "gender": 2,
-      "user_class": 1,
-      "user_study": 1,
-      "allergy": "",
-      "tool": "",
-      "app_token": null,
-      "is_TIHLDE_member": false,
-      "is_staff": true,
-      "is_active": true,
-      "groups": [],
-      "user_permissions": []
-    }
-  },
-  {
-    "model": "content.userevent",
-    "pk": 1,
-    "fields": {
-      "updated_at": "2019-11-10T19:02:02.014Z",
-      "user": "devkom",
-      "event": 3,
-      "is_on_wait": false,
-      "has_attended": false,
-      "created_at": "2019-11-10T19:01:40.513Z",
-      "allow_photo": true
-    }
-  },
-  {
-    "model": "content.userevent",
-    "pk": 2,
-    "fields": {
-      "updated_at": "2019-11-10T19:02:02.014Z",
-      "user": "test",
-      "event": 4,
-      "is_on_wait": true,
-      "has_attended": false,
-      "created_at": "2019-11-10T19:01:40.513Z",
-      "allow_photo": true
-    }
-  },
-  {
-    "model": "content.userevent",
-    "pk": 3,
-    "fields": {
-      "updated_at": "2019-11-10T19:02:02.014Z",
-      "user": "devkom",
-      "event": 4,
-      "is_on_wait": false,
-      "has_attended": false,
-      "created_at": "2019-11-10T19:01:40.513Z",
-      "allow_photo": true
-    }
-  },
-  {
-    "model": "content.event",
-    "pk": 1,
-    "fields": {
-      "created_at": "2019-11-10T18:44:48.066Z",
-      "updated_at": "2019-11-10T18:44:48.066Z",
-      "image": "https://images.pexels.com/photos/67636/rose-blue-flower-rose-blooms-67636.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
-      "image_alt": "Rose",
-      "title": "Roses are blue",
-      "start_date": "2019-11-10T19:10:30Z",
-      "end_date": "2019-11-10T19:10:31Z",
-      "location": "Jungle",
-      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a ultrices tortor. Sed vitae feugiat diam. Suspendisse potenti. Maecenas congue aliquet vulputate. Aenean eu euismod ligula, quis rhoncus purus. Praesent ac odio diam. Praesent eleifend ullamcorper erat ut bibendum. Phasellus fringilla neque eu mollis eleifend. Etiam pretium, lacus ac ultrices interdum, enim ante consequat diam, ut congue arcu eros quis lorem. Proin non tempus arcu. Suspendisse mauris nulla, lobortis non commodo id, ultricies eu turpis. Praesent maximus euismod accumsan. In aliquam dictum purus ac condimentum. Pellentesque mattis felis vitae urna aliquet pretium. Pellentesque dapibus nisi non lorem tempus commodo.\r\n\r\nAenean at magna rhoncus, aliquet erat et, auctor eros. Suspendisse vitae varius ex, at mollis felis. Proin non tincidunt nunc. Nunc erat eros, tempor vitae blandit eu, convallis ut justo. Aenean luctus ante sit amet pellentesque venenatis. Cras malesuada, massa in sollicitudin cursus, urna tortor ultrices justo, egestas aliquam lacus lorem id arcu. Phasellus ultricies dapibus dui, at lacinia ex gravida ac. Proin mattis aliquet quam, et finibus magna dictum sed. Praesent at elementum orci. Fusce rutrum arcu orci, malesuada maximus odio sodales nec. Fusce sodales eu elit ut semper. Fusce blandit neque vel augue auctor, vel maximus sem fermentum. Nunc cursus odio vel ligula cursus, luctus finibus dui lacinia. Curabitur pharetra, quam vitae eleifend elementum, libero ipsum vulputate eros, vel pretium nisl diam nec enim. Suspendisse ante dui, viverra a est eu, viverra finibus magna.",
-      "priority": 1,
-      "category": 1,
-      "sign_up": true,
-      "limit": 100,
-      "closed": false,
-      "start_registration_at": null,
-      "end_registration_at": null,
-      "sign_off_deadline": null,
-      "evaluate_link": null,
-      "end_date_schedular_id": null,
-      "sign_off_deadline_schedular_id": null,
-      "registration_priorities": []
-    }
-  },
-  {
-    "model": "content.event",
-    "pk": 2,
-    "fields": {
-      "created_at": "2019-11-10T18:45:40.569Z",
-      "updated_at": "2019-11-10T18:45:40.569Z",
-      "image": "https://images.unsplash.com/photo-1499084732479-de2c02d45fcc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&w=1000&q=80",
-      "image_alt": "Sky",
-      "title": "The vast sky",
-      "start_date": "2019-11-20T19:11:49Z",
-      "end_date": "2019-11-20T19:11:59Z",
-      "location": "Akrinn",
-      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a ultrices tortor. Sed vitae feugiat diam. Suspendisse potenti. Maecenas congue aliquet vulputate. Aenean eu euismod ligula, quis rhoncus purus. Praesent ac odio diam. Praesent eleifend ullamcorper erat ut bibendum. Phasellus fringilla neque eu mollis eleifend. Etiam pretium, lacus ac ultrices interdum, enim ante consequat diam, ut congue arcu eros quis lorem. Proin non tempus arcu. Suspendisse mauris nulla, lobortis non commodo id, ultricies eu turpis. Praesent maximus euismod accumsan. In aliquam dictum purus ac condimentum. Pellentesque mattis felis vitae urna aliquet pretium. Pellentesque dapibus nisi non lorem tempus commodo.\r\n\r\nAenean at magna rhoncus, aliquet erat et, auctor eros. Suspendisse vitae varius ex, at mollis felis. Proin non tincidunt nunc. Nunc erat eros, tempor vitae blandit eu, convallis ut justo. Aenean luctus ante sit amet pellentesque venenatis. Cras malesuada, massa in sollicitudin cursus, urna tortor ultrices justo, egestas aliquam lacus lorem id arcu. Phasellus ultricies dapibus dui, at lacinia ex gravida ac. Proin mattis aliquet quam, et finibus magna dictum sed. Praesent at elementum orci. Fusce rutrum arcu orci, malesuada maximus odio sodales nec. Fusce sodales eu elit ut semper. Fusce blandit neque vel augue auctor, vel maximus sem fermentum. Nunc cursus odio vel ligula cursus, luctus finibus dui lacinia. Curabitur pharetra, quam vitae eleifend elementum, libero ipsum vulputate eros, vel pretium nisl diam nec enim. Suspendisse ante dui, viverra a est eu, viverra finibus magna.",
-      "priority": 0,
-      "category": 2,
-      "sign_up": false,
-      "limit": 0,
-      "closed": false,
-      "start_registration_at": null,
-      "end_registration_at": null,
-      "sign_off_deadline": null,
-      "evaluate_link": null,
-      "end_date_schedular_id": null,
-      "sign_off_deadline_schedular_id": null,
-      "registration_priorities": []
-    }
-  },
-  {
-    "model": "content.event",
-    "pk": 3,
-    "fields": {
-      "created_at": "2019-11-10T18:47:58.609Z",
-      "updated_at": "2019-11-10T18:47:58.609Z",
-      "image": "https://interactive-examples.mdn.mozilla.net/media/examples/grapefruit-slice-332-332.jpg",
-      "image_alt": "appelsin",
-      "title": "Oranges are red",
-      "start_date": "2019-12-13T19:13:36Z",
-      "end_date": "2019-12-13T19:13:36Z",
-      "location": "Blue",
-      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a ultrices tortor. Sed vitae feugiat diam. Suspendisse potenti. Maecenas congue aliquet vulputate. Aenean eu euismod ligula, quis rhoncus purus. Praesent ac odio diam. Praesent eleifend ullamcorper erat ut bibendum. Phasellus fringilla neque eu mollis eleifend. Etiam pretium, lacus ac ultrices interdum, enim ante consequat diam, ut congue arcu eros quis lorem. Proin non tempus arcu. Suspendisse mauris nulla, lobortis non commodo id, ultricies eu turpis. Praesent maximus euismod accumsan. In aliquam dictum purus ac condimentum. Pellentesque mattis felis vitae urna aliquet pretium. Pellentesque dapibus nisi non lorem tempus commodo.\r\n\r\nAenean at magna rhoncus, aliquet erat et, auctor eros. Suspendisse vitae varius ex, at mollis felis. Proin non tincidunt nunc. Nunc erat eros, tempor vitae blandit eu, convallis ut justo. Aenean luctus ante sit amet pellentesque venenatis. Cras malesuada, massa in sollicitudin cursus, urna tortor ultrices justo, egestas aliquam lacus lorem id arcu. Phasellus ultricies dapibus dui, at lacinia ex gravida ac. Proin mattis aliquet quam, et finibus magna dictum sed. Praesent at elementum orci. Fusce rutrum arcu orci, malesuada maximus odio sodales nec. Fusce sodales eu elit ut semper. Fusce blandit neque vel augue auctor, vel maximus sem fermentum. Nunc cursus odio vel ligula cursus, luctus finibus dui lacinia. Curabitur pharetra, quam vitae eleifend elementum, libero ipsum vulputate eros, vel pretium nisl diam nec enim. Suspendisse ante dui, viverra a est eu, viverra finibus magna.",
-      "priority": 2,
-      "category": 3,
-      "sign_up": true,
-      "limit": 10,
-      "closed": false,
-      "start_registration_at": null,
-      "end_registration_at": null,
-      "sign_off_deadline": null,
-      "evaluate_link": null,
-      "end_date_schedular_id": null,
-      "sign_off_deadline_schedular_id": null,
-      "registration_priorities": []
-    }
-  },
-  {
-    "model": "content.event",
-    "pk": 4,
-    "fields": {
-      "created_at": "2019-11-10T18:55:58.939Z",
-      "updated_at": "2019-11-10T18:55:58.939Z",
-      "image": "https://cdn.pixabay.com/photo/2018/05/28/22/11/message-in-a-bottle-3437294__340.jpg",
-      "image_alt": "faskepost",
-      "title": "Arr sier piraten",
-      "start_date": "2019-12-10T19:21:59Z",
-      "end_date": "2019-12-10T19:21:59Z",
-      "location": "Black pearl",
-      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a ultrices tortor. Sed vitae feugiat diam. Suspendisse potenti. Maecenas congue aliquet vulputate. Aenean eu euismod ligula, quis rhoncus purus. Praesent ac odio diam. Praesent eleifend ullamcorper erat ut bibendum. Phasellus fringilla neque eu mollis eleifend. Etiam pretium, lacus ac ultrices interdum, enim ante consequat diam, ut congue arcu eros quis lorem. Proin non tempus arcu. Suspendisse mauris nulla, lobortis non commodo id, ultricies eu turpis. Praesent maximus euismod accumsan. In aliquam dictum purus ac condimentum. Pellentesque mattis felis vitae urna aliquet pretium. Pellentesque dapibus nisi non lorem tempus commodo.\r\n\r\nAenean at magna rhoncus, aliquet erat et, auctor eros. Suspendisse vitae varius ex, at mollis felis. Proin non tincidunt nunc. Nunc erat eros, tempor vitae blandit eu, convallis ut justo. Aenean luctus ante sit amet pellentesque venenatis. Cras malesuada, massa in sollicitudin cursus, urna tortor ultrices justo, egestas aliquam lacus lorem id arcu. Phasellus ultricies dapibus dui, at lacinia ex gravida ac. Proin mattis aliquet quam, et finibus magna dictum sed. Praesent at elementum orci. Fusce rutrum arcu orci, malesuada maximus odio sodales nec. Fusce sodales eu elit ut semper. Fusce blandit neque vel augue auctor, vel maximus sem fermentum. Nunc cursus odio vel ligula cursus, luctus finibus dui lacinia. Curabitur pharetra, quam vitae eleifend elementum, libero ipsum vulputate eros, vel pretium nisl diam nec enim. Suspendisse ante dui, viverra a est eu, viverra finibus magna.",
-      "priority": 2,
-      "category": 4,
-      "sign_up": true,
-      "limit": 1,
-      "closed": false,
-      "start_registration_at": null,
-      "end_registration_at": null,
-      "sign_off_deadline": null,
-      "evaluate_link": null,
-      "end_date_schedular_id": null,
-      "sign_off_deadline_schedular_id": null,
-      "registration_priorities": []
-    }
-  },
-  {
-    "model": "content.jobpost",
-    "pk": 1,
-    "fields": {
-      "created_at": "2019-11-10T18:57:50.504Z",
-      "updated_at": "2019-11-10T18:57:50.504Z",
-      "image": "https://interactive-examples.mdn.mozilla.net/media/examples/grapefruit-slice-332-332.jpg",
-      "image_alt": "postman",
-      "title": "Postman",
-      "ingress": "Bli en viktig mann",
-      "body": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a ultrices tortor. Sed vitae feugiat diam. Suspendisse potenti. Maecenas congue aliquet vulputate. Aenean eu euismod ligula, quis rhoncus purus. Praesent ac odio diam. Praesent eleifend ullamcorper erat ut bibendum. Phasellus fringilla neque eu mollis eleifend. Etiam pretium, lacus ac ultrices interdum, enim ante consequat diam, ut congue arcu eros quis lorem. Proin non tempus arcu. Suspendisse mauris nulla, lobortis non commodo id, ultricies eu turpis. Praesent maximus euismod accumsan. In aliquam dictum purus ac condimentum. Pellentesque mattis felis vitae urna aliquet pretium. Pellentesque dapibus nisi non lorem tempus commodo.\r\n\r\nAenean at magna rhoncus, aliquet erat et, auctor eros. Suspendisse vitae varius ex, at mollis felis. Proin non tincidunt nunc. Nunc erat eros, tempor vitae blandit eu, convallis ut justo. Aenean luctus ante sit amet pellentesque venenatis. Cras malesuada, massa in sollicitudin cursus, urna tortor ultrices justo, egestas aliquam lacus lorem id arcu. Phasellus ultricies dapibus dui, at lacinia ex gravida ac. Proin mattis aliquet quam, et finibus magna dictum sed. Praesent at elementum orci. Fusce rutrum arcu orci, malesuada maximus odio sodales nec. Fusce sodales eu elit ut semper. Fusce blandit neque vel augue auctor, vel maximus sem fermentum. Nunc cursus odio vel ligula cursus, luctus finibus dui lacinia. Curabitur pharetra, quam vitae eleifend elementum, libero ipsum vulputate eros, vel pretium nisl diam nec enim. Suspendisse ante dui, viverra a est eu, viverra finibus magna.",
-      "location": "Bring",
-      "deadline": "2020-12-10T19:23:56Z",
-      "company": "Bring",
-      "email": "bring@bring.com",
-      "link": "http://www.bring.nob"
-    }
-  },
-  {
-    "model": "content.jobpost",
-    "pk": 2,
-    "fields": {
-      "created_at": "2019-11-10T18:59:28.298Z",
-      "updated_at": "2019-11-10T18:59:28.298Z",
-      "image": "https://analyticsindiamag.com/wp-content/uploads/2018/12/image.jpg",
-      "image_alt": "hacker",
-      "title": "Hackerman",
-      "ingress": "Turn off and on",
-      "body": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a ultrices tortor. Sed vitae feugiat diam. Suspendisse potenti. Maecenas congue aliquet vulputate. Aenean eu euismod ligula, quis rhoncus purus. Praesent ac odio diam. Praesent eleifend ullamcorper erat ut bibendum. Phasellus fringilla neque eu mollis eleifend. Etiam pretium, lacus ac ultrices interdum, enim ante consequat diam, ut congue arcu eros quis lorem. Proin non tempus arcu. Suspendisse mauris nulla, lobortis non commodo id, ultricies eu turpis. Praesent maximus euismod accumsan. In aliquam dictum purus ac condimentum. Pellentesque mattis felis vitae urna aliquet pretium. Pellentesque dapibus nisi non lorem tempus commodo.\r\n\r\nAenean at magna rhoncus, aliquet erat et, auctor eros. Suspendisse vitae varius ex, at mollis felis. Proin non tincidunt nunc. Nunc erat eros, tempor vitae blandit eu, convallis ut justo. Aenean luctus ante sit amet pellentesque venenatis. Cras malesuada, massa in sollicitudin cursus, urna tortor ultrices justo, egestas aliquam lacus lorem id arcu. Phasellus ultricies dapibus dui, at lacinia ex gravida ac. Proin mattis aliquet quam, et finibus magna dictum sed. Praesent at elementum orci. Fusce rutrum arcu orci, malesuada maximus odio sodales nec. Fusce sodales eu elit ut semper. Fusce blandit neque vel augue auctor, vel maximus sem fermentum. Nunc cursus odio vel ligula cursus, luctus finibus dui lacinia. Curabitur pharetra, quam vitae eleifend elementum, libero ipsum vulputate eros, vel pretium nisl diam nec enim. Suspendisse ante dui, viverra a est eu, viverra finibus magna.",
-      "location": "Void",
-      "deadline": "2020-11-10T19:25:01Z",
-      "company": "Illuminati",
-      "email": "random@mail.com",
-      "link": "http://random.com"
-    }
-  },
-  {
-    "model": "content.jobpost",
-    "pk": 3,
-    "fields": {
-      "created_at": "2019-11-10T19:00:43.257Z",
-      "updated_at": "2019-11-10T19:00:43.257Z",
-      "image": "https://media.sproutsocial.com/uploads/2017/02/10x-featured-social-media-image-size.png",
-      "image_alt": "photoshop",
-      "title": "Photoshop legende",
-      "ingress": "Edit your way to money",
-      "body": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a ultrices tortor. Sed vitae feugiat diam. Suspendisse potenti. Maecenas congue aliquet vulputate. Aenean eu euismod ligula, quis rhoncus purus. Praesent ac odio diam. Praesent eleifend ullamcorper erat ut bibendum. Phasellus fringilla neque eu mollis eleifend. Etiam pretium, lacus ac ultrices interdum, enim ante consequat diam, ut congue arcu eros quis lorem. Proin non tempus arcu. Suspendisse mauris nulla, lobortis non commodo id, ultricies eu turpis. Praesent maximus euismod accumsan. In aliquam dictum purus ac condimentum. Pellentesque mattis felis vitae urna aliquet pretium. Pellentesque dapibus nisi non lorem tempus commodo.\r\n\r\nAenean at magna rhoncus, aliquet erat et, auctor eros. Suspendisse vitae varius ex, at mollis felis. Proin non tincidunt nunc. Nunc erat eros, tempor vitae blandit eu, convallis ut justo. Aenean luctus ante sit amet pellentesque venenatis. Cras malesuada, massa in sollicitudin cursus, urna tortor ultrices justo, egestas aliquam lacus lorem id arcu. Phasellus ultricies dapibus dui, at lacinia ex gravida ac. Proin mattis aliquet quam, et finibus magna dictum sed. Praesent at elementum orci. Fusce rutrum arcu orci, malesuada maximus odio sodales nec. Fusce sodales eu elit ut semper. Fusce blandit neque vel augue auctor, vel maximus sem fermentum. Nunc cursus odio vel ligula cursus, luctus finibus dui lacinia. Curabitur pharetra, quam vitae eleifend elementum, libero ipsum vulputate eros, vel pretium nisl diam nec enim. Suspendisse ante dui, viverra a est eu, viverra finibus magna.",
-      "location": "Trondheim",
-      "deadline": "2020-11-10T19:26:57Z",
-      "company": "Photoshop",
-      "email": "photo@shop.com",
-      "link": "http://www.adobe.com"
-    }
+     "model":"admin.logentry",
+     "pk":1,
+     "fields":{
+        "action_time":"2020-10-01T18:23:46.093Z",
+        "user":"index",
+        "content_type":3,
+        "object_id":"1",
+        "object_repr":"Index",
+        "action_flag":1,
+        "change_message":"[{\"added\": {}}]"
+     }
+  },
+  {
+     "model":"admin.logentry",
+     "pk":2,
+     "fields":{
+        "action_time":"2020-10-01T18:25:11.103Z",
+        "user":"index",
+        "content_type":3,
+        "object_id":"2",
+        "object_repr":"HS",
+        "action_flag":1,
+        "change_message":"[{\"added\": {}}]"
+     }
+  },
+  {
+     "model":"admin.logentry",
+     "pk":3,
+     "fields":{
+        "action_time":"2020-10-01T18:25:17.389Z",
+        "user":"index",
+        "content_type":3,
+        "object_id":"3",
+        "object_repr":"Sosialen",
+        "action_flag":1,
+        "change_message":"[{\"added\": {}}]"
+     }
+  },
+  {
+     "model":"admin.logentry",
+     "pk":4,
+     "fields":{
+        "action_time":"2020-10-01T18:25:25.362Z",
+        "user":"index",
+        "content_type":3,
+        "object_id":"4",
+        "object_repr":"NoK",
+        "action_flag":1,
+        "change_message":"[{\"added\": {}}]"
+     }
+  },
+  {
+     "model":"admin.logentry",
+     "pk":5,
+     "fields":{
+        "action_time":"2020-10-01T18:25:29.081Z",
+        "user":"index",
+        "content_type":3,
+        "object_id":"5",
+        "object_repr":"Promo",
+        "action_flag":1,
+        "change_message":"[{\"added\": {}}]"
+     }
+  },
+  {
+     "model":"admin.logentry",
+     "pk":6,
+     "fields":{
+        "action_time":"2020-10-01T18:26:13.909Z",
+        "user":"index",
+        "content_type":3,
+        "object_id":"3",
+        "object_repr":"Sosialen",
+        "action_flag":2,
+        "change_message":"[{\"changed\": {\"fields\": [\"Permissions\"]}}]"
+     }
+  },
+  {
+     "model":"admin.logentry",
+     "pk":7,
+     "fields":{
+        "action_time":"2020-10-01T18:26:36.991Z",
+        "user":"index",
+        "content_type":3,
+        "object_id":"5",
+        "object_repr":"Promo",
+        "action_flag":2,
+        "change_message":"[{\"changed\": {\"fields\": [\"Permissions\"]}}]"
+     }
+  },
+  {
+     "model":"admin.logentry",
+     "pk":8,
+     "fields":{
+        "action_time":"2020-10-01T18:27:38.403Z",
+        "user":"index",
+        "content_type":3,
+        "object_id":"4",
+        "object_repr":"NoK",
+        "action_flag":2,
+        "change_message":"[{\"changed\": {\"fields\": [\"Permissions\"]}}]"
+     }
+  },
+  {
+     "model":"admin.logentry",
+     "pk":9,
+     "fields":{
+        "action_time":"2020-10-01T18:27:59.804Z",
+        "user":"index",
+        "content_type":3,
+        "object_id":"5",
+        "object_repr":"Promo",
+        "action_flag":2,
+        "change_message":"[{\"changed\": {\"fields\": [\"Permissions\"]}}]"
+     }
+  },
+  {
+     "model":"admin.logentry",
+     "pk":10,
+     "fields":{
+        "action_time":"2020-10-01T18:28:14.501Z",
+        "user":"index",
+        "content_type":3,
+        "object_id":"3",
+        "object_repr":"Sosialen",
+        "action_flag":2,
+        "change_message":"[{\"changed\": {\"fields\": [\"Permissions\"]}}]"
+     }
+  },
+  {
+     "model":"admin.logentry",
+     "pk":11,
+     "fields":{
+        "action_time":"2020-10-01T18:29:35.001Z",
+        "user":"index",
+        "content_type":3,
+        "object_id":"2",
+        "object_repr":"HS",
+        "action_flag":2,
+        "change_message":"[{\"changed\": {\"fields\": [\"Permissions\"]}}]"
+     }
+  },
+  {
+     "model":"admin.logentry",
+     "pk":12,
+     "fields":{
+        "action_time":"2020-10-01T18:29:57.038Z",
+        "user":"index",
+        "content_type":9,
+        "object_id":"1",
+        "object_repr":"Fest",
+        "action_flag":1,
+        "change_message":"[{\"added\": {}}]"
+     }
+  },
+  {
+     "model":"admin.logentry",
+     "pk":13,
+     "fields":{
+        "action_time":"2020-10-01T18:30:12.525Z",
+        "user":"index",
+        "content_type":9,
+        "object_id":"2",
+        "object_repr":"Bedpress",
+        "action_flag":1,
+        "change_message":"[{\"added\": {}}]"
+     }
+  },
+  {
+     "model":"admin.logentry",
+     "pk":14,
+     "fields":{
+        "action_time":"2020-10-01T18:30:37.231Z",
+        "user":"index",
+        "content_type":9,
+        "object_id":"3",
+        "object_repr":"Fadderuke",
+        "action_flag":1,
+        "change_message":"[{\"added\": {}}]"
+     }
+  },
+  {
+     "model":"admin.logentry",
+     "pk":15,
+     "fields":{
+        "action_time":"2020-10-01T18:32:18.565Z",
+        "user":"index",
+        "content_type":9,
+        "object_id":"4",
+        "object_repr":"Sport",
+        "action_flag":1,
+        "change_message":"[{\"added\": {}}]"
+     }
+  },
+  {
+     "model":"admin.logentry",
+     "pk":16,
+     "fields":{
+        "action_time":"2020-10-01T18:32:35.299Z",
+        "user":"index",
+        "content_type":17,
+        "object_id":"8149b976-c5c9-428b-bbf5-ee891e57774a",
+        "object_repr":"2020 - Påske",
+        "action_flag":1,
+        "change_message":"[{\"added\": {}}]"
+     }
+  },
+  {
+     "model":"admin.logentry",
+     "pk":17,
+     "fields":{
+        "action_time":"2020-10-01T18:33:51.132Z",
+        "user":"index",
+        "content_type":19,
+        "object_id":"efddd97d-8a75-4f0d-a23c-111bb51c910f",
+        "object_repr":"Cheatsheet -Øving 1 Zaim Imran 1. Klasse Dataingeniør Prog grunnkurs",
+        "action_flag":1,
+        "change_message":"[{\"added\": {}}]"
+     }
+  },
+  {
+     "model":"admin.logentry",
+     "pk":18,
+     "fields":{
+        "action_time":"2020-10-01T18:37:22.881Z",
+        "user":"index",
+        "content_type":16,
+        "object_id":"1",
+        "object_repr":"1. Klasse Dataingeniør",
+        "action_flag":1,
+        "change_message":"[{\"added\": {}}]"
+     }
+  },
+  {
+     "model":"admin.logentry",
+     "pk":19,
+     "fields":{
+        "action_time":"2020-10-01T18:38:27.853Z",
+        "user":"index",
+        "content_type":10,
+        "object_id":"1",
+        "object_repr":"Pirater sier Arr - starting 2020-10-03 20:35:32+02:00 at Båten Anna",
+        "action_flag":1,
+        "change_message":"[{\"added\": {}}]"
+     }
+  },
+  {
+     "model":"admin.logentry",
+     "pk":20,
+     "fields":{
+        "action_time":"2020-10-01T18:41:04.641Z",
+        "user":"index",
+        "content_type":10,
+        "object_id":"2",
+        "object_repr":"Palmesus - starting 2020-11-01 20:39:27+01:00 at Kristiansand",
+        "action_flag":1,
+        "change_message":"[{\"added\": {}}]"
+     }
+  },
+  {
+     "model":"admin.logentry",
+     "pk":21,
+     "fields":{
+        "action_time":"2020-10-01T18:44:28.829Z",
+        "user":"index",
+        "content_type":11,
+        "object_id":"1",
+        "object_repr":"JobPost: Bekk  - Kaffehenter hos Bekk",
+        "action_flag":1,
+        "change_message":"[{\"added\": {}}]"
+     }
+  },
+  {
+     "model":"admin.logentry",
+     "pk":22,
+     "fields":{
+        "action_time":"2020-10-01T18:47:31.933Z",
+        "user":"index",
+        "content_type":11,
+        "object_id":"2",
+        "object_repr":"JobPost: TIHLDE  - TIHLDE Tinder",
+        "action_flag":1,
+        "change_message":"[{\"added\": {}}]"
+     }
+  },
+  {
+     "model":"admin.logentry",
+     "pk":23,
+     "fields":{
+        "action_time":"2020-10-01T18:51:48.403Z",
+        "user":"index",
+        "content_type":12,
+        "object_id":"1",
+        "object_repr":"Join TIHLDE - LIvet blir bedre når du joiner TIHLDE [446 characters]",
+        "action_flag":1,
+        "change_message":"[{\"added\": {}}]"
+     }
+  },
+  {
+     "model":"admin.logentry",
+     "pk":24,
+     "fields":{
+        "action_time":"2020-10-01T18:52:14.506Z",
+        "user":"index",
+        "content_type":15,
+        "object_id":"1",
+        "object_repr":"Notification for User - index: Index TIHLDE",
+        "action_flag":1,
+        "change_message":"[{\"added\": {}}]"
+     }
+  },
+  {
+     "model":"admin.logentry",
+     "pk":25,
+     "fields":{
+        "action_time":"2020-10-01T18:52:25.375Z",
+        "user":"index",
+        "content_type":16,
+        "object_id":"2",
+        "object_repr":"2. Klasse Dataingeniør",
+        "action_flag":1,
+        "change_message":"[{\"added\": {}}]"
+     }
+  },
+  {
+     "model":"admin.logentry",
+     "pk":26,
+     "fields":{
+        "action_time":"2020-10-01T18:52:31.281Z",
+        "user":"index",
+        "content_type":16,
+        "object_id":"3",
+        "object_repr":"3. Klasse Dataingeniør",
+        "action_flag":1,
+        "change_message":"[{\"added\": {}}]"
+     }
+  },
+  {
+     "model":"admin.logentry",
+     "pk":27,
+     "fields":{
+        "action_time":"2020-10-01T18:52:34.608Z",
+        "user":"index",
+        "content_type":16,
+        "object_id":"4",
+        "object_repr":"1. Klasse Digital forretningsutvikling",
+        "action_flag":1,
+        "change_message":"[{\"added\": {}}]"
+     }
+  },
+  {
+     "model":"admin.logentry",
+     "pk":28,
+     "fields":{
+        "action_time":"2020-10-01T18:52:41.962Z",
+        "user":"index",
+        "content_type":16,
+        "object_id":"5",
+        "object_repr":"2. Klasse Digital forretningsutvikling",
+        "action_flag":1,
+        "change_message":"[{\"added\": {}}]"
+     }
+  },
+  {
+     "model":"admin.logentry",
+     "pk":29,
+     "fields":{
+        "action_time":"2020-10-01T18:52:48.066Z",
+        "user":"index",
+        "content_type":16,
+        "object_id":"6",
+        "object_repr":"3. Klasse Digital forretningsutvikling",
+        "action_flag":1,
+        "change_message":"[{\"added\": {}}]"
+     }
+  },
+  {
+     "model":"admin.logentry",
+     "pk":30,
+     "fields":{
+        "action_time":"2020-10-01T18:53:18.043Z",
+        "user":"index",
+        "content_type":16,
+        "object_id":"7",
+        "object_repr":"1. Klasse Digital infrastruktur og cybersikkerhet",
+        "action_flag":1,
+        "change_message":"[{\"added\": {}}]"
+     }
+  },
+  {
+     "model":"admin.logentry",
+     "pk":31,
+     "fields":{
+        "action_time":"2020-10-01T18:53:21.527Z",
+        "user":"index",
+        "content_type":16,
+        "object_id":"7",
+        "object_repr":"2. Klasse Digital infrastruktur og cybersikkerhet",
+        "action_flag":2,
+        "change_message":"[{\"changed\": {\"fields\": [\"User class\"]}}]"
+     }
+  },
+  {
+     "model":"admin.logentry",
+     "pk":32,
+     "fields":{
+        "action_time":"2020-10-01T18:53:25.303Z",
+        "user":"index",
+        "content_type":16,
+        "object_id":"7",
+        "object_repr":"3. Klasse Digital infrastruktur og cybersikkerhet",
+        "action_flag":2,
+        "change_message":"[{\"changed\": {\"fields\": [\"User class\"]}}]"
+     }
+  },
+  {
+     "model":"admin.logentry",
+     "pk":33,
+     "fields":{
+        "action_time":"2020-10-01T18:53:33.941Z",
+        "user":"index",
+        "content_type":16,
+        "object_id":"7",
+        "object_repr":"4. Klasse Digital samhandling",
+        "action_flag":2,
+        "change_message":"[{\"changed\": {\"fields\": [\"User class\", \"User study\"]}}]"
+     }
+  },
+  {
+     "model":"admin.logentry",
+     "pk":34,
+     "fields":{
+        "action_time":"2020-10-01T18:53:38.013Z",
+        "user":"index",
+        "content_type":16,
+        "object_id":"7",
+        "object_repr":"5. Klasse Digital samhandling",
+        "action_flag":2,
+        "change_message":"[{\"changed\": {\"fields\": [\"User class\"]}}]"
+     }
+  },
+  {
+     "model":"admin.logentry",
+     "pk":35,
+     "fields":{
+        "action_time":"2020-10-01T18:53:48.436Z",
+        "user":"index",
+        "content_type":18,
+        "object_id":"1",
+        "object_repr":"Påske - index",
+        "action_flag":1,
+        "change_message":"[{\"added\": {}}]"
+     }
+  },
+  {
+     "model":"admin.logentry",
+     "pk":36,
+     "fields":{
+        "action_time":"2020-10-01T18:54:25.415Z",
+        "user":"index",
+        "content_type":10,
+        "object_id":"1",
+        "object_repr":"Pirater sier Arr - starting 2020-10-03 20:35:32+02:00 at Båten Anna",
+        "action_flag":2,
+        "change_message":"[{\"changed\": {\"fields\": [\"Start registration at\"]}}]"
+     }
+  },
+  {
+     "model":"admin.logentry",
+     "pk":37,
+     "fields":{
+        "action_time":"2020-10-01T18:54:37.073Z",
+        "user":"index",
+        "content_type":14,
+        "object_id":"1",
+        "object_repr":"index@tihlde.org - is to attend Pirater sier Arr - starting 2020-10-03 18:35:32+00:00 at Båten Anna and is on the list",
+        "action_flag":1,
+        "change_message":"[{\"added\": {}}]"
+     }
+  },
+  {
+     "model":"admin.logentry",
+     "pk":38,
+     "fields":{
+        "action_time":"2020-10-01T18:58:47.549Z",
+        "user":"index",
+        "content_type":8,
+        "object_id":"eivindste",
+        "object_repr":"User - eivindste: Eivind Øvstedal",
+        "action_flag":2,
+        "change_message":"[{\"changed\": {\"fields\": [\"Is TIHLDE member\"]}}]"
+     }
+  },
+  {
+     "model":"admin.logentry",
+     "pk":39,
+     "fields":{
+        "action_time":"2020-10-01T18:59:42.008Z",
+        "user":"index",
+        "content_type":8,
+        "object_id":"index",
+        "object_repr":"User - index: Index TIHLDE",
+        "action_flag":2,
+        "change_message":"[{\"changed\": {\"fields\": [\"Cell\", \"Home busstop\", \"Allergy\", \"Tool\"]}}]"
+     }
+  },
+  {
+     "model":"admin.logentry",
+     "pk":40,
+     "fields":{
+        "action_time":"2020-10-01T19:46:46.465Z",
+        "user":"index",
+        "content_type":8,
+        "object_id":"index",
+        "object_repr":"User - index: Index TIHLDE",
+        "action_flag":2,
+        "change_message":"[{\"changed\": {\"fields\": [\"Groups\"]}}]"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":1,
+     "fields":{
+        "name":"Can add log entry",
+        "content_type":1,
+        "codename":"add_logentry"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":2,
+     "fields":{
+        "name":"Can change log entry",
+        "content_type":1,
+        "codename":"change_logentry"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":3,
+     "fields":{
+        "name":"Can delete log entry",
+        "content_type":1,
+        "codename":"delete_logentry"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":4,
+     "fields":{
+        "name":"Can view log entry",
+        "content_type":1,
+        "codename":"view_logentry"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":5,
+     "fields":{
+        "name":"Can add permission",
+        "content_type":2,
+        "codename":"add_permission"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":6,
+     "fields":{
+        "name":"Can change permission",
+        "content_type":2,
+        "codename":"change_permission"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":7,
+     "fields":{
+        "name":"Can delete permission",
+        "content_type":2,
+        "codename":"delete_permission"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":8,
+     "fields":{
+        "name":"Can view permission",
+        "content_type":2,
+        "codename":"view_permission"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":9,
+     "fields":{
+        "name":"Can add group",
+        "content_type":3,
+        "codename":"add_group"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":10,
+     "fields":{
+        "name":"Can change group",
+        "content_type":3,
+        "codename":"change_group"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":11,
+     "fields":{
+        "name":"Can delete group",
+        "content_type":3,
+        "codename":"delete_group"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":12,
+     "fields":{
+        "name":"Can view group",
+        "content_type":3,
+        "codename":"view_group"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":13,
+     "fields":{
+        "name":"Can add content type",
+        "content_type":4,
+        "codename":"add_contenttype"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":14,
+     "fields":{
+        "name":"Can change content type",
+        "content_type":4,
+        "codename":"change_contenttype"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":15,
+     "fields":{
+        "name":"Can delete content type",
+        "content_type":4,
+        "codename":"delete_contenttype"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":16,
+     "fields":{
+        "name":"Can view content type",
+        "content_type":4,
+        "codename":"view_contenttype"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":17,
+     "fields":{
+        "name":"Can add session",
+        "content_type":5,
+        "codename":"add_session"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":18,
+     "fields":{
+        "name":"Can change session",
+        "content_type":5,
+        "codename":"change_session"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":19,
+     "fields":{
+        "name":"Can delete session",
+        "content_type":5,
+        "codename":"delete_session"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":20,
+     "fields":{
+        "name":"Can view session",
+        "content_type":5,
+        "codename":"view_session"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":21,
+     "fields":{
+        "name":"Can add Token",
+        "content_type":6,
+        "codename":"add_token"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":22,
+     "fields":{
+        "name":"Can change Token",
+        "content_type":6,
+        "codename":"change_token"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":23,
+     "fields":{
+        "name":"Can delete Token",
+        "content_type":6,
+        "codename":"delete_token"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":24,
+     "fields":{
+        "name":"Can view Token",
+        "content_type":6,
+        "codename":"view_token"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":25,
+     "fields":{
+        "name":"Can add token",
+        "content_type":7,
+        "codename":"add_tokenproxy"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":26,
+     "fields":{
+        "name":"Can change token",
+        "content_type":7,
+        "codename":"change_tokenproxy"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":27,
+     "fields":{
+        "name":"Can delete token",
+        "content_type":7,
+        "codename":"delete_tokenproxy"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":28,
+     "fields":{
+        "name":"Can view token",
+        "content_type":7,
+        "codename":"view_tokenproxy"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":29,
+     "fields":{
+        "name":"Can add user",
+        "content_type":8,
+        "codename":"add_user"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":30,
+     "fields":{
+        "name":"Can change user",
+        "content_type":8,
+        "codename":"change_user"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":31,
+     "fields":{
+        "name":"Can delete user",
+        "content_type":8,
+        "codename":"delete_user"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":32,
+     "fields":{
+        "name":"Can view user",
+        "content_type":8,
+        "codename":"view_user"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":33,
+     "fields":{
+        "name":"Can add category",
+        "content_type":9,
+        "codename":"add_category"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":34,
+     "fields":{
+        "name":"Can change category",
+        "content_type":9,
+        "codename":"change_category"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":35,
+     "fields":{
+        "name":"Can delete category",
+        "content_type":9,
+        "codename":"delete_category"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":36,
+     "fields":{
+        "name":"Can view category",
+        "content_type":9,
+        "codename":"view_category"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":37,
+     "fields":{
+        "name":"Can add event",
+        "content_type":10,
+        "codename":"add_event"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":38,
+     "fields":{
+        "name":"Can change event",
+        "content_type":10,
+        "codename":"change_event"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":39,
+     "fields":{
+        "name":"Can delete event",
+        "content_type":10,
+        "codename":"delete_event"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":40,
+     "fields":{
+        "name":"Can view event",
+        "content_type":10,
+        "codename":"view_event"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":41,
+     "fields":{
+        "name":"Can add job post",
+        "content_type":11,
+        "codename":"add_jobpost"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":42,
+     "fields":{
+        "name":"Can change job post",
+        "content_type":11,
+        "codename":"change_jobpost"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":43,
+     "fields":{
+        "name":"Can delete job post",
+        "content_type":11,
+        "codename":"delete_jobpost"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":44,
+     "fields":{
+        "name":"Can view job post",
+        "content_type":11,
+        "codename":"view_jobpost"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":45,
+     "fields":{
+        "name":"Can add news",
+        "content_type":12,
+        "codename":"add_news"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":46,
+     "fields":{
+        "name":"Can change news",
+        "content_type":12,
+        "codename":"change_news"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":47,
+     "fields":{
+        "name":"Can delete news",
+        "content_type":12,
+        "codename":"delete_news"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":48,
+     "fields":{
+        "name":"Can view news",
+        "content_type":12,
+        "codename":"view_news"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":49,
+     "fields":{
+        "name":"Can add warning",
+        "content_type":13,
+        "codename":"add_warning"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":50,
+     "fields":{
+        "name":"Can change warning",
+        "content_type":13,
+        "codename":"change_warning"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":51,
+     "fields":{
+        "name":"Can delete warning",
+        "content_type":13,
+        "codename":"delete_warning"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":52,
+     "fields":{
+        "name":"Can view warning",
+        "content_type":13,
+        "codename":"view_warning"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":53,
+     "fields":{
+        "name":"Can add User event",
+        "content_type":14,
+        "codename":"add_userevent"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":54,
+     "fields":{
+        "name":"Can change User event",
+        "content_type":14,
+        "codename":"change_userevent"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":55,
+     "fields":{
+        "name":"Can delete User event",
+        "content_type":14,
+        "codename":"delete_userevent"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":56,
+     "fields":{
+        "name":"Can view User event",
+        "content_type":14,
+        "codename":"view_userevent"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":57,
+     "fields":{
+        "name":"Can add notification",
+        "content_type":15,
+        "codename":"add_notification"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":58,
+     "fields":{
+        "name":"Can change notification",
+        "content_type":15,
+        "codename":"change_notification"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":59,
+     "fields":{
+        "name":"Can delete notification",
+        "content_type":15,
+        "codename":"delete_notification"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":60,
+     "fields":{
+        "name":"Can view notification",
+        "content_type":15,
+        "codename":"view_notification"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":61,
+     "fields":{
+        "name":"Can add priority",
+        "content_type":16,
+        "codename":"add_priority"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":62,
+     "fields":{
+        "name":"Can change priority",
+        "content_type":16,
+        "codename":"change_priority"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":63,
+     "fields":{
+        "name":"Can delete priority",
+        "content_type":16,
+        "codename":"delete_priority"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":64,
+     "fields":{
+        "name":"Can view priority",
+        "content_type":16,
+        "codename":"view_priority"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":65,
+     "fields":{
+        "name":"Can add challenge",
+        "content_type":17,
+        "codename":"add_challenge"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":66,
+     "fields":{
+        "name":"Can change challenge",
+        "content_type":17,
+        "codename":"change_challenge"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":67,
+     "fields":{
+        "name":"Can delete challenge",
+        "content_type":17,
+        "codename":"delete_challenge"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":68,
+     "fields":{
+        "name":"Can view challenge",
+        "content_type":17,
+        "codename":"view_challenge"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":69,
+     "fields":{
+        "name":"Can add user challenge",
+        "content_type":18,
+        "codename":"add_userchallenge"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":70,
+     "fields":{
+        "name":"Can change user challenge",
+        "content_type":18,
+        "codename":"change_userchallenge"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":71,
+     "fields":{
+        "name":"Can delete user challenge",
+        "content_type":18,
+        "codename":"delete_userchallenge"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":72,
+     "fields":{
+        "name":"Can view user challenge",
+        "content_type":18,
+        "codename":"view_userchallenge"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":73,
+     "fields":{
+        "name":"Can add Cheatsheet",
+        "content_type":19,
+        "codename":"add_cheatsheet"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":74,
+     "fields":{
+        "name":"Can change Cheatsheet",
+        "content_type":19,
+        "codename":"change_cheatsheet"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":75,
+     "fields":{
+        "name":"Can delete Cheatsheet",
+        "content_type":19,
+        "codename":"delete_cheatsheet"
+     }
+  },
+  {
+     "model":"auth.permission",
+     "pk":76,
+     "fields":{
+        "name":"Can view Cheatsheet",
+        "content_type":19,
+        "codename":"view_cheatsheet"
+     }
+  },
+  {
+     "model":"auth.group",
+     "pk":1,
+     "fields":{
+        "name":"Index",
+        "permissions":[
+           1,
+           2,
+           3,
+           4,
+           9,
+           10,
+           11,
+           12,
+           5,
+           6,
+           7,
+           8,
+           21,
+           22,
+           23,
+           24,
+           25,
+           26,
+           27,
+           28,
+           33,
+           34,
+           35,
+           36,
+           65,
+           66,
+           67,
+           68,
+           73,
+           74,
+           75,
+           76,
+           37,
+           38,
+           39,
+           40,
+           41,
+           42,
+           43,
+           44,
+           45,
+           46,
+           47,
+           48,
+           57,
+           58,
+           59,
+           60,
+           61,
+           62,
+           63,
+           64,
+           29,
+           30,
+           31,
+           32,
+           69,
+           70,
+           71,
+           72,
+           53,
+           54,
+           55,
+           56,
+           49,
+           50,
+           51,
+           52,
+           13,
+           14,
+           15,
+           16,
+           17,
+           18,
+           19,
+           20
+        ]
+     }
+  },
+  {
+     "model":"auth.group",
+     "pk":2,
+     "fields":{
+        "name":"HS",
+        "permissions":[
+           33,
+           34,
+           35,
+           36,
+           73,
+           74,
+           75,
+           76,
+           37,
+           38,
+           39,
+           40,
+           41,
+           42,
+           43,
+           44,
+           45,
+           46,
+           47,
+           48,
+           57,
+           58,
+           59,
+           60,
+           29,
+           30,
+           31,
+           32,
+           53,
+           54,
+           55,
+           56,
+           52
+        ]
+     }
+  },
+  {
+     "model":"auth.group",
+     "pk":3,
+     "fields":{
+        "name":"Sosialen",
+        "permissions":[
+           37,
+           38,
+           39,
+           40,
+           45,
+           46,
+           47,
+           48,
+           53,
+           54,
+           55,
+           56
+        ]
+     }
+  },
+  {
+     "model":"auth.group",
+     "pk":4,
+     "fields":{
+        "name":"NoK",
+        "permissions":[
+           37,
+           38,
+           39,
+           40,
+           41,
+           42,
+           43,
+           44,
+           45,
+           46,
+           47,
+           48,
+           53,
+           54,
+           55,
+           56
+        ]
+     }
+  },
+  {
+     "model":"auth.group",
+     "pk":5,
+     "fields":{
+        "name":"Promo",
+        "permissions":[
+           37,
+           38,
+           39,
+           40,
+           41,
+           42,
+           43,
+           44,
+           45,
+           46,
+           47,
+           48
+        ]
+     }
+  },
+  {
+     "model":"contenttypes.contenttype",
+     "pk":1,
+     "fields":{
+        "app_label":"admin",
+        "model":"logentry"
+     }
+  },
+  {
+     "model":"contenttypes.contenttype",
+     "pk":2,
+     "fields":{
+        "app_label":"auth",
+        "model":"permission"
+     }
+  },
+  {
+     "model":"contenttypes.contenttype",
+     "pk":3,
+     "fields":{
+        "app_label":"auth",
+        "model":"group"
+     }
+  },
+  {
+     "model":"contenttypes.contenttype",
+     "pk":4,
+     "fields":{
+        "app_label":"contenttypes",
+        "model":"contenttype"
+     }
+  },
+  {
+     "model":"contenttypes.contenttype",
+     "pk":5,
+     "fields":{
+        "app_label":"sessions",
+        "model":"session"
+     }
+  },
+  {
+     "model":"contenttypes.contenttype",
+     "pk":6,
+     "fields":{
+        "app_label":"authtoken",
+        "model":"token"
+     }
+  },
+  {
+     "model":"contenttypes.contenttype",
+     "pk":7,
+     "fields":{
+        "app_label":"authtoken",
+        "model":"tokenproxy"
+     }
+  },
+  {
+     "model":"contenttypes.contenttype",
+     "pk":8,
+     "fields":{
+        "app_label":"content",
+        "model":"user"
+     }
+  },
+  {
+     "model":"contenttypes.contenttype",
+     "pk":9,
+     "fields":{
+        "app_label":"content",
+        "model":"category"
+     }
+  },
+  {
+     "model":"contenttypes.contenttype",
+     "pk":10,
+     "fields":{
+        "app_label":"content",
+        "model":"event"
+     }
+  },
+  {
+     "model":"contenttypes.contenttype",
+     "pk":11,
+     "fields":{
+        "app_label":"content",
+        "model":"jobpost"
+     }
+  },
+  {
+     "model":"contenttypes.contenttype",
+     "pk":12,
+     "fields":{
+        "app_label":"content",
+        "model":"news"
+     }
+  },
+  {
+     "model":"contenttypes.contenttype",
+     "pk":13,
+     "fields":{
+        "app_label":"content",
+        "model":"warning"
+     }
+  },
+  {
+     "model":"contenttypes.contenttype",
+     "pk":14,
+     "fields":{
+        "app_label":"content",
+        "model":"userevent"
+     }
+  },
+  {
+     "model":"contenttypes.contenttype",
+     "pk":15,
+     "fields":{
+        "app_label":"content",
+        "model":"notification"
+     }
+  },
+  {
+     "model":"contenttypes.contenttype",
+     "pk":16,
+     "fields":{
+        "app_label":"content",
+        "model":"priority"
+     }
+  },
+  {
+     "model":"contenttypes.contenttype",
+     "pk":17,
+     "fields":{
+        "app_label":"content",
+        "model":"challenge"
+     }
+  },
+  {
+     "model":"contenttypes.contenttype",
+     "pk":18,
+     "fields":{
+        "app_label":"content",
+        "model":"userchallenge"
+     }
+  },
+  {
+     "model":"contenttypes.contenttype",
+     "pk":19,
+     "fields":{
+        "app_label":"content",
+        "model":"cheatsheet"
+     }
+  },
+  {
+     "model":"sessions.session",
+     "pk":"m79tdvfobix0fp2bvftnmg0gs1yqzvkn",
+     "fields":{
+        "session_data":".eJxVjMsOgjAUBf-la9NQaHuLS_d8A7kvBDUloZCYGP9dSVjo9szMeZket3Xst6JLP4k5mymLPs3pdyfku-Ydyg3zdbY853WZyO6KPWix3Sz6uBzu38GIZfzWgaSpKLGrtKpBCdCpb9ShKguFFNjHFBVcgDpSqxGA68ELO4Chwda8PzXPOh4:1kO468:nZpWAz2NxJpZTqNYG7UxUYaQ9wobr0UjzF81UiHQ1bs",
+        "expire_date":"2020-10-15T19:18:36.221Z"
+     }
+  },
+  {
+     "model":"sessions.session",
+     "pk":"x2dkv800otr2rfq329b7h2lmmmjuotj8",
+     "fields":{
+        "session_data":".eJxVjs1uwjAQhN_FZxr5L7G3R-59Bmu9a5O0EFexA0io714jceE6M9_oe4jwi7XeysZhSzW10MpPWsWnwKjb5frBMiapsjNqIotEDjyi9zkSotHai4MIuLc57DVtYeFOLiun-3sekfrrs-RvXE9loLK2bYnDczK82jp8FU7n42v7djBjnTttR9BycmNXANV1pPNTdNISmNEAgTRWAeEIPGnO3RS0sh6y5Zh1VE78_QO9GE5c:1kO3Eo:fyONFwmHc2DBbq77B8CgEtFa2b_mFTuqhrzrKP-A6K4",
+        "expire_date":"2020-10-15T18:23:30.832Z"
+     }
+  },
+  {
+     "model":"authtoken.token",
+     "pk":"606d9b0894c798fa511d85f876fd8611b7109e32",
+     "fields":{
+        "user":"index",
+        "created":"2020-10-01T18:22:57.720Z"
+     }
+  },
+  {
+     "model":"authtoken.token",
+     "pk":"64e443d5d4eb019b6055bece575d13e32553fb23",
+     "fields":{
+        "user":"eivindste",
+        "created":"2020-10-01T18:58:32.305Z"
+     }
+  },
+  {
+     "model":"content.category",
+     "pk":1,
+     "fields":{
+        "created_at":"2020-10-01T18:29:57.037Z",
+        "updated_at":"2020-10-01T18:29:57.037Z",
+        "text":"Fest"
+     }
+  },
+  {
+     "model":"content.category",
+     "pk":2,
+     "fields":{
+        "created_at":"2020-10-01T18:30:12.523Z",
+        "updated_at":"2020-10-01T18:30:12.523Z",
+        "text":"Bedpress"
+     }
+  },
+  {
+     "model":"content.category",
+     "pk":3,
+     "fields":{
+        "created_at":"2020-10-01T18:30:37.229Z",
+        "updated_at":"2020-10-01T18:30:37.229Z",
+        "text":"Fadderuke"
+     }
+  },
+  {
+     "model":"content.category",
+     "pk":4,
+     "fields":{
+        "created_at":"2020-10-01T18:32:18.564Z",
+        "updated_at":"2020-10-01T18:32:18.564Z",
+        "text":"Sport"
+     }
+  },
+  {
+     "model":"content.challenge",
+     "pk":"8149b976-c5c9-428b-bbf5-ee891e57774a",
+     "fields":{
+        "created_at":"2020-10-01T18:32:35.298Z",
+        "updated_at":"2020-10-01T18:32:35.298Z",
+        "title":"Påske",
+        "year":2020
+     }
+  },
+  {
+     "model":"content.cheatsheet",
+     "pk":"efddd97d-8a75-4f0d-a23c-111bb51c910f",
+     "fields":{
+        "created_at":"2020-10-01T18:33:51.131Z",
+        "updated_at":"2020-10-01T18:33:51.131Z",
+        "title":"Øving 1",
+        "creator":"Zaim Imran",
+        "grade":"FIRST",
+        "study":"DATAING",
+        "course":"Prog grunnkurs",
+        "url":"https://miro.medium.com/max/1000/0*kBHpKva09AsGj7RQ"
+     }
+  },
+  {
+     "model":"content.user",
+     "pk":"eivindste",
+     "fields":{
+        "password":"pbkdf2_sha256$216000$Dp3zr6J3QDd9$KDKTvNysMZeCIwDqbEZJBklw4uINe62Jv4UOT+ymu2s=",
+        "last_login":null,
+        "is_superuser":false,
+        "created_at":"2020-10-01T18:58:32.218Z",
+        "updated_at":"2020-10-01T18:58:47.542Z",
+        "image":null,
+        "image_alt":null,
+        "first_name":"Eivind",
+        "last_name":"Øvstedal",
+        "email":"EivindOvstedal@jourrapide.com",
+        "cell":"",
+        "home_busstop":null,
+        "gender":2,
+        "user_class":2,
+        "user_study":2,
+        "allergy":"",
+        "tool":"",
+        "app_token":null,
+        "is_TIHLDE_member":true,
+        "is_staff":false,
+        "is_active":true,
+        "groups":[
+           
+        ],
+        "user_permissions":[
+           
+        ]
+     }
+  },
+  {
+     "model":"content.user",
+     "pk":"index",
+     "fields":{
+        "password":"pbkdf2_sha256$216000$FsS3jt4tZJa2$69L3Esu1A6xYIWchq0mNA7svX5xqZcIHlDkRuFwHBZU=",
+        "last_login":"2020-10-01T18:23:30Z",
+        "is_superuser":true,
+        "created_at":"2020-10-01T18:22:57.665Z",
+        "updated_at":"2020-10-01T19:46:46.327Z",
+        "image":null,
+        "image_alt":null,
+        "first_name":"Index",
+        "last_name":"TIHLDE",
+        "email":"index@tihlde.org",
+        "cell":"44449999",
+        "home_busstop":1,
+        "gender":2,
+        "user_class":3,
+        "user_study":1,
+        "allergy":"Kun parenteser",
+        "tool":"Parentes",
+        "app_token":null,
+        "is_TIHLDE_member":true,
+        "is_staff":true,
+        "is_active":true,
+        "groups":[
+           2
+        ],
+        "user_permissions":[
+           
+        ]
+     }
+  },
+  {
+     "model":"content.notification",
+     "pk":1,
+     "fields":{
+        "user":"index",
+        "message":"Dette er første notifikasjon ever!!",
+        "read":true
+     }
+  },
+  {
+     "model":"content.notification",
+     "pk":2,
+     "fields":{
+        "user":"index",
+        "message":"Du har fått plass på Pirater sier Arr",
+        "read":true
+     }
+  },
+  {
+     "model":"content.userevent",
+     "pk":1,
+     "fields":{
+        "updated_at":"2020-10-01T18:54:36.940Z",
+        "user":"index",
+        "event":1,
+        "is_on_wait":false,
+        "has_attended":false,
+        "created_at":"2020-10-01T18:54:36.940Z",
+        "allow_photo":true
+     }
+  },
+  {
+     "model":"content.priority",
+     "pk":1,
+     "fields":{
+        "created_at":"2020-10-01T18:37:22.880Z",
+        "updated_at":"2020-10-01T18:37:22.880Z",
+        "user_class":"FIRST",
+        "user_study":"DATAING"
+     }
+  },
+  {
+     "model":"content.priority",
+     "pk":2,
+     "fields":{
+        "created_at":"2020-10-01T18:52:25.374Z",
+        "updated_at":"2020-10-01T18:52:25.374Z",
+        "user_class":"SECOND",
+        "user_study":"DATAING"
+     }
+  },
+  {
+     "model":"content.priority",
+     "pk":3,
+     "fields":{
+        "created_at":"2020-10-01T18:52:31.281Z",
+        "updated_at":"2020-10-01T18:52:31.281Z",
+        "user_class":"THIRD",
+        "user_study":"DATAING"
+     }
+  },
+  {
+     "model":"content.priority",
+     "pk":4,
+     "fields":{
+        "created_at":"2020-10-01T18:52:34.607Z",
+        "updated_at":"2020-10-01T18:52:34.607Z",
+        "user_class":"FIRST",
+        "user_study":"DIGFOR"
+     }
+  },
+  {
+     "model":"content.priority",
+     "pk":5,
+     "fields":{
+        "created_at":"2020-10-01T18:52:41.961Z",
+        "updated_at":"2020-10-01T18:52:41.962Z",
+        "user_class":"SECOND",
+        "user_study":"DIGFOR"
+     }
+  },
+  {
+     "model":"content.priority",
+     "pk":6,
+     "fields":{
+        "created_at":"2020-10-01T18:52:48.065Z",
+        "updated_at":"2020-10-01T18:52:48.065Z",
+        "user_class":"THIRD",
+        "user_study":"DIGFOR"
+     }
+  },
+  {
+     "model":"content.priority",
+     "pk":7,
+     "fields":{
+        "created_at":"2020-10-01T18:53:18.041Z",
+        "updated_at":"2020-10-01T18:53:38.012Z",
+        "user_class":"FIFTH",
+        "user_study":"DIGSAM"
+     }
+  },
+  {
+     "model":"content.event",
+     "pk":1,
+     "fields":{
+        "created_at":"2020-10-01T18:38:27.404Z",
+        "updated_at":"2020-10-01T18:54:25.409Z",
+        "image":"https://ps-attachments.s3.amazonaws.com/361c4f00-befe-4b07-9ece-60886d65e049/kvGQecKphQHV9kO01uBFMQ.png",
+        "image_alt":"Header image 1",
+        "title":"Pirater sier Arr",
+        "start_date":"2020-10-03T18:35:32Z",
+        "end_date":"2020-10-04T18:35:51Z",
+        "location":"Båten Anna",
+        "description":"Jag känner en bot\r\nHon heter Anna. Anna heter hon\r\nOch hon kan banna banna dig så hårt\r\nHon röjer upp I våran kanal\r\nJag vill berätta för dig att jag känner en bot\r\nJag känner en bot\r\nHon heter Anna. Anna heter hon\r\nOch hon kan banna banna dig så hårt\r\nHon röjer upp I våran kanal\r\nJag vill berätta för dig att jag känner en bot\r\nSom alltid vaktar alla som är här\r\nOch som ser till att vi blir utan besvär\r\nDet finns ingen take-over som lyckas\r\nKom ihåg att det är jag som känner en bot\r\nEn bot som ingen ingen annan slår\r\nOch hon kan kicka utan att hon får\r\nHon gör sig av med alla som spammar\r\nJa ingen kan slå våran bot\r\nJag känner en bot\r\nHon heter Anna. Anna heter hon\r\nOch hon kan banna banna dig så hårt\r\nHon röjer upp I våran kanal\r\nJag vill berätta för dig att jag känner en bot\r\nDå kom den dagen jag inte trodde fanns\r\nDen satte verkligen kanalen you're balans\r\nJag trodde aldrig att jag hade så fel\r\nMen när Anna skrev och sa\r\nJag är ingen bot\r\nJag är en väldigt, väldigt vacker tjej\r\nSom nu tyvärr är väldigt främmande för mig\r\nMen det finns inget som behöver förklaras\r\nFör I mina ögon är hon alltid en bot\r\nHon heter Anna. Anna heter hon\r\nOch hon kan banna banna dig så hårt\r\nHon röjer upp I våran kanal\r\nJag vill berätta för dig att jag känner en bot\r\nSom alltid vaktar alla som är här\r\nOch som ser till att vi blir utan besvär\r\nDet finns ingen take-over som lyckas\r\nKom ihåg att det är jag som känner en bot\r\nEn bot som ingen ingen annan slår\r\nOch hon kan kicka utan att hon får\r\nHon gör sig av med alla som spammar\r\nJa, ingen kan slå våran bot!",
+        "priority":2,
+        "category":1,
+        "sign_up":true,
+        "limit":45,
+        "closed":false,
+        "start_registration_at":"2020-10-01T18:36:53Z",
+        "end_registration_at":"2020-10-03T17:36:54Z",
+        "sign_off_deadline":"2020-10-03T17:36:55Z",
+        "evaluate_link":"https://www.youtube.com/watch?v=vpYz3yeXapc",
+        "end_date_schedular_id":null,
+        "sign_off_deadline_schedular_id":null,
+        "registration_priorities":[
+           1
+        ]
+     }
+  },
+  {
+     "model":"content.event",
+     "pk":2,
+     "fields":{
+        "created_at":"2020-10-01T18:41:04.519Z",
+        "updated_at":"2020-10-01T18:41:04.520Z",
+        "image":"https://dbstatic.no/70001449.jpg?imageId=70001449&panow=100&panoh=51.041666666667&panox=0&panoy=45.833333333333&heightw=42.307692307692&heighth=100&heightx=42.657342657343&heighty=0&width=1200&height=630",
+        "image_alt":"Palmesus",
+        "title":"Palmesus",
+        "start_date":"2020-11-01T19:39:27Z",
+        "end_date":"2020-11-02T19:39:36Z",
+        "location":"Kristiansand",
+        "description":"Palmesus er Skandinavias største strandfest. Hvert år samles nesten 40 000 festglade mennesker på Bystranda midt i Kristiansand sentrum for å nyte sol, sommer og en helt enestående fest. \r\n\r\nSelv om det er den gode stemningen og selve strandfesten som står i sentrum er det likevel alltid en svært sterk line-up på Palmesus. Artister som KYGO, Martin Garrix, Kent, Migos, Jason Derulo, Axwell ^ Ingrosso, Dimitri Vegas & Like Mike, Madcon, Taio Cruz, Benny Benassi, Nelly Furtado, Faithless, Fedde Le Grand, Karpe Diem, Fatboy Slim, Steve Aoki, Wyclef Jean, Charlie XCX, Highasakite og mange flere har alle spilt på Palmesus.",
+        "priority":1,
+        "category":3,
+        "sign_up":false,
+        "limit":0,
+        "closed":false,
+        "start_registration_at":null,
+        "end_registration_at":null,
+        "sign_off_deadline":null,
+        "evaluate_link":null,
+        "end_date_schedular_id":null,
+        "sign_off_deadline_schedular_id":null,
+        "registration_priorities":[
+           
+        ]
+     }
+  },
+  {
+     "model":"content.jobpost",
+     "pk":1,
+     "fields":{
+        "created_at":"2020-10-01T18:44:28.827Z",
+        "updated_at":"2020-10-01T18:44:28.827Z",
+        "image":"https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcS7Nm1REKWBvCtyNGStKydj5hquvQkEnvqAlw&usqp=CAU",
+        "image_alt":"Bekk",
+        "title":"Kaffehenter hos Bekk",
+        "ingress":"Vil du jobbe et helt år som kaffeslave?",
+        "body":"Da er Bekk det perfekte sted for deg. Kald kaffe, varm kaffe, latte, kakao. Du skal skaffe alt og vi skal kose oss.",
+        "location":"Starbucks",
+        "deadline":"2022-10-01T18:43:43Z",
+        "company":"Bekk",
+        "email":"index@tihlde.org",
+        "link":"https://tihlde.org/"
+     }
+  },
+  {
+     "model":"content.jobpost",
+     "pk":2,
+     "fields":{
+        "created_at":"2020-10-01T18:47:31.931Z",
+        "updated_at":"2020-10-01T18:47:31.931Z",
+        "image":"https://lh3.googleusercontent.com/tPSknKHPUTRNsWt-YBQpcryIUlKiu3tjCdYgO7rFnpiRtl_oosb-oIZjM8LlHCLS5qY=w2247-h1264",
+        "image_alt":"Tinder",
+        "title":"TIHLDE Tinder",
+        "ingress":"Lei av bare gutter i TIHLDE",
+        "body":"Bli med å lage TIHLDE Tinder. Inspirert fra Mark LIzardburk skal du ha ansvaret for å matche oss TIHLDE gutta med alle jentene i NTNU",
+        "location":"Trondheim",
+        "deadline":"2023-10-01T18:47:14Z",
+        "company":"TIHLDE",
+        "email":"index@tihlde.org",
+        "link":"https://tihlde.org/"
+     }
+  },
+  {
+     "model":"content.news",
+     "pk":1,
+     "fields":{
+        "created_at":"2020-10-01T18:51:48.401Z",
+        "updated_at":"2020-10-01T18:51:48.401Z",
+        "image":"https://scontent.fosl3-1.fna.fbcdn.net/v/t1.0-9/55455433_10156920666740516_650873152355696640_o.jpg?_nc_cat=108&_nc_sid=dd9801&_nc_ohc=V4dNMuV46TYAX-HLtGz&_nc_ht=scontent.fosl3-1.fna&oh=291a3534063d97b10645f5101c4e57d8&oe=5F9C60D6",
+        "image_alt":"TIHLDE",
+        "title":"Join TIHLDE",
+        "header":"LIvet blir bedre når du joiner TIHLDE",
+        "body":"Opptaket har startet!\r\n\r\nTIHLDE drives av engasjerte studenter som vil skape en levende og inkluderende linjeforening, og nå søker vi flere som ønsker å ta del i det!\r\n\r\nSom frivillig i TIHLDE er man garantert å utvide sitt sosiale nettverk, og man får erfaring som kommer godt med senere i livet. Et frivillig verv ser også meget bra ut på CV'en!\r\n\r\nDet er heller ikke skummelt å søke, vi ønsker å få med oss så mange som mulig uansett bakgrunn!"
+     }
+  },
+  {
+     "model":"content.userchallenge",
+     "pk":1,
+     "fields":{
+        "created_at":"2020-10-01T18:53:48.435Z",
+        "updated_at":"2020-10-01T18:53:48.435Z",
+        "user":"index",
+        "challenge":"8149b976-c5c9-428b-bbf5-ee891e57774a"
+     }
   }
 ]

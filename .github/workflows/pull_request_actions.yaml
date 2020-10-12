@@ -8,21 +8,35 @@ on:
 jobs:
   test_and_lint:
     runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: ${{secrets.DATABASE_ROOT_PASSWORD}}
+        ports:
+          - 3306
     steps:
       - uses: actions/checkout@v2
-
       - name: Setup Python
         uses: actions/setup-python@v1
         with:
           python-version: 3.6
-
       - name: Install dependencies with pipenv
         run: |
           pip install pipenv
           pipenv install
-
-      - run: pipenv run isort . --check-only
-      - run: pipenv run black app/ --check
-      - run: pipenv run flake8 app
-#       Temporarily disabled until tests are stable
-#      - run: pipenv run pytest --cov
+      - name: Run sorting check
+        run: pipenv run isort . --check-only
+      - name: Run formatting check
+        run: pipenv run black app/ --check
+      - name: Run linting
+        run: pipenv run flake8 app
+      - name: Run test suite
+        run: pipenv run pytest . --cov
+        env:
+          DJANGO_SECRET: ${{secrets.DJANGO_SECRET}}
+          DATABASE_USER: ${{secrets.DATABASE_USER}}
+          DATABASE_PASSWORD: ${{secrets.DATABASE_PASSWORD}}
+          DATABASE_NAME: ${{secrets.DATABASE_NAME}}
+          DATABASE_HOST: ${{secrets.DATABASE_HOST}}
+          DATABASE_PORT: ${{ job.services.mysql.ports['3306'] }}

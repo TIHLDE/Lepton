@@ -2,11 +2,12 @@ from .category import CategorySerializer
 from .cheatsheet import CheatsheetSerializer
 from .event import (
     EventAdminSerializer,
-    EventCreateUpdateSerializer,
+    EventCreateAndUpdateSerializer,
     EventSerializer,
 )
 from .job_post import JobPostSerializer
-from .news import NewsSerializer
+
+from .registration import RegistrationSerializer
 from .notification import NotificationSerializer, UpdateNotificationSerializer
 from .priority import PrioritySerializer
 from .user import (
@@ -16,5 +17,5 @@ from .user import (
     UserSerializer,
 )
 from .user_challenge import UserChallengeSerializer
-from .user_event import UserEventSerializer
 from .warning import WarningSerializer
+from .news import NewsSerializer

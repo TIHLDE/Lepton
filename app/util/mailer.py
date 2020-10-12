@@ -22,7 +22,7 @@ def send_tihlde_email(subject, message, mail_list):
     )
 
 
-def send_user_event_mail(is_on_wait, event, user):
+def send_registration_mail(is_on_wait, event, user):
     if is_on_wait:
         send_tihlde_email(
             "Du er satt på venteliste for event " + (event),
