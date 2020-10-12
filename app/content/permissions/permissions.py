@@ -85,6 +85,13 @@ class RegistrationPermission(BasePermission):
     message = "You are not an admin"
 
     def has_permission(self, request, view):
+        user_id = get_user_id(request)
+        if user_id is None:
+            return False
+
+        if view.action in ["retrieve", "destroy", "create"]:
+            return True
+
         return is_admin_user(request)
 
 

@@ -7,7 +7,7 @@ from app.util.utils import today
 
 from ...util.mailer import send_registration_mail
 from ..models import Event, Registration, User
-from ..permissions import IsMember, RegistrationPermission, is_admin_user
+from ..permissions import RegistrationPermission, is_admin_user
 from ..serializers import RegistrationSerializer
 
 
@@ -18,12 +18,6 @@ class RegistrationViewSet(viewsets.ModelViewSet):
     permission_classes = [RegistrationPermission]
     queryset = Registration.objects.all()
     lookup_field = "user_id"
-
-    def get_permissions(self):
-        """ Allow a member to sign up/off themselves """
-        if self.request.method in ["POST", "DELETE"]:
-            self.permission_classes = [IsMember]
-        return super(RegistrationViewSet, self).get_permissions()
 
     def list(self, request, event_id):
         """ Returns all registered users for a given events """
@@ -42,15 +36,21 @@ class RegistrationViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request, event_id, user_id):
         """ Returns a registered user for the specified event """
+        current_user_id = request.id
+        if user_id is not current_user_id:
+            return Response(
+                {"detail": _("Cannot access the registration for this user")},
+                status=400,
+            )
+
         try:
             registration = Registration.objects.get(
-                event__pk=event_id, user__user_id=user_id
+                event__pk=event_id, user__user_id=current_user_id
             )
             serializer = RegistrationSerializer(
                 registration, context={"request": request}, many=False
             )
-
-            return Response(serializer.data)
+            return Response(serializer.data, status=200)
         except Registration.DoesNotExist:
             return Response({"detail": _("Registration not found.")}, status=404)
 
