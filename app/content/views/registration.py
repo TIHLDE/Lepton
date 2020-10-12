@@ -37,7 +37,7 @@ class RegistrationViewSet(viewsets.ModelViewSet):
     def retrieve(self, request, event_id, user_id):
         """ Returns a registered user for the specified event """
         current_user_id = request.id
-        if user_id is not current_user_id:
+        if user_id != current_user_id:
             return Response(
                 {"detail": _("Cannot access the registration for this user")},
                 status=400,
