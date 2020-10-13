@@ -5,6 +5,7 @@ from .news import News
 from .user import User, UserManager
 from .registration import Registration
 from .warning import Warning
+from .wiki_post import WikiPost
 from .prioritiy import Priority
 from .notification import Notification
 from .cheatsheet import Cheatsheet

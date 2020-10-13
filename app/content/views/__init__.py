@@ -9,3 +9,4 @@ from .notification import NotificationViewSet
 from .user_challenge import UserChallengeViewSet
 from .warning import WarningViewSet
 from .news import NewsViewSet
+from .wiki import WikiViewSet

@@ -19,3 +19,4 @@ from .user import (
 from .user_challenge import UserChallengeSerializer
 from .warning import WarningSerializer
 from .news import NewsSerializer
+from .wiki import WikiListSerializer, WikiPostSerializer

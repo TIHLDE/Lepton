@@ -28,7 +28,7 @@ jobs:
       - name: Run sorting check
         run: pipenv run isort . --check-only
       - name: Run formatting check
-        run: pipenv run black app/ --check
+        run: pipenv run black app/ --check --exclude migrations
       - name: Run linting
         run: pipenv run flake8 app
       - name: Run test suite

@@ -993,7 +993,7 @@
      "fields":{
         "name":"Can add User event",
         "content_type":14,
-        "codename":"add_userevent"
+        "codename":"add_registration"
      }
   },
   {
@@ -1002,7 +1002,7 @@
      "fields":{
         "name":"Can change User event",
         "content_type":14,
-        "codename":"change_userevent"
+        "codename":"change_registration"
      }
   },
   {
@@ -1011,7 +1011,7 @@
      "fields":{
         "name":"Can delete User event",
         "content_type":14,
-        "codename":"delete_userevent"
+        "codename":"delete_registration"
      }
   },
   {
@@ -1020,7 +1020,7 @@
      "fields":{
         "name":"Can view User event",
         "content_type":14,
-        "codename":"view_userevent"
+        "codename":"view_registration"
      }
   },
   {
@@ -1506,7 +1506,7 @@
      "pk":14,
      "fields":{
         "app_label":"content",
-        "model":"userevent"
+        "model":"registration"
      }
   },
   {
@@ -1726,7 +1726,7 @@
      }
   },
   {
-     "model":"content.userevent",
+     "model":"content.registration",
      "pk":1,
      "fields":{
         "updated_at":"2020-10-01T18:54:36.940Z",

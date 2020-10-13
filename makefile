@@ -61,7 +61,7 @@ check:
 	make flake8
 
 black:
-	docker-compose run web pipenv run black app/ ${args}
+	docker-compose run web pipenv run black app/ ${args} --exclude migrations
 
 isort:
 	docker-compose run web pipenv run isort . ${args}
