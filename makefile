@@ -40,7 +40,7 @@ migrate: ##@Docker Perform migrations to database
 	docker-compose run --rm web pipenv run python manage.py migrate
 
 dumpdata:
-	docker-compose run --rm web pipenv run python manage.py dumpdata > ./app/fixture.json
+	docker-compose run --rm web pipenv run python manage.py dumpdata -e admin -e auth.Permission -e contenttypes --indent=4 > ./app/fixture.json
 
 loaddata:
 	docker-compose run --rm web pipenv run python manage.py loaddata ./app/fixture.json
