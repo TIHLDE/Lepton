@@ -36,6 +36,9 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
+    def tihlde_members(self):
+        return self.filter(is_TIHLDE_member=True)
+
 
 class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
     user_id = models.CharField(max_length=15, primary_key=True)
