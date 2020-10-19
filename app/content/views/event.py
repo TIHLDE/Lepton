@@ -16,6 +16,14 @@ from ..serializers import (
     EventSerializer,
 )
 
+import logging
+from sentry_sdk import capture_exception, capture_message
+from django.http import HttpResponseNotFound
+
+#try:
+#    a_potentially_failing_function()
+#except Exception as e:
+#    capture_exception(e)
 
 class EventViewSet(viewsets.ModelViewSet):
     """
@@ -50,7 +58,8 @@ class EventViewSet(viewsets.ModelViewSet):
                     event, context={"request": request}, many=False
                 )
             return Response(serializer.data)
-        except Event.DoesNotExist:
+        except Event.DoesNotExist as e:
+            capture_exception(e)
             return Response({"detail": _("User event not found.")}, status=404)
 
     def update(self, request, pk):

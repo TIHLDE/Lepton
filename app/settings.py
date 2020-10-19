@@ -15,6 +15,10 @@ import dj_database_url
 import django_heroku
 from corsheaders.defaults import default_headers
 
+import logging
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
+from sentry_sdk.integrations.logging import LoggingIntegration
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -30,7 +34,24 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET")
 DEBUG = os.environ.get("PROD") == None
 
 # Application definition
+sentry_logging = LoggingIntegration(
+    level=logging.INFO,        # Capture info and above as breadcrumbs
+    event_level=logging.ERROR  # Send errors as events
+)
 
+sentry_sdk.init(
+    dsn="https://ed4718cbabdb48db997993a72eba41eb@o460552.ingest.sentry.io/5460965",
+    integrations=[sentry_logging],
+
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for performance monitoring.
+    # Adjusting this value in production is recommended,
+    traces_sample_rate=1.0,
+
+    # If you wish to associate users to errors (assuming you are using
+    # django.contrib.auth) you may enable sending PII data.
+    send_default_pii=True
+)
 
 INSTALLED_APPS = [
     "django.contrib.admin",
