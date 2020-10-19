@@ -3,10 +3,10 @@ from .cheatsheet import CheatsheetViewSet
 from .event import EventViewSet
 from .job_post import JobPostViewSet
 from .user import UserViewSet
+from .user_badge import UserBadgeViewSet
 from .registration import RegistrationViewSet
 from .accept_form import accept_form
 from .notification import NotificationViewSet
-from .user_challenge import UserChallengeViewSet
 from .warning import WarningViewSet
 from .news import NewsViewSet
 from .wiki import WikiViewSet
