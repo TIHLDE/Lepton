@@ -48,7 +48,7 @@ class Registration(BaseModel):
 
         self.is_on_wait = self.event.has_waiting_list()
 
-        if self.should_be_swapped_with_not_prioritized_user():
+        if self.should_swap_with_non_prioritized_user():
             self.swap_users()
 
         self.send_notification_and_mail()
@@ -92,14 +92,15 @@ class Registration(BaseModel):
                 user=self.user, message="Du har fått plass på " + self.event.title
             ).save()
 
-    def should_be_swapped_with_not_prioritized_user(self):
+    def should_swap_with_non_prioritized_user(self):
         return (
             self.is_on_wait
-            and self.is_prioritized()
+            and self.is_prioritized
             and self.event.has_priorities()
             and self.event.is_full()
         )
 
+    @property
     def is_prioritized(self):
         user_class, user_study = EnumUtils.get_user_enums(**self.user.__dict__)
         return self.event.registration_priorities.filter(
@@ -111,10 +112,10 @@ class Registration(BaseModel):
         for registration in Registration.objects.filter(
             event=self.event, is_on_wait=False
         ):
-            if not registration.is_prioritized():
-                return self.swap_not_prioritized_user(registration)
+            if not registration.is_prioritized:
+                return self.swap_places_with(registration)
 
-    def swap_not_prioritized_user(self, other_registration):
+    def swap_places_with(self, other_registration):
         """ Puts own self on the list and other_registration on wait """
         other_registration.is_on_wait = True
         other_registration.save()

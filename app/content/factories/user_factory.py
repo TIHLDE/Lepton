@@ -9,7 +9,7 @@ class UserFactory(DjangoModelFactory):
         model = User
 
     user_id = factory.LazyAttribute(
-        lambda user: f"{user.first_name[:3]}_{user.last_name[3:]}"
+        lambda user: f"{user.first_name[:3]}{user.last_name[3:]}"
     )
     first_name = factory.Faker("first_name")
     last_name = factory.Faker("last_name")
