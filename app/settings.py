@@ -15,6 +15,8 @@ import dj_database_url
 import django_heroku
 from corsheaders.defaults import default_headers
 
+from app.content.enums import EnvironmentOptions
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -28,6 +30,14 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("PROD") == None
+
+ENVIRONMENT = (
+    EnvironmentOptions.PRODUCTION
+    if os.environ.get("PROD")
+    else EnvironmentOptions.DEVELOPMENT
+    if os.environ.get("DEV")
+    else EnvironmentOptions.LOCAL
+)
 
 # Application definition
 

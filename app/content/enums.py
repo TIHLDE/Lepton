@@ -1,3 +1,5 @@
+from enum import Enum
+
 from enumchoicefield import ChoiceEnum
 
 
@@ -23,3 +25,9 @@ class AdminGroup(ChoiceEnum):
     NOK = "Nok"
     PROMO = "Promo"
     SOSIALEN = "Sosialen"
+
+
+class EnvironmentOptions(Enum):
+    LOCAL = "LOCAL"
+    DEVELOPMENT = "DEVELOPMENT"
+    PRODUCTION = "PRODUCTION"
