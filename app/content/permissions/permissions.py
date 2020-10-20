@@ -32,7 +32,7 @@ class IsDev(BasePermission):
             return False
         return (
             User.objects.filter(user_id=user_id)
-            .filter(groups__name__in=[AdminGroup.DEVKOM])
+            .filter(groups__name__in=[AdminGroup.INDEX])
             .count()
             > 0
         )
@@ -44,7 +44,7 @@ class IsHS(BasePermission):
     message = "You are not in HS"
 
     def has_permission(self, request, view):
-        return check_group_permission(request, [AdminGroup.HS, AdminGroup.DEVKOM])
+        return check_group_permission(request, [AdminGroup.HS, AdminGroup.INDEX])
 
 
 class IsPromo(BasePermission):
@@ -54,7 +54,7 @@ class IsPromo(BasePermission):
 
     def has_permission(self, request, view):
         return check_group_permission(
-            request, [AdminGroup.HS, AdminGroup.DEVKOM, AdminGroup.PROMO]
+            request, [AdminGroup.HS, AdminGroup.INDEX, AdminGroup.PROMO]
         )
 
 
@@ -65,7 +65,7 @@ class IsNoK(BasePermission):
 
     def has_permission(self, request, view):
         return check_group_permission(
-            request, [AdminGroup.HS, AdminGroup.DEVKOM, AdminGroup.NOK]
+            request, [AdminGroup.HS, AdminGroup.INDEX, AdminGroup.NOK]
         )
 
 
@@ -77,7 +77,7 @@ class IsNoKorPromo(BasePermission):
     def has_permission(self, request, view):
         return check_group_permission(
             request,
-            [AdminGroup.HS, AdminGroup.DEVKOM, AdminGroup.NOK, AdminGroup.PROMO],
+            [AdminGroup.HS, AdminGroup.INDEX, AdminGroup.NOK, AdminGroup.PROMO],
         )
 
 
@@ -92,7 +92,10 @@ class RegistrationPermission(BasePermission):
         if view.action in ["retrieve", "destroy", "create"]:
             return True
 
-        return is_admin_user(request)
+        return check_strict_group_permission(
+            request,
+            [AdminGroup.HS, AdminGroup.INDEX, AdminGroup.NOK, AdminGroup.SOSIALEN],
+        )
 
 
 class UserPermission(BasePermission):
@@ -158,6 +161,10 @@ def check_group_permission(request, groups):
     if request.method in SAFE_METHODS:
         return True
 
+    return check_strict_group_permission(request, groups)
+
+
+def check_strict_group_permission(request, groups):
     # Check if session-token is provided
     user_id = get_user_id(request)
 
@@ -195,7 +202,7 @@ def is_admin_user(request):
 
     return (
         User.objects.filter(user_id=user_id)
-        .filter(groups__name__in=[AdminGroup.DEVKOM, AdminGroup.HS])
+        .filter(groups__name__in=[AdminGroup.INDEX, AdminGroup.HS])
         .count()
         > 0
         or request.user.is_staff

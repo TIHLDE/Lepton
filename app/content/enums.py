@@ -19,6 +19,7 @@ class UserStudy(ChoiceEnum):
 
 class AdminGroup(ChoiceEnum):
     HS = "HS"
-    DEVKOM = "DevKom"
+    INDEX = "Index"
     NOK = "Nok"
     PROMO = "Promo"
+    SOSIALEN = "Sosialen"

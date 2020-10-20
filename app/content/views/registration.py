@@ -36,8 +36,7 @@ class RegistrationViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request, event_id, user_id):
         """ Returns a registered user for the specified event """
-        current_user_id = request.id
-        if user_id != current_user_id:
+        if user_id != request.id and not is_admin_user(request):
             return Response(
                 {"detail": _("Cannot access the registration for this user")},
                 status=400,
@@ -45,7 +44,7 @@ class RegistrationViewSet(viewsets.ModelViewSet):
 
         try:
             registration = Registration.objects.get(
-                event__pk=event_id, user__user_id=current_user_id
+                event__pk=event_id, user__user_id=user_id
             )
             serializer = RegistrationSerializer(
                 registration, context={"request": request}, many=False
@@ -61,23 +60,23 @@ class RegistrationViewSet(viewsets.ModelViewSet):
             user = User.objects.get(user_id=request.id)
             serializer = RegistrationSerializer(data=request.data)
             if serializer.is_valid():
-                Registration(user=user, event=event).save()
-                return Response({"detail": "Registration created."}, status=200)
+                registration = Registration.objects.create(user=user, event=event)
+                registration.save()
+                registration.refresh_from_db()
+                registration_serializer = RegistrationSerializer(
+                    registration, context={"user": registration.user}
+                )
+                return Response(registration_serializer.data, status=201)
             else:
                 return Response({"detail": serializer.errors}, status=400)
-
         except Event.DoesNotExist:
-            msg = _("The provided event does not exist")
-
-        except User.DoesNotExist:
-            msg = _("The provided user does not exist")
-
+            return Response(
+                {"detail": _("The provided event does not exist")}, status=404
+            )
         except ValidationError as e:
-            msg = _(e.message)
+            return Response({"detail": e.message}, status=400)
 
-        return Response({"detail": _(msg)}, status=404)
-
-    def update(self, request, event_id, user_id):
+    def update(self, request, event_id, user_id, *args, **kwargs):
         """ Updates fields passed in request """
         try:
             registration = Registration.objects.get(
@@ -90,24 +89,18 @@ class RegistrationViewSet(viewsets.ModelViewSet):
             if serializer.is_valid():
                 if registration.has_attended and request.data["has_attended"]:
                     return Response({"detail": _("User already attended")}, status=400)
-                self.perform_update(serializer)
+
                 if not request.data.get("has_attended"):
                     send_registration_mail(
                         request.data.get("is_on_wait"),
                         Event.objects.get(pk=event_id).title,
                         [User.objects.get(user_id=user_id).email],
                     )
-                return Response(
-                    {"detail": _("Registration successfully updated.")}, status=201
-                )
+                return super().update(request, *args, **kwargs)
             else:
                 return Response({"detail": _("Could not perform update")}, status=400)
         except Registration.DoesNotExist:
             return Response({"detail": _("Could not find registration")}, status=404)
-        except User.DoesNotExist:
-            return Response({"detail": _("Could not find user")}, status=404)
-        except Event.DoesNotExist:
-            return Response({"detail": _("Could not find event")}, status=404)
 
         except ValidationError as e:
             return Response({"detail": _(e.message)}, status=404)
@@ -118,26 +111,29 @@ class RegistrationViewSet(viewsets.ModelViewSet):
             registration = Registration.objects.get(
                 event__pk=event_id, user__user_id=user_id
             )
-            event = Event.objects.get(pk=event_id)
+
+            if is_admin_user(request):
+                return Response({"detail": registration.delete()}, status=200)
+
+            event = registration.event
             if event.sign_off_deadline < today():
                 return Response(
-                    {"detail": "Sign off deadline cannot be after deadline."},
+                    {
+                        "detail": "Cannot sign user off after sign off deadline has passed."
+                    },
                     status=400,
                 )
 
             if request.id == user_id:
                 return Response({"detail": registration.delete()}, status=200)
-
-            self.check_object_permissions(request, registration)
-
-            if is_admin_user(request):
-                msg, status = registration.delete(), 200
             else:
-                msg, status = _("You can only unregister yourself"), 403
+                return Response(
+                    {"detail": _("You can only unregister yourself")}, status=403
+                )
 
         except Registration.DoesNotExist:
-            msg, status = _("Could not delete registration."), 404
+            return Response({"detail": _("Could not delete registration.")}, status=404)
         except Event.DoesNotExist:
-            msg = _("The provided event does not exist")
-
-        return Response({"detail": msg}, status=status)
+            return Response(
+                {"detail": _("The provided event does not exist")}, status=404
+            )

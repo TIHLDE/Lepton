@@ -7,8 +7,9 @@ from rest_framework.test import APIClient
 
 import pytest
 
-from ..factories import UserFactory
-from ..models import WikiPost
+from app.content.enums import AdminGroup
+from app.content.factories.user_factory import UserFactory
+from app.content.models.wiki_post import WikiPost
 
 WIKI_PATH = "/api/v1/wiki/"
 WIKI_POST_TEST_DATA = {
@@ -23,7 +24,7 @@ def client():
     test_user = UserFactory(
         user_id="dev", password="123", first_name="member", last_name="user"
     )
-    test_user.groups.add(Group.objects.create(name="DevKom"))
+    test_user.groups.add(Group.objects.create(name=AdminGroup.INDEX))
     token = Token.objects.get(user_id=test_user.user_id)
     client = APIClient()
     client.credentials(HTTP_X_CSRF_TOKEN=token)
