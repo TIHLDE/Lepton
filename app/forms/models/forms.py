@@ -2,6 +2,7 @@ import uuid
 
 from django.db import models
 from enumchoicefield import EnumChoiceField
+from polymorphic.models import PolymorphicModel
 
 from app.content.models.event import Event
 from app.content.models.user import User
@@ -9,14 +10,11 @@ from app.util.models import BaseModel
 from app.forms.enums import FormType, FormFieldType
 
 
-class Form(BaseModel):
+class Form(PolymorphicModel):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=200)
-    type = EnumChoiceField(FormType, default=FormType.GENERAL)
-
-    class Meta:
-        abstract = True
+    # type = EnumChoiceField(FormType, default=FormType.GENERAL)
 
     def __str__(self):
         return self.title
