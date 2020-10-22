@@ -80,6 +80,7 @@ INSTALLED_APPS = [
     "app.util",
     "app.authentication",
     "app.group",
+    "app.forms",
 ]
 
 # Django rest framework
