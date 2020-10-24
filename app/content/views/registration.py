@@ -19,6 +19,10 @@ class RegistrationViewSet(viewsets.ModelViewSet):
     queryset = Registration.objects.all()
     lookup_field = "user_id"
 
+    def get_queryset(self):
+        event_id = self.kwargs.get("event_id", None)
+        return Registration.objects.filter(event=event_id).prefetch_related("user")
+
     def list(self, request, event_id):
         """ Returns all registered users for a given events """
         try:
@@ -79,9 +83,7 @@ class RegistrationViewSet(viewsets.ModelViewSet):
     def update(self, request, event_id, user_id, *args, **kwargs):
         """ Updates fields passed in request """
         try:
-            registration = Registration.objects.get(
-                event__pk=event_id, user__user_id=user_id
-            )
+            registration = self.get_object()
             self.check_object_permissions(self.request, registration)
             serializer = RegistrationSerializer(
                 registration, data=request.data, partial=True, many=False

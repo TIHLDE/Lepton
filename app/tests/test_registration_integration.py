@@ -500,6 +500,29 @@ def test_update_does_not_send_registration_mail_when_registration_is_updated_to_
 
 
 @pytest.mark.django_db
+def test_update_returns_a_single_registration_when_user_has_multiple_for_different_events(
+    member, admin_user
+):
+    """
+    Test that a single registration is returned even
+    if the user has multiple registrations for different events.
+    """
+    RegistrationFactory.create_batch(4, user=member)
+
+    registration_to_update = RegistrationFactory(user=member)
+    event = registration_to_update.event
+    data = _get_registration_put_data(user=member, event=event)
+
+    client = get_api_client(user=admin_user)
+    url = _get_registration_detail_url(registration_to_update)
+    response = client.put(url, data=data)
+
+    actual_user_id = response.json().get("user_info").get("user_id")
+
+    assert actual_user_id == member.user_id
+
+
+@pytest.mark.django_db
 def test_delete_when_not_found(admin_user):
     """Should return a status code of status.HTTP_404_NOT_FOUND."""
     client = get_api_client(user=admin_user)

@@ -13,7 +13,7 @@ class EventWithSignalsFactory(DjangoModelFactory):
     class Meta:
         model = Event
 
-    title = "Test Event"
+    title = factory.Sequence(lambda n: f"Event {n}")
     start_date = timezone.now() + timedelta(days=10)
     end_date = timezone.now() + timedelta(days=11)
     sign_up = True
