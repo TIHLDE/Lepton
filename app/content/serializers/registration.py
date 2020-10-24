@@ -8,7 +8,13 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Registration
-        fields = ["registration_id", "user_info", "is_on_wait", "has_attended"]
+        fields = [
+            "registration_id",
+            "user_info",
+            "is_on_wait",
+            "has_attended",
+            "allow_photo",
+        ]
 
     def get_user_info(self, obj):
         """ Gets the necessary info from user """
@@ -17,6 +23,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
             "user_id": user.user_id,
             "first_name": user.first_name,
             "last_name": user.last_name,
+            "email": user.email,
             "user_class": user.user_class,
             "user_study": user.user_study,
             "allergy": user.allergy,

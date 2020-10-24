@@ -2,12 +2,14 @@ from django.contrib.auth.hashers import make_password
 from rest_framework import serializers
 
 from ..models import Notification, Registration, User
+from .badge import BadgeSerializer
 from .event import EventInUserSerializer
 
 
 class UserSerializer(serializers.ModelSerializer):
     events = serializers.SerializerMethodField()
     groups = serializers.SerializerMethodField()
+    badges = serializers.SerializerMethodField()
     unread_notifications = serializers.SerializerMethodField()
     notifications = serializers.SerializerMethodField()
 
@@ -29,6 +31,7 @@ class UserSerializer(serializers.ModelSerializer):
             "is_TIHLDE_member",
             "events",
             "groups",
+            "badges",
             "unread_notifications",
             "notifications",
         )
@@ -46,6 +49,12 @@ class UserSerializer(serializers.ModelSerializer):
             if not registration.event.expired
         ]
         return EventInUserSerializer(events, many=True).data
+
+    def get_badges(self, obj):
+        """ Lists all badges a user has accomplished """
+        user_badges = obj.user_badges.order_by("created_at")
+        badges = [user_badge.badge for user_badge in user_badges]
+        return BadgeSerializer(badges, many=True).data
 
     def get_groups(self, obj):
         """ Lists all groups a user is a member of """

@@ -1,3 +1,4 @@
+from .badge import BadgeSerializer
 from .category import CategorySerializer
 from .cheatsheet import CheatsheetSerializer
 from .event import (
@@ -16,6 +17,7 @@ from .user import (
     UserMemberSerializer,
     UserSerializer,
 )
-from .user_challenge import UserChallengeSerializer
+from .user_badge import UserBadgeSerializer
 from .warning import WarningSerializer
 from .news import NewsSerializer
+from .wiki import WikiListSerializer, WikiPostSerializer

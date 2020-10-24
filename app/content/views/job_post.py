@@ -1,5 +1,7 @@
+from django.utils.translation import gettext as _
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, viewsets
+from rest_framework.response import Response
 
 from app.util.utils import yesterday
 
@@ -12,8 +14,8 @@ from ..serializers import JobPostSerializer
 
 class JobPostViewSet(viewsets.ModelViewSet):
     """
-        Display all upcoming events and filter them by title, category and expired
-        Excludes expired events by default: to include expired in search results, add '&expired=true'
+        Display all not expired jobposts and filter them by title and expired
+        Excludes expired jobposts by default: to include expired in search results, add '&expired=true'
     """
 
     serializer_class = JobPostSerializer
@@ -28,3 +30,8 @@ class JobPostViewSet(viewsets.ModelViewSet):
         if self.kwargs or "expired" in self.request.query_params:
             return JobPost.objects.all().order_by("deadline")
         return JobPost.objects.filter(deadline__gte=yesterday()).order_by("deadline")
+
+    def destroy(self, request, *args, **kwargs):
+        """ Delete the jobpost """
+        super().destroy(request, *args, **kwargs)
+        return Response({"detail": _("Jobbannonsen ble slettet")}, status=200)

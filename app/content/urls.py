@@ -12,9 +12,10 @@ from .views import (
     NewsViewSet,
     NotificationViewSet,
     RegistrationViewSet,
-    UserChallengeViewSet,
+    UserBadgeViewSet,
     UserViewSet,
     WarningViewSet,
+    WikiViewSet,
     accept_form,
 )
 
@@ -36,7 +37,8 @@ router.register(
     CheatsheetViewSet,
     basename="cheatsheet_list",
 )
-router.register("challenge", UserChallengeViewSet, basename="challenge")
+router.register("badge", UserBadgeViewSet, basename="badge")
+router.register("wiki", WikiViewSet)
 
 # Swagger
 schema_view = get_swagger_view(title="TIHLDE API")

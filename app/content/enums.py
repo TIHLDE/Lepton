@@ -1,3 +1,5 @@
+from enum import Enum
+
 from enumchoicefield import ChoiceEnum
 
 
@@ -19,6 +21,13 @@ class UserStudy(ChoiceEnum):
 
 class AdminGroup(ChoiceEnum):
     HS = "HS"
-    DEVKOM = "DevKom"
+    INDEX = "Index"
     NOK = "Nok"
     PROMO = "Promo"
+    SOSIALEN = "Sosialen"
+
+
+class EnvironmentOptions(Enum):
+    LOCAL = "LOCAL"
+    DEVELOPMENT = "DEVELOPMENT"
+    PRODUCTION = "PRODUCTION"
