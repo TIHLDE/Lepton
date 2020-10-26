@@ -75,11 +75,11 @@ class Answer(BaseModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     submission = models.ForeignKey(Form, on_delete=models.CASCADE, related_name="answers")
     selected_options = models.ManyToManyField(Option, related_name="selected_in_answers", blank=True)
-    answer_text = models.CharField(max_length=255, default="", blank=True)
+    field = models.ForeignKey(Field, on_delete=models.CASCADE, related_name="answers", null=True, blank=True)
+    answer_text = models.CharField(max_length=255, default="", blank=True, null=True)
 
-    @property
-    def field(self):
-        return self.selected_options.first().field
+    def get_field(self):
+        return self.field if self.field else self.selected_options.first().field
 
     def save(self, *args, **kwargs):
         """
