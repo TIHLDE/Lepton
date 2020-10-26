@@ -27,6 +27,14 @@ class AdminGroup(ChoiceEnum):
     SOSIALEN = "Sosialen"
 
 
+class AppModel(ChoiceEnum):
+    EVENT = "Event"
+    JOBPOST = "Jobpost"
+    NEWS = "News"
+    USER = "User"
+    CHEATSHEET = "Cheatsheet"
+
+
 class EnvironmentOptions(Enum):
     LOCAL = "LOCAL"
     DEVELOPMENT = "DEVELOPMENT"
