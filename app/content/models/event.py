@@ -86,6 +86,15 @@ class Event(BaseModel, OptionalImage):
     def event_has_ended(self):
         return today() >= self.end_date
 
+    @property
+    def attended_count(self):
+        """ Number of users who actually attended to the event"""
+        return 0
+
+    @property
+    def registration_count(self):
+        return self.list_count()
+
     def has_waiting_list(self):
         return self.has_limit() and (self.is_full or self.get_waiting_list().exists())
 

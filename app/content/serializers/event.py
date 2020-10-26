@@ -188,3 +188,15 @@ class EventInUserSerializer(EventSerializer):
             "image",
             "image_alt",
         ]
+
+
+class EventInFormSerializer(EventSerializer):
+
+    class Meta:
+        model = Event
+        fields = [
+            "id",
+            "title",
+            "attended_count",
+            "registration_count"
+        ]
