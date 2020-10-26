@@ -5,6 +5,7 @@ from .event import (
     EventAdminSerializer,
     EventCreateAndUpdateSerializer,
     EventSerializer,
+    EventInFormSerializer,
 )
 from .job_post import JobPostSerializer
 
