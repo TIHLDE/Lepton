@@ -4,8 +4,19 @@ from rest_polymorphic.serializers import PolymorphicSerializer
 from app.forms.models import Form, Field, EventForm, Answer, Submission, Option
 from app.content.serializers import EventInFormSerializer
 
+
+class OptionSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Option
+        fields = [
+            "id",
+            "title",
+        ]
+
+
 class FieldSerializer(serializers.ModelSerializer):
-    options = Option
+    options = OptionSerializer(many=True, read_only=True)
 
 class OptionSerializer(serializers.ModelSerializer):
 
@@ -49,8 +60,10 @@ class FormSerializer(serializers.ModelSerializer):
 class EventFormSerializer(FormSerializer):
     event = EventInFormSerializer(read_only=True)
 
+class FormInSubmissionSerializer(serializers.ModelSerializer):
+
     class Meta:
-        model = EventForm
+        model = Form
         fields = [
             "id",
             "title",
