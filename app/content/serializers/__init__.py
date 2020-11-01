@@ -17,6 +17,7 @@ from .user import (
     UserCreateSerializer,
     UserMemberSerializer,
     UserSerializer,
+    UserInAnswerSerializer
 )
 from .user_badge import UserBadgeSerializer
 from .warning import WarningSerializer

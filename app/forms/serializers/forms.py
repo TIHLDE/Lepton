@@ -3,8 +3,19 @@ from rest_framework import serializers
 from app.forms.models import Form, Field, EventForm, Answer, Submission, Option
 from app.content.serializers import EventInFormSerializer
 
+
+class OptionSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Option
+        fields = [
+            "id",
+            "title",
+        ]
+
+
 class FieldSerializer(serializers.ModelSerializer):
-    options = Option
+    options = OptionSerializer(many=True, read_only=True)
 
     class Meta:
         model = Field
@@ -18,29 +29,19 @@ class FieldSerializer(serializers.ModelSerializer):
 
 
 class FormSerializer(serializers.ModelSerializer):
-    fields = FieldSerializer()
+    fields = FieldSerializer(many=True)
 
     class Meta:
         model = Form
         fields = [
             "id",
             "title",
-            "fields"
+            "fields",
         ]
 
-
-class OptionSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Option
-        fields = [
-            "id",
-            "title",
-            "field"
-        ]
 
 class EventFormSerializer(FormSerializer):
-    event = EventInFormSerializer()
+    event = EventInFormSerializer(read_only=True)
 
     class Meta:
         model = EventForm
@@ -49,4 +50,25 @@ class EventFormSerializer(FormSerializer):
             "title",
             "event",
             "field",
+            "type",
+        ]
+
+
+class FormInSubmissionSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Form
+        fields = [
+            "id",
+            "type",
+        ]
+
+
+class FieldInAnswerSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Field
+        fields = [
+            "id",
+            "type"
         ]
