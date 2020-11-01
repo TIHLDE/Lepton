@@ -1,13 +1,12 @@
 from django.core.exceptions import ObjectDoesNotExist
-from django.utils.translation import gettext as _
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, viewsets
+from rest_framework import filters, status, viewsets
 from rest_framework.response import Response
 
-from ..models import User
-from ..pagination import BasePagination
-from ..permissions import UserPermission, is_admin_user
-from ..serializers import (
+from app.content.models import User
+from app.content.pagination import BasePagination
+from app.content.permissions import UserPermission, is_admin_user
+from app.content.serializers import (
     UserAdminSerializer,
     UserCreateSerializer,
     UserMemberSerializer,
@@ -37,16 +36,21 @@ class UserViewSet(viewsets.ModelViewSet):
 
             return Response(serializer.data)
         except User.DoesNotExist:
-            return Response({"detail": _("User not found.")}, status=404)
+            return Response(
+                {"detail": ("Kunne ikke finne brukeren")},
+                status=status.HTTP_404_NOT_FOUND,
+            )
 
     def create(self, request, *args, **kwargs):
         serializer = UserCreateSerializer(data=self.request.data)
 
         if serializer.is_valid():
             serializer.save()
-            return Response({"detail": _("User created")}, status=201)
+            return Response({"detail": serializer.data}, status=status.HTTP_201_CREATED)
 
-        return Response({"detail": serializer.errors}, status=400)
+        return Response(
+            {"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST
+        )
 
     def update(self, request, pk, *args, **kwargs):
         """ Updates fields passed in request """
@@ -77,15 +81,19 @@ class UserViewSet(viewsets.ModelViewSet):
                     )
                 else:
                     return Response(
-                        {"detail": _("Not authenticated to perform user update")},
-                        status=400,
+                        {"detail": ("Du har ikke tillatelse til å oppdatere brukeren")},
+                        status=status.HTTP_400_BAD_REQUEST,
                     )
             if serializer.is_valid():
                 serializer.save()
-                return Response({"detail": _("User successfully updated.")})
+                return Response({"detail": serializer.data}, status=status.HTTP_200_OK)
             else:
                 return Response(
-                    {"detail": _("Could not perform user update")}, status=400
+                    {"detail": ("Kunne ikke oppdatere brukeren")},
+                    status=status.HTTP_400_BAD_REQUEST,
                 )
         except ObjectDoesNotExist:
-            return Response({"detail": "Could not find user"}, status=400)
+            return Response(
+                {"detail": "Kunne ikke finne brukeren"},
+                status=status.HTTP_404_NOT_FOUND,
+            )

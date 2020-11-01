@@ -1,4 +1,4 @@
-from rest_framework import viewsets
+from rest_framework import status, viewsets
 from rest_framework.response import Response
 
 from ..models import Badge, User, UserBadge
@@ -22,18 +22,33 @@ class UserBadgeViewSet(viewsets.ModelViewSet):
             badge = Badge.objects.get(id=request.data.get("badge_id"))
 
             if UserBadge.objects.get(user=user, badge=badge).exists():
-                return Response({"detail": "Badge already completed."}, status=400)
+                return Response(
+                    {"detail": "Dette badgen er allerede fullført"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
             serializer = UserBadgeSerializer(data=request.data)
             if serializer.is_valid():
                 UserBadge(user=user, badge=badge).save()
-                return Response({"detail": "Badge completed."}, status=201)
+                return Response(
+                    {"detail": "Badge fullført!"}, status=status.HTTP_200_OK
+                )
             else:
-                return Response({"detail": serializer.errors}, status=400)
+                return Response(
+                    {"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST
+                )
 
         except User.DoesNotExist:
-            return Response({"detail": "Could not find User"}, status=404)
+            return Response(
+                {"detail": "Kunne ikke finne brukeren"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
         except Badge.DoesNotExist:
-            return Response({"detail": "Could not find badge"}, status=404)
+            return Response(
+                {"detail": "Kunne ikke finne badgen"}, status=status.HTTP_404_NOT_FOUND
+            )
         except Exception:
-            return Response({"detail": "The badge could not be created"}, status=404)
+            return Response(
+                {"detail": "Badgen kunne ikke ble opprettet"},
+                status=status.HTTP_404_NOT_FOUND,
+            )

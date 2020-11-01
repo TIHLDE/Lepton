@@ -1,8 +1,8 @@
 from rest_framework import viewsets
 
-from ..models import Category
-from ..permissions import IsNoKorPromo
-from ..serializers import CategorySerializer
+from app.content.models import Category
+from app.content.permissions import IsNoKorPromo
+from app.content.serializers import CategorySerializer
 
 
 class CategoryViewSet(viewsets.ModelViewSet):

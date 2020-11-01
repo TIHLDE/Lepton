@@ -1,15 +1,14 @@
 from django.utils.translation import gettext as _
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, viewsets
+from rest_framework import filters, status, viewsets
 from rest_framework.response import Response
 
 from app.content.enums import UserClass, UserStudy
-
-from ..filters import CheatsheetFilter
-from ..models import Cheatsheet
-from ..pagination import BasePagination
-from ..permissions import IsMember, is_admin_user
-from ..serializers import CheatsheetSerializer
+from app.content.filters import CheatsheetFilter
+from app.content.models import Cheatsheet
+from app.content.pagination import BasePagination
+from app.content.permissions import IsMember, is_admin_user
+from app.content.serializers import CheatsheetSerializer
 
 
 class CheatsheetViewSet(viewsets.ModelViewSet):
@@ -38,20 +37,25 @@ class CheatsheetViewSet(viewsets.ModelViewSet):
             serializer = CheatsheetSerializer(
                 cheatsheet, context={"request": request}, many=True
             )
-            return Response(serializer.data, status=200)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         except Cheatsheet.DoesNotExist:
-            return Response({"detail": _("Cheatsheets does not exist.")}, status=404)
+            return Response(
+                {"detail": _("Kokeboken eksisterer ikke")},
+                status=status.HTTP_404_NOT_FOUND,
+            )
 
     def create(self, request, *args, **kwargs):
         if is_admin_user(request):
-            serializer = CheatsheetSerializer(data=self.request.data, many=False)
+            serializer = CheatsheetSerializer(data=self.request.data)
             if serializer.is_valid():
                 serializer.save()
-                return Response({"detail": _("Cheatsheet created")}, status=201)
-            return Response({"detail": serializer.errors}, status=400)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(
+                {"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST
+            )
         return Response(
-            {"detail": _("Not authenticated to perform cheatsheet creation")},
-            status=400,
+            {"detail": _("Du har ikke tillatelse til å lage en oppskrift")},
+            status=status.HTTP_403_FORBIDDEN,
         )
 
     def update(self, request, study, grade, pk):
@@ -63,15 +67,16 @@ class CheatsheetViewSet(viewsets.ModelViewSet):
                 serializer = CheatsheetSerializer(cheatsheet, data=request.data)
                 if serializer.is_valid():
                     serializer.save()
-                    return Response(
-                        {"detail": ("Cheatsheet successfully updated.")}, status=204
-                    )
+                    return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(
-                {"detail": ("Not authenticated to perform cheatsheet update")},
-                status=400,
+                {"detail": ("Du har ikke tillatelse til å oppdatere oppskriften")},
+                status=status.HTTP_400_BAD_REQUEST,
             )
         except Cheatsheet.DoesNotExist:
-            return Response({"details": _("Cheatsheet not found")}, status=404)
+            return Response(
+                {"details": _("Oppskriften ble ikke funnet")},
+                status=status.HTTP_404_NOT_FOUND,
+            )
 
     def destroy(self, request, study, grade, pk):
         try:
@@ -79,10 +84,17 @@ class CheatsheetViewSet(viewsets.ModelViewSet):
                 id=pk, grade=UserClass[grade], study=UserStudy[study]
             )
             if is_admin_user(request):
-                return Response({"detail": (cheatsheet.delete())}, status=200)
+                super().destroy(cheatsheet)
+                return Response(
+                    {"detail": ("Oppskriften har blitt slettet")},
+                    status=status.HTTP_200_OK,
+                )
             return Response(
-                {"detail": ("Not authenticated to perform cheatsheet deletion")},
-                status=204,
+                {"detail": ("Ikke riktig tilatelse for å slette en oppskrift")},
+                status=status.HTTP_403_FORBIDDEN,
             )
         except Cheatsheet.DoesNotExist:
-            return Response({"details": _("Cheatsheet not found")}, status=404)
+            return Response(
+                {"details": _("Oppskriften ble ikke funnet")},
+                status=status.HTTP_404_NOT_FOUND,
+            )

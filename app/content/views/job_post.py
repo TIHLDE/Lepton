@@ -1,15 +1,14 @@
 from django.utils.translation import gettext as _
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, viewsets
+from rest_framework import filters, status, viewsets
 from rest_framework.response import Response
 
+from app.content.filters import JobPostFilter
+from app.content.models import JobPost
+from app.content.pagination import BasePagination
+from app.content.permissions import IsDev, IsNoK
+from app.content.serializers import JobPostSerializer
 from app.util.utils import yesterday
-
-from ..filters import JobPostFilter
-from ..models import JobPost
-from ..pagination import BasePagination
-from ..permissions import IsDev, IsNoK
-from ..serializers import JobPostSerializer
 
 
 class JobPostViewSet(viewsets.ModelViewSet):
@@ -34,4 +33,6 @@ class JobPostViewSet(viewsets.ModelViewSet):
     def destroy(self, request, *args, **kwargs):
         """ Delete the jobpost """
         super().destroy(request, *args, **kwargs)
-        return Response({"detail": _("Jobbannonsen ble slettet")}, status=200)
+        return Response(
+            {"detail": _("Jobbannonsen ble slettet")}, status=status.HTTP_200_OK
+        )

@@ -1,9 +1,9 @@
-from rest_framework import viewsets
+from rest_framework import status, viewsets
 from rest_framework.response import Response
 
-from ..models import WikiPost
-from ..permissions import IsDev, IsHS
-from ..serializers import WikiListSerializer, WikiPostSerializer
+from app.content.models import WikiPost
+from app.content.permissions import IsDev, IsHS
+from app.content.serializers import WikiListSerializer, WikiPostSerializer
 
 
 class WikiViewSet(viewsets.ModelViewSet):
@@ -14,4 +14,4 @@ class WikiViewSet(viewsets.ModelViewSet):
 
     def list(self, request):
         serializer = WikiListSerializer(self.queryset, many=True)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)

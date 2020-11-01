@@ -1,21 +1,19 @@
 from django.utils.translation import gettext as _
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, viewsets
+from rest_framework import filters, status, viewsets
 from rest_framework.response import Response
 
-from app.util import yesterday
-
-from ...util import upload_and_replace_image_with_cloud_link
-from ..enums import AppModel
-from ..filters import EventFilter
-from ..models import Event
-from ..pagination import BasePagination
-from ..permissions import IsNoKorPromo, is_admin_user
-from ..serializers import (
+from app.content.enums import AppModel
+from app.content.filters import EventFilter
+from app.content.models import Event
+from app.content.pagination import BasePagination
+from app.content.permissions import IsNoKorPromo, is_admin_user
+from app.content.serializers import (
     EventAdminSerializer,
     EventCreateAndUpdateSerializer,
     EventSerializer,
 )
+from app.util import upload_and_replace_image_with_cloud_link, yesterday
 
 
 class EventViewSet(viewsets.ModelViewSet):
@@ -50,9 +48,12 @@ class EventViewSet(viewsets.ModelViewSet):
                 serializer = EventSerializer(
                     event, context={"request": request}, many=False
                 )
-            return Response(serializer.data)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         except Event.DoesNotExist:
-            return Response({"detail": _("Registration not found.")}, status=404)
+            return Response(
+                {"detail": _("Fant ikke arrangementet")},
+                status=status.HTTP_404_NOT_FOUND,
+            )
 
     def update(self, request, pk):
         """Update the event with the specified pk."""
@@ -66,16 +67,19 @@ class EventViewSet(viewsets.ModelViewSet):
             )
 
             if serializer.is_valid():
-                save = serializer.save()
-                return Response(
-                    {"detail": _("Event successfully updated."), "id": save.id},
-                    status=200,
-                )
+                event = serializer.save()
+                serializer = EventSerializer(event)
+                return Response(serializer.data, status=status.HTTP_200_OK)
             else:
-                return Response({"detail": _("Could not perform update")}, status=400)
+                return Response(
+                    {"detail": _("Kunne ikke utføre oppdatering av arrangementet")},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
         except Event.DoesNotExist:
-            return Response({"detail": "Could not find event"}, status=404)
+            return Response(
+                {"detail": "Fant ikke arrangementet"}, status=status.HTTP_404_NOT_FOUND
+            )
 
     def create(self, request, *args, **kwargs):
         """Create an event."""
@@ -84,7 +88,16 @@ class EventViewSet(viewsets.ModelViewSet):
         serializer = EventCreateAndUpdateSerializer(data=request.data)
 
         if serializer.is_valid():
-            save = serializer.save()
-            return Response({"detail": "Event created", "id": save.id}, status=201)
+            event = serializer.save()
+            serializer = EventSerializer(event)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-        return Response({"detail": serializer.errors}, status=400)
+        return Response(
+            {"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST
+        )
+
+    def destroy(self, request, *args, **kwargs):
+        super().destroy(request, *args, **kwargs)
+        return Response(
+            {"detail": ("Arrangementet ble slettet")}, status=status.HTTP_200_OK
+        )

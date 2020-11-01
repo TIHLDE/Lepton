@@ -1,9 +1,12 @@
-from rest_framework import viewsets
+from rest_framework import status, viewsets
 from rest_framework.response import Response
 
-from ..models import Notification
-from ..permissions import NotificationPermission, is_admin_user
-from ..serializers import NotificationSerializer, UpdateNotificationSerializer
+from app.content.models import Notification
+from app.content.permissions import NotificationPermission, is_admin_user
+from app.content.serializers import (
+    NotificationSerializer,
+    UpdateNotificationSerializer,
+)
 
 
 class NotificationViewSet(viewsets.ModelViewSet):
@@ -19,7 +22,8 @@ class NotificationViewSet(viewsets.ModelViewSet):
             serializer = UpdateNotificationSerializer(notification, data=request.data)
             if serializer.is_valid():
                 serializer.save()
-                return Response({"detail": ("User successfully updated.")}, status=204)
+                return Response({"detail": serializer.data}, status=status.HTTP_200_OK,)
         return Response(
-            {"detail": ("Could not perform notification update")}, status=400
+            {"detail": ("Kunne ikke oppdatere varslet")},
+            status=status.HTTP_403_FORBIDDEN,
         )
