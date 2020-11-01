@@ -117,7 +117,7 @@ def test_retrieve_another_registration_as_member(member, registration):
     url = _get_registration_detail_url(registration)
     response = client.get(url)
 
-    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
 @pytest.mark.django_db
@@ -148,7 +148,7 @@ def test_retrieve_other_registrations_as_member_in_nok_or_promo(
     url = _get_registration_detail_url(registration)
     response = client.get(url)
 
-    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
 @pytest.mark.django_db

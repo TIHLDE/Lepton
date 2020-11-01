@@ -29,13 +29,13 @@ def token(user):
 
 
 @pytest.fixture()
-def member():
-    return UserFactory(is_TIHLDE_member=True)
+def admin_user():
+    return add_user_to_group_with_name(UserFactory(), AdminGroup.HS)
 
 
 @pytest.fixture()
-def admin_user():
-    return add_user_to_group_with_name(UserFactory(), AdminGroup.HS)
+def member():
+    return UserFactory(is_TIHLDE_member=True)
 
 
 @pytest.fixture()

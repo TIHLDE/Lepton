@@ -70,6 +70,7 @@ INSTALLED_APPS = [
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "rest_framework.schemas.coreapi.AutoSchema",
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.AllowAny",],
+    "EXCEPTION_HANDLER": "app.util.exceptions.exception_handler",
 }
 
 # Django rest auth framework

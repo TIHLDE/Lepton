@@ -172,9 +172,7 @@ def check_strict_group_permission(request, groups):
         return False
 
     # Check if user with given id is connected to Groups
-    return (
-        User.objects.filter(user_id=user_id).filter(groups__name__in=groups).count() > 0
-    )
+    return User.objects.filter(user_id=user_id, groups__name__in=groups).count() > 0
 
 
 def get_user_id(request):

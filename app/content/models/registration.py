@@ -3,12 +3,12 @@ from django.db import models
 from django.template.loader import render_to_string
 from django.utils.translation import gettext as _
 
+from app.content.exceptions import EventSignOffDeadlineHasPassed
+from app.content.models.notification import Notification
+from app.content.models.user import User
 from app.util import EnumUtils, today
 from app.util.mailer import send_html_email
 from app.util.models import BaseModel
-
-from .notification import Notification
-from .user import User
 
 
 class Registration(BaseModel):
@@ -34,6 +34,17 @@ class Registration(BaseModel):
             f"{self.user.email} - is to attend {self.event} and is "
             f'{"on the waiting list" if self.is_on_wait else "on the list"}'
         )
+
+    def delete(self, *args, **kwargs):
+        if self.event.is_past_sign_off_deadline:
+            raise EventSignOffDeadlineHasPassed(
+                _("Cannot sign user off after sign off deadline has passed")
+            )
+
+        return super().delete(*args, **kwargs)
+
+    def admin_unregister(self, *args, **kwargs):
+        return super().delete(*args, **kwargs)
 
     def save(self, *args, **kwargs):
         """ Determines whether the object is being created or updated and acts accordingly """

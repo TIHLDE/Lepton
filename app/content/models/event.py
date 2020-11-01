@@ -3,8 +3,8 @@ from django.db import models
 from django.db.models import signals
 from django.utils.translation import gettext as _
 
-from app.util import yesterday
 from app.util.models import BaseModel, OptionalImage
+from app.util.utils import today, yesterday
 
 from ..signals import send_event_reminders
 from .category import Category
@@ -70,6 +70,10 @@ class Event(BaseModel, OptionalImage):
     def waiting_list_count(self):
         """ Number of users on the waiting list """
         return Registration.objects.filter(event__pk=self.pk, is_on_wait=True).count()
+
+    @property
+    def is_past_sign_off_deadline(self):
+        return today() >= self.sign_off_deadline
 
     def has_waiting_list(self):
         return self.has_limit() and (
