@@ -4,7 +4,12 @@ from rest_framework.test import APIClient, APIRequestFactory
 import pytest
 
 from app.content.enums import AdminGroup
-from app.content.factories import EventFactory, RegistrationFactory, UserFactory
+from app.content.factories import (
+    EventFactory,
+    NewsFactory,
+    RegistrationFactory,
+    UserFactory,
+)
 from app.util.test_utils import add_user_to_group_with_name
 
 
@@ -46,3 +51,8 @@ def event():
 @pytest.fixture()
 def registration():
     return RegistrationFactory()
+
+
+@pytest.fixture()
+def news():
+    return NewsFactory()

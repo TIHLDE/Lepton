@@ -49,7 +49,6 @@ def test_list_as_anonymous_user(default_client, event):
 @pytest.mark.django_db
 def test_list_as_member(member, registration):
     """A member should not be able to list all registrations for an event."""
-    print(member.groups)
     client = get_api_client(user=member)
     url = _get_registration_url(registration.event)
     response = client.get(url)
