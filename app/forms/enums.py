@@ -7,6 +7,11 @@ class FormType(ChoiceEnum):
     EVALUATION = "Evaluering"
 
 
+class EventFormType(ChoiceEnum):
+    SURVEY = FormType.SURVEY
+    EVALUATION = FormType.EVALUATION
+
+
 class FormFieldType(ChoiceEnum):
     TEXT_ANSWER = 'Text answer'
     MULTIPLE_SELECT = 'Multiple select'
