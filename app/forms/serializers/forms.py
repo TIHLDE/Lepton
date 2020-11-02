@@ -93,16 +93,9 @@ class FieldInAnswerSerializer(serializers.ModelSerializer):
         ]
 
 
-class FormPolymorphicSerializer(PolymorphicSerializer, serializers.ModelSerializer):
-    resource_type = serializers.CharField()
-    resource_type_field_name = "resource_type"
-
+class FormPolymorphicSerializer(PolymorphicSerializer):
     model_serializer_mapping = {
         Form: FormSerializer,
         EventForm: EventFormSerializer,
     }
-
-    class Meta:
-        model = Form
-        fields = ["resource_type"] + FormSerializer.Meta.fields
 
