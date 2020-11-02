@@ -57,7 +57,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "corsheaders",
     "django_filters",
-    "rest_framework_swagger",
+    "drf_yasg",
     "rest_framework.authtoken",
     "rest_auth",
     # Our apps
@@ -72,13 +72,23 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.AllowAny",],
     "EXCEPTION_HANDLER": "app.util.exceptions.exception_handler",
 }
-
+SWAGGER_SETTINGS = {
+    "SECURITY_DEFINITIONS": {
+        "DRF Token": {
+            "type": "apiKey",
+            "description": "Auth token to be passed as a header as custom authentication. "
+            "Can be found in the django admin panel.",
+            "name": "X-CSRF-Token",
+            "in": "header",
+        }
+    }
+}
 # Django rest auth framework
 REST_AUTH_SERIALIZERS = {
     "PASSWORD_RESET_SERIALIZER": "app.authentication.serializers.reset_password.PasswordResetSerializer",
     "PASSWORD_CHANGE_SERIALIZER": "app.authentication.serializers.change_password.ChangePasswordSerializer",
+    "USER_DETAILS_SERIALIZER": "app.content.serializers.user.UserSerializer",
 }
-
 
 MIDDLEWARE = [
     # Django Cors Headers

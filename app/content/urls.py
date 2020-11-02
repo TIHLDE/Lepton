@@ -2,8 +2,6 @@ from django.conf.urls import include, url
 from django.urls import path
 from rest_framework import routers
 
-from rest_framework_swagger.views import get_swagger_view
-
 from .views import (
     CategoryViewSet,
     CheatsheetViewSet,
@@ -40,12 +38,7 @@ router.register(
 router.register("badge", UserBadgeViewSet, basename="badge")
 router.register("wiki", WikiViewSet)
 
-# Swagger
-schema_view = get_swagger_view(title="TIHLDE API")
-
-
 urlpatterns = [
-    url(r"docs", schema_view),
     url(r"", include(router.urls)),
     path("accept-form/", accept_form),
 ]

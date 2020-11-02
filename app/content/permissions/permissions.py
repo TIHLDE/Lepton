@@ -177,6 +177,7 @@ def check_strict_group_permission(request, groups):
 
 def get_user_id(request):
     token = request.META.get("HTTP_X_CSRF_TOKEN")
+
     if token is None:
         return None
 
