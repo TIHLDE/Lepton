@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 
+from app.common.permissions import IsDev, IsNoK
 from app.content.models import Warning
-from app.content.permissions import IsDev, IsNoK
 from app.content.serializers import WarningSerializer
 
 

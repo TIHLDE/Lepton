@@ -5,7 +5,7 @@ from rest_framework import status
 
 import pytest
 
-from app.content.enums import AdminGroup
+from app.common.enums import AdminGroup
 from app.content.factories import EventFactory, RegistrationFactory
 from app.util.test_utils import get_api_client
 from app.util.utils import today

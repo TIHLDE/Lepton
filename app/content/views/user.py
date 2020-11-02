@@ -3,9 +3,9 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status, viewsets
 from rest_framework.response import Response
 
+from app.common.pagination import BasePagination
+from app.common.permissions import UserPermission, is_admin_user
 from app.content.models import User
-from app.content.pagination import BasePagination
-from app.content.permissions import UserPermission, is_admin_user
 from app.content.serializers import (
     UserAdminSerializer,
     UserCreateSerializer,

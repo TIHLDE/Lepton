@@ -1,8 +1,8 @@
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 
+from app.common.permissions import NotificationPermission, is_admin_user
 from app.content.models import Notification
-from app.content.permissions import NotificationPermission, is_admin_user
 from app.content.serializers import (
     NotificationSerializer,
     UpdateNotificationSerializer,

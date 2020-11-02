@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 
+from app.common.permissions import IsNoKorPromo
 from app.content.models import Category
-from app.content.permissions import IsNoKorPromo
 from app.content.serializers import CategorySerializer
 
 

@@ -3,7 +3,7 @@ from rest_framework.test import force_authenticate
 
 import pytest
 
-from app.content.enums import AdminGroup
+from app.common.enums import AdminGroup
 from app.content.views import EventViewSet
 
 

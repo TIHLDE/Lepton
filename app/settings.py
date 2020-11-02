@@ -15,7 +15,7 @@ import dj_database_url
 import django_heroku
 from corsheaders.defaults import default_headers
 
-from app.content.enums import EnvironmentOptions
+from app.common.enums import EnvironmentOptions
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -64,6 +64,7 @@ INSTALLED_APPS = [
     "app.content",
     "app.util",
     "app.authentication",
+    "app.group",
 ]
 
 # Django rest framework

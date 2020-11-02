@@ -16,6 +16,7 @@ def get_api_client(user=None, group_name=None):
 
 
 def add_user_to_group_with_name(user, group_name):
+    # should be changed to our groups later
     group = Group.objects.create(name=group_name)
     user.groups.add(group)
     return user

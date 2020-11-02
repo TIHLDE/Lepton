@@ -1,6 +1,7 @@
 from factory.django import DjangoModelFactory
 
-from ..enums import UserClass, UserStudy
+from app.common.enums import UserClass, UserStudy
+
 from ..models import Priority
 
 

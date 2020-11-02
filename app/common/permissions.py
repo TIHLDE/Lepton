@@ -1,9 +1,8 @@
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import SAFE_METHODS, BasePermission
 
+from app.common.enums import AdminGroup
 from app.content.models import User
-
-from ..enums import AdminGroup
 
 
 class IsMember(BasePermission):

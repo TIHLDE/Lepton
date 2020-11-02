@@ -2,8 +2,8 @@ from unittest.mock import patch
 
 import pytest
 
-from ..enums import UserClass, UserStudy
-from ..factories import (
+from app.common.enums import UserClass, UserStudy
+from app.content.factories import (
     EventFactory,
     PriorityFactory,
     RegistrationFactory,

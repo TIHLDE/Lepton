@@ -35,6 +35,15 @@ class AppModel(ChoiceEnum):
     CHEATSHEET = "Cheatsheet"
 
 
+class GroupType(ChoiceEnum):
+    THILDE = "THILDE"
+    BOARD = "Styre"
+    SUBGROUP = "Undergruppe"
+    COMMITEE = "Kommite"
+    STUDYYEAR = "Studieår"
+    OTHER = "Annet"
+
+
 class EnvironmentOptions(Enum):
     LOCAL = "LOCAL"
     DEVELOPMENT = "DEVELOPMENT"

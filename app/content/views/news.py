@@ -2,8 +2,9 @@ from django.utils.translation import gettext as _
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 
+from app.common.permissions import IsDev, IsNoK
+
 from ..models import News
-from ..permissions import IsDev, IsNoK
 from ..serializers import NewsSerializer
 
 

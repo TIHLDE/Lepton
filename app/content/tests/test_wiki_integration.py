@@ -7,7 +7,7 @@ from rest_framework.test import APIClient
 
 import pytest
 
-from app.content.enums import AdminGroup
+from app.common.enums import AdminGroup
 from app.content.factories.user_factory import UserFactory
 from app.content.models.wiki_post import WikiPost
 

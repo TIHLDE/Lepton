@@ -3,11 +3,11 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status, viewsets
 from rest_framework.response import Response
 
-from app.content.enums import UserClass, UserStudy
+from app.common.enums import UserClass, UserStudy
+from app.common.pagination import BasePagination
+from app.common.permissions import IsMember, is_admin_user
 from app.content.filters import CheatsheetFilter
 from app.content.models import Cheatsheet
-from app.content.pagination import BasePagination
-from app.content.permissions import IsMember, is_admin_user
 from app.content.serializers import CheatsheetSerializer
 
 

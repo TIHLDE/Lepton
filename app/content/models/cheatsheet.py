@@ -4,7 +4,7 @@ from django.db import models
 
 from enumchoicefield import EnumChoiceField
 
-from app.content.enums import UserClass, UserStudy
+from app.common.enums import UserClass, UserStudy
 from app.util.models import BaseModel
 
 

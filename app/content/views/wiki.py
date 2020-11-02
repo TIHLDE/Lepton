@@ -1,8 +1,8 @@
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 
+from app.common.permissions import IsDev, IsHS
 from app.content.models import WikiPost
-from app.content.permissions import IsDev, IsHS
 from app.content.serializers import WikiListSerializer, WikiPostSerializer
 
 

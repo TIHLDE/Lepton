@@ -3,10 +3,10 @@ from rest_framework import status, viewsets
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 
+from app.common.permissions import RegistrationPermission, is_admin_user
 from app.content.exceptions import APIUserAlreadyAttendedEvent
 from app.content.mixins import APIRegistrationErrorsMixin
 from app.content.models import Event, Registration
-from app.content.permissions import RegistrationPermission, is_admin_user
 from app.content.serializers import RegistrationSerializer
 from app.util.mailer import send_registration_mail
 
