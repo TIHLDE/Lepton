@@ -73,7 +73,7 @@ class Submission(BaseModel):
 class Answer(BaseModel):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    submission = models.ForeignKey(Form, on_delete=models.CASCADE, related_name="answers")
+    submission = models.ForeignKey(Submission, on_delete=models.CASCADE, related_name="answers")
     selected_options = models.ManyToManyField(Option, related_name="selected_in_answers", blank=True)
     field = models.ForeignKey(Field, on_delete=models.CASCADE, related_name="answers", null=True, blank=True)
     answer_text = models.CharField(max_length=255, default="", blank=True, null=True)
@@ -94,7 +94,7 @@ class Answer(BaseModel):
             ids_of_options_to_add.append(selected_option.id)
 
         self.selected_options.add(*ids_of_options_to_add)
-        self.save()
+        super(Answer, self).save()
 
     def __str__(self):
         return f"Answer to {self.submission}"
