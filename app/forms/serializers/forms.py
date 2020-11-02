@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_polymorphic.serializers import PolymorphicSerializer
 
 from app.forms.models import Form, Field, EventForm, Answer, Submission, Option
 from app.content.serializers import EventInFormSerializer
@@ -76,3 +77,11 @@ class FieldInAnswerSerializer(serializers.ModelSerializer):
             "id",
             "type"
         ]
+
+
+class FormPolymorphicSerializer(PolymorphicSerializer):
+    model_serializer_mapping = {
+        Form: FormSerializer,
+        EventForm: EventFormSerializer,
+    }
+
