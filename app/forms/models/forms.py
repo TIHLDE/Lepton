@@ -81,7 +81,7 @@ class Answer(BaseModel):
     def get_field(self):
         return self.field if self.field else self.selected_options.first().field
 
-    def save(self, *args, **kwargs):
+    def saved(self, *args, **kwargs):
         """
         Aggregate the ids of the selected options and
         add them all at once to minimize database queries

@@ -39,6 +39,10 @@ class FormSerializer(serializers.ModelSerializer):
             "fields",
         ]
 
+    def create(self, validated_data):
+        print(validated_data)
+        form = Form.objects.create()
+        return form
 
 class EventFormSerializer(FormSerializer):
     event = EventInFormSerializer(read_only=True)
