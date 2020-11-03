@@ -6,4 +6,13 @@ from ..models import News
 class NewsSerializer(serializers.ModelSerializer):
     class Meta:
         model = News
-        fields = ("title", "header", "body")
+        fields = (
+            "id",
+            "created_at",
+            "updated_at",
+            "image",
+            "image_alt",
+            "title",
+            "header",
+            "body",
+        )
