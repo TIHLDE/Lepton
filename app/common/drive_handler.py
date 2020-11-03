@@ -29,16 +29,16 @@ def make_directory(dirname):
         oc.logout()
 
 
-def upload_bytes(to_dir, file_data, file_extention):
+def upload_bytes(to_dir, file_data, file_extension):
     """
-    Uploads raw bytes or chunks <file_data> to path /<to_dir>/<random uuid4><file_extention> in cloud and returns shared link.
+    Uploads raw bytes or chunks <file_data> to path /<to_dir>/<random uuid4><file_extension> in cloud and returns shared link.
     """
-    if "." not in file_extention:
-        file_extention = "." + file_extention
+    if "." not in file_extension:
+        file_extension = "." + file_extension
 
     file_name = uuid.uuid4()
-    cloud_file_path = f"{ to_dir }/{ file_name }{ file_extention }"
-    local_file_path = f"app/util/temp/temp{ file_extention }"
+    cloud_file_path = f"{ to_dir }/{ file_name }{ file_extension }"
+    local_file_path = f"app/util/temp{ file_extension }"
 
     with open(local_file_path, "wb") as f:
         if type(file_data) == InMemoryUploadedFile:
@@ -73,7 +73,7 @@ def upload_bytes(to_dir, file_data, file_extention):
             "Unable to get shared link from cloud. (Most likely because of a bug in the pyocclient package.)"
         )
 
-    return f"{ share_info.get_link() }/preview#file{ file_extention }"
+    return f"{ share_info.get_link() }/preview#file{ file_extension }"
 
 
 def is_url(data):
@@ -85,9 +85,9 @@ def is_url(data):
         return False
 
 
-def get_cloud_link_from_url(file_url, file_extention, to_dir):
+def get_cloud_link_from_url(file_url, file_extension, to_dir):
     """
-    Takes the file url and file extention and uploads file to cloud.
+    Takes the file url and file extension and uploads file to cloud.
     """
     if not is_url(file_url):
         raise ValueError("Given data has to be a url to a file.")
@@ -97,7 +97,7 @@ def get_cloud_link_from_url(file_url, file_extention, to_dir):
     if type(file_data) != bytes:
         file_data = bytes(file_data, "utf-8")
 
-    return upload_bytes(to_dir, file_data, file_extention)
+    return upload_bytes(to_dir, file_data, file_extension)
 
 
 def get_cloud_links_from_files(request, to_dir):
@@ -108,8 +108,8 @@ def get_cloud_links_from_files(request, to_dir):
     replaced_files = {}
 
     for file in request.FILES:
-        _, file_extention = os.path.splitext(file.name)
-        replaced_files[file.name] = upload_bytes(to_dir, file, file_extention)
+        _, file_extension = os.path.splitext(file.name)
+        replaced_files[file.name] = upload_bytes(to_dir, file, file_extension)
 
     return replaced_files
 
@@ -125,9 +125,9 @@ def get_cloud_link_from_single_file(request, to_dir):
     key = list(request.FILES.keys())[0]
     file = request.FILES[key]
 
-    _, file_extention = os.path.splitext(file.name)
+    _, file_extension = os.path.splitext(file.name)
 
-    return upload_bytes(to_dir, file, file_extention)
+    return upload_bytes(to_dir, file, file_extension)
 
 
 def upload_and_replace_image_with_cloud_link(request, to_dir):
@@ -136,14 +136,31 @@ def upload_and_replace_image_with_cloud_link(request, to_dir):
     """
 
     image = request.data.get("image", None)
-    image_extention = request.data.get("image_extention", None)
+    image_extension = request.data.get("image_extension", None)
 
     try:
-        if image and image_extention:
+        if image and image_extension:
             request.data["image"] = get_cloud_link_from_url(
-                image, image_extention, to_dir
+                image, image_extension, to_dir
             )
         elif request.FILES:
             request.data["image"] = get_cloud_link_from_single_file(request, to_dir)
+    except ValueError as e:
+        logger.error(e.message)
+
+
+def upload_and_replace_url_with_cloud_link(request, to_dir):
+    """
+    Takes request, and cloud directory. Uploads file and updates request.data["url"] with cloud url.
+    """
+
+    url = request.data.get("url", None)
+    file_extension = request.data.get("file_extension", None)
+
+    try:
+        if url and file_extension:
+            request.data["url"] = get_cloud_link_from_url(url, file_extension, to_dir)
+        elif request.FILES:
+            request.data["url"] = get_cloud_link_from_single_file(request, to_dir)
     except ValueError as e:
         logger.error(e.message)

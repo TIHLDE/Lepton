@@ -3,7 +3,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status, viewsets
 from rest_framework.response import Response
 
-from app.common.enums import UserClass, UserStudy
+from app.common.drive_handler import upload_and_replace_url_with_cloud_link
+from app.common.enums import AppModel, UserClass, UserStudy
 from app.common.pagination import BasePagination
 from app.common.permissions import IsMember, is_admin_user
 from app.content.filters import CheatsheetFilter
@@ -20,16 +21,24 @@ class CheatsheetViewSet(viewsets.ModelViewSet):
     filterset_class = CheatsheetFilter
     search_fields = ["course", "title", "creator"]
 
+    def get_object(self):
+        if "pk" not in self.kwargs:
+            return self.filter_queryset(self.queryset).filter(
+                grade=UserClass(int(self.kwargs["grade"])),
+                study=UserStudy[self.kwargs["study"]],
+            )
+
+        return super().get_object()
+
     def filter_queryset(self, queryset):
         for backend in list(self.filter_backends):
             queryset = backend().filter_queryset(self.request, queryset, self)
         return CheatsheetFilter(self.request.GET, queryset=queryset).qs
 
-    def list(self, request, study, grade):
+    def list(self, request, *args, **kwargs):
+        """Return a list of cheatsheets filtered by UserClass and UserStudy"""
         try:
-            cheatsheet = self.filter_queryset(self.queryset).filter(
-                grade=UserClass[grade], study=UserStudy[study]
-            )
+            cheatsheet = self.get_object()
             page = self.paginate_queryset(cheatsheet)
             if page is not None:
                 serializer = CheatsheetSerializer(page, many=True)
@@ -45,6 +54,8 @@ class CheatsheetViewSet(viewsets.ModelViewSet):
             )
 
     def create(self, request, *args, **kwargs):
+        """Creates a new cheatsheet """
+        upload_and_replace_url_with_cloud_link(request, AppModel.EVENT)
         if is_admin_user(request):
             serializer = CheatsheetSerializer(data=self.request.data)
             if serializer.is_valid():
@@ -58,18 +69,18 @@ class CheatsheetViewSet(viewsets.ModelViewSet):
             status=status.HTTP_403_FORBIDDEN,
         )
 
-    def update(self, request, study, grade, pk):
+    def update(self, request, *args, **kwargs):
+        """Updates a cheatsheet retrieved by UserClass and UserStudy and pk"""
         try:
-            cheatsheet = self.queryset.get(
-                id=pk, grade=UserClass[grade], study=UserStudy[study]
-            )
+            upload_and_replace_url_with_cloud_link(request, AppModel.CHEATSHEET)
+            cheatsheet = self.get_object()
             if is_admin_user(request):
                 serializer = CheatsheetSerializer(cheatsheet, data=request.data)
                 if serializer.is_valid():
                     serializer.save()
                     return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(
-                {"detail": ("Du har ikke tillatelse til å oppdatere oppskriften")},
+                {"detail": _("Du har ikke tillatelse til å oppdatere oppskriften")},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         except Cheatsheet.DoesNotExist:
@@ -78,19 +89,18 @@ class CheatsheetViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-    def destroy(self, request, study, grade, pk):
+    def destroy(self, request, *args, **kwargs):
+        """Deletes a cheatsheet retrieved by UserClass and UserStudy"""
         try:
-            cheatsheet = self.queryset.get(
-                id=pk, grade=UserClass[grade], study=UserStudy[study]
-            )
+            cheatsheet = self.get_object()
             if is_admin_user(request):
                 super().destroy(cheatsheet)
                 return Response(
-                    {"detail": ("Oppskriften har blitt slettet")},
+                    {"detail": _("Oppskriften har blitt slettet")},
                     status=status.HTTP_200_OK,
                 )
             return Response(
-                {"detail": ("Ikke riktig tilatelse for å slette en oppskrift")},
+                {"detail": _("Ikke riktig tilatelse for å slette en oppskrift")},
                 status=status.HTTP_403_FORBIDDEN,
             )
         except Cheatsheet.DoesNotExist:

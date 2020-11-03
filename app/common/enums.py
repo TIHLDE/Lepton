@@ -48,3 +48,10 @@ class EnvironmentOptions(Enum):
     LOCAL = "LOCAL"
     DEVELOPMENT = "DEVELOPMENT"
     PRODUCTION = "PRODUCTION"
+
+
+class CheatsheetType(ChoiceEnum):
+    FILE = "Fil"
+    GITHUB = "GitHub"
+    LINK = "Link"
+    OTHER = "Annet"

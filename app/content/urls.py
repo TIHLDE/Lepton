@@ -31,7 +31,7 @@ router.register(
 )
 router.register("notification", NotificationViewSet, basename="notification")
 router.register(
-    r"cheatsheet/study/(?P<study>[^\.]+)/grade/(?P<grade>[^\.]+)/file",
+    r"cheatsheet/(?P<study>[^\.]+)/(?P<grade>[^\.]+)/files",
     CheatsheetViewSet,
     basename="cheatsheet_list",
 )

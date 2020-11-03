@@ -4,7 +4,7 @@ from django.db import models
 
 from enumchoicefield import EnumChoiceField
 
-from app.common.enums import UserClass, UserStudy
+from app.common.enums import CheatsheetType, UserClass, UserStudy
 from app.util.models import BaseModel
 
 
@@ -15,6 +15,8 @@ class Cheatsheet(BaseModel):
     grade = EnumChoiceField(UserClass, default=UserClass.FIRST)
     study = EnumChoiceField(UserStudy, default=UserStudy.DATAING)
     course = models.CharField(max_length=200)
+    type = EnumChoiceField(CheatsheetType, default=CheatsheetType.LINK)
+    official = models.BooleanField(default=False)
     url = models.URLField(max_length=600)
 
     class Meta:
@@ -22,4 +24,4 @@ class Cheatsheet(BaseModel):
         verbose_name_plural = "Cheatsheets"
 
     def __str__(self):
-        return f"Cheatsheet -{self.title} {self.creator} {self.grade} {self.study} {self.course}"
+        return f"{self.title} {self.course}"

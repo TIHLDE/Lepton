@@ -5,6 +5,7 @@ import pytest
 
 from app.common.enums import AdminGroup
 from app.content.factories import (
+    CheatsheetFactory,
     EventFactory,
     NewsFactory,
     RegistrationFactory,
@@ -57,6 +58,11 @@ def group():
 @pytest.fixture
 def registration():
     return RegistrationFactory()
+
+
+@pytest.fixture()
+def cheatsheet():
+    return CheatsheetFactory()
 
 
 @pytest.fixture()
