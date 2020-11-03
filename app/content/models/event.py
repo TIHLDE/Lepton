@@ -9,7 +9,6 @@ from app.util.utils import today, yesterday
 from ..signals import send_event_reminders
 from .category import Category
 from .prioritiy import Priority
-from .registration import Registration
 from .user import User
 
 
@@ -64,28 +63,34 @@ class Event(BaseModel, OptionalImage):
     @property
     def list_count(self):
         """ Number of users registered to attend the event """
-        return Registration.objects.filter(event__pk=self.pk, is_on_wait=False).count()
+        return self.get_queue().count()
 
     @property
     def waiting_list_count(self):
         """ Number of users on the waiting list """
-        return Registration.objects.filter(event__pk=self.pk, is_on_wait=True).count()
+        return self.get_waiting_list().count()
+
+    def get_queue(self):
+        """ Number of users registered to attend the event """
+        return self.registrations.filter(is_on_wait=False)
+
+    def get_waiting_list(self):
+        """ Number of users on the waiting list """
+        return self.registrations.filter(is_on_wait=True)
 
     @property
     def is_past_sign_off_deadline(self):
         return today() >= self.sign_off_deadline
 
     def has_waiting_list(self):
-        return self.has_limit() and (
-            self.is_full()
-            or Registration.objects.filter(event=self, is_on_wait=True).exists()
-        )
+        return self.has_limit() and (self.is_full or self.get_waiting_list().exists())
 
     def has_limit(self):
         return self.limit != 0
 
+    @property
     def is_full(self):
-        return Registration.objects.filter(event=self).count() >= self.limit
+        return self.get_queue().count() >= self.limit
 
     def has_priorities(self):
         return self.registration_priorities.all().exists()

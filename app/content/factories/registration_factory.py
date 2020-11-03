@@ -16,5 +16,5 @@ class RegistrationFactory(DjangoModelFactory):
     is_on_wait = factory.LazyAttribute(
         lambda registration: False
         if registration.event.limit == 0
-        else registration.event.is_full()
+        else registration.event.is_full
     )

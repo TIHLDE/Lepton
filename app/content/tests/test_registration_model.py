@@ -239,3 +239,68 @@ def test_users_are_not_swapped_when_both_are_in_a_priority_pool(
 
     assert not registration_in_priority_pool.is_on_wait
     assert other_registration_in_priority_pool.is_on_wait
+
+
+@pytest.mark.django_db
+def test_registration_in_queue_is_deleted_priority_in_waiting_list_is_moved_to_queue(
+    event_with_registrations,
+    registration_in_priority_pool,
+    priority_user_class,
+    priority_user_study,
+    non_priority_user_study,
+):
+    """Swap registration when user is deleted with prioritized user."""
+    user_in_priority_pool = UserFactory(
+        user_class=priority_user_class.value, user_study=priority_user_study.value
+    )
+    other_registration_in_priority_pool = RegistrationFactory(
+        event=event_with_registrations, user=user_in_priority_pool
+    )
+    user_not_in_priority_pool = UserFactory(
+        user_class=priority_user_class.value, user_study=non_priority_user_study.value
+    )
+    registration_not_in_priority_pool = RegistrationFactory(
+        event=event_with_registrations, user=user_not_in_priority_pool
+    )
+
+    registration_in_priority_pool.delete()
+    other_registration_in_priority_pool.refresh_from_db()
+    registration_not_in_priority_pool.refresh_from_db()
+
+    assert not registration_in_priority_pool.event.registrations.filter(
+        registration_id=registration_in_priority_pool.registration_id
+    ).exists()
+    assert not other_registration_in_priority_pool.is_on_wait
+    assert registration_not_in_priority_pool.is_on_wait
+
+
+@pytest.mark.django_db
+def test_registration_in_queue_is_deleted_if_no_priority_registration_in_waiting_list_first_registration_is_moved_to_queue(
+    event_with_registrations,
+    registration_in_priority_pool,
+    priority_user_class,
+    non_priority_user_study,
+):
+    """Swap registration when user is deleted with first registration in waiting list, if no priority exists."""
+    user_not_in_priority_pool = UserFactory(
+        user_class=priority_user_class.value, user_study=non_priority_user_study.value
+    )
+    registration_not_in_priority_pool = RegistrationFactory(
+        event=event_with_registrations, user=user_not_in_priority_pool
+    )
+    other_user_not_in_priority_pool = UserFactory(
+        user_class=priority_user_class.value, user_study=non_priority_user_study.value
+    )
+    other_registration_not_in_priority_pool = RegistrationFactory(
+        event=event_with_registrations, user=other_user_not_in_priority_pool
+    )
+
+    registration_in_priority_pool.delete()
+    registration_not_in_priority_pool.refresh_from_db()
+    other_registration_not_in_priority_pool.refresh_from_db()
+
+    assert not registration_in_priority_pool.event.registrations.filter(
+        registration_id=registration_in_priority_pool.registration_id
+    ).exists()
+    assert not registration_not_in_priority_pool.is_on_wait
+    assert other_registration_not_in_priority_pool.is_on_wait

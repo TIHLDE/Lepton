@@ -15,8 +15,12 @@ class Registration(BaseModel):
     """ Model for user registration for an event """
 
     registration_id = models.AutoField(primary_key=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    event = models.ForeignKey("Event", on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="registrations"
+    )
+    event = models.ForeignKey(
+        "Event", on_delete=models.CASCADE, related_name="registrations"
+    )
 
     is_on_wait = models.BooleanField(default=False, verbose_name="waiting list")
     has_attended = models.BooleanField(default=False)
@@ -40,6 +44,8 @@ class Registration(BaseModel):
             raise EventSignOffDeadlineHasPassed(
                 _("Cannot sign user off after sign off deadline has passed")
             )
+        if not self.is_on_wait:
+            self.move_from_waiting_list_to_queue()
 
         return super().delete(*args, **kwargs)
 
@@ -57,7 +63,7 @@ class Registration(BaseModel):
         """ Determines whether user is on the waiting list or not when the instance is created. """
         self.clean()
 
-        self.is_on_wait = self.event.has_waiting_list()
+        self.is_on_wait = self.event.is_full
 
         if self.should_swap_with_non_prioritized_user():
             self.swap_users()
@@ -108,7 +114,7 @@ class Registration(BaseModel):
             self.is_on_wait
             and self.is_prioritized
             and self.event.has_priorities()
-            and self.event.is_full()
+            and self.event.is_full
         )
 
     @property
@@ -120,9 +126,7 @@ class Registration(BaseModel):
 
     def swap_users(self):
         """ Swaps a user with a spot with a prioritized user, if such user exists """
-        for registration in Registration.objects.filter(
-            event=self.event, is_on_wait=False
-        ):
+        for registration in self.event.get_queue().order_by("-created_at"):
             if not registration.is_prioritized:
                 return self.swap_places_with(registration)
 
@@ -131,6 +135,19 @@ class Registration(BaseModel):
         other_registration.is_on_wait = True
         other_registration.save()
         self.is_on_wait = False
+
+    def move_from_waiting_list_to_queue(self):
+        registrations = self.event.get_waiting_list().order_by("created_at")
+        registration_move_to_queue = next(
+            (
+                registration
+                for registration in registrations
+                if registration.is_prioritized
+            ),
+            registrations[0],
+        )
+        registration_move_to_queue.is_on_wait = False
+        registration_move_to_queue.save()
 
     def clean(self):
         """
