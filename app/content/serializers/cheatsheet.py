@@ -13,5 +13,7 @@ class CheatsheetSerializer(serializers.ModelSerializer):
             "grade",
             "study",
             "course",
+            "type",
+            "official",
             "url",
         ]

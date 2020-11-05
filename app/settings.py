@@ -15,7 +15,7 @@ import dj_database_url
 import django_heroku
 from corsheaders.defaults import default_headers
 
-from app.content.enums import EnvironmentOptions
+from app.common.enums import EnvironmentOptions
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -57,27 +57,39 @@ INSTALLED_APPS = [
     "rest_framework",
     "corsheaders",
     "django_filters",
-    "rest_framework_swagger",
+    "drf_yasg",
     "rest_framework.authtoken",
     "rest_auth",
     # Our apps
     "app.content",
     "app.util",
     "app.authentication",
+    "app.group",
 ]
 
 # Django rest framework
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "rest_framework.schemas.coreapi.AutoSchema",
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.AllowAny",],
+    "EXCEPTION_HANDLER": "app.util.exceptions.exception_handler",
 }
-
+SWAGGER_SETTINGS = {
+    "SECURITY_DEFINITIONS": {
+        "DRF Token": {
+            "type": "apiKey",
+            "description": "Auth token to be passed as a header as custom authentication. "
+            "Can be found in the django admin panel.",
+            "name": "X-CSRF-Token",
+            "in": "header",
+        }
+    }
+}
 # Django rest auth framework
 REST_AUTH_SERIALIZERS = {
     "PASSWORD_RESET_SERIALIZER": "app.authentication.serializers.reset_password.PasswordResetSerializer",
     "PASSWORD_CHANGE_SERIALIZER": "app.authentication.serializers.change_password.ChangePasswordSerializer",
+    "USER_DETAILS_SERIALIZER": "app.content.serializers.user.UserSerializer",
 }
-
 
 MIDDLEWARE = [
     # Django Cors Headers
@@ -92,6 +104,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "django.middleware.locale.LocaleMiddleware",
 ]
 
 ROOT_URLCONF = "app.urls"
@@ -145,7 +158,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/
 
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = "nb-no"
 TIME_ZONE = "Europe/Oslo"
 USE_I18N = True
 USE_L10N = True

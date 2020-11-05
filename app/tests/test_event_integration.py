@@ -3,7 +3,7 @@ from rest_framework.test import force_authenticate
 
 import pytest
 
-from app.content.enums import AdminGroup
+from app.common.enums import AdminGroup
 from app.content.views import EventViewSet
 
 
@@ -159,10 +159,10 @@ def test_delete_as_user(request_factory, user, event):
 @pytest.mark.parametrize(
     ("group_name", "expected_status_code"),
     [
-        (AdminGroup.HS, 204),
-        (AdminGroup.INDEX, 204),
-        (AdminGroup.NOK, 204),
-        (AdminGroup.PROMO, 204),
+        (AdminGroup.HS, 200),
+        (AdminGroup.INDEX, 200),
+        (AdminGroup.NOK, 200),
+        (AdminGroup.PROMO, 200),
         ("Non_admin_group", 403),
     ],
 )

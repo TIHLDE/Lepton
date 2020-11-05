@@ -14,9 +14,18 @@ admin.site.register(models.Badge)
 admin.site.register(models.UserBadge)
 
 
+def admin_delete_registration(modeladmin, request, queryset):
+    for registration in queryset:
+        registration.admin_unregister()
+
+
 @admin.register(models.Registration)
 class RegistrationAdmin(admin.ModelAdmin):
     list_display = ("user", "event", "is_on_wait", "has_attended")
+    # Enables checks bypassing from the 'Action' dropdown in Registration overview
+    actions = [
+        admin_delete_registration,
+    ]
 
 
 @admin.register(models.User)

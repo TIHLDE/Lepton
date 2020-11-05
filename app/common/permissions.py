@@ -1,9 +1,8 @@
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import SAFE_METHODS, BasePermission
 
+from app.common.enums import AdminGroup
 from app.content.models import User
-
-from ..enums import AdminGroup
 
 
 class IsMember(BasePermission):
@@ -172,13 +171,12 @@ def check_strict_group_permission(request, groups):
         return False
 
     # Check if user with given id is connected to Groups
-    return (
-        User.objects.filter(user_id=user_id).filter(groups__name__in=groups).count() > 0
-    )
+    return User.objects.filter(user_id=user_id, groups__name__in=groups).count() > 0
 
 
 def get_user_id(request):
     token = request.META.get("HTTP_X_CSRF_TOKEN")
+
     if token is None:
         return None
 

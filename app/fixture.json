@@ -1,362 +1,362 @@
 [
-  {
-    "model": "sessions.session",
-    "pk": "uluxibay9z8ygncjnjqevuzsbwxmc47p",
-    "fields": {
-      "session_data": ".eJxVjMkKwjAURf8lawmvQ-qrS_d-Q3lTTFRS6ACC-O9a6EK395xzX26gdUnDOts0ZHUnl4va0x1-dya5W9mg3qhcRy9jWabMflP8Tmd_GdUe5939O0g0p28NrVVgrVBQEERlpB6ryCxtH1i6JgDGvop67GoDxihNtFrQQmiQANz7AzqBOkk:1kU8R8:6qGRI7uDv8TpglOOWvKqviMaK3BPvqZsX2X_nlYrfyA",
-      "expire_date": "2020-11-01T13:09:22.974Z"
-    }
-  },
-  {
-    "model": "authtoken.token",
-    "pk": "606d9b0894c798fa511d85f876fd8611b7109e32",
-    "fields": {
-      "user": "index",
-      "created": "2020-10-01T18:22:57.720Z"
-    }
-  },
-  {
-    "model": "authtoken.token",
-    "pk": "64e443d5d4eb019b6055bece575d13e32553fb23",
-    "fields": {
-      "user": "eivindste",
-      "created": "2020-10-01T18:58:32.305Z"
-    }
-  },
-  {
-    "model": "content.badge",
-    "pk": "8149b976-c5c9-428b-bbf5-ee891e57774a",
-    "fields": {
-      "created_at": "2020-10-01T18:32:35.298Z",
-      "updated_at": "2020-10-01T18:32:35.298Z",
-      "image": null,
-      "image_alt": null,
-      "title": "Påske",
-      "description": "Beskrivelse"
-    }
-  },
-  {
-    "model": "content.category",
-    "pk": 1,
-    "fields": {
-      "created_at": "2020-10-01T18:29:57.037Z",
-      "updated_at": "2020-10-01T18:29:57.037Z",
-      "text": "Fest"
-    }
-  },
-  {
-    "model": "content.category",
-    "pk": 2,
-    "fields": {
-      "created_at": "2020-10-01T18:30:12.523Z",
-      "updated_at": "2020-10-01T18:30:12.523Z",
-      "text": "Bedpress"
-    }
-  },
-  {
-    "model": "content.category",
-    "pk": 3,
-    "fields": {
-      "created_at": "2020-10-01T18:30:37.229Z",
-      "updated_at": "2020-10-01T18:30:37.229Z",
-      "text": "Fadderuke"
-    }
-  },
-  {
-    "model": "content.category",
-    "pk": 4,
-    "fields": {
-      "created_at": "2020-10-01T18:32:18.564Z",
-      "updated_at": "2020-10-01T18:32:18.564Z",
-      "text": "Sport"
-    }
-  },
-  {
-    "model": "content.cheatsheet",
-    "pk": "efddd97d-8a75-4f0d-a23c-111bb51c910f",
-    "fields": {
-      "created_at": "2020-10-01T18:33:51.131Z",
-      "updated_at": "2020-10-01T18:33:51.131Z",
-      "title": "Øving 1",
-      "creator": "Zaim Imran",
-      "grade": "FIRST",
-      "study": "DATAING",
-      "course": "Prog grunnkurs",
-      "url": "https://miro.medium.com/max/1000/0*kBHpKva09AsGj7RQ"
-    }
-  },
-  {
-    "model": "content.user",
-    "pk": "eivindste",
-    "fields": {
-      "password": "pbkdf2_sha256$216000$Dp3zr6J3QDd9$KDKTvNysMZeCIwDqbEZJBklw4uINe62Jv4UOT+ymu2s=",
-      "last_login": null,
-      "is_superuser": false,
-      "created_at": "2020-10-01T18:58:32.218Z",
-      "updated_at": "2020-10-01T18:58:47.542Z",
-      "image": null,
-      "image_alt": null,
-      "first_name": "Eivind",
-      "last_name": "Øvstedal",
-      "email": "EivindOvstedal@jourrapide.com",
-      "cell": "",
-      "home_busstop": null,
-      "gender": 2,
-      "user_class": 2,
-      "user_study": 2,
-      "allergy": "",
-      "tool": "",
-      "app_token": null,
-      "is_TIHLDE_member": true,
-      "is_staff": false,
-      "is_active": true,
-      "groups": [],
-      "user_permissions": []
-    }
-  },
-  {
-    "model": "content.user",
-    "pk": "index",
-    "fields": {
-      "password": "pbkdf2_sha256$216000$FsS3jt4tZJa2$69L3Esu1A6xYIWchq0mNA7svX5xqZcIHlDkRuFwHBZU=",
-      "last_login": "2020-10-01T18:23:30Z",
-      "is_superuser": true,
-      "created_at": "2020-10-01T18:22:57.665Z",
-      "updated_at": "2020-10-01T19:46:46.327Z",
-      "image": null,
-      "image_alt": null,
-      "first_name": "Index",
-      "last_name": "TIHLDE",
-      "email": "index@tihlde.org",
-      "cell": "44449999",
-      "home_busstop": 1,
-      "gender": 2,
-      "user_class": 3,
-      "user_study": 1,
-      "allergy": "Kun parenteser",
-      "tool": "Parentes",
-      "app_token": null,
-      "is_TIHLDE_member": true,
-      "is_staff": true,
-      "is_active": true,
-      "groups": [],
-      "user_permissions": []
-    }
-  },
-  {
-    "model": "content.notification",
-    "pk": 1,
-    "fields": {
-      "user": "index",
-      "message": "Dette er første notifikasjon ever!!",
-      "read": true
-    }
-  },
-  {
-    "model": "content.notification",
-    "pk": 2,
-    "fields": {
-      "user": "index",
-      "message": "Du har fått plass på Pirater sier Arr",
-      "read": true
-    }
-  },
-  {
-    "model": "content.registration",
-    "pk": 1,
-    "fields": {
-      "updated_at": "2020-10-01T18:54:36.940Z",
-      "user": "index",
-      "event": 1,
-      "is_on_wait": false,
-      "has_attended": false,
-      "created_at": "2020-10-01T18:54:36.940Z",
-      "allow_photo": true
-    }
-  },
-  {
-    "model": "content.priority",
-    "pk": 1,
-    "fields": {
-      "created_at": "2020-10-01T18:37:22.880Z",
-      "updated_at": "2020-10-01T18:37:22.880Z",
-      "user_class": "FIRST",
-      "user_study": "DATAING"
-    }
-  },
-  {
-    "model": "content.priority",
-    "pk": 2,
-    "fields": {
-      "created_at": "2020-10-01T18:52:25.374Z",
-      "updated_at": "2020-10-01T18:52:25.374Z",
-      "user_class": "SECOND",
-      "user_study": "DATAING"
-    }
-  },
-  {
-    "model": "content.priority",
-    "pk": 3,
-    "fields": {
-      "created_at": "2020-10-01T18:52:31.281Z",
-      "updated_at": "2020-10-01T18:52:31.281Z",
-      "user_class": "THIRD",
-      "user_study": "DATAING"
-    }
-  },
-  {
-    "model": "content.priority",
-    "pk": 4,
-    "fields": {
-      "created_at": "2020-10-01T18:52:34.607Z",
-      "updated_at": "2020-10-01T18:52:34.607Z",
-      "user_class": "FIRST",
-      "user_study": "DIGFOR"
-    }
-  },
-  {
-    "model": "content.priority",
-    "pk": 5,
-    "fields": {
-      "created_at": "2020-10-01T18:52:41.961Z",
-      "updated_at": "2020-10-01T18:52:41.962Z",
-      "user_class": "SECOND",
-      "user_study": "DIGFOR"
-    }
-  },
-  {
-    "model": "content.priority",
-    "pk": 6,
-    "fields": {
-      "created_at": "2020-10-01T18:52:48.065Z",
-      "updated_at": "2020-10-01T18:52:48.065Z",
-      "user_class": "THIRD",
-      "user_study": "DIGFOR"
-    }
-  },
-  {
-    "model": "content.priority",
-    "pk": 7,
-    "fields": {
-      "created_at": "2020-10-01T18:53:18.041Z",
-      "updated_at": "2020-10-01T18:53:38.012Z",
-      "user_class": "FIFTH",
-      "user_study": "DIGSAM"
-    }
-  },
-  {
-    "model": "content.event",
-    "pk": 1,
-    "fields": {
-      "created_at": "2020-10-01T18:38:27.404Z",
-      "updated_at": "2020-10-01T18:54:25.409Z",
-      "image": "https://ps-attachments.s3.amazonaws.com/361c4f00-befe-4b07-9ece-60886d65e049/kvGQecKphQHV9kO01uBFMQ.png",
-      "image_alt": "Header image 1",
-      "title": "Pirater sier Arr",
-      "start_date": "2020-10-03T18:35:32Z",
-      "end_date": "2020-10-04T18:35:51Z",
-      "location": "Båten Anna",
-      "description": "Jag känner en bot\r\nHon heter Anna. Anna heter hon\r\nOch hon kan banna banna dig så hårt\r\nHon röjer upp I våran kanal\r\nJag vill berätta för dig att jag känner en bot\r\nJag känner en bot\r\nHon heter Anna. Anna heter hon\r\nOch hon kan banna banna dig så hårt\r\nHon röjer upp I våran kanal\r\nJag vill berätta för dig att jag känner en bot\r\nSom alltid vaktar alla som är här\r\nOch som ser till att vi blir utan besvär\r\nDet finns ingen take-over som lyckas\r\nKom ihåg att det är jag som känner en bot\r\nEn bot som ingen ingen annan slår\r\nOch hon kan kicka utan att hon får\r\nHon gör sig av med alla som spammar\r\nJa ingen kan slå våran bot\r\nJag känner en bot\r\nHon heter Anna. Anna heter hon\r\nOch hon kan banna banna dig så hårt\r\nHon röjer upp I våran kanal\r\nJag vill berätta för dig att jag känner en bot\r\nDå kom den dagen jag inte trodde fanns\r\nDen satte verkligen kanalen you're balans\r\nJag trodde aldrig att jag hade så fel\r\nMen när Anna skrev och sa\r\nJag är ingen bot\r\nJag är en väldigt, väldigt vacker tjej\r\nSom nu tyvärr är väldigt främmande för mig\r\nMen det finns inget som behöver förklaras\r\nFör I mina ögon är hon alltid en bot\r\nHon heter Anna. Anna heter hon\r\nOch hon kan banna banna dig så hårt\r\nHon röjer upp I våran kanal\r\nJag vill berätta för dig att jag känner en bot\r\nSom alltid vaktar alla som är här\r\nOch som ser till att vi blir utan besvär\r\nDet finns ingen take-over som lyckas\r\nKom ihåg att det är jag som känner en bot\r\nEn bot som ingen ingen annan slår\r\nOch hon kan kicka utan att hon får\r\nHon gör sig av med alla som spammar\r\nJa, ingen kan slå våran bot!",
-      "priority": 2,
-      "category": 1,
-      "sign_up": true,
-      "limit": 45,
-      "closed": false,
-      "start_registration_at": "2020-10-01T18:36:53Z",
-      "end_registration_at": "2020-10-03T17:36:54Z",
-      "sign_off_deadline": "2020-10-03T17:36:55Z",
-      "evaluate_link": "https://www.youtube.com/watch?v=vpYz3yeXapc",
-      "end_date_schedular_id": null,
-      "sign_off_deadline_schedular_id": null,
-      "registration_priorities": [
-        1
-      ]
-    }
-  },
-  {
-    "model": "content.event",
-    "pk": 2,
-    "fields": {
-      "created_at": "2020-10-01T18:41:04.519Z",
-      "updated_at": "2020-10-01T18:41:04.520Z",
-      "image": "https://dbstatic.no/70001449.jpg?imageId=70001449&panow=100&panoh=51.041666666667&panox=0&panoy=45.833333333333&heightw=42.307692307692&heighth=100&heightx=42.657342657343&heighty=0&width=1200&height=630",
-      "image_alt": "Palmesus",
-      "title": "Palmesus",
-      "start_date": "2020-11-01T19:39:27Z",
-      "end_date": "2020-11-02T19:39:36Z",
-      "location": "Kristiansand",
-      "description": "Palmesus er Skandinavias største strandfest. Hvert år samles nesten 40 000 festglade mennesker på Bystranda midt i Kristiansand sentrum for å nyte sol, sommer og en helt enestående fest. \r\n\r\nSelv om det er den gode stemningen og selve strandfesten som står i sentrum er det likevel alltid en svært sterk line-up på Palmesus. Artister som KYGO, Martin Garrix, Kent, Migos, Jason Derulo, Axwell ^ Ingrosso, Dimitri Vegas & Like Mike, Madcon, Taio Cruz, Benny Benassi, Nelly Furtado, Faithless, Fedde Le Grand, Karpe Diem, Fatboy Slim, Steve Aoki, Wyclef Jean, Charlie XCX, Highasakite og mange flere har alle spilt på Palmesus.",
-      "priority": 1,
-      "category": 3,
-      "sign_up": false,
-      "limit": 0,
-      "closed": false,
-      "start_registration_at": null,
-      "end_registration_at": null,
-      "sign_off_deadline": null,
-      "evaluate_link": null,
-      "end_date_schedular_id": null,
-      "sign_off_deadline_schedular_id": null,
-      "registration_priorities": []
-    }
-  },
-  {
-    "model": "content.jobpost",
-    "pk": 1,
-    "fields": {
-      "created_at": "2020-10-01T18:44:28.827Z",
-      "updated_at": "2020-10-01T18:44:28.827Z",
-      "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcS7Nm1REKWBvCtyNGStKydj5hquvQkEnvqAlw&usqp=CAU",
-      "image_alt": "Bekk",
-      "title": "Kaffehenter hos Bekk",
-      "ingress": "Vil du jobbe et helt år som kaffeslave?",
-      "body": "Da er Bekk det perfekte sted for deg. Kald kaffe, varm kaffe, latte, kakao. Du skal skaffe alt og vi skal kose oss.",
-      "location": "Starbucks",
-      "deadline": "2022-10-01T18:43:43Z",
-      "company": "Bekk",
-      "email": "index@tihlde.org",
-      "link": "https://tihlde.org/"
-    }
-  },
-  {
-    "model": "content.jobpost",
-    "pk": 2,
-    "fields": {
-      "created_at": "2020-10-01T18:47:31.931Z",
-      "updated_at": "2020-10-01T18:47:31.931Z",
-      "image": "https://lh3.googleusercontent.com/tPSknKHPUTRNsWt-YBQpcryIUlKiu3tjCdYgO7rFnpiRtl_oosb-oIZjM8LlHCLS5qY=w2247-h1264",
-      "image_alt": "Tinder",
-      "title": "TIHLDE Tinder",
-      "ingress": "Lei av bare gutter i TIHLDE",
-      "body": "Bli med å lage TIHLDE Tinder. Inspirert fra Mark LIzardburk skal du ha ansvaret for å matche oss TIHLDE gutta med alle jentene i NTNU",
-      "location": "Trondheim",
-      "deadline": "2023-10-01T18:47:14Z",
-      "company": "TIHLDE",
-      "email": "index@tihlde.org",
-      "link": "https://tihlde.org/"
-    }
-  },
-  {
-    "model": "content.news",
-    "pk": 1,
-    "fields": {
-      "created_at": "2020-10-01T18:51:48.401Z",
-      "updated_at": "2020-10-01T18:51:48.401Z",
-      "image": "https://scontent.fosl3-1.fna.fbcdn.net/v/t1.0-9/55455433_10156920666740516_650873152355696640_o.jpg?_nc_cat=108&_nc_sid=dd9801&_nc_ohc=V4dNMuV46TYAX-HLtGz&_nc_ht=scontent.fosl3-1.fna&oh=291a3534063d97b10645f5101c4e57d8&oe=5F9C60D6",
-      "image_alt": "TIHLDE",
-      "title": "Join TIHLDE",
-      "header": "LIvet blir bedre når du joiner TIHLDE",
-      "body": "Opptaket har startet!\r\n\r\nTIHLDE drives av engasjerte studenter som vil skape en levende og inkluderende linjeforening, og nå søker vi flere som ønsker å ta del i det!\r\n\r\nSom frivillig i TIHLDE er man garantert å utvide sitt sosiale nettverk, og man får erfaring som kommer godt med senere i livet. Et frivillig verv ser også meget bra ut på CV'en!\r\n\r\nDet er heller ikke skummelt å søke, vi ønsker å få med oss så mange som mulig uansett bakgrunn!"
-    }
-  },
-  {
-    "model": "content.userbadge",
-    "pk": 1,
-    "fields": {
-      "created_at": "2020-10-01T18:53:48.435Z",
-      "updated_at": "2020-10-01T18:53:48.435Z",
-      "user": "index",
-      "badge": "8149b976-c5c9-428b-bbf5-ee891e57774a"
-    }
-  }
+   {
+      "model": "sessions.session",
+      "pk": "uluxibay9z8ygncjnjqevuzsbwxmc47p",
+      "fields": {
+         "session_data": ".eJxVjMkKwjAURf8lawmvQ-qrS_d-Q3lTTFRS6ACC-O9a6EK395xzX26gdUnDOts0ZHUnl4va0x1-dya5W9mg3qhcRy9jWabMflP8Tmd_GdUe5939O0g0p28NrVVgrVBQEERlpB6ryCxtH1i6JgDGvop67GoDxihNtFrQQmiQANz7AzqBOkk:1kU8R8:6qGRI7uDv8TpglOOWvKqviMaK3BPvqZsX2X_nlYrfyA",
+         "expire_date": "2020-11-01T13:09:22.974Z"
+      }
+   },
+   {
+      "model": "authtoken.token",
+      "pk": "606d9b0894c798fa511d85f876fd8611b7109e32",
+      "fields": {
+         "user": "index",
+         "created": "2020-10-01T18:22:57.720Z"
+      }
+   },
+   {
+      "model": "authtoken.token",
+      "pk": "64e443d5d4eb019b6055bece575d13e32553fb23",
+      "fields": {
+         "user": "eivindste",
+         "created": "2020-10-01T18:58:32.305Z"
+      }
+   },
+   {
+      "model": "content.badge",
+      "pk": "8149b976-c5c9-428b-bbf5-ee891e57774a",
+      "fields": {
+         "created_at": "2020-10-01T18:32:35.298Z",
+         "updated_at": "2020-10-01T18:32:35.298Z",
+         "image": null,
+         "image_alt": null,
+         "title": "Påske",
+         "description": "Beskrivelse"
+      }
+   },
+   {
+      "model": "content.category",
+      "pk": 1,
+      "fields": {
+         "created_at": "2020-10-01T18:29:57.037Z",
+         "updated_at": "2020-10-01T18:29:57.037Z",
+         "text": "Fest"
+      }
+   },
+   {
+      "model": "content.category",
+      "pk": 2,
+      "fields": {
+         "created_at": "2020-10-01T18:30:12.523Z",
+         "updated_at": "2020-10-01T18:30:12.523Z",
+         "text": "Bedpress"
+      }
+   },
+   {
+      "model": "content.category",
+      "pk": 3,
+      "fields": {
+         "created_at": "2020-10-01T18:30:37.229Z",
+         "updated_at": "2020-10-01T18:30:37.229Z",
+         "text": "Fadderuke"
+      }
+   },
+   {
+      "model": "content.category",
+      "pk": 4,
+      "fields": {
+         "created_at": "2020-10-01T18:32:18.564Z",
+         "updated_at": "2020-10-01T18:32:18.564Z",
+         "text": "Sport"
+      }
+   },
+   {
+      "model": "content.cheatsheet",
+      "pk": "efddd97d-8a75-4f0d-a23c-111bb51c910f",
+      "fields": {
+         "created_at": "2020-10-01T18:33:51.131Z",
+         "updated_at": "2020-10-01T18:33:51.131Z",
+         "title": "Øving 1",
+         "creator": "Zaim Imran",
+         "grade": "FIRST",
+         "study": "DATAING",
+         "course": "Prog grunnkurs",
+         "url": "https://miro.medium.com/max/1000/0*kBHpKva09AsGj7RQ"
+      }
+   },
+   {
+      "model": "content.user",
+      "pk": "eivindste",
+      "fields": {
+         "password": "pbkdf2_sha256$216000$Dp3zr6J3QDd9$KDKTvNysMZeCIwDqbEZJBklw4uINe62Jv4UOT+ymu2s=",
+         "last_login": null,
+         "is_superuser": false,
+         "created_at": "2020-10-01T18:58:32.218Z",
+         "updated_at": "2020-10-01T18:58:47.542Z",
+         "image": null,
+         "image_alt": null,
+         "first_name": "Eivind",
+         "last_name": "Øvstedal",
+         "email": "EivindOvstedal@jourrapide.com",
+         "cell": "",
+         "home_busstop": null,
+         "gender": 2,
+         "user_class": 2,
+         "user_study": 2,
+         "allergy": "",
+         "tool": "",
+         "app_token": null,
+         "is_TIHLDE_member": true,
+         "is_staff": false,
+         "is_active": true,
+         "groups": [],
+         "user_permissions": []
+      }
+   },
+   {
+      "model": "content.user",
+      "pk": "index",
+      "fields": {
+         "password": "pbkdf2_sha256$216000$FsS3jt4tZJa2$69L3Esu1A6xYIWchq0mNA7svX5xqZcIHlDkRuFwHBZU=",
+         "last_login": "2020-10-01T18:23:30Z",
+         "is_superuser": true,
+         "created_at": "2020-10-01T18:22:57.665Z",
+         "updated_at": "2020-10-01T19:46:46.327Z",
+         "image": null,
+         "image_alt": null,
+         "first_name": "Index",
+         "last_name": "TIHLDE",
+         "email": "index@tihlde.org",
+         "cell": "44449999",
+         "home_busstop": 1,
+         "gender": 2,
+         "user_class": 3,
+         "user_study": 1,
+         "allergy": "Kun parenteser",
+         "tool": "Parentes",
+         "app_token": null,
+         "is_TIHLDE_member": true,
+         "is_staff": true,
+         "is_active": true,
+         "groups": [],
+         "user_permissions": []
+      }
+   },
+   {
+      "model": "content.notification",
+      "pk": 1,
+      "fields": {
+         "user": "index",
+         "message": "Dette er første notifikasjon ever!!",
+         "read": true
+      }
+   },
+   {
+      "model": "content.notification",
+      "pk": 2,
+      "fields": {
+         "user": "index",
+         "message": "Du har fått plass på Pirater sier Arr",
+         "read": true
+      }
+   },
+   {
+      "model": "content.registration",
+      "pk": 1,
+      "fields": {
+         "updated_at": "2020-10-01T18:54:36.940Z",
+         "user": "index",
+         "event": 1,
+         "is_on_wait": false,
+         "has_attended": false,
+         "created_at": "2020-10-01T18:54:36.940Z",
+         "allow_photo": true
+      }
+   },
+   {
+      "model": "content.priority",
+      "pk": 1,
+      "fields": {
+         "created_at": "2020-10-01T18:37:22.880Z",
+         "updated_at": "2020-10-01T18:37:22.880Z",
+         "user_class": "FIRST",
+         "user_study": "DATAING"
+      }
+   },
+   {
+      "model": "content.priority",
+      "pk": 2,
+      "fields": {
+         "created_at": "2020-10-01T18:52:25.374Z",
+         "updated_at": "2020-10-01T18:52:25.374Z",
+         "user_class": "SECOND",
+         "user_study": "DATAING"
+      }
+   },
+   {
+      "model": "content.priority",
+      "pk": 3,
+      "fields": {
+         "created_at": "2020-10-01T18:52:31.281Z",
+         "updated_at": "2020-10-01T18:52:31.281Z",
+         "user_class": "THIRD",
+         "user_study": "DATAING"
+      }
+   },
+   {
+      "model": "content.priority",
+      "pk": 4,
+      "fields": {
+         "created_at": "2020-10-01T18:52:34.607Z",
+         "updated_at": "2020-10-01T18:52:34.607Z",
+         "user_class": "FIRST",
+         "user_study": "DIGFOR"
+      }
+   },
+   {
+      "model": "content.priority",
+      "pk": 5,
+      "fields": {
+         "created_at": "2020-10-01T18:52:41.961Z",
+         "updated_at": "2020-10-01T18:52:41.962Z",
+         "user_class": "SECOND",
+         "user_study": "DIGFOR"
+      }
+   },
+   {
+      "model": "content.priority",
+      "pk": 6,
+      "fields": {
+         "created_at": "2020-10-01T18:52:48.065Z",
+         "updated_at": "2020-10-01T18:52:48.065Z",
+         "user_class": "THIRD",
+         "user_study": "DIGFOR"
+      }
+   },
+   {
+      "model": "content.priority",
+      "pk": 7,
+      "fields": {
+         "created_at": "2020-10-01T18:53:18.041Z",
+         "updated_at": "2020-10-01T18:53:38.012Z",
+         "user_class": "FIFTH",
+         "user_study": "DIGSAM"
+      }
+   },
+   {
+      "model": "content.event",
+      "pk": 1,
+      "fields": {
+         "created_at": "2020-10-01T18:38:27.404Z",
+         "updated_at": "2020-10-01T18:54:25.409Z",
+         "image": "https://ps-attachments.s3.amazonaws.com/361c4f00-befe-4b07-9ece-60886d65e049/kvGQecKphQHV9kO01uBFMQ.png",
+         "image_alt": "Header image 1",
+         "title": "Pirater sier Arr",
+         "start_date": "2020-10-03T18:35:32Z",
+         "end_date": "2020-10-04T18:35:51Z",
+         "location": "Båten Anna",
+         "description": "Jag känner en bot\r\nHon heter Anna. Anna heter hon\r\nOch hon kan banna banna dig så hårt\r\nHon röjer upp I våran kanal\r\nJag vill berätta för dig att jag känner en bot\r\nJag känner en bot\r\nHon heter Anna. Anna heter hon\r\nOch hon kan banna banna dig så hårt\r\nHon röjer upp I våran kanal\r\nJag vill berätta för dig att jag känner en bot\r\nSom alltid vaktar alla som är här\r\nOch som ser till att vi blir utan besvär\r\nDet finns ingen take-over som lyckas\r\nKom ihåg att det är jag som känner en bot\r\nEn bot som ingen ingen annan slår\r\nOch hon kan kicka utan att hon får\r\nHon gör sig av med alla som spammar\r\nJa ingen kan slå våran bot\r\nJag känner en bot\r\nHon heter Anna. Anna heter hon\r\nOch hon kan banna banna dig så hårt\r\nHon röjer upp I våran kanal\r\nJag vill berätta för dig att jag känner en bot\r\nDå kom den dagen jag inte trodde fanns\r\nDen satte verkligen kanalen you're balans\r\nJag trodde aldrig att jag hade så fel\r\nMen när Anna skrev och sa\r\nJag är ingen bot\r\nJag är en väldigt, väldigt vacker tjej\r\nSom nu tyvärr är väldigt främmande för mig\r\nMen det finns inget som behöver förklaras\r\nFör I mina ögon är hon alltid en bot\r\nHon heter Anna. Anna heter hon\r\nOch hon kan banna banna dig så hårt\r\nHon röjer upp I våran kanal\r\nJag vill berätta för dig att jag känner en bot\r\nSom alltid vaktar alla som är här\r\nOch som ser till att vi blir utan besvär\r\nDet finns ingen take-over som lyckas\r\nKom ihåg att det är jag som känner en bot\r\nEn bot som ingen ingen annan slår\r\nOch hon kan kicka utan att hon får\r\nHon gör sig av med alla som spammar\r\nJa, ingen kan slå våran bot!",
+         "priority": 2,
+         "category": 1,
+         "sign_up": true,
+         "limit": 45,
+         "closed": false,
+         "start_registration_at": "2020-10-01T18:36:53Z",
+         "end_registration_at": "2020-10-03T17:36:54Z",
+         "sign_off_deadline": "2020-10-03T17:36:55Z",
+         "evaluate_link": "https://www.youtube.com/watch?v=vpYz3yeXapc",
+         "end_date_schedular_id": null,
+         "sign_off_deadline_schedular_id": null,
+         "registration_priorities": [
+            1
+         ]
+      }
+   },
+   {
+      "model": "content.event",
+      "pk": 2,
+      "fields": {
+         "created_at": "2020-10-01T18:41:04.519Z",
+         "updated_at": "2020-10-01T18:41:04.520Z",
+         "image": "https://dbstatic.no/70001449.jpg?imageId=70001449&panow=100&panoh=51.041666666667&panox=0&panoy=45.833333333333&heightw=42.307692307692&heighth=100&heightx=42.657342657343&heighty=0&width=1200&height=630",
+         "image_alt": "Palmesus",
+         "title": "Palmesus",
+         "start_date": "2020-11-01T19:39:27Z",
+         "end_date": "2020-11-02T19:39:36Z",
+         "location": "Kristiansand",
+         "description": "Palmesus er Skandinavias største strandfest. Hvert år samles nesten 40 000 festglade mennesker på Bystranda midt i Kristiansand sentrum for å nyte sol, sommer og en helt enestående fest. \r\n\r\nSelv om det er den gode stemningen og selve strandfesten som står i sentrum er det likevel alltid en svært sterk line-up på Palmesus. Artister som KYGO, Martin Garrix, Kent, Migos, Jason Derulo, Axwell ^ Ingrosso, Dimitri Vegas & Like Mike, Madcon, Taio Cruz, Benny Benassi, Nelly Furtado, Faithless, Fedde Le Grand, Karpe Diem, Fatboy Slim, Steve Aoki, Wyclef Jean, Charlie XCX, Highasakite og mange flere har alle spilt på Palmesus.",
+         "priority": 1,
+         "category": 3,
+         "sign_up": false,
+         "limit": 0,
+         "closed": false,
+         "start_registration_at": null,
+         "end_registration_at": null,
+         "sign_off_deadline": null,
+         "evaluate_link": null,
+         "end_date_schedular_id": null,
+         "sign_off_deadline_schedular_id": null,
+         "registration_priorities": []
+      }
+   },
+   {
+      "model": "content.jobpost",
+      "pk": 1,
+      "fields": {
+         "created_at": "2020-10-01T18:44:28.827Z",
+         "updated_at": "2020-10-01T18:44:28.827Z",
+         "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcS7Nm1REKWBvCtyNGStKydj5hquvQkEnvqAlw&usqp=CAU",
+         "image_alt": "Bekk",
+         "title": "Kaffehenter hos Bekk",
+         "ingress": "Vil du jobbe et helt år som kaffeslave?",
+         "body": "Da er Bekk det perfekte sted for deg. Kald kaffe, varm kaffe, latte, kakao. Du skal skaffe alt og vi skal kose oss.",
+         "location": "Starbucks",
+         "deadline": "2022-10-01T18:43:43Z",
+         "company": "Bekk",
+         "email": "index@tihlde.org",
+         "link": "https://tihlde.org/"
+      }
+   },
+   {
+      "model": "content.jobpost",
+      "pk": 2,
+      "fields": {
+         "created_at": "2020-10-01T18:47:31.931Z",
+         "updated_at": "2020-10-01T18:47:31.931Z",
+         "image": "https://lh3.googleusercontent.com/tPSknKHPUTRNsWt-YBQpcryIUlKiu3tjCdYgO7rFnpiRtl_oosb-oIZjM8LlHCLS5qY=w2247-h1264",
+         "image_alt": "Tinder",
+         "title": "TIHLDE Tinder",
+         "ingress": "Lei av bare gutter i TIHLDE",
+         "body": "Bli med å lage TIHLDE Tinder. Inspirert fra Mark LIzardburk skal du ha ansvaret for å matche oss TIHLDE gutta med alle jentene i NTNU",
+         "location": "Trondheim",
+         "deadline": "2023-10-01T18:47:14Z",
+         "company": "TIHLDE",
+         "email": "index@tihlde.org",
+         "link": "https://tihlde.org/"
+      }
+   },
+   {
+      "model": "content.news",
+      "pk": 1,
+      "fields": {
+         "created_at": "2020-10-01T18:51:48.401Z",
+         "updated_at": "2020-10-01T18:51:48.401Z",
+         "image": "https://scontent.fosl3-1.fna.fbcdn.net/v/t1.0-9/55455433_10156920666740516_650873152355696640_o.jpg?_nc_cat=108&_nc_sid=dd9801&_nc_ohc=V4dNMuV46TYAX-HLtGz&_nc_ht=scontent.fosl3-1.fna&oh=291a3534063d97b10645f5101c4e57d8&oe=5F9C60D6",
+         "image_alt": "TIHLDE",
+         "title": "Join TIHLDE",
+         "header": "LIvet blir bedre når du joiner TIHLDE",
+         "body": "Opptaket har startet!\r\n\r\nTIHLDE drives av engasjerte studenter som vil skape en levende og inkluderende linjeforening, og nå søker vi flere som ønsker å ta del i det!\r\n\r\nSom frivillig i TIHLDE er man garantert å utvide sitt sosiale nettverk, og man får erfaring som kommer godt med senere i livet. Et frivillig verv ser også meget bra ut på CV'en!\r\n\r\nDet er heller ikke skummelt å søke, vi ønsker å få med oss så mange som mulig uansett bakgrunn!"
+      }
+   },
+   {
+      "model": "content.userbadge",
+      "pk": 1,
+      "fields": {
+         "created_at": "2020-10-01T18:53:48.435Z",
+         "updated_at": "2020-10-01T18:53:48.435Z",
+         "user": "index",
+         "badge": "8149b976-c5c9-428b-bbf5-ee891e57774a"
+      }
+   }
 ]

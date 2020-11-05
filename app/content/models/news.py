@@ -12,4 +12,4 @@ class News(BaseModel, OptionalImage):
         verbose_name_plural = "News"
 
     def __str__(self):
-        return "{} - {} [{} characters]".format(self.title, self.header, len(self.body))
+        return f"{self.title} - {self.header} ({len(self.body)} characters)"

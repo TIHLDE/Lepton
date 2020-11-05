@@ -27,7 +27,31 @@ class AdminGroup(ChoiceEnum):
     SOSIALEN = "Sosialen"
 
 
+class AppModel(ChoiceEnum):
+    EVENT = "Event"
+    JOBPOST = "Jobpost"
+    NEWS = "News"
+    USER = "User"
+    CHEATSHEET = "Cheatsheet"
+
+
+class GroupType(ChoiceEnum):
+    THILDE = "THILDE"
+    BOARD = "Styre"
+    SUBGROUP = "Undergruppe"
+    COMMITEE = "Kommite"
+    STUDYYEAR = "Studieår"
+    OTHER = "Annet"
+
+
 class EnvironmentOptions(Enum):
     LOCAL = "LOCAL"
     DEVELOPMENT = "DEVELOPMENT"
     PRODUCTION = "PRODUCTION"
+
+
+class CheatsheetType(ChoiceEnum):
+    FILE = "Fil"
+    GITHUB = "GitHub"
+    LINK = "Link"
+    OTHER = "Annet"

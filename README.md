@@ -1,156 +1,103 @@
-# TIHLDE API
-TIHLDEs API is the API TIHLDE's webiste. The API is made using [Django](https://www.djangoproject.com/), a Python Web framework.
-## Contents
-1. [Basic info](#basic-info)
-2. [Getting started](#getting-started)
-3. [Database Map (ER-Model)](#database-map)
-4. [Authentication Flow](#authentication-flow)
-5. [Authorization Flow](#authorization-flow)
-6. [Tutorial](#tutorial)
+<br/>
+<p align="center">
+    <a href="https://tihlde.org" target="_blank">
+        <img width="50%" src="https://i.ibb.co/6YpLt8m/TIHLDE-LOGO-BL.png" alt="TIHLDE logo">
+    </a>
+</p>
 
 
-### Basic Info
-THILDE's API is using following technologies
-* [Django](https://www.djangoproject.com/)
-* [Django Restframework](https://www.django-rest-framework.org/)
+<h1 align="center">LEPTON</h1>
 
-### Getting started
+<h4 align="center">
+    TIHLDEs open source backend for <a href="https://tihlde.org">tihlde.org</a> - the organizations main web site. 
+</h4>
 
-#### Setup
-The API is written in python and requires python version 3.6 or higher to run. With python installed, do the
-following to run the API:
-```
-git clone git@github.com:tihlde/API.git
-cd API
-```
-**!NB** - You need have an **mysql-driver** installed on your computer to run this API!
+<br/>
 
-#### Installing dependencies
-The API dependencies are found in the _Pipfile_ which you can either install manually, or with
-_pipenv_ installed, you can install all the dependencies from that file by doing the following:
+<p align="CENTER">
+<a href="https://github.com/tihlde/Lepton/actions"><img alt="Actions Status" src="https://github.com/tihlde/Lepton/workflows/Test and linting/badge.svg?label=github-actions"></a>
+<a href="https://github.com/psf/black/blob/master/LICENSE"><img alt="License: MIT" src="https://black.readthedocs.io/en/stable/_static/license.svg"></a>
+<a href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
+<a href="https://github.com/tihlde/Lepton/commits/master" target="_blank">
+    <img src="https://img.shields.io/github/commit-activity/y/tihlde/lepton.svg" alt="GitHub commit activity">
+</a>
+<a href="https://github.com/tihlde/lepton/graphs/contributors" target="_blank">
+    <img src="https://img.shields.io/github/contributors-anon/tihlde/lepton.svg" alt="GitHub contributors">
+</a>
+</p>
+
+<br/>
+<p align="center">
+    <img width="80%" src="https://i.ibb.co/CtHxCph/Skjermbilde-2020-10-31-224329.png" alt="TIHLDEs nettside">   
+</p>
+<br/>
+
+
+## 🚀 Getting started
+
+Lepton requires Python 3.6 or higher, Docker and Docker Compose. Other services are handled by Docker.
+ 
+
 ```
-pipenv install
+# Setup a local repository
+git clone https://github.com/tihlde/Lepton.git
+cd Lepton
+
+# If this is your first time running the application
+make fresh
+
+# Thats it! 
 ```
 
-#### Running the API
-To run the API all you have to do is run the following line:
-```
-python manage.py runserver 0:8080
-```
+From now on it's enough to run `make start` to run the application.
 
-**!NB** - If you installed the dependencies using _pipenv_, you have to enter the shell first. Run the follwing line:
-```
-pipenv shell
-```
+We use [GNU Make](https://www.gnu.org/software/make/) to simplify common commands.
+Have a look at the `makefile` to find out more about how to run the project without it.
 
-You can also run the API by typing the following commands if you have Docker installed:
-```
-docker-compose build
-docker-compose up
-```
 
-#### Required Enviornment variables
-For the API to run you have to configure some enviornment variables. These variables can for example be put in a
-_.env_ file.
-First:
+#### ⚙ Configuration
+The application requires configuration of some environment variables in order to run. 
+These should be put in a _.env_ file in the repository root.
+
 ```
 DJANGO_SECRET = PUT_A_RANDOM_LONG_STRING_HERE
-```
 
-Next you havet to configure the environment variables for the database connection. The API is configured to use
-a MYSQL database. Therefore, configure following database variables
-```
+# Database connection variables
 DATABASE_HOST= HOST_URL
 DATABASE_NAME= DATABASE_NAME
 DATABASE_PASSWORD= PASSWORD
 DATABASE_PORT= PORT (normally 3306)
 DATABASE_USER= USERNAME
-```
 
-With the configurations above, the api should be able to run. But the API only has some email-functionality build in.
-For the email functions to work, you also have to provide email-credentals and host in form of environment variables:
-```
+# Optional for using mailing
 EMAIL_HOST= HOST_URL
 EMAIL_PORT= PORT (normally 587)
 EMAIL_USER= EMAIL_USER
 EMAIL_PASSWORD= EMAIL_PASSWORD
 ```
 
-**IN PRODUCTION** you have to set an extra environment variable to set debug-mode to false. This is done my doing the following:
-```
-PROD=True
-```
+## ✅ Test the application
+The tests can be run with pytest by running `make test`.
 
-#### Missing static folder ####
-If you are not able to run the API or are getting lots of 500 errors with the configuration over it might be because you are missing the static folder. In the root of the project create a folder named _staticfiles_ and run the command:
-```
-python manage.py collectstatic
-```
+To run with test coverage, run `make test args="--cov"`.
 
-### Database Map (Simplified ER-Model)
-![ER-model](https://user-images.githubusercontent.com/31648998/55506006-b4149480-5654-11e9-8a17-0c8d6d48ac64.png)
+## ❤ Contributing 
+The Lepton backend is an open source project build on voluntary work. 
+We are committed to a fully transparent development process 
+and highly appreciate any contributions. 
+Whether you are helping us fixing bugs, proposing new feature, improving our documentation 
+or spreading the word - **we would love to have you as part of the community**.
 
-### Authentication Flow
-All the TIHLDE's members are stored in a different system of TIHLDE. This means that this API does not handle user authentication.
-Instead the API communicates with a different running API for handling user authentication, called [WebAuth]. So the flow can be described as below:
-(https://github.com/tihlde/WebAuth).
-![AuthenticationFlow](https://user-images.githubusercontent.com/31648998/55506395-9d227200-5655-11e9-8471-0d4384151e41.png)
-The API also talks to [WebAuth](https://github.com/tihlde/WebAuth) for verifying the token.
+## 🤝  Found a bug? Missing a specific feature?
+Feel free to file a new issue with a respective title and description 
+on the the [tihlde/Lepton](https://github.com/tihlde/Lepton/issues) repository. 
+If you already found a solution to your problem, we would love to review your pull request! 
+We enforce the PEP-8 style guide with isort, black and flake8. 
+Have a look at `setup.cfg` to find out more about our coding standards.  
 
+## 📫 Contact
+Feel free to send us a message on our official [slack channel](https://tihlde.slack.com/archives/C01CJ0EQCFM). 
+Of course you can always reach out to us directly at index@tihlde.org.
 
-### Authorization Flow
-To know if a member is authorized to for example post new events or jobposts, we need to know if that member is a part of a "Undergruppe" or "Komitee" that is authorized to do so. For example should a member of Promo or HS be able to post new events. This done by _connecting_ a TIHLDE-userId with a "Undergruppe" or "Komitee". There are tables in the database for this, called _Group_ and _Connection_. All authorization is handled with Django-premissions.
-![](https://user-images.githubusercontent.com/31648998/55507277-94cb3680-5657-11e9-88b5-b09b73a24a62.png)
-
-### Tutorial
-Django and Django Restframework is a very abstract framework, and is very difficult to understand for beginners. Therefore, here is a simple tutorial showing how to create a simple entity, a Todo item. It is a good idea to do this tutorial in a seperate Django project.
-
-**!NB** The tutorial does not include all imports, so you have to deal with this yourself.
-
-#### 1. Creating an Todo model
-First we need to describe how the Todo-entity should look like. This description will be used by Django to generate a table in the database. Open the _models.py_ file and write the following:
-![Entity](https://user-images.githubusercontent.com/31648998/55508062-5c2c5c80-5659-11e9-9ffd-9639e9df0cd9.png)
-
-#### 2. Auto-generate endpoints
-For creating the basic CRUD-endpoints (GET, POST, PUT, PATCH and DELETE) for the Todo-entity we have to tell Django to auto-generate them. Open the _views.py_ file and write the following:
-
-![View](https://user-images.githubusercontent.com/31648998/55508726-c396dc00-565a-11e9-847a-78f60b88c4fe.png)
-By making a class inheriting django.viewsets.ModelViewSet, Django will auto-generate the wanted endpoints. But you can see we are setting something called a _serializer_class_ equal to _TodoSerializer_. What is a serializer?
-
-#### 3. Model serializiation
-When the website sends data to the API, the data is most likely in the form of JSON. But the API is writtin in python and does not support JSON-format in the language, like in Javascript. This means Django have to convert the data from JSON-format to a valid python format (and the other way around). This is done by something called a _Serializer_. In Django we just simply have to create a Serializer-Class, and tell it which Model to serializer.
-
-Open _serializers.py_ and write the following:
-
-![Serializers](https://user-images.githubusercontent.com/31648998/55508839-fc36b580-565a-11e9-95a9-73a77b23fc43.png)
-
-#### 4. Specifying a route to your endpoints
-So far you have created a _view_ for auto-generating endpoints, but you have to specify the route for the clients to go to for accessing these endpoints. Open _urls.py_ and write the following:
-
-![Url-registration](https://user-images.githubusercontent.com/31648998/55509086-9ac31680-565b-11e9-8b16-410658bab256.png)
-
-#### 5. Migrating the changes to your database
-
-**IT IS SUPER IMPORTANT THAT YOU DON'T DO THIS IN THE API PROJECT! MIGRATION-FILES DESCRIBES HOW THE DATABASE SHOULD LOOK LIKE, AND YOU DON'T WANT TO APPLY THESE CHANGES TO THE PRODUCTION DATABASE...AT ALL! CONFIGURE THE DJANGO PROJECT WITH YOUR OWN SEPERATE DATABASE BEFORE YOU PROCEED!**
-
-You have earlier created a Model-entity call Todo. This entity needs to be added to the database, and this is done by telling Django to do so. Django uses something called _migrations_. Migrations are just files that describes how the database looks like, and Django generates these files by looking at the Models you have created in the _models.py_ file. To generate these files, run the following command:
-```
-python manage.py makemigrations
-```
-
-When the migration-files are created, you have to tell Django to use these files to change the database based on how the migrations look like. To do so, run the following command:
-```
-python manage.py migrate
-```
-
-**IF YOU DID THIS ON THE PRODUCTION SERVER...THEN YOU ARE DEAD! YOU WILL BE FIRED AND HATED FOR THE REST OF YOUR LIFE! (This is just a hint for telling you that you should not do this on the production database)**
-
-#### 6. Enjoy life
-That's it! If you run the django project by running the command "_python manage.py runserver 0:8080_" and open the link "_http://localhost:8080/api/v1/todo_" (depends on your url-configuration) you will be able to see, edit and delete data.
-
-Congratulations, your are set!
-
-#### 7. Expand your knownledge
-To learn more, start looking at the official documentation for Django and Django Rest-framework:
-* [Django](https://www.djangoproject.com/)
-* [Django Rest-framework](https://www.django-rest-framework.org/)
+## 📘 Licence 
+The code in this project is licensed under MIT license.

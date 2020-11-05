@@ -2,8 +2,6 @@ from django.conf.urls import include, url
 from django.urls import path
 from rest_framework import routers
 
-from rest_framework_swagger.views import get_swagger_view
-
 from .views import (
     CategoryViewSet,
     CheatsheetViewSet,
@@ -33,19 +31,14 @@ router.register(
 )
 router.register("notification", NotificationViewSet, basename="notification")
 router.register(
-    r"cheatsheet/study/(?P<study>[^\.]+)/grade/(?P<grade>[^\.]+)/file",
+    r"cheatsheet/(?P<study>[^\.]+)/(?P<grade>[^\.]+)/files",
     CheatsheetViewSet,
     basename="cheatsheet_list",
 )
 router.register("badge", UserBadgeViewSet, basename="badge")
 router.register("wiki", WikiViewSet)
 
-# Swagger
-schema_view = get_swagger_view(title="TIHLDE API")
-
-
 urlpatterns = [
-    url(r"docs", schema_view),
     url(r"", include(router.urls)),
     path("accept-form/", accept_form),
 ]

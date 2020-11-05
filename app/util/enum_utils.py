@@ -1,4 +1,4 @@
-from app.content.enums import UserClass, UserStudy
+from app.common.enums import UserClass, UserStudy
 
 
 class EnumUtils:

@@ -130,7 +130,7 @@ def test_is_full(event, limit, number_of_attendees, is_full):
     event.limit = limit
     RegistrationFactory.create_batch(number_of_attendees, event=event)
 
-    assert event.is_full() == is_full
+    assert event.is_full == is_full
 
 
 @pytest.mark.django_db

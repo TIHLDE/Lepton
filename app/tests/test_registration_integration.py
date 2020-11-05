@@ -5,7 +5,7 @@ from rest_framework import status
 
 import pytest
 
-from app.content.enums import AdminGroup
+from app.common.enums import AdminGroup
 from app.content.factories import EventFactory, RegistrationFactory
 from app.util.test_utils import get_api_client
 from app.util.utils import today
@@ -49,7 +49,6 @@ def test_list_as_anonymous_user(default_client, event):
 @pytest.mark.django_db
 def test_list_as_member(member, registration):
     """A member should not be able to list all registrations for an event."""
-    print(member.groups)
     client = get_api_client(user=member)
     url = _get_registration_url(registration.event)
     response = client.get(url)
@@ -117,7 +116,7 @@ def test_retrieve_another_registration_as_member(member, registration):
     url = _get_registration_detail_url(registration)
     response = client.get(url)
 
-    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
 @pytest.mark.django_db
@@ -148,7 +147,7 @@ def test_retrieve_other_registrations_as_member_in_nok_or_promo(
     url = _get_registration_detail_url(registration)
     response = client.get(url)
 
-    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
 @pytest.mark.django_db

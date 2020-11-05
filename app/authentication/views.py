@@ -2,8 +2,9 @@ from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 
+from app.common.permissions import IsDev, IsHS
+
 from ..content.models.user import User
-from ..content.permissions.permissions import IsDev, IsHS
 from .serializers import AuthSerializer, MakeUserSerializer
 
 
