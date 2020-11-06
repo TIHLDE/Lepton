@@ -1,13 +1,11 @@
 from rest_framework import serializers
 
-from ..models import UserBadge
-from .badge import BadgeSerializer
-from .user import UserSerializer
+from app.content.models import UserBadge
 
 
 class UserBadgeSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
-    badge = BadgeSerializer()
+    user = serializers.SerializerMethodField()
+    badge = serializers.SerializerMethodField()
 
     class Meta:
         model = UserBadge

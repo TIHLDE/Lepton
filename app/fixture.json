@@ -127,7 +127,7 @@
          "image_alt": null,
          "first_name": "Index",
          "last_name": "TIHLDE",
-         "email": "index@tihlde.org",
+         "email": "index@index.org",
          "cell": "44449999",
          "home_busstop": 1,
          "gender": 2,
@@ -314,7 +314,7 @@
          "location": "Starbucks",
          "deadline": "2022-10-01T18:43:43Z",
          "company": "Bekk",
-         "email": "index@tihlde.org",
+         "email": "index@index.org",
          "link": "https://tihlde.org/"
       }
    },
@@ -332,7 +332,7 @@
          "location": "Trondheim",
          "deadline": "2023-10-01T18:47:14Z",
          "company": "TIHLDE",
-         "email": "index@tihlde.org",
+         "email": "index@index.org",
          "link": "https://tihlde.org/"
       }
    },

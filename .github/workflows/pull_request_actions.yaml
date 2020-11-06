@@ -24,7 +24,7 @@ jobs:
       - name: Install dependencies with pipenv
         run: |
           pip install pipenv
-          pipenv install
+          pipenv install -d
       - name: Run sorting check
         run: pipenv run isort . --check-only
       - name: Run formatting check

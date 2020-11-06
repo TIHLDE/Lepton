@@ -76,7 +76,6 @@ class EventViewSet(viewsets.ModelViewSet):
                     {"detail": _("Kunne ikke utføre oppdatering av arrangementet")},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-
         except Event.DoesNotExist:
             return Response(
                 {"detail": "Fant ikke arrangementet"}, status=status.HTTP_404_NOT_FOUND

@@ -9,5 +9,5 @@ class NewsFactory(DjangoModelFactory):
         model = News
 
     title = factory.Faker("sentence", nb_words=5)
-    header = factory.Faker("sentence", nb_words=20)
+    header = factory.Faker("sentence", nb_words=5)
     body = factory.Faker("paragraph", nb_sentences=10)

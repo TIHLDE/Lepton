@@ -22,7 +22,7 @@ class UserBadgeViewSet(viewsets.ModelViewSet):
             user = User.objects.get(user_id=request.id)
             badge = Badge.objects.get(id=request.data.get("badge_id"))
 
-            if UserBadge.objects.get(user=user, badge=badge).exists():
+            if UserBadge.objects.filter(user=user, badge=badge).exists():
                 return Response(
                     {"detail": "Dette badgen er allerede fullført"},
                     status=status.HTTP_400_BAD_REQUEST,
@@ -36,7 +36,8 @@ class UserBadgeViewSet(viewsets.ModelViewSet):
                 )
             else:
                 return Response(
-                    {"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST
+                    {"detail": "Badgen kunne ikke ble opprettet"},
+                    status=status.HTTP_400_BAD_REQUEST,
                 )
 
         except User.DoesNotExist:
