@@ -12,7 +12,7 @@ COPY Pipfile Pipfile.lock ./
 
 # Install required python packages
 RUN apk add --no-cache --virtual .build-deps gcc linux-headers libc-dev && \
-      pipenv install && \
+      pipenv install -d && \
       rm -rf ~/.cache/pip ~/.cache/pipenv && \
     apk del .build-deps
 
