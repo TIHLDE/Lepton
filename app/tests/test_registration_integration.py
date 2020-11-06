@@ -1,5 +1,4 @@
 from datetime import timedelta
-from unittest.mock import patch
 
 from rest_framework import status
 
@@ -445,57 +444,6 @@ def test_update_fails_when_user_has_attended(admin_user):
     response = client.put(url, data=data)
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
-
-
-@pytest.mark.django_db
-@patch("app.content.views.registration.send_registration_mail")
-def test_update_sends_registration_mail_when_registration_is_not_updated_to_has_attended(
-    mock_send_registration_mail, admin_user, member
-):
-    """
-    The user should be sent a registration mail if the request updates a registration that has not yet attended.
-    This means that the user has been moved up from the waiting list.
-    """
-    registration_to_update = RegistrationFactory(user=member)
-    data = _get_registration_put_data(
-        user=admin_user, event=registration_to_update.event
-    )
-    data["has_attended"] = False
-
-    client = get_api_client(user=admin_user)
-    url = _get_registration_detail_url(registration_to_update)
-    response = client.put(url, data=data)
-
-    event_title = registration_to_update.event.title
-    user_email = registration_to_update.user.email
-
-    assert response.status_code == status.HTTP_200_OK
-    assert mock_send_registration_mail.called_with(
-        data["is_on_wait"], event_title, [user_email]
-    )
-
-
-@pytest.mark.django_db
-@patch("app.content.views.registration.send_registration_mail")
-def test_update_does_not_send_registration_mail_when_registration_is_updated_to_has_attended(
-    mock_send_registration_mail, admin_user, member
-):
-    """
-    The user should be sent a registration mail if the request updates a registration that has not yet attended.
-    This means that the user has been moved up from the waiting list.
-    """
-    registration_to_update = RegistrationFactory(user=member)
-    data = _get_registration_put_data(
-        user=admin_user, event=registration_to_update.event
-    )
-    data["has_attended"] = True
-
-    client = get_api_client(user=admin_user)
-    url = _get_registration_detail_url(registration_to_update)
-    response = client.put(url, data=data)
-
-    assert response.status_code == status.HTTP_200_OK
-    assert not mock_send_registration_mail.called
 
 
 @pytest.mark.django_db

@@ -8,7 +8,6 @@ from app.content.exceptions import APIUserAlreadyAttendedEvent
 from app.content.mixins import APIRegistrationErrorsMixin
 from app.content.models import Event, Registration
 from app.content.serializers import RegistrationSerializer
-from app.util.mailer import send_registration_mail
 
 
 class RegistrationViewSet(APIRegistrationErrorsMixin, viewsets.ModelViewSet):
@@ -65,20 +64,10 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, viewsets.ModelViewSet):
             # Prevent other registrations from using the same QR-code
             raise APIUserAlreadyAttendedEvent()
 
-        self._send_registration_mail_if_user_has_not_attended(registration)
-
         return super().update(request, *args, **kwargs)
 
     def _user_has_already_attended_event(self, registration):
         return registration.has_attended and self.request.data["has_attended"]
-
-    def _send_registration_mail_if_user_has_not_attended(self, registration):
-        if not self.request.data.get("has_attended"):
-            send_registration_mail(
-                self.request.data.get("is_on_wait"),
-                registration.event.title,
-                [registration.user.email],
-            )
 
     def destroy(self, request, *args, **kwargs):
         registration = self.get_object()

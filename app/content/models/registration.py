@@ -1,13 +1,11 @@
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.template.loader import render_to_string
 from django.utils.translation import gettext as _
 
 from app.content.exceptions import EventSignOffDeadlineHasPassed
-from app.content.models.notification import Notification
 from app.content.models.user import User
 from app.util import EnumUtils, today
-from app.util.mailer import send_html_email
+from app.util.mailer import send_event_verification, send_event_waitlist
 from app.util.models import BaseModel
 
 
@@ -55,59 +53,24 @@ class Registration(BaseModel):
     def save(self, *args, **kwargs):
         """ Determines whether the object is being created or updated and acts accordingly """
         if not self.registration_id:
-            return self.create(*args, **kwargs)
+            self.create()
         self.send_notification_and_mail()
         return super(Registration, self).save(*args, **kwargs)
 
-    def create(self, *args, **kwargs):
+    def create(self):
         """ Determines whether user is on the waiting list or not when the instance is created. """
         self.clean()
-
         self.is_on_wait = self.event.is_full
 
         if self.should_swap_with_non_prioritized_user():
             self.swap_users()
 
-        self.send_notification_and_mail()
-        return super(Registration, self).save(*args, **kwargs)
-
     def send_notification_and_mail(self):
-        if self.is_on_wait:
-            send_html_email(
-                "Venteliste for " + self.event.title,
-                render_to_string(
-                    "waitlist.html",
-                    context={
-                        "user_name": self.user.first_name,
-                        "event_name": self.event.title,
-                        "event_deadline": self.event.sign_off_deadline,
-                    },
-                ),
-                self.user.email,
-            )
-            Notification(
-                user=self.user,
-                message="På grunn av høy pågang er du satt på venteliste på "
-                + self.event.title,
-            ).save()
-        else:
-            send_html_email(
-                "Plassbekreftelse for " + self.event.title,
-                render_to_string(
-                    "signed_up.html",
-                    context={
-                        "user_name": self.user.first_name,
-                        "event_name": self.event.title,
-                        "event_time": self.event.start_date,
-                        "event_place": self.event.location,
-                        "event_deadline": self.event.sign_off_deadline,
-                    },
-                ),
-                self.user.email,
-            )
-            Notification(
-                user=self.user, message="Du har fått plass på " + self.event.title
-            ).save()
+        has_not_attended = not self.has_attended
+        if not self.is_on_wait and has_not_attended:
+            send_event_verification(self)
+        elif self.is_on_wait and has_not_attended:
+            send_event_waitlist(self)
 
     def should_swap_with_non_prioritized_user(self):
         return (

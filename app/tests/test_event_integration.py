@@ -1,6 +1,8 @@
 from django.contrib.auth.models import Group
+from django.db.models import signals
 from rest_framework.test import force_authenticate
 
+import factory
 import pytest
 
 from app.common.enums import AdminGroup
@@ -110,6 +112,7 @@ def test_update_as_user(request_factory, event, user):
         ("Non_admin_group", 403, None),
     ],
 )
+@factory.django.mute_signals(signals.post_save)
 def test_update_as_admin_user(
     request_factory, event, user, token, group_name, expected_status_code, new_title
 ):

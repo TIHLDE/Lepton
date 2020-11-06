@@ -1,7 +1,10 @@
 import os
 
-from django.core.mail import EmailMultiAlternatives, send_mail
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
 from django.utils.html import strip_tags
+
+from app.content.models.notification import Notification
 
 
 def send_html_email(subject, html, mail_list):
@@ -16,23 +19,42 @@ def send_html_email(subject, html, mail_list):
         print(e)
 
 
-def send_tihlde_email(subject, message, mail_list):
-    return send_mail(
-        subject, message, os.environ.get("EMAIL_USER"), mail_list, fail_silently=False,
+def send_event_waitlist(registration):
+    send_html_email(
+        "Venteliste for " + registration.event.title,
+        render_to_string(
+            "waitlist.html",
+            context={
+                "user_name": registration.user.first_name,
+                "event_name": registration.event.title,
+                "event_deadline": registration.event.sign_off_deadline,
+            },
+        ),
+        registration.user.email,
     )
+    Notification(
+        user=registration.user,
+        message="På grunn av høy pågang er du satt på venteliste på "
+        + registration.event.title,
+    ).save()
 
 
-def send_registration_mail(is_on_wait, event, user):
-    if is_on_wait:
-        send_tihlde_email(
-            "Du er satt på venteliste for event " + (event),
-            "Inntil videre er du satt på venteliste",
-            user,
-        )
-    else:
-        send_tihlde_email(
-            "Du har fått plass på " + (event),
-            "Gratulerer, du har fått plass på eventet " + (event),
-            user,
-        )
-    return None
+def send_event_verification(registration):
+    send_html_email(
+        "Plassbekreftelse for " + registration.event.title,
+        render_to_string(
+            "signed_up.html",
+            context={
+                "user_name": registration.user.first_name,
+                "event_name": registration.event.title,
+                "event_time": registration.event.start_date,
+                "event_place": registration.event.location,
+                "event_deadline": registration.event.sign_off_deadline,
+            },
+        ),
+        registration.user.email,
+    )
+    Notification(
+        user=registration.user,
+        message="Du har fått plass på " + registration.event.title,
+    ).save()

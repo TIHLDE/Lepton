@@ -68,3 +68,9 @@ isort:
 
 flake8:
 	docker-compose run web pipenv run flake8 app
+
+PR:
+	make format
+	git add .
+	make check
+	make test

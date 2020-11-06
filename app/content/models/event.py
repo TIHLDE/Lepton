@@ -82,6 +82,10 @@ class Event(BaseModel, OptionalImage):
     def is_past_sign_off_deadline(self):
         return today() >= self.sign_off_deadline
 
+    @property
+    def event_has_ended(self):
+        return today() >= self.end_date
+
     def has_waiting_list(self):
         return self.has_limit() and (self.is_full or self.get_waiting_list().exists())
 

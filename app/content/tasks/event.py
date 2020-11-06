@@ -28,8 +28,8 @@ def event_sign_off_deadline_schedular(pk, title):
 
 
 @shared_task
-def event_end_schedular(pk, title, date, evaluate_link):
-    [
+def event_end_schedular(pk, title, start_date, evaluate_link):
+    for registration in Registration.objects.filter(event__pk=pk, has_attended=True):
         send_html_email(
             "Evaluering av " + title,
             render_to_string(
@@ -37,11 +37,9 @@ def event_end_schedular(pk, title, date, evaluate_link):
                 context={
                     "user_name": registration.user.first_name,
                     "event_name": title,
-                    "event_date": date,
+                    "event_date": start_date,
                     "event_evaluate_link": evaluate_link,
                 },
             ),
             registration.user.email,
         )
-        for registration in Registration.objects.filter(event__pk=pk, has_attended=True)
-    ]

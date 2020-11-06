@@ -15,6 +15,14 @@ def today():
     return datetime.now(tz=pytz_timezone("Europe/Oslo"))
 
 
+def datetime_format(date_time):
+    return date_time.strftime("%d %B, %Y")
+
+
+def midday(date_time):
+    return date_time.replace(hour=12, minute=00, second=00)
+
+
 def disable_for_loaddata(signal_handler):
     """
     Disable signals for the 'loaddata' command
