@@ -16,7 +16,7 @@ class OptionSerializer(serializers.ModelSerializer):
 
 
 class FieldSerializer(serializers.ModelSerializer):
-    options = OptionSerializer(many=True, read_only=True)
+    options = OptionSerializer(many=True)
 
 class OptionSerializer(serializers.ModelSerializer):
 
@@ -52,8 +52,15 @@ class FormSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
-        print(validated_data)
-        form = Form.objects.create()
+        fields = validated_data.pop("fields")
+        form = Form.objects.create(**validated_data)
+        for field in fields:
+            options = field.pop("options")
+            field = Field.objects.create(form=form, **field)
+
+            for o in options:
+                Option.objects.create(field=field, **o)
+
         return form
 
 
@@ -71,7 +78,6 @@ class FormInSubmissionSerializer(serializers.ModelSerializer):
             "fields",
             "type",
         ]
-
 
     def create(self, validated_data):
         print(validated_data)
@@ -98,16 +104,10 @@ class FieldInAnswerSerializer(serializers.ModelSerializer):
         ]
 
 
-class FormPolymorphicSerializer(PolymorphicSerializer, serializers.ModelSerializer):
-    resource_type = serializers.CharField()
+class FormPolymorphicSerializer(PolymorphicSerializer):
     resource_type_field_name = "resource_type"
 
     model_serializer_mapping = {
         Form: FormSerializer,
         EventForm: EventFormSerializer,
     }
-
-    class Meta:
-        model = Form
-        fields = ["resource_type"] + FormSerializer.Meta.fields
-

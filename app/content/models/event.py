@@ -93,7 +93,7 @@ class Event(BaseModel, OptionalImage):
 
     @property
     def registration_count(self):
-        return self.list_count()
+        return self.list_count
 
     def has_waiting_list(self):
         return self.has_limit() and (self.is_full or self.get_waiting_list().exists())
