@@ -52,7 +52,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     def get_badges(self, obj):
         """ Lists all badges a user has accomplished """
-        user_badges = obj.user_badges.order_by("created_at")
+        user_badges = obj.user_badges.order_by("-created_at")
         badges = [user_badge.badge for user_badge in user_badges]
         return BadgeSerializer(badges, many=True).data
 
