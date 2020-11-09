@@ -1,6 +1,6 @@
 from rest_framework import viewsets
 
-from app.content.enums import AdminGroup
+from app.common.enums import AdminGroup
 from app.forms.serializers import FormPolymorphicSerializer
 from app.forms.models import Form
 
