@@ -1,7 +1,7 @@
 from rest_framework.permissions import SAFE_METHODS, BasePermission
 
-from app.content.enums import AdminGroup
-from app.content.permissions.permissions import check_strict_group_permission
+from app.common.enums import AdminGroup
+from app.common.permissions import check_strict_group_permission
 
 
 class FormPermissions(BasePermission):
