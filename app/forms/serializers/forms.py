@@ -73,6 +73,11 @@ class FormInSubmissionSerializer(serializers.ModelSerializer):
         ]
 
 
+    def create(self, validated_data):
+        print(validated_data)
+        form = EventForm(**validated_data)
+        return form
+
 class FormInSubmissionSerializer(serializers.ModelSerializer):
 
     class Meta:
