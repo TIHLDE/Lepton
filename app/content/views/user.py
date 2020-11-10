@@ -3,6 +3,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status, viewsets
 from rest_framework.response import Response
 
+from sentry_sdk import capture_exception
+
 from app.common.pagination import BasePagination
 from app.common.permissions import UserPermission, is_admin_user
 from app.content.models import User
@@ -35,7 +37,8 @@ class UserViewSet(viewsets.ModelViewSet):
             )
 
             return Response(serializer.data)
-        except User.DoesNotExist:
+        except User.DoesNotExist as user_not_exist:
+            capture_exception(user_not_exist)
             return Response(
                 {"detail": ("Kunne ikke finne brukeren")},
                 status=status.HTTP_404_NOT_FOUND,
@@ -92,7 +95,8 @@ class UserViewSet(viewsets.ModelViewSet):
                     {"detail": ("Kunne ikke oppdatere brukeren")},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-        except ObjectDoesNotExist:
+        except ObjectDoesNotExist as object_not_exist:
+            capture_exception(object_not_exist)
             return Response(
                 {"detail": "Kunne ikke finne brukeren"},
                 status=status.HTTP_404_NOT_FOUND,

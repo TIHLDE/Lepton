@@ -5,6 +5,8 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
+from sentry_sdk import capture_exception
+
 
 @csrf_exempt
 @api_view(["POST"])
@@ -53,5 +55,6 @@ def accept_form(request):
         )
         return Response({"detail": ""}, status=200 if numOfSentMails > 0 else 400)
 
-    except Exception:
+    except Exception as accept_form_fail:
+        capture_exception(accept_form_fail)
         raise

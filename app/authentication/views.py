@@ -2,6 +2,8 @@ from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 
+from sentry_sdk import capture_exception
+
 from app.common.permissions import IsDev, IsHS
 
 from ..content.models.user import User
@@ -25,7 +27,8 @@ def login(request):
             try:
                 token = Token.objects.get(user_id=user_id).key
                 return Response({"token": token}, status=200)
-            except Token.DoesNotExist:
+            except Token.DoesNotExist as token_not_exist:
+                capture_exception(token_not_exist)
                 return Response({"detail": ("Ikke aktivert TIHLDE medlem")}, status=401)
         else:
             return Response({"detail": ("Ikke aktivert TIHLDE medlem")}, status=401)
@@ -49,7 +52,8 @@ def makeMember(request):
         try:
             Token.objects.get(user_id=user_id)
             return Response({"detail": ("Already a TIHLDE member")}, status=400)
-        except Token.DoesNotExist:
+        except Token.DoesNotExist as token_not_exist:
+            capture_exception(token_not_exist)
             Token.objects.create(user=user)
             return Response({"detail": ("New TIHLDE member added")}, status=200)
     else:

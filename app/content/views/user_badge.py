@@ -1,6 +1,8 @@
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 
+from sentry_sdk import capture_exception
+
 from app.common.permissions import IsDev, IsMember
 
 from ..models import Badge, User, UserBadge
@@ -40,16 +42,19 @@ class UserBadgeViewSet(viewsets.ModelViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-        except User.DoesNotExist:
+        except User.DoesNotExist as user_not_exist:
+            capture_exception(user_not_exist)
             return Response(
                 {"detail": "Kunne ikke finne brukeren"},
                 status=status.HTTP_404_NOT_FOUND,
             )
-        except Badge.DoesNotExist:
+        except Badge.DoesNotExist as badge_not_exist:
+            capture_exception(badge_not_exist)
             return Response(
                 {"detail": "Kunne ikke finne badgen"}, status=status.HTTP_404_NOT_FOUND
             )
-        except Exception:
+        except Exception as badge_create_fail:
+            capture_exception(badge_create_fail)
             return Response(
                 {"detail": "Badgen kunne ikke ble opprettet"},
                 status=status.HTTP_404_NOT_FOUND,

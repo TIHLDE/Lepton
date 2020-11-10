@@ -3,6 +3,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status, viewsets
 from rest_framework.response import Response
 
+from sentry_sdk import capture_exception
+
 from app.common.drive_handler import upload_and_replace_url_with_cloud_link
 from app.common.enums import AppModel, UserClass, UserStudy
 from app.common.pagination import BasePagination
@@ -47,7 +49,8 @@ class CheatsheetViewSet(viewsets.ModelViewSet):
                 cheatsheet, context={"request": request}, many=True
             )
             return Response(serializer.data, status=status.HTTP_200_OK)
-        except Cheatsheet.DoesNotExist:
+        except Cheatsheet.DoesNotExist as cheatsheet_not_exist:
+            capture_exception(cheatsheet_not_exist)
             return Response(
                 {"detail": _("Kokeboken eksisterer ikke")},
                 status=status.HTTP_404_NOT_FOUND,
@@ -83,7 +86,8 @@ class CheatsheetViewSet(viewsets.ModelViewSet):
                 {"detail": _("Du har ikke tillatelse til å oppdatere oppskriften")},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        except Cheatsheet.DoesNotExist:
+        except Cheatsheet.DoesNotExist as cheatsheet_not_exist:
+            capture_exception(cheatsheet_not_exist)
             return Response(
                 {"details": _("Oppskriften ble ikke funnet")},
                 status=status.HTTP_404_NOT_FOUND,
@@ -103,7 +107,8 @@ class CheatsheetViewSet(viewsets.ModelViewSet):
                 {"detail": _("Ikke riktig tilatelse for å slette en oppskrift")},
                 status=status.HTTP_403_FORBIDDEN,
             )
-        except Cheatsheet.DoesNotExist:
+        except Cheatsheet.DoesNotExist as cheatsheet_not_exist:
+            capture_exception(cheatsheet_not_exist)
             return Response(
                 {"details": _("Oppskriften ble ikke funnet")},
                 status=status.HTTP_404_NOT_FOUND,

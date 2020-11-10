@@ -4,6 +4,8 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 
+from sentry_sdk import capture_exception
+
 from app.content.models.notification import Notification
 
 
@@ -15,8 +17,8 @@ def send_html_email(subject, html, mail_list):
         )
         msg.attach_alternative(html, "text/html")
         msg.send()
-    except Exception as e:
-        print(e)
+    except Exception as send_html_email_fail:
+        capture_exception(send_html_email_fail)
 
 
 def send_event_waitlist(registration):
