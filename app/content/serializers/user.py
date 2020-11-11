@@ -6,6 +6,17 @@ from .badge import BadgeSerializer
 from .event import EventInUserSerializer
 
 
+class DefaultUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        read_only_fields = (
+            "user_id",
+            "first_name",
+            "last_name",
+            "email",
+        )
+
+
 class UserSerializer(serializers.ModelSerializer):
     events = serializers.SerializerMethodField()
     groups = serializers.SerializerMethodField()
