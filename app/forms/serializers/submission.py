@@ -1,8 +1,12 @@
 from rest_framework import serializers
 
-from app.forms.models import Submission, Answer
-from app.forms.serializers import FormInSubmissionSerializer, FieldInAnswerSerializer, OptionSerializer
 from app.content.serializers import UserInAnswerSerializer
+from app.forms.models import Answer, Submission
+from app.forms.serializers import (
+    FieldInAnswerSerializer,
+    FormInSubmissionSerializer,
+    OptionSerializer,
+)
 
 
 class AnswerSerializer(serializers.ModelSerializer):
@@ -11,12 +15,7 @@ class AnswerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Answer
-        fields = [
-            "id",
-            "field",
-            "selected_options",
-            "answer_text"
-        ]
+        fields = ["id", "field", "selected_options", "answer_text"]
 
 
 class SubmissionSerializer(serializers.ModelSerializer):
@@ -26,8 +25,4 @@ class SubmissionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Submission
-        fields = [
-            "form",
-            "user",
-            "answers"
-        ]
+        fields = ["form", "user", "answers"]

@@ -1,13 +1,10 @@
-from rest_framework.permissions import SAFE_METHODS, BasePermission
+from rest_framework.permissions import BasePermission
 
-from app.common.enums import AdminGroup
 from app.common.permissions import check_strict_group_permission, get_user_id
 from app.forms.enums import FormType
 
 
-
 class FormPermissions(BasePermission):
-
     def __init__(self, groups):
         self.groups = groups
 

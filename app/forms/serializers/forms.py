@@ -1,12 +1,12 @@
 from rest_framework import serializers
+
 from rest_polymorphic.serializers import PolymorphicSerializer
 
-from app.forms.models import Form, Field, EventForm, Answer, Submission, Option
 from app.content.serializers import EventInFormSerializer
+from app.forms.models import EventForm, Field, Form, Option
 
 
 class OptionSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Option
         fields = [
@@ -68,7 +68,6 @@ class EventFormSerializer(FormSerializer):
 
 
 class FormInSubmissionSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Form
         fields = [
@@ -78,13 +77,9 @@ class FormInSubmissionSerializer(serializers.ModelSerializer):
 
 
 class FieldInAnswerSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Field
-        fields = [
-            "id",
-            "type"
-        ]
+        fields = ["id", "type"]
 
 
 class FormPolymorphicSerializer(PolymorphicSerializer, serializers.ModelSerializer):
@@ -99,4 +94,3 @@ class FormPolymorphicSerializer(PolymorphicSerializer, serializers.ModelSerializ
     class Meta:
         model = Form
         fields = ["resource_type"] + FormSerializer.Meta.fields
-

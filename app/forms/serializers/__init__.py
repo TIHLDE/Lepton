@@ -1,5 +1,7 @@
-from .forms import (FormInSubmissionSerializer,
-                    FieldInAnswerSerializer,
-                    OptionSerializer,
-                    FormSerializer,
-                    FormPolymorphicSerializer)
+from .forms import (
+    FormInSubmissionSerializer,
+    FieldInAnswerSerializer,
+    OptionSerializer,
+    FormSerializer,
+    FormPolymorphicSerializer,
+)

@@ -1,13 +1,14 @@
 import uuid
 
 from django.db import models
+
 from enumchoicefield import EnumChoiceField
 from polymorphic.models import PolymorphicModel
 
 from app.content.models.event import Event
 from app.content.models.user import User
+from app.forms.enums import EventFormType, FormFieldType, FormType
 from app.util.models import BaseModel
-from app.forms.enums import EventFormType, FormType, FormFieldType
 
 
 class Form(PolymorphicModel):
@@ -73,9 +74,15 @@ class Submission(BaseModel):
 class Answer(BaseModel):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    submission = models.ForeignKey(Submission, on_delete=models.CASCADE, related_name="answers")
-    selected_options = models.ManyToManyField(Option, related_name="selected_in_answers", blank=True)
-    field = models.ForeignKey(Field, on_delete=models.CASCADE, related_name="answers", null=True, blank=True)
+    submission = models.ForeignKey(
+        Submission, on_delete=models.CASCADE, related_name="answers"
+    )
+    selected_options = models.ManyToManyField(
+        Option, related_name="selected_in_answers", blank=True
+    )
+    field = models.ForeignKey(
+        Field, on_delete=models.CASCADE, related_name="answers", null=True, blank=True
+    )
     answer_text = models.CharField(max_length=255, default="", blank=True, null=True)
 
     def get_field(self):

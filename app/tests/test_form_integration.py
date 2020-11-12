@@ -1,17 +1,5 @@
-import pytest
-
-
-from rest_framework import status
-
-import pytest
-
-from app.content.enums import AdminGroup
-from app.content.factories import EventFactory, RegistrationFactory
-from app.util.test_utils import get_api_client
-
-
 def _get_forms_url():
-    return f"/api/v1/forms/"
+    return f'{"/api/v1/forms/"}'
 
 
 def _get_form_detail_url(form):

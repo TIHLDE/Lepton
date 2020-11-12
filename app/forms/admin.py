@@ -1,5 +1,10 @@
 from django.contrib import admin
-from polymorphic.admin import PolymorphicParentModelAdmin, PolymorphicChildModelAdmin, PolymorphicChildModelFilter
+
+from polymorphic.admin import (
+    PolymorphicChildModelAdmin,
+    PolymorphicChildModelFilter,
+    PolymorphicParentModelAdmin,
+)
 
 from app.forms import models
 
@@ -24,8 +29,10 @@ class FieldInline(admin.TabularInline):
 # class FormAdmin(admin.ModelAdmin):
 #     inlines = (FieldInline,)
 
+
 class FormChildAdmin(PolymorphicChildModelAdmin):
     """ Base admin class for all child models """
+
     base_model = models.Form  # Optional, explicitly set here.
 
 
@@ -39,8 +46,8 @@ class EventFormAdmin(FormChildAdmin):
 @admin.register(models.Form)
 class FormAdmin(PolymorphicParentModelAdmin):
     """ The parent model admin """
+
     base_model = models.Form
     child_models = (models.EventForm,)
     list_filter = (PolymorphicChildModelFilter,)
     inlines = (FieldInline,)
-
