@@ -75,7 +75,7 @@ INSTALLED_APPS = [
     "drf_yasg",
     "rest_framework.authtoken",
     "rest_auth",
-    'polymorphic',
+    "polymorphic",
     # Our apps
     "app.content",
     "app.util",

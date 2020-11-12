@@ -150,10 +150,6 @@ class UserCreateSerializer(serializers.ModelSerializer):
 
 
 class UserInAnswerSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = User
-        fields = [
-            "user_id",
-            "email"
-        ]
+        fields = ["user_id", "email"]

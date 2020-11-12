@@ -193,12 +193,6 @@ class EventInUserSerializer(EventSerializer):
 
 
 class EventInFormSerializer(EventSerializer):
-
     class Meta:
         model = Event
-        fields = [
-            "id",
-            "title",
-            "attended_count",
-            "registration_count"
-        ]
+        fields = ["id", "title", "attended_count", "registration_count"]
