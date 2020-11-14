@@ -5,6 +5,8 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import exception_handler as drf_exception_handler
 
+from sentry_sdk import capture_exception
+
 logger = logging.getLogger(__name__)
 
 
@@ -18,6 +20,7 @@ def exception_handler(exc, context):
         )
 
     if response:
+        capture_exception(exc)
         log_api_error(response, exc)
     else:
         logger.error(f"Unhandled request exception: {exc}")

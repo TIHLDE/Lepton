@@ -8,6 +8,7 @@ from django.core.validators import URLValidator
 
 import owncloud
 import requests
+from sentry_sdk import capture_exception
 
 logger = logging.getLogger(__name__)
 
@@ -23,8 +24,8 @@ def make_directory(dirname):
 
     try:
         oc.mkdir(dirname)
-    except Exception as e:
-        logger.error(e.message)
+    except Exception as make_directory_fail:
+        capture_exception(make_directory_fail)
     finally:
         oc.logout()
 
@@ -56,7 +57,8 @@ def upload_bytes(to_dir, file_data, file_extension):
         # Since the function consistantly does what it is supposed to (share the file) we catch the exception.
         oc.put_file(cloud_file_path, local_file_path)
         share_info = oc.share_file_with_link(cloud_file_path)
-    except Exception:
+    except Exception as upload_bytes_fail:
+        capture_exception(upload_bytes_fail)
         # This workaround uses a function that does not have the same issue as oc.share_file_with_link(c).
         # It gets all shares for the newly uploaded file and returns the first element, which in practice is the same as above.
         share_list = oc.get_shares(cloud_file_path)
@@ -81,7 +83,8 @@ def is_url(data):
     try:
         validator(data)
         return True
-    except ValidationError:
+    except ValidationError as validation_fail:
+        capture_exception(validation_fail)
         return False
 
 
@@ -145,8 +148,8 @@ def upload_and_replace_image_with_cloud_link(request, to_dir):
             )
         elif request.FILES:
             request.data["image"] = get_cloud_link_from_single_file(request, to_dir)
-    except ValueError as e:
-        logger.error(e.message)
+    except ValueError as value_error:
+        capture_exception(value_error)
 
 
 def upload_and_replace_url_with_cloud_link(request, to_dir):

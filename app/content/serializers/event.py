@@ -1,5 +1,7 @@
 from rest_framework import serializers
 
+from sentry_sdk import capture_exception
+
 from app.util import EnumUtils
 
 from ..models import Event, Priority, Registration, User
@@ -76,7 +78,8 @@ class EventSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(
                     "Event limit can not be lower than number of registered users."
                 )
-        except AttributeError:
+        except AttributeError as attribute_error:
+            capture_exception(attribute_error)
             pass
 
         return limit

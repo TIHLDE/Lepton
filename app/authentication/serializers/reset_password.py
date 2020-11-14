@@ -3,6 +3,8 @@ import os
 from django.contrib.auth.forms import PasswordResetForm
 from rest_framework import serializers
 
+from sentry_sdk import capture_exception
+
 from app.settings import DOMAIN
 
 
@@ -20,7 +22,8 @@ class PasswordResetSerializer(serializers.Serializer):
             self.reset_form = self.password_reset_form_class(data=self.initial_data)
             if not self.reset_form.is_valid():
                 raise serializers.ValidationError(self.reset_form.errors)
-        except Exception:
+        except Exception as validate_email_fail:
+            capture_exception(validate_email_fail)
             raise
         return value
 
@@ -39,5 +42,6 @@ class PasswordResetSerializer(serializers.Serializer):
 
             self.reset_form.save(**opts)
 
-        except Exception:
+        except Exception as save_fail:
+            capture_exception(save_fail)
             raise

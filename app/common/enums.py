@@ -55,3 +55,8 @@ class CheatsheetType(ChoiceEnum):
     GITHUB = "GitHub"
     LINK = "Link"
     OTHER = "Annet"
+
+
+class MembershipType(ChoiceEnum):
+    MEMBER = "Member"
+    LEADER = "Leader"
