@@ -36,10 +36,10 @@ class AppModel(ChoiceEnum):
 
 
 class GroupType(ChoiceEnum):
-    THILDE = "THILDE"
+    TIHLDE = "TIHLDE"
     BOARD = "Styre"
     SUBGROUP = "Undergruppe"
-    COMMITEE = "Kommite"
+    COMMITTEE = "Komité"
     STUDYYEAR = "Studieår"
     OTHER = "Annet"
 
