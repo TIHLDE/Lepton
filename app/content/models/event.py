@@ -89,7 +89,7 @@ class Event(BaseModel, OptionalImage):
     @property
     def attended_count(self):
         """ Number of users who actually attended to the event"""
-        return 0
+        return self.registrations.filter(has_attended=True)
 
     @property
     def registration_count(self):

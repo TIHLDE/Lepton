@@ -15,6 +15,7 @@ aiohttp-cors = "*"
 wheel = "*"
 mysqlclient = "==1.4.4"
 travis = "*"
+sentry-sdk = "*"
 
 pyocclient = "*"
 celery = "~=4.4"
