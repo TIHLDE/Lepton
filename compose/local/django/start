@@ -1,0 +1,8 @@
+#!/bin/sh
+
+set -o errexit
+set -o pipefail
+set -o nounset
+
+pipenv run python manage.py migrate
+pipenv run python manage.py runserver 0.0.0.0:8000

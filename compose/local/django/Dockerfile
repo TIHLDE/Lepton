@@ -3,6 +3,8 @@ ENV PYTHONUNBUFFERED 1
 
 WORKDIR /usr/src
 
+RUN apk add --no-cache --upgrade bash
+
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir pipenv && \
     # Install required linux packages (remove postgresql-dev when Heroku isn't needed)
@@ -20,5 +22,12 @@ COPY . .
 
 VOLUME /usr/src/app/volume
 
-CMD ./manage.py collectstatic --noinput && \
-    gnuicorn -w 3 --bind 0.0.0.0:8000 --acess-logfile - app.wsgi:application
+COPY ./compose/production/django/wait-for-it /wait-for-it
+RUN sed -i 's/\r$//g' /wait-for-it
+RUN chmod +x /wait-for-it
+
+COPY ./compose/local/django/start /start
+RUN sed -i 's/\r$//g' /start
+RUN chmod +x /start
+
+ENTRYPOINT ["/wait-for-it", "lepton_db:3306", "--strict", "--"]

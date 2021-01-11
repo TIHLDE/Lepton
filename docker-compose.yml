@@ -1,46 +1,43 @@
 version: '3'
 
+volumes:
+  local_mysql_data: {}
+
 services:
-  db:
+  lepton_db:
     image: mysql:5.7
-    container_name: db
+    container_name: lepton_db
+    volumes:
+      - local_mysql_data:/var/lib/mysql
     restart: always
+    env_file:
+      - ./.envs/.local/.mysql
     ports:
-      - "3306:3306"
-    environment:
-      - MYSQL_ROOT_PASSWORD=password
-      - MYSQL_USER=dev
-      - MYSQL_PASSWORD=password
-      - MYSQL_DATABASE=nettside-dev
+      - '3306:3306'
+
   phpmyadmin:
     depends_on:
-      - db
+      - lepton_db
     image: phpmyadmin/phpmyadmin
     restart: always
+    env_file:
+      - ./.envs/.local/.phpmyadmin
     ports:
       - '8080:80'
-    environment:
-      PMA_HOST: db
-      MYSQL_ROOT_PASSWORD: password
-  celery:
-    env_file:
-      - .env
-    build: .
-    container_name: celery
-    command: pipenv run celery -A app worker -l info
-    volumes:
-      - .:/usr/src/
-    depends_on:
-      - db
+
   web:
-    env_file:
-      - .env
-    build: .
+    build:
+      context: .
+      dockerfile: ./compose/local/django/Dockerfile
+    image: lepton_local_web
     container_name: web
-    command: pipenv run python manage.py runserver 0.0.0.0:8000
+    depends_on:
+      - lepton_db
     volumes:
-      - .:/usr/src/
+      - .:/usr/src
+    env_file:
+      - ./.envs/.local/.django
+      - ./.envs/.local/.mysql
     ports:
       - "8000:8000"
-    depends_on:
-      - db
+    command: /start

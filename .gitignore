@@ -13,9 +13,14 @@ volume/
 
 .DS_STORE
 
+# IntelliJ
+out/
+
 # Env
 .env
 .env.development
+.envs/*
+!.envs/.local/
 
 mysite.log
 

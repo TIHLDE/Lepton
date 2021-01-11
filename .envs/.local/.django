@@ -1,0 +1,7 @@
+# Django
+# ------------------------------------------------------------------------------
+DATABASE_HOST=lepton_db
+DATABASE_NAME=lepton
+DATABASE_USER=local
+DATABASE_PASSWORD=local
+DATABASE_PORT=3306

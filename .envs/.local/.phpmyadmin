@@ -1,0 +1,4 @@
+# phpmyadmin
+# ------------------------------------------------------------------------------
+PMA_HOST=lepton_db
+MYSQL_ROOT_PASSWORD=local

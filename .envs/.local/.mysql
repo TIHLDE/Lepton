@@ -1,0 +1,6 @@
+# MySQL
+# ------------------------------------------------------------------------------
+MYSQL_DATABASE=lepton
+MYSQL_ROOT_PASSWORD=local
+MYSQL_USER=local
+MYSQL_PASSWORD=local
