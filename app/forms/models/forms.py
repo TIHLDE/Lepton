@@ -28,7 +28,7 @@ class Form(PolymorphicModel):
 class EventForm(Form):
 
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name="forms")
-    type = EnumChoiceField(EventFormType, default=FormType.SURVEY)
+    type = EnumChoiceField(EventFormType, default=EventFormType.SURVEY)
 
     class Meta:
         unique_together = ("event", "type")

@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from rest_polymorphic.serializers import PolymorphicSerializer
 
-from app.content.serializers import EventInFormSerializer
+from app.content.serializers.event import EventInFormSerializer
 from app.forms.models import EventForm, Field, Form, Option
 
 

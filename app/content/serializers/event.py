@@ -40,6 +40,7 @@ class EventSerializer(serializers.ModelSerializer):
             "sign_off_deadline",
             "registration_priorities",
             "evaluate_link",
+            "forms",
         )
 
         extra_kwargs = {
@@ -62,9 +63,9 @@ class EventSerializer(serializers.ModelSerializer):
 
     def validate_limit(self, limit):
         """
-                Validate that the event limit is greater or equal to 0 and
-                that the limit can not be lower than the number of registered users.
-                If the limit is already 0, then do not let that effect updating other fields
+        Validate that the event limit is greater or equal to 0 and
+        that the limit can not be lower than the number of registered users.
+        If the limit is already 0, then do not let that effect updating other fields
         """
         try:
             if limit < 0:

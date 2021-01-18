@@ -22,6 +22,10 @@ class EventWithSignalsFactory(DjangoModelFactory):
     end_registration_at = timezone.now() + timedelta(days=9)
     sign_off_deadline = timezone.now() + timedelta(days=8)
 
+    forms = factory.RelatedFactory(
+        "app.forms.tests.form_factories.EventFormFactory", factory_related_name="event"
+    )
+
 
 @factory.django.mute_signals(signals.post_save)
 class EventFactory(EventWithSignalsFactory):

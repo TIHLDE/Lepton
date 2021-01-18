@@ -5,21 +5,19 @@ from .event import (
     EventAdminSerializer,
     EventCreateAndUpdateSerializer,
     EventSerializer,
-    EventInFormSerializer,
 )
 from .job_post import JobPostSerializer
-
-from .registration import RegistrationSerializer
+from .news import NewsSerializer
 from .notification import NotificationSerializer, UpdateNotificationSerializer
 from .priority import PrioritySerializer
+from .registration import RegistrationSerializer
 from .user import (
     UserAdminSerializer,
     UserCreateSerializer,
+    UserInAnswerSerializer,
     UserMemberSerializer,
     UserSerializer,
-    UserInAnswerSerializer,
 )
 from .user_badge import UserBadgeSerializer
 from .warning import WarningSerializer
-from .news import NewsSerializer
 from .wiki import WikiListSerializer, WikiPostSerializer
