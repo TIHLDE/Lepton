@@ -304,3 +304,17 @@ def test_registration_in_queue_is_deleted_if_no_priority_registration_in_waiting
     ).exists()
     assert not registration_not_in_priority_pool.is_on_wait
     assert other_registration_not_in_priority_pool.is_on_wait
+
+
+@pytest.mark.django_db
+def test_registration_in_queue_is_deleted_if_no_waiting_list(
+    event_with_registrations, registration_in_priority_pool,
+):
+    """Test that if there is no waiting list, a user is still able to unregister from  an event"""
+    registration_in_priority_pool.delete()
+    event_with_registrations.refresh_from_db()
+
+    assert not registration_in_priority_pool.event.registrations.filter(
+        registration_id=registration_in_priority_pool.registration_id
+    ).exists()
+    assert not event_with_registrations.get_waiting_list().exists()

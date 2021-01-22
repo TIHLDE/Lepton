@@ -1,8 +1,11 @@
 import logging
 from datetime import timedelta
 
+from django.conf import settings
+
 from celery.task.control import revoke
 
+from app.common.enums import EnvironmentOptions
 from app.content.tasks.event import (
     event_end_schedular,
     event_sign_off_deadline_schedular,
@@ -14,7 +17,8 @@ logger = logging.getLogger(__name__)
 
 @disable_for_loaddata
 def send_event_reminders(sender, instance, created, **kwargs):
-    run_celery_tasks_for_event(instance)
+    if settings.ENVIRONMENT == EnvironmentOptions.PRODUCTION:
+        run_celery_tasks_for_event(instance)
 
 
 def run_celery_tasks_for_event(event):

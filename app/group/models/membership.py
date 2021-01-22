@@ -55,16 +55,16 @@ class Membership(BaseModel):
         return f"{self.user} - {self.group} - {self.membership_type}"
 
     @atomic
-    def swap_leader(self):
+    def swap_board(self, new_membership_type):
         """Swaps leader of a group and creates a Membership History for each membership"""
         previous_leader = Membership.objects.select_for_update().get(
-            group=self.group, membership_type=self.membership_type
+            group=self.group, membership_type=new_membership_type
         )
         if previous_leader.user == self.user:
             raise ValidationError("The user is the current leader")
-        MembershipHistory.membership(Membership=previous_leader)
+        MembershipHistory.from_membership(Membership=previous_leader)
         previous_leader.membership_type = MembershipType.MEMBER
         previous_leader.save()
         MembershipHistory.from_membership(Membership=self)
-        self.membership_type = MembershipType.LEADER
+        self.membership_type = new_membership_type
         self.save()
