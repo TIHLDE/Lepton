@@ -64,15 +64,12 @@ def test_retrieve_events():
 def test_retrieve_event():
     event = EventFactory()
     client = _create_user_client(AdminGroup.INDEX)
+
     response = client.get(_event_url(event))
     event = response.json()
+
     form = event.get("forms")[0]
-    print(form)
-    assert {"id": form.id, "type": form.type, "hidden": form.hidden} == {
-        "id": event.id,
-        "type": event.type,
-        "hidden": event.hidden,
-    }
+    assert form == event.get("forms")[0]
 
 
 # PUT /events/<id>/
@@ -134,7 +131,6 @@ def test_create_forms():
     raise NotImplementedError()
 
 
-@pytest.mark.django_db
 @pytest.mark.django_db
 def test_get_forms_permissions(user_group):
     raise NotImplementedError()
