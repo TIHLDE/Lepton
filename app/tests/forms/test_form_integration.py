@@ -21,8 +21,12 @@ def _create_user_client(user_group):
     return client
 
 
-def _event_url(event):
-    return f"/api/v1/events/{event.id}/"
+def _event_url():
+    return "/api/v1/events/"
+
+
+def _event_detail_url(event):
+    return f"{_event_url()}{event.id}/"
 
 
 def _forms_url():
@@ -51,8 +55,14 @@ def _get_form_post_data(form):
 # GET /events
 # Send med formet (read_only)
 @pytest.mark.django_db
-def test_retrieve_events():
-    raise NotImplementedError()
+def test_retrieve_events_does_not_contain_forms():
+    event = EventFactory()
+    client = _create_user_client(AdminGroup.INDEX)
+
+    response = client.get(_event_url())
+    event = response.json()
+
+    assert "forms" not in event
 
 
 # GET /events/<id>/
@@ -61,11 +71,11 @@ def test_retrieve_events():
 # Send med all info fra den over (retrieve) pluss brukerens ubesvarte forms
 # Dette feltet ligger på brukeren som "request.user.unanswered_forms()"
 @pytest.mark.django_db
-def test_retrieve_event():
+def test_retrieve_event_detail_has_form_id_equal_to_the_one_provided():
     event = EventFactory()
     client = _create_user_client(AdminGroup.INDEX)
 
-    response = client.get(_event_url(event))
+    response = client.get(_event_detail_url(event))
     event = response.json()
 
     form = event.get("forms")[0]
