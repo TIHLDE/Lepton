@@ -136,9 +136,10 @@ class EventCreateAndUpdateSerializer(serializers.ModelSerializer):
         )
 
     def create(self, validated_data):
-        registration_priorities_data = validated_data.pop("registration_priorities")
         event = Event.objects.create(**validated_data)
-        self.set_registration_priorities(event, registration_priorities_data)
+        if "registration_priorities" in validated_data:
+            registration_priorities_data = validated_data.pop("registration_priorities")
+            self.set_registration_priorities(event, registration_priorities_data)
 
         return event
 
