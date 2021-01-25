@@ -1,3 +1,5 @@
+import json
+
 from django.contrib.auth.models import Group
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
@@ -76,17 +78,23 @@ def test_retrieve_event_detail_has_form_id_equal_to_the_one_provided():
     client = _create_user_client(AdminGroup.INDEX)
 
     response = client.get(_event_detail_url(event))
-    event = response.json()
+    retrieved_event = response.json()
 
-    form = event.get("forms")[0]
-    assert form == event.get("forms")[0]
+    form = retrieved_event.get("forms")[0]
+    assert form == str(event.forms.get().id)
 
 
 # PUT /events/<id>/
 # Oppdaterer ikke formet (sendes ikke med fra frontend)
 @pytest.mark.django_db
-def test_update_event():
-    raise NotImplementedError()
+def test_update_event_detail_does_not_update_form_ids():
+    event = EventFactory()
+    client = _create_user_client(AdminGroup.INDEX)
+
+    response = client.put(_event_detail_url(event), {"forms": []}, format="json")
+    updated_event = response.json()
+
+    assert updated_event.get("forms") != []
 
 
 # POST /events/
