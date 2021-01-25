@@ -1,6 +1,8 @@
 import json
+from datetime import timedelta
 
 from django.contrib.auth.models import Group
+from django.utils import timezone
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
 
@@ -101,6 +103,14 @@ def test_update_event_detail_does_not_update_form_ids():
 # Oppdaterer/lager ikke formet (sendes ikke med fra frontend)
 @pytest.mark.django_db
 def test_create_event():
+    client = _create_user_client(AdminGroup.INDEX)
+
+    print(client.post(_event_url(), {
+        "title": "title",
+        "start_date": timezone.now() + timedelta(days=10),
+        "end_date": timezone.now() + timedelta(days=11),
+        "forms": [],
+    }, format="json").json())
     raise NotImplementedError()
 
 
