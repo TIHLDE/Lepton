@@ -40,6 +40,7 @@ class EventSerializer(serializers.ModelSerializer):
             "sign_off_deadline",
             "registration_priorities",
             "evaluate_link",
+            "updated_at",
         )
 
         extra_kwargs = {
