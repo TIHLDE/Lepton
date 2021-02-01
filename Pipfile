@@ -16,10 +16,8 @@ wheel = "*"
 mysqlclient = "==1.4.4"
 travis = "*"
 sentry-sdk = "*"
-
 pyocclient = "*"
 celery = "~=4.4"
-
 # Django
 # ------------------------------------------------------------------------------
 django-enumchoicefield = "*"
@@ -30,7 +28,7 @@ django-heroku = "*"
 django-rest-framework = "*"
 django-cors-headers = "*"
 django-rest-auth = "*"
-
+django-mptt="*"
 # Documentation
 # ------------------------------------------------------------------------------
 drf-yasg = "*"
@@ -45,7 +43,6 @@ flake8 = "*"
 flake8-django = "*"
 flake8-black = "*"
 pre-commit = "==2.7.1"
-
 # Testing
 # ------------------------------------------------------------------------------
 coverage = "*"

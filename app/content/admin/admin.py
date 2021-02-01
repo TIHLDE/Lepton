@@ -12,6 +12,7 @@ admin.site.register(models.Notification)
 admin.site.register(models.Cheatsheet)
 admin.site.register(models.Badge)
 admin.site.register(models.UserBadge)
+admin.site.register(models.Page)
 
 
 def admin_delete_registration(modeladmin, request, queryset):

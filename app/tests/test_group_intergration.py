@@ -56,7 +56,7 @@ def test_retrieve_as_user(group, user):
 
 @pytest.mark.django_db
 def test_update_as_anonymous_user(default_client, group):
-    """Tests if an anonymous user can fails to update a group"""
+    """Tests if an anonymous user fails to update a group"""
 
     url = _get_group_url(group)
     response = default_client.put(url)
@@ -66,7 +66,7 @@ def test_update_as_anonymous_user(default_client, group):
 
 @pytest.mark.django_db
 def test_update_as_user(group, user):
-    """Tests if a logged in user can fails to update a group"""
+    """Tests if a logged in user fails to update a group"""
 
     client = get_api_client(user=user)
     url = _get_group_url(group)
@@ -128,7 +128,6 @@ def test_create_return_group_if_found(group, user):
     client = get_api_client(user=user, group_name=AdminGroup.HS)
     url = _get_group_url()
     data = _get_group_post_data(group=group)
-    response = client.post(url, data=data)
     response = client.post(url, data=data)
     group.refresh_from_db()
 

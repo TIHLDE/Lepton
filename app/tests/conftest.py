@@ -8,6 +8,8 @@ from app.content.factories import (
     CheatsheetFactory,
     EventFactory,
     NewsFactory,
+    PageFactory,
+    ParentPageFactory,
     RegistrationFactory,
     UserFactory,
 )
@@ -68,3 +70,13 @@ def cheatsheet():
 @pytest.fixture()
 def news():
     return NewsFactory()
+
+
+@pytest.fixture()
+def page():
+    return PageFactory()
+
+
+@pytest.fixture()
+def parent_page():
+    return ParentPageFactory()
