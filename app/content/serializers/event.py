@@ -41,6 +41,7 @@ class EventSerializer(serializers.ModelSerializer):
             "registration_priorities",
             "evaluate_link",
             "forms",
+            "updated_at",
         )
 
         extra_kwargs = {

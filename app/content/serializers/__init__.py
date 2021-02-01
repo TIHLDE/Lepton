@@ -1,23 +1,26 @@
-from .badge import BadgeSerializer
-from .category import CategorySerializer
-from .cheatsheet import CheatsheetSerializer
-from .event import (
+from app.content.serializers.badge import BadgeSerializer
+from app.content.serializers.category import CategorySerializer
+from app.content.serializers.cheatsheet import CheatsheetSerializer
+from app.content.serializers.event import (
     EventAdminSerializer,
     EventCreateAndUpdateSerializer,
     EventSerializer,
 )
-from .job_post import JobPostSerializer
-from .news import NewsSerializer
-from .notification import NotificationSerializer, UpdateNotificationSerializer
-from .priority import PrioritySerializer
-from .registration import RegistrationSerializer
-from .user import (
+from app.content.serializers.job_post import JobPostSerializer
+from app.content.serializers.news import NewsSerializer
+from app.content.serializers.notification import (
+    NotificationSerializer,
+    UpdateNotificationSerializer,
+)
+from app.content.serializers.page import PageSerializer, PageTreeSerializer
+from app.content.serializers.priority import PrioritySerializer
+from app.content.serializers.registration import RegistrationSerializer
+from app.content.serializers.user import (
     UserAdminSerializer,
     UserCreateSerializer,
     UserInAnswerSerializer,
     UserMemberSerializer,
     UserSerializer,
 )
-from .user_badge import UserBadgeSerializer
-from .warning import WarningSerializer
-from .wiki import WikiListSerializer, WikiPostSerializer
+from app.content.serializers.user_badge import UserBadgeSerializer
+from app.content.serializers.warning import WarningSerializer

@@ -100,17 +100,20 @@ class Registration(BaseModel):
         self.is_on_wait = False
 
     def move_from_waiting_list_to_queue(self):
-        registrations = self.event.get_waiting_list().order_by("created_at")
-        registration_move_to_queue = next(
-            (
-                registration
-                for registration in registrations
-                if registration.is_prioritized
-            ),
-            registrations[0],
+        registrations_in_waiting_list = self.event.get_waiting_list().order_by(
+            "created_at"
         )
-        registration_move_to_queue.is_on_wait = False
-        registration_move_to_queue.save()
+        if registrations_in_waiting_list:
+            registration_move_to_queue = next(
+                (
+                    registration
+                    for registration in registrations_in_waiting_list
+                    if registration.is_prioritized
+                ),
+                registrations_in_waiting_list[0],
+            )
+            registration_move_to_queue.is_on_wait = False
+            registration_move_to_queue.save()
 
     def clean(self):
         """
