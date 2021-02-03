@@ -14,6 +14,7 @@ from app.content.models import Event
 from app.content.serializers import (
     EventAdminSerializer,
     EventCreateAndUpdateSerializer,
+    EventListSerializer,
     EventSerializer,
 )
 from app.util.utils import yesterday
@@ -38,6 +39,11 @@ class EventViewSet(viewsets.ModelViewSet):
         if self.kwargs or "expired" in self.request.query_params:
             return Event.objects.all().order_by("start_date")
         return Event.objects.filter(start_date__gte=yesterday()).order_by("start_date")
+
+    def get_serializer_class(self):
+        if hasattr(self, "action") and self.action == "list":
+            return EventListSerializer
+        return super().get_serializer_class()
 
     def retrieve(self, request, pk):
         """Return detailed information about the event with the specified pk."""
