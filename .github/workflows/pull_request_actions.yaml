@@ -6,7 +6,7 @@ on:
       - dev
       - master
 jobs:
-  test:
+  test_and_lint:
     runs-on: ubuntu-latest
     services:
       mysql:
@@ -17,17 +17,20 @@ jobs:
           - 3306
     steps:
       - uses: actions/checkout@v2
-
       - name: Setup Python
         uses: actions/setup-python@v1
         with:
           python-version: 3.6
-
       - name: Install dependencies with pipenv
         run: |
           pip install pipenv
           pipenv install -d
-
+      - name: Run sorting check
+        run: pipenv run isort . --check-only
+      - name: Run formatting check
+        run: pipenv run black app/ --check --exclude migrations
+      - name: Run linting
+        run: pipenv run flake8 app
       - name: Run test suite
         run: pipenv run pytest . --cov
         env:
@@ -37,57 +40,3 @@ jobs:
           DATABASE_NAME: ${{secrets.DATABASE_NAME}}
           DATABASE_HOST: ${{secrets.DATABASE_HOST}}
           DATABASE_PORT: ${{ job.services.mysql.ports['3306'] }}
-
-  linting:
-    runs-on: ubuntu-latest
-    steps:
-
-      - name: Checkout Code Repository
-        uses: actions/checkout@v2
-
-      - name: Set up Python 3.6
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.6
-
-      - name: Install flake8
-        run: |
-          python -m pip install --upgrade pip
-          pip install flake8
-
-      - name: Lint with flake8
-        run: flake8 app
-
-  format:
-    runs-on: ubuntu-latest
-    steps:
-
-      - name: Checkout Code Repository
-        uses: actions/checkout@v2
-
-      - name: Set up Python 3.6
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.6
-
-      - name: Install black & isort
-        run: |
-          python -m pip install --upgrade pip
-          pip install black==19.10b0 isort
-
-      - name: Formatting with black
-        run: pipenv run black app/ --exclude migrations
-
-      - name: Formatting with isort
-        run: pipenv run isort .
-
-      - name: Check for modified files
-        id: git-check
-        run: echo ::set-output name=modified::$(if git diff-index --quiet HEAD --; then echo "false"; else echo "true"; fi)
-
-      - name: Push changes
-        if: steps.git-check.outputs.modified == 'true' && github.ref != 'refs/heads/dev' # Do not run in dev
-        uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          commit_message: Automated formatting changes
-          commit_options: '--no-verify' # Do not run pre-commit hooks
