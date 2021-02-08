@@ -17,12 +17,12 @@ class Form(PolymorphicModel):
     title = models.CharField(max_length=200)
     # type = EnumChoiceField(FormType, default=FormType.GENERAL)
 
+    class Meta:
+        verbose_name = "Form"
+        verbose_name_plural = "Forms"
+
     def __str__(self):
         return self.title
-
-    def get_submissions(self):
-        """Return all submissions of this form with answers and/or options to fields."""
-        pass
 
 
 class EventForm(Form):

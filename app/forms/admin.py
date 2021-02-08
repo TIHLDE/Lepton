@@ -8,8 +8,6 @@ from polymorphic.admin import (
 
 from app.forms import models
 
-# admin.site.register(models.Form)
-# admin.site.register(models.EventForm)
 admin.site.register(models.Field)
 admin.site.register(models.Option)
 admin.site.register(models.Submission)
@@ -23,11 +21,6 @@ class OptionInline(admin.TabularInline):
 class FieldInline(admin.TabularInline):
     model = models.Field
     inlines = (OptionInline,)
-
-
-# @admin.register(models.Form)
-# class FormAdmin(admin.ModelAdmin):
-#     inlines = (FieldInline,)
 
 
 class FormChildAdmin(PolymorphicChildModelAdmin):
@@ -48,6 +41,7 @@ class FormAdmin(PolymorphicParentModelAdmin):
     """ The parent model admin """
 
     base_model = models.Form
-    child_models = (models.EventForm,)
+    child_models = (models.EventForm, models.Form)
+    pk_regex = "([\w-]+)"  # noqa W605
     list_filter = (PolymorphicChildModelFilter,)
     inlines = (FieldInline,)
