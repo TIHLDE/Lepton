@@ -1,18 +1,13 @@
+from django.utils.translation import gettext_lazy as _
 from enumchoicefield import ChoiceEnum
 
 
-class FormType(ChoiceEnum):
-    GENERAL = "Generelt"
-    SURVEY = "Undersøkelse"
-    EVALUATION = "Evaluering"
-
-
 class EventFormType(ChoiceEnum):
-    SURVEY = FormType.SURVEY
-    EVALUATION = FormType.EVALUATION
+    SURVEY = _("Survey")
+    EVALUATION = _("Evaluation")
 
 
 class FormFieldType(ChoiceEnum):
-    TEXT_ANSWER = "Text answer"
-    MULTIPLE_SELECT = "Multiple select"
-    SINGLE_SELECT = "Single select"
+    TEXT_ANSWER = _("Text answer")
+    MULTIPLE_SELECT = _("Multiple select")
+    SINGLE_SELECT = _("Single select")

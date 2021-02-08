@@ -7,7 +7,7 @@ from polymorphic.models import PolymorphicModel
 
 from app.content.models.event import Event
 from app.content.models.user import User
-from app.forms.enums import EventFormType, FormFieldType, FormType
+from app.forms.enums import EventFormType, FormFieldType
 from app.util.models import BaseModel
 
 
@@ -15,7 +15,6 @@ class Form(PolymorphicModel):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=200)
-    # type = EnumChoiceField(FormType, default=FormType.GENERAL)
 
     class Meta:
         verbose_name = "Form"
@@ -41,11 +40,12 @@ class Field(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=200)
     form = models.ForeignKey(Form, on_delete=models.CASCADE, related_name="fields")
-    type = EnumChoiceField(FormFieldType, default=FormType.GENERAL)
+    type = EnumChoiceField(FormFieldType, default=FormFieldType.TEXT_ANSWER)
     required = models.BooleanField(default=False)
 
     def __str__(self):
         return self.title
+
 
 
 class Option(models.Model):
@@ -101,7 +101,7 @@ class Answer(BaseModel):
             ids_of_options_to_add.append(selected_option.id)
 
         self.selected_options.add(*ids_of_options_to_add)
-        super(Answer, self).save()
+        super().save()
 
     def __str__(self):
         return f"Answer to {self.submission}"
