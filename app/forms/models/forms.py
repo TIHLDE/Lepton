@@ -23,6 +23,14 @@ class Form(PolymorphicModel):
     def __str__(self):
         return self.title
 
+    def add_fields(self, fields):
+        for field in fields:
+            options = field.pop("options", None)
+            field = Field.objects.create(form=self, **field)
+
+            if options:
+                field.add_options(options)
+
 
 class EventForm(Form):
 
@@ -46,6 +54,9 @@ class Field(models.Model):
     def __str__(self):
         return self.title
 
+    def add_options(self, options):
+        for o in options:
+            Option.objects.create(field=self, **o)
 
 
 class Option(models.Model):

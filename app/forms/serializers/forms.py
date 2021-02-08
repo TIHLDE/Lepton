@@ -40,14 +40,11 @@ class FormSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
-        fields = validated_data.pop("fields")
+        fields = validated_data.pop("fields", None)
         form = Form.objects.create(**validated_data)
-        for field in fields:
-            options = field.pop("options")
-            field = Field.objects.create(form=form, **field)
 
-            for o in options:
-                Option.objects.create(field=field, **o)
+        if fields:
+            form.add_fields(fields)
 
         return form
 
