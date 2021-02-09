@@ -1,9 +1,9 @@
 from django.contrib.auth.hashers import make_password
 from rest_framework import serializers
 
-from ..models import Notification, Registration, User
-from .badge import BadgeSerializer
-from .event import EventInUserSerializer
+from app.content.models import Notification, Registration, User
+from app.content.serializers.badge import BadgeSerializer
+from app.content.serializers.event import EventListSerializer
 
 
 class DefaultUserSerializer(serializers.ModelSerializer):
@@ -59,7 +59,7 @@ class UserSerializer(serializers.ModelSerializer):
             for registration in registrations
             if not registration.event.expired
         ]
-        return EventInUserSerializer(events, many=True).data
+        return EventListSerializer(events, many=True).data
 
     def get_badges(self, obj):
         """ Lists all badges a user has accomplished """
