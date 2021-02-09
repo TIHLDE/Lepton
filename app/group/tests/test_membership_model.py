@@ -1,11 +1,9 @@
-from django.core.exceptions import ValidationError
-
 import pytest
 
 from app.common.enums import MembershipType
 from app.group.factories import MembershipFactory
 from app.group.factories.group_factory import GroupFactory
-from app.group.models import Membership
+from app.group.models.membership import MembershipHistory
 
 
 @pytest.fixture()
@@ -33,7 +31,8 @@ def test_swap_leader_changes_leader(group):
     membership_leader = MembershipFactory(
         membership_type=MembershipType.LEADER, group=group
     )
-    membership.swap_board(MembershipType.LEADER)
+    membership.membership_type = MembershipType.LEADER
+    membership.save()
     membership.refresh_from_db()
     membership_leader.refresh_from_db()
     assert membership.membership_type == MembershipType.LEADER
@@ -41,20 +40,45 @@ def test_swap_leader_changes_leader(group):
 
 
 @pytest.mark.django_db
-def test_swap_board_raises_validation_error(membership_leader):
+def test_swap_leader_if_no_leader(group):
     """
-    Tests that if a leader tries to use swap_leader,
-    the function raises a ValidationError
+    Tests that swap leader changes the leader of the group,
+    when there is no leader and a member
     """
-    with pytest.raises(ValidationError):
-        membership_leader.swap_board(MembershipType.LEADER)
+    membership = MembershipFactory(membership_type=MembershipType.MEMBER, group=group)
+    membership.membership_type = MembershipType.LEADER
+    membership.save()
+    membership.refresh_from_db()
+    assert membership.membership_type == MembershipType.LEADER
 
 
 @pytest.mark.django_db
-def test_swap_board_raises_does_not_exist(membership):
+def test_create_leader(group):
     """
-    Tests that if a member tries to use swap_leader,
-    when there is no leader in the group it raises a DoesNotExist error
+    Tests that creates a leader to a group
     """
-    with pytest.raises(Membership.DoesNotExist):
-        membership.swap_board(MembershipType.LEADER)
+    membership = MembershipFactory(membership_type=MembershipType.LEADER, group=group)
+    membership.refresh_from_db()
+    assert membership.membership_type == MembershipType.LEADER
+
+
+@pytest.mark.django_db
+def test_swap_leader_does_not_create_two_leaders(group):
+    """
+    Tests that swap leader changes the leader of the group,
+    when there is a leader and a member
+    """
+    membership = MembershipFactory(membership_type=MembershipType.LEADER, group=group)
+    membership_leader = MembershipFactory(
+        membership_type=MembershipType.LEADER, group=group
+    )
+    membership.refresh_from_db()
+    membership_leader.refresh_from_db()
+    assert membership.membership_type == MembershipType.MEMBER
+    assert membership_leader.membership_type == MembershipType.LEADER
+
+
+@pytest.mark.django_db
+def test_on_delete_membership_history_is_created(membership):
+    membership.delete()
+    assert MembershipHistory.objects.get(start_date=membership.created_at)

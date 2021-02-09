@@ -9,11 +9,15 @@ from app.content.serializers.event import EventListSerializer
 class DefaultUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
+        fields = (
+            "user_id",
+            "first_name",
+            "last_name",
+        )
         read_only_fields = (
             "user_id",
             "first_name",
             "last_name",
-            "email",
         )
 
 
