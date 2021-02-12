@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+- ⚡ **Pagination i nyheter**. Lagt til pagination i nyheter
 ## Versjon 1.0.1 (09.02.2021)
 - ⚡ **Ryddet opp i event-felter**. Fjernet åpent tilgjengelig liste over deltagere, samt redusert antall felter som returneres når man henter flere.
 - 🦟 **Fikset utviklingsmiljø**. Fikset pipfile slik at Heroku-dev backend nå fungerer igjen.
