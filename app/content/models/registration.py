@@ -26,7 +26,7 @@ class Registration(BaseModel):
     allow_photo = models.BooleanField(default=True)
 
     class Meta:
-        ordering = ("event", "is_on_wait", "created_at")
+        ordering = ("event", "registration_id", "is_on_wait", "created_at")
         unique_together = ("user", "event")
         verbose_name = "Registration"
         verbose_name_plural = "Registrations"
