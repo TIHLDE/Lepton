@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+- 🦟 **Begrens epost-domener**. Hindre brukere i å lage bruker med @ntnu.no-adresser siden vi ikke klarer å sende epost til slike adresser.
 - ⚡ **Avmelding på venteliste**. Brukere kan melde seg av arrangementer etter avmeldingsfristen hvis de er på ventelisten.
 - ⚡ **Sorter registrations**. Sortert registrations basert på id slik at de som meldte seg på først kommer øverst i listen.
 - 🎨 **Valgfri ingress i annonser**. Det er nå valgfritt å legge inn en ingress i jobbannonser.

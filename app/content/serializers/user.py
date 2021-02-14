@@ -1,4 +1,6 @@
 from django.contrib.auth.hashers import make_password
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext as _
 from rest_framework import serializers
 
 from app.content.models import Notification, Registration, User
@@ -151,3 +153,12 @@ class UserCreateSerializer(serializers.ModelSerializer):
         user.set_password(validated_data["password"])
         user.save()
         return user
+
+    def validate_email(self, data):
+        if "@ntnu.no" in data:
+            raise ValidationError(
+                _(
+                    "Vi kan ikke sende epost til @ntnu.no-adresser, bruk @stud.ntnu.no-adressen istedenfor."
+                )
+            )
+        return data
