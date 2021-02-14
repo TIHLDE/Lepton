@@ -6,11 +6,12 @@ from app.util.utils import yesterday
 
 class JobPost(BaseModel, OptionalImage):
     title = models.CharField(max_length=200)
-    ingress = models.CharField(max_length=800)
+    ingress = models.CharField(max_length=800, blank=True, default="")
     body = models.TextField(blank=True, default="")
     location = models.CharField(max_length=200)
 
     deadline = models.DateTimeField(null=True, blank=True)
+    is_continuously_hiring = models.BooleanField(default=False)
 
     company = models.CharField(max_length=200)
     email = models.EmailField(blank=True, null=True)
