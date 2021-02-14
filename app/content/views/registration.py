@@ -71,6 +71,10 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         registration = self.get_object()
+
+        if is_admin_user(request) and self._is_own_registration():
+            return self._unregister(registration)
+
         if is_admin_user(request):
             return self._admin_unregister(registration)
 

@@ -58,5 +58,9 @@ class CheatsheetType(ChoiceEnum):
 
 
 class MembershipType(ChoiceEnum):
-    MEMBER = "Member"
     LEADER = "Leader"
+    MEMBER = "Member"
+
+    @classmethod
+    def board_members(cls):
+        return (cls.LEADER,)

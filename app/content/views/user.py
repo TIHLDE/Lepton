@@ -89,7 +89,7 @@ class UserViewSet(viewsets.ModelViewSet):
                     )
             if serializer.is_valid():
                 serializer.save()
-                return Response({"detail": serializer.data}, status=status.HTTP_200_OK)
+                return Response(serializer.data, status=status.HTTP_200_OK)
             else:
                 return Response(
                     {"detail": ("Kunne ikke oppdatere brukeren")},
