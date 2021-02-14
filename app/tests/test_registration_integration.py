@@ -513,8 +513,27 @@ def test_delete_another_registration_as_member(member, user):
 
 
 @pytest.mark.django_db
-def test_delete_as_member_when_sign_off_deadline_has_passed(member):
-    """A member should not be able to delete their registration when the events sign off deadline has passed."""
+def test_delete_as_member_when_sign_off_deadline_has_passed_and_not_on_wait(member):
+    """
+    A member should not be able to delete their registration
+    when the events sign off deadline has passed and is not on wait.
+    """
+    event = EventFactory(sign_off_deadline=today() - timedelta(days=1), limit=10)
+    registration = RegistrationFactory(user=member, event=event, is_on_wait=False)
+    client = get_api_client(user=member)
+
+    url = _get_registration_detail_url(registration)
+    response = client.delete(url)
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
+@pytest.mark.django_db
+def test_delete_as_member_when_sign_off_deadline_has_passed_and_on_wait(member):
+    """
+    A member should be able to delete their registration
+    when the events sign off deadline has passed but is on wait.
+    """
     event = EventFactory(sign_off_deadline=today() - timedelta(days=1))
     registration = RegistrationFactory(user=member, event=event)
     client = get_api_client(user=member)
@@ -522,7 +541,7 @@ def test_delete_as_member_when_sign_off_deadline_has_passed(member):
     url = _get_registration_detail_url(registration)
     response = client.delete(url)
 
-    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db

@@ -38,7 +38,7 @@ class Registration(BaseModel):
         )
 
     def delete(self, *args, **kwargs):
-        if self.event.is_past_sign_off_deadline:
+        if self.event.is_past_sign_off_deadline and not self.is_on_wait:
             raise EventSignOffDeadlineHasPassed(
                 _("Cannot sign user off after sign off deadline has passed")
             )
