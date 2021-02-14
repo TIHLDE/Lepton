@@ -4,7 +4,8 @@ import pytest
 
 from app.common.enums import AdminGroup
 from app.content.factories import EventFactory
-from app.forms.tests.form_factories import FormFactory
+from app.forms.tests.form_factories import FormFactory, EventFormFactory, FieldFactory
+from app.forms.models.forms import Field
 from app.util.test_utils import get_api_client
 
 pytestmark = pytest.mark.django_db
@@ -21,13 +22,13 @@ def _get_form_detail_url(form):
 def _get_form_post_data(form):
     return {
         "resource_type": "Form",
-        "title": "string",
+        "title": form.title,
         "fields": [
             {
                 "title": "string",
                 "options": [{"title": "string"}],
                 "type": "SINGLE_SELECT",
-                "required": False,
+                "required": True,
             }
         ],
     }
@@ -45,7 +46,7 @@ def _get_event_form_post_data(form, event):
 def _get_form_update_data(form):
     return {
         "resource_type": "Form",
-        "title": "another string",
+        "title": form.title,
         "fields": [
             {
                 "title": "another string",
@@ -59,28 +60,32 @@ def _get_form_update_data(form):
 
 def test_list_forms_data(user):
     """Should return the correct fields about the forms."""
-    form = FormFactory()
-    other_form = FormFactory()
+    #option = OptionFactory()
+    #field = FieldFactory(options=[option])
+    form = EventFormFactory()#fields=[field])
+    field = form.fields.first()
+    option = field.options.first()
+    
     client = get_api_client(user=user)
-    response = client.get(_get_form_detail_url())
+    response = client.get(_get_forms_url())
     forms = response.json()
 
-    assert forms == [
-        {
-            "id": form.id,
-            "title": form.title,
-            "event": form.event,
-            "type": form.type,
-            "fields": form.fields,
-        },
-        {
-            "id": other_form.id,
-            "title": other_form.title,
-            "event": other_form.event,
-            "type": other_form.type,
-            "fields": other_form.fields,
-        },
-    ]
+    assert forms[0] == {
+        "id": str(form.id),
+        "resource_type": "EventForm",
+        "title": form.title,
+        "event": form.event.id,
+        "type": form.type.name,
+        "fields": [
+            {
+                "id": str(field.id),
+                "title": field.title,
+                "options": [{"id": str(option.id), "title": option.title}],
+                "type": field.type.name,
+                "required": field.required,
+            }
+        ], 
+    }
 
 
 def test_list_forms_as_anonymous_user_is_not_permitted(default_client):
@@ -111,7 +116,6 @@ def test_list_forms_as_member_of_nok_hs_or_index(member, group_name):
     response = client.get(url)
 
     assert response.status_code == status.HTTP_200_OK
-    assert response.json()
 
 
 @pytest.mark.parametrize(
@@ -125,7 +129,6 @@ def test_list_forms_as_member_of_sosialen_or_promo(member, group_name):
     response = client.get(url)
 
     assert response.status_code == status.HTTP_403_FORBIDDEN
-    assert response.json()
 
 
 def test_retrieve_form_as_anonymous_user_is_not_permitted(default_client, form):
@@ -171,20 +174,21 @@ def test_retrieve_form_as_part_of_admin_group(member, group_name, form):
     assert response.json()
 
 
-def test_create_forms_as_anonymous_is_not_permitted(member):
+def test_create_forms_as_anonymous_is_not_permitted(form):
     """An anonymous user should not be able to create forms."""
-    client = get_api_client(user=member)
+    client = get_api_client()
     url = _get_forms_url()
-    response = client.post(url, _get_form_post_data())
+    data = _get_form_post_data(form)
+    response = client.post(url, data)
 
     assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
-def test_create_forms_as_member_is_not_permitted(member):
+def test_create_forms_as_member_is_not_permitted(form, member):
     """A member should not be able to create forms."""
     client = get_api_client(user=member)
     url = _get_forms_url()
-    response = client.post(url, _get_form_post_data())
+    response = client.post(url, _get_form_post_data(form))
 
     assert response.status_code == status.HTTP_403_FORBIDDEN
 
@@ -192,11 +196,11 @@ def test_create_forms_as_member_is_not_permitted(member):
 @pytest.mark.parametrize(
     "group_name", [AdminGroup.HS, AdminGroup.INDEX, AdminGroup.NOK]
 )
-def test_create_forms_as_admin_is_permitted(member, group_name):
+def test_create_forms_as_admin_is_permitted(form, member, group_name):
     """An admin should be able to create forms."""
     client = get_api_client(user=member, group_name=group_name)
     url = _get_forms_url()
-    response = client.post(url, _get_form_post_data())
+    response = client.post(url, _get_form_post_data(form))
 
     assert response.status_code == status.HTTP_201_CREATED
 
@@ -219,25 +223,25 @@ def test_create_event_form_as_admin_adds_the_form_to_the_event(admin_user, event
 
     client = get_api_client(user=admin_user)
     url = _get_forms_url()
-    client.post(url, _get_event_form_post_data(form, event))
+    data = _get_event_form_post_data(form, event)
+    client.post(url, data)
 
-    assert event.forms.count() == 1
-    assert event.forms.first().title == form.title
+    assert event.forms.filter(title=form.title).exists()
 
 
-def test_update_form_as_anonymous_is_not_permitted(default_client):
+def test_update_form_as_anonymous_is_not_permitted(form, default_client):
     """An anonymous user should not be allowed to update forms."""
-    url = _get_forms_url()
-    response = default_client.put(url, _get_form_update_data())
+    url = _get_form_detail_url(form)
+    response = default_client.put(url, _get_form_update_data(form))
 
     assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
-def test_update_form_as_member_is_not_permitted(member):
+def test_update_form_as_member_is_not_permitted(member, form):
     """A member should not be allowed to update forms."""
     client = get_api_client(user=member)
-    url = _get_forms_url()
-    response = client.put(url, _get_form_update_data())
+    url = _get_form_detail_url(form)
+    response = client.put(url, _get_form_update_data(form))
 
     assert response.status_code == status.HTTP_403_FORBIDDEN
 
@@ -246,11 +250,11 @@ def test_update_form_as_member_is_not_permitted(member):
     "group_name",
     [AdminGroup.SOSIALEN, AdminGroup.PROMO],
 )
-def test_update_form_as_sosialen_or_promo_is_not_permitted(member, group_name):
+def test_update_form_as_sosialen_or_promo_is_not_permitted(form, member, group_name):
     """A member of sosialen or promo should not be allowed to update forms."""
     client = get_api_client(user=member, group_name=group_name)
-    url = _get_forms_url()
-    response = client.put(url, _get_form_update_data())
+    url = _get_form_detail_url(form)
+    response = client.put(url, _get_form_update_data(form))
 
     assert response.status_code == status.HTTP_403_FORBIDDEN
 
@@ -258,11 +262,12 @@ def test_update_form_as_sosialen_or_promo_is_not_permitted(member, group_name):
 @pytest.mark.parametrize(
     "group_name", [AdminGroup.HS, AdminGroup.INDEX, AdminGroup.NOK]
 )
-def test_update_form_as_hs_index_or_nok_is_permitted(member, group_name):
+def test_update_form_as_hs_index_or_nok_is_permitted(form, member, group_name):
     """An admin from HS, Index or NoK should not be allowed to update forms."""
     client = get_api_client(user=member, group_name=group_name)
-    url = _get_forms_url()
-    response = client.put(url, _get_form_update_data())
+    url = _get_form_detail_url(form)
+    data = _get_form_update_data(form)
+    response = client.put(url, data)
 
     assert response.status_code == status.HTTP_200_OK
 
@@ -271,18 +276,18 @@ def test_update_form_as_admin_changes_form(admin_user, form):
     """The form should update if an admin updates it."""
     client = get_api_client(user=admin_user)
     url = _get_form_detail_url(form)
-    put_data = _get_form_update_data()
+    put_data = _get_form_update_data(form)
     client.put(url, put_data)
 
     form.refresh_from_db()
 
-    assert put_data.title == form.title
+    assert put_data.get("title") == form.title
 
 
 def test_update_fields_when_existing_field_is_not_included_in_request_removes_field_from_form(
     admin_user, form
 ):
-    """Thest that field that are not included in the request data are removed from the form."""
+    """Test that field that are not included in the request data are removed from the form."""
     client = get_api_client(user=admin_user)
     url = _get_form_detail_url(form)
     data = {
@@ -297,43 +302,148 @@ def test_update_fields_when_existing_field_is_not_included_in_request_removes_fi
     assert not form.fields.exists()
 
 
-def test_update_fields_when_id_is_passed_in_field_request_data_updates_the_field():
+def test_update_fields_when_id_is_passed_in_field_request_data_updates_the_field(
+    admin_user, form
+): 
     """Test that the field is updated when the field id is not included in the request data."""
-    raise NotImplementedError()
+    client = get_api_client(user=admin_user)
+    url = _get_form_detail_url(form)
+    field = Field.objects.get(form=form.id)
+    want = {
+        "title": "i love this field <3",
+        "type": "SINGLE_SELECT",
+        "options": [{"title": "option"}],
+        "required": False,
+    }
+    data = {
+        "resource_type": "Form",
+        "title": "testform",
+        "fields": [{ "id": field.id, **want }],
+    }
+    
+    response = client.patch(url, data)
+    form_resp = response.json()
+    field_resp = form_resp["fields"][0]
+
+    got = { key: field_resp[key] for key in want.keys() }
+
+    assert got == want
+    
 
 
-def test_update_field_when_id_is_not_passed_in_field_request_data_adds_new_field():
+def test_update_field_when_id_is_not_passed_in_field_request_data_adds_new_field(admin_user, form):
     """Test that new fields are added when the field id is not included in the request data."""
-    raise NotImplementedError()
+    client = get_api_client(user=admin_user)
+    url = _get_form_detail_url(form)
+    field_count = form.fields.count()
+    data = {
+        "resource_type": "Form",
+        "title": "test",
+        "fields": [
+            {
+                "title": "string",
+                "options": [{"title": "string"}],
+                "type": "SINGLE_SELECT",
+                "required": False,
+            }
+        ],
+    }
 
+    client.patch(url, data)
+    form.refresh_from_db()
 
-def test_update_options_when_previous_option_is_not_included_in_request_removes_option_from_field():
+    assert form.fields.count() == field_count + 1
+    
+
+def test_update_options_when_previous_option_is_not_included_in_request_removes_option_from_field(admin_user, form):
     """Options that are not included in the request data are removed from the form fields."""
-    raise NotImplementedError()
+    field = form.fields.first()
+    data = {
+        "resource_type": "Form",
+        "fields": [
+            {
+                "id": str(field.id),
+                "options": [],
+            }
+        ]
+    }
+    client = get_api_client(user=admin_user)
+    url = _get_form_detail_url(form)
+    
+    client.patch(url, data)
+    field.refresh_from_db()
+
+    assert not field.options.exists()
+    
 
 
-def test_update_options_when_id_is_passed_in_options_request_data_updates_the_option():
-    """Test that the option is updated when the option id is not included in the request data."""
-    raise NotImplementedError()
+def test_update_options_when_id_is_passed_in_options_request_data_updates_the_option(admin_user, form):
+    """Test that the option is updated when the option id is included in the request data."""
+    field = form.fields.first()
+    option = field.options.first()
+    updated_title = "Test"
+    
+    data = {
+        "resource_type": "Form",
+        "fields": [
+            {
+                "id": str(field.id),
+                "options": [
+                    {
+                        "id": str(option.id),
+                        "title": updated_title,
+                    },
+                ],
+            }
+        ]
+    }
+    client = get_api_client(user=admin_user)
+    url = _get_form_detail_url(form)
+    client.patch(url, data)
+
+    option.refresh_from_db()
+
+    assert option.title == updated_title
 
 
-def test_update_option_when_id_is_not_passed_in_options_request_data_adds_new_option():
+def test_update_option_when_id_is_not_passed_in_options_request_data_adds_new_option(admin_user, form):
     """Test that new options are added when the option id is not included in the request data."""
-    raise NotImplementedError()
+    field = form.fields.first()
+    option_count = field.options.count()
+
+    client = get_api_client(user=admin_user)
+    url = _get_form_detail_url(form)
+    data = {
+        "resource_type": "Form",
+        "fields": [
+            {
+                "id": field.id,
+                "title": "string",
+                "options": [{"title": "string"}],
+                "type": "SINGLE_SELECT",
+                "required": False,
+            }
+        ],
+    }
+
+    client.patch(url, data)
+    form.refresh_from_db()
+
+    assert field.options.count() == option_count + 1
 
 
-def test_delete_form_as_anonymous_is_not_permitted(default_client):
+def test_delete_form_as_anonymous_is_not_permitted(default_client, form):
     """Anonymous users should not be allowed to delete forms."""
-    url = _get_forms_url()
+    url = _get_form_detail_url(form)
     response = default_client.delete(url)
 
     assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
-def test_delete_form_as_member_is_not_permitted(member):
+def test_delete_form_as_member_is_not_permitted(member, form):
     """Members should not be allowed to delete forms."""
     client = get_api_client(user=member)
-    url = _get_forms_url()
+    url = _get_form_detail_url(form)
     response = client.delete(url)
 
     assert response.status_code == status.HTTP_403_FORBIDDEN
@@ -343,10 +453,10 @@ def test_delete_form_as_member_is_not_permitted(member):
     "group_name",
     [AdminGroup.SOSIALEN, AdminGroup.PROMO],
 )
-def test_delete_form_as_sosialen_or_promo_is_not_permitted(member, group_name):
+def test_delete_form_as_sosialen_or_promo_is_not_permitted(member, group_name, form):
     """Admins in Sosialen and Promo should not be allowed to delete forms."""
     client = get_api_client(user=member, group_name=group_name)
-    url = _get_forms_url()
+    url = _get_form_detail_url(form)
     response = client.delete(url)
 
     assert response.status_code == status.HTTP_403_FORBIDDEN
@@ -355,10 +465,10 @@ def test_delete_form_as_sosialen_or_promo_is_not_permitted(member, group_name):
 @pytest.mark.parametrize(
     "group_name", [AdminGroup.HS, AdminGroup.INDEX, AdminGroup.NOK]
 )
-def test_delete_form_as_hs_index_or_nok_is_permitted(member, group_name):
+def test_delete_form_as_hs_index_or_nok_is_permitted(member, group_name, form):
     """Admins in HS, Index or NoK should be allowed to delete forms."""
     client = get_api_client(user=member, group_name=group_name)
-    url = _get_forms_url()
+    url = _get_form_detail_url(form)
     response = client.delete(url)
 
-    assert response.status_code == status.HTTP_200_OK
+    assert response.status_code == status.HTTP_204_NO_CONTENT

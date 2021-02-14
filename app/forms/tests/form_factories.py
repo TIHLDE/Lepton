@@ -11,6 +11,9 @@ class FormFactory(DjangoModelFactory):
         model = models.Form
 
     title = factory.Sequence(lambda n: f"Form {n}")
+    fields = factory.RelatedFactory(
+        "app.forms.tests.form_factories.FieldFactory", factory_related_name="form"
+    )
 
 
 class EventFormFactory(FormFactory):
@@ -25,7 +28,9 @@ class FieldFactory(DjangoModelFactory):
         model = models.Field
 
     title = factory.Sequence(lambda n: f"Field {n}")
-    form = factory.SubFactory(FormFactory)
+    options = factory.RelatedFactory(
+        "app.forms.tests.form_factories.OptionFactory", factory_related_name="field"
+    )
 
 
 class OptionFactory(DjangoModelFactory):

@@ -1,3 +1,4 @@
+from app.forms.tests.form_factories import FieldFactory, FormFactory
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient, APIRequestFactory
 
@@ -80,3 +81,8 @@ def page():
 @pytest.fixture()
 def parent_page():
     return ParentPageFactory()
+    
+
+@pytest.fixture()
+def form():
+    return FormFactory()

@@ -15,7 +15,7 @@ class OptionSerializer(serializers.ModelSerializer):
 
 
 class FieldSerializer(serializers.ModelSerializer):
-    options = OptionSerializer(many=True, read_only=True)
+    options = OptionSerializer(many=True, required=False, allow_null=True)
 
     class Meta:
         model = Field
@@ -29,7 +29,7 @@ class FieldSerializer(serializers.ModelSerializer):
 
 
 class FormSerializer(serializers.ModelSerializer):
-    fields = FieldSerializer(many=True)
+    fields = FieldSerializer(many=True, required=False, allow_null=True)
 
     class Meta:
         model = Form
