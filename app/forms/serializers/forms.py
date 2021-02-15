@@ -41,7 +41,7 @@ class FormSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         fields = validated_data.pop("fields", None)
-        form = Form.objects.create(**validated_data)
+        form = self.Meta.model.objects.create(**validated_data)
 
         if fields:
             form.add_fields(fields)
