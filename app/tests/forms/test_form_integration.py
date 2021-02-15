@@ -3,9 +3,14 @@ from rest_framework import status
 import pytest
 
 from app.common.enums import AdminGroup
-from app.content.factories import EventFactory
-from app.forms.tests.form_factories import FormFactory, EventFormFactory, FieldFactory
+from app.content.factories import EventFactory, RegistrationFactory
+from app.forms.enums import EventFormType
 from app.forms.models.forms import Field
+from app.forms.tests.form_factories import (
+    EventFormFactory,
+    FieldFactory,
+    FormFactory,
+)
 from app.util.test_utils import get_api_client
 
 pytestmark = pytest.mark.django_db
@@ -60,12 +65,10 @@ def _get_form_update_data(form):
 
 def test_list_forms_data(user):
     """Should return the correct fields about the forms."""
-    #option = OptionFactory()
-    #field = FieldFactory(options=[option])
-    form = EventFormFactory()#fields=[field])
+    form = EventFormFactory()
     field = form.fields.first()
     option = field.options.first()
-    
+
     client = get_api_client(user=user)
     response = client.get(_get_forms_url())
     forms = response.json()
@@ -84,7 +87,7 @@ def test_list_forms_data(user):
                 "type": field.type.name,
                 "required": field.required,
             }
-        ], 
+        ],
     }
 
 
@@ -148,15 +151,51 @@ def test_retrieve_form_as_member(member, form):
     assert response.json()
 
 
+def test_retrieve_evaluation_event_form_as_member_when_has_attended_event(member, form):
+    """
+    A member should be able to retrieve an event form of type evaluation if
+    they has attended the event.
+    """
+    event = EventFactory(limit=1)
+    registration = RegistrationFactory(
+        user=member, event=event, is_on_wait=False, has_attended=True
+    )
+    form = EventFormFactory(event=registration.event, type=EventFormType.EVALUATION)
+
+    client = get_api_client(user=member)
+    url = _get_form_detail_url(form)
+    response = client.get(url)
+
+    assert response.status_code == status.HTTP_200_OK
+    assert response.json()
+
+
+def test_retrieve_evaluation_event_form_as_member_when_has_not_attended_event(
+    member, form
+):
+    """A member should not be able to retrieve an event evaluation form if they have not attended the event."""
+    event = EventFactory(limit=1)
+    registration = RegistrationFactory(
+        user=member, event=event, is_on_wait=False, has_attended=False
+    )
+    form = EventFormFactory(event=registration.event, type=EventFormType.EVALUATION)
+
+    client = get_api_client(user=member)
+    url = _get_form_detail_url(form)
+    response = client.get(url)
+
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
 def test_retrieve_form_as_member_returns_form(member, form):
     """Test that the correct form is retrieved."""
     client = get_api_client(user=member)
     url = _get_form_detail_url(form)
     response = client.get(url)
 
-    actual_form = response.json().get("data").get("form")
+    actual_form = response.json()
 
-    assert actual_form.get("id") == form.form_id
+    assert actual_form.get("id") == str(form.id)
 
 
 @pytest.mark.parametrize(
@@ -304,7 +343,7 @@ def test_update_fields_when_existing_field_is_not_included_in_request_removes_fi
 
 def test_update_fields_when_id_is_passed_in_field_request_data_updates_the_field(
     admin_user, form
-): 
+):
     """Test that the field is updated when the field id is not included in the request data."""
     client = get_api_client(user=admin_user)
     url = _get_form_detail_url(form)
@@ -318,20 +357,21 @@ def test_update_fields_when_id_is_passed_in_field_request_data_updates_the_field
     data = {
         "resource_type": "Form",
         "title": "testform",
-        "fields": [{ "id": field.id, **want }],
+        "fields": [{"id": field.id, **want}],
     }
-    
+
     response = client.patch(url, data)
     form_resp = response.json()
     field_resp = form_resp["fields"][0]
 
-    got = { key: field_resp[key] for key in want.keys() }
+    got = {key: field_resp[key] for key in want.keys()}
 
     assert got == want
-    
 
 
-def test_update_field_when_id_is_not_passed_in_field_request_data_adds_new_field(admin_user, form):
+def test_update_field_when_id_is_not_passed_in_field_request_data_adds_new_field(
+    admin_user, form
+):
     """Test that new fields are added when the field id is not included in the request data."""
     client = get_api_client(user=admin_user)
     url = _get_form_detail_url(form)
@@ -353,9 +393,11 @@ def test_update_field_when_id_is_not_passed_in_field_request_data_adds_new_field
     form.refresh_from_db()
 
     assert form.fields.count() == field_count + 1
-    
 
-def test_update_options_when_previous_option_is_not_included_in_request_removes_option_from_field(admin_user, form):
+
+def test_update_options_when_previous_option_is_not_included_in_request_removes_option_from_field(
+    admin_user, form
+):
     """Options that are not included in the request data are removed from the form fields."""
     field = form.fields.first()
     data = {
@@ -365,24 +407,25 @@ def test_update_options_when_previous_option_is_not_included_in_request_removes_
                 "id": str(field.id),
                 "options": [],
             }
-        ]
+        ],
     }
     client = get_api_client(user=admin_user)
     url = _get_form_detail_url(form)
-    
+
     client.patch(url, data)
     field.refresh_from_db()
 
     assert not field.options.exists()
-    
 
 
-def test_update_options_when_id_is_passed_in_options_request_data_updates_the_option(admin_user, form):
+def test_update_options_when_id_is_passed_in_options_request_data_updates_the_option(
+    admin_user, form
+):
     """Test that the option is updated when the option id is included in the request data."""
     field = form.fields.first()
     option = field.options.first()
     updated_title = "Test"
-    
+
     data = {
         "resource_type": "Form",
         "fields": [
@@ -395,7 +438,7 @@ def test_update_options_when_id_is_passed_in_options_request_data_updates_the_op
                     },
                 ],
             }
-        ]
+        ],
     }
     client = get_api_client(user=admin_user)
     url = _get_form_detail_url(form)
@@ -406,7 +449,9 @@ def test_update_options_when_id_is_passed_in_options_request_data_updates_the_op
     assert option.title == updated_title
 
 
-def test_update_option_when_id_is_not_passed_in_options_request_data_adds_new_option(admin_user, form):
+def test_update_option_when_id_is_not_passed_in_options_request_data_adds_new_option(
+    admin_user, form
+):
     """Test that new options are added when the option id is not included in the request data."""
     field = form.fields.first()
     option_count = field.options.count()

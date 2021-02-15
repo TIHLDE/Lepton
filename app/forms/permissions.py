@@ -1,7 +1,8 @@
 from rest_framework.permissions import BasePermission
 
 from app.common.permissions import check_strict_group_permission, get_user_id
-from app.forms.enums import FormType
+from app.forms.enums import EventFormType
+from app.forms.models.forms import EventForm
 
 
 class FormPermissions(BasePermission):
@@ -11,16 +12,27 @@ class FormPermissions(BasePermission):
     def __call__(self, *args, **kwargs):
         return self
 
+    def has_permission(self, request, view):
+        is_logged_in = get_user_id(request) is not None
+
+        if not is_logged_in:
+            return False
+
+        if view.action in ["retrieve"]:
+            return True
+
+        return check_strict_group_permission(request, self.groups)
+
     def has_object_permission(self, request, view, obj):
         get_user_id(request)
 
-        #  If user is admin.
-        if check_strict_group_permission(request, self.groups):
-            return True
+        if isinstance(obj, EventForm) and obj.type == EventFormType.EVALUATION:
+            print(obj)
+            print(list(obj.event.get_queue().all()))
+            return (
+                obj.event.get_queue()
+                .filter(user=request.user, has_attended=True)
+                .exists()
+            )
 
-        #  If the form type is evaluation, return True if the user has attended the event.
-        if obj.type == FormType.EVALUATION:
-            return request.user in obj.event.registered_users_list
-
-        #  If not, all users should have access.
         return True
