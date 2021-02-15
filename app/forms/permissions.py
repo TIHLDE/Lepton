@@ -13,9 +13,9 @@ class FormPermissions(BasePermission):
         return self
 
     def has_permission(self, request, view):
-        is_logged_in = get_user_id(request) is not None
+        get_user_id(request)
 
-        if not is_logged_in:
+        if not request.user.is_authenticated:
             return False
 
         if view.action in ["retrieve"]:
@@ -24,11 +24,8 @@ class FormPermissions(BasePermission):
         return check_strict_group_permission(request, self.groups)
 
     def has_object_permission(self, request, view, obj):
-        get_user_id(request)
 
         if isinstance(obj, EventForm) and obj.type == EventFormType.EVALUATION:
-            print(obj)
-            print(list(obj.event.get_queue().all()))
             return (
                 obj.event.get_queue()
                 .filter(user=request.user, has_attended=True)
