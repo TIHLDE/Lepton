@@ -63,17 +63,18 @@ def _get_form_update_data(form):
     }
 
 
-def test_list_forms_data(user):
+def test_list_forms_data(admin_user):
     """Should return the correct fields about the forms."""
     form = EventFormFactory()
     field = form.fields.first()
     option = field.options.first()
 
-    client = get_api_client(user=user)
-    response = client.get(_get_forms_url())
-    forms = response.json()
+    client = get_api_client(user=admin_user)
+    url = _get_forms_url()
+    response = client.get(url)
+    response = response.json()
 
-    assert forms[0] == {
+    assert response[0] == {
         "id": str(form.id),
         "resource_type": "EventForm",
         "title": form.title,
@@ -135,7 +136,7 @@ def test_list_forms_as_member_of_sosialen_or_promo(member, group_name):
 
 
 def test_retrieve_form_as_anonymous_user_is_not_permitted(default_client, form):
-    """An anomymous user should not be able to retrieve forms."""
+    """An anonymous user should not be able to retrieve forms."""
     url = _get_form_detail_url(form)
     response = default_client.get(url)
 
@@ -331,10 +332,11 @@ def test_update_fields_when_existing_field_is_not_included_in_request_removes_fi
     url = _get_form_detail_url(form)
     data = {
         "resource_type": "Form",
+        "id": str(form.id),
         "title": "test",
         "fields": [],
     }
-    client.put(url, data)
+    client.patch(url, data)
 
     form.refresh_from_db()
 

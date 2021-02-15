@@ -49,7 +49,7 @@ collectstatic:
 	docker-compose run --rm web pipenv run python manage.py collectstatic
 
 test:
-	docker-compose run web pipenv run pytest ${args}
+	docker-compose run --rm web pipenv run pytest ${args}
 
 format:
 	make black

@@ -49,6 +49,37 @@ class FormSerializer(serializers.ModelSerializer):
         return form
 
 
+    def update(self, instance, validated_data):
+        """
+        - field that are not included in the request data are removed from the form
+        - field is updated when the field id is not included in the request data
+        - new fields are added when the field id is not included in the request data
+
+        - oppdater formet på vanlig måte
+            - fjerne fields før dette
+        -
+        """
+        print(instance)
+        print(validated_data)
+
+        fields = validated_data.pop("fields")
+        super().update(instance, validated_data)
+
+        # slette fields som ikke er med
+        ids_to_update = []
+        for field in fields:
+            if "id" in field:
+                ids_to_update.append(field["id"])
+
+        existing_fields_ids = instance.fields.values_list("id", flat=True)
+
+        ids_to_delete = set(existing_fields_ids) - set(ids_to_update)
+        for id_ in ids_to_delete:
+            Field.objects.get(id=id_).delete()
+
+        # legg til eller oppdater felter som er med
+
+
 class EventFormSerializer(FormSerializer):
     class Meta:
         model = EventForm
