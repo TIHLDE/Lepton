@@ -17,7 +17,7 @@ def event_sign_off_deadline_schedular(pk, title):
                 context={
                     "user_name": registration.user.first_name,
                     "event_name": title,
-                    "event_pk": pk,
+                    "event_id": pk,
                 },
             ),
             registration.user.email,
