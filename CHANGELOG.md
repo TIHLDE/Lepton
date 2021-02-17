@@ -19,6 +19,7 @@
 - 🎨 **Valgfri ingress i annonser**. Det er nå valgfritt å legge inn en ingress i jobbannonser.
 - ⚡ **Pagination i nyheter**. Lagt til pagination i nyheter
 - 🦟 **Å melde seg av som adminbruker** flytter nå opp brukere på ventelisten, som forventet.
+- ⚡ **Bruker får bilde** som kan brukes som profilbilde på TIHLDE siden
 
 ## Versjon 1.0.1 (09.02.2021)
 - ⚡ **Ryddet opp i event-felter**. Fjernet åpent tilgjengelig liste over deltagere, samt redusert antall felter som returneres når man henter flere.
