@@ -105,7 +105,6 @@ class UserMemberSerializer(UserSerializer):
             "user_id",
             "first_name",
             "last_name",
-            "image",
             "email",
             "is_TIHLDE_member",
         )
