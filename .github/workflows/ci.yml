@@ -1,10 +1,5 @@
 name: CI
 
-# Enable Buildkit and let compose use it to speed up image building
-env:
-  DOCKER_BUILDKIT: 1
-  COMPOSE_DOCKER_CLI_BUILD: 1
-
 on:
   pull_request:
     branches:
@@ -16,7 +11,7 @@ on:
 
 jobs:
 
-  flake8:
+  lint:
     runs-on: ubuntu-latest
     steps:
 
@@ -31,10 +26,10 @@ jobs:
       - name: Install flake8
         run: |
           python -m pip install --upgrade pip
-          pip install flake8 isort black====19.10b0
+          pip install flake8 isort black==19.10b0
 
       - name: Lint with flake8
-        run: flake8
+        run: flake8 app
 
       - name: Lint with black
         run: black app/ --check --exclude migrations
@@ -44,6 +39,13 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: ${{secrets.DATABASE_ROOT_PASSWORD}}
+        ports:
+          - 3306
     steps:
       - name: Checkout Code Repository
         uses: actions/checkout@v2
