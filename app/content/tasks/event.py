@@ -11,19 +11,19 @@ from app.util.mailer import send_html_email
 def event_sign_off_deadline_schedular(pk, title):
     for registration in Registration.objects.filter(event__pk=pk, is_on_wait=False):
         send_html_email(
-            "Påmindelse om avmeldingsfrist for " + title,
+            "Påminnelse om avmeldingsfrist for " + title,
             render_to_string(
                 "sign_off_deadline.html",
                 context={
                     "user_name": registration.user.first_name,
                     "event_name": title,
-                    "event_pk": pk,
+                    "event_id": pk,
                 },
             ),
             registration.user.email,
         )
         Notification.objects.create(
-            user=registration.user, message="Påmindelse om avmeldingsfrist for " + title
+            user=registration.user, message="Påminnelse om avmeldingsfrist for " + title
         )
 
 

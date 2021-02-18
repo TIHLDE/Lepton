@@ -2,16 +2,13 @@ from rest_framework import serializers
 
 from sentry_sdk import capture_exception
 
+from app.content.models import Event, Priority
+from app.content.serializers.priority import PrioritySerializer
 from app.util import EnumUtils
-
-from ..models import Event, Priority, Registration, User
-from .priority import PrioritySerializer
 
 
 class EventSerializer(serializers.ModelSerializer):
     expired = serializers.BooleanField(read_only=True)
-    registered_users_list = serializers.SerializerMethodField()
-    is_user_registered = serializers.SerializerMethodField()
     registration_priorities = serializers.SerializerMethodField()
 
     class Meta:
@@ -29,10 +26,8 @@ class EventSerializer(serializers.ModelSerializer):
             "expired",
             "limit",
             "closed",
-            "registered_users_list",
             "list_count",
             "waiting_list_count",
-            "is_user_registered",
             "image",
             "image_alt",
             "start_registration_at",
@@ -40,25 +35,12 @@ class EventSerializer(serializers.ModelSerializer):
             "sign_off_deadline",
             "registration_priorities",
             "evaluate_link",
+            "updated_at",
         )
 
         extra_kwargs = {
             "evaluate_link": {"write_only": True},
         }
-
-    def get_registered_users_list(self, obj):
-        """ Return only some user fields"""
-        try:
-            return [
-                {
-                    "user_id": user.user_id,
-                    "first_name": user.first_name,
-                    "last_name": user.last_name,
-                }
-                for user in obj.registered_users_list.all()
-            ]
-        except User.DoesNotExist:
-            return None
 
     def validate_limit(self, limit):
         """
@@ -84,17 +66,6 @@ class EventSerializer(serializers.ModelSerializer):
 
         return limit
 
-    def get_is_user_registered(self, obj):
-        """ Check if user loading event is signed up """
-        request = self.context.get("request")
-        if request and hasattr(request, "id"):
-            user_id = request.id
-            return Registration.objects.filter(
-                event__pk=obj.pk, user__user_id=user_id
-            ).exists()
-
-        return None
-
     def get_registration_priorities(self, obj):
         try:
             return [
@@ -106,6 +77,24 @@ class EventSerializer(serializers.ModelSerializer):
             ]
         except Priority.DoesNotExist:
             return None
+
+
+class EventListSerializer(serializers.ModelSerializer):
+    expired = serializers.BooleanField(read_only=True)
+
+    class Meta:
+        model = Event
+        fields = [
+            "id",
+            "title",
+            "start_date",
+            "end_date",
+            "location",
+            "expired",
+            "image",
+            "image_alt",
+            "updated_at",
+        ]
 
 
 class EventCreateAndUpdateSerializer(serializers.ModelSerializer):
@@ -170,24 +159,3 @@ class EventAdminSerializer(EventSerializer):
     class Meta:
         model = Event
         fields = EventSerializer.Meta.fields + ("evaluate_link",)
-
-
-class EventInUserSerializer(EventSerializer):
-    expired = serializers.BooleanField(read_only=True)
-
-    class Meta:
-        model = Event
-        fields = [
-            "id",
-            "title",
-            "start_date",
-            "end_date",
-            "location",
-            "priority",
-            "limit",
-            "closed",
-            "description",
-            "expired",
-            "image",
-            "image_alt",
-        ]

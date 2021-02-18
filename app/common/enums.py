@@ -36,10 +36,10 @@ class AppModel(ChoiceEnum):
 
 
 class GroupType(ChoiceEnum):
-    THILDE = "THILDE"
+    TIHLDE = "TIHLDE"
     BOARD = "Styre"
     SUBGROUP = "Undergruppe"
-    COMMITEE = "Kommite"
+    COMMITTEE = "Komité"
     STUDYYEAR = "Studieår"
     OTHER = "Annet"
 
@@ -58,5 +58,9 @@ class CheatsheetType(ChoiceEnum):
 
 
 class MembershipType(ChoiceEnum):
-    MEMBER = "Member"
     LEADER = "Leader"
+    MEMBER = "Member"
+
+    @classmethod
+    def board_members(cls):
+        return (cls.LEADER,)

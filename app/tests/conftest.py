@@ -3,15 +3,17 @@ from rest_framework.test import APIClient, APIRequestFactory
 
 import pytest
 
-from app.common.enums import AdminGroup
+from app.common.enums import AdminGroup, MembershipType
 from app.content.factories import (
     CheatsheetFactory,
     EventFactory,
     NewsFactory,
+    PageFactory,
+    ParentPageFactory,
     RegistrationFactory,
     UserFactory,
 )
-from app.group.factories import GroupFactory
+from app.group.factories import GroupFactory, MembershipFactory
 from app.util.test_utils import add_user_to_group_with_name
 
 
@@ -55,6 +57,16 @@ def group():
     return GroupFactory()
 
 
+@pytest.fixture()
+def membership():
+    return MembershipFactory(membership_type=MembershipType.MEMBER)
+
+
+@pytest.fixture()
+def membership_leader():
+    return MembershipFactory(membership_type=MembershipType.LEADER)
+
+
 @pytest.fixture
 def registration():
     return RegistrationFactory()
@@ -68,3 +80,13 @@ def cheatsheet():
 @pytest.fixture()
 def news():
     return NewsFactory()
+
+
+@pytest.fixture()
+def page():
+    return PageFactory()
+
+
+@pytest.fixture()
+def parent_page():
+    return ParentPageFactory()

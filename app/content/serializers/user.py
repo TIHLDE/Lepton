@@ -1,19 +1,27 @@
 from django.contrib.auth.hashers import make_password
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext as _
 from rest_framework import serializers
 
-from ..models import Notification, Registration, User
-from .badge import BadgeSerializer
-from .event import EventInUserSerializer
+from app.content.models import Notification, Registration, User
+from app.content.serializers.badge import BadgeSerializer
+from app.content.serializers.event import EventListSerializer
 
 
 class DefaultUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
+        fields = (
+            "user_id",
+            "first_name",
+            "last_name",
+            "image",
+        )
         read_only_fields = (
             "user_id",
             "first_name",
             "last_name",
-            "email",
+            "image",
         )
 
 
@@ -30,6 +38,7 @@ class UserSerializer(serializers.ModelSerializer):
             "user_id",
             "first_name",
             "last_name",
+            "image",
             "email",
             "cell",
             "home_busstop",
@@ -59,7 +68,7 @@ class UserSerializer(serializers.ModelSerializer):
             for registration in registrations
             if not registration.event.expired
         ]
-        return EventInUserSerializer(events, many=True).data
+        return EventListSerializer(events, many=True).data
 
     def get_badges(self, obj):
         """ Lists all badges a user has accomplished """
@@ -147,3 +156,12 @@ class UserCreateSerializer(serializers.ModelSerializer):
         user.set_password(validated_data["password"])
         user.save()
         return user
+
+    def validate_email(self, data):
+        if "@ntnu.no" in data:
+            raise ValidationError(
+                _(
+                    "Vi kan ikke sende epost til @ntnu.no-adresser, bruk @stud.ntnu.no-adressen istedenfor."
+                )
+            )
+        return data

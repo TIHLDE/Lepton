@@ -26,7 +26,7 @@ class Registration(BaseModel):
     allow_photo = models.BooleanField(default=True)
 
     class Meta:
-        ordering = ("event", "is_on_wait", "created_at")
+        ordering = ("event", "registration_id", "is_on_wait", "created_at")
         unique_together = ("user", "event")
         verbose_name = "Registration"
         verbose_name_plural = "Registrations"
@@ -38,7 +38,7 @@ class Registration(BaseModel):
         )
 
     def delete(self, *args, **kwargs):
-        if self.event.is_past_sign_off_deadline:
+        if self.event.is_past_sign_off_deadline and not self.is_on_wait:
             raise EventSignOffDeadlineHasPassed(
                 _("Cannot sign user off after sign off deadline has passed")
             )
@@ -100,17 +100,20 @@ class Registration(BaseModel):
         self.is_on_wait = False
 
     def move_from_waiting_list_to_queue(self):
-        registrations = self.event.get_waiting_list().order_by("created_at")
-        registration_move_to_queue = next(
-            (
-                registration
-                for registration in registrations
-                if registration.is_prioritized
-            ),
-            registrations[0],
+        registrations_in_waiting_list = self.event.get_waiting_list().order_by(
+            "created_at"
         )
-        registration_move_to_queue.is_on_wait = False
-        registration_move_to_queue.save()
+        if registrations_in_waiting_list:
+            registration_move_to_queue = next(
+                (
+                    registration
+                    for registration in registrations_in_waiting_list
+                    if registration.is_prioritized
+                ),
+                registrations_in_waiting_list[0],
+            )
+            registration_move_to_queue.is_on_wait = False
+            registration_move_to_queue.save()
 
     def clean(self):
         """

@@ -51,6 +51,9 @@ collectstatic:
 test:
 	docker-compose run web pipenv run pytest ${args}
 
+cov:
+	docker-compose run web pipenv run pytest --cov-config=.coveragerc --cov=app
+
 format:
 	make black
 	make isort

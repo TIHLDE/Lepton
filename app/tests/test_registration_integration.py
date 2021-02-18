@@ -4,8 +4,13 @@ from rest_framework import status
 
 import pytest
 
-from app.common.enums import AdminGroup
-from app.content.factories import EventFactory, RegistrationFactory
+from app.common.enums import AdminGroup, UserClass, UserStudy
+from app.content.factories import (
+    EventFactory,
+    PriorityFactory,
+    RegistrationFactory,
+    UserFactory,
+)
 from app.util.test_utils import get_api_client
 from app.util.utils import today
 
@@ -513,8 +518,27 @@ def test_delete_another_registration_as_member(member, user):
 
 
 @pytest.mark.django_db
-def test_delete_as_member_when_sign_off_deadline_has_passed(member):
-    """A member should not be able to delete their registration when the events sign off deadline has passed."""
+def test_delete_as_member_when_sign_off_deadline_has_passed_and_not_on_wait(member):
+    """
+    A member should not be able to delete their registration
+    when the events sign off deadline has passed and is not on wait.
+    """
+    event = EventFactory(sign_off_deadline=today() - timedelta(days=1), limit=10)
+    registration = RegistrationFactory(user=member, event=event, is_on_wait=False)
+    client = get_api_client(user=member)
+
+    url = _get_registration_detail_url(registration)
+    response = client.delete(url)
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
+@pytest.mark.django_db
+def test_delete_as_member_when_sign_off_deadline_has_passed_and_on_wait(member):
+    """
+    A member should be able to delete their registration
+    when the events sign off deadline has passed but is on wait.
+    """
     event = EventFactory(sign_off_deadline=today() - timedelta(days=1))
     registration = RegistrationFactory(user=member, event=event)
     client = get_api_client(user=member)
@@ -522,7 +546,7 @@ def test_delete_as_member_when_sign_off_deadline_has_passed(member):
     url = _get_registration_detail_url(registration)
     response = client.delete(url)
 
-    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db
@@ -565,3 +589,52 @@ def test_delete_another_registration_as_admin_after_sign_off_deadline(
     response = client.delete(url)
 
     assert response.status_code == status.HTTP_200_OK
+
+
+@pytest.mark.django_db
+def test_delete_own_registration_as_admin_bumps_first_user_on_wait(admin_user):
+    """
+    Test that the first registration on the waiting list is moved up
+    when an admin deletes their own registration
+    """
+    event = EventFactory(limit=1)
+    admin_registration = RegistrationFactory(event=event, user=admin_user)
+    registration_on_wait = RegistrationFactory(event=event)
+
+    client = get_api_client(user=admin_user)
+    url = _get_registration_detail_url(admin_registration)
+    client.delete(url)
+
+    registration_on_wait.refresh_from_db()
+
+    assert not registration_on_wait.is_on_wait
+
+
+@pytest.mark.django_db
+def test_delete_own_registration_as_member_when_no_users_on_wait_are_in_a_priority_pool_bumps_first_registration_on_wait(
+    member,
+):
+    """
+    Test that the first registration on wait is moved up when
+    a member deletes their own registration and the event has no priorities.
+    """
+    event = EventFactory(limit=1)
+    priority = PriorityFactory(user_study=UserStudy.DATAING, user_class=UserClass.FIRST)
+    event.registration_priorities.add(priority)
+
+    user_not_in_priority_pool = UserFactory(
+        user_study=UserStudy.DIGFOR.value, user_class=UserClass.SECOND.value
+    )
+
+    registration_to_delete = RegistrationFactory(event=event, user=member)
+    registration_on_wait = RegistrationFactory(
+        event=event, user=user_not_in_priority_pool
+    )
+
+    client = get_api_client(user=member)
+    url = _get_registration_detail_url(registration_to_delete)
+    client.delete(url)
+
+    registration_on_wait.refresh_from_db()
+
+    assert not registration_on_wait.is_on_wait

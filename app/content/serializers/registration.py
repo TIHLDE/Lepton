@@ -23,6 +23,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
             "user_id": user.user_id,
             "first_name": user.first_name,
             "last_name": user.last_name,
+            "image": user.image,
             "email": user.email,
             "user_class": user.user_class,
             "user_study": user.user_study,

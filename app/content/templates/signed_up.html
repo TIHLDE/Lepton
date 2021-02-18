@@ -1,29 +1,14 @@
-<!doctype html>
-<html xmlns="http://www.w3.org/1999/xhtml">
-    <head>
-        <!-- NAME: 1 COLUMN -->
-        <!--[if gte mso 15]>
-        <xml>
-            <o:OfficeDocumentSettings>
-            <o:AllowPNG/>
-            <o:PixelsPerInch>96</o:PixelsPerInch>
-            </o:OfficeDocumentSettings>
-        </xml>
-        <![endif]-->
-        <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>TIHLDE - Du er påmeldt</title>
-        <link href='https://fonts.googleapis.com/css?family=Roboto:400,400italic,700,700italic' rel='stylesheet' type='text/css'>
-        <style>
-            html, body {
-                background-color: #f8f8fa;
-            }
-        </style>
-    </head>
-    <body>
-        <h2 style="font-family: Roboto,'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;">Hei {{user_name}}!</h2>
-        <p style="font-family: Roboto,'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;">Du er påmeldt {{event_name}}!<br>Arrangementet starter {{event_time}} og vil være på {{event_place}}<br>Du kan melde deg av innen {{event_deadline}}</p>
-        <p style="font-family: Roboto,'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;">Med vennlig hilsen<br><b>TIHLDE</b></p>
-    </body>
-</html>
+{% extends 'base.html' %}
+
+{% block title %}TIHLDE - Du er påmeldt{% endblock %}
+
+{% block mail_content %}
+
+<h1 style="font-size: 1.6rem; margin: 0; color: white;">DU ER PÅMELDT</h1>
+<p style="font-size: 1.1rem; color: white;">Hei {{user_name}}!</p>
+<p style="font-size: 1.1rem; color: white;">Du er påmeldt {{event_name}}!<br>Arrangementet starter {{event_time}} og vil være på {{event_place}}<br>Du kan melde deg av innen {{event_deadline}}</p>
+<a class="link" href="https://tihlde.org/arrangementer/{{ event_id }}/" style="color: white; text-decoration: none;">
+    <button class="button" style="color: black;">Arrangement</button>
+</a>
+
+{% endblock %}
