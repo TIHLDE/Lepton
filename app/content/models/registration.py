@@ -22,11 +22,10 @@ class Registration(BaseModel):
 
     is_on_wait = models.BooleanField(default=False, verbose_name="waiting list")
     has_attended = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now=True, verbose_name="Signed up on")
     allow_photo = models.BooleanField(default=True)
 
     class Meta:
-        ordering = ("event", "registration_id", "is_on_wait", "created_at")
+        ordering = ("event", "created_at", "is_on_wait")
         unique_together = ("user", "event")
         verbose_name = "Registration"
         verbose_name_plural = "Registrations"

@@ -14,6 +14,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
             "is_on_wait",
             "has_attended",
             "allow_photo",
+            "created_at",
         ]
 
     def get_user_info(self, obj):
