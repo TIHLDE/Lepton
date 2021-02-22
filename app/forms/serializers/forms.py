@@ -55,67 +55,51 @@ class FormSerializer(serializers.ModelSerializer):
 
     @atomic
     def update(self, instance, validated_data):
-        """
-        - field that are not included in the request data are removed from the form
-        - field is updated when the field id is not included in the request data
-        - new fields are added when the field id is not included in the request data
-
-        - oppdater formet på vanlig måte
-            - fjerne fields før dette
-        -
-        """
-
         validated_fields = validated_data.pop("fields")
         super().update(instance, validated_data)
 
-        field_ids_to_keep = []
+        updated_field_ids = list()
+        fields_to_create = list()
 
         for field_data in validated_fields:
             options_data = field_data.pop("options", None)
+            field_id = field_data.get("id")
 
-            if "id" in field_data:
-                Field.objects.filter(id=field_data["id"]).update(**field_data)
-                current_field = Field.objects.get(id=field_data["id"])
-                field_ids_to_keep.append(field_data["id"])
+            if field_id:
+                Field.objects.filter(id=field_id).update(**field_data)
+                field_instance = Field.objects.get(id=field_id)
+                updated_field_ids.append(field_id)
             else:
-                current_field = Field.objects.create(form=instance, **field_data)
-                field_ids_to_keep.append(current_field.id)
+                field_instance = Field.objects.create(form=instance, **field_data)
+                fields_to_create.append(field_data)
 
-            if options_data is not None:
-                # slett options som ikke er med
-                # legg til de som er med og ikke er koblet til feltet
-                # oppdater de som er med og er koblet til feltet
+            updated_options_id = list()
+            options_to_create = list()
 
-                option_ids_to_keep = []
+            for option_data in options_data:
+                option_id = option_data.get("id")
+                if option_id:
+                    Option.objects.filter(id=option_id).update(**option_data)
+                    updated_options_id.append(option_id)
+                else:
+                    options_to_create.append(option_data)
 
-                for option_data in options_data:
-                    if "id" in option_data:
-                        Option.objects.filter(id=option_data["id"]).update(
-                            **option_data
-                        )
-                        option_ids_to_keep.append(option_data["id"])
-                    else:
-                        current_option = Option.objects.create(
-                            field=current_field, **option_data
-                        )
-                        option_ids_to_keep.append(current_option.id)
+            options_to_delete = field_instance.options.exclude(
+                id__in=updated_options_id
+            )
+            options_to_delete.delete()
 
-                existing_options_ids = current_field.options.values_list(
-                    "id", flat=True
-                )
-                option_ids_to_delete = set(existing_options_ids) - set(
-                    option_ids_to_keep
-                )
-                for id_ in option_ids_to_delete:
-                    Option.objects.get(id=id_).delete()
+            Option.objects.bulk_create(
+                [Option(field=field_instance, **data) for data in options_to_create]
+            )
 
-        existing_fields_ids = instance.fields.values_list("id", flat=True)
-        field_ids_to_delete = set(existing_fields_ids) - set(field_ids_to_keep)
+        fields_to_delete = instance.fields.exclude(id__in=updated_field_ids)
+        fields_to_delete.delete()
 
-        for id_ in field_ids_to_delete:
-            Field.objects.get(id=id_).delete()
+        Field.objects.bulk_create(
+            [Field(form=instance, **data) for data in fields_to_create]
+        )
 
-        # legg til eller oppdater felter som er med
         return instance
 
 

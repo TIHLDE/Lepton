@@ -146,7 +146,7 @@ def test_retrieve_form_as_member(member, form):
     assert response.json()
 
 
-def test_retrieve_evaluation_event_form_as_member_when_has_attended_event(member, form):
+def test_retrieve_evaluation_event_form_as_member_when_has_attended_event(member):
     """
     A member should be able to retrieve an event form of type evaluation if
     they has attended the event.
@@ -165,9 +165,7 @@ def test_retrieve_evaluation_event_form_as_member_when_has_attended_event(member
     assert response.json()
 
 
-def test_retrieve_evaluation_event_form_as_member_when_has_not_attended_event(
-    member, form
-):
+def test_retrieve_evaluation_event_form_as_member_when_has_not_attended_event(member):
     """A member should not be able to retrieve an event evaluation form if they have not attended the event."""
     event = EventFactory(limit=1)
     registration = RegistrationFactory(
