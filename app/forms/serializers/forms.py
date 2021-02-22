@@ -1,3 +1,4 @@
+from django.db.transaction import atomic
 from rest_framework import serializers
 
 from rest_polymorphic.serializers import PolymorphicSerializer
@@ -6,6 +7,8 @@ from app.forms.models import EventForm, Field, Form, Option
 
 
 class OptionSerializer(serializers.ModelSerializer):
+    id = serializers.UUIDField(read_only=False, required=False)
+
     class Meta:
         model = Option
         fields = [
@@ -16,6 +19,7 @@ class OptionSerializer(serializers.ModelSerializer):
 
 class FieldSerializer(serializers.ModelSerializer):
     options = OptionSerializer(many=True, required=False, allow_null=True)
+    id = serializers.UUIDField(read_only=False, required=False)
 
     class Meta:
         model = Field
@@ -39,6 +43,7 @@ class FormSerializer(serializers.ModelSerializer):
             "fields",
         ]
 
+    @atomic
     def create(self, validated_data):
         fields = validated_data.pop("fields", None)
         form = self.Meta.model.objects.create(**validated_data)
@@ -48,7 +53,7 @@ class FormSerializer(serializers.ModelSerializer):
 
         return form
 
-
+    @atomic
     def update(self, instance, validated_data):
         """
         - field that are not included in the request data are removed from the form
@@ -59,25 +64,59 @@ class FormSerializer(serializers.ModelSerializer):
             - fjerne fields før dette
         -
         """
-        print(instance)
-        print(validated_data)
 
-        fields = validated_data.pop("fields")
+        validated_fields = validated_data.pop("fields")
         super().update(instance, validated_data)
 
-        # slette fields som ikke er med
-        ids_to_update = []
-        for field in fields:
-            if "id" in field:
-                ids_to_update.append(field["id"])
+        field_ids_to_keep = []
+
+        for field_data in validated_fields:
+            options_data = field_data.pop("options", None)
+
+            if "id" in field_data:
+                Field.objects.filter(id=field_data["id"]).update(**field_data)
+                current_field = Field.objects.get(id=field_data["id"])
+                field_ids_to_keep.append(field_data["id"])
+            else:
+                current_field = Field.objects.create(form=instance, **field_data)
+                field_ids_to_keep.append(current_field.id)
+
+            if options_data is not None:
+                # slett options som ikke er med
+                # legg til de som er med og ikke er koblet til feltet
+                # oppdater de som er med og er koblet til feltet
+
+                option_ids_to_keep = []
+
+                for option_data in options_data:
+                    if "id" in option_data:
+                        Option.objects.filter(id=option_data["id"]).update(
+                            **option_data
+                        )
+                        option_ids_to_keep.append(option_data["id"])
+                    else:
+                        current_option = Option.objects.create(
+                            field=current_field, **option_data
+                        )
+                        option_ids_to_keep.append(current_option.id)
+
+                existing_options_ids = current_field.options.values_list(
+                    "id", flat=True
+                )
+                option_ids_to_delete = set(existing_options_ids) - set(
+                    option_ids_to_keep
+                )
+                for id_ in option_ids_to_delete:
+                    Option.objects.get(id=id_).delete()
 
         existing_fields_ids = instance.fields.values_list("id", flat=True)
+        field_ids_to_delete = set(existing_fields_ids) - set(field_ids_to_keep)
 
-        ids_to_delete = set(existing_fields_ids) - set(ids_to_update)
-        for id_ in ids_to_delete:
+        for id_ in field_ids_to_delete:
             Field.objects.get(id=id_).delete()
 
         # legg til eller oppdater felter som er med
+        return instance
 
 
 class EventFormSerializer(FormSerializer):

@@ -6,11 +6,7 @@ from app.common.enums import AdminGroup
 from app.content.factories import EventFactory, RegistrationFactory
 from app.forms.enums import EventFormType
 from app.forms.models.forms import Field
-from app.forms.tests.form_factories import (
-    EventFormFactory,
-    FieldFactory,
-    FormFactory,
-)
+from app.forms.tests.form_factories import EventFormFactory, FormFactory
 from app.util.test_utils import get_api_client
 
 pytestmark = pytest.mark.django_db
@@ -110,8 +106,7 @@ def test_list_forms_as_member_is_not_permitted(member):
 
 
 @pytest.mark.parametrize(
-    "group_name",
-    [AdminGroup.HS, AdminGroup.INDEX, AdminGroup.NOK],
+    "group_name", [AdminGroup.HS, AdminGroup.INDEX, AdminGroup.NOK],
 )
 def test_list_forms_as_member_of_nok_hs_or_index(member, group_name):
     """A user in NOK, HS or Index should be able to list forms."""
@@ -123,8 +118,7 @@ def test_list_forms_as_member_of_nok_hs_or_index(member, group_name):
 
 
 @pytest.mark.parametrize(
-    "group_name",
-    [AdminGroup.SOSIALEN, AdminGroup.PROMO],
+    "group_name", [AdminGroup.SOSIALEN, AdminGroup.PROMO],
 )
 def test_list_forms_as_member_of_sosialen_or_promo(member, group_name):
     """A user in sosialen or promo should be able to list forms."""
@@ -200,8 +194,7 @@ def test_retrieve_form_as_member_returns_form(member, form):
 
 
 @pytest.mark.parametrize(
-    "group_name",
-    list(AdminGroup),
+    "group_name", list(AdminGroup),
 )
 def test_retrieve_form_as_part_of_admin_group(member, group_name, form):
     """A member as a part of an admin group should be able to retrieve a form."""
@@ -287,8 +280,7 @@ def test_update_form_as_member_is_not_permitted(member, form):
 
 
 @pytest.mark.parametrize(
-    "group_name",
-    [AdminGroup.SOSIALEN, AdminGroup.PROMO],
+    "group_name", [AdminGroup.SOSIALEN, AdminGroup.PROMO],
 )
 def test_update_form_as_sosialen_or_promo_is_not_permitted(form, member, group_name):
     """A member of sosialen or promo should not be allowed to update forms."""
@@ -350,34 +342,36 @@ def test_update_fields_when_id_is_passed_in_field_request_data_updates_the_field
     client = get_api_client(user=admin_user)
     url = _get_form_detail_url(form)
     field = Field.objects.get(form=form.id)
-    want = {
+    expected_field_data = {
+        "id": str(field.id),
         "title": "i love this field <3",
         "type": "SINGLE_SELECT",
-        "options": [{"title": "option"}],
+        "options": [],
         "required": False,
     }
     data = {
         "resource_type": "Form",
         "title": "testform",
-        "fields": [{"id": field.id, **want}],
+        "fields": [{**expected_field_data}],
     }
 
     response = client.patch(url, data)
-    form_resp = response.json()
-    field_resp = form_resp["fields"][0]
+    response = response.json()
+    field_resp = response["fields"][0]
 
-    got = {key: field_resp[key] for key in want.keys()}
+    actual_field_data = {key: field_resp[key] for key in expected_field_data.keys()}
 
-    assert got == want
+    assert actual_field_data == expected_field_data
 
 
 def test_update_field_when_id_is_not_passed_in_field_request_data_adds_new_field(
     admin_user, form
 ):
     """Test that new fields are added when the field id is not included in the request data."""
+    form.fields.all().delete()
+
     client = get_api_client(user=admin_user)
     url = _get_form_detail_url(form)
-    field_count = form.fields.count()
     data = {
         "resource_type": "Form",
         "title": "test",
@@ -394,7 +388,7 @@ def test_update_field_when_id_is_not_passed_in_field_request_data_adds_new_field
     client.patch(url, data)
     form.refresh_from_db()
 
-    assert form.fields.count() == field_count + 1
+    assert form.fields.count() == 1
 
 
 def test_update_options_when_previous_option_is_not_included_in_request_removes_option_from_field(
@@ -404,12 +398,7 @@ def test_update_options_when_previous_option_is_not_included_in_request_removes_
     field = form.fields.first()
     data = {
         "resource_type": "Form",
-        "fields": [
-            {
-                "id": str(field.id),
-                "options": [],
-            }
-        ],
+        "fields": [{"id": str(field.id), "options": [],}],
     }
     client = get_api_client(user=admin_user)
     url = _get_form_detail_url(form)
@@ -433,12 +422,7 @@ def test_update_options_when_id_is_passed_in_options_request_data_updates_the_op
         "fields": [
             {
                 "id": str(field.id),
-                "options": [
-                    {
-                        "id": str(option.id),
-                        "title": updated_title,
-                    },
-                ],
+                "options": [{"id": str(option.id), "title": updated_title,},],
             }
         ],
     }
@@ -456,7 +440,7 @@ def test_update_option_when_id_is_not_passed_in_options_request_data_adds_new_op
 ):
     """Test that new options are added when the option id is not included in the request data."""
     field = form.fields.first()
-    option_count = field.options.count()
+    field.options.all().delete()
 
     client = get_api_client(user=admin_user)
     url = _get_form_detail_url(form)
@@ -474,9 +458,9 @@ def test_update_option_when_id_is_not_passed_in_options_request_data_adds_new_op
     }
 
     client.patch(url, data)
-    form.refresh_from_db()
+    field.refresh_from_db()
 
-    assert field.options.count() == option_count + 1
+    assert field.options.count() == 1
 
 
 def test_delete_form_as_anonymous_is_not_permitted(default_client, form):
@@ -497,8 +481,7 @@ def test_delete_form_as_member_is_not_permitted(member, form):
 
 
 @pytest.mark.parametrize(
-    "group_name",
-    [AdminGroup.SOSIALEN, AdminGroup.PROMO],
+    "group_name", [AdminGroup.SOSIALEN, AdminGroup.PROMO],
 )
 def test_delete_form_as_sosialen_or_promo_is_not_permitted(member, group_name, form):
     """Admins in Sosialen and Promo should not be allowed to delete forms."""
