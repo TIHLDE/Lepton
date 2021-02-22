@@ -443,6 +443,7 @@ def test_update_fails_when_user_has_attended(admin_user):
     data = _get_registration_put_data(
         user=admin_user, event=registration_to_update.event
     )
+    data["has_attended"] = True
 
     client = get_api_client(user=admin_user)
     url = _get_registration_detail_url(registration_to_update)
