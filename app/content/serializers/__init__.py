@@ -4,6 +4,7 @@ from app.content.serializers.cheatsheet import CheatsheetSerializer
 from app.content.serializers.event import (
     EventAdminSerializer,
     EventCreateAndUpdateSerializer,
+    EventListSerializer,
     EventSerializer,
 )
 from app.content.serializers.job_post import JobPostSerializer

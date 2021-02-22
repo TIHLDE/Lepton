@@ -40,8 +40,8 @@ def test_news_ordering(default_client):
     response = default_client.get(_get_news_url())
     response = response.json()
 
-    assert response[0].get("title") == newest_news.title
-    assert response[1].get("title") == oldest_news.title
+    assert response["results"][0].get("title") == newest_news.title
+    assert response["results"][1].get("title") == oldest_news.title
 
 
 @pytest.mark.django_db

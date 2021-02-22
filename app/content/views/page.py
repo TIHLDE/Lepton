@@ -41,6 +41,10 @@ class PageViewSet(viewsets.ModelViewSet):
                 {"detail": _("Kan ikke hente siden fordi treet er ødelagt")},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+        except StopIteration:
+            return Response(
+                {"detail": _("Fant ikke siden")}, status=status.HTTP_404_NOT_FOUND
+            )
 
     def list(self, request, *args, **kwargs):
         try:
@@ -84,6 +88,10 @@ class PageViewSet(viewsets.ModelViewSet):
                 {"detail": _("Kan ikke lage siden fordi treet er ødelagt")},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+        except StopIteration:
+            return Response(
+                {"detail": _("Fant ikke siden")}, status=status.HTTP_404_NOT_FOUND
+            )
 
     def update(self, request, *args, **kwargs):
         try:
@@ -105,6 +113,10 @@ class PageViewSet(viewsets.ModelViewSet):
             return Response(
                 {"detail": _("Kan ikke endre siden fordi treet er ødelagt")},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+        except StopIteration:
+            return Response(
+                {"detail": _("Fant ikke siden")}, status=status.HTTP_404_NOT_FOUND
             )
 
     def destroy(self, request, *args, **kwargs):
@@ -137,6 +149,10 @@ class PageViewSet(viewsets.ModelViewSet):
             return Response(
                 {"detail": _("Kan ikke slette siden fordi treet er ødelagt")},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+        except StopIteration:
+            return Response(
+                {"detail": _("Fant ikke siden")}, status=status.HTTP_404_NOT_FOUND
             )
 
     @action(detail=False, methods=["get"])

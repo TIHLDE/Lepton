@@ -3,6 +3,26 @@ from rest_framework.permissions import SAFE_METHODS, BasePermission
 
 from app.common.enums import AdminGroup
 from app.content.models import User
+from app.group.models import Membership
+
+
+class IsLeader(BasePermission):
+    """ Checks if the user is a leader on a group """
+
+    message = "You are not a leader of this group"
+
+    def has_permission(self, request, view):
+        # Check if session-token is provided
+        user_id = get_user_id(request)
+        group_slug = view.kwargs["slug"]
+        try:
+            if Membership.objects.get(
+                user__user_id=user_id, group__slug=group_slug
+            ).is_leader():
+                return True
+        except Membership.DoesNotExist:
+            return False
+        return False
 
 
 class IsMember(BasePermission):
