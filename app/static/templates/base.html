@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>{% block title %}{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <style>
+        * {
+            color: white;
+            background: #121519;
+            font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+        }
+        body {
+            background-color: #121519;
+        }
+        .button {
+            padding: 16px 0;
+            margin: 16px 0;
+            background-color: #9ec0ff;
+            color: black;
+            font-size: 1rem;
+            text-align: center;
+            border-radius: 8px;
+            position: relative;
+            font-weight: bold;
+            text-transform: uppercase;
+            border: 0;
+            width: 100%;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<center style="background-color: #121519; padding: 16px;">
+    <div style="max-width: 500px; width: 100%; background-color: #121519; text-align: center;">
+        <center>
+            <table style="width:100%!important;border-collapse:separate;min-width:100%!important; padding: 16px 16px 32px;">
+                <tbody>
+                <tr>
+                    <td align="center">
+                        <img class="topBoxes" src="https://i.ibb.co/NCbp6p0/TIHLDE-LOGO-HVIT-1.png" height="49" width="250" uk-svg alt="TIHLDE LOGO">
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </center>
+        <div style="padding: 16px; border: 2px solid #ffffff; border-radius: 8px; text-align: left;">
+            {% block mail_content %}
+
+            {% endblock %}
+
+            <p>Med vennlig hilsen,<br><b><a class="link" href="https://tihlde.org/om/tihlde/undergrupper/index/" style="color: white; text-decoration: none;">TIHLDE Index</a></b></p>
+        </div>
+        <div style="padding: 0 20px;">
+            <p><a style="color: white; text-decoration: underline;" href="mailto:hs@tihlde.org">Kontakt oss</a> | <a style="color: white; text-decoration: underline;" href="https://tihlde.org">tihlde.org</a></p>
+        </div>
+    </div>
+</center>
+</body>
+</html>

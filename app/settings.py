@@ -87,6 +87,7 @@ REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "rest_framework.schemas.coreapi.AutoSchema",
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.AllowAny",],
     "EXCEPTION_HANDLER": "app.util.exceptions.exception_handler",
+    "TEST_REQUEST_DEFAULT_FORMAT": "json",
 }
 SWAGGER_SETTINGS = {
     "SECURITY_DEFINITIONS": {
@@ -127,7 +128,10 @@ ROOT_URLCONF = "app.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": (
+            # It is important that we load the base templates first
+            os.path.join(PROJECT_ROOT, "./static", "templates"),
+        ),
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
