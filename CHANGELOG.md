@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+## Versjon 1.0.2 (22.02.2021)
 - 🦟 **Lås påmeldingstid i registrering**. Hindre at tidspunktet for påmelding endres når påmeldingen endres. Dermed beholder påmeldte sin prioritet i listen.
 - 🎨 **Nytt utseende i epost**. Oppdatert utseende i eposter som harmonierer med med resten av nettsiden.
 - 🦟 **Begrens epost-domener**. Hindre brukere i å lage bruker med @ntnu.no-adresser siden vi ikke klarer å sende epost til slike adresser.
