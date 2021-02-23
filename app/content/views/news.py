@@ -5,13 +5,14 @@ from app.common.pagination import BasePagination
 from app.common.permissions import IsDev, IsNoK
 from app.content.models import News
 from app.content.serializers import NewsSerializer
+from dry_rest_permissions.generics import DRYPermissions
 
 
 class NewsViewSet(viewsets.ModelViewSet):
 
     queryset = News.objects.all().order_by("-created_at")
     serializer_class = NewsSerializer
-    permission_classes = [IsDev | IsNoK]
+    permission_classes = [DRYPermissions]
     pagination_class = BasePagination
 
     def destroy(self, request, *args, **kwargs):

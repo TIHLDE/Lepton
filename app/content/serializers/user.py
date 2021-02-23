@@ -5,6 +5,7 @@ from rest_framework import serializers
 from app.content.models import Notification, Registration, User
 from app.content.serializers.badge import BadgeSerializer
 from app.content.serializers.event import EventListSerializer
+from dry_rest_permissions.generics import DRYPermissionsField 
 
 
 class DefaultUserSerializer(serializers.ModelSerializer):
@@ -29,6 +30,8 @@ class UserSerializer(serializers.ModelSerializer):
     groups = serializers.SerializerMethodField()
     badges = serializers.SerializerMethodField()
     unread_notifications = serializers.SerializerMethodField()
+    notifications = serializers.SerializerMethodField()
+    permissions = DRYPermissionsField()
 
     class Meta:
         model = User
@@ -51,6 +54,8 @@ class UserSerializer(serializers.ModelSerializer):
             "groups",
             "badges",
             "unread_notifications",
+            "notifications",
+            "permissions"
         )
         read_only_fields = ("user_id",)
         write_only_fields = ("app_token",)

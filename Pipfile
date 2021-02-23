@@ -35,6 +35,7 @@ django-polymorphic = "~=3.0"
 django-rest-polymorphic = "*"
 
 django-mptt="*"
+dry-rest-permissions="*"
 # Documentation
 # ------------------------------------------------------------------------------
 drf-yasg = "*"
