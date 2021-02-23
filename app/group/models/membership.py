@@ -42,8 +42,8 @@ class MembershipHistory(BaseModel):
 class Membership(BaseModel):
     """Model for a Group Membership"""
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    group = models.ForeignKey(Group, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="membership")
+    group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name="membership")
     membership_type = EnumChoiceField(MembershipType, default=MembershipType.MEMBER)
     expiration_date = models.DateField(null=True, blank=True)
 

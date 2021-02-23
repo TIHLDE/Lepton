@@ -26,6 +26,14 @@ class AdminGroup(ChoiceEnum):
     PROMO = "Promo"
     SOSIALEN = "Sosialen"
 
+    @classmethod
+    def all(cls):
+        return (cls.HS, cls.INDEX, cls.NOK, cls.PROMO, cls.SOSIALEN)
+
+    @classmethod
+    def admin(cls):
+        return (cls.HS, cls.INDEX)
+
 
 class AppModel(ChoiceEnum):
     EVENT = "Event"

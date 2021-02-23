@@ -29,6 +29,7 @@ django-rest-framework = "*"
 django-cors-headers = "*"
 django-rest-auth = "*"
 django-mptt="*"
+dry-rest-permissions="*"
 # Documentation
 # ------------------------------------------------------------------------------
 drf-yasg = "*"
