@@ -99,20 +99,5 @@ class Answer(BaseModel):
     def get_field(self):
         return self.field if self.field else self.selected_options.first().field
 
-    def saved(self, *args, **kwargs):
-        """
-        Aggregate the ids of the selected options and
-        add them all at once to minimize database queries
-        because of the many to many relation.
-        """
-        selected_options = kwargs.pop("selected_options")
-        ids_of_options_to_add = []
-
-        for selected_option in selected_options:
-            ids_of_options_to_add.append(selected_option.id)
-
-        self.selected_options.add(*ids_of_options_to_add)
-        super().save()
-
     def __str__(self):
         return f"Answer to {self.submission}"
