@@ -16,11 +16,13 @@ class DefaultUserSerializer(serializers.ModelSerializer):
             "user_id",
             "first_name",
             "last_name",
+            "image",
         )
         read_only_fields = (
             "user_id",
             "first_name",
             "last_name",
+            "image",
         )
 
 
@@ -38,6 +40,7 @@ class UserSerializer(serializers.ModelSerializer):
             "user_id",
             "first_name",
             "last_name",
+            "image",
             "email",
             "cell",
             "home_busstop",
