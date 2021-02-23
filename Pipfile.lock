@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "4abf58fd3015d27eb8fdcb468899adb84a7bede691ec8c435f33e2d44b5f8066"
+            "sha256": "0c4b62f7287fc6b86a0f78737816c1b0d370f497e94780db0cd02c2b201ec42b"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -173,6 +173,14 @@
             "index": "pypi",
             "version": "==1.4.2"
         },
+        "django-dry-rest-permissions": {
+            "hashes": [
+                "sha256:5c40c197917795be15730401c0801c0b6780acc42b68046fd34bc288e5d5a23e",
+                "sha256:bc6a40ba90460127fc0b98f6a35e6b35dd8eac19e3b131c5aba11a05efa5e4b8"
+            ],
+            "index": "pypi",
+            "version": "==1.1.0"
+        },
         "django-enumchoicefield": {
             "hashes": [
                 "sha256:9dc7d9ea2ac1fd7749262a310708d890442ac3ffdf2a65918559262570e76d07",
@@ -241,14 +249,6 @@
             ],
             "index": "pypi",
             "version": "==1.20.0"
-        },
-        "dry-rest-permissions": {
-            "hashes": [
-                "sha256:1f40461184063390e5b24e9c5602eb8cc8c3c2433c796f39a5332065bfbddd2b",
-                "sha256:f3fe685760004ce182801602819b43ebfa922e587036f1f5a5c10ffcfa646039"
-            ],
-            "index": "pypi",
-            "version": "==0.1.10"
         },
         "gunicorn": {
             "hashes": [
