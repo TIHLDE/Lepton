@@ -396,7 +396,7 @@ def test_update_options_when_previous_option_is_not_included_in_request_removes_
     field = form.fields.first()
     data = {
         "resource_type": "Form",
-        "fields": [{"id": str(field.id), "options": [], }],
+        "fields": [{"id": str(field.id), "options": [],}],
     }
     client = get_api_client(user=admin_user)
     url = _get_form_detail_url(form)
@@ -420,7 +420,7 @@ def test_update_options_when_id_is_passed_in_options_request_data_updates_the_op
         "fields": [
             {
                 "id": str(field.id),
-                "options": [{"id": str(option.id), "title": updated_title, }, ],
+                "options": [{"id": str(option.id), "title": updated_title,},],
             }
         ],
     }

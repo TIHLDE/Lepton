@@ -1,4 +1,3 @@
-from app.forms.tests.form_factories import FieldFactory, FormFactory
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient, APIRequestFactory
 
@@ -14,6 +13,7 @@ from app.content.factories import (
     RegistrationFactory,
     UserFactory,
 )
+from app.forms.tests.form_factories import FormFactory
 from app.group.factories import GroupFactory, MembershipFactory
 from app.util.test_utils import add_user_to_group_with_name
 
@@ -91,7 +91,7 @@ def page():
 @pytest.fixture()
 def parent_page():
     return ParentPageFactory()
-    
+
 
 @pytest.fixture()
 def form():
