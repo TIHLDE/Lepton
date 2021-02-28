@@ -11,6 +11,7 @@ from app.content.factories import (
     PageFactory,
     ParentPageFactory,
     RegistrationFactory,
+    ShortLinkFactory,
     UserFactory,
 )
 from app.group.factories import GroupFactory, MembershipFactory
@@ -90,3 +91,8 @@ def page():
 @pytest.fixture()
 def parent_page():
     return ParentPageFactory()
+
+
+@pytest.fixture()
+def short_link():
+    return ShortLinkFactory()
