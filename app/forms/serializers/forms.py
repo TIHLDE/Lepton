@@ -53,52 +53,52 @@ class FormSerializer(serializers.ModelSerializer):
 
         return form
 
+    @staticmethod
+    def update_field_options(field, options):
+        """Creates new options from data without `id` attached, updates options with `id` attached and removes unreferenced options."""
+        updated_ids = list()
+        created = list()
+
+        for option in options:
+            id = option.get("id")
+            if id:
+                Option.objects.filter(id=id).update(**option)
+                updated_ids.append(id)
+            else:
+                created.append(option)
+
+        options_to_delete = field.options.exclude(id__in=updated_ids)
+        options_to_delete.delete()
+
+        Option.objects.bulk_create(
+            [Option(field=field, **option) for option in created]
+        )
+
     @atomic
     def update(self, instance, validated_data):
         validated_fields = validated_data.pop("fields")
         super().update(instance, validated_data)
 
-        updated_field_ids = list()
-        fields_to_create = list()
+        field_ids_to_keep = list()
 
         for field_data in validated_fields:
             options_data = field_data.pop("options", None)
             field_id = field_data.get("id")
 
             if field_id:
-                Field.objects.filter(id=field_id).update(**field_data)
-                field_instance = Field.objects.get(id=field_id)
-                updated_field_ids.append(field_id)
+                field_query = Field.objects.filter(id=field_id)
+                field_query.update(**field_data)
+                field_instance = field_query[0]
             else:
                 field_instance = Field.objects.create(form=instance, **field_data)
-                fields_to_create.append(field_data)
+                field_id = field_instance.id
 
-            updated_options_id = list()
-            options_to_create = list()
+            field_ids_to_keep.append(field_id)
 
-            for option_data in options_data:
-                option_id = option_data.get("id")
-                if option_id:
-                    Option.objects.filter(id=option_id).update(**option_data)
-                    updated_options_id.append(option_id)
-                else:
-                    options_to_create.append(option_data)
+            self.update_field_options(field_instance, options_data)
 
-            options_to_delete = field_instance.options.exclude(
-                id__in=updated_options_id
-            )
-            options_to_delete.delete()
-
-            Option.objects.bulk_create(
-                [Option(field=field_instance, **data) for data in options_to_create]
-            )
-
-        fields_to_delete = instance.fields.exclude(id__in=updated_field_ids)
+        fields_to_delete = instance.fields.exclude(id__in=field_ids_to_keep)
         fields_to_delete.delete()
-
-        Field.objects.bulk_create(
-            [Field(form=instance, **data) for data in fields_to_create]
-        )
 
         return instance
 
