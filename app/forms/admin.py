@@ -42,6 +42,6 @@ class FormAdmin(PolymorphicParentModelAdmin):
 
     base_model = models.Form
     child_models = (models.EventForm, models.Form)
-    pk_regex = "([\w-]+)"  # noqa W605
+    pk_regex = "([\\w-]+)"
     list_filter = (PolymorphicChildModelFilter,)
     inlines = (FieldInline,)
