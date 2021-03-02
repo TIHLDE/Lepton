@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+- ⚡ **Pagination i varsler**. Lagt til pagination i varsler, samt lagt til tester og fjernet admin's muligheter til å opprette/endre/slette andres varsler.
 - ✨ **Korte URL's**. Opprettet en ny tjeneste der brukere kan lagre url'er bak korte, valgfrie slugs.
 
 ## Versjon 1.0.2 (22.02.2021)
