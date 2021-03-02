@@ -1,3 +1,4 @@
+from os import write
 from django.db import models
 
 from app.content.models import Badge, User
@@ -8,6 +9,7 @@ class UserBadge(BaseModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_badges")
     badge = models.ForeignKey(Badge, on_delete=models.CASCADE)
 
+    
     class Meta:
         verbose_name = "User badge"
         verbose_name_plural = "User badges"

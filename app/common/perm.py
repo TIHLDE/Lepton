@@ -21,7 +21,19 @@ class BasePermissionModel(models.Model):
             return True
         return check_permissions(cls.write_access, request)
 
+    @classmethod
+    def has_object_write_permission(cls, request):
+        if len(cls.write_access) == 0:
+            return True
+        return check_permissions(cls.write_access, request)
+        
+    @classmethod
+    def has_object_read_permission(cls, request):
+        if len(cls.read_access) == 0:
+            return True
+        return check_permissions(cls.read_access, request)
 
+   
 def check_permissions(access,request):
     if get_user_id(request):
         return check_has_access(access=access, user = request.user)
@@ -46,7 +58,7 @@ def check_has_access(access, request=None, user=None):
         memberships = user.membership.all()
         for membership in memberships:
             for name in access:
-                if str(membership.group_id) == str(name).lower():
+                if str(membership.group_id).lower() == str(name).lower():
                     return True
         return False
     except:

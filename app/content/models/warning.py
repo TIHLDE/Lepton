@@ -1,9 +1,13 @@
+from app.common.enums import AdminGroup
+from app.common.perm import BasePermissionModel
 from django.db import models
 
 from app.util.models import BaseModel
 
 
-class Warning(BaseModel):
+class Warning(BaseModel, BasePermissionModel):
+
+    write_access =  [AdminGroup.HS, AdminGroup.INDEX, AdminGroup.NOK]
     text = models.CharField(max_length=400, null=True)
     TYPES = (
         (0, "Error"),

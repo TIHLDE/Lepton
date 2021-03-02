@@ -15,11 +15,12 @@ from app.content.serializers import (
     EventSerializer,
 )
 from app.util.utils import yesterday
+from dry_rest_permissions.generics import DRYPermissions
 
 
 class EventViewSet(viewsets.ModelViewSet):
     serializer_class = EventSerializer
-    permission_classes = [IsNoKorPromo]
+    permission_classes = [DRYPermissions]
     queryset = Event.objects.filter(start_date__gte=yesterday()).order_by("start_date")
     pagination_class = BasePagination
 
