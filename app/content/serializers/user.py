@@ -6,7 +6,7 @@ from rest_framework import serializers
 from app.content.models import Notification, Registration, User
 from app.content.serializers.badge import BadgeSerializer
 from app.content.serializers.event import EventListSerializer
-from dry_rest_permissions.generics import DRYGlobalPermissionsField 
+from dry_rest_permissions.generics import DRYGlobalPermissionsField, DRYPermissionsField
 
 
 class DefaultUserSerializer(serializers.ModelSerializer):

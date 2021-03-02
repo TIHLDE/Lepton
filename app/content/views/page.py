@@ -9,12 +9,13 @@ from sentry_sdk import capture_exception
 from app.common.permissions import IsDev, IsHS
 from app.content.models import Page
 from app.content.serializers import PageSerializer, PageTreeSerializer
+from dry_rest_permissions.generics import DRYPermissions
 
 
 class PageViewSet(viewsets.ModelViewSet):
     queryset = Page.objects.all()
     serializer_class = PageSerializer
-    permission_classes = [IsDev | IsHS]
+    permission_classes = [DRYPermissions]
     lookup_url_kwarg = "path"
     lookup_value_regex = ".*"
 

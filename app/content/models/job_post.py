@@ -1,10 +1,12 @@
+from app.common.enums import AdminGroup
+from app.common.perm import BasePermissionModel
 from django.db import models
 
 from app.util.models import BaseModel, OptionalImage
 from app.util.utils import yesterday
 
 
-class JobPost(BaseModel, OptionalImage):
+class JobPost(BaseModel, OptionalImage, BasePermissionModel):
     title = models.CharField(max_length=200)
     ingress = models.CharField(max_length=800, blank=True, default="")
     body = models.TextField(blank=True, default="")
@@ -16,6 +18,8 @@ class JobPost(BaseModel, OptionalImage):
     company = models.CharField(max_length=200)
     email = models.EmailField(blank=True, null=True)
     link = models.URLField(max_length=300, blank=True, null=True)
+
+    write_access =  [AdminGroup.HS, AdminGroup.INDEX, AdminGroup.NOK]
 
     @property
     def expired(self):
