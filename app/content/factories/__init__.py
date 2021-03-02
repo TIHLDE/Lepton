@@ -6,3 +6,4 @@ from app.content.factories.cheatsheet_factory import CheatsheetFactory
 from app.content.factories.news_factory import NewsFactory
 from app.content.factories.page_factory import PageFactory
 from app.content.factories.page_factory import ParentPageFactory
+from app.content.factories.short_link_factory import ShortLinkFactory

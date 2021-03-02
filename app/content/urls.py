@@ -11,6 +11,7 @@ from .views import (
     NotificationViewSet,
     PageViewSet,
     RegistrationViewSet,
+    ShortLinkViewSet,
     UserBadgeViewSet,
     UserViewSet,
     WarningViewSet,
@@ -24,6 +25,7 @@ router.register("news", NewsViewSet)
 router.register("events", EventViewSet, basename="event")
 router.register("warning", WarningViewSet, basename="warning")
 router.register("category", CategoryViewSet)
+router.register("short-link", ShortLinkViewSet, basename="short-link")
 router.register("jobpost", JobPostViewSet, basename="jobpost")
 router.register("user", UserViewSet, basename="user")
 router.register(
