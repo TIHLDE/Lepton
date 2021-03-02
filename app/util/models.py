@@ -19,4 +19,3 @@ class OptionalImage(models.Model):
 
     class Meta:
         abstract = True
-

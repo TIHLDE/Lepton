@@ -2,10 +2,11 @@ from django.contrib.auth.hashers import make_password
 from django.core.exceptions import ValidationError
 from rest_framework import serializers
 
+from dry_rest_permissions.generics import DRYGlobalPermissionsField
+
 from app.content.models import Notification, Registration, User
 from app.content.serializers.badge import BadgeSerializer
 from app.content.serializers.event import EventListSerializer
-from dry_rest_permissions.generics import DRYGlobalPermissionsField, DRYPermissionsField
 
 
 class DefaultUserSerializer(serializers.ModelSerializer):
@@ -55,7 +56,7 @@ class UserSerializer(serializers.ModelSerializer):
             "badges",
             "unread_notifications",
             "notifications",
-            "permissions"
+            "permissions",
         )
         read_only_fields = ("user_id",)
         write_only_fields = ("app_token",)

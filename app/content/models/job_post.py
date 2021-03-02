@@ -1,7 +1,7 @@
-from app.common.enums import AdminGroup
-from app.common.perm import BasePermissionModel
 from django.db import models
 
+from app.common.enums import AdminGroup
+from app.common.perm import BasePermissionModel
 from app.util.models import BaseModel, OptionalImage
 from app.util.utils import yesterday
 
@@ -19,7 +19,7 @@ class JobPost(BaseModel, OptionalImage, BasePermissionModel):
     email = models.EmailField(blank=True, null=True)
     link = models.URLField(max_length=300, blank=True, null=True)
 
-    write_access =  [AdminGroup.HS, AdminGroup.INDEX, AdminGroup.NOK]
+    write_access = [AdminGroup.HS, AdminGroup.INDEX, AdminGroup.NOK]
 
     @property
     def expired(self):

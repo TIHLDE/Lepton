@@ -1,6 +1,7 @@
 import uuid
 
 from django.db import models
+
 from app.util.models import BaseModel, OptionalImage
 
 

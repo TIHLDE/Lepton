@@ -1,9 +1,9 @@
 from rest_framework import viewsets
 
-from app.common.permissions import IsNoKorPromo
+from dry_rest_permissions.generics import DRYPermissions
+
 from app.content.models import Category
 from app.content.serializers import CategorySerializer
-from dry_rest_permissions.generics import DRYPermissions
 
 
 class CategoryViewSet(viewsets.ModelViewSet):

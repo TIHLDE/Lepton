@@ -1,11 +1,11 @@
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 
+from dry_rest_permissions.generics import DRYPermissions
+
 from app.common.pagination import BasePagination
-from app.common.permissions import IsDev, IsNoK
 from app.content.models import News
 from app.content.serializers import NewsSerializer
-from dry_rest_permissions.generics import DRYPermissions
 
 
 class NewsViewSet(viewsets.ModelViewSet):

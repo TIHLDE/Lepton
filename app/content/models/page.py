@@ -1,5 +1,3 @@
-from app.common.enums import AdminGroup
-from app.common.perm import BasePermissionModel
 import uuid
 
 from django.db import models
@@ -7,12 +5,14 @@ from django.utils.text import slugify
 
 from mptt.models import MPTTModel, TreeForeignKey
 
+from app.common.enums import AdminGroup
+from app.common.perm import BasePermissionModel
 from app.util.models import BaseModel, OptionalImage
 
 
 class Page(MPTTModel, OptionalImage, BaseModel, BasePermissionModel):
 
-    write_access =  [AdminGroup.HS, AdminGroup.INDEX]
+    write_access = [AdminGroup.HS, AdminGroup.INDEX]
 
     parent = TreeForeignKey(
         "self", null=True, blank=True, on_delete=models.CASCADE, related_name="children"

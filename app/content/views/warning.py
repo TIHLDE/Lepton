@@ -1,9 +1,9 @@
 from rest_framework import viewsets
 
-from app.common.permissions import IsDev, IsNoK
+from dry_rest_permissions.generics import DRYPermissions
+
 from app.content.models import Warning
 from app.content.serializers import WarningSerializer
-from dry_rest_permissions.generics import DRYPermissions
 
 
 class WarningViewSet(viewsets.ModelViewSet):

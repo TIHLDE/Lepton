@@ -3,12 +3,11 @@ from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
+from dry_rest_permissions.generics import DRYPermissions
 from sentry_sdk import capture_exception
 
-from app.common.permissions import IsDev, IsHS
 from app.content.models import Page
 from app.content.serializers import PageSerializer, PageTreeSerializer
-from dry_rest_permissions.generics import DRYPermissions
 
 
 class PageViewSet(viewsets.ModelViewSet):

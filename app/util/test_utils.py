@@ -1,6 +1,7 @@
 from django.contrib.auth.models import Group as Auth_group
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
+
 from app.group.models import Group, Membership
 
 

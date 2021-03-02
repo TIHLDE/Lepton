@@ -1,4 +1,4 @@
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group as Auth_group
 from django.db.models import signals
 from rest_framework.test import force_authenticate
 
@@ -7,13 +7,19 @@ import pytest
 
 from app.common.enums import AdminGroup
 from app.content.views import EventViewSet
+<<<<<<< HEAD:app/tests/content/test_event_integration.py
 from app.forms.enums import EventFormType
 from app.forms.tests.form_factories import EventFormFactory
+=======
+from app.group.models import Group, Membership
+>>>>>>> 21a0ccd... all tests now pass:app/tests/test_event_integration.py
 
 
 def add_user_to_group_with_name(user, group_name):
-    group = Group.objects.create(name=group_name)
-    user.groups.add(group)
+    auth_group = Auth_group.objects.create(name=group_name)
+    group = Group.objects.create(slug=group_name)
+    Membership.objects.create(group=group, user=user)
+    user.groups.add(auth_group)
 
 
 def get_response(request, user=None, event=None):

@@ -1,10 +1,13 @@
-from app.common.enums import AdminGroup
-from app.common.perm import BasePermissionModel
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import signals
 
+<<<<<<< HEAD
 from app.forms.enums import EventFormType
+=======
+from app.common.enums import AdminGroup
+from app.common.perm import BasePermissionModel
+>>>>>>> 21a0ccd... all tests now pass
 from app.util.models import BaseModel, OptionalImage
 from app.util.utils import today, yesterday
 
@@ -15,7 +18,6 @@ from .user import User
 
 
 class Event(BaseModel, OptionalImage, BasePermissionModel):
-    
 
     title = models.CharField(max_length=200)
     start_date = models.DateTimeField()
