@@ -3,12 +3,13 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status, viewsets
 from rest_framework.response import Response
 
+from dry_rest_permissions.generics import DRYPermissions
 from sentry_sdk import capture_exception
 
 from app.common.drive_handler import upload_and_replace_image_with_cloud_link
 from app.common.enums import AppModel
 from app.common.pagination import BasePagination
-from app.common.permissions import IsNoKorPromo, is_admin_user
+from app.common.permissions import is_admin_user
 from app.content.filters import EventFilter
 from app.content.models import Event
 from app.content.serializers import (
@@ -18,7 +19,6 @@ from app.content.serializers import (
     EventSerializer,
 )
 from app.util.utils import yesterday
-from dry_rest_permissions.generics import DRYPermissions
 
 
 class EventViewSet(viewsets.ModelViewSet):

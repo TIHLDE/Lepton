@@ -3,14 +3,13 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status, viewsets
 from rest_framework.response import Response
 
+from dry_rest_permissions.generics import DRYPermissions
+
 from app.common.pagination import BasePagination
-from app.common.permissions import IsDev, IsNoK
 from app.content.filters import JobPostFilter
 from app.content.models import JobPost
 from app.content.serializers import JobPostSerializer
 from app.util.utils import yesterday
-from dry_rest_permissions.generics import DRYPermissions
-
 
 
 class JobPostViewSet(viewsets.ModelViewSet):
