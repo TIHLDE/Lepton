@@ -30,7 +30,6 @@ class UserSerializer(serializers.ModelSerializer):
     groups = serializers.SerializerMethodField()
     badges = serializers.SerializerMethodField()
     unread_notifications = serializers.SerializerMethodField()
-    notifications = serializers.SerializerMethodField()
 
     class Meta:
         model = User
@@ -53,7 +52,6 @@ class UserSerializer(serializers.ModelSerializer):
             "groups",
             "badges",
             "unread_notifications",
-            "notifications",
         )
         read_only_fields = ("user_id",)
         write_only_fields = ("app_token",)
@@ -83,17 +81,6 @@ class UserSerializer(serializers.ModelSerializer):
     def get_unread_notifications(self, obj):
         """ Counts all unread notifications and returns the count """
         return Notification.objects.filter(user=obj, read=False).count()
-
-    def get_notifications(self, obj):
-        """ Gets all notifications for user """
-        return [
-            {
-                "id": notification.id,
-                "message": notification.message,
-                "read": notification.read,
-            }
-            for notification in Notification.objects.filter(user=obj)
-        ]
 
 
 class UserMemberSerializer(UserSerializer):

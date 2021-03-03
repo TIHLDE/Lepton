@@ -156,9 +156,23 @@ class NotificationPermission(BasePermission):
     def has_permission(self, request, view):
         get_user_id(request)
 
+        if not request.user.is_authenticated:
+            return False
+
         if view.action in ["retrieve", "update", "list"]:
             return True
         elif view.action in ["create", "partial_update", "destroy"]:
+            return False
+
+    def has_object_permission(self, request, view, obj):
+        get_user_id(request)
+
+        if not request.user.is_authenticated:
+            return False
+
+        if view.action in ["retrieve", "update"]:
+            return obj.user == request.user
+        else:
             return False
 
 

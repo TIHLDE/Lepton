@@ -3,8 +3,8 @@ from rest_framework import status, viewsets
 from rest_framework.response import Response
 
 from app.common.pagination import BasePagination
-from app.common.permissions import NotificationPermission, get_user_id
-from app.content.models import Notification, User
+from app.common.permissions import NotificationPermission
+from app.content.models import Notification
 from app.content.serializers import (
     NotificationSerializer,
     UpdateNotificationSerializer,
@@ -20,11 +20,14 @@ class NotificationViewSet(viewsets.ModelViewSet):
     pagination_class = BasePagination
 
     def get_queryset(self):
-        user = get_object_or_404(User, user_id=get_user_id(self.request))
-        return self.queryset.filter(user=user)
+        if hasattr(self, "action") and self.action == "list":
+            return self.queryset.filter(user=self.request.user)
+        else:
+            return self.queryset
 
     def update(self, request, pk):
-        notification = get_object_or_404(Notification, id=pk, user=request.user)
+        notification = get_object_or_404(Notification, id=pk)
+        self.check_object_permissions(self.request, notification)
         serializer = UpdateNotificationSerializer(notification, data=request.data)
         if serializer.is_valid():
             notification = serializer.save()

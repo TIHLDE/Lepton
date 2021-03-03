@@ -28,7 +28,7 @@ def test_list_notifications_as_anonymous_user_fails(default_client):
     url = _get_notification_url()
     response = default_client.get(url)
 
-    assert response.status_code == status.HTTP_404_NOT_FOUND
+    assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
 @pytest.mark.django_db
@@ -49,7 +49,7 @@ def test_retrieve_notification_as_anonymous_user(default_client, notification):
     url = _get_notification_url(notification)
     response = default_client.get(url)
 
-    assert response.status_code == status.HTTP_404_NOT_FOUND
+    assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
 @pytest.mark.django_db
@@ -60,7 +60,7 @@ def test_retrieve_notification_as_user(notification, user):
     url = _get_notification_url(notification)
     response = client.get(url)
 
-    assert response.status_code == status.HTTP_404_NOT_FOUND
+    assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
 @pytest.mark.django_db
@@ -98,7 +98,7 @@ def test_update_notification_as_anonymous(default_client, notification):
     data = _get_notification_put_data(notification=notification)
     response = default_client.put(url, data)
 
-    assert response.status_code == status.HTTP_404_NOT_FOUND
+    assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
 @pytest.mark.django_db
@@ -109,7 +109,7 @@ def test_update_notification_as_user(user, notification):
     data = _get_notification_put_data(notification=notification)
     response = client.put(url, data)
 
-    assert response.status_code == status.HTTP_404_NOT_FOUND
+    assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
 @pytest.mark.django_db
