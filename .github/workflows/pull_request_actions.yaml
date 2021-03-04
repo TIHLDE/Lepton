@@ -7,20 +7,24 @@ on:
       - master
 jobs:
   test_and_lint:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     services:
       mysql:
         image: mysql:5.7
         env:
           MYSQL_ROOT_PASSWORD: ${{secrets.DATABASE_ROOT_PASSWORD}}
         ports:
-          - 3306
+          - 3306/tcp
+          
     steps:
       - uses: actions/checkout@v2
       - name: Setup Python
         uses: actions/setup-python@v1
         with:
           python-version: 3.6
+      - name: Start the MySQL service
+        # See https://github.blog/changelog/2020-02-21-github-actions-breaking-change-ubuntu-virtual-environments-will-no-longer-start-the-mysql-service-automatically/
+        run: sudo /etc/init.d/mysql start
       - name: Install dependencies with pipenv
         run: |
           pip install pipenv
