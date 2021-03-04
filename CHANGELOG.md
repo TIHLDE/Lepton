@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+## Versjon 1.0.4 (04.03.2021)
 ## Versjon 1.0.3 (04.03.2021)
 - ✨ **Korte URL's**. Opprettet en ny tjeneste der brukere kan lagre url'er bak korte, valgfrie slugs.
 
