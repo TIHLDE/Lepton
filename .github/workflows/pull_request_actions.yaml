@@ -17,6 +17,9 @@ jobs:
           - 3306
     steps:
       - uses: actions/checkout@v2
+      - name: Create test database
+        run: |
+          sudo /etc/init.d/mysql start
       - name: Setup Python
         uses: actions/setup-python@v1
         with:
