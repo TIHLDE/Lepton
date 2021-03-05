@@ -10,11 +10,13 @@ from app.common.permissions import IsMember, is_admin_user
 from app.content.filters import CheatsheetFilter
 from app.content.models import Cheatsheet
 from app.content.serializers import CheatsheetSerializer
+from dry_rest_permissions.generics import DRYPermissions
+
 
 
 class CheatsheetViewSet(viewsets.ModelViewSet):
     serializer_class = CheatsheetSerializer
-    permission_classes = [IsMember]
+    permission_classes = [DRYPermissions]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     queryset = Cheatsheet.objects.all()
     pagination_class = BasePagination
@@ -56,32 +58,24 @@ class CheatsheetViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         """Creates a new cheatsheet """
-        if is_admin_user(request):
-            serializer = CheatsheetSerializer(data=self.request.data)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-            return Response(
-                {"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST
-            )
+        upload_and_replace_url_with_cloud_link(request, AppModel.EVENT)
+        serializer = CheatsheetSerializer(data=self.request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(
-            {"detail": "Du har ikke tillatelse til å lage en oppskrift"},
-            status=status.HTTP_403_FORBIDDEN,
+            {"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST
         )
+        
 
     def update(self, request, *args, **kwargs):
         """Updates a cheatsheet retrieved by UserClass and UserStudy and pk"""
         try:
             cheatsheet = self.get_object()
-            if is_admin_user(request):
-                serializer = CheatsheetSerializer(cheatsheet, data=request.data)
-                if serializer.is_valid():
-                    serializer.save()
-                    return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(
-                {"detail": "Du har ikke tillatelse til å oppdatere oppskriften"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            serializer = CheatsheetSerializer(cheatsheet, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
         except Cheatsheet.DoesNotExist as cheatsheet_not_exist:
             capture_exception(cheatsheet_not_exist)
             return Response(

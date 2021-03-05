@@ -1,10 +1,11 @@
+from app.group.models import Group, Membership
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient, APIRequestFactory
 
 import pytest
 
 from app.career.factories import WeeklyBusinessFactory
-from app.common.enums import AdminGroup, MembershipType
+from app.common.enums import AdminGroup, Groups, MembershipType
 from app.content.factories import (
     CheatsheetFactory,
     EventFactory,
@@ -48,7 +49,10 @@ def admin_user():
 
 @pytest.fixture()
 def member():
-    return UserFactory(is_TIHLDE_member=True)
+    user = UserFactory(is_TIHLDE_member=True)
+    group = Group.objects.create(name=Groups.TIHLDE)
+    Membership.objects.create(group=group, user=user)
+    return user
 
 
 @pytest.fixture()

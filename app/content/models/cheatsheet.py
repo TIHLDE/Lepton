@@ -1,14 +1,17 @@
+from app.common.perm import BasePermissionModel
 import uuid
 
 from django.db import models
 
 from enumchoicefield import EnumChoiceField
 
-from app.common.enums import CheatsheetType, UserClass, UserStudy
+from app.common.enums import AdminGroup, CheatsheetType, Groups, UserClass, UserStudy
 from app.util.models import BaseModel
 
 
-class Cheatsheet(BaseModel):
+class Cheatsheet(BaseModel, BasePermissionModel):
+    write_access = AdminGroup.admin()
+    read_access = [Groups.TIHLDE]
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=200)
     creator = models.CharField(max_length=200)
