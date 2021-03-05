@@ -3,17 +3,18 @@ from rest_framework import status, viewsets
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 
-from app.common.permissions import RegistrationPermission, is_admin_user
+from app.common.permissions import RegistrationPermission, get_user_id, is_admin_user
 from app.content.exceptions import APIUserAlreadyAttendedEvent
 from app.content.mixins import APIRegistrationErrorsMixin
 from app.content.models import Event, Registration
 from app.content.serializers import RegistrationSerializer
+from dry_rest_permissions.generics import DRYPermissions
 
 
 class RegistrationViewSet(APIRegistrationErrorsMixin, viewsets.ModelViewSet):
 
     serializer_class = RegistrationSerializer
-    permission_classes = [RegistrationPermission]
+    permission_classes = [DRYPermissions]
     lookup_field = "user_id"
 
     def get_queryset(self):
@@ -32,7 +33,7 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, viewsets.ModelViewSet):
 
     def _is_own_registration(self):
         user_id = self.kwargs.get("user_id", None)
-        return self.request.id == user_id
+        return get_user_id(self.request) == user_id
 
     def _is_not_own_registration(self):
         return not self._is_own_registration()

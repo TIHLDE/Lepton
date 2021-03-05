@@ -1,5 +1,6 @@
 from django.contrib.auth.models import Permission
 from django.db import models
+from django.utils.text import slugify
 
 from enumchoicefield import EnumChoiceField
 
@@ -24,3 +25,7 @@ class Group(OptionalImage, BaseModel):
 
     def __str__(self):
         return f"{self.name}"
+    
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.name)
+        super().save(*args, **kwargs)

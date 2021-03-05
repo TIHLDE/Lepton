@@ -12,7 +12,7 @@ from app.group.models import Group, Membership
 
 def add_user_to_group_with_name(user, group_name):
     auth_group = Auth_group.objects.create(name=group_name)
-    group = Group.objects.create(slug=group_name)
+    group = Group.objects.create(name=group_name)
     Membership.objects.create(group=group, user=user)
     user.groups.add(auth_group)
 

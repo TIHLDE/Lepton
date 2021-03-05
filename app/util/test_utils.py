@@ -20,7 +20,7 @@ def get_api_client(user=None, group_name=None):
 def add_user_to_group_with_name(user, group_name):
     # should be changed to our groups later
     auth_group = Auth_group.objects.create(name=group_name)
-    group = Group.objects.create(slug=group_name)
+    group = Group.objects.create(name=group_name)
     Membership.objects.create(group=group, user=user)
     user.groups.add(auth_group)
     return user
