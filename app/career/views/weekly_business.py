@@ -1,9 +1,8 @@
 from django.db.models import Q
+from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext as _
 from rest_framework import status, viewsets
 from rest_framework.response import Response
-
-from sentry_sdk import capture_exception
 
 from app.career.models import WeeklyBusiness
 from app.career.serializers import WeeklyBusinessSerializer
@@ -70,24 +69,18 @@ class WeeklyBusinessViewSet(viewsets.ModelViewSet):
             )
 
     def update(self, request, pk):
+        weekly_business = get_object_or_404(WeeklyBusiness, id=pk)
+        self.check_object_permissions(self.request, weekly_business)
+        upload_and_replace_image_with_cloud_link(request, AppModel.WEEKLY_BUSINESS)
+        serializer = WeeklyBusinessSerializer(
+            weekly_business, data=request.data, partial=True
+        )
         try:
-            weekly_business = WeeklyBusiness.objects.get(id=pk)
-            self.check_object_permissions(self.request, weekly_business)
-            upload_and_replace_image_with_cloud_link(request, AppModel.WEEKLY_BUSINESS)
-            serializer = WeeklyBusinessSerializer(
-                weekly_business, data=request.data, partial=True
-            )
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(
                 {"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST
-            )
-        except WeeklyBusiness.DoesNotExist as weekly_business_not_exist:
-            capture_exception(weekly_business_not_exist)
-            return Response(
-                {"detail": "Fant ikke ukentlig bedrift"},
-                status=status.HTTP_404_NOT_FOUND,
             )
         except ValueError as value_error:
             return Response(

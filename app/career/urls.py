@@ -4,7 +4,7 @@ from rest_framework import routers
 from app.career.views import WeeklyBusinessViewSet
 
 router = routers.DefaultRouter()
-router.register("weekly_business", WeeklyBusinessViewSet, basename="weekly_business")
+router.register("weekly-business", WeeklyBusinessViewSet, basename="weekly-business")
 
 # Register carrer viewpoints here
 urlpatterns = [url(r"", include(router.urls))]
