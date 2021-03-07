@@ -300,7 +300,7 @@ def test_destroy_as_member(member, weekly_business):
 def test_destroy_as_member_of_admin_group(
     weekly_business, group_name, expected_status_code
 ):
-    """Only members of HS, Index or NoK should be able to delete news."""
+    """Only members of HS, Index or NoK should be able to delete weekly_business."""
     client = get_api_client(user=UserFactory(), group_name=group_name)
     url = _get_weekly_business_detail_url(weekly_business)
     response = client.delete(url)
