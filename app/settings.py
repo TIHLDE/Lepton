@@ -76,10 +76,11 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "rest_auth",
     # Our apps
-    "app.content",
-    "app.util",
     "app.authentication",
+    "app.career",
+    "app.content",
     "app.group",
+    "app.util",
 ]
 
 # Django rest framework
