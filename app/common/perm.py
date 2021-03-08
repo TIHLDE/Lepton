@@ -1,7 +1,7 @@
 from django.db import models
 from rest_framework.authtoken.models import Token
 
-from app.content.models.user import User
+from app.content.models import User
 
 
 class BasePermissionModel(models.Model):
