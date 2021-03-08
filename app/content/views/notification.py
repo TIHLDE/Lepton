@@ -22,8 +22,7 @@ class NotificationViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         if hasattr(self, "action") and self.action == "list":
             return self.queryset.filter(user=self.request.user)
-        else:
-            return self.queryset
+        return self.queryset
 
     def update(self, request, pk):
         notification = get_object_or_404(Notification, id=pk)

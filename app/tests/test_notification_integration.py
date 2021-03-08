@@ -145,7 +145,7 @@ def test_destroy_notification_as_user(user, notification):
 
 @pytest.mark.django_db
 def test_destroy_notification_as_owner(notification):
-    """The owner should be able to delete a notification"""
+    """The owner should not be able to delete a notification"""
     client = get_api_client(user=notification.user)
     url = _get_notification_url(notification)
     response = client.delete(url)
