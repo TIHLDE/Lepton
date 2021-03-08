@@ -3,6 +3,7 @@ from rest_framework.test import APIClient, APIRequestFactory
 
 import pytest
 
+from app.career.factories import WeeklyBusinessFactory
 from app.common.enums import AdminGroup, MembershipType
 from app.content.factories import (
     CheatsheetFactory,
@@ -102,3 +103,7 @@ def short_link():
 @pytest.fixture()
 def notification():
     return NotificationFactory()
+  
+@pytest.fixture()
+def weekly_business():
+    return WeeklyBusinessFactory()
