@@ -32,6 +32,8 @@ django-mptt="*"
 # Documentation
 # ------------------------------------------------------------------------------
 drf-yasg = "*"
+azure-storage-blob = "*"
+python-dotenv = "*"
 
 [dev-packages]
 # Code quality
