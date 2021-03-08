@@ -8,15 +8,15 @@ from app.career.serializers import WeeklyBusinessSerializer
 from app.common.drive_handler import upload_and_replace_image_with_cloud_link
 from app.common.enums import AppModel
 from app.common.pagination import BasePagination
-from app.common.permissions import IsNoK
 from app.util import today, week_nr
+from dry_rest_permissions.generics import DRYPermissions
 
 
 class WeeklyBusinessViewSet(viewsets.ModelViewSet):
 
     queryset = WeeklyBusiness.objects.none()
     serializer_class = WeeklyBusinessSerializer
-    permission_classes = [IsNoK]
+    permission_classes = [DRYPermissions]
     pagination_class = BasePagination
 
     def get_queryset(self):

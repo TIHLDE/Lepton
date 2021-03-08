@@ -1,3 +1,5 @@
+from app.common.perm import BasePermissionModel
+from app.common.enums import AdminGroup
 import uuid
 
 from django.db import models
@@ -6,7 +8,9 @@ from app.util import today
 from app.util.models import BaseModel, OptionalImage
 
 
-class WeeklyBusiness(BaseModel, OptionalImage):
+class WeeklyBusiness(BaseModel, OptionalImage, BasePermissionModel):
+    write_access = [AdminGroup.HS, AdminGroup.INDEX, AdminGroup.NOK]
+
     id = models.UUIDField(
         auto_created=True, primary_key=True, default=uuid.uuid4, serialize=False,
     )

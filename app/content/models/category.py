@@ -6,9 +6,9 @@ from app.util.models import BaseModel
 
 
 class Category(BaseModel, BasePermissionModel):
+    write_access = [AdminGroup.HS, AdminGroup.INDEX, AdminGroup.NOK, AdminGroup.PROMO]
     text = models.CharField(max_length=200, null=True)
 
-    write_access = [AdminGroup.HS, AdminGroup.INDEX, AdminGroup.NOK, AdminGroup.PROMO]
 
     class Meta:
         verbose_name_plural = "Categories"
