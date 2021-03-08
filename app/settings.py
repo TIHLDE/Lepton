@@ -75,18 +75,13 @@ INSTALLED_APPS = [
     "drf_yasg",
     "rest_framework.authtoken",
     "rest_auth",
-<<<<<<< HEAD
-    "polymorphic",
-=======
     "dry_rest_permissions",
->>>>>>> 38e5107... feat(permissions): init
     # Our apps
     "app.authentication",
     "app.career",
     "app.content",
-    "app.util",
     "app.group",
-    "app.forms",
+    "app.util",
 ]
 
 # Django rest framework

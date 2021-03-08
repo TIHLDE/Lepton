@@ -111,10 +111,13 @@ def short_link():
 
 
 @pytest.fixture()
+<<<<<<< HEAD
 def notification():
     return NotificationFactory()
 
 
 @pytest.fixture()
+=======
+>>>>>>> a910ada... feat(weekly business): create weekly business (#16)
 def weekly_business():
     return WeeklyBusinessFactory()
