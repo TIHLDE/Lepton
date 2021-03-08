@@ -146,6 +146,7 @@ def test_destroy_as_user(user, short_link):
 
     assert response.status_code == status.HTTP_404_NOT_FOUND
 
+
 @pytest.mark.django_db
 def test_destroy_as_owner(short_link):
     """The owner should be able to delete a short link"""

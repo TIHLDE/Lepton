@@ -1,11 +1,10 @@
-from app.group.models import Group, Membership
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient, APIRequestFactory
 
 import pytest
 
-from app.common.enums import AdminGroup, Groups, MembershipType
 from app.career.factories import WeeklyBusinessFactory
+from app.common.enums import AdminGroup, Groups, MembershipType
 from app.content.factories import (
     CheatsheetFactory,
     EventFactory,
@@ -17,6 +16,7 @@ from app.content.factories import (
     UserFactory,
 )
 from app.group.factories import GroupFactory, MembershipFactory
+from app.group.models import Group, Membership
 from app.util.test_utils import add_user_to_group_with_name
 
 

@@ -3,13 +3,14 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 
+from dry_rest_permissions.generics import DRYPermissions
+
 from app.career.models import WeeklyBusiness
 from app.career.serializers import WeeklyBusinessSerializer
 from app.common.drive_handler import upload_and_replace_image_with_cloud_link
 from app.common.enums import AppModel
 from app.common.pagination import BasePagination
 from app.util import today, week_nr
-from dry_rest_permissions.generics import DRYPermissions
 
 
 class WeeklyBusinessViewSet(viewsets.ModelViewSet):

@@ -1,11 +1,17 @@
-from app.common.perm import BasePermissionModel
 import uuid
 
 from django.db import models
 
 from enumchoicefield import EnumChoiceField
 
-from app.common.enums import AdminGroup, CheatsheetType, Groups, UserClass, UserStudy
+from app.common.enums import (
+    AdminGroup,
+    CheatsheetType,
+    Groups,
+    UserClass,
+    UserStudy,
+)
+from app.common.perm import BasePermissionModel
 from app.util.models import BaseModel
 
 
