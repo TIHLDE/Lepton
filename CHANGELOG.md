@@ -14,6 +14,7 @@
 
 ## Neste versjon
 - ✨ **Korte URL's**. Opprettet en ny tjeneste der brukere kan lagre url'er bak korte, valgfrie slugs.
+- ✨ **Ukens Bedrift**. Nå er det mulig for NoK å lage en kø med ukens bedrifter basert på ukenr
 
 ## Versjon 1.0.2 (22.02.2021)
 - 🦟 **Lås påmeldingstid i registrering**. Hindre at tidspunktet for påmelding endres når påmeldingen endres. Dermed beholder påmeldte sin prioritet i listen.

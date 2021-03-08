@@ -45,6 +45,7 @@ class AppModel(ChoiceEnum):
     NEWS = "News"
     USER = "User"
     CHEATSHEET = "Cheatsheet"
+    WEEKLY_BUSINESS = "Weekly Business"
 
 
 class GroupType(ChoiceEnum):
