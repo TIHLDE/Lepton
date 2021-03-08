@@ -1,16 +1,17 @@
+from app.common.perm import BasePermissionModel
 from django.contrib.auth.models import Permission
 from django.db import models
 from django.utils.text import slugify
 
 from enumchoicefield import EnumChoiceField
 
-from app.common.enums import GroupType
+from app.common.enums import AdminGroup, GroupType
 from app.util.models import BaseModel, OptionalImage
 
 
-class Group(OptionalImage, BaseModel):
+class Group(OptionalImage, BaseModel, BasePermissionModel):
     """Model for Custom Groups"""
-
+    write_access = [AdminGroup.HS, AdminGroup.INDEX, AdminGroup.NOK, AdminGroup.PROMO]
     name = models.CharField(max_length=50)
     permissions = models.ManyToManyField(
         Permission, related_name="groups_permissions", blank=True
