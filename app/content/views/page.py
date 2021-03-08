@@ -1,5 +1,4 @@
 from django.core.exceptions import MultipleObjectsReturned
-from django.utils.translation import gettext as _
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -33,17 +32,17 @@ class PageViewSet(viewsets.ModelViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Page.DoesNotExist:
             return Response(
-                {"detail": _("Fant ikke siden")}, status=status.HTTP_404_NOT_FOUND
+                {"detail": "Fant ikke siden"}, status=status.HTTP_404_NOT_FOUND
             )
         except MultipleObjectsReturned as tree_destroyed_error:
             capture_exception(tree_destroyed_error)
             return Response(
-                {"detail": _("Kan ikke hente siden fordi treet er ødelagt")},
+                {"detail": "Kan ikke hente siden fordi treet er ødelagt"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
         except StopIteration:
             return Response(
-                {"detail": _("Fant ikke siden")}, status=status.HTTP_404_NOT_FOUND
+                {"detail": "Fant ikke siden"}, status=status.HTTP_404_NOT_FOUND
             )
 
     def list(self, request, *args, **kwargs):
@@ -53,12 +52,12 @@ class PageViewSet(viewsets.ModelViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Page.DoesNotExist:
             return Response(
-                {"detail": _("Fant ikke siden")}, status=status.HTTP_404_NOT_FOUND
+                {"detail": "Fant ikke siden"}, status=status.HTTP_404_NOT_FOUND
             )
         except MultipleObjectsReturned as tree_destroyed_error:
             capture_exception(tree_destroyed_error)
             return Response(
-                {"detail": _("Kan ikke hente siden fordi treet er ødelagt")},
+                {"detail": "Kan ikke hente siden fordi treet er ødelagt"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
@@ -72,25 +71,23 @@ class PageViewSet(viewsets.ModelViewSet):
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(
                 {
-                    "detail": _(
-                        "En annen side med dette navnet eksisterer allerede i denne mappen"
-                    )
+                    "detail": "En annen side med dette navnet eksisterer allerede i denne mappen"
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
         except Page.DoesNotExist:
             return Response(
-                {"detail": _("Fant ikke siden")}, status=status.HTTP_404_NOT_FOUND
+                {"detail": "Fant ikke siden"}, status=status.HTTP_404_NOT_FOUND
             )
         except MultipleObjectsReturned as tree_destroyed_error:
             capture_exception(tree_destroyed_error)
             return Response(
-                {"detail": _("Kan ikke lage siden fordi treet er ødelagt")},
+                {"detail": "Kan ikke lage siden fordi treet er ødelagt"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
         except StopIteration:
             return Response(
-                {"detail": _("Fant ikke siden")}, status=status.HTTP_404_NOT_FOUND
+                {"detail": "Fant ikke siden"}, status=status.HTTP_404_NOT_FOUND
             )
 
     def update(self, request, *args, **kwargs):
@@ -106,23 +103,23 @@ class PageViewSet(viewsets.ModelViewSet):
             )
         except Page.DoesNotExist:
             return Response(
-                {"detail": _("Fant ikke siden")}, status=status.HTTP_404_NOT_FOUND
+                {"detail": "Fant ikke siden"}, status=status.HTTP_404_NOT_FOUND
             )
         except MultipleObjectsReturned as tree_destroyed_error:
             capture_exception(tree_destroyed_error)
             return Response(
-                {"detail": _("Kan ikke endre siden fordi treet er ødelagt")},
+                {"detail": "Kan ikke endre siden fordi treet er ødelagt"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
         except StopIteration:
             return Response(
-                {"detail": _("Fant ikke siden")}, status=status.HTTP_404_NOT_FOUND
+                {"detail": "Fant ikke siden"}, status=status.HTTP_404_NOT_FOUND
             )
 
     def destroy(self, request, *args, **kwargs):
         if "path" not in kwargs:
             return Response(
-                {"detail": _("Urlen må innholde referanse til side treet")},
+                {"detail": "Url'en må innholde referanse til side treet"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         try:
@@ -130,29 +127,25 @@ class PageViewSet(viewsets.ModelViewSet):
             if len(page.get_children()) > 0:
                 return Response(
                     {
-                        "detail": _(
-                            "Du kan ikke slette en side som har undersider, slett eller flytt undersidene først"
-                        )
+                        "detail": "Du kan ikke slette en side som har undersider, slett eller flytt undersidene først"
                     },
                     status=status.HTTP_403_FORBIDDEN,
                 )
             self.perform_destroy(page)
-            return Response(
-                {"detail": _("Siden ble slettet")}, status=status.HTTP_200_OK,
-            )
+            return Response({"detail": "Siden ble slettet"}, status=status.HTTP_200_OK,)
         except Page.DoesNotExist:
             return Response(
-                {"detail": _("Fant ikke siden")}, status=status.HTTP_404_NOT_FOUND
+                {"detail": "Fant ikke siden"}, status=status.HTTP_404_NOT_FOUND
             )
         except MultipleObjectsReturned as tree_destroyed_error:
             capture_exception(tree_destroyed_error)
             return Response(
-                {"detail": _("Kan ikke slette siden fordi treet er ødelagt")},
+                {"detail": "Kan ikke slette siden fordi treet er ødelagt"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
         except StopIteration:
             return Response(
-                {"detail": _("Fant ikke siden")}, status=status.HTTP_404_NOT_FOUND
+                {"detail": "Fant ikke siden"}, status=status.HTTP_404_NOT_FOUND
             )
 
     @action(detail=False, methods=["get"])
