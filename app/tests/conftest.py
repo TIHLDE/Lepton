@@ -103,7 +103,8 @@ def short_link():
 @pytest.fixture()
 def notification():
     return NotificationFactory()
-  
+
+
 @pytest.fixture()
 def weekly_business():
     return WeeklyBusinessFactory()
