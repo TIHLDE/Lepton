@@ -26,7 +26,7 @@ class FieldInline(admin.TabularInline):
 class FormChildAdmin(PolymorphicChildModelAdmin):
     """ Base admin class for all child models """
 
-    base_model = models.Form  # Optional, explicitly set here.
+    base_model = models.Form
 
 
 @admin.register(models.EventForm)

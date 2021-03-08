@@ -55,8 +55,8 @@ class Field(models.Model):
         return self.title
 
     def add_options(self, options):
-        for o in options:
-            Option.objects.create(field=self, **o)
+        for option in options:
+            Option.objects.create(field=self, **option)
 
 
 class Option(models.Model):
@@ -89,12 +89,12 @@ class Answer(BaseModel):
         Submission, on_delete=models.CASCADE, related_name="answers"
     )
     selected_options = models.ManyToManyField(
-        Option, related_name="selected_in_answers", blank=True
+        Option, related_name="answers", blank=True
     )
     field = models.ForeignKey(
-        Field, on_delete=models.CASCADE, related_name="answers", null=True, blank=True
+        Field, on_delete=models.CASCADE, related_name="answers", blank=True, null=True
     )
-    answer_text = models.CharField(max_length=255, default="", blank=True, null=True)
+    answer_text = models.CharField(max_length=255, blank=True)
 
     def get_field(self):
         return self.field if self.field else self.selected_options.first().field

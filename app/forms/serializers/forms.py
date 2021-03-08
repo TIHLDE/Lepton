@@ -11,10 +11,10 @@ class OptionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Option
-        fields = [
+        fields = (
             "id",
             "title",
-        ]
+        )
 
 
 class FieldSerializer(serializers.ModelSerializer):
@@ -23,13 +23,13 @@ class FieldSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Field
-        fields = [
+        fields = (
             "id",
             "title",
             "options",
             "type",
             "required",
-        ]
+        )
 
 
 class FormSerializer(serializers.ModelSerializer):
@@ -37,11 +37,11 @@ class FormSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Form
-        fields = [
+        fields = (
             "id",
             "title",
             "fields",
-        ]
+        )
 
     @atomic
     def create(self, validated_data):
@@ -106,28 +106,25 @@ class FormSerializer(serializers.ModelSerializer):
 class EventFormSerializer(FormSerializer):
     class Meta:
         model = EventForm
-        fields = [
+        fields = (
             "id",
             "title",
             "event",
             "fields",
             "type",
-        ]
+        )
 
 
 class FormInSubmissionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Form
-        fields = [
-            "id",
-            "type",
-        ]
+        fields = ("id", "type")
 
 
 class FieldInAnswerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Field
-        fields = ["id", "type"]
+        fields = ("id", "type")
 
 
 class FormPolymorphicSerializer(PolymorphicSerializer, serializers.ModelSerializer):
@@ -141,4 +138,4 @@ class FormPolymorphicSerializer(PolymorphicSerializer, serializers.ModelSerializ
 
     class Meta:
         model = Form
-        fields = ["resource_type"] + FormSerializer.Meta.fields
+        fields = ("resource_type", ) + FormSerializer.Meta.fields
