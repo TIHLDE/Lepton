@@ -80,7 +80,4 @@ def get_user_id(request):
     except Token.DoesNotExist:
         return None
 
-    request.id = userToken.user_id
-    request.user = User.objects.get(user_id=userToken.user_id)
-
     return userToken.user_id

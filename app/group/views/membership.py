@@ -9,13 +9,13 @@ from app.group.serializers.membership import (
     MembershipLeaderSerializer,
     UpdateMembershipSerializer,
 )
-
+from dry_rest_permissions.generics import DRYPermissions
 
 class MembershipViewSet(viewsets.ModelViewSet):
 
     serializer_class = MembershipSerializer
     queryset = Membership.objects.all()
-    permission_classes = [IsDev | IsHS | IsLeader]
+    permission_classes = [DRYPermissions]
     lookup_field = "user_id"
 
     def get_queryset(self):
@@ -27,11 +27,6 @@ class MembershipViewSet(viewsets.ModelViewSet):
         if IsLeader().has_permission(request=self.request, view=self):
             return MembershipLeaderSerializer
         return super().get_serializer_class()
-
-    def get_permissions(self):
-        if self.request.method == "GET":
-            self.permission_classes = []
-        return super(MembershipViewSet, self).get_permissions()
 
     def update(self, request, *args, **kwargs):
         try:

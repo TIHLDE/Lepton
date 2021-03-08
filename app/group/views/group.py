@@ -4,22 +4,15 @@ from rest_framework.response import Response
 from app.common.permissions import IsHS, IsNoKorPromo
 from app.group.models import Group
 from app.group.serializers import GroupSerializer
-
+from dry_rest_permissions.generics import DRYPermissions
 
 class GroupViewSet(viewsets.ModelViewSet):
     """API endpoint for Groups"""
 
     serializer_class = GroupSerializer
-    permission_classes = [IsNoKorPromo]
+    permission_classes = [DRYPermissions]
     queryset = Group.objects.all()
     lookup_field = "slug"
-
-    def get_permissions(self):
-        if self.action == "retrieve":
-            self.permission_classes = []
-        if self.action == "create":
-            self.permission_classes = [IsHS]
-        return super(GroupViewSet, self).get_permissions()
 
     def retrieve(self, request, slug):
         """Returns a spesific group by slug"""
