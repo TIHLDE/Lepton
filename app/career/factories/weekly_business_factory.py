@@ -14,5 +14,5 @@ class WeeklyBusinessFactory(DjangoModelFactory):
     business_name = factory.Faker("name")
     body = factory.Faker("sentence", nb_words=100, variable_nb_words=True)
 
-    year = today().year
+    year = today().year + 1
     week = randint(1, 52)

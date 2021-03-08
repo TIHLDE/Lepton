@@ -118,7 +118,7 @@ def test_create_weekly_business_this_year(weekly_business):
     """
     Test if possible to create weekly_business object this year
     """
-    assert weekly_business.year == today().year
+    assert weekly_business.year == today().year + 1
 
 
 @pytest.mark.django_db
