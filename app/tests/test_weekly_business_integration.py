@@ -28,7 +28,7 @@ def weekly_business_post_data():
         "image_alt": "index_logo",
         "business_name": "Index",
         "body": "Lorem ipsum penum rektum benedikt gagge",
-        "year": today().year,
+        "year": today().year + 1,
         "week": randint(1, 52),
     }
 

@@ -109,12 +109,18 @@ def short_link():
 
 @pytest.fixture()
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> f4ef05e... refactor(notifications): notifications and tests (#1)
 def notification():
     return NotificationFactory()
 
 
 @pytest.fixture()
+<<<<<<< HEAD
 =======
 >>>>>>> a910ada... feat(weekly business): create weekly business (#16)
+=======
+>>>>>>> f4ef05e... refactor(notifications): notifications and tests (#1)
 def weekly_business():
     return WeeklyBusinessFactory()

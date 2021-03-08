@@ -55,8 +55,11 @@ class UserSerializer(serializers.ModelSerializer):
             "groups",
             "badges",
             "unread_notifications",
+<<<<<<< HEAD
             "notifications",
             "permissions",
+=======
+>>>>>>> refactor(notifications): notifications and tests (#1)
         )
         read_only_fields = ("user_id",)
         write_only_fields = ("app_token",)
