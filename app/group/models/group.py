@@ -1,4 +1,3 @@
-from app.common.perm import BasePermissionModel
 from django.contrib.auth.models import Permission
 from django.db import models
 from django.utils.text import slugify
@@ -6,11 +5,13 @@ from django.utils.text import slugify
 from enumchoicefield import EnumChoiceField
 
 from app.common.enums import AdminGroup, GroupType
+from app.common.perm import BasePermissionModel
 from app.util.models import BaseModel, OptionalImage
 
 
 class Group(OptionalImage, BaseModel, BasePermissionModel):
     """Model for Custom Groups"""
+
     write_access = [AdminGroup.HS, AdminGroup.INDEX, AdminGroup.NOK, AdminGroup.PROMO]
     name = models.CharField(max_length=50)
     permissions = models.ManyToManyField(
@@ -26,7 +27,7 @@ class Group(OptionalImage, BaseModel, BasePermissionModel):
 
     def __str__(self):
         return f"{self.name}"
-    
+
     def save(self, *args, **kwargs):
         self.slug = slugify(self.name)
         super().save(*args, **kwargs)

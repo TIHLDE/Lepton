@@ -2,16 +2,15 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status, viewsets
 from rest_framework.response import Response
 
+from dry_rest_permissions.generics import DRYPermissions
 from sentry_sdk import capture_exception
 
 from app.common.enums import UserClass, UserStudy
 from app.common.pagination import BasePagination
-from app.common.permissions import IsMember, is_admin_user
+from app.common.permissions import is_admin_user
 from app.content.filters import CheatsheetFilter
 from app.content.models import Cheatsheet
 from app.content.serializers import CheatsheetSerializer
-from dry_rest_permissions.generics import DRYPermissions
-
 
 
 class CheatsheetViewSet(viewsets.ModelViewSet):
@@ -66,7 +65,6 @@ class CheatsheetViewSet(viewsets.ModelViewSet):
         return Response(
             {"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST
         )
-        
 
     def update(self, request, *args, **kwargs):
         """Updates a cheatsheet retrieved by UserClass and UserStudy and pk"""

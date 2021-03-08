@@ -1,10 +1,11 @@
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 
-from app.common.permissions import IsHS, IsNoKorPromo
+from dry_rest_permissions.generics import DRYPermissions
+
 from app.group.models import Group
 from app.group.serializers import GroupSerializer
-from dry_rest_permissions.generics import DRYPermissions
+
 
 class GroupViewSet(viewsets.ModelViewSet):
     """API endpoint for Groups"""

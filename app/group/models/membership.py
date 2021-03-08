@@ -1,10 +1,10 @@
-from app.common.perm import BasePermissionModel, get_user_from_request, get_user_id
 from django.db import models
 from django.db.transaction import atomic
 
 from enumchoicefield import EnumChoiceField
 
 from app.common.enums import AdminGroup, MembershipType
+from app.common.perm import BasePermissionModel, get_user_id
 from app.content.models import User
 from app.group.models import Group
 from app.util.models import BaseModel
@@ -42,6 +42,7 @@ class MembershipHistory(BaseModel):
 
 class Membership(BaseModel, BasePermissionModel):
     """Model for a Group Membership"""
+
     write_access = [AdminGroup.HS, AdminGroup.INDEX]
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="membership")
     group = models.ForeignKey(
@@ -52,9 +53,9 @@ class Membership(BaseModel, BasePermissionModel):
 
     class Meta:
         unique_together = ("user", "group")
-    
+
     @classmethod
-    def has_write_permission(cls,request):
+    def has_write_permission(cls, request):
         user_id = get_user_id(request)
         group_slug = request.parser_context["kwargs"]["slug"]
         try:
@@ -65,10 +66,9 @@ class Membership(BaseModel, BasePermissionModel):
         except Membership.DoesNotExist:
             pass
         return super().has_write_permission(request)
-    
+
     def has_object_write_permission(self, request):
         return Membership.has_write_permission(request)
-    
 
     def __str__(self):
         return f"{self.user} - {self.group} - {self.membership_type}"

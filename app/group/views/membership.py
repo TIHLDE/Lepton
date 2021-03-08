@@ -1,7 +1,9 @@
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 
-from app.common.permissions import IsDev, IsHS, IsLeader, is_admin_user
+from dry_rest_permissions.generics import DRYPermissions
+
+from app.common.permissions import IsLeader, is_admin_user
 from app.content.models import User
 from app.group.models import Group, Membership
 from app.group.serializers import MembershipSerializer
@@ -9,7 +11,7 @@ from app.group.serializers.membership import (
     MembershipLeaderSerializer,
     UpdateMembershipSerializer,
 )
-from dry_rest_permissions.generics import DRYPermissions
+
 
 class MembershipViewSet(viewsets.ModelViewSet):
 

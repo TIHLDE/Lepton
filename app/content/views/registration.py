@@ -2,12 +2,13 @@ from rest_framework import status, viewsets
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 
-from app.common.permissions import RegistrationPermission, get_user_id, is_admin_user
+from dry_rest_permissions.generics import DRYPermissions
+
+from app.common.permissions import get_user_id, is_admin_user
 from app.content.exceptions import APIUserAlreadyAttendedEvent
 from app.content.mixins import APIRegistrationErrorsMixin
 from app.content.models import Event, Registration
 from app.content.serializers import RegistrationSerializer
-from dry_rest_permissions.generics import DRYPermissions
 
 
 class RegistrationViewSet(APIRegistrationErrorsMixin, viewsets.ModelViewSet):

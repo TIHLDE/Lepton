@@ -34,9 +34,9 @@ class AdminGroup(ChoiceEnum):
     def admin(cls):
         return (cls.HS, cls.INDEX)
 
+
 class Groups(ChoiceEnum):
-    TIHLDE = 'TIHLDE'
-    
+    TIHLDE = "TIHLDE"
 
 
 class AppModel(ChoiceEnum):

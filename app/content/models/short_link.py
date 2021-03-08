@@ -1,11 +1,10 @@
-from app.common.enums import Groups
 from django.db import models
 from django.utils.text import slugify
 
+from app.common.enums import Groups
+from app.common.perm import BasePermissionModel, get_user_from_request
 from app.content.models import User
 from app.util.models import BaseModel
-from app.common.perm import BasePermissionModel, get_user_from_request
-
 
 
 class ShortLink(BaseModel, BasePermissionModel):
@@ -25,7 +24,7 @@ class ShortLink(BaseModel, BasePermissionModel):
         return f"{self.name} - {self.user.user_id}"
 
     @classmethod
-    def has_create_permission(cls,request):
+    def has_create_permission(cls, request):
         cls.write_access = [Groups.TIHLDE]
         return super().has_write_permission(request)
 
@@ -33,6 +32,3 @@ class ShortLink(BaseModel, BasePermissionModel):
         if self.user == get_user_from_request(request):
             return True
         return super().has_object_write_permission(request)
-
-    
-    

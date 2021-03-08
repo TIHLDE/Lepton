@@ -1,9 +1,8 @@
-from re import A
-from app.common.enums import AdminGroup, Groups
-from app.common.perm import BasePermissionModel, check_permissions, get_user_id
 from django.core.exceptions import ValidationError
 from django.db import models
 
+from app.common.enums import AdminGroup, Groups
+from app.common.perm import check_permissions, get_user_id
 from app.content.exceptions import EventSignOffDeadlineHasPassed
 from app.content.models.user import User
 from app.util import EnumUtils, today
@@ -13,7 +12,7 @@ from app.util.models import BaseModel
 
 class Registration(BaseModel):
     """ Model for user registration for an event """
-    
+
     registration_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="registrations"
@@ -34,34 +33,55 @@ class Registration(BaseModel):
 
     @staticmethod
     def has_retrieve_permission(request):
-        return check_permissions([AdminGroup.HS, AdminGroup.INDEX, AdminGroup.NOK, AdminGroup.SOSIALEN, Groups.TIHLDE], request)
+        return check_permissions(
+            [
+                AdminGroup.HS,
+                AdminGroup.INDEX,
+                AdminGroup.NOK,
+                AdminGroup.SOSIALEN,
+                Groups.TIHLDE,
+            ],
+            request,
+        )
 
     @staticmethod
     def has_list_permission(request):
-        return check_permissions([AdminGroup.HS, AdminGroup.INDEX, AdminGroup.NOK, AdminGroup.SOSIALEN], request)
+        return check_permissions(
+            [AdminGroup.HS, AdminGroup.INDEX, AdminGroup.NOK, AdminGroup.SOSIALEN],
+            request,
+        )
 
     @staticmethod
     def has_write_permission(request):
-        return Registration.has_list_permission(request) or Registration.has_retrieve_permission(request)
+        return Registration.has_list_permission(
+            request
+        ) or Registration.has_retrieve_permission(request)
 
     @staticmethod
     def has_create_permission(request):
         return get_user_id(request) is not None
 
     def has_object_update_permission(self, request):
-        return check_permissions([AdminGroup.HS, AdminGroup.INDEX, AdminGroup.NOK, AdminGroup.SOSIALEN], request)
+        return check_permissions(
+            [AdminGroup.HS, AdminGroup.INDEX, AdminGroup.NOK, AdminGroup.SOSIALEN],
+            request,
+        )
 
     def has_object_destroy_permission(self, request):
         if self.user.user_id == get_user_id(request):
             return True
-        return check_permissions([AdminGroup.HS, AdminGroup.INDEX, AdminGroup.NOK, AdminGroup.SOSIALEN], request)
+        return check_permissions(
+            [AdminGroup.HS, AdminGroup.INDEX, AdminGroup.NOK, AdminGroup.SOSIALEN],
+            request,
+        )
 
     def has_object_retrieve_permission(self, request):
         if self.user.user_id == get_user_id(request):
             return True
-        return check_permissions([AdminGroup.HS, AdminGroup.INDEX, AdminGroup.NOK, AdminGroup.SOSIALEN], request)
-
-
+        return check_permissions(
+            [AdminGroup.HS, AdminGroup.INDEX, AdminGroup.NOK, AdminGroup.SOSIALEN],
+            request,
+        )
 
     def __str__(self):
         return (
