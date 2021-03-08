@@ -42,6 +42,7 @@ urlpatterns = [
     path("api/admin/", admin.site.urls),
     path("api/", include("rest_framework.urls")),
     # Our endpoints
+    path("api/v1/", include("app.career.urls")),
     path("api/v1/", include("app.content.urls")),
     path("api/v1/", include("app.group.urls")),
     path("api/v1/auth/", include("app.authentication.urls")),
