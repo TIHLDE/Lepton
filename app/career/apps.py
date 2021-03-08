@@ -1,5 +1,5 @@
 from django.apps import AppConfig
 
 
-class GroupConfig(AppConfig):
+class CareerConfig(AppConfig):
     name = "app.career"

@@ -8,8 +8,6 @@ from app.util import today
 
 
 class WeeklyBusinessFactory(DjangoModelFactory):
-    """Factory that creates a generic weekly business"""
-
     class Meta:
         model = WeeklyBusiness
 

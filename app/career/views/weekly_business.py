@@ -90,5 +90,5 @@ class WeeklyBusinessViewSet(viewsets.ModelViewSet):
     def destroy(self, request, *args, **kwargs):
         super().destroy(request, *args, **kwargs)
         return Response(
-            {"detail": _("Ukens bedrift ble slettet")}, status=status.HTTP_200_OK
+            {"detail": "Ukens bedrift ble slettet"}, status=status.HTTP_200_OK
         )
