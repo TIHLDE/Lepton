@@ -77,7 +77,10 @@ INSTALLED_APPS = [
     "rest_auth",
     "polymorphic",
     # Our apps
+    "app.authentication",
+    "app.career",
     "app.content",
+    "app.group",
     "app.util",
     "app.authentication",
     "app.group",
