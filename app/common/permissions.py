@@ -156,14 +156,10 @@ class NotificationPermission(BasePermission):
     def has_permission(self, request, view):
         get_user_id(request)
 
-        if view.action in ["list", "create"]:
-            # Only admin can list out all notifications and create new ones.
-            return is_admin_user(request)
-        elif view.action in ["retrieve", "update"]:
-            # This is handled by has_object_permission, so pass down there.
-            return True
-        elif view.action in ["partial_update", "destroy"]:
+        if not request.user.is_authenticated:
             return False
+
+        return view.action in ["retrieve", "update", "list"]
 
     def has_object_permission(self, request, view, obj):
         get_user_id(request)
@@ -171,8 +167,9 @@ class NotificationPermission(BasePermission):
         if not request.user.is_authenticated:
             return False
 
-        # Only allow the user to acces own notifications
-        return obj.user == request.user
+        if view.action in ["retrieve", "update"]:
+            return obj.user == request.user
+        return False
 
 
 def check_group_permission(request, groups):

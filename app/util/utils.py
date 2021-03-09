@@ -23,6 +23,10 @@ def midday(date_time):
     return date_time.replace(hour=12, minute=00, second=00)
 
 
+def week_nr(date):
+    return date.isocalendar()[1]
+
+
 def disable_for_loaddata(signal_handler):
     """
     Disable signals for the 'loaddata' command
