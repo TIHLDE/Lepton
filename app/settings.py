@@ -77,11 +77,12 @@ INSTALLED_APPS = [
     "rest_auth",
     "dry_rest_permissions",
     # Our apps
-    "app.authentication",
-    "app.career",
     "app.content",
+    "app.common",
+    "app.authentication",
     "app.group",
     "app.util",
+    "app.career",
 ]
 
 # Django rest framework

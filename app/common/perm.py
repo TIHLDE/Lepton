@@ -1,7 +1,7 @@
 from django.db import models
 from rest_framework.authtoken.models import Token
+from app.content.models.user import User
 
-from app.content.models import User
 
 
 class BasePermissionModel(models.Model):
@@ -79,5 +79,8 @@ def get_user_id(request):
         userToken = Token.objects.get(key=token)
     except Token.DoesNotExist:
         return None
+
+    request.id = userToken.user_id
+    request.user = User.objects.get(user_id = userToken.user_id)
 
     return userToken.user_id

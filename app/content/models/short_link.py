@@ -2,7 +2,7 @@ from django.db import models
 from django.utils.text import slugify
 
 from app.common.enums import Groups
-from app.common.perm import BasePermissionModel, get_user_from_request
+from app.common.perm import BasePermissionModel, get_user_from_request, get_user_id
 from app.content.models import User
 from app.util.models import BaseModel
 
@@ -28,7 +28,7 @@ class ShortLink(BaseModel, BasePermissionModel):
         cls.write_access = [Groups.TIHLDE]
         return super().has_write_permission(request)
 
-    def has_object_destroy_permission(self, request):
-        if self.user == get_user_from_request(request):
+    def has_object_write_permission(self, request):
+        if self.user.user_id == get_user_id(request):
             return True
         return super().has_object_write_permission(request)

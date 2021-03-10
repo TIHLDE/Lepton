@@ -1,6 +1,7 @@
 from django.contrib.auth.models import Group as Auth_group
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
+from django.db.transaction import atomic
 
 from app.group.models import Group, Membership
 
@@ -16,7 +17,7 @@ def get_api_client(user=None, group_name=None):
 
     return client
 
-
+@atomic
 def add_user_to_group_with_name(user, group_name):
     # should be changed to our groups later
     auth_group = Auth_group.objects.create(name=group_name)

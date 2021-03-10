@@ -49,10 +49,7 @@ def admin_user():
 
 @pytest.fixture()
 def member():
-    user = UserFactory(is_TIHLDE_member=True)
-    group = Group.objects.create(name=Groups.TIHLDE)
-    Membership.objects.create(group=group, user=user)
-    return user
+    return add_user_to_group_with_name(UserFactory(), Groups.TIHLDE)
 
 
 @pytest.fixture()
