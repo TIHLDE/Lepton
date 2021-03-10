@@ -1,4 +1,3 @@
-from django.utils.translation import gettext as _
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status, viewsets
 from rest_framework.response import Response
@@ -34,5 +33,5 @@ class JobPostViewSet(viewsets.ModelViewSet):
         """ Delete the jobpost """
         super().destroy(request, *args, **kwargs)
         return Response(
-            {"detail": _("Jobbannonsen ble slettet")}, status=status.HTTP_200_OK
+            {"detail": "Jobbannonsen ble slettet"}, status=status.HTTP_200_OK
         )

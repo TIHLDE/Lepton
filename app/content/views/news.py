@@ -1,4 +1,3 @@
-from django.utils.translation import gettext as _
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 
@@ -17,4 +16,4 @@ class NewsViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         super().destroy(request, *args, **kwargs)
-        return Response({"detail": _("Nyheten ble slettet")}, status=status.HTTP_200_OK)
+        return Response({"detail": "Nyheten ble slettet"}, status=status.HTTP_200_OK)
