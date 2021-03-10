@@ -3,11 +3,13 @@ from rest_framework.test import APIClient, APIRequestFactory
 
 import pytest
 
+from app.career.factories import WeeklyBusinessFactory
 from app.common.enums import AdminGroup, MembershipType
 from app.content.factories import (
     CheatsheetFactory,
     EventFactory,
     NewsFactory,
+    NotificationFactory,
     PageFactory,
     ParentPageFactory,
     RegistrationFactory,
@@ -96,3 +98,13 @@ def parent_page():
 @pytest.fixture()
 def short_link():
     return ShortLinkFactory()
+
+
+@pytest.fixture()
+def notification():
+    return NotificationFactory()
+
+
+@pytest.fixture()
+def weekly_business():
+    return WeeklyBusinessFactory()
