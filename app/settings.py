@@ -75,7 +75,6 @@ INSTALLED_APPS = [
     "drf_yasg",
     "rest_framework.authtoken",
     "rest_auth",
-    "azure",
     # Our apps
     "app.authentication",
     "app.career",

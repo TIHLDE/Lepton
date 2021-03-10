@@ -1,5 +1,4 @@
-from azure.core.exceptions import ResourceExistsError
-from azure.storage.blob import BlobServiceClient, ContainerClient
+from azure.storage.blob import BlobServiceClient
 import os, uuid
 # from sentry_sdk import capture_exception
 from dotenv import load_dotenv
