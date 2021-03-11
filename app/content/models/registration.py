@@ -52,7 +52,7 @@ class Registration(BaseModel):
         )
 
     @staticmethod
-    def has_write_permission(request):
+    def has_read_permission(request):
         return Registration.has_list_permission(
             request
         ) or Registration.has_retrieve_permission(request)

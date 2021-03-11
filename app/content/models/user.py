@@ -10,6 +10,9 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 
+from app.common.enums import AdminGroup
+from app.common.perm import check_permissions
+from app.group.models import group
 from app.util.models import BaseModel, OptionalImage
 from app.util.utils import disable_for_loaddata
 
@@ -95,6 +98,38 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
         return self.is_superuser
 
     objects = UserManager()
+
+    @staticmethod
+    def has_retrieve_permission(request):
+        return request.id == request.parser_context["kwargs"][
+            "user_id"
+        ] or check_permissions([AdminGroup.HS, AdminGroup.INDEX,], request,)
+
+    @staticmethod
+    def has_list_permission(request):
+        return check_permissions([AdminGroup.HS, AdminGroup.INDEX], request)
+
+    @staticmethod
+    def has_read_permission(request):
+        return User.has_list_permission(request) or User.has_retrieve_permission(
+            request
+        )
+
+    @staticmethod
+    def has_write_permission(request):
+        return check_permissions([AdminGroup.HS, AdminGroup.INDEX], request,)
+
+    def has_object_write_permission(self, request):
+        if request.methode == "DELETE":
+            return check_permissions([AdminGroup.HS, AdminGroup.INDEX], request,)
+        return self.user == request.user or check_permissions(
+            [AdminGroup.HS, AdminGroup.INDEX], request,
+        )
+
+    def has_object_retrieve_permission(self, request):
+        return self.user == request.user or check_permissions(
+            [AdminGroup.HS, AdminGroup.INDEX], request,
+        )
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)

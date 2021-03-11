@@ -56,21 +56,18 @@ class Membership(BaseModel, BasePermissionModel):
 
     @classmethod
     def has_write_permission(cls, request):
-        try: 
+        try:
             group_slug = request.parser_context["kwargs"]["slug"]
-            if Membership.objects.get(
+            return Membership.objects.get(
                 user__user_id=request.id, group__slug=group_slug
-            ).is_leader():
-                return True
+            ).is_leader() or super().has_write_permission(request)
         except Membership.DoesNotExist:
             return super().has_write_permission(request)
         except KeyError:
-             return super().has_write_permission(request)
-        return super().has_write_permission(request)
-       
+            return super().has_write_permission(request)
 
     def has_object_write_permission(self, request):
-        return super().has_write_permission(request)
+        return Membership.has_write_permission(request)
 
     def __str__(self):
         return f"{self.user} - {self.group} - {self.membership_type}"

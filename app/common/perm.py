@@ -1,7 +1,9 @@
 from django.db import models
 from rest_framework.authtoken.models import Token
-from app.content.models.user import User
+
 from dry_rest_permissions.generics import DRYPermissions
+
+from app.content.models.user import User
 
 
 class BasePermissionModel(models.Model):
@@ -42,6 +44,7 @@ class BasicViewPermission(DRYPermissions):
     def has_object_permission(self, request, view, obj):
         set_user_id(request)
         return super().has_object_permission(request, view, obj)
+
 
 def check_permissions(access, request):
     if get_user_id(request):
@@ -89,6 +92,7 @@ def get_user_id(request):
 
     return userToken.user_id
 
+
 def set_user_id(request):
     token = request.META.get("HTTP_X_CSRF_TOKEN")
     request.id = None
@@ -103,5 +107,4 @@ def set_user_id(request):
         return None
 
     request.id = userToken.user_id
-    request.user = User.objects.get(user_id = userToken.user_id)
-
+    request.user = User.objects.get(user_id=userToken.user_id)

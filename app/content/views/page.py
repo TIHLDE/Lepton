@@ -3,9 +3,9 @@ from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from app.common.perm import BasicViewPermission
 from sentry_sdk import capture_exception
 
+from app.common.perm import BasicViewPermission
 from app.content.models import Page
 from app.content.serializers import PageSerializer, PageTreeSerializer
 

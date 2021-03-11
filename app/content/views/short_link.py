@@ -6,7 +6,6 @@ from rest_framework import status, viewsets
 from rest_framework.response import Response
 
 from app.common.perm import BasicViewPermission
-
 from app.common.permissions import get_user_id
 from app.content.models import ShortLink, User
 from app.content.serializers import ShortLinkSerializer

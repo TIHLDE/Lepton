@@ -4,6 +4,8 @@ from rest_framework.permissions import SAFE_METHODS, BasePermission
 from app.common.enums import AdminGroup
 from app.content.models import User
 from app.group.models import Membership
+
+
 class IsLeader(BasePermission):
     """ Checks if the user is a leader on a group """
 

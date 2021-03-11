@@ -1,9 +1,9 @@
-from app.common.enums import AdminGroup, Groups
 from django.db import models
 
+from app.common.enums import AdminGroup, Groups
+from app.common.perm import BasePermissionModel
 from app.content.models import Badge, User
 from app.util.models import BaseModel
-from app.common.perm import BasePermissionModel
 
 
 class UserBadge(BaseModel, BasePermissionModel):
