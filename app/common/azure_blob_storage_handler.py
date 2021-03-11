@@ -19,11 +19,11 @@ def get_container_or_create_if_not_exist(name):
 
 
 def getBlobName(blob) -> str:
-    return blob.name if blob.name != None else ""
+    return blob.name if blob.name is not None else ""
 
 
 def getContentSettings(blob) -> ContentSettings:
-    return ContentSettings(blob.content_type) if blob.content_type != None else None
+    return ContentSettings(blob.content_type) if blob.content_type is not None else None
 
 
 def uploadBlob(blob, container="default") -> str:
