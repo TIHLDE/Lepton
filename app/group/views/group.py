@@ -1,7 +1,7 @@
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 
-from dry_rest_permissions.generics import DRYPermissions
+from app.common.perm import BasicViewPermission
 
 from app.group.models import Group
 from app.group.serializers import GroupSerializer
@@ -11,7 +11,7 @@ class GroupViewSet(viewsets.ModelViewSet):
     """API endpoint for Groups"""
 
     serializer_class = GroupSerializer
-    permission_classes = [DRYPermissions]
+    permission_classes = [BasicViewPermission]
     queryset = Group.objects.all()
     lookup_field = "slug"
 

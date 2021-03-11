@@ -2,7 +2,7 @@ from rest_framework import status, viewsets
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 
-from dry_rest_permissions.generics import DRYPermissions
+from app.common.perm import BasicViewPermission
 
 from app.common.permissions import get_user_id, is_admin_user
 from app.content.exceptions import APIUserAlreadyAttendedEvent
@@ -14,7 +14,7 @@ from app.content.serializers import RegistrationSerializer
 class RegistrationViewSet(APIRegistrationErrorsMixin, viewsets.ModelViewSet):
 
     serializer_class = RegistrationSerializer
-    permission_classes = [DRYPermissions]
+    permission_classes = [BasicViewPermission]
     lookup_field = "user_id"
 
     def get_queryset(self):

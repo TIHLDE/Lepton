@@ -32,7 +32,7 @@ class UserSerializer(serializers.ModelSerializer):
     badges = serializers.SerializerMethodField()
     unread_notifications = serializers.SerializerMethodField()
     notifications = serializers.SerializerMethodField()
-    permissions = DRYGlobalPermissionsField()
+    permissions = DRYGlobalPermissionsField(actions=["write","read"])
 
     class Meta:
         model = User

@@ -1,7 +1,7 @@
 from django.db import models
 from rest_framework.authtoken.models import Token
 from app.content.models.user import User
-
+from dry_rest_permissions.generics import DRYPermissions
 
 
 class BasePermissionModel(models.Model):
@@ -23,18 +23,25 @@ class BasePermissionModel(models.Model):
             return True
         return check_permissions(cls.write_access, request)
 
-    @classmethod
-    def has_object_write_permission(cls, request):
-        if len(cls.write_access) == 0:
+    def has_object_write_permission(self, request):
+        if len(self.write_access) == 0:
             return True
-        return check_permissions(cls.write_access, request)
+        return check_permissions(self.write_access, request)
 
-    @classmethod
-    def has_object_read_permission(cls, request):
-        if len(cls.read_access) == 0:
+    def has_object_read_permission(self, request):
+        if len(self.read_access) == 0:
             return True
-        return check_permissions(cls.read_access, request)
+        return check_permissions(self.read_access, request)
 
+
+class BasicViewPermission(DRYPermissions):
+    def has_permission(self, request, view):
+        set_user_id(request)
+        return super().has_permission(request, view)
+
+    def has_object_permission(self, request, view, obj):
+        set_user_id(request)
+        return super().has_object_permission(request, view, obj)
 
 def check_permissions(access, request):
     if get_user_id(request):
@@ -80,7 +87,21 @@ def get_user_id(request):
     except Token.DoesNotExist:
         return None
 
+    return userToken.user_id
+
+def set_user_id(request):
+    token = request.META.get("HTTP_X_CSRF_TOKEN")
+    request.id = None
+    request.user = None
+
+    if token is None:
+        return None
+
+    try:
+        userToken = Token.objects.get(key=token)
+    except Token.DoesNotExist:
+        return None
+
     request.id = userToken.user_id
     request.user = User.objects.get(user_id = userToken.user_id)
 
-    return userToken.user_id

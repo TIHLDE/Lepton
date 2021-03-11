@@ -2,7 +2,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status, viewsets
 from rest_framework.response import Response
 
-from dry_rest_permissions.generics import DRYPermissions
+from app.common.perm import BasicViewPermission
 
 from app.common.pagination import BasePagination
 from app.content.filters import JobPostFilter
@@ -18,7 +18,7 @@ class JobPostViewSet(viewsets.ModelViewSet):
     """
 
     serializer_class = JobPostSerializer
-    permission_classes = [DRYPermissions]
+    permission_classes = [BasicViewPermission]
     pagination_class = BasePagination
     queryset = JobPost.objects.filter(deadline__gte=yesterday()).order_by("deadline")
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]

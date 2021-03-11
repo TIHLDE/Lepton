@@ -2,7 +2,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status, viewsets
 from rest_framework.response import Response
 
-from dry_rest_permissions.generics import DRYPermissions
+from app.common.perm import BasicViewPermission
 from sentry_sdk import capture_exception
 
 from app.common.pagination import BasePagination
@@ -20,7 +20,7 @@ from app.util.utils import yesterday
 
 class EventViewSet(viewsets.ModelViewSet):
     serializer_class = EventSerializer
-    permission_classes = [DRYPermissions]
+    permission_classes = [BasicViewPermission]
     queryset = Event.objects.filter(start_date__gte=yesterday()).order_by("start_date")
     pagination_class = BasePagination
 

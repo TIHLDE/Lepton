@@ -1,7 +1,7 @@
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 
-from dry_rest_permissions.generics import DRYPermissions
+from app.common.perm import BasicViewPermission
 
 from app.common.permissions import IsLeader, is_admin_user
 from app.content.models import User
@@ -17,7 +17,7 @@ class MembershipViewSet(viewsets.ModelViewSet):
 
     serializer_class = MembershipSerializer
     queryset = Membership.objects.all()
-    permission_classes = [DRYPermissions]
+    permission_classes = [BasicViewPermission]
     lookup_field = "user_id"
 
     def get_queryset(self):

@@ -3,7 +3,7 @@ from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from dry_rest_permissions.generics import DRYPermissions
+from app.common.perm import BasicViewPermission
 from sentry_sdk import capture_exception
 
 from app.content.models import Page
@@ -13,7 +13,7 @@ from app.content.serializers import PageSerializer, PageTreeSerializer
 class PageViewSet(viewsets.ModelViewSet):
     queryset = Page.objects.all()
     serializer_class = PageSerializer
-    permission_classes = [DRYPermissions]
+    permission_classes = [BasicViewPermission]
     lookup_url_kwarg = "path"
     lookup_value_regex = ".*"
 
