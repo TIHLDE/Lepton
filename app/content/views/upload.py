@@ -1,4 +1,3 @@
-import os
 from rest_framework import status
 
 from rest_framework.decorators import api_view, permission_classes
@@ -14,11 +13,23 @@ from sentry_sdk import capture_exception
 def upload(request):
     """ Method for accepting company interest forms from the company page """
     try:
-        blob = request.data["file"]
-        print(request.data["file"])
+        if len(request.FILES) > 1:
+            return Response(
+                {"detail": "Du må kan ikke sende med flere filer"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        
+        if len(request.FILES) < 1:
+            return Response(
+                {"detail": "Du må sende med en fil i FILE"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        key = list(request.FILES.keys())[0]
+        blob = request.FILES[key]
         url = uploadBlob(blob)
         return Response(
-            {"detail": "Filen ble lastet opp", "url": url},
+            {"url": url},
             status=status.HTTP_200_OK,
         )
 

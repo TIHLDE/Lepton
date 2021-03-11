@@ -1,8 +1,6 @@
-from azure.storage.blob import BlobServiceClient
+from azure.storage.blob import BlobServiceClient, ContentSettings
 import os, uuid
-# from sentry_sdk import capture_exception
-from dotenv import load_dotenv
-load_dotenv()
+from sentry_sdk import capture_exception
 
 
 def get_container_or_create_if_not_exist(name):
@@ -20,6 +18,9 @@ def get_container_or_create_if_not_exist(name):
 def getBlobName(blob) -> str:
     return blob.name if blob.name != None else ""
 
+def getContentSettings(blob) -> ContentSettings:
+    return ContentSettings(blob.content_type) if blob.content_type != None else None
+
 
 def uploadBlob(blob, container="default") -> str:
     "Uploads the given blob to Azure and returns a url to the blob"
@@ -29,20 +30,8 @@ def uploadBlob(blob, container="default") -> str:
         blob_name = f"{uuid.uuid4()}{getBlobName(blob)}"
 
         blob_client = container.get_blob_client(blob_name)
-        blob_client.upload_blob(data=blob)
+        blob_client.upload_blob(data=blob, content_settings=getContentSettings(blob))
         return blob_client.url
     except Exception as e:
-        # capture_exception(e)
+        capture_exception(e)
         return None
-
-def main(name: str):
-    try:
-        with open(name, "rb") as data:
-            return uploadBlob(data)
-    except Exception as e:
-        print(f"Error: {e}")
-        return "Noo"
-
-
-url = main("test.txt")
-print(url)
