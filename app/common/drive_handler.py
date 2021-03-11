@@ -1,7 +1,7 @@
 import logging
 import os
 import uuid
-# Tester push
+
 from django.core.exceptions import ValidationError
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.core.validators import URLValidator

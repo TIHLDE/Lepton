@@ -1,5 +1,7 @@
+import os
+import uuid
+
 from azure.storage.blob import BlobServiceClient, ContentSettings
-import os, uuid
 from sentry_sdk import capture_exception
 
 
@@ -15,8 +17,10 @@ def get_container_or_create_if_not_exist(name):
     except Exception as e:
         print(f"Error: {e}")
 
+
 def getBlobName(blob) -> str:
     return blob.name if blob.name != None else ""
+
 
 def getContentSettings(blob) -> ContentSettings:
     return ContentSettings(blob.content_type) if blob.content_type != None else None

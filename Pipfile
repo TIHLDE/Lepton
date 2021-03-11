@@ -33,7 +33,6 @@ django-mptt="*"
 # Documentation
 # ------------------------------------------------------------------------------
 drf-yasg = "*"
-python-dotenv = "*"
 
 [dev-packages]
 # Code quality

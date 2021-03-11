@@ -13,6 +13,8 @@
 ---
 
 ## Neste versjon
+- ✨ **Filopplastning**. Lagt til støtte for filopplastning til Azure gjennom eget endepunkt. Kun for medlemmer.
+
 ## Versjon 1.0.3 (09.03.2021)
 - ⚡ **Pagination i varsler**. Lagt til pagination i varsler, samt lagt til tester og fjernet admin's muligheter til å opprette/endre/slette andres varsler.
 - ✨ **Korte URL's**. Opprettet en ny tjeneste der brukere kan lagre url'er bak korte, valgfrie slugs.
