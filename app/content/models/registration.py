@@ -1,6 +1,5 @@
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.utils.translation import gettext as _
 
 from app.content.exceptions import EventSignOffDeadlineHasPassed
 from app.content.models.user import User
@@ -39,7 +38,7 @@ class Registration(BaseModel):
     def delete(self, *args, **kwargs):
         if self.event.is_past_sign_off_deadline and not self.is_on_wait:
             raise EventSignOffDeadlineHasPassed(
-                _("Cannot sign user off after sign off deadline has passed")
+                "Kan ikke melde av brukeren etter avmeldingsfrist"
             )
         if not self.is_on_wait:
             self.move_from_waiting_list_to_queue()
@@ -121,9 +120,9 @@ class Registration(BaseModel):
         :raises ValidationError if the event or queue is closed.
         """
         if self.event.closed:
-            raise ValidationError(_("The queue for this event is closed"))
+            raise ValidationError("The queue for this event is closed")
         if not self.event.sign_up:
-            raise ValidationError(_("Sign up is not possible"))
+            raise ValidationError("Sign up is not possible")
         if not self.registration_id:
             self.validate_start_and_end_registration_time()
 
@@ -134,9 +133,9 @@ class Registration(BaseModel):
     def check_registration_has_started(self):
         if self.event.start_registration_at > today():
             raise ValidationError(
-                _("The registration for this event has not started yet.")
+                "The registration for this event has not started yet."
             )
 
     def check_registration_has_ended(self):
         if self.event.end_registration_at < today():
-            raise ValidationError(_("The registration for this event has ended."))
+            raise ValidationError("The registration for this event has ended.")
