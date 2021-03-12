@@ -11,15 +11,17 @@ from app.common.permissions import IsMember
 @api_view(["POST"])
 @permission_classes([IsMember])
 def upload(request):
-    """ Method for accepting company interest forms from the company page """
+    """ Method for uploading files til Azure Blob Storage, only allowed for members """
     try:
-        if len(request.FILES) > 1:
+        has_multiple_files = len(request.FILES) > 1
+        if has_multiple_files:
             return Response(
-                {"detail": "Du må kan ikke sende med flere filer"},
+                {"detail": "Du kan ikke sende med flere filer"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        if len(request.FILES) < 1:
+        no_files = len(request.FILES) < 1
+        if no_files:
             return Response(
                 {"detail": "Du må sende med en fil i FILE"},
                 status=status.HTTP_400_BAD_REQUEST,

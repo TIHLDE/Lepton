@@ -9,7 +9,7 @@ def get_container_or_create_if_not_exist(name):
     connection_string = os.environ.get("AZURE_STORAGE_CONNECTION_STRING")
     blob_service_client = BlobServiceClient.from_connection_string(connection_string)
     container = blob_service_client.get_container_client(name)
-    if container.exists:
+    if container.exists():
         return container
     try:
         container = blob_service_client.create_container(name, public_access="blob")
