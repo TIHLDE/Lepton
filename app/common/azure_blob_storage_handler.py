@@ -5,7 +5,7 @@ from azure.storage.blob import BlobServiceClient, ContentSettings
 from sentry_sdk import capture_exception
 
 
-def get_container_or_create_if_not_exist(name):
+def get_container_or_create_if_not_exist(name="default"):
     connection_string = os.environ.get("AZURE_STORAGE_CONNECTION_STRING")
     blob_service_client = BlobServiceClient.from_connection_string(connection_string)
     container = blob_service_client.get_container_client(name)
@@ -22,14 +22,23 @@ def getBlobName(blob) -> str:
     return blob.name if blob.name is not None else ""
 
 
+def getContainerNameFromBlob(blob) -> str:
+    return (
+        "".join(e for e in blob.content_type if e.isalnum())
+        if blob.content_type is not None
+        else None
+    )
+
+
 def getContentSettings(blob) -> ContentSettings:
     return ContentSettings(blob.content_type) if blob.content_type is not None else None
 
 
-def uploadBlob(blob, container="default") -> str:
+def uploadBlob(blob) -> str:
     "Uploads the given blob to Azure and returns a url to the blob"
     try:
-        container = get_container_or_create_if_not_exist(container)
+        containerName = getContainerNameFromBlob(blob)
+        container = get_container_or_create_if_not_exist(containerName)
 
         blob_name = f"{uuid.uuid4()}{getBlobName(blob)}"
 
