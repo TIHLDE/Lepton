@@ -1,4 +1,4 @@
-from app.forms.serializers.forms import (
+from app.forms.serializers.form import (
     FormInSubmissionSerializer,
     FieldInAnswerSerializer,
     OptionSerializer,
