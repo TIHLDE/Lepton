@@ -4,7 +4,7 @@ from rest_framework.response import Response
 
 from sentry_sdk import capture_exception
 
-from app.common.azure_blob_storage_handler import uploadBlob
+from app.common.azure_file_handler import AzureFileHandler
 from app.common.permissions import IsMember
 
 
@@ -29,9 +29,10 @@ def upload(request):
 
         key = list(request.FILES.keys())[0]
         blob = request.FILES[key]
-        url = uploadBlob(blob)
-        return Response({"url": url}, status=status.HTTP_200_OK,)
+        url = AzureFileHandler(blob).uploadBlob()
+        if (url):
+          return Response({"url": url}, status=status.HTTP_200_OK,)
+        return Response({"detail": "Noe gikk galt under filopplastningen"}, status=status.HTTP_400_BAD_REQUEST,)
 
-    except Exception as e:
-        capture_exception(e)
+    except Exception:
         raise
