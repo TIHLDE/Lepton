@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 
 class FileHandler(ABC):
-    
+
     SIZE_10_MB = 10000000
 
     @abstractmethod
