@@ -21,7 +21,6 @@ class FileHandler(ABC):
         )
 
     def checkBlobSize(self):
-        print(self.blob.size)
         if self.blob.size > 10000000:
             raise ValueError("Filen kan ikke være større enn 10 MB")
 
