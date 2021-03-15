@@ -194,9 +194,7 @@ def test_retrieve_event_includes_form_evaluation(default_client, event):
     event.save()
 
     response = default_client.get(f"/api/v1/events/{event.pk}/")
-    content = response.json()
-    print(content)
-    pytest.fail()
+
     assert response.json().get("evaluation") == str(evaluation.id)
 
 
