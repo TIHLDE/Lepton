@@ -9,6 +9,7 @@ from app.content.factories import (
     CheatsheetFactory,
     EventFactory,
     NewsFactory,
+    NotificationFactory,
     PageFactory,
     ParentPageFactory,
     RegistrationFactory,
@@ -103,6 +104,11 @@ def form():
 @pytest.fixture()
 def short_link():
     return ShortLinkFactory()
+
+
+@pytest.fixture()
+def notification():
+    return NotificationFactory()
 
 
 @pytest.fixture()

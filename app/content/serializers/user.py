@@ -1,6 +1,5 @@
 from django.contrib.auth.hashers import make_password
 from django.core.exceptions import ValidationError
-from django.utils.translation import gettext as _
 from rest_framework import serializers
 
 from app.content.models import Notification, Registration, User
@@ -30,7 +29,6 @@ class UserSerializer(serializers.ModelSerializer):
     groups = serializers.SerializerMethodField()
     badges = serializers.SerializerMethodField()
     unread_notifications = serializers.SerializerMethodField()
-    notifications = serializers.SerializerMethodField()
 
     class Meta:
         model = User
@@ -53,7 +51,6 @@ class UserSerializer(serializers.ModelSerializer):
             "groups",
             "badges",
             "unread_notifications",
-            "notifications",
         )
         read_only_fields = ("user_id",)
         write_only_fields = ("app_token",)
@@ -83,17 +80,6 @@ class UserSerializer(serializers.ModelSerializer):
     def get_unread_notifications(self, obj):
         """ Counts all unread notifications and returns the count """
         return Notification.objects.filter(user=obj, read=False).count()
-
-    def get_notifications(self, obj):
-        """ Gets all notifications for user """
-        return [
-            {
-                "id": notification.id,
-                "message": notification.message,
-                "read": notification.read,
-            }
-            for notification in Notification.objects.filter(user=obj)
-        ]
 
 
 class UserMemberSerializer(UserSerializer):
@@ -160,9 +146,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
     def validate_email(self, data):
         if "@ntnu.no" in data:
             raise ValidationError(
-                _(
-                    "Vi kan ikke sende epost til @ntnu.no-adresser, bruk @stud.ntnu.no-adressen istedenfor."
-                )
+                "Vi kan ikke sende epost til @ntnu.no-adresser, bruk @stud.ntnu.no-adressen istedenfor."
             )
         return data
 

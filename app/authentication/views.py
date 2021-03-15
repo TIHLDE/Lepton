@@ -1,4 +1,3 @@
-from django.utils.translation import gettext_lazy as _
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, permission_classes
@@ -18,7 +17,7 @@ def login(request):
     serializer = AuthSerializer(data=request.data)
     if not serializer.is_valid():
         return Response(
-            {"detail": _("Noe er feil i brukernavnet eller passordet ditt")},
+            {"detail": "Noe er feil i brukernavnet eller passordet ditt"},
             status=status.HTTP_401_UNAUTHORIZED,
         )
 
@@ -36,12 +35,12 @@ def login(request):
                 capture_exception(token_not_exist)
 
         return Response(
-            {"detail": _("Du må aktiveres som TIHLDE-medlem før du kan logge inn")},
+            {"detail": "Du må aktiveres som TIHLDE-medlem før du kan logge inn"},
             status=status.HTTP_401_UNAUTHORIZED,
         )
     else:
         return Response(
-            {"detail": _("Brukernavnet eller passordet ditt var feil")},
+            {"detail": "Brukernavnet eller passordet ditt var feil"},
             status=status.HTTP_401_UNAUTHORIZED,
         )
 
@@ -59,7 +58,7 @@ def makeMember(request):
     # Serialize data and check if valid
     serializer = MakeUserSerializer(data=request.data)
     if not serializer.is_valid():
-        return Response({"detail": ("Invalid user_id")}, status=400)
+        return Response({"detail": "Ugyldig brukernavn"}, status=400)
 
     # Get username and password
     user_id = serializer.data["user_id"]
@@ -68,10 +67,12 @@ def makeMember(request):
     if user is not None:
         try:
             Token.objects.get(user_id=user_id)
-            return Response({"detail": ("Already a TIHLDE member")}, status=400)
+            return Response(
+                {"detail": "Brukeren er allerede et TIHLDE medlem"}, status=400
+            )
         except Token.DoesNotExist as token_not_exist:
             capture_exception(token_not_exist)
             Token.objects.create(user=user)
-            return Response({"detail": ("New TIHLDE member added")}, status=200)
+            return Response({"detail": "Nytt TIHLDE medlem opprettet"}, status=200)
     else:
-        return Response({"detail": ("Incorrect user_id")}, status=400)
+        return Response({"detail": "Ugyldig brukernavn"}, status=400)

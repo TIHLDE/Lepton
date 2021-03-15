@@ -1,4 +1,3 @@
-from django.utils.translation import gettext as _
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status, viewsets
 from rest_framework.response import Response
@@ -64,8 +63,7 @@ class EventViewSet(viewsets.ModelViewSet):
         except Event.DoesNotExist as event_not_exist:
             capture_exception(event_not_exist)
             return Response(
-                {"detail": _("Fant ikke arrangementet")},
-                status=status.HTTP_404_NOT_FOUND,
+                {"detail": "Fant ikke arrangementet"}, status=status.HTTP_404_NOT_FOUND,
             )
 
     def update(self, request, pk):
@@ -85,7 +83,7 @@ class EventViewSet(viewsets.ModelViewSet):
                 return Response(serializer.data, status=status.HTTP_200_OK)
             else:
                 return Response(
-                    {"detail": _("Kunne ikke utføre oppdatering av arrangementet")},
+                    {"detail": "Kunne ikke utføre oppdatering av arrangementet"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
