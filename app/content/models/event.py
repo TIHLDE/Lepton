@@ -3,6 +3,7 @@ from django.db import models
 from django.db.models import signals
 from django.utils.translation import gettext as _
 
+from app.forms.enums import EventFormType
 from app.util.models import BaseModel, OptionalImage
 from app.util.utils import today, yesterday
 
@@ -98,6 +99,14 @@ class Event(BaseModel, OptionalImage):
 
     def has_priorities(self):
         return self.registration_priorities.all().exists()
+
+    @property
+    def evaluation(self):
+        return self.forms.filter(type=EventFormType.EVALUATION).first()
+
+    @property
+    def survey(self):
+        return self.forms.filter(type=EventFormType.SURVEY).first()
 
     def clean(self):
         self.validate_start_end_registration_times()

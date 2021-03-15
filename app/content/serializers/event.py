@@ -10,6 +10,8 @@ from app.util import EnumUtils
 class EventSerializer(serializers.ModelSerializer):
     expired = serializers.BooleanField(read_only=True)
     registration_priorities = serializers.SerializerMethodField()
+    evaluation = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
+    survey = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
 
     class Meta:
         model = Event
@@ -35,7 +37,8 @@ class EventSerializer(serializers.ModelSerializer):
             "sign_off_deadline",
             "registration_priorities",
             "evaluate_link",
-            "forms",
+            "evaluation",
+            "survey",
             "updated_at",
         )
 
