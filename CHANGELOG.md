@@ -13,6 +13,9 @@
 ---
 
 ## Neste versjon
+
+
+## Versjon 1.0.4 (15.03.2021)
 - ✨ **Filopplastning**. Lagt til støtte for filopplastning til Azure gjennom eget endepunkt. Kun for medlemmer.
 - ✨ **Forms**. Admins kan opprette, redigere og slette forms. Forms kan brukes i blant annet arrangement-påmelding.
 
