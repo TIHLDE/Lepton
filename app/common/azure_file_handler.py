@@ -2,7 +2,6 @@ import os
 import uuid
 
 from azure.storage.blob import BlobServiceClient, ContentSettings
-from sentry_sdk import capture_exception
 
 from app.common.file_handler import FileHandler
 
