@@ -4,7 +4,7 @@ from rest_framework.response import Response
 
 from sentry_sdk import capture_exception
 
-from app.common.enums import AppModel, UserClass, UserStudy
+from app.common.enums import UserClass, UserStudy
 from app.common.pagination import BasePagination
 from app.common.permissions import IsMember, is_admin_user
 from app.content.filters import CheatsheetFilter

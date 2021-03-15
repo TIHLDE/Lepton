@@ -4,7 +4,6 @@ from rest_framework.response import Response
 
 from sentry_sdk import capture_exception
 
-from app.common.enums import AppModel
 from app.common.pagination import BasePagination
 from app.common.permissions import IsNoKorPromo, is_admin_user
 from app.content.filters import EventFilter

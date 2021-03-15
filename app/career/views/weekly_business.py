@@ -5,7 +5,6 @@ from rest_framework.response import Response
 
 from app.career.models import WeeklyBusiness
 from app.career.serializers import WeeklyBusinessSerializer
-from app.common.enums import AppModel
 from app.common.pagination import BasePagination
 from app.common.permissions import IsNoK
 from app.util import today, week_nr
