@@ -11,3 +11,4 @@ from app.content.views.warning import WarningViewSet
 from app.content.views.news import NewsViewSet
 from app.content.views.page import PageViewSet
 from app.content.views.short_link import ShortLinkViewSet
+from app.content.views.upload import upload

@@ -11,7 +11,8 @@ RUN pip install --no-cache-dir --upgrade pip && \
 COPY Pipfile Pipfile.lock ./
 
 # Install required python packages
-RUN apk add --no-cache --virtual .build-deps gcc linux-headers libc-dev && \
+RUN apk --update add --no-cache --virtual .build-deps gcc musl-dev python3-dev libffi-dev openssl-dev cargo py-pip linux-headers libc-dev build-base && \
+      pip install --upgrade pip && \
       pipenv install -d && \
       rm -rf ~/.cache/pip ~/.cache/pipenv && \
     apk del .build-deps
