@@ -138,4 +138,4 @@ class FormPolymorphicSerializer(PolymorphicSerializer, serializers.ModelSerializ
 
     class Meta:
         model = Form
-        fields = ("resource_type", ) + FormSerializer.Meta.fields
+        fields = ("resource_type",) + FormSerializer.Meta.fields

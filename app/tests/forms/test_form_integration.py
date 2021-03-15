@@ -106,21 +106,25 @@ def test_list_forms_as_member_is_not_permitted(member):
 
 
 @pytest.mark.parametrize(
-    ("group_name", "expected_status_code"), [
+    ("group_name", "expected_status_code"),
+    [
         (AdminGroup.HS, status.HTTP_200_OK),
         (AdminGroup.INDEX, status.HTTP_200_OK),
         (AdminGroup.NOK, status.HTTP_200_OK),
         (AdminGroup.SOSIALEN, status.HTTP_403_FORBIDDEN),
         (AdminGroup.PROMO, status.HTTP_403_FORBIDDEN),
-    ]
+    ],
 )
-def test_list_forms_as_member_of_nok_hs_or_index(member, group_name, expected_status_code):
+def test_list_forms_as_member_of_nok_hs_or_index(
+    member, group_name, expected_status_code
+):
     """A user in NOK, HS or Index should be able to list forms."""
     client = get_api_client(user=member, group_name=group_name)
     url = _get_forms_url()
     response = client.get(url)
 
     assert response.status_code == expected_status_code
+
 
 def test_retrieve_form_as_anonymous_user_is_not_permitted(default_client, form):
     """An anonymous user should not be able to retrieve forms."""
@@ -272,11 +276,13 @@ def test_update_form_as_member_is_not_permitted(member, form):
 
 @pytest.mark.parametrize(
     ("group_name", "expected_status_code"),
-    [(AdminGroup.HS, status.HTTP_200_OK),
-    (AdminGroup.INDEX, status.HTTP_200_OK),
-    (AdminGroup.NOK, status.HTTP_200_OK),
-    (AdminGroup.SOSIALEN, status.HTTP_403_FORBIDDEN),
-    (AdminGroup.PROMO, status.HTTP_403_FORBIDDEN)]
+    [
+        (AdminGroup.HS, status.HTTP_200_OK),
+        (AdminGroup.INDEX, status.HTTP_200_OK),
+        (AdminGroup.NOK, status.HTTP_200_OK),
+        (AdminGroup.SOSIALEN, status.HTTP_403_FORBIDDEN),
+        (AdminGroup.PROMO, status.HTTP_403_FORBIDDEN),
+    ],
 )
 def test_admin_update_form_permissions(form, member, group_name, expected_status_code):
     """HS, Index and NoK is allowed to update form, while Sosialen and Promo is not."""
@@ -475,7 +481,8 @@ def test_delete_form_as_member_is_not_permitted(member, form):
 
 
 @pytest.mark.parametrize(
-    ("group_name", "expected_status_code"), [
+    ("group_name", "expected_status_code"),
+    [
         (AdminGroup.SOSIALEN, status.HTTP_403_FORBIDDEN),
         (AdminGroup.PROMO, status.HTTP_403_FORBIDDEN),
         (AdminGroup.HS, status.HTTP_204_NO_CONTENT),
@@ -483,7 +490,9 @@ def test_delete_form_as_member_is_not_permitted(member, form):
         (AdminGroup.NOK, status.HTTP_204_NO_CONTENT),
     ],
 )
-def test_delete_form_as_member_of_admin_group(member, group_name, expected_status_code, form):
+def test_delete_form_as_member_of_admin_group(
+    member, group_name, expected_status_code, form
+):
     """Only admins in HS, Index and Nok should be allowed to delete forms."""
     client = get_api_client(user=member, group_name=group_name)
     url = _get_form_detail_url(form)

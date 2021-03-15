@@ -22,8 +22,12 @@ class FormViewSet(viewsets.ModelViewSet):
             self.perform_update(serializer)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
-        return Response({"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST
+        )
 
     def destroy(self, request, *args, **kwargs):
         super().destroy(request, *args, **kwargs)
-        return Response({"detail": "Skjemaet ble slettet"}, status=status.HTTP_204_NO_CONTENT)
+        return Response(
+            {"detail": "Skjemaet ble slettet"}, status=status.HTTP_204_NO_CONTENT
+        )
