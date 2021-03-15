@@ -36,8 +36,11 @@ class EventViewSet(viewsets.ModelViewSet):
         """
 
         if self.kwargs or "expired" in self.request.query_params:
-            return Event.objects.all().order_by("start_date")
-        return Event.objects.filter(start_date__gte=yesterday()).order_by("start_date")
+            queryset = Event.objects.all()
+        else:
+            queryset = Event.objects.filter(start_date__gte=yesterday())
+
+        return queryset.prefetch_related("forms").order_by("start_date")
 
     def get_serializer_class(self):
         if hasattr(self, "action") and self.action == "list":

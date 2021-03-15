@@ -10,6 +10,8 @@ from app.util import EnumUtils
 class EventSerializer(serializers.ModelSerializer):
     expired = serializers.BooleanField(read_only=True)
     registration_priorities = serializers.SerializerMethodField()
+    evaluation = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
+    survey = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
 
     class Meta:
         model = Event
@@ -35,6 +37,8 @@ class EventSerializer(serializers.ModelSerializer):
             "sign_off_deadline",
             "registration_priorities",
             "evaluate_link",
+            "evaluation",
+            "survey",
             "updated_at",
         )
 
@@ -44,9 +48,9 @@ class EventSerializer(serializers.ModelSerializer):
 
     def validate_limit(self, limit):
         """
-                Validate that the event limit is greater or equal to 0 and
-                that the limit can not be lower than the number of registered users.
-                If the limit is already 0, then do not let that effect updating other fields
+        Validate that the event limit is greater or equal to 0 and
+        that the limit can not be lower than the number of registered users.
+        If the limit is already 0, then do not let that effect updating other fields
         """
         try:
             if limit < 0:
@@ -124,10 +128,10 @@ class EventCreateAndUpdateSerializer(serializers.ModelSerializer):
         )
 
     def create(self, validated_data):
-        registration_priorities_data = validated_data.pop("registration_priorities")
-        print(validated_data)
         event = Event.objects.create(**validated_data)
-        self.set_registration_priorities(event, registration_priorities_data)
+        if "registration_priorities" in validated_data:
+            registration_priorities_data = validated_data.pop("registration_priorities")
+            self.set_registration_priorities(event, registration_priorities_data)
 
         return event
 

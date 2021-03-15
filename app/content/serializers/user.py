@@ -149,3 +149,9 @@ class UserCreateSerializer(serializers.ModelSerializer):
                 "Vi kan ikke sende epost til @ntnu.no-adresser, bruk @stud.ntnu.no-adressen istedenfor."
             )
         return data
+
+
+class UserInAnswerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["user_id", "email"]
