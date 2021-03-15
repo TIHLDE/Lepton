@@ -4,7 +4,6 @@ from rest_framework.response import Response
 
 from sentry_sdk import capture_exception
 
-from app.common.drive_handler import upload_and_replace_image_with_cloud_link
 from app.common.enums import AppModel
 from app.common.pagination import BasePagination
 from app.common.permissions import IsNoKorPromo, is_admin_user
@@ -66,8 +65,6 @@ class EventViewSet(viewsets.ModelViewSet):
     def update(self, request, pk):
         """Update the event with the specified pk."""
         try:
-            upload_and_replace_image_with_cloud_link(request, AppModel.EVENT)
-
             event = Event.objects.get(pk=pk)
             self.check_object_permissions(self.request, event)
             serializer = EventCreateAndUpdateSerializer(
@@ -92,8 +89,6 @@ class EventViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         """Create an event."""
-        upload_and_replace_image_with_cloud_link(request, AppModel.EVENT)
-
         serializer = EventCreateAndUpdateSerializer(data=request.data)
 
         if serializer.is_valid():

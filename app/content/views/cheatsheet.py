@@ -4,7 +4,6 @@ from rest_framework.response import Response
 
 from sentry_sdk import capture_exception
 
-from app.common.drive_handler import upload_and_replace_url_with_cloud_link
 from app.common.enums import AppModel, UserClass, UserStudy
 from app.common.pagination import BasePagination
 from app.common.permissions import IsMember, is_admin_user
@@ -57,7 +56,6 @@ class CheatsheetViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         """Creates a new cheatsheet """
-        upload_and_replace_url_with_cloud_link(request, AppModel.EVENT)
         if is_admin_user(request):
             serializer = CheatsheetSerializer(data=self.request.data)
             if serializer.is_valid():
@@ -74,7 +72,6 @@ class CheatsheetViewSet(viewsets.ModelViewSet):
     def update(self, request, *args, **kwargs):
         """Updates a cheatsheet retrieved by UserClass and UserStudy and pk"""
         try:
-            upload_and_replace_url_with_cloud_link(request, AppModel.CHEATSHEET)
             cheatsheet = self.get_object()
             if is_admin_user(request):
                 serializer = CheatsheetSerializer(cheatsheet, data=request.data)
