@@ -16,6 +16,7 @@ from .views import (
     UserViewSet,
     WarningViewSet,
     accept_form,
+    upload,
 )
 
 router = routers.DefaultRouter()
@@ -43,4 +44,5 @@ router.register("page", PageViewSet)
 urlpatterns = [
     url(r"", include(router.urls)),
     path("accept-form/", accept_form),
+    path("upload/", upload),
 ]

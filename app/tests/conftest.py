@@ -16,6 +16,7 @@ from app.content.factories import (
     ShortLinkFactory,
     UserFactory,
 )
+from app.forms.tests.form_factories import FormFactory
 from app.group.factories import GroupFactory, MembershipFactory
 from app.util.test_utils import add_user_to_group_with_name
 
@@ -93,6 +94,11 @@ def page():
 @pytest.fixture()
 def parent_page():
     return ParentPageFactory()
+
+
+@pytest.fixture()
+def form():
+    return FormFactory()
 
 
 @pytest.fixture()

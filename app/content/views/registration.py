@@ -1,4 +1,3 @@
-from django.utils.translation import gettext as _
 from rest_framework import status, viewsets
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
@@ -23,7 +22,7 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, viewsets.ModelViewSet):
     def retrieve(self, request, *args, **kwargs):
         """Return own registration for members and any registration for admins."""
         if self._non_admin_tries_to_access_another_registration():
-            raise PermissionDenied(_("Du har ikke tilgang til denne påmeldingen"))
+            raise PermissionDenied("Du har ikke tilgang til denne påmeldingen")
 
         return super().retrieve(request, *args, **kwargs)
 
@@ -79,18 +78,19 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, viewsets.ModelViewSet):
             return self._admin_unregister(registration)
 
         if self._is_not_own_registration():
-            raise PermissionDenied(_("Du kan kun melde av deg selv"))
+            raise PermissionDenied("Du kan kun melde av deg selv")
 
         return self._unregister(registration)
 
     def _unregister(self, registration):
         registration.delete()
         return Response(
-            {"detail": _("Påmeldingen har blitt slettet")}, status=status.HTTP_200_OK
+            {"detail": "Du har blitt meldt av arrangementet"}, status=status.HTTP_200_OK
         )
 
     def _admin_unregister(self, registration):
         registration.admin_unregister()
         return Response(
-            {"detail": _("Påmeldingen har blitt slettet")}, status=status.HTTP_200_OK
+            {"detail": "Brukeren har blitt meldt av arrangement"},
+            status=status.HTTP_200_OK,
         )

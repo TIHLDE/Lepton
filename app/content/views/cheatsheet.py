@@ -1,12 +1,10 @@
-from django.utils.translation import gettext as _
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status, viewsets
 from rest_framework.response import Response
 
 from sentry_sdk import capture_exception
 
-from app.common.drive_handler import upload_and_replace_url_with_cloud_link
-from app.common.enums import AppModel, UserClass, UserStudy
+from app.common.enums import UserClass, UserStudy
 from app.common.pagination import BasePagination
 from app.common.permissions import IsMember, is_admin_user
 from app.content.filters import CheatsheetFilter
@@ -52,13 +50,12 @@ class CheatsheetViewSet(viewsets.ModelViewSet):
         except Cheatsheet.DoesNotExist as cheatsheet_not_exist:
             capture_exception(cheatsheet_not_exist)
             return Response(
-                {"detail": _("Kokeboken eksisterer ikke")},
+                {"detail": "Kokeboken eksisterer ikke"},
                 status=status.HTTP_404_NOT_FOUND,
             )
 
     def create(self, request, *args, **kwargs):
         """Creates a new cheatsheet """
-        upload_and_replace_url_with_cloud_link(request, AppModel.EVENT)
         if is_admin_user(request):
             serializer = CheatsheetSerializer(data=self.request.data)
             if serializer.is_valid():
@@ -68,14 +65,13 @@ class CheatsheetViewSet(viewsets.ModelViewSet):
                 {"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST
             )
         return Response(
-            {"detail": _("Du har ikke tillatelse til å lage en oppskrift")},
+            {"detail": "Du har ikke tillatelse til å lage en oppskrift"},
             status=status.HTTP_403_FORBIDDEN,
         )
 
     def update(self, request, *args, **kwargs):
         """Updates a cheatsheet retrieved by UserClass and UserStudy and pk"""
         try:
-            upload_and_replace_url_with_cloud_link(request, AppModel.CHEATSHEET)
             cheatsheet = self.get_object()
             if is_admin_user(request):
                 serializer = CheatsheetSerializer(cheatsheet, data=request.data)
@@ -83,13 +79,13 @@ class CheatsheetViewSet(viewsets.ModelViewSet):
                     serializer.save()
                     return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(
-                {"detail": _("Du har ikke tillatelse til å oppdatere oppskriften")},
+                {"detail": "Du har ikke tillatelse til å oppdatere oppskriften"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         except Cheatsheet.DoesNotExist as cheatsheet_not_exist:
             capture_exception(cheatsheet_not_exist)
             return Response(
-                {"details": _("Oppskriften ble ikke funnet")},
+                {"details": "Oppskriften ble ikke funnet"},
                 status=status.HTTP_404_NOT_FOUND,
             )
 
@@ -100,16 +96,16 @@ class CheatsheetViewSet(viewsets.ModelViewSet):
             if is_admin_user(request):
                 super().destroy(cheatsheet)
                 return Response(
-                    {"detail": _("Oppskriften har blitt slettet")},
+                    {"detail": "Oppskriften har blitt slettet"},
                     status=status.HTTP_200_OK,
                 )
             return Response(
-                {"detail": _("Ikke riktig tilatelse for å slette en oppskrift")},
+                {"detail": "Du har ikke riktig tilatelser for å slette en oppskrift"},
                 status=status.HTTP_403_FORBIDDEN,
             )
         except Cheatsheet.DoesNotExist as cheatsheet_not_exist:
             capture_exception(cheatsheet_not_exist)
             return Response(
-                {"details": _("Oppskriften ble ikke funnet")},
+                {"details": "Oppskriften ble ikke funnet"},
                 status=status.HTTP_404_NOT_FOUND,
             )

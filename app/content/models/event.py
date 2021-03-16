@@ -1,8 +1,8 @@
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import signals
-from django.utils.translation import gettext as _
 
+from app.forms.enums import EventFormType
 from app.util.models import BaseModel, OptionalImage
 from app.util.utils import today, yesterday
 
@@ -99,6 +99,14 @@ class Event(BaseModel, OptionalImage):
     def has_priorities(self):
         return self.registration_priorities.all().exists()
 
+    @property
+    def evaluation(self):
+        return self.forms.filter(type=EventFormType.EVALUATION).first()
+
+    @property
+    def survey(self):
+        return self.forms.filter(type=EventFormType.SURVEY).first()
+
     def clean(self):
         self.validate_start_end_registration_times()
 
@@ -120,7 +128,7 @@ class Event(BaseModel, OptionalImage):
             self.start_registration_at or self.end_registration_at
         ):
             raise ValidationError(
-                _("Enable signup to add start_date and end time for registration.")
+                "Enable signup to set start_date and end time for registration."
             )
 
     def check_if_registration_is_not_set(self):
@@ -130,57 +138,53 @@ class Event(BaseModel, OptionalImage):
             and self.sign_off_deadline
         ):
             raise ValidationError(
-                _("Set start- and end-registration and sign_off_deadline")
+                "Set start- and end-registration and sign_off_deadline"
             )
 
     def check_sign_up_and_sign_off_deadline(self):
         if not self.sign_up and self.sign_off_deadline:
-            raise ValidationError(_("Enable signup to add deadline."))
+            raise ValidationError("Enable signup to add deadline.")
 
     def check_start_time_is_before_end_registration(self):
         if self.start_date < self.end_registration_at:
             raise ValidationError(
-                _("End time for registration cannot be after the event start_date.")
+                "End time for registration cannot be after the event start_date."
             )
 
     def check_start_registration_is_before_end_registration(self):
         if self.start_registration_at > self.end_registration_at:
             raise ValidationError(
-                _("Start time for registration cannot be after end time.")
+                "Start time for registration cannot be after end time."
             )
 
     def check_start_registration_is_after_start_time(self):
         if self.start_date < self.start_registration_at:
             raise ValidationError(
-                _(
-                    "Event start_date time for registration cannot be after start_date time."
-                )
+                "Event start_date time for registration cannot be after start_date time."
             )
 
     def check_end_time_is_before_end_registration(self):
         if self.end_date < self.end_registration_at:
             raise ValidationError(
-                _("End time for registration cannot be after the event end_date.")
+                "End time for registration cannot be after the event end_date."
             )
 
     def check_start_date_is_before_deadline(self):
         if self.start_date < self.sign_off_deadline:
             raise ValidationError(
-                _("End time for sign_off cannot be after the event start_date.")
+                "End time for sign_off cannot be after the event start_date."
             )
 
     def check_start_registration_is_after_deadline(self):
         if self.start_registration_at > self.sign_off_deadline:
             raise ValidationError(
-                _(
-                    "End time for sign_off cannot be after the event start_registration_at."
-                )
+                "End time for sign_off cannot be after the event start_registration_at."
             )
 
     def check_start_time_is_after_end_time(self):
         if self.end_date < self.start_date:
             raise ValidationError(
-                _("End date for event cannot be before the event start_date.")
+                "End date for event cannot be before the event start_date."
             )
 
 

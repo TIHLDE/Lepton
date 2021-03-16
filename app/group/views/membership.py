@@ -1,4 +1,3 @@
-from django.utils.translation import gettext as _
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 
@@ -44,7 +43,7 @@ class MembershipViewSet(viewsets.ModelViewSet):
             return super().update(request, *args, **kwargs)
         except Membership.DoesNotExist:
             return Response(
-                {"detail": _("Medlemskapet eksisterer ikke")},
+                {"detail": "Medlemskapet eksisterer ikke"},
                 status=status.HTTP_404_NOT_FOUND,
             )
 
@@ -59,16 +58,14 @@ class MembershipViewSet(viewsets.ModelViewSet):
 
         except Membership.DoesNotExist:
             return Response(
-                {"detail": _("Medlemskapet eksisterer ikke")},
+                {"detail": "Medlemskapet eksisterer ikke"},
                 status=status.HTTP_404_NOT_FOUND,
             )
         except User.DoesNotExist:
             return Response(
-                {"detail": _("Bruker eksisterer ikke")},
-                status=status.HTTP_404_NOT_FOUND,
+                {"detail": "Bruker eksisterer ikke"}, status=status.HTTP_404_NOT_FOUND,
             )
         except Group.DoesNotExist:
             return Response(
-                {"detail": _("Gruppen eksisterer ikke")},
-                status=status.HTTP_404_NOT_FOUND,
+                {"detail": "Gruppen eksisterer ikke"}, status=status.HTTP_404_NOT_FOUND,
             )

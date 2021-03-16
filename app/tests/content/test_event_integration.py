@@ -7,6 +7,8 @@ import pytest
 
 from app.common.enums import AdminGroup
 from app.content.views import EventViewSet
+from app.forms.enums import EventFormType
+from app.forms.tests.form_factories import EventFormFactory
 
 
 def add_user_to_group_with_name(user, group_name):
@@ -182,3 +184,27 @@ def test_delete_as_group_members(
     response = get_response(request=request, user=user, event=event)
 
     assert response.status_code == expected_status_code
+
+
+@pytest.mark.django_db
+def test_retrieve_event_includes_form_evaluation(default_client, event):
+    """Should include the id of the related form evaluation in the response."""
+    evaluation = EventFormFactory(type=EventFormType.EVALUATION)
+    event.forms.add(evaluation)
+    event.save()
+
+    response = default_client.get(f"/api/v1/events/{event.pk}/")
+
+    assert response.json().get("evaluation") == str(evaluation.id)
+
+
+@pytest.mark.django_db
+def test_retrieve_event_includes_form_survey(default_client, event):
+    """Should include the id of the related form survey in the response."""
+    survey = EventFormFactory(type=EventFormType.SURVEY)
+    event.forms.add(survey)
+    event.save()
+
+    response = default_client.get(f"/api/v1/events/{event.pk}/")
+
+    assert response.json().get("survey") == str(survey.id)

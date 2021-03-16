@@ -18,6 +18,7 @@ travis = "*"
 sentry-sdk = "*"
 pyocclient = "*"
 celery = "~=4.4"
+azure-storage-blob = "*"
 # Django
 # ------------------------------------------------------------------------------
 django-enumchoicefield = "*"
@@ -28,6 +29,11 @@ django-heroku = "*"
 django-rest-framework = "*"
 django-cors-headers = "*"
 django-rest-auth = "*"
+
+# Django Polymorphic
+django-polymorphic = "~=3.0"
+django-rest-polymorphic = "*"
+
 django-mptt="*"
 # Documentation
 # ------------------------------------------------------------------------------
