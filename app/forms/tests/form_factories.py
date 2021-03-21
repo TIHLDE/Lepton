@@ -49,7 +49,7 @@ class SubmissionFactory(DjangoModelFactory):
     user = factory.SubFactory(UserFactory)
 
 
-class Answer(DjangoModelFactory):
+class AnswerFactory(DjangoModelFactory):
     class Meta:
         model = models.Answer
 

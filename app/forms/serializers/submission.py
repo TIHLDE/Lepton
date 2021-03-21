@@ -17,6 +17,12 @@ class AnswerSerializer(serializers.ModelSerializer):
         model = Answer
         fields = ["id", "field", "selected_options", "answer_text"]
 
+    def validate(self, data):
+        if data["selected_options"] and data["answer_text"]:
+            raise serializers.ValidationError("Du kan ikke svare med både alternativer og tekst på samme spørsmål.")
+
+        return data
+
 
 class SubmissionSerializer(serializers.ModelSerializer):
     form = FormInSubmissionSerializer(read_only=True)
