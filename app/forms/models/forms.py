@@ -58,7 +58,6 @@ class Field(models.Model):
         for option in options:
             Option.objects.create(field=self, **option)
 
-
 class Option(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
