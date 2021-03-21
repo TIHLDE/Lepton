@@ -32,10 +32,10 @@ class GroupSerializer(serializers.ModelSerializer):
         try:
             leader = obj.membership.get(group__slug=obj.slug, membership_type=MembershipType.LEADER)
             return {
-                "user_id": leader.user_id,
-                "first_name": leader.first_name,
-                "last_name": leader.last_name,
-                "image": leader.image,
+                "user_id": leader.user.user_id,
+                "first_name": leader.user.first_name,
+                "last_name": leader.user.last_name,
+                "image": leader.user.image,
             }
         except membership.Membership.DoesNotExist:
             return None
