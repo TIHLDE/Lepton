@@ -12,3 +12,4 @@ from app.content.models.page import Page
 from app.content.models.prioritiy import Priority
 from app.content.models.short_link import ShortLink
 from app.content.models.notification import Notification
+from app.content.models.strike import Strike
