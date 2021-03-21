@@ -1,7 +1,7 @@
-from app.common.enums import MembershipType
 from rest_framework import serializers
 
-from app.group.models import Group, group, membership
+from app.common.enums import MembershipType
+from app.group.models import Group, Membership
 
 
 class DefaultGroupSerializer(serializers.ModelSerializer):
@@ -14,7 +14,8 @@ class DefaultGroupSerializer(serializers.ModelSerializer):
 
 class GroupSerializer(serializers.ModelSerializer):
     """Serizlier for Groups with lookup by slug field"""
-    leader =  serializers.SerializerMethodField()
+
+    leader = serializers.SerializerMethodField()
 
     class Meta:
         model = Group
@@ -26,16 +27,19 @@ class GroupSerializer(serializers.ModelSerializer):
             "contact_email",
             "type",
             "permissions",
-            "leader"
+            "leader",
         )
+
     def get_leader(self, obj):
         try:
-            leader = obj.membership.get(group__slug=obj.slug, membership_type=MembershipType.LEADER)
+            leader = obj.membership.get(
+                group__slug=obj.slug, membership_type=MembershipType.LEADER
+            )
             return {
                 "user_id": leader.user.user_id,
                 "first_name": leader.user.first_name,
                 "last_name": leader.user.last_name,
                 "image": leader.user.image,
             }
-        except membership.Membership.DoesNotExist:
+        except Membership.DoesNotExist:
             return None
