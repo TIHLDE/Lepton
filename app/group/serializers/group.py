@@ -1,7 +1,8 @@
 from rest_framework import serializers
 
-from app.group.models import Group, Membership
+from app.common.enums import MembershipType
 from app.common.serializers import BaseModelSerializer
+from app.group.models import Group, Membership
 
 
 class DefaultGroupSerializer(serializers.ModelSerializer):
@@ -11,9 +12,9 @@ class DefaultGroupSerializer(serializers.ModelSerializer):
 
 
 class GroupSerializer(BaseModelSerializer):
-    
+
     leader = serializers.SerializerMethodField()
-    
+
     class Meta:
         model = Group
         lookup_field = "slug"

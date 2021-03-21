@@ -1,6 +1,6 @@
 from django.contrib.admin.models import ADDITION, LogEntry
 from django.contrib.contenttypes.models import ContentType
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from rest_framework import serializers
 
 
@@ -41,13 +41,13 @@ class LoggerSerializer(serializers.ModelSerializer):
 
 def _log_action(instance, user, action):
     message = (
-        f'{action} {force_text(instance._meta.verbose_name)}s "{force_text(instance)}s".',
+        f'{action} {force_str(instance._meta.verbose_name)}s "{force_str(instance)}s".',
     )
     LogEntry.objects.log_action(
         user_id=user.pk,
         content_type_id=ContentType.objects.get_for_model(instance).pk,
         object_id=instance.pk,
-        object_repr=force_text(instance),
+        object_repr=force_str(instance),
         action_flag=ADDITION,
         change_message=message,
     )

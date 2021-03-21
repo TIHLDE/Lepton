@@ -27,7 +27,9 @@ class ShortLinkViewSet(viewsets.ModelViewSet):
 
     def create(self, request):
         user = get_object_or_404(User, user_id=request.id)
-        serializer = ShortLinkSerializer(data=request.data)
+        serializer = ShortLinkSerializer(
+            data=request.data, context={"request": request}
+        )
         if serializer.is_valid():
             try:
                 serializer.save(user=user)

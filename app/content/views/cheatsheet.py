@@ -57,7 +57,9 @@ class CheatsheetViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         """Creates a new cheatsheet """
         if is_admin_user(request):
-            serializer = CheatsheetSerializer(data=self.request.data)
+            serializer = CheatsheetSerializer(
+                data=self.request.data, context={"request": request}
+            )
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -74,7 +76,9 @@ class CheatsheetViewSet(viewsets.ModelViewSet):
         try:
             cheatsheet = self.get_object()
             if is_admin_user(request):
-                serializer = CheatsheetSerializer(cheatsheet, data=request.data)
+                serializer = CheatsheetSerializer(
+                    cheatsheet, data=request.data, context={"request": request}
+                )
                 if serializer.is_valid():
                     serializer.save()
                     return Response(serializer.data, status=status.HTTP_200_OK)
