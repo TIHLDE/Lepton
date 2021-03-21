@@ -1,9 +1,8 @@
-from rest_framework import serializers
-
 from app.career.models import WeeklyBusiness
+from app.common.serializers import BaseModelSerializer
 
 
-class WeeklyBusinessSerializer(serializers.ModelSerializer):
+class WeeklyBusinessSerializer(BaseModelSerializer):
     class Meta:
         model = WeeklyBusiness
         fields = (

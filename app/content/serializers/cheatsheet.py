@@ -1,9 +1,9 @@
-from rest_framework import serializers
+from app.common.serializers import BaseModelSerializer
 
 from ..models import Cheatsheet
 
 
-class CheatsheetSerializer(serializers.ModelSerializer):
+class CheatsheetSerializer(BaseModelSerializer):
     class Meta:
         model = Cheatsheet
         fields = [
