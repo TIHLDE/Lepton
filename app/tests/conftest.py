@@ -18,7 +18,6 @@ from app.content.factories import (
 )
 from app.forms.tests.form_factories import FormFactory
 from app.group.factories import GroupFactory, MembershipFactory
-from app.group.models import Group, Membership
 from app.util.test_utils import add_user_to_group_with_name
 
 

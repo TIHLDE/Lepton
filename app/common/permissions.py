@@ -1,13 +1,11 @@
+from django.db import models
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import BasePermission
 
+from dry_rest_permissions.generics import DRYPermissions
+
 from app.common.enums import AdminGroup
 
-
-from django.db import models
-from rest_framework.authtoken.models import Token
-
-from dry_rest_permissions.generics import DRYPermissions
 
 class BasePermissionModel(models.Model):
     read_access = []
@@ -47,9 +45,6 @@ class BasicViewPermission(DRYPermissions):
     def has_object_permission(self, request, view, obj):
         set_user_id(request)
         return super().has_object_permission(request, view, obj)
-
-
-
 
 
 def check_has_access(access, request=None, user=None):
@@ -104,10 +99,9 @@ class IsLeader(BasePermission):
 
     def has_permission(self, request, view):
         # Check if session-token is provided
-        user_id = get_user_id(request)
         group_slug = view.kwargs["slug"]
         user = request.user
-        memberships =user.membership.all() if user else []
+        memberships = user.membership.all() if user else []
         for membership in memberships:
             if membership.group.slug == group_slug:
                 return membership.is_leader()
@@ -146,7 +140,7 @@ class IsHS(BasePermission):
     message = "You are not in HS"
 
     def has_permission(self, request, view):
-        return check_has_access([AdminGroup.HS, AdminGroup.INDEX],request)
+        return check_has_access([AdminGroup.HS, AdminGroup.INDEX], request)
 
 
 def is_admin_user(request):

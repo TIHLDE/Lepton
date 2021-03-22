@@ -1,4 +1,3 @@
-from django.contrib.auth.models import Group as Auth_group
 from django.db.models import signals
 from rest_framework.test import force_authenticate
 

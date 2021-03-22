@@ -1,8 +1,7 @@
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 
-from app.common.permissions import BasicViewPermission
-from app.common.permissions import IsLeader, is_admin_user
+from app.common.permissions import BasicViewPermission, IsLeader, is_admin_user
 from app.content.models import User
 from app.group.models import Group, Membership
 from app.group.serializers import MembershipSerializer

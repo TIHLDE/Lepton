@@ -1,4 +1,3 @@
-from app.group.models.group import Group
 from django.db import models
 from django.db.transaction import atomic
 
@@ -7,6 +6,7 @@ from enumchoicefield import EnumChoiceField
 from app.common.enums import AdminGroup, MembershipType
 from app.common.permissions import BasePermissionModel
 from app.content.models.user import User
+from app.group.models.group import Group
 from app.util.models import BaseModel
 from app.util.utils import today
 
@@ -63,7 +63,7 @@ class Membership(BaseModel, BasePermissionModel):
             ).is_leader() or super().has_write_permission(request)
         except (Membership.DoesNotExist, KeyError):
             return super().has_write_permission(request)
-        
+
     def has_object_write_permission(self, request):
         return Membership.has_write_permission(request)
 

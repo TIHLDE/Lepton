@@ -14,7 +14,6 @@ class UserBadgeViewSet(viewsets.ModelViewSet):
     permission_classes = [BasicViewPermission]
     queryset = UserBadge.objects.all()
 
-
     def create(self, request):
         try:
             user = User.objects.get(user_id=request.id)

@@ -12,7 +12,13 @@ from app.util.models import BaseModel
 
 class Registration(BaseModel):
     has_access = [AdminGroup.HS, AdminGroup.INDEX, AdminGroup.NOK, AdminGroup.SOSIALEN]
-    has_retrieve_access = [AdminGroup.HS, AdminGroup.INDEX, AdminGroup.NOK, AdminGroup.SOSIALEN, Groups.TIHLDE]
+    has_retrieve_access = [
+        AdminGroup.HS,
+        AdminGroup.INDEX,
+        AdminGroup.NOK,
+        AdminGroup.SOSIALEN,
+        Groups.TIHLDE,
+    ]
     """ Model for user registration for an event """
 
     registration_id = models.AutoField(primary_key=True)
@@ -34,45 +40,33 @@ class Registration(BaseModel):
         verbose_name_plural = "Registrations"
 
     @classmethod
-    def has_retrieve_permission(cls,request):
-        return check_has_access(cls.has_retrieve_access,request,)
+    def has_retrieve_permission(cls, request):
+        return check_has_access(cls.has_retrieve_access, request,)
 
     @classmethod
-    def has_list_permission(cls,request):
-        return check_has_access(
-            cls.has_access,
-            request,
-        )
-        
+    def has_list_permission(cls, request):
+        return check_has_access(cls.has_access, request,)
+
     @staticmethod
     def has_write_permission(request):
-       return bool(request.user)
-    
+        return bool(request.user)
+
     @staticmethod
     def has_create_permission(request):
         return get_user_id(request) is not None
 
     def has_object_update_permission(self, request):
-        return check_has_access(
-            self.has_access,
-            request,
-        )
+        return check_has_access(self.has_access, request,)
 
     def has_object_destroy_permission(self, request):
         if self.user.user_id == get_user_id(request):
             return True
-        return check_has_access(
-            self.has_access,
-            request,
-        )
+        return check_has_access(self.has_access, request,)
 
     def has_object_retrieve_permission(self, request):
         if self.user.user_id == get_user_id(request):
             return True
-        return check_has_access(
-            self.has_access,
-            request,
-        )
+        return check_has_access(self.has_access, request,)
 
     def __str__(self):
         return (

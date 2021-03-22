@@ -7,7 +7,6 @@ from dry_rest_permissions.generics import DRYPermissions
 
 from app.career.models import WeeklyBusiness
 from app.career.serializers import WeeklyBusinessSerializer
-from app.common.enums import AppModel
 from app.common.pagination import BasePagination
 from app.util import today, week_nr
 
