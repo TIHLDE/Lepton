@@ -1,9 +1,11 @@
 from rest_framework import serializers
 
+from app.common.serializers import BaseModelSerializer
+
 from ..models import Registration, User
 
 
-class RegistrationSerializer(serializers.ModelSerializer):
+class RegistrationSerializer(BaseModelSerializer):
     user_info = serializers.SerializerMethodField()
 
     class Meta:

@@ -27,7 +27,9 @@ class NotificationViewSet(viewsets.ModelViewSet):
     def update(self, request, pk):
         notification = get_object_or_404(Notification, id=pk)
         self.check_object_permissions(self.request, notification)
-        serializer = UpdateNotificationSerializer(notification, data=request.data)
+        serializer = UpdateNotificationSerializer(
+            notification, data=request.data, context={"request": request}
+        )
         if serializer.is_valid():
             notification = serializer.save()
             serializer = NotificationSerializer(notification)

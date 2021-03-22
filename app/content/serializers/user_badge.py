@@ -1,9 +1,10 @@
 from rest_framework import serializers
 
+from app.common.serializers import BaseModelSerializer
 from app.content.models import UserBadge
 
 
-class UserBadgeSerializer(serializers.ModelSerializer):
+class UserBadgeSerializer(BaseModelSerializer):
     user = serializers.SerializerMethodField()
     badge = serializers.SerializerMethodField()
 
