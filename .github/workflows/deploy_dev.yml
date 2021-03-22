@@ -43,10 +43,10 @@ jobs:
         cache-from: type=local,src=/tmp/.buildx-cache
         cache-to: type=local,dest=/tmp/.buildx-cache
 
-    # - name: Deploy to Azure Web App
-    #   uses: azure/webapps-deploy@v2
-    #   with:
-    #     app-name: 'lepton-test-api'
-    #     slot-name: 'production'
-    #     publish-profile: ${{ secrets.AzureAppService_PublishProfile_756bc456918e4835bc5da898d90e1ebd }}
-    #     images: 'leptondevregistry.azurecr.io/lepton:${{ github.sha }}'
+    - name: Deploy to Azure Web App
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: 'lepton-dev-api'
+        slot-name: 'production'
+        publish-profile: ${{ secrets.APP_SERVICE_PUBLISH_PROFILE_DEV }}
+        images: 'leptondevregistry.azurecr.io/lepton:${{ github.sha }}'
