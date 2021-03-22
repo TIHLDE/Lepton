@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from app.content.models import Strike, User, Event
+from app.content.models import Event, Strike, User
 
 
 class BaseStrikeSerializer(serializers.ModelSerializer):
@@ -13,12 +13,13 @@ class BaseStrikeSerializer(serializers.ModelSerializer):
             "expires_at",
         )
 
+
 class StrikeSerializer(BaseStrikeSerializer):
 
     user = serializers.SerializerMethodField()
     event = serializers.SerializerMethodField()
     creator = serializers.SerializerMethodField()
-    
+
     class Meta:
         model = Strike
         fields = BaseStrikeSerializer.Meta.fields + ("user", "event", "creator")
@@ -33,16 +34,16 @@ class StrikeSerializer(BaseStrikeSerializer):
         }
 
     def get_event(self, obj):
-        if not obj.event_id: 
+        if not obj.event_id:
             return
         event = Event.objects.get(id=obj.event_id)
         return {
             "id": event.user_id,
             "title": event.title,
         }
-        
+
     def get_creator(self, obj):
-        if not obj.creator_id: 
+        if not obj.creator_id:
             return
         user = User.objects.get(user_id=obj.creator_id)
         return {

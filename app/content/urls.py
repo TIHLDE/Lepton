@@ -12,10 +12,10 @@ from .views import (
     PageViewSet,
     RegistrationViewSet,
     ShortLinkViewSet,
+    StrikeViewSet,
     UserBadgeViewSet,
     UserViewSet,
     WarningViewSet,
-    StrikeViewSet,
     accept_form,
     upload,
 )

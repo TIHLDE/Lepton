@@ -1,14 +1,11 @@
-from django.core.exceptions import ValidationError
-from django.db import IntegrityError
-from django.shortcuts import get_object_or_404
+from datetime import timedelta
+
 from rest_framework import status, viewsets
 from rest_framework.response import Response
-from app.util.utils import today
-from datetime import datetime, timedelta
 
-from app.common.permissions import IsMember, get_user_id
-from app.content.models import Strike, User, Event
+from app.content.models import Event, Strike, User
 from app.content.serializers import StrikeSerializer
+from app.util.utils import today
 
 
 class StrikeViewSet(viewsets.ModelViewSet):
@@ -16,10 +13,13 @@ class StrikeViewSet(viewsets.ModelViewSet):
     queryset = Strike.objects.filter(expires_at__gte=today())
 
     def update(self, request, *args, **kwargs):
-        return Response({"detail": "Endepunktet ikke støttet"}, status=status.HTTP_501_NOT_IMPLEMENTED)
+        return Response(
+            {"detail": "Endepunktet ikke støttet"},
+            status=status.HTTP_501_NOT_IMPLEMENTED,
+        )
 
     def create(self, request):
-        request.data['expires_at'] = today() + timedelta(days=20)
+        request.data["expires_at"] = today() + timedelta(days=20)
         serializer = StrikeSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         try:
