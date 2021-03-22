@@ -1,6 +1,6 @@
 from rest_framework import viewsets
 
-from app.common.perm import BasicViewPermission
+from app.common.permissions import BasicViewPermission
 from app.content.models import Category
 from app.content.serializers import CategorySerializer
 

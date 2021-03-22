@@ -11,8 +11,7 @@ from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 
 from app.common.enums import AdminGroup
-from app.common.perm import check_permissions
-from app.group.models import group
+from app.common.permissions import check_has_access
 from app.util.models import BaseModel, OptionalImage
 from app.util.utils import disable_for_loaddata
 
@@ -41,6 +40,7 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
+    has_access = [AdminGroup.HS, AdminGroup.INDEX]
     user_id = models.CharField(max_length=15, primary_key=True)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
@@ -99,15 +99,13 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
 
     objects = UserManager()
 
-    @staticmethod
-    def has_retrieve_permission(request):
-        return request.id == request.parser_context["kwargs"][
-            "user_id"
-        ] or check_permissions([AdminGroup.HS, AdminGroup.INDEX,], request,)
+    @classmethod
+    def has_retrieve_permission(cls,request):
+        return request.id == request._user.user_id or check_has_access(cls.has_access, request,)
 
-    @staticmethod
-    def has_list_permission(request):
-        return check_permissions([AdminGroup.HS, AdminGroup.INDEX], request)
+    @classmethod
+    def has_list_permission(cls,request):
+        return check_has_access(cls.has_access, request)
 
     @staticmethod
     def has_read_permission(request):
@@ -115,20 +113,20 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
             request
         )
 
-    @staticmethod
-    def has_write_permission(request):
-        return check_permissions([AdminGroup.HS, AdminGroup.INDEX], request,)
+    @classmethod
+    def has_write_permission(cls, request):
+        return check_has_access(cls.has_access, request,)
 
     def has_object_write_permission(self, request):
         if request.methode == "DELETE":
-            return check_permissions([AdminGroup.HS, AdminGroup.INDEX], request,)
-        return self.user == request.user or check_permissions(
-            [AdminGroup.HS, AdminGroup.INDEX], request,
+            return check_has_access(self.has_access, request,)
+        return self.user == request.user or check_has_access(
+            self.has_access, request,
         )
 
     def has_object_retrieve_permission(self, request):
-        return self.user == request.user or check_permissions(
-            [AdminGroup.HS, AdminGroup.INDEX], request,
+        return self == request.user or check_has_access(
+            self.has_access, request,
         )
 
 

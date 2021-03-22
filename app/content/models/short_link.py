@@ -2,7 +2,7 @@ from django.db import models
 from django.utils.text import slugify
 
 from app.common.enums import Groups
-from app.common.perm import BasePermissionModel
+from app.common.permissions import BasePermissionModel
 from app.content.models import User
 from app.util.models import BaseModel
 

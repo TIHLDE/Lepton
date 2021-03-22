@@ -6,7 +6,7 @@ from sentry_sdk import capture_exception
 
 from app.common.enums import UserClass, UserStudy
 from app.common.pagination import BasePagination
-from app.common.perm import BasicViewPermission
+from app.common.permissions import BasicViewPermission
 from app.common.permissions import is_admin_user
 from app.content.filters import CheatsheetFilter
 from app.content.models import Cheatsheet
@@ -57,7 +57,6 @@ class CheatsheetViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         """Creates a new cheatsheet """
-        upload_and_replace_url_with_cloud_link(request, AppModel.EVENT)
         serializer = CheatsheetSerializer(data=self.request.data)
         if serializer.is_valid():
             serializer.save()

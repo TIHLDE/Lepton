@@ -1,7 +1,7 @@
 from django.db import models
 
 from app.common.enums import AdminGroup, Groups
-from app.common.perm import BasePermissionModel
+from app.common.permissions import BasePermissionModel
 from app.content.models import Badge, User
 from app.util.models import BaseModel
 

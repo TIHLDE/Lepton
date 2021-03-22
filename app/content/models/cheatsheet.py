@@ -11,7 +11,7 @@ from app.common.enums import (
     UserClass,
     UserStudy,
 )
-from app.common.perm import BasePermissionModel
+from app.common.permissions import BasePermissionModel
 from app.util.models import BaseModel
 
 

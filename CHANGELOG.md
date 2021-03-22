@@ -13,7 +13,7 @@
 ---
 
 ## Neste versjon
-
+-✨ **Endring i permissions**. Endret hvordan vi håndterer tillatelser på nettsiden til å bruke våre nye grupper.
 
 ## Versjon 1.0.4 (15.03.2021)
 - ✨ **Filopplastning**. Lagt til støtte for filopplastning til Azure gjennom eget endepunkt. Kun for medlemmer.

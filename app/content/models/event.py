@@ -4,7 +4,7 @@ from django.db.models import signals
 
 from app.forms.enums import EventFormType
 from app.common.enums import AdminGroup
-from app.common.perm import BasePermissionModel
+from app.common.permissions import BasePermissionModel
 from app.util.models import BaseModel, OptionalImage
 from app.util.utils import today, yesterday
 

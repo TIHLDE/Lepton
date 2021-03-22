@@ -2,7 +2,7 @@ from rest_framework import status, viewsets
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 
-from app.common.perm import BasicViewPermission
+from app.common.permissions import BasicViewPermission
 from app.common.permissions import get_user_id, is_admin_user
 from app.content.exceptions import APIUserAlreadyAttendedEvent
 from app.content.mixins import APIRegistrationErrorsMixin

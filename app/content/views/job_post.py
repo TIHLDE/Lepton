@@ -3,7 +3,7 @@ from rest_framework import filters, status, viewsets
 from rest_framework.response import Response
 
 from app.common.pagination import BasePagination
-from app.common.perm import BasicViewPermission
+from app.common.permissions import BasicViewPermission
 from app.content.filters import JobPostFilter
 from app.content.models import JobPost
 from app.content.serializers import JobPostSerializer

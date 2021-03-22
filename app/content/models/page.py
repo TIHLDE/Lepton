@@ -6,7 +6,7 @@ from django.utils.text import slugify
 from mptt.models import MPTTModel, TreeForeignKey
 
 from app.common.enums import AdminGroup
-from app.common.perm import BasePermissionModel
+from app.common.permissions import BasePermissionModel
 from app.util.models import BaseModel, OptionalImage
 
 

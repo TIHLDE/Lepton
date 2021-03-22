@@ -31,7 +31,7 @@ class UserSerializer(serializers.ModelSerializer):
     groups = serializers.SerializerMethodField()
     badges = serializers.SerializerMethodField()
     unread_notifications = serializers.SerializerMethodField()
-    permissions = DRYGlobalPermissionsField(actions=["write", "read"])
+    permissions = DRYGlobalPermissionsField()#actions=["write", "read"] is we only want spesific permissions shown
 
     class Meta:
         model = User
@@ -54,7 +54,7 @@ class UserSerializer(serializers.ModelSerializer):
             "groups",
             "badges",
             "unread_notifications",
-            "notifications",
+            "permissions",
         )
         read_only_fields = ("user_id",)
         write_only_fields = ("app_token",)

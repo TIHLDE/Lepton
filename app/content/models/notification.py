@@ -1,6 +1,5 @@
 from django.db import models
 
-from app.common.perm import BasePermissionModel
 from app.content.models.user import User
 from app.util.models import BaseModel
 

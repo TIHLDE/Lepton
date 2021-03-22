@@ -3,7 +3,7 @@ import uuid
 from django.db import models
 
 from app.common.enums import AdminGroup
-from app.common.perm import BasePermissionModel
+from app.common.permissions import BasePermissionModel
 from app.util import today
 from app.util.models import BaseModel, OptionalImage
 

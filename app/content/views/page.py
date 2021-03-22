@@ -5,7 +5,7 @@ from rest_framework.response import Response
 
 from sentry_sdk import capture_exception
 
-from app.common.perm import BasicViewPermission
+from app.common.permissions import BasicViewPermission
 from app.content.models import Page
 from app.content.serializers import PageSerializer, PageTreeSerializer
 

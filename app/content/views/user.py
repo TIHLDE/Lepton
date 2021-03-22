@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from sentry_sdk import capture_exception
 
 from app.common.pagination import BasePagination
-from app.common.permissions import UserPermission, is_admin_user
+from app.common.permissions import BasicViewPermission, is_admin_user
 from app.content.models import User
 from app.content.serializers import (
     UserAdminSerializer,
@@ -20,7 +20,7 @@ class UserViewSet(viewsets.ModelViewSet):
     """ API endpoint to display one user """
 
     serializer_class = UserSerializer
-    permission_classes = [UserPermission]
+    permission_classes = [BasicViewPermission]
     queryset = User.objects.all()
     pagination_class = BasePagination
 

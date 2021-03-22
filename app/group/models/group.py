@@ -5,7 +5,7 @@ from django.utils.text import slugify
 from enumchoicefield import EnumChoiceField
 
 from app.common.enums import AdminGroup, GroupType
-from app.common.perm import BasePermissionModel
+from app.common.permissions import BasePermissionModel
 from app.util.models import BaseModel, OptionalImage
 
 

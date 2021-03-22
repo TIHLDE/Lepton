@@ -1,12 +1,12 @@
+from app.group.models.group import Group
 from django.db import models
 from django.db.transaction import atomic
 
 from enumchoicefield import EnumChoiceField
 
 from app.common.enums import AdminGroup, MembershipType
-from app.common.perm import BasePermissionModel, get_user_id
-from app.content.models import User
-from app.group.models import Group
+from app.common.permissions import BasePermissionModel
+from app.content.models.user import User
 from app.util.models import BaseModel
 from app.util.utils import today
 
@@ -61,11 +61,9 @@ class Membership(BaseModel, BasePermissionModel):
             return Membership.objects.get(
                 user__user_id=request.id, group__slug=group_slug
             ).is_leader() or super().has_write_permission(request)
-        except Membership.DoesNotExist:
+        except (Membership.DoesNotExist, KeyError):
             return super().has_write_permission(request)
-        except KeyError:
-            return super().has_write_permission(request)
-
+        
     def has_object_write_permission(self, request):
         return Membership.has_write_permission(request)
 
