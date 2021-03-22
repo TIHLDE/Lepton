@@ -11,13 +11,6 @@ class LoggerSerializer(serializers.ModelSerializer):
     """
 
     def create(self, validated_data):
-        """
-        The create function of the ModelSerializer class in Django-REST
-        Framework is being overridden here in order to get access to the
-        object being created.
-        The object instance which is being created is necessary in order
-        to log the action being performed.
-        """
         user = self._get_user()
         instance = super().create(validated_data)
 
