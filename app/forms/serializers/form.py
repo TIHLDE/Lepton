@@ -118,13 +118,13 @@ class EventFormSerializer(FormSerializer):
 class FormInSubmissionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Form
-        fields = ("id", "type")
+        fields = ("id",)
 
 
 class FieldInAnswerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Field
-        fields = ("id", "type")
+        fields = ("id",)
 
 
 class FormPolymorphicSerializer(PolymorphicSerializer, serializers.ModelSerializer):
@@ -138,4 +138,4 @@ class FormPolymorphicSerializer(PolymorphicSerializer, serializers.ModelSerializ
 
     class Meta:
         model = Form
-        fields = ("resource_type", ) + FormSerializer.Meta.fields
+        fields = ("resource_type",) + FormSerializer.Meta.fields

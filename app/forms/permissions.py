@@ -24,7 +24,6 @@ class FormPermissions(BasePermission):
         return check_strict_group_permission(request, self.groups)
 
     def has_object_permission(self, request, view, obj):
-
         if isinstance(obj, EventForm) and obj.type == EventFormType.EVALUATION:
             return (
                 obj.event.get_queue()
@@ -33,3 +32,22 @@ class FormPermissions(BasePermission):
             )
 
         return True
+
+
+class SubmissionPermissions(BasePermission):
+    def __init__(self, groups):
+        self.groups = groups
+
+    def __call__(self, *args, **kwargs):
+        return self
+
+    def has_permission(self, request, view):
+        get_user_id(request)
+
+        if not request.user.is_authenticated:
+            return False
+
+        if view.action in ["create"]:
+            return True
+
+        return check_strict_group_permission(request, self.groups)
