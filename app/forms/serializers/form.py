@@ -115,12 +115,6 @@ class EventFormSerializer(FormSerializer):
         )
 
 
-class FormInSubmissionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Form
-        fields = ("id",)
-
-
 class FieldInAnswerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Field

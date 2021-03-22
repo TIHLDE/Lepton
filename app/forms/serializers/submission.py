@@ -27,10 +27,13 @@ class AnswerSerializer(serializers.ModelSerializer):
 
 
 class SubmissionSerializer(serializers.ModelSerializer):
-    form = FormInSubmissionSerializer(read_only=True)
     user = UserInAnswerSerializer(read_only=True)
     answers = AnswerSerializer(read_only=True)
 
     class Meta:
         model = Submission
-        fields = ["form", "user", "answers"]
+        fields = ["user", "answers"]
+
+    def create(self, validated_data):
+        print(validated_data)
+        raise NotImplementedError()

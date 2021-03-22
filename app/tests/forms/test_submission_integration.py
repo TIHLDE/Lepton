@@ -46,9 +46,11 @@ def test_sending_both_selected_options_and_text_is_not_permitted(member):
     )
     response = client.post(url, submission_data)
 
+    print(form.id)
     print(response.json())
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert False
 
 
 def test_sending_selected_options_is_permitted():
