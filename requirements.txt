@@ -1,0 +1,53 @@
+psycopg2
+gunicorn
+requests
+logzero
+aiohttp-cors
+wheel
+mysqlclient ==1.4.4
+travis
+sentry-sdk
+pyocclient
+celery ~=4.4
+azure-storage-blob
+
+# Django
+# ------------------------------------------------------------------------------
+django-enumchoicefield
+django-dotenv
+django-filter
+django-heroku
+# Django REST Framework
+django-rest-framework
+django-cors-headers
+django-rest-auth
+
+# Django Polymorphic
+django-polymorphic ~= 3.0
+django-rest-polymorphic
+
+django-mptt
+
+# Documentation
+# ------------------------------------------------------------------------------
+drf-yasg
+
+# Code quality
+# ------------------------------------------------------------------------------
+pylint
+black == 19.10b0
+isort
+flake8
+flake8-django
+flake8-black
+pre-commit == 2.7.1
+
+# Testing
+# ------------------------------------------------------------------------------
+coverage
+pdbpp == 0.10.2
+pytest == 6.0.0
+pytest-cov == 2.10.0
+pytest-django == 3.8.0
+factory-boy == 3.0.0
+pytest-factoryboy == 2.0.3
