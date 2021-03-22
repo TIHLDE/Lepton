@@ -15,6 +15,9 @@ class StrikeViewSet(viewsets.ModelViewSet):
     serializer_class = StrikeSerializer
     queryset = Strike.objects.filter(expires_at__gte=today())
 
+    def update(self, request, *args, **kwargs):
+        return Response({"detail": "Endepunktet ikke støttet"}, status=status.HTTP_501_NOT_IMPLEMENTED)
+
     def create(self, request):
         request.data['expires_at'] = today() + timedelta(days=20)
         serializer = StrikeSerializer(data=request.data)
