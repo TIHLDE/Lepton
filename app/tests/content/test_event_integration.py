@@ -7,12 +7,9 @@ import pytest
 
 from app.common.enums import AdminGroup
 from app.content.views import EventViewSet
-<<<<<<< HEAD:app/tests/content/test_event_integration.py
 from app.forms.enums import EventFormType
 from app.forms.tests.form_factories import EventFormFactory
-=======
 from app.group.models import Group, Membership
->>>>>>> 21a0ccd... all tests now pass:app/tests/test_event_integration.py
 
 
 def add_user_to_group_with_name(user, group_name):
