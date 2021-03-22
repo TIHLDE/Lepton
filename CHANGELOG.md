@@ -13,7 +13,7 @@
 ---
 
 ## Neste versjon
-
+- ✨ **Azure**. Satt opp dev-miljø i Azure for å migrere vekk fra Drift og til skyen.
 
 ## Versjon 1.0.4 (15.03.2021)
 - ✨ **Filopplastning**. Lagt til støtte for filopplastning til Azure gjennom eget endepunkt. Kun for medlemmer.
