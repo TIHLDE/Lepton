@@ -3,7 +3,7 @@ name: Build and deploy to Azure dev server
 on:
   push:
     branches:
-      - azure
+      - dev
   workflow_dispatch:
 
 jobs:
