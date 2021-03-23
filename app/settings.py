@@ -1,7 +1,4 @@
 """
-Django settings for app project on Heroku. For more info, see:
-https://github.com/heroku/heroku-django-template
-
 For more information on this file, see
 https://docs.djangoproject.com/en/2.0/topics/settings/
 
@@ -12,8 +9,6 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 import logging
 import os
 
-import dj_database_url
-import django_heroku
 import sentry_sdk
 from corsheaders.defaults import default_headers
 from sentry_sdk.integrations.django import DjangoIntegration
@@ -185,9 +180,6 @@ TIME_ZONE = "Europe/Oslo"
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
-
-# Change 'default' database configuration with $DATABASE_URL.
-DATABASES["default"].update(dj_database_url.config(conn_max_age=500, ssl_require=True))
 
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
