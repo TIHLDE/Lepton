@@ -4,8 +4,7 @@ ENV PYTHONUNBUFFERED 1
 WORKDIR /usr/src
 
 RUN pip install --no-cache-dir --upgrade pip && \
-    # Install required linux packages (remove postgresql-dev when Heroku isn't needed)
-    apk add --no-cache mariadb-dev postgresql-dev
+    apk add --no-cache mariadb-dev
 
 COPY requirements.txt ./
 
