@@ -8,9 +8,6 @@ services:
     container_name: web
     ports:
       - 8000:8000
-    command: python manage.py collectstatic --noinput && \
-            python manage.py migrate && \
-            python manage.py runserver 0.0.0.0:8000
   celery:
     image: leptondevregistry.azurecr.io/lepton:latest
     container_name: celery
