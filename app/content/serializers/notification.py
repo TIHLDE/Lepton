@@ -1,24 +1,19 @@
-from rest_framework import serializers
-
+from app.common.serializers import BaseModelSerializer
 from app.content.models import Notification
 
 
-class NotificationSerializer(serializers.ModelSerializer):
-    """ Serilaize all the notifcations """
-
+class NotificationSerializer(BaseModelSerializer):
     class Meta:
         model = Notification
         fields = ["id", "message", "read", "created_at"]
 
 
-class UpdateNotificationSerializer(serializers.ModelSerializer):
-    """ Serialize notifications for update """
-
+class UpdateNotificationSerializer(BaseModelSerializer):
     class Meta:
         model = Notification
         fields = ["read"]
 
     def update(self, instance, validated_data):
-        instance.read = validated_data.get("read", instance.read)
-        instance.save()
-        return instance
+        is_read = validated_data.get("read", instance.read)
+
+        return super().update(instance, dict(read=is_read))

@@ -65,7 +65,9 @@ class PageViewSet(viewsets.ModelViewSet):
         try:
             parent = Page.get_by_path(request.data["path"])
             page = Page(parent=parent)
-            serializer = PageSerializer(page, data=request.data)
+            serializer = PageSerializer(
+                page, data=request.data, context={"request": request}
+            )
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)
@@ -94,7 +96,9 @@ class PageViewSet(viewsets.ModelViewSet):
         try:
             page = self.get_page_from_tree()
             page.parent = Page.get_by_path(request.data["path"])
-            serializer = PageSerializer(page, data=request.data)
+            serializer = PageSerializer(
+                page, data=request.data, context={"request": request}
+            )
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)

@@ -39,7 +39,9 @@ class GroupViewSet(viewsets.ModelViewSet):
         """Updates a spesific group by slug"""
         try:
             group = self.get_object()
-            serializer = GroupSerializer(group, data=request.data, partial=True)
+            serializer = GroupSerializer(
+                group, data=request.data, partial=True, context={"request": request}
+            )
             if serializer.is_valid():
                 serializer.save()
                 return Response(data=serializer.data, status=status.HTTP_200_OK)
@@ -54,7 +56,9 @@ class GroupViewSet(viewsets.ModelViewSet):
         try:
             slug = request.data["slug"]
             group = Group.objects.get_or_create(slug=slug)
-            serializer = GroupSerializer(group[0], data=request.data)
+            serializer = GroupSerializer(
+                group[0], data=request.data, context={"request": request}
+            )
             if serializer.is_valid():
                 serializer.save()
                 return Response(data=serializer.data, status=status.HTTP_200_OK)
