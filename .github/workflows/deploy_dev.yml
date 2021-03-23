@@ -3,7 +3,7 @@ name: Build and deploy to Azure dev server
 on:
   push:
     branches:
-      - dev
+      - azure
   workflow_dispatch:
 
 jobs:
@@ -39,7 +39,7 @@ jobs:
         file: ./Dockerfile
         builder: ${{ steps.buildx.outputs.name }}
         push: true
-        tags: leptondevregistry.azurecr.io/lepton:${{ github.sha }}
+        tags: leptondevregistry.azurecr.io/lepton:latest
         cache-from: type=local,src=/tmp/.buildx-cache
         cache-to: type=local,dest=/tmp/.buildx-cache
 
@@ -49,4 +49,4 @@ jobs:
         app-name: 'lepton-dev-api'
         slot-name: 'production'
         publish-profile: ${{ secrets.APP_SERVICE_PUBLISH_PROFILE_DEV }}
-        images: 'leptondevregistry.azurecr.io/lepton:${{ github.sha }}'
+        images: 'leptondevregistry.azurecr.io/lepton:latest'

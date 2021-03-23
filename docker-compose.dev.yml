@@ -1,0 +1,17 @@
+version: '3'
+
+# Config file for registry settings in Azure App Service dev
+
+services:
+  web:
+    image: leptondevregistry.azurecr.io/lepton:latest
+    container_name: web
+    ports:
+      - 8000:8000
+    command: python manage.py collectstatic --noinput && \
+            python manage.py migrate && \
+            python manage.py runserver 0.0.0.0:8000
+  celery:
+    image: leptondevregistry.azurecr.io/lepton:latest
+    container_name: celery
+    command: celery -A app worker -l info
