@@ -58,10 +58,6 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
-    # Disable Django's own staticfiles handling in favour of WhiteNoise, for
-    # greater consistency between gunicorn and `./manage.py runserver`. See:
-    # http://whitenoise.evans.io/en/stable/django.html#using-whitenoise-in-development
-    "whitenoise.runserver_nostatic",
     "django.contrib.staticfiles",
     # Third party
     "rest_framework",
@@ -111,7 +107,6 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     # Base Middleware
     "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -202,13 +197,6 @@ STATIC_URL = "/api/static/"
 CORS_ORIGIN_ALLOW_ALL = True
 
 CORS_ALLOW_HEADERS = default_headers + ("X-CSRF-Token",)
-
-# Simplified static file serving.
-# https://warehouse.python.org/project/whitenoise/
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
-
-# Activate Django-Heroku.
-# django_heroku.settings(locals())
 
 # EMAIL SMTP Server setup
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
