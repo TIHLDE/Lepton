@@ -4,8 +4,9 @@ aiohttp-cors
 wheel
 mysqlclient ==1.4.4
 sentry-sdk
-celery ~=4.4
+celery
 azure-storage-blob
+azure-servicebus == 0.50.3
 
 # Django
 # ------------------------------------------------------------------------------
@@ -41,7 +42,7 @@ pre-commit == 2.7.1
 # Testing
 # ------------------------------------------------------------------------------
 coverage
-pdbpp == 0.10.2
+pdbpp
 pytest == 6.0.0
 pytest-cov == 2.10.0
 pytest-django == 3.8.0

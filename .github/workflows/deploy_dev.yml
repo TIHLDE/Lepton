@@ -1,4 +1,4 @@
-name: Build and deploy to Azure dev server
+name: Deploy to Azure development
 
 on:
   push:

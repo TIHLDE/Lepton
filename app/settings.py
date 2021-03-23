@@ -252,4 +252,4 @@ LOGGING = {
     },
 }
 
-CELERY_BROKER_URL = os.environ.get("CELERY_URL")
+# CELERY_BROKER_URL = os.environ.get("CELERY_URL")
