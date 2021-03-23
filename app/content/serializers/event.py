@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from sentry_sdk import capture_exception
 
+from app.common.serializers import BaseModelSerializer
 from app.content.models import Event, Priority
 from app.content.serializers.priority import PrioritySerializer
 from app.util import EnumUtils
@@ -101,7 +102,7 @@ class EventListSerializer(serializers.ModelSerializer):
         ]
 
 
-class EventCreateAndUpdateSerializer(serializers.ModelSerializer):
+class EventCreateAndUpdateSerializer(BaseModelSerializer):
     registration_priorities = PrioritySerializer(many=True, required=False)
 
     class Meta:

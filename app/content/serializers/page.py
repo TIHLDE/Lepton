@@ -1,10 +1,11 @@
 from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
 
+from app.common.serializers import BaseModelSerializer
 from app.content.models import Page
 
 
-class PageSerializer(serializers.ModelSerializer):
+class PageSerializer(BaseModelSerializer):
     children = SerializerMethodField()
     path = SerializerMethodField()
 
