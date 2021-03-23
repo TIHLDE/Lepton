@@ -4,7 +4,6 @@ from datetime import timedelta
 from django.conf import settings
 
 from app.celery import app
-
 from app.common.enums import EnvironmentOptions
 from app.content.tasks.event import (
     event_end_schedular,

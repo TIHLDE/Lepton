@@ -4,16 +4,14 @@ aiohttp-cors
 wheel
 mysqlclient ==1.4.4
 sentry-sdk
-celery
-azure-storage-blob
-azure-servicebus == 0.50.3
+celery == 5.0.5
+azure-storage-blob == 12.8.0
 
 # Django
 # ------------------------------------------------------------------------------
 django-enumchoicefield
 django-dotenv
 django-filter
-django-heroku
 # Django REST Framework
 django-rest-framework
 django-cors-headers

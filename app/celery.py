@@ -3,17 +3,11 @@ from __future__ import absolute_import, unicode_literals
 import os
 
 from celery import Celery
-from kombu.utils.url import safequote
 
 # set the default Django settings module for the 'celery' program.
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "app.settings")
 
-SAS_policy = "RootManageSharedAccessKey"  # SAS Policy
-# Primary key from the previous SS
-SAS_key = safequote("KbKoXjzKmX7hQ4UhVU5BNxe3+Z5xxpQnMqdhIgwNsQE=")
-namespace = "dev-celery"
-
-app = Celery("app", broker=f'azureservicebus://{SAS_policy}:{SAS_key}@{namespace}')
+app = Celery("app")
 
 # Using a string here means the worker doesn't have to serialize
 # the configuration object to child processes.

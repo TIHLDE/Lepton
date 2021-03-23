@@ -9,7 +9,7 @@ RUN pip install --no-cache-dir --upgrade pip && \
 COPY requirements.txt ./
 
 # Install required python packages
-RUN apk --update add --no-cache --virtual .build-deps python3 cmake g++ gcc musl-dev python3-dev libffi-dev openssl-dev cargo py-pip linux-headers libc-dev build-base && \
+RUN apk --update add --no-cache --virtual .build-deps gcc musl-dev python3-dev libffi-dev openssl-dev cargo py-pip linux-headers libc-dev build-base && \
       pip install --upgrade pip && \
       pip install -r requirements.txt && \
       rm -rf ~/.cache/pip && \
