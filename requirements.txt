@@ -12,6 +12,7 @@ azure-storage-blob == 12.8.0
 django-enumchoicefield
 django-dotenv
 django-filter
+django-heroku
 # Django REST Framework
 django-rest-framework
 django-cors-headers

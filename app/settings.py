@@ -1,4 +1,7 @@
 """
+Django settings for app project on Heroku. For more info, see:
+https://github.com/heroku/heroku-django-template
+
 For more information on this file, see
 https://docs.djangoproject.com/en/2.0/topics/settings/
 
@@ -9,6 +12,8 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 import logging
 import os
 
+import dj_database_url
+import django_heroku
 import sentry_sdk
 from corsheaders.defaults import default_headers
 from sentry_sdk.integrations.django import DjangoIntegration
@@ -58,6 +63,10 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
+    # Disable Django's own staticfiles handling in favour of WhiteNoise, for
+    # greater consistency between gunicorn and `./manage.py runserver`. See:
+    # http://whitenoise.evans.io/en/stable/django.html#using-whitenoise-in-development
+    "whitenoise.runserver_nostatic",
     "django.contrib.staticfiles",
     # Third party
     "rest_framework",
@@ -107,6 +116,7 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     # Base Middleware
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -176,6 +186,9 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
+# Change 'default' database configuration with $DATABASE_URL.
+DATABASES["default"].update(dj_database_url.config(conn_max_age=500, ssl_require=True))
+
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
@@ -197,6 +210,13 @@ STATIC_URL = "/api/static/"
 CORS_ORIGIN_ALLOW_ALL = True
 
 CORS_ALLOW_HEADERS = default_headers + ("X-CSRF-Token",)
+
+# Simplified static file serving.
+# https://warehouse.python.org/project/whitenoise/
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+# Activate Django-Heroku.
+# django_heroku.settings(locals())
 
 # EMAIL SMTP Server setup
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
