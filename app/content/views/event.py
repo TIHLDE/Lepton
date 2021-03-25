@@ -70,7 +70,7 @@ class EventViewSet(viewsets.ModelViewSet):
             event = Event.objects.get(pk=pk)
             self.check_object_permissions(self.request, event)
             serializer = EventCreateAndUpdateSerializer(
-                event, data=request.data, partial=True
+                event, data=request.data, partial=True, context={"request": request}
             )
 
             if serializer.is_valid():
@@ -90,8 +90,9 @@ class EventViewSet(viewsets.ModelViewSet):
             )
 
     def create(self, request, *args, **kwargs):
-        """Create an event."""
-        serializer = EventCreateAndUpdateSerializer(data=request.data)
+        serializer = EventCreateAndUpdateSerializer(
+            data=request.data, context={"request": request}
+        )
 
         if serializer.is_valid():
             event = serializer.save()

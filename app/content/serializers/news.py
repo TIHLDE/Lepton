@@ -1,9 +1,9 @@
-from rest_framework import serializers
+from app.common.serializers import BaseModelSerializer
 
 from ..models import News
 
 
-class NewsSerializer(serializers.ModelSerializer):
+class NewsSerializer(BaseModelSerializer):
     class Meta:
         model = News
         fields = (
