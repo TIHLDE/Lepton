@@ -43,7 +43,6 @@ class BasicViewPermission(DRYPermissions):
         return super().has_permission(request, view)
 
     def has_object_permission(self, request, view, obj):
-        set_user_id(request)
         return super().has_object_permission(request, view, obj)
 
 
@@ -61,20 +60,6 @@ def check_has_access(access, request=None, user=None):
         return False
 
 
-def get_user_id(request):
-    token = request.META.get("HTTP_X_CSRF_TOKEN")
-
-    if token is None:
-        return None
-
-    try:
-        userToken = Token.objects.get(key=token)
-    except Token.DoesNotExist:
-        return None
-
-    return userToken.user_id
-
-
 def set_user_id(request):
     token = request.META.get("HTTP_X_CSRF_TOKEN")
     request.id = None
@@ -84,22 +69,23 @@ def set_user_id(request):
         return None
 
     try:
-        userToken = Token.objects.get(key=token)
+        user_token = Token.objects.get(key=token)
     except Token.DoesNotExist:
         return None
 
-    request.id = userToken.user_id
-    request.user = userToken.user
+    request.id = user_token.user_id
+    request.user = user_token.user
 
 
 class IsLeader(BasePermission):
     """ Checks if the user is a leader on a group """
 
-    message = "You are not a leader of this group"
+    message = "You are not the leader of this group"
 
-    def has_permission(self, request, view):
+    def has_permission(self, request, view, group_slug = None):
+        set_user_id(request)
         # Check if session-token is provided
-        group_slug = view.kwargs["slug"]
+        group_slug = group_slug if group_slug else view.kwargs["slug"]
         user = request.user
         memberships = user.membership.all() if user else []
         for membership in memberships:
@@ -113,8 +99,9 @@ class IsMember(BasePermission):
     message = "You are not a member"
 
     def has_permission(self, request, view):
+        set_user_id(request)
         # Check if session-token is provided
-        user_id = get_user_id(request)
+        user_id = request.id
 
         if user_id is None:
             return False
@@ -125,17 +112,18 @@ class IsMember(BasePermission):
 class IsDev(BasePermission):
     """ Checks if the user is in HS or Drift """
 
-    message = "You are not in DevKom"
+    message = "You are not in Index"
 
     def has_permission(self, request, view):
-        user_id = get_user_id(request)
+        set_user_id(request)
+        user_id = request.user
         if user_id is None:
             return False
         return check_has_access([AdminGroup.INDEX], request)
 
 
 class IsHS(BasePermission):
-    """ Checks if the user is in HS or Drift """
+    """ Checks if the user is in HS or Index """
 
     message = "You are not in HS"
 
@@ -144,8 +132,9 @@ class IsHS(BasePermission):
 
 
 def is_admin_user(request):
+    set_user_id(request)
     """ Checks if user is in dev or HS """
-    user_id = get_user_id(request)
+    user_id = request.user
 
     if user_id is None:
         return False

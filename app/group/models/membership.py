@@ -55,12 +55,19 @@ class Membership(BaseModel, BasePermissionModel):
         unique_together = ("user", "group")
 
     @classmethod
+    def _check_request_user_is_leader(request):
+        assert(request.id)
+        assert(request.parser_context["kwargs"]["slug"])
+        
+        group_slug = request.parser_context["kwargs"]["slug"]
+        return Membership.objects.get(
+                user__user_id=request.id, group__slug=group_slug
+            ).is_leader()
+
+    @classmethod
     def has_write_permission(cls, request):
         try:
-            group_slug = request.parser_context["kwargs"]["slug"]
-            return Membership.objects.get(
-                user__user_id=request.id, group__slug=group_slug
-            ).is_leader() or super().has_write_permission(request)
+            return cls._check_request_user_is_leader(request) or super().has_write_permission(request)
         except (Membership.DoesNotExist, KeyError):
             return super().has_write_permission(request)
 

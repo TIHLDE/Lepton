@@ -53,18 +53,18 @@ class Registration(BaseModel):
 
     @staticmethod
     def has_create_permission(request):
-        return get_user_id(request) is not None
+        return request.id is not None
 
     def has_object_update_permission(self, request):
         return check_has_access(self.has_access, request,)
 
     def has_object_destroy_permission(self, request):
-        if self.user.user_id == get_user_id(request):
+        if self.user.user_id ==request.id:
             return True
         return check_has_access(self.has_access, request,)
 
     def has_object_retrieve_permission(self, request):
-        if self.user.user_id == get_user_id(request):
+        if self.user.user_id == request.id:
             return True
         return check_has_access(self.has_access, request,)
 

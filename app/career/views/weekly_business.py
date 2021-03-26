@@ -1,9 +1,9 @@
+from app.common.permissions import BasicViewPermission
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 
-from dry_rest_permissions.generics import DRYPermissions
 
 from app.career.models import WeeklyBusiness
 from app.career.serializers import WeeklyBusinessSerializer
@@ -15,7 +15,7 @@ class WeeklyBusinessViewSet(viewsets.ModelViewSet):
 
     queryset = WeeklyBusiness.objects.none()
     serializer_class = WeeklyBusinessSerializer
-    permission_classes = [DRYPermissions]
+    permission_classes = [BasicViewPermission]
     pagination_class = BasePagination
 
     def get_queryset(self):
