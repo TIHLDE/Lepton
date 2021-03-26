@@ -2,7 +2,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 
 from app.common.enums import AdminGroup, Groups
-from app.common.permissions import check_has_access, get_user_id
+from app.common.permissions import check_has_access
 from app.content.exceptions import EventSignOffDeadlineHasPassed
 from app.content.models.user import User
 from app.util import EnumUtils, today
@@ -59,7 +59,7 @@ class Registration(BaseModel):
         return check_has_access(self.has_access, request,)
 
     def has_object_destroy_permission(self, request):
-        if self.user.user_id ==request.id:
+        if self.user.user_id == request.id:
             return True
         return check_has_access(self.has_access, request,)
 

@@ -82,7 +82,7 @@ class IsLeader(BasePermission):
 
     message = "You are not the leader of this group"
 
-    def has_permission(self, request, view, group_slug = None):
+    def has_permission(self, request, view, group_slug=None):
         set_user_id(request)
         # Check if session-token is provided
         group_slug = group_slug if group_slug else view.kwargs["slug"]
@@ -128,7 +128,7 @@ class IsHS(BasePermission):
     message = "You are not in HS"
 
     def has_permission(self, request, view):
-        return check_has_access([AdminGroup.HS, AdminGroup.INDEX], request)
+        return check_has_access(AdminGroup.admin(), request)
 
 
 def is_admin_user(request):
@@ -139,4 +139,4 @@ def is_admin_user(request):
     if user_id is None:
         return False
 
-    return check_has_access([AdminGroup.INDEX, AdminGroup.HS], request)
+    return check_has_access(AdminGroup.admin(), request)

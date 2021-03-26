@@ -1,13 +1,12 @@
-from app.common.permissions import BasicViewPermission
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 
-
 from app.career.models import WeeklyBusiness
 from app.career.serializers import WeeklyBusinessSerializer
 from app.common.pagination import BasePagination
+from app.common.permissions import BasicViewPermission
 from app.util import today, week_nr
 
 

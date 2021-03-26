@@ -1,7 +1,5 @@
 from app.common.serializers import BaseModelSerializer
 
-from dry_rest_permissions.generics import DRYPermissionsField
-
 from ..models import News
 
 

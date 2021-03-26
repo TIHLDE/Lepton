@@ -14,7 +14,7 @@ class Notification(BaseModel):
 
     @classmethod
     def has_read_permission(cls, request):
-         return request.user is not None
+        return request.user is not None
 
     def has_object_read_permission(self, request):
         if request.user is None:

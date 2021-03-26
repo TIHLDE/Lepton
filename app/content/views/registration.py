@@ -2,11 +2,7 @@ from rest_framework import status, viewsets
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 
-from app.common.permissions import (
-    BasicViewPermission,
-    get_user_id,
-    is_admin_user,
-)
+from app.common.permissions import BasicViewPermission, is_admin_user
 from app.content.exceptions import APIUserAlreadyAttendedEvent
 from app.content.mixins import APIRegistrationErrorsMixin
 from app.content.models import Event, Registration
@@ -35,7 +31,7 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, viewsets.ModelViewSet):
 
     def _is_own_registration(self):
         user_id = self.kwargs.get("user_id", None)
-        return get_user_id(self.request) == user_id
+        return self.request.id == user_id
 
     def _is_not_own_registration(self):
         return not self._is_own_registration()
