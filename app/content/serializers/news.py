@@ -1,13 +1,11 @@
-from rest_framework import serializers
+from app.common.serializers import BaseModelSerializer
 
 from dry_rest_permissions.generics import DRYPermissionsField
 
 from ..models import News
 
 
-class NewsSerializer(serializers.ModelSerializer):
-    permissions = DRYPermissionsField()
-
+class NewsSerializer(BaseModelSerializer):
     class Meta:
         model = News
         fields = (
@@ -19,5 +17,4 @@ class NewsSerializer(serializers.ModelSerializer):
             "title",
             "header",
             "body",
-            "permissions",
         )

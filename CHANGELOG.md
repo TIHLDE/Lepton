@@ -14,6 +14,11 @@
 
 ## Neste versjon
 -✨ **Endring i permissions**. Endret hvordan vi håndterer tillatelser på nettsiden til å bruke våre nye grupper.
+- ✨ **Azure**. Satt opp dev-miljø i Azure for å migrere vekk fra Drift og til skyen.
+
+## Versjon 1.0.5 (24.03.2021)
+- 🦟 **Opprett arrangement**. Fikset feil der det ikke var mulig å opprette et arrangement.
+- ✨ **Logging** av endringer skjer automatisk ved bruk.
 
 ## Versjon 1.0.4 (15.03.2021)
 - ✨ **Filopplastning**. Lagt til støtte for filopplastning til Azure gjennom eget endepunkt. Kun for medlemmer.

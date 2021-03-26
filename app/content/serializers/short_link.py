@@ -1,12 +1,12 @@
 import re
 
 from django.core.exceptions import ValidationError
-from rest_framework import serializers
 
+from app.common.serializers import BaseModelSerializer
 from app.content.models import ShortLink
 
 
-class ShortLinkSerializer(serializers.ModelSerializer):
+class ShortLinkSerializer(BaseModelSerializer):
     class Meta:
         model = ShortLink
         fields = ["name", "url"]

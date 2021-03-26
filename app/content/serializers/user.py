@@ -4,6 +4,7 @@ from rest_framework import serializers
 
 from dry_rest_permissions.generics import DRYGlobalPermissionsField
 
+from app.common.serializers import BaseModelSerializer
 from app.content.models import Notification, Registration, User
 from app.content.serializers.badge import BadgeSerializer
 from app.content.serializers.event import EventListSerializer
@@ -88,7 +89,7 @@ class UserSerializer(serializers.ModelSerializer):
         return Notification.objects.filter(user=obj, read=False).count()
 
 
-class UserMemberSerializer(UserSerializer):
+class UserMemberSerializer(UserSerializer, BaseModelSerializer):
     """Serializer for user update to prevent them from updating extra_kwargs fields"""
 
     class Meta(UserSerializer.Meta):

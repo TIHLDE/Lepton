@@ -56,10 +56,16 @@ class CheatsheetViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         """Creates a new cheatsheet """
-        serializer = CheatsheetSerializer(data=self.request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        if is_admin_user(request):
+            serializer = CheatsheetSerializer(
+                data=self.request.data, context={"request": request}
+            )
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(
+                {"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST
+            )
         return Response(
             {"detail": "Du har ikke tillatelse til å lage en oppskrift"},
             status=status.HTTP_403_FORBIDDEN,
@@ -69,10 +75,17 @@ class CheatsheetViewSet(viewsets.ModelViewSet):
         """Updates a cheatsheet retrieved by UserClass and UserStudy and pk"""
         try:
             cheatsheet = self.get_object()
-            serializer = CheatsheetSerializer(cheatsheet, data=request.data)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_200_OK)
+            if is_admin_user(request):
+                serializer = CheatsheetSerializer(
+                    cheatsheet, data=request.data, context={"request": request}
+                )
+                if serializer.is_valid():
+                    serializer.save()
+                    return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(
+                {"detail": "Du har ikke tillatelse til å oppdatere oppskriften"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         except Cheatsheet.DoesNotExist as cheatsheet_not_exist:
             capture_exception(cheatsheet_not_exist)
             return Response(

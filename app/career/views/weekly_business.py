@@ -50,8 +50,9 @@ class WeeklyBusinessViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         try:
-
-            serializer = WeeklyBusinessSerializer(data=request.data, partial=True)
+            serializer = WeeklyBusinessSerializer(
+                data=request.data, partial=True, context={"request": request}
+            )
 
             if serializer.is_valid():
                 serializer.save()
@@ -69,7 +70,10 @@ class WeeklyBusinessViewSet(viewsets.ModelViewSet):
         weekly_business = get_object_or_404(WeeklyBusiness, id=pk)
         self.check_object_permissions(self.request, weekly_business)
         serializer = WeeklyBusinessSerializer(
-            weekly_business, data=request.data, partial=True
+            weekly_business,
+            data=request.data,
+            partial=True,
+            context={"request": request},
         )
         try:
             if serializer.is_valid():
