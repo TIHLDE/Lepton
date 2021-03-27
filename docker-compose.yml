@@ -27,7 +27,7 @@ services:
       - .env
     build: .
     container_name: celery
-    command: pipenv run celery -A app worker -l info
+    command: celery -A app worker -l info
     volumes:
       - .:/usr/src/
     depends_on:
@@ -37,7 +37,7 @@ services:
       - .env
     build: .
     container_name: web
-    command: pipenv run python manage.py runserver 0.0.0.0:8000
+    command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - .:/usr/src/
     ports:

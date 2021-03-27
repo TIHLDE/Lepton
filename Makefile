@@ -31,28 +31,28 @@ fresh:
 	docker-compose up
 
 createsuperuser: ##@Docker Create a superuser
-	docker-compose run --rm web pipenv run python manage.py createsuperuser
+	docker-compose run --rm web python manage.py createsuperuser
 
 makemigrations: ##@Docker Set up migration files
-	docker-compose run --rm web pipenv run python manage.py makemigrations
+	docker-compose run --rm web python manage.py makemigrations
 
 migrate: ##@Docker Perform migrations to database
-	docker-compose run --rm web pipenv run python manage.py migrate
+	docker-compose run --rm web python manage.py migrate
 
 dumpdata:
-	docker-compose run --rm web pipenv run python manage.py dumpdata -e admin -e auth.Permission -e contenttypes --indent=4 > ./app/fixture.json
+	docker-compose run --rm web python manage.py dumpdata -e admin -e auth.Permission -e contenttypes --indent=4 > ./app/fixture.json
 
 loaddata:
-	docker-compose run --rm web pipenv run python manage.py loaddata ./app/fixture.json
+	docker-compose run --rm web python manage.py loaddata ./app/fixture.json
 
 collectstatic:
-	docker-compose run --rm web pipenv run python manage.py collectstatic
+	docker-compose run --rm web python manage.py collectstatic
 
 test:
-	docker-compose run --rm web pipenv run pytest ${args}
+	docker-compose run --rm web pytest ${args}
 
 cov:
-	docker-compose run web pipenv run pytest --cov-config=.coveragerc --cov=app
+	docker-compose run web pytest --cov-config=.coveragerc --cov=app
 
 format:
 	make black
@@ -64,13 +64,13 @@ check:
 	make flake8
 
 black:
-	docker-compose run web pipenv run black app/ ${args} --exclude migrations
+	docker-compose run web black app/ ${args} --exclude migrations
 
 isort:
-	docker-compose run web pipenv run isort . ${args}
+	docker-compose run web isort . ${args}
 
 flake8:
-	docker-compose run web pipenv run flake8 app
+	docker-compose run web flake8 app
 
 PR:
 	make format
