@@ -29,7 +29,7 @@ services:
     container_name: celery
     command: celery -A app worker -l info
     volumes:
-      - .:/usr/src/
+      - .:/app:z
     depends_on:
       - db
   web:
@@ -39,7 +39,7 @@ services:
     container_name: web
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
-      - .:/usr/src/
+      - .:/app:z
     ports:
       - "8000:8000"
     depends_on:
