@@ -3,7 +3,7 @@ name: Deploy to Azure development
 on:
   push:
     branches:
-      - dev
+      - azure
   workflow_dispatch:
 
 jobs:
@@ -42,11 +42,3 @@ jobs:
         tags: leptondevregistry.azurecr.io/lepton:latest
         cache-from: type=local,src=/tmp/.buildx-cache
         cache-to: type=local,dest=/tmp/.buildx-cache
-
-    - name: Deploy to Azure Web App
-      uses: azure/webapps-deploy@v2
-      with:
-        app-name: 'lepton-dev-api'
-        slot-name: 'production'
-        publish-profile: ${{ secrets.APP_SERVICE_PUBLISH_PROFILE_DEV }}
-        images: 'leptondevregistry.azurecr.io/lepton:latest'
