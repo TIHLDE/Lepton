@@ -74,9 +74,9 @@ class MembershipViewSet(viewsets.ModelViewSet):
                 {"detail": "Medlemskapet eksisterer allerede "},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
     def destroy(self, request, *args, **kwargs):
         super().destroy(request, *args, **kwargs)
         return Response(
-                {"detail": "Medlemskapet ble slettet "},
-                status=status.HTTP_200_OK,
-            )
+            {"detail": "Medlemskapet ble slettet "}, status=status.HTTP_200_OK,
+        )
