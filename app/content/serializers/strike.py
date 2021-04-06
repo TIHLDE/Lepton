@@ -6,12 +6,7 @@ from app.content.models import Event, Strike, User
 class BaseStrikeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Strike
-        fields = (
-            "id",
-            "description",
-            "nr_of_strikes",
-            "expires_at",
-        )
+        fields = ("id", "description", "nr_of_strikes", "expires_at", "created_at")
 
 
 class StrikeSerializer(BaseStrikeSerializer):
