@@ -1,5 +1,4 @@
-from datetime import datetime, timedelta
-from django.shortcuts import get_object_or_404
+from datetime import timedelta
 
 from django.shortcuts import get_object_or_404
 from rest_framework import status, viewsets
@@ -34,7 +33,4 @@ class StrikeViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         super().destroy(request, *args, **kwargs)
-        return Response(
-            {"detail": "Prikken ble slettet"},
-            status=status.HTTP_200_OK,
-        )
+        return Response({"detail": "Prikken ble slettet"}, status=status.HTTP_200_OK,)
