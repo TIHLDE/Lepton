@@ -1,366 +1,1119 @@
 [
-   {
-      "model": "sessions.session",
-      "pk": "uluxibay9z8ygncjnjqevuzsbwxmc47p",
-      "fields": {
-         "session_data": ".eJxVjMkKwjAURf8lawmvQ-qrS_d-Q3lTTFRS6ACC-O9a6EK395xzX26gdUnDOts0ZHUnl4va0x1-dya5W9mg3qhcRy9jWabMflP8Tmd_GdUe5939O0g0p28NrVVgrVBQEERlpB6ryCxtH1i6JgDGvop67GoDxihNtFrQQmiQANz7AzqBOkk:1kU8R8:6qGRI7uDv8TpglOOWvKqviMaK3BPvqZsX2X_nlYrfyA",
-         "expire_date": "2020-11-01T13:09:22.974Z"
-      }
-   },
-   {
-      "model": "authtoken.token",
-      "pk": "606d9b0894c798fa511d85f876fd8611b7109e32",
-      "fields": {
-         "user": "index",
-         "created": "2020-10-01T18:22:57.720Z"
-      }
-   },
-   {
-      "model": "authtoken.token",
-      "pk": "64e443d5d4eb019b6055bece575d13e32553fb23",
-      "fields": {
-         "user": "eivindste",
-         "created": "2020-10-01T18:58:32.305Z"
-      }
-   },
-   {
-      "model": "content.badge",
-      "pk": "8149b976-c5c9-428b-bbf5-ee891e57774a",
-      "fields": {
-         "created_at": "2020-10-01T18:32:35.298Z",
-         "updated_at": "2020-10-01T18:32:35.298Z",
-         "image": null,
-         "image_alt": null,
-         "title": "Påske",
-         "description": "Beskrivelse"
-      }
-   },
-   {
-      "model": "content.category",
-      "pk": 1,
-      "fields": {
-         "created_at": "2020-10-01T18:29:57.037Z",
-         "updated_at": "2020-10-01T18:29:57.037Z",
-         "text": "Fest"
-      }
-   },
-   {
-      "model": "content.category",
-      "pk": 2,
-      "fields": {
-         "created_at": "2020-10-01T18:30:12.523Z",
-         "updated_at": "2020-10-01T18:30:12.523Z",
-         "text": "Bedpress"
-      }
-   },
-   {
-      "model": "content.category",
-      "pk": 3,
-      "fields": {
-         "created_at": "2020-10-01T18:30:37.229Z",
-         "updated_at": "2020-10-01T18:30:37.229Z",
-         "text": "Fadderuke"
-      }
-   },
-   {
-      "model": "content.category",
-      "pk": 4,
-      "fields": {
-         "created_at": "2020-10-01T18:32:18.564Z",
-         "updated_at": "2020-10-01T18:32:18.564Z",
-         "text": "Sport"
-      }
-   },
-   {
-      "model": "content.cheatsheet",
-      "pk": "efddd97d-8a75-4f0d-a23c-111bb51c910f",
-      "fields": {
-         "created_at": "2020-10-01T18:33:51.131Z",
-         "updated_at": "2020-10-01T18:33:51.131Z",
-         "title": "Øving 1",
-         "creator": "Zaim Imran",
-         "grade": "FIRST",
-         "study": "DATAING",
-         "course": "Prog grunnkurs",
-         "url": "https://miro.medium.com/max/1000/0*kBHpKva09AsGj7RQ"
-      }
-   },
-   {
-      "model": "content.user",
-      "pk": "eivindste",
-      "fields": {
-         "password": "pbkdf2_sha256$216000$Dp3zr6J3QDd9$KDKTvNysMZeCIwDqbEZJBklw4uINe62Jv4UOT+ymu2s=",
-         "last_login": null,
-         "is_superuser": false,
-         "created_at": "2020-10-01T18:58:32.218Z",
-         "updated_at": "2020-10-01T18:58:47.542Z",
-         "image": null,
-         "image_alt": null,
-         "first_name": "Eivind",
-         "last_name": "Øvstedal",
-         "email": "EivindOvstedal@jourrapide.com",
-         "cell": "",
-         "home_busstop": null,
-         "gender": 2,
-         "user_class": 2,
-         "user_study": 2,
-         "allergy": "",
-         "tool": "",
-         "app_token": null,
-         "is_TIHLDE_member": true,
-         "is_staff": false,
-         "is_active": true,
-         "groups": [],
-         "user_permissions": []
-      }
-   },
-   {
-      "model": "content.user",
-      "pk": "index",
-      "fields": {
-         "password": "pbkdf2_sha256$216000$FsS3jt4tZJa2$69L3Esu1A6xYIWchq0mNA7svX5xqZcIHlDkRuFwHBZU=",
-         "last_login": "2020-10-01T18:23:30Z",
-         "is_superuser": true,
-         "created_at": "2020-10-01T18:22:57.665Z",
-         "updated_at": "2020-10-01T19:46:46.327Z",
-         "image": null,
-         "image_alt": null,
-         "first_name": "Index",
-         "last_name": "TIHLDE",
-         "email": "index@index.org",
-         "cell": "44449999",
-         "home_busstop": 1,
-         "gender": 2,
-         "user_class": 3,
-         "user_study": 1,
-         "allergy": "Kun parenteser",
-         "tool": "Parentes",
-         "app_token": null,
-         "is_TIHLDE_member": true,
-         "is_staff": true,
-         "is_active": true,
-         "groups": [],
-         "user_permissions": []
-      }
-   },
-   {
-      "model": "content.notification",
-      "pk": 1,
-      "fields": {
-         "user": "index",
-         "message": "Dette er første notifikasjon ever!!",
-         "read": true,
-         "created_at": "2020-10-01T18:54:36.940Z",
-         "updated_at": "2020-10-01T18:54:36.940Z"
-      }
-   },
-   {
-      "model": "content.notification",
-      "pk": 2,
-      "fields": {
-         "user": "index",
-         "message": "Du har fått plass på Pirater sier Arr",
-         "read": true,
-         "created_at": "2020-10-01T18:54:36.940Z",
-         "updated_at": "2020-10-01T18:54:36.940Z"
-      }
-   },
-   {
-      "model": "content.registration",
-      "pk": 1,
-      "fields": {
-         "updated_at": "2020-10-01T18:54:36.940Z",
-         "user": "index",
-         "event": 1,
-         "is_on_wait": false,
-         "has_attended": false,
-         "created_at": "2020-10-01T18:54:36.940Z",
-         "allow_photo": true
-      }
-   },
-   {
-      "model": "content.priority",
-      "pk": 1,
-      "fields": {
-         "created_at": "2020-10-01T18:37:22.880Z",
-         "updated_at": "2020-10-01T18:37:22.880Z",
-         "user_class": "FIRST",
-         "user_study": "DATAING"
-      }
-   },
-   {
-      "model": "content.priority",
-      "pk": 2,
-      "fields": {
-         "created_at": "2020-10-01T18:52:25.374Z",
-         "updated_at": "2020-10-01T18:52:25.374Z",
-         "user_class": "SECOND",
-         "user_study": "DATAING"
-      }
-   },
-   {
-      "model": "content.priority",
-      "pk": 3,
-      "fields": {
-         "created_at": "2020-10-01T18:52:31.281Z",
-         "updated_at": "2020-10-01T18:52:31.281Z",
-         "user_class": "THIRD",
-         "user_study": "DATAING"
-      }
-   },
-   {
-      "model": "content.priority",
-      "pk": 4,
-      "fields": {
-         "created_at": "2020-10-01T18:52:34.607Z",
-         "updated_at": "2020-10-01T18:52:34.607Z",
-         "user_class": "FIRST",
-         "user_study": "DIGFOR"
-      }
-   },
-   {
-      "model": "content.priority",
-      "pk": 5,
-      "fields": {
-         "created_at": "2020-10-01T18:52:41.961Z",
-         "updated_at": "2020-10-01T18:52:41.962Z",
-         "user_class": "SECOND",
-         "user_study": "DIGFOR"
-      }
-   },
-   {
-      "model": "content.priority",
-      "pk": 6,
-      "fields": {
-         "created_at": "2020-10-01T18:52:48.065Z",
-         "updated_at": "2020-10-01T18:52:48.065Z",
-         "user_class": "THIRD",
-         "user_study": "DIGFOR"
-      }
-   },
-   {
-      "model": "content.priority",
-      "pk": 7,
-      "fields": {
-         "created_at": "2020-10-01T18:53:18.041Z",
-         "updated_at": "2020-10-01T18:53:38.012Z",
-         "user_class": "FIFTH",
-         "user_study": "DIGSAM"
-      }
-   },
-   {
-      "model": "content.event",
-      "pk": 1,
-      "fields": {
-         "created_at": "2020-10-01T18:38:27.404Z",
-         "updated_at": "2020-10-01T18:54:25.409Z",
-         "image": "https://ps-attachments.s3.amazonaws.com/361c4f00-befe-4b07-9ece-60886d65e049/kvGQecKphQHV9kO01uBFMQ.png",
-         "image_alt": "Header image 1",
-         "title": "Pirater sier Arr",
-         "start_date": "2020-10-03T18:35:32Z",
-         "end_date": "2020-10-04T18:35:51Z",
-         "location": "Båten Anna",
-         "description": "Jag känner en bot\r\nHon heter Anna. Anna heter hon\r\nOch hon kan banna banna dig så hårt\r\nHon röjer upp I våran kanal\r\nJag vill berätta för dig att jag känner en bot\r\nJag känner en bot\r\nHon heter Anna. Anna heter hon\r\nOch hon kan banna banna dig så hårt\r\nHon röjer upp I våran kanal\r\nJag vill berätta för dig att jag känner en bot\r\nSom alltid vaktar alla som är här\r\nOch som ser till att vi blir utan besvär\r\nDet finns ingen take-over som lyckas\r\nKom ihåg att det är jag som känner en bot\r\nEn bot som ingen ingen annan slår\r\nOch hon kan kicka utan att hon får\r\nHon gör sig av med alla som spammar\r\nJa ingen kan slå våran bot\r\nJag känner en bot\r\nHon heter Anna. Anna heter hon\r\nOch hon kan banna banna dig så hårt\r\nHon röjer upp I våran kanal\r\nJag vill berätta för dig att jag känner en bot\r\nDå kom den dagen jag inte trodde fanns\r\nDen satte verkligen kanalen you're balans\r\nJag trodde aldrig att jag hade så fel\r\nMen när Anna skrev och sa\r\nJag är ingen bot\r\nJag är en väldigt, väldigt vacker tjej\r\nSom nu tyvärr är väldigt främmande för mig\r\nMen det finns inget som behöver förklaras\r\nFör I mina ögon är hon alltid en bot\r\nHon heter Anna. Anna heter hon\r\nOch hon kan banna banna dig så hårt\r\nHon röjer upp I våran kanal\r\nJag vill berätta för dig att jag känner en bot\r\nSom alltid vaktar alla som är här\r\nOch som ser till att vi blir utan besvär\r\nDet finns ingen take-over som lyckas\r\nKom ihåg att det är jag som känner en bot\r\nEn bot som ingen ingen annan slår\r\nOch hon kan kicka utan att hon får\r\nHon gör sig av med alla som spammar\r\nJa, ingen kan slå våran bot!",
-         "priority": 2,
-         "category": 1,
-         "sign_up": true,
-         "limit": 45,
-         "closed": false,
-         "start_registration_at": "2020-10-01T18:36:53Z",
-         "end_registration_at": "2020-10-03T17:36:54Z",
-         "sign_off_deadline": "2020-10-03T17:36:55Z",
-         "evaluate_link": "https://www.youtube.com/watch?v=vpYz3yeXapc",
-         "end_date_schedular_id": null,
-         "sign_off_deadline_schedular_id": null,
-         "registration_priorities": [
+{
+    "model": "auth.group",
+    "pk": 1,
+    "fields": {
+        "name": "Index",
+        "permissions": []
+    }
+},
+{
+    "model": "auth.group",
+    "pk": 3,
+    "fields": {
+        "name": "NoK",
+        "permissions": []
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "0d7iipfpmvuv3dbkwblj79z79jvp419x",
+    "fields": {
+        "session_data": ".eJxVjMsOgjAUBf-la9NQaHuLS_d8A7kvBDUloZCYGP9dSVjo9szMeZket3Xst6JLP4k5mymLPs3pdyfku-Ydyg3zdbY853WZyO6KPWix3Sz6uBzu38GIZfzWgaSpKLGrtKpBCdCpb9ShKguFFNjHFBVcgDpSqxGA68ELO4Chwda8PzXPOh4:1l9VFx:hDRwvxirbuZeAlMASI7a6mwYuQgQkkndnB4VbiJyruY",
+        "expire_date": "2021-02-23T15:48:49.251Z"
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "3sgbahdznfzbxfir95l4glge5zchrgmr",
+    "fields": {
+        "session_data": ".eJxVjMsOgjAUBf-la9NQaHuLS_d8A7kvBDUloZCYGP9dSVjo9szMeZket3Xst6JLP4k5mymLPs3pdyfku-Ydyg3zdbY853WZyO6KPWix3Sz6uBzu38GIZfzWgaSpKLGrtKpBCdCpb9ShKguFFNjHFBVcgDpSqxGA68ELO4Chwda8PzXPOh4:1lCN06:gS1WjlFsANJizcu_SNG3kpoPYnnUMnjjUFTLJe7uvuU",
+        "expire_date": "2021-03-03T13:36:18.511Z"
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "7xbvrhd1axhcozusclabk0kghnb87zfe",
+    "fields": {
+        "session_data": ".eJxVjMsOgjAUBf-la9NQaHuLS_d8A7kvBDUloZCYGP9dSVjo9szMeZket3Xst6JLP4k5mymLPs3pdyfku-Ydyg3zdbY853WZyO6KPWix3Sz6uBzu38GIZfzWgaSpKLGrtKpBCdCpb9ShKguFFNjHFBVcgDpSqxGA68ELO4Chwda8PzXPOh4:1lHvcx:Jkt29ubfeP92wFEEAyuR51IxattAJ0RbWlqRWBFkr8k",
+        "expire_date": "2021-03-18T21:35:23.859Z"
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "e1izy6l05ryuibpubwdye53n1oc8f98q",
+    "fields": {
+        "session_data": ".eJxVjMsOgjAUBf-la9NQaHuLS_d8A7kvBDUloZCYGP9dSVjo9szMeZket3Xst6JLP4k5mymLPs3pdyfku-Ydyg3zdbY853WZyO6KPWix3Sz6uBzu38GIZfzWgaSpKLGrtKpBCdCpb9ShKguFFNjHFBVcgDpSqxGA68ELO4Chwda8PzXPOh4:1l9aFZ:NI-DGBkUiNK0fjotCF0SwkOpaU3zhXvm3FYXstSjGNQ",
+        "expire_date": "2021-02-23T21:08:45.518Z"
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "f3etrwbjzqewwch0qg94ijctipgtmz1j",
+    "fields": {
+        "session_data": ".eJxVjMsOgjAUBf-la9NQaHuLS_d8A7kvBDUloZCYGP9dSVjo9szMeZket3Xst6JLP4k5mymLPs3pdyfku-Ydyg3zdbY853WZyO6KPWix3Sz6uBzu38GIZfzWgaSpKLGrtKpBCdCpb9ShKguFFNjHFBVcgDpSqxGA68ELO4Chwda8PzXPOh4:1lNwTy:8wzYY1W-VZc7sFhp3brL6hqBlp94mZ6nLVQaK4rvjSY",
+        "expire_date": "2021-04-04T11:42:58.218Z"
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "hmrz2pmfnmnpb7gzu88fvethzo9tk3mt",
+    "fields": {
+        "session_data": ".eJxVjMkKwjAURf8lawmvQ-qrS_d-Q3lTTFRS6ACC-O9a6EK395xzX26gdUnDOts0ZHUnl4va0x1-dya5W9mg3qhcRy9jWabMflP8Tmd_GdUe5939O0g0p28NrVVgrVBQEERlpB6ryCxtH1i6JgDGvop67GoDxihNtFrQQmiQANz7AzqBOkk:1lO5LL:CwmX4gyvYj_LE_PGPffRpkjYugnwLNAP4SVe3l9f0ng",
+        "expire_date": "2021-04-04T21:10:39.168Z"
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "j2emktdnbr69y9wsbrs8x7qokpui898b",
+    "fields": {
+        "session_data": ".eJxVjMsOgjAUBf-la9NQaHuLS_d8A7kvBDUloZCYGP9dSVjo9szMeZket3Xst6JLP4k5mymLPs3pdyfku-Ydyg3zdbY853WZyO6KPWix3Sz6uBzu38GIZfzWgaSpKLGrtKpBCdCpb9ShKguFFNjHFBVcgDpSqxGA68ELO4Chwda8PzXPOh4:1lGeTe:FlqribS7hWX4ucyjQihL-jxvBf_d-nL6meFTY6T8DQk",
+        "expire_date": "2021-03-15T09:04:30.406Z"
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "j6896it09mdksi37prxavbzkgt4mx9wf",
+    "fields": {
+        "session_data": ".eJxVjMsOgjAUBf-la9NQaHuLS_d8A7kvBDUloZCYGP9dSVjo9szMeZket3Xst6JLP4k5mymLPs3pdyfku-Ydyg3zdbY853WZyO6KPWix3Sz6uBzu38GIZfzWgaSpKLGrtKpBCdCpb9ShKguFFNjHFBVcgDpSqxGA68ELO4Chwda8PzXPOh4:1lH6Bp:jj2Omgfkq5tq7S8LNjt1PCtDX9nXUoB9uHPNFOwwfTo",
+        "expire_date": "2021-03-16T14:39:57.789Z"
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "k710wn9asvdkzgjrkcodt2excz5i2eyw",
+    "fields": {
+        "session_data": ".eJxVjMsOgjAUBf-la9NQaHuLS_d8A7kvBDUloZCYGP9dSVjo9szMeZket3Xst6JLP4k5mymLPs3pdyfku-Ydyg3zdbY853WZyO6KPWix3Sz6uBzu38GIZfzWgaSpKLGrtKpBCdCpb9ShKguFFNjHFBVcgDpSqxGA68ELO4Chwda8PzXPOh4:1lECKj:eg54RBTsZHrmUD4ByZ8oumL97-1-oHLip11sk7dXIFQ",
+        "expire_date": "2021-03-08T14:37:09.261Z"
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "ngky3zl3n7rp8ml1oupwo93ejf586ved",
+    "fields": {
+        "session_data": ".eJxVjMsOgjAUBf-la9NQaHuLS_d8A7kvBDUloZCYGP9dSVjo9szMeZket3Xst6JLP4k5mymLPs3pdyfku-Ydyg3zdbY853WZyO6KPWix3Sz6uBzu38GIZfzWgaSpKLGrtKpBCdCpb9ShKguFFNjHFBVcgDpSqxGA68ELO4Chwda8PzXPOh4:1lBvUx:41iN9iu3MKPZoM-rIBmb0G5XdVAoCa0X3ogaLJNj-vk",
+        "expire_date": "2021-03-02T08:14:19.316Z"
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "t0djrbmlwzq0v73j05iy5efpaghzy9kf",
+    "fields": {
+        "session_data": ".eJxVjMsOgjAUBf-la9NQaHuLS_d8A7kvBDUloZCYGP9dSVjo9szMeZket3Xst6JLP4k5mymLPs3pdyfku-Ydyg3zdbY853WZyO6KPWix3Sz6uBzu38GIZfzWgaSpKLGrtKpBCdCpb9ShKguFFNjHFBVcgDpSqxGA68ELO4Chwda8PzXPOh4:1lMIti:ZkVrE8w77ZgS66xZwM-ESts6c79xAdabsvnhymw4i6w",
+        "expire_date": "2021-03-30T23:14:46.878Z"
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "uluxibay9z8ygncjnjqevuzsbwxmc47p",
+    "fields": {
+        "session_data": ".eJxVjMkKwjAURf8lawmvQ-qrS_d-Q3lTTFRS6ACC-O9a6EK395xzX26gdUnDOts0ZHUnl4va0x1-dya5W9mg3qhcRy9jWabMflP8Tmd_GdUe5939O0g0p28NrVVgrVBQEERlpB6ryCxtH1i6JgDGvop67GoDxihNtFrQQmiQANz7AzqBOkk:1kU8R8:6qGRI7uDv8TpglOOWvKqviMaK3BPvqZsX2X_nlYrfyA",
+        "expire_date": "2020-11-01T13:09:22.974Z"
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "x2g88outp6fek547v1t7wdp2kqv00bpn",
+    "fields": {
+        "session_data": ".eJxVjMsOgjAUBf-la9NQaHuLS_d8A7kvBDUloZCYGP9dSVjo9szMeZket3Xst6JLP4k5mymLPs3pdyfku-Ydyg3zdbY853WZyO6KPWix3Sz6uBzu38GIZfzWgaSpKLGrtKpBCdCpb9ShKguFFNjHFBVcgDpSqxGA68ELO4Chwda8PzXPOh4:1lGlen:7sRAiQBCkdQnFzCIKZwr3m0sv1eCJtjp-ezrolmL2qo",
+        "expire_date": "2021-03-15T16:44:29.813Z"
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "ybb07pnogonawthet24z3xoaz6d0qr96",
+    "fields": {
+        "session_data": ".eJxVjMsOgjAUBf-la9NQaHuLS_d8A7kvBDUloZCYGP9dSVjo9szMeZket3Xst6JLP4k5mymLPs3pdyfku-Ydyg3zdbY853WZyO6KPWix3Sz6uBzu38GIZfzWgaSpKLGrtKpBCdCpb9ShKguFFNjHFBVcgDpSqxGA68ELO4Chwda8PzXPOh4:1lOMbu:XLcBmP8dpNLVyKTlXsGTpXXEYBIL_Gho7H6CwPA-kxg",
+        "expire_date": "2021-04-05T15:36:54.314Z"
+    }
+},
+{
+    "model": "authtoken.token",
+    "pk": "606d9b0894c798fa511d85f876fd8611b7109e32",
+    "fields": {
+        "user": "index",
+        "created": "2020-10-01T18:22:57.720Z"
+    }
+},
+{
+    "model": "authtoken.token",
+    "pk": "64e443d5d4eb019b6055bece575d13e32553fb23",
+    "fields": {
+        "user": "eivindste",
+        "created": "2020-10-01T18:58:32.305Z"
+    }
+},
+{
+    "model": "authtoken.token",
+    "pk": "813e9d426d9cfe20b184492b417072aa533d29bc",
+    "fields": {
+        "user": "nok",
+        "created": "2021-03-04T16:59:43.225Z"
+    }
+},
+{
+    "model": "career.weeklybusiness",
+    "pk": "76aa8934-f415-49cb-bad8-ff43e30a0fa5",
+    "fields": {
+        "created_at": "2021-03-21T21:22:33.765Z",
+        "updated_at": "2021-03-21T21:22:33.765Z",
+        "image": "https://ifinavet.no/images/large/ec99004dc3fdaf.png",
+        "image_alt": null,
+        "business_name": "Bekk",
+        "body": "Bekk eller bekkefar er et mindre vassfar (en naturlig vei i landskapet) der en vannstrøm har gravd seg en fast løype i terrenget og renner noenlunde stabilt hele året. Opphav til alle bekker er tidligere overskuddsnedbør som etter hvert samles og renner nedover til sporet blir synlig nok til å kalles bekk.\r\n\r\nBekken kan ha synlig start fra et vann, tjern, underjordisk kilde eller en myr, og vil fortsette nedover til den ender med å møte annet vann i form av en annen bekk, vann, elv eller havet.\r\n\r\nEnkelte større bekker regnes med som start av et elveløp. Mange bekker har en stamme av ørret som lar seg fiske på.\r\n\r\nVannføringen i et bekkeløp vil kunne variere sterkt, avhengig av nedbørsforholdene langs det. På Vestlandet finnes mange strenger som har løp ned bratte fjellsider og som er tørre store deler av forsommeren og vinteren, men er særs aktive og synlige ved snøsmelting og høstregn. Mange av de sesongvariable bekkeløpene lager store problemer og ødeleggelser ved å flomme over eller mette leirjord med for mye vann slik at en får flomskred. For bøndene har det alltid vært viktig å sørge for at bekkeløp er godt steinsatt og sikret, slik at ikke vannet tar matjorda.\r\n\r\nFor samferdselen har det tidligere vært et problem å krysse bekker. Noen steder har bekken vært bred og grunn, og en har laget vad, alternativt lagt ut steiner som en kunne gå over på, mens vannet fikk avløp mellom. Ellers har en brukt klopp eller en liten bro.",
+        "year": 2025,
+        "week": 8
+    }
+},
+{
+    "model": "content.badge",
+    "pk": "8149b976-c5c9-428b-bbf5-ee891e57774a",
+    "fields": {
+        "created_at": "2020-10-01T18:32:35.298Z",
+        "updated_at": "2021-03-21T21:14:02.657Z",
+        "image": "https://www.jocooks.com/wp-content/uploads/2014/09/beer-can-chicken-1-7.jpg",
+        "image_alt": "Det er påske :)",
+        "title": "Påske",
+        "description": "Beskrivelse"
+    }
+},
+{
+    "model": "content.category",
+    "pk": 1,
+    "fields": {
+        "created_at": "2020-10-01T18:29:57.037Z",
+        "updated_at": "2020-10-01T18:29:57.037Z",
+        "text": "Fest"
+    }
+},
+{
+    "model": "content.category",
+    "pk": 2,
+    "fields": {
+        "created_at": "2020-10-01T18:30:12.523Z",
+        "updated_at": "2020-10-01T18:30:12.523Z",
+        "text": "Bedpress"
+    }
+},
+{
+    "model": "content.category",
+    "pk": 3,
+    "fields": {
+        "created_at": "2020-10-01T18:30:37.229Z",
+        "updated_at": "2020-10-01T18:30:37.229Z",
+        "text": "Fadderuke"
+    }
+},
+{
+    "model": "content.category",
+    "pk": 4,
+    "fields": {
+        "created_at": "2020-10-01T18:32:18.564Z",
+        "updated_at": "2020-10-01T18:32:18.564Z",
+        "text": "Sport"
+    }
+},
+{
+    "model": "content.cheatsheet",
+    "pk": "efddd97d-8a75-4f0d-a23c-111bb51c910f",
+    "fields": {
+        "created_at": "2020-10-01T18:33:51.131Z",
+        "updated_at": "2020-10-01T18:33:51.131Z",
+        "title": "Øving 1",
+        "creator": "Zaim Imran",
+        "grade": "FIRST",
+        "study": "DATAING",
+        "course": "Prog grunnkurs",
+        "type": "LINK",
+        "official": false,
+        "url": "https://miro.medium.com/max/1000/0*kBHpKva09AsGj7RQ"
+    }
+},
+{
+    "model": "content.user",
+    "pk": "eivindste",
+    "fields": {
+        "password": "pbkdf2_sha256$216000$Dp3zr6J3QDd9$KDKTvNysMZeCIwDqbEZJBklw4uINe62Jv4UOT+ymu2s=",
+        "last_login": null,
+        "is_superuser": false,
+        "created_at": "2020-10-01T18:58:32.218Z",
+        "updated_at": "2021-02-10T08:50:18.706Z",
+        "image": null,
+        "image_alt": null,
+        "first_name": "Eivind",
+        "last_name": "Øvstedal",
+        "email": "EivindOvstedal@jourrapide.com",
+        "cell": "",
+        "home_busstop": null,
+        "gender": 2,
+        "user_class": 2,
+        "user_study": 2,
+        "allergy": "",
+        "tool": "",
+        "app_token": null,
+        "is_TIHLDE_member": true,
+        "is_staff": false,
+        "is_active": true,
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "content.user",
+    "pk": "index",
+    "fields": {
+        "password": "pbkdf2_sha256$216000$FsS3jt4tZJa2$69L3Esu1A6xYIWchq0mNA7svX5xqZcIHlDkRuFwHBZU=",
+        "last_login": "2021-03-21T21:10:38.819Z",
+        "is_superuser": true,
+        "created_at": "2020-10-01T18:22:57.665Z",
+        "updated_at": "2021-03-07T16:21:08.469Z",
+        "image": "https://i.gifer.com/8vGN.gif",
+        "image_alt": null,
+        "first_name": "Index",
+        "last_name": "TIHLDE",
+        "email": "index@index.org",
+        "cell": "44449999",
+        "home_busstop": 1,
+        "gender": 1,
+        "user_class": 3,
+        "user_study": 1,
+        "allergy": "Gode karakterer",
+        "tool": "Parentes",
+        "app_token": null,
+        "is_TIHLDE_member": true,
+        "is_staff": true,
+        "is_active": true,
+        "groups": [
             1
-         ]
-      }
-   },
-   {
-      "model": "content.event",
-      "pk": 2,
-      "fields": {
-         "created_at": "2020-10-01T18:41:04.519Z",
-         "updated_at": "2020-10-01T18:41:04.520Z",
-         "image": "https://dbstatic.no/70001449.jpg?imageId=70001449&panow=100&panoh=51.041666666667&panox=0&panoy=45.833333333333&heightw=42.307692307692&heighth=100&heightx=42.657342657343&heighty=0&width=1200&height=630",
-         "image_alt": "Palmesus",
-         "title": "Palmesus",
-         "start_date": "2020-11-01T19:39:27Z",
-         "end_date": "2020-11-02T19:39:36Z",
-         "location": "Kristiansand",
-         "description": "Palmesus er Skandinavias største strandfest. Hvert år samles nesten 40 000 festglade mennesker på Bystranda midt i Kristiansand sentrum for å nyte sol, sommer og en helt enestående fest. \r\n\r\nSelv om det er den gode stemningen og selve strandfesten som står i sentrum er det likevel alltid en svært sterk line-up på Palmesus. Artister som KYGO, Martin Garrix, Kent, Migos, Jason Derulo, Axwell ^ Ingrosso, Dimitri Vegas & Like Mike, Madcon, Taio Cruz, Benny Benassi, Nelly Furtado, Faithless, Fedde Le Grand, Karpe Diem, Fatboy Slim, Steve Aoki, Wyclef Jean, Charlie XCX, Highasakite og mange flere har alle spilt på Palmesus.",
-         "priority": 1,
-         "category": 3,
-         "sign_up": false,
-         "limit": 0,
-         "closed": false,
-         "start_registration_at": null,
-         "end_registration_at": null,
-         "sign_off_deadline": null,
-         "evaluate_link": null,
-         "end_date_schedular_id": null,
-         "sign_off_deadline_schedular_id": null,
-         "registration_priorities": []
-      }
-   },
-   {
-      "model": "content.jobpost",
-      "pk": 1,
-      "fields": {
-         "created_at": "2020-10-01T18:44:28.827Z",
-         "updated_at": "2020-10-01T18:44:28.827Z",
-         "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcS7Nm1REKWBvCtyNGStKydj5hquvQkEnvqAlw&usqp=CAU",
-         "image_alt": "Bekk",
-         "title": "Kaffehenter hos Bekk",
-         "ingress": "Vil du jobbe et helt år som kaffeslave?",
-         "body": "Da er Bekk det perfekte sted for deg. Kald kaffe, varm kaffe, latte, kakao. Du skal skaffe alt og vi skal kose oss.",
-         "location": "Starbucks",
-         "deadline": "2022-10-01T18:43:43Z",
-         "company": "Bekk",
-         "email": "index@index.org",
-         "link": "https://tihlde.org/"
-      }
-   },
-   {
-      "model": "content.jobpost",
-      "pk": 2,
-      "fields": {
-         "created_at": "2020-10-01T18:47:31.931Z",
-         "updated_at": "2020-10-01T18:47:31.931Z",
-         "image": "https://lh3.googleusercontent.com/tPSknKHPUTRNsWt-YBQpcryIUlKiu3tjCdYgO7rFnpiRtl_oosb-oIZjM8LlHCLS5qY=w2247-h1264",
-         "image_alt": "Tinder",
-         "title": "TIHLDE Tinder",
-         "ingress": "Lei av bare gutter i TIHLDE",
-         "body": "Bli med å lage TIHLDE Tinder. Inspirert fra Mark LIzardburk skal du ha ansvaret for å matche oss TIHLDE gutta med alle jentene i NTNU",
-         "location": "Trondheim",
-         "deadline": "2023-10-01T18:47:14Z",
-         "company": "TIHLDE",
-         "email": "index@index.org",
-         "link": "https://tihlde.org/"
-      }
-   },
-   {
-      "model": "content.news",
-      "pk": 1,
-      "fields": {
-         "created_at": "2020-10-01T18:51:48.401Z",
-         "updated_at": "2020-10-01T18:51:48.401Z",
-         "image": "https://scontent.fosl3-1.fna.fbcdn.net/v/t1.0-9/55455433_10156920666740516_650873152355696640_o.jpg?_nc_cat=108&_nc_sid=dd9801&_nc_ohc=V4dNMuV46TYAX-HLtGz&_nc_ht=scontent.fosl3-1.fna&oh=291a3534063d97b10645f5101c4e57d8&oe=5F9C60D6",
-         "image_alt": "TIHLDE",
-         "title": "Join TIHLDE",
-         "header": "LIvet blir bedre når du joiner TIHLDE",
-         "body": "Opptaket har startet!\r\n\r\nTIHLDE drives av engasjerte studenter som vil skape en levende og inkluderende linjeforening, og nå søker vi flere som ønsker å ta del i det!\r\n\r\nSom frivillig i TIHLDE er man garantert å utvide sitt sosiale nettverk, og man får erfaring som kommer godt med senere i livet. Et frivillig verv ser også meget bra ut på CV'en!\r\n\r\nDet er heller ikke skummelt å søke, vi ønsker å få med oss så mange som mulig uansett bakgrunn!"
-      }
-   },
-   {
-      "model": "content.userbadge",
-      "pk": 1,
-      "fields": {
-         "created_at": "2020-10-01T18:53:48.435Z",
-         "updated_at": "2020-10-01T18:53:48.435Z",
-         "user": "index",
-         "badge": "8149b976-c5c9-428b-bbf5-ee891e57774a"
-      }
-   }
+        ],
+        "user_permissions": []
+    }
+},
+{
+    "model": "content.user",
+    "pk": "nok",
+    "fields": {
+        "password": "pbkdf2_sha256$216000$8ReWWUg2dbx0$+JwUFHaLC3YbZOb52RPzxTyD/UOt6bQSGDYClm6WIiM=",
+        "last_login": null,
+        "is_superuser": false,
+        "created_at": "2021-03-04T16:59:43.220Z",
+        "updated_at": "2021-03-04T17:11:07.356Z",
+        "image": null,
+        "image_alt": null,
+        "first_name": "Nok",
+        "last_name": "Nok",
+        "email": "nok@gmail.com",
+        "cell": "",
+        "home_busstop": null,
+        "gender": 2,
+        "user_class": 1,
+        "user_study": 1,
+        "allergy": "",
+        "tool": "",
+        "app_token": null,
+        "is_TIHLDE_member": true,
+        "is_staff": false,
+        "is_active": true,
+        "groups": [
+            1
+        ],
+        "user_permissions": []
+    }
+},
+{
+    "model": "content.notification",
+    "pk": 35,
+    "fields": {
+        "created_at": "2021-03-08T19:51:56.552Z",
+        "updated_at": "2021-03-08T19:51:56.592Z",
+        "user": "nok",
+        "message": "På grunn av høy pågang er du satt på venteliste på Catch IDI",
+        "read": false
+    }
+},
+{
+    "model": "content.notification",
+    "pk": 45,
+    "fields": {
+        "created_at": "2021-03-20T12:23:12.092Z",
+        "updated_at": "2021-03-21T11:34:42.887Z",
+        "user": "index",
+        "message": "Du har fått plass på 17 mai",
+        "read": true
+    }
+},
+{
+    "model": "content.registration",
+    "pk": 16,
+    "fields": {
+        "created_at": "2021-03-20T00:27:42.603Z",
+        "updated_at": "2021-03-20T00:27:42.603Z",
+        "user": "index",
+        "event": 3,
+        "is_on_wait": false,
+        "has_attended": false,
+        "allow_photo": true
+    }
+},
+{
+    "model": "content.priority",
+    "pk": 1,
+    "fields": {
+        "created_at": "2020-10-01T18:37:22.880Z",
+        "updated_at": "2020-10-01T18:37:22.880Z",
+        "user_class": "FIRST",
+        "user_study": "DATAING"
+    }
+},
+{
+    "model": "content.priority",
+    "pk": 2,
+    "fields": {
+        "created_at": "2020-10-01T18:52:25.374Z",
+        "updated_at": "2020-10-01T18:52:25.374Z",
+        "user_class": "SECOND",
+        "user_study": "DATAING"
+    }
+},
+{
+    "model": "content.priority",
+    "pk": 3,
+    "fields": {
+        "created_at": "2020-10-01T18:52:31.281Z",
+        "updated_at": "2020-10-01T18:52:31.281Z",
+        "user_class": "THIRD",
+        "user_study": "DATAING"
+    }
+},
+{
+    "model": "content.priority",
+    "pk": 4,
+    "fields": {
+        "created_at": "2020-10-01T18:52:34.607Z",
+        "updated_at": "2020-10-01T18:52:34.607Z",
+        "user_class": "FIRST",
+        "user_study": "DIGFOR"
+    }
+},
+{
+    "model": "content.priority",
+    "pk": 5,
+    "fields": {
+        "created_at": "2020-10-01T18:52:41.961Z",
+        "updated_at": "2020-10-01T18:52:41.962Z",
+        "user_class": "SECOND",
+        "user_study": "DIGFOR"
+    }
+},
+{
+    "model": "content.priority",
+    "pk": 6,
+    "fields": {
+        "created_at": "2020-10-01T18:52:48.065Z",
+        "updated_at": "2020-10-01T18:52:48.065Z",
+        "user_class": "THIRD",
+        "user_study": "DIGFOR"
+    }
+},
+{
+    "model": "content.priority",
+    "pk": 7,
+    "fields": {
+        "created_at": "2020-10-01T18:53:18.041Z",
+        "updated_at": "2020-10-01T18:53:38.012Z",
+        "user_class": "FIFTH",
+        "user_study": "DIGSAM"
+    }
+},
+{
+    "model": "content.priority",
+    "pk": 8,
+    "fields": {
+        "created_at": "2021-02-09T21:35:59.751Z",
+        "updated_at": "2021-02-09T21:35:59.751Z",
+        "user_class": "FIRST",
+        "user_study": "DIGINC"
+    }
+},
+{
+    "model": "content.priority",
+    "pk": 9,
+    "fields": {
+        "created_at": "2021-02-09T21:35:59.762Z",
+        "updated_at": "2021-02-09T21:35:59.762Z",
+        "user_class": "FIRST",
+        "user_study": "DRIFT"
+    }
+},
+{
+    "model": "content.priority",
+    "pk": 10,
+    "fields": {
+        "created_at": "2021-02-09T21:35:59.783Z",
+        "updated_at": "2021-02-09T21:35:59.783Z",
+        "user_class": "SECOND",
+        "user_study": "DIGINC"
+    }
+},
+{
+    "model": "content.priority",
+    "pk": 11,
+    "fields": {
+        "created_at": "2021-02-09T21:35:59.792Z",
+        "updated_at": "2021-02-09T21:35:59.792Z",
+        "user_class": "SECOND",
+        "user_study": "DRIFT"
+    }
+},
+{
+    "model": "content.priority",
+    "pk": 12,
+    "fields": {
+        "created_at": "2021-02-09T21:35:59.814Z",
+        "updated_at": "2021-02-09T21:35:59.814Z",
+        "user_class": "THIRD",
+        "user_study": "DIGINC"
+    }
+},
+{
+    "model": "content.priority",
+    "pk": 13,
+    "fields": {
+        "created_at": "2021-02-09T21:35:59.824Z",
+        "updated_at": "2021-02-09T21:35:59.824Z",
+        "user_class": "THIRD",
+        "user_study": "DRIFT"
+    }
+},
+{
+    "model": "content.priority",
+    "pk": 14,
+    "fields": {
+        "created_at": "2021-02-09T21:35:59.834Z",
+        "updated_at": "2021-02-09T21:35:59.834Z",
+        "user_class": "FOURTH",
+        "user_study": "DIGSAM"
+    }
+},
+{
+    "model": "content.event",
+    "pk": 2,
+    "fields": {
+        "created_at": "2020-10-01T18:41:04.519Z",
+        "updated_at": "2021-03-22T16:53:33.126Z",
+        "image": "https://dbstatic.no/70001449.jpg?imageId=70001449&panow=100&panoh=51.041666666667&panox=0&panoy=45.833333333333&heightw=42.307692307692&heighth=100&heightx=42.657342657343&heighty=0&width=1200&height=630",
+        "image_alt": "Palmesus",
+        "title": "Palmesus (åpen påmelding)",
+        "start_date": "2029-07-05T10:00:00Z",
+        "end_date": "2029-07-05T12:00:00Z",
+        "location": "Kristiansand",
+        "description": "Palmesus er Skandinavias største strandfest. Hvert år samles nesten 40 000 festglade mennesker på Bystranda midt i Kristiansand sentrum for å nyte sol, sommer og en helt enestående fest. \n\nSelv om det er den gode stemningen og selve strandfesten som står i sentrum er det likevel alltid en svært sterk line-up på Palmesus. Artister som KYGO, Martin Garrix, Kent, Migos, Jason Derulo, Axwell ^ Ingrosso, Dimitri Vegas & Like Mike, Madcon, Taio Cruz, Benny Benassi, Nelly Furtado, Faithless, Fedde Le Grand, Karpe Diem, Fatboy Slim, Steve Aoki, Wyclef Jean, Charlie XCX, Highasakite og mange flere har alle spilt på Palmesus.",
+        "priority": 1,
+        "category": 3,
+        "sign_up": true,
+        "limit": 10,
+        "closed": false,
+        "start_registration_at": "2020-06-28T10:00:00Z",
+        "end_registration_at": "2029-07-05T10:00:00Z",
+        "sign_off_deadline": "2029-07-04T10:00:00Z",
+        "evaluate_link": "",
+        "end_date_schedular_id": null,
+        "sign_off_deadline_schedular_id": null,
+        "registration_priorities": [
+            7,
+            2,
+            5,
+            10,
+            11,
+            3,
+            6,
+            12,
+            13
+        ]
+    }
+},
+{
+    "model": "content.event",
+    "pk": 3,
+    "fields": {
+        "created_at": "2021-02-09T21:35:59.678Z",
+        "updated_at": "2021-03-22T16:54:52.429Z",
+        "image": "https://i.ibb.co/vVL4X9Q/blob.jpg",
+        "image_alt": "",
+        "title": "Catch IDI (før påmelding)",
+        "start_date": "2028-06-09T14:00:00Z",
+        "end_date": "2028-06-09T16:00:00Z",
+        "location": "Rockheim",
+        "description": "**Lær å lage native apps for alle plattformer - Flutter 101**\n\nFlutter er et open source UI toolkit laget av Google ene og alene for native compiled apps for mobile, web og desktop. Alt fra en kodebase! All utvikling skjer i programmeringsspråket Dart, som er designet for å lage raske apps til alle plattformer.\n\nI kurset vil vi ha en kort gjennomgang av Flutter og Dart, for så å bevege oss over til å lage en app. Learning by doing er beste måten å lære. Ved kursslutt sitter du med en fiks ferdig app! Du trenger ingen erfaring med apputvikling, Dart eller Flutter for å bli med.\n\nKurset vil hovedsakelig ta for seg utvikling til iOS og Android, så det man må få installert et par ting på forhånd. Dette er lurt å gjøre før kursstart, slik at vi slipper å bruke kurstid på installasjon. På lenkene under følger enkle steg for hvordan man kan få installert det man trenger.\n\nWindows: [https://flutter.dev/docs/get-started/install/windows](https://flutter.dev/docs/get-started/install/windows)\n\nMac: [https://flutter.dev/docs/get-started/install/macos](https://flutter.dev/docs/get-started/install/macos)\n\nLinux: [https://flutter.dev/docs/get-started/install/linux](https://flutter.dev/docs/get-started/install/linux)\n\nEditor setup: [https://flutter.dev/docs/get-started/editor](https://flutter.dev/docs/get-started/editor)\n\nKursleder vil bruke Android Studio, men du velger fritt om du heller vil bruke IntelliJ, VSCode eller Emacs. \n\nTa gjerne en titt her for å kjøre en enkel testrunde: [https://flutter.dev/docs/get-started/test-drive](https://flutter.dev/docs/get-started/test-drive)\n\n\nKodeworks sponser også gavekort fra Foodora, så man kan ta seg en matbit under kurset!",
+        "priority": 2,
+        "category": 1,
+        "sign_up": true,
+        "limit": 3,
+        "closed": false,
+        "start_registration_at": "2028-06-02T10:00:00Z",
+        "end_registration_at": "2028-06-09T10:00:00Z",
+        "sign_off_deadline": "2028-06-08T10:00:00Z",
+        "evaluate_link": "",
+        "end_date_schedular_id": null,
+        "sign_off_deadline_schedular_id": null,
+        "registration_priorities": [
+            7,
+            1,
+            4,
+            8,
+            9,
+            14,
+            2,
+            5,
+            10,
+            11,
+            3,
+            6,
+            12,
+            13
+        ]
+    }
+},
+{
+    "model": "content.event",
+    "pk": 5,
+    "fields": {
+        "created_at": "2021-02-17T09:16:40.137Z",
+        "updated_at": "2021-03-22T16:55:37.175Z",
+        "image": "https://i.ibb.co/R7VrSwr/blob.jpg",
+        "image_alt": "",
+        "title": "17 mai (påmelding stengt)",
+        "start_date": "2029-05-17T07:15:00Z",
+        "end_date": "2029-05-17T09:15:00Z",
+        "location": "Trondheim",
+        "description": "Bli med\n\n![ty](https://www.logiqpay.no/wp-content/uploads/2020/03/bouvet_nyhet.png)",
+        "priority": 2,
+        "category": 1,
+        "sign_up": true,
+        "limit": 10,
+        "closed": false,
+        "start_registration_at": "2020-05-10T10:00:00Z",
+        "end_registration_at": "2021-01-17T11:00:00Z",
+        "sign_off_deadline": "2021-02-16T11:00:00Z",
+        "evaluate_link": "",
+        "end_date_schedular_id": null,
+        "sign_off_deadline_schedular_id": null,
+        "registration_priorities": [
+            7,
+            1,
+            4,
+            8,
+            9,
+            14,
+            2,
+            5,
+            10,
+            11,
+            3,
+            6,
+            12,
+            13
+        ]
+    }
+},
+{
+    "model": "content.event",
+    "pk": 7,
+    "fields": {
+        "created_at": "2021-03-19T23:50:22.201Z",
+        "updated_at": "2021-03-22T16:57:51.122Z",
+        "image": "https://images.squarespace-cdn.com/content/v1/5bdb284fda02bce239f48da7/1599074085962-R2MNJY6II7W1SENXCXCP/ke17ZwdGBToddI8pDm48kNvT88LknE-K9M4pGNO0Iqd7gQa3H78H3Y0txjaiv_0fDoOvxcdMmMKkDsyUqMSsMWxHk725yiiHCCLfrh8O1z5QPOohDIaIeljMHgDF5CVlOqpeNLcJ80NK65_fV7S1UbeDbaZv1s3QfpIA4TYnL5Qao8BosUKjCVjCf8TKewJIH3bqxw7fF48mhrq5Ulr0Hg/image-asset.png",
+        "image_alt": "",
+        "title": "Kurs med Kodeworks",
+        "start_date": "2030-04-23T10:00:00Z",
+        "end_date": "2030-04-23T12:00:00Z",
+        "location": "Her",
+        "description": "**Lær å lage native apps for alle plattformer - Flutter 101**\n\nFlutter er et open source UI toolkit laget av Google ene og alene for native compiled apps for mobile, web og desktop. Alt fra en kodebase! All utvikling skjer i programmeringsspråket Dart, som er designet for å lage raske apps til alle plattformer.\n\nI kurset vil vi ha en kort gjennomgang av Flutter og Dart, for så å bevege oss over til å lage en app. Learning by doing er beste måten å lære. Ved kursslutt sitter du med en fiks ferdig app! Du trenger ingen erfaring med apputvikling, Dart eller Flutter for å bli med.\n\nKurset vil hovedsakelig ta for seg utvikling til iOS og Android, så det man må få installert et par ting på forhånd. Dette er lurt å gjøre før kursstart, slik at vi slipper å bruke kurstid på installasjon. På lenkene under følger enkle steg for hvordan man kan få installert det man trenger.\n\nWindows: [https://flutter.dev/docs/get-started/install/windows](https://flutter.dev/docs/get-started/install/windows)\n\nMac: [https://flutter.dev/docs/get-started/install/macos](https://flutter.dev/docs/get-started/install/macos)\n\nLinux: [https://flutter.dev/docs/get-started/install/linux](https://flutter.dev/docs/get-started/install/linux)\n\nEditor setup: [https://flutter.dev/docs/get-started/editor](https://flutter.dev/docs/get-started/editor)\n\nKursleder vil bruke Android Studio, men du velger fritt om du heller vil bruke IntelliJ, VSCode eller Emacs. \n\nTa gjerne en titt her for å kjøre en enkel testrunde: [https://flutter.dev/docs/get-started/test-drive](https://flutter.dev/docs/get-started/test-drive)\n\n\nKodeworks sponser også gavekort fra Foodora, så man kan ta seg en matbit under kurset!",
+        "priority": 2,
+        "category": 1,
+        "sign_up": true,
+        "limit": 40,
+        "closed": false,
+        "start_registration_at": "2020-04-16T10:00:00Z",
+        "end_registration_at": "2030-04-23T10:00:00Z",
+        "sign_off_deadline": "2030-04-22T10:00:00Z",
+        "evaluate_link": "",
+        "end_date_schedular_id": null,
+        "sign_off_deadline_schedular_id": null,
+        "registration_priorities": []
+    }
+},
+{
+    "model": "content.event",
+    "pk": 8,
+    "fields": {
+        "created_at": "2021-03-21T21:49:29.545Z",
+        "updated_at": "2021-03-22T17:27:43.871Z",
+        "image": "https://www.telia.no/contentassets/cf24158dba3a464c8ef65f7e912d71fd/netcom-telia-1.jpeg",
+        "image_alt": null,
+        "title": "[DIGITAL] Bedpres med Telia",
+        "start_date": "2025-03-22T18:00:00Z",
+        "end_date": "2025-03-22T20:00:00Z",
+        "location": "Zoom",
+        "description": "Velkomment til bedpres med Telia!\r\n\r\nTelia er et ledende teknologiselskap som arbeider med å utvikle digitale plattformer og tjenester slik at selskaper kan ta del av de enorme mulighetene innen digital transformasjon. Med store kunder som AkerBP gjør vår teknologi det mulig å utnytte data for blant annet bedre beslutningstaking  og innovasjon.\r\n\r\nGjennom bedriftspresentasjonen vil dere bli kjent med et knippe Teliaere, deres reise i selskapet og mulighetene som ligger til rette for studenter som dere. Det blir også gavekort på Wolt på 300kr slik at dere kan nyte noe godt underveis.\r\n\r\nVi gleder oss til å bli bedre kjent!",
+        "priority": 2,
+        "category": 1,
+        "sign_up": true,
+        "limit": 10,
+        "closed": false,
+        "start_registration_at": "2025-03-15T11:00:00Z",
+        "end_registration_at": "2025-03-22T11:00:00Z",
+        "sign_off_deadline": "2025-03-21T11:00:00Z",
+        "evaluate_link": null,
+        "end_date_schedular_id": null,
+        "sign_off_deadline_schedular_id": null,
+        "registration_priorities": []
+    }
+},
+{
+    "model": "content.jobpost",
+    "pk": 1,
+    "fields": {
+        "created_at": "2020-10-01T18:44:28.827Z",
+        "updated_at": "2021-03-21T21:14:52.133Z",
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcS7Nm1REKWBvCtyNGStKydj5hquvQkEnvqAlw&usqp=CAU",
+        "image_alt": "Bekk",
+        "title": "Kaffehenter hos Bekk",
+        "ingress": "",
+        "body": "Da er Bekk det perfekte sted for deg. Kald kaffe, varm kaffe, latte, kakao. Du skal skaffe alt og vi skal kose oss.",
+        "location": "Starbucks",
+        "deadline": "2028-10-01T18:43:00Z",
+        "is_continuously_hiring": false,
+        "company": "Bekk",
+        "email": "index@index.org",
+        "link": null
+    }
+},
+{
+    "model": "content.jobpost",
+    "pk": 2,
+    "fields": {
+        "created_at": "2020-10-01T18:47:31.931Z",
+        "updated_at": "2021-03-21T21:15:01.081Z",
+        "image": "https://lh3.googleusercontent.com/tPSknKHPUTRNsWt-YBQpcryIUlKiu3tjCdYgO7rFnpiRtl_oosb-oIZjM8LlHCLS5qY=w2247-h1264",
+        "image_alt": "Tinder",
+        "title": "TIHLDE Tinder",
+        "ingress": "Lei av bare gutter i TIHLDE",
+        "body": "Bli med å lage TIHLDE Tinder. Inspirert fra Mark LIzardburk skal du ha ansvaret for å matche oss TIHLDE gutta med alle jentene i NTNU",
+        "location": "Trondheim",
+        "deadline": "2027-10-01T18:47:00Z",
+        "is_continuously_hiring": false,
+        "company": "TIHLDE",
+        "email": "index@index.org",
+        "link": "https://tihlde.org/"
+    }
+},
+{
+    "model": "content.jobpost",
+    "pk": 3,
+    "fields": {
+        "created_at": "2021-03-01T16:25:06.565Z",
+        "updated_at": "2021-03-21T21:17:51.765Z",
+        "image": "https://i.kym-cdn.com/entries/icons/original/000/021/807/ig9OoyenpxqdCQyABmOQBZDI0duHk2QZZmWg2Hxd4ro.jpg",
+        "image_alt": null,
+        "title": "Stillingsutlysning - Utviklere",
+        "ingress": "",
+        "body": "Hackers er en nyoppstartet teknologibedrift som utvikler digitale løsninger til miljøambisiøse bygg- og anleggsprosjekter. Dette gjør vi sammen med de største aktørene i bransjen, og nå er vi klare for å vokse!\r\n\r\nØnsker du å bruke din digitale kompetanse til å gjøre bygg- og anleggsbransjen grønnere? Da vil vi ha deg med på laget!\r\n\r\n**Om stillingene**\r\n\r\nDu kommer til å sitte i spydspissen av produktutviklingen til Hackers og vil være med på sentrale avgjørelser rundt utformingen av våre løsninger. Ettersom vi er en liten bedrift vil du få varierte arbeidsoppgaver og utfordringer, både front- og back-end.\r\nVi skriver i Typescript og benytter oss av moderne webteknologi for å utvikle våre produkter. Vi har en selvutviklet løsning for backend som er event-basert og bygger på prinsippene om domenedrevet design.\r\nDet er en stor fordel om du har kjennskap til Typescript, Vue og NodeJS. Når det er sagt - lidenskap og vilje til å lære trumfer eventuelle kunnskapshull. Og ta det helt med ro - ingen av våre produkter kjøres i Internet Explorer.\r\n\r\n**Om deg**\r\n\r\nDu må digge å kode. Det er en fordel om du har erfaring, men det viktigste er at du er ivrig etter å lære og tar en utfordring på strak arm. Du bør ha en logisk og analytisk tilnærming til problemstillinger, og du evner å takle utfordringer selvstendig. \r\nMye av arbeidet vil foregå i team, så det er en fordel at du er en god lagspiller! Du bør være positiv og trives i en hektisk arbeidshverdag. Viktigst av alt, du er villig til å sette av tid til å jobbe med startup. Til gjengjeld blir du en del av et team som virkelig ønsker å utgjøre en forskjell!\r\n\r\n**Vi tilbyr**\r\n\r\n- Et actionfylt arbeidsmiljø der hver dag er unik, med en bratt læringskurve i praktisk anvendelse av fag. \r\n- Et godt sosialt miljø, der vi stadig finner på gøyale ting sammen!\r\n- En unik sjanse for å være med å utvikle en virksomhet i vekst.\r\n- Lønn og mulighet for eierandeler i Hackers. Vi ønsker å få med teammedlemmer som vil bidra til å ta selskapet til nye høyder. Så, dersom du gjør en god jobb får du dermed verdi gjennom aksjer i selskapet. \r\n- Vi holder til på Digs i Trondheim sentrum og Oppredningen på Gløshaugen. Du vil få egen kontorplass her. Når det er sagt – du må gjerne jobbe der det passer deg!\r\n- Uendelig med kaffe når du er på jobb. \r\n\r\n**Vi søker:**\r\n\r\n- Fulltidsutviklere - Frontend, Backend & Fullstack \r\n- Deltidsutviklere - Fullstack \r\n- Summer Intern - Fullstack \r\n\r\n**Hva trenger vi av deg?**\r\n\r\n- Kort søknadstekst om hvorfor du vil jobbe i Hackers\r\n- CV\r\n- Vitnemål/karakterer fra høyere utdanning\r\n- Portfolio eller eksempler fra tidligere relevant arbeid\r\n\r\nOppstart: Mai eller August.\r\n\r\nSøknad og CV sendes til kontakt@hackers.no.\r\n\r\nSøknader behandles fortløpende, siste frist 01.04.21\r\n\r\n**Ikke nøl med å slå på tråden – vi gleder oss til å høre fra deg!**",
+        "location": "Quantico's servers",
+        "deadline": "2029-03-01T15:17:00Z",
+        "is_continuously_hiring": true,
+        "company": "Hacker As",
+        "email": null,
+        "link": "https://tihlde.org/ctf/"
+    }
+},
+{
+    "model": "content.news",
+    "pk": 1,
+    "fields": {
+        "created_at": "2020-10-01T18:51:48.401Z",
+        "updated_at": "2021-03-06T20:21:13.811Z",
+        "image": "https://i.postimg.cc/nr9xt4hh/Skjermbilde-2021-01-31-kl-19-31-24.png",
+        "image_alt": "TIHLDE",
+        "title": "Join TIHLDE",
+        "header": "Livet blir bedre når du joiner TIHLDE",
+        "body": "## Hva skjer?\n\n- 🦟 **Bedre feilhåndtering**. Feilmeldinger som mottas fra backend håndteres bedre og mer sikkert.\n- ✨ **Oppdatert kokeboka**. Endret til bruk av react query istedenfor selvlaget hook.\n- ✨ **Oppdatert arrangementer**. Bedre caching med React Query og finere innlastning.\n- Liste\n- Listen 1\n- Hmm\n\nTIHLDE Drift 2.0 vil endre fokus og satse på kunnskapsformidling. Istedenfor å tilby tjenester som konkurrerer mot profesjonelle aktører, vil TIHLDE Drift bli bedre på kompetanseoverføring i form av kurs/workshops. Internt i TIHLDE er det relativt lite kompetanseoverføring blant elever, spesielt med tanke på at TIHLDE representerer 3 bachelorer og 1 master. Ett mål TIHLDE Drift ønsker å oppnå med fokusskifte er å gjøre det enklere for elever å dele kunnskap på tvers av studieretningene.\n\n## Hvorfor skjer det?\n\nDet er vanskelig å tilby tjenester som andre profesjonelle aktører tilbyr. Som student kan man få mange forskjellige ressurser og tjenester gratis, kraftig rabattert eller veldig billig. Github har for eksempel [Developer Pack](https://education.github.com/pack), som inneholder mye snadder. Andre eksempler er [Gitlab Pages](https://education.github.com/pack), [Heroku](https://www.heroku.com/), [Vercel](https://vercel.com), [Microsoft Azure](https://azure.microsoft.com/nb-no/), [Google Cloud Platform](https://cloud.google.com/) og [Amazon Web Services](https://aws.amazon.com/). TIHLDE Drift ønsker å blir mer relevante for TIHLDE sine medlemmer og mener et fokusskifte med blanke ark må til.\n\n**Hvordan vil det skje?**\n\nI forbindelse med fokusskifte ønsker TIHLDE Drift å starte fra bunn. Det å starte fra bunn vil si TIHLDE Drift har som mål å slette alle serverne for så å installere de tjenestene som er med på å skape den fremtidige kunnskapsplattformen.\n\nVarsling, migrering, avvikling og re-installering er en prosess som **vil ta tid**. Før TIHLDE Drift gjør noe som helst med serverne vil det skje en varslings fase. Hensikten med varsling er å informere de brukerne som fremdeles benytter tjenester som Colargol, SQL databasen, Fantorangen og virtuelle maskiner på Nerdvana slik at de kan ta backup. Etter varslings fasen vil TIHLDE Drift bistå med å migrere noen tjenester fra vårt system over til et annet system. De migreringen gjelder vil bli kontaktet av TIHLDE Drift. Når migreringen er over vil en avviklingsfase starte som vil si at TIHLDE Drift skrur av tjenester. Formålet med avvikling er å sørge for at alle får med seg nedstengingen og gjøre de tiltakene som er nødvendige. Dette kan for eksempel være å kontakte TIHLDE Drift eller å ta backup av sine filer. Når varsling, migrering og avvikling har blitt gjennomført vil alle serverne bli slettet slik at serverne er klare for et nytt kapittel.\n\n**Spørsmål? Klage?**\n\nHvis du har forslag, klager eller spørsmål er det bare å kontakte TIHLDE Drift på mail (drift@tihlde.org), TIHLDE Slack, TIHLDE Discord eller TIHLDE IRC."
+    }
+},
+{
+    "model": "content.news",
+    "pk": 9,
+    "fields": {
+        "created_at": "2021-03-21T21:18:38.301Z",
+        "updated_at": "2021-03-21T21:18:38.301Z",
+        "image": "https://i.imgur.com/kCZMMWJ.png",
+        "image_alt": null,
+        "title": "Kontoret åpner for utlån av brettspill!",
+        "header": "Har du lyst å spille et av våre spill i komfor av dine egne fire vegger?",
+        "body": "Kontoret åpner nå for at man som medlem av TIHLDE kan låne våre brettspill. Du låner et spill ved å skrive ditt eget navn, spillets navn samt dato på listen som henger til venstre for døra.\r\n\r\nLov å låne spill opptil 7 dager!\r\n___\r\nxoxo Kontkom💋"
+    }
+},
+{
+    "model": "content.news",
+    "pk": 10,
+    "fields": {
+        "created_at": "2021-03-21T21:19:06.595Z",
+        "updated_at": "2021-03-21T21:19:06.595Z",
+        "image": "https://i.ibb.co/J54WWDc/unnamed-1.jpg",
+        "image_alt": null,
+        "title": "Oppdatert prikksystem",
+        "header": "Gjelder kun på arrangementer i regi av Næringsliv og Kurs",
+        "body": "Skulle det være spørsmål etter at dette er lest, ta gjerne kontakt med Næringsliv og Kurs på bedpres@tihlde.org. Dersom man mener man har fått en urettferdig prikk eller at det har skjedd en feil, ta kontakt.\r\nDet kan gis tilleggsregler til spesifikke arrangement, og da vil dette opplyses om i arrangementsteksten.\r\n\r\n## **Hva gir prikker**\r\n- Å melde seg av et arrangement etter avmeldingsfristen gir én prikk\r\n- Om man ikke møter opp på et arrangement hvor man er påmeldt gir det to prikker\r\n- Dersom man er påmeldt og møter opp etter arrangementets starttidspunkt, får man én prikk\r\n- Dersom deltakeren oppfører seg upassende og ikke retter seg etter advarsler fra arrangementsansvarlig kan arrangerende komité gi opp til tre prikker\r\n- Flyttes du opp fra venteliste gjelder samme regler som ellers, du må derfor melde deg av ventelisten dersom du ikke har mulighet til å møte opp.\r\n\r\n## **Konsekvenser av prikker**\r\n- Tre prikker eller flere prikker innebærer at du må blir nedprioritert på arrangementene ut semesteret.\r\n\r\n## **Ventelisteregler**\r\nDeltakere som står på venteliste er forventet at kan møte opp dersom det blir en ledig plass. Dette gjelder helt frem til 2 timer før arrangementets starttid. Det er deltakerens ansvar å melde seg av ventelisten, hvis det ikke passer allikevel.\r\n\r\n## **Retningslinjer for oppførsel**\r\nNår bedrifter velger å holde arrangementer med TIHLDE, så gjør de det for å komme i kontakt med våre studenter. Under arrangementet ønsker bedriftene å vise at de er en aktuell arbeidsplass, og på samme måte må vi vise at vi er en aktuell målgruppe for rekruttering. **Gode holdninger** og **interesserte studenter** gir bedriften et bedre inntrykk av besøket. Følgelig vil bedriftene være mer interesserte i å komme tilbake til TIHLDE for å profilere seg overfor oss.\r\n- Hvis det er bespisning under arrangement bør en oppføre seg som om man selv dro ut for å spise. Dette innebærer å vise **god folkeskikk**, og å oppføre seg som “folk flest”.\r\n- Hvis noen oppfører seg upassende på et arrangement vil vi, i den grad det er mulig, henvende oss til vedkommende og konfrontere dem med det vi mener er dårlig oppførsel, enten under eller i etterkant av arrangementet.\r\n\r\nOppførsel som oppleves av arrangør som uakseptabel vil kunne få konsekvenser. Arrangør har rett til å vurdere og utøve sanksjoner dersom det vurderes som nødvendig eller hensiktsmessig. Om ikke man retter seg etter saklige pålegg fra representant på gjeldende arrangement vil også konsekvenser bli vurdert."
+    }
+},
+{
+    "model": "content.news",
+    "pk": 11,
+    "fields": {
+        "created_at": "2021-03-21T21:19:40.559Z",
+        "updated_at": "2021-03-21T21:19:40.559Z",
+        "image": "https://p0.pikrepo.com/preview/2/479/gold-trophy-with-confetti.jpg",
+        "image_alt": null,
+        "title": "Kåringer - Julebord 2023",
+        "header": "Nå har avstemmingen startet",
+        "body": "#### I år som i fjor kjører vi på med kåringer på julebordet!! \r\n\r\nHer kan du stemme frem årets frivillig, ildsjel, gledesspreder og mye mer. \r\n\r\nStem frem din favoritt! Kanskje er det akkurat den du stemmer på som får tildelt en av de gjeve titlene i år."
+    }
+},
+{
+    "model": "content.userbadge",
+    "pk": 1,
+    "fields": {
+        "created_at": "2020-10-01T18:53:48.435Z",
+        "updated_at": "2020-10-01T18:53:48.435Z",
+        "user": "index",
+        "badge": "8149b976-c5c9-428b-bbf5-ee891e57774a"
+    }
+},
+{
+    "model": "content.page",
+    "pk": "05134b69-30f9-4d4f-bf7a-6d4bf1831f73",
+    "fields": {
+        "created_at": "2021-02-15T18:05:39.598Z",
+        "updated_at": "2021-02-15T18:05:39.598Z",
+        "image": "",
+        "image_alt": "",
+        "parent": "74622391-badf-4b55-a436-7e2c2cbe043e",
+        "title": "Lover og regler",
+        "slug": "lover-og-regler",
+        "content": "[Lover for TIHLDE](https://drive.tihlde.org/index.php/s/XHSTzMdNNYkcii7)\n\n[Styreinstruks for Hovedstyret](https://drive.tihlde.org/index.php/s/6ofQZDAACYjicAS)\n\n[Undergruppeinstrukser](https://drive.tihlde.org/index.php/s/PFCxsydPixPT7Rk)\n\n___\n\n[Regler og instrukser for Sosialen](https://drive.tihlde.org/index.php/s/6reZE8JAiCXDAAG)\n\n[Regler og instrukser for Næringsliv og Kurs](https://drive.tihlde.org/index.php/s/koXWrtzzqmykTFP)\n\n[Regler og instrukser for Drift](https://drive.tihlde.org/index.php/s/o2aKNFBNzzndnmK)\n\n[Regler og instrukser for Promo](https://drive.tihlde.org/index.php/s/RFENK6jntf82F4k)\n\n[Regler og instrukser for De Eldstes Raad](https://drive.tihlde.org/index.php/s/aXn6QF8BrMPkQwr)\n\n[Regler og instrukser for TIHLDE-Kontoret](https://drive.tihlde.org/index.php/s/ZRJHFicjRgCT4BA)\n\n[Regler og instrukser for Index](https://drive.tihlde.org/index.php/s/noqsxJDaAs5tySG)",
+        "lft": 9,
+        "rght": 10,
+        "tree_id": 1,
+        "level": 2
+    }
+},
+{
+    "model": "content.page",
+    "pk": "62396c0b-2c80-4bce-8f42-90fff7fb0058",
+    "fields": {
+        "created_at": "2021-02-15T18:03:43.204Z",
+        "updated_at": "2021-02-15T18:03:43.204Z",
+        "image": "",
+        "image_alt": "",
+        "parent": "e6ab49c7-fe17-451b-894e-23ad1fefa6d0",
+        "title": "Ny Student",
+        "slug": "ny-student",
+        "content": "# Velkommen til alle nye studenter!\n\nHei og velkommen til TIHLDE. Vi i TIHLDE vil gjerne ønske deg velkommen til Trondheim og vil at du skal bli kjent med både byen og dine medstudenter derfor arrangerer vi fadderuka for dere. Men hva er fadderuka? Jo, fadderuka er et program som varer i to uker hvor du som en ny student blir godt kjent med dine medstudenter og skaper et bånd som varer hele studietiden og muligens livet. For mer informasjon trykk på linken under.\n\n[Info om fadderuka](https://drive.google.com/file/d/1Q8kx9p_khg6LbK1HACPAKIfjVwLPeJ2J/view)\n\n# Spørsmål og svar (FAQ)\n\n## Linjeforeningen\n~~~expandlist\n```expand\nHva er TIHLDE::\nTIHLDE (Trondheim IngeniørHøgskoles Linjeforening for Dannede EDBere) er linjeforeningen for bachelorstudiene Dataingeniør, Digital infrastruktur og cybersikkerhet, Digital forretningsutvikling, Drift av datasystemer, samt masterstudiet Digital samhandling ved AIT, IDI, NTNU på Gløshaugen. Du kan lese mer om TIHLDE [her](https://tihlde.org/om/).\n```\n```expand\nHva er en linjeforening?::\nEn linjeforening er en studentorganisasjon som baserer seg på frivillig engasjement fra studenter. Formålet er å etablere sosiale nettverk på tvers av klasser innenfor de ulike studieretningene. Sosial aktivitet er høyt prioritert, men det er i tillegg vanlig å ha en faglig avdeling med ansvar for bedriftskontakt og enteknisk avdeling med ansvar for nettsiden og andre datasystemer.\n```\n```expand\nHva gjør en linjeforening?::\nLinjeforeninger jobber for å etablere sosiale nettverk på tvers av kull og linjer innad på studiet. Over tid har de fleste linjeforeninger utviklet seg til å bli bindeleddet mellom studentene og næringslivet. TIHLDE sitt formål er nedfelt i [TIHLDEs Lover](https://tihlde.org/lover/). Her står det: *“Foreningens formål er å fremme det sosiale og faglige tilbudet ved AIT.”* Linjeforeninger er også arrangør av sosiale arrangementer og aktivitetstilbud utenfor studiet.\n```\n~~~\n\n## Fadderuka\n~~~expandlist\n```expand\nHva er fadderuka?::\nFadderuka burde egentlig bli kalt for fadderukene, da den i Trondheim varer fra immatrikuleringen og to uker frem i tid. Dette er uker fylt med masse aktiviteter som er laget for at du skal bli kjent både med byen, campus og dine medstudenter. På arrangementene vil du være sammen med klassekameratene dine og det er muligheter for å bli kjent med andre studenter på NTNU. Typiske arrangementer som blir arrangert i fadderuka er grilling, quiz, rebusløp, toga-fest, hybel-til-hybel og mye annet moro.\n```\n```expand\nHvorfor bli med på fadderuka?::\nÅ bli med i fadderuka vil gi deg en enklere hverdag de første ukene som ny student på NTNU. Kanskje er det også nettopp i denne perioden du danner vennskap som varer hele studietiden, eller enda lenger. Selv om det kan bli mange aktiviteter på kort tid, er det anbefalt å delta på så mye som mulig i disse ukene, da dette ofte legger grunnlaget for det sosiale miljøet resten av studietiden.\n\nDet er også en gylden mulighet til å spørre fadderne dine om alt du lurer på om studiet og studietilværelsen.\n```\n```expand\nVåre tips til fadderuka::\n\n1. Ta med klær og sko for alle anledninger. Hvite laken (ikke stretchlaken) og sko du ikke er så redd for kommer alltid til nytte.\n2. Vær forberedt på stress. Ha fryseren full av frossenpizza og annen ferdigmat. De fleste matbutikker i Trondheim har salg på akkurat dette ved studiestart.\n3. Si ja, bli med og kos deg! Fadderuka kan føles lang, tung og den er full av inntrykk, men det er veldig verdt det. Vennskapene du får i fadderuka, er gjerne de vennskapene du har når bacheloren leveres.\n\n```\n```expand\nHvem skal jeg spørre om jeg lurer på noe?::\nFadderne dine er der for å hjelpe deg i fadderuka, og kan svare på mange av spørsmålene du måtte ha. Dersom det er noe de ikke kan svare på, kan du enten spørre skolen eller ta kontakt med oss i TIHLDE. Vi, som linjeforening, er her for å hjelpe deg. Dersom vi ikke kan svaret, så vet vi ihvertfall hvem vi skal spørre for å finne ut av det.\n```\n~~~\n\n## Studiestart\n~~~expandlist\n```expand\nHvor finner jeg informasjon om studiestart?::\nHva som skjer på dagtid den første studieuka, kan du lese om på NTNU sine sider. Gå inn på NTNU sine sider og søk opp ditt studie. Informasjonen bør stå på forsiden der.\n\nNår det kommer til hva som skjer på kveldstid de første ukene, kan det leses i fadderuke-programmet. Dette er det vi i TIHLDE som arrangerer.\n```\n```expand\nHva er immatrikulering?::\nImmatrikuleringen er skolen velkomstseremoni for nye studenter.\n```\n```expand\nHva er immatrikuleringsballet?::\nImmatrkulleringsballet er det første store arrangementet arrangert av linjeforeningen ved studiestart. Dette arrangeres hvert år for å for å ønske nye studenter velkommen til studiet og linjeforeningen. Dette er en studentgalla, noe som vil si at det er det fineste antrekket du har som gjelder, vanligvis dress og kjole. Alle trinn deltar selvfølgelig på dette arrangementet, men førsteklasse har prioritet.\n```\n```expand\nHvilke bøker trenger jeg?::\nHvilke bøker du trenger i de forskjellige fagene vil bli informert om på en av de første forelesningene i hvert fag. Dette kan også leses nederst på nettsiden til emnet under «Kursmateriell».Det er ofte lurt å ta kontakt med eldre folk på studiet før du kjøper bøker, da det er ikke alltid man faktisk trenger å kjøpe alle som står oppgitt.\n```\n```expand\nHvor kjøper jeg pensumbøker?::\nDet er mange muligheter får å få tak i riktige bøker. Den enkleste (og dyreste) er å kjøpe dem nye på Akademika. Akademika er en bokhandel som ligger på campus. Et lite tips er å lete på andre bokhandlere på nettet også. Flere av disse har gjerne salg på fagbøker i starten av semestret.\n\nEr du ute etter et billigere alternativ, kan du kjøpe brukte bøker. Vi i TIHLDE har opprettet en FaceBook-gruppe for kjøp og salg av pensumbøker. Denne kan du finne på «Kjøp og salg pensumbøker - TIHLDE - AIT, IDI, NTNU». [iBok.no](https://ibok.no/) er også et bra alternativ. Her legger studenter fra hele Norge ut bøker de vil selge til en billig penge.Det er også lurt å snakke med fadderne sine eller andre i linjeforeningen. Kanskjede har noen bøker de vil selge?Å kjøpe pensumbøker er ikke noe man trenger i stress med. Av erfaring vet vi at mange av bøkene ikke blir åpnet før mot slutten av semesteret uansett.\n```\n```expand\nHva slags PC trenger jeg til studiet?::\nDet er ingen krav til hva slags PC du trenger til studiet, velg en maskin du trives å jobbe med. Det går an å gjennomføre studiet med Windows, MacOS og Linux, men med de to sistnevnte må man beregne å finne ut av litt mer på egenhånd. Dette er stort sett ikke noe problem, og det er studenter som bruker alle tre operativsystemene hvert år. Om du skulle få problemer med PCen din underveis i studiet, så hjelper NTNU deg. [Orakeltjenesten](https://innsida.ntnu.no/wiki/-/wiki/Norsk/Orakeltjenesten) kan hjelpe deg med IT-relaterte problemer.\n```\n```expand\nHvilke apper bør lastes ned før skolestart?::\n*AtB Reise* og *AtB Mobilbillett* er appene du trenger for å ta buss rundt i Trondheim. I fadderuka kan det godt være det lønner seg å kjøpe busskort. På AtB Reise vil det være oversikt over bussforbindelser.\n\n*MazeMap* er en app for å navigere seg rundt på NTNU sine campuser. Sliter du med å finne veien til forelesningssalen eller labben du skal møte opp i, vil dette appen være veldig hjelpsom.\n\n*Mattilbud* er en samling av alle kampanjeaviser til matbutikkene. Når man etter første handletur finner ut av hvor dyrt gulost faktisk er, er det veldig greit å ha oversikt over når de forskjellige butikkene har tilbud på ost.\n\n*Blackboard* er læringsplattformen som NTNU bruker. Her blir beskjeder fra forelesere, forelesningsnotater og mye annet lagt ut.\n\n*Studentbevis* kan bli nyttig i mange situasjoner. I og med at Trondheim er Norges studenterby, er det mye studenttilbud rundt om kring.\n```\n```expand\nHvordan påvirker Covid-19 studiestarten?::\nNår det kommer til hvordan pandemien påvirker studiestarten, er det NTNU som kommer med de siste oppdateringene. Det som er sikkert, er at det vil bli lagt opp til å følge en-meters-regelen utover høsten også. Dette innebærer at man ikke kan ha alle forelesningene sine på Campus. Øvingstimer og gruppearbeid vil få prioritert plass. Dette betyr altså at det vil være mulighet til å møte sine nye medelever på skolen, selv om det kanskje ikke blir like ofte som det ellers ville vært.\n\nI TIHLDE sin fadderuke vil det også bli tatt hensyn. Det vil bli oppfordret til å holde litt avstand til hverandre. Vi har også valgt å dele opp gruppen på enkelte arrangementer, slik at ikke hele TIHLDE er samlet, men at vi heller er klassevis.\n```\n~~~\n\n## Studentlivet\n~~~expandlist\n```expand\nHvorfor velge å studere i Trondheim?::\nDet finnes mange gode grunner til å velge Trondheim som studieby. Mange av dem kan du lese her: [https://www.ntnu.no/studier/velgntnu/](https://www.ntnu.no/studier/velgntnu).\n\nDen aller beste grunnen synes vi er at du blir en del av Norges beste studentmiljø. Trondheim har flere ganger blitt kåret til Norges beste studieby. En av grunnene til dette er de mange organisasjonene som studentene driver selv. Engasjerte studenter legger ned en stor innsats i Studentersamfundet, UKA, Den internasjonale studentfestivalen ISFIT, linjeforeningene, studentdemokratiet og de flere hundre andre studentorganisasjoner. Studentersamfundet er faktisk god nok grunn alene til at mange velger Trondheim som sin studieby.\n```\n```expand\nHvordan er studentmiljøet i Trondheim?::\nDet gode studentmiljøet i Trondheim er først og fremst skapt av studentfrivilligheten. Linjeforeningene, idrettslagene og diverse utesteder er drevet av frivillige studenter. For å få mest ut av studiemiljøet, og for å holde frivilligheten i live, så anbefaler vi å verve deg til et eller flere frivillige verv selv. Det finnes tonnevis av ting å engasjere seg i, så her er det mulig for enhver å finne noe man liker å holde på med. Ved å ta et frivillig verv, får du mange nye venner, et stort nettverk, og ikke minst er det veldig morsomt og sosialt. Om vi skal gi et råd om hvilke verv du burde ta, så kan jeg kun anbefale deg å søke verv hos de lokale studentorganisasjonene først. Her vil du ofte treffe andre studenter som studerer det samme som deg. Da vil du se at det sosiale miljøet strekker seg fra vervet og frivilligheten, og inn i studiehverdagen også.\n```\n```expand\nHva er Studentersamfundet?::\nStudentersamfundet i Trondhjem er et hus, en tradisjon og en organisasjon for studentene i Trondheim, som eies og drives av studentene. Samfundet har omtrent 10 000 medlemmer, og omtrent 1 250 er aktive på huset. Les mer om [Samfundet](https://www.samfundet.no/).\n```\n```expand\nHva er UKA?::\nEr verdens største studentfestival, og finner sted i Trondheim på høsten annethvert år. Det arrangeres en hel del ulike arrangementer som temafester, revy og konserter med både nasjonale og internasjonale artister. Festivalen er drevet av studenter, og det er derfor veldig mange ulike verv som skal besettes, alt fra kokk og bartender til salgssjef og skuespiller.\n```\n```expand\nHvor finner jeg et sted å bo?::\nSkal du begynne å studere i Trondheim, men har ikke funnet et sted å bo? Frykt ikke, under skal vi gi deg noen tips for å komme i gang. Det første du bør tenke på er budsjett, og hvor mye penger du ønsker å bruke på å leie. Priser varierer primært på hvor hybelen er og størrelsen på rommet. Generelt sett er områder nær sentrum og campus ofte mer ettertraktet og derfor også dyrere enn de som ligger litt lenger unna.\n```\n```expand\nHva er Studentskipnaden i Trondheim?::\nStudentsamskipnaden i Trondheim er en stiftelse som betales av og drives for studentene. Gå inn på [sit.no](https://www.sit.no/) og søk plass så fort som mulig for å sikre deg en plass i køen. Det er ofte mange søkere her, og er du sent ute kan du ikke regne med å få bolig herfra. Utvekslingsstudenter har førsteprioritet, og kommer først i køen, og alle andre søkere prioriteres etter fødselsår, hvor de yngste får tilbud først.\n```\n```expand\nHva er viktig å tenke på om man leier fra private utleiere?::\nVed privat leie er det viktig å passe på at utleier er en seriøs aktør. Det er absolutt mulig å få gode tilbud i det private markedet, men vi anbefaler å dra på visning og se hvordan stedet er før du leier.\n\nDet er flere kjente og seriøse utleiere i Trondheim. Blant disse er Utleiemegleren, Stiftstaden og Frost Eiendom. Kjente private studentbyer er Stiftsstaden studentby, Voll studentby, Singsaker studenterhjem og Camp Trondheim. Utover dette er det enkeltpersoner som leier ut på både [finn.no](https://www.finn.no/) og [hybel.no](https://hybel.no/). Det er det også mulig å finne rom i kollektiv.\n\nOm du ikke rekker å finne bolig til studiestart, har Sit i samarbeid med Scandic Lerkendal noe som heter Tak-over-hodet-garantien, som vil si at du som student kan få bo på hotellet for 310 kr natten (inkl. frokost) inntil du har funnet et sted å bo. Les mer om dette [her](https://takoverhodet.com/).\n```\n~~~\n\nFikk du ikke svar på det du lurte på her? Send oss en melding på [Facebook](https://www.facebook.com/messages/t/tihlde), så svarer vi deg så fort som vi klarer.",
+        "lft": 12,
+        "rght": 13,
+        "tree_id": 1,
+        "level": 1
+    }
+},
+{
+    "model": "content.page",
+    "pk": "74622391-badf-4b55-a436-7e2c2cbe043e",
+    "fields": {
+        "created_at": "2021-02-15T16:24:16.103Z",
+        "updated_at": "2021-02-16T15:34:22.433Z",
+        "image": "",
+        "image_alt": "",
+        "parent": "e6ab49c7-fe17-451b-894e-23ad1fefa6d0",
+        "title": "TIHLDE",
+        "slug": "tihlde",
+        "content": "## Undergrupper og komiteer",
+        "lft": 2,
+        "rght": 11,
+        "tree_id": 1,
+        "level": 1
+    }
+},
+{
+    "model": "content.page",
+    "pk": "a5cb717e-7b9a-442c-9831-fb57e2efb090",
+    "fields": {
+        "created_at": "2021-02-15T18:04:02.876Z",
+        "updated_at": "2021-03-07T11:04:41.487Z",
+        "image": "https://i.ibb.co/k01KdLc/Skjermbilde-2021-03-05-142838.jpg",
+        "image_alt": "",
+        "parent": "e6ab49c7-fe17-451b-894e-23ad1fefa6d0",
+        "title": "Kontakt oss",
+        "slug": "kontakt-oss",
+        "content": "# Digitalt\n> [Epost](mailto:hs@tihlde.org)\n>\n> [Messnger](https://www.facebook.com/messages/t/tihlde)\n>\n> [Slack](https://tihlde.slack.com/)\n\n# Besøksadresse\n> A-blokka, Realfagbygget\n>\n> Rom: [A3-116](http://bit.ly/2Rf5AR5)\n>\n> Høgskoleringen 5\n>\n> NTNU Gløshaugen\n\n# Post- og faktureringsadresse\n> TIHLDE\n>\n> Sem Sælands vei 7-9\n>\n> 7491 Trondheim",
+        "lft": 14,
+        "rght": 15,
+        "tree_id": 1,
+        "level": 1
+    }
+},
+{
+    "model": "content.page",
+    "pk": "b0ea039d-1885-4ef7-92a3-c459ed8e395e",
+    "fields": {
+        "created_at": "2021-02-15T18:04:20.592Z",
+        "updated_at": "2021-02-15T18:04:20.592Z",
+        "image": "",
+        "image_alt": "",
+        "parent": "e6ab49c7-fe17-451b-894e-23ad1fefa6d0",
+        "title": "Annet",
+        "slug": "annet",
+        "content": "",
+        "lft": 16,
+        "rght": 23,
+        "tree_id": 1,
+        "level": 1
+    }
+},
+{
+    "model": "content.page",
+    "pk": "b2507b12-6e9a-4a37-bece-7ad3e909aca8",
+    "fields": {
+        "created_at": "2021-02-15T16:57:22.695Z",
+        "updated_at": "2021-02-15T18:05:52.230Z",
+        "image": "",
+        "image_alt": "",
+        "parent": "74622391-badf-4b55-a436-7e2c2cbe043e",
+        "title": "Undergrupper",
+        "slug": "undergrupper",
+        "content": "",
+        "lft": 3,
+        "rght": 8,
+        "tree_id": 1,
+        "level": 2
+    }
+},
+{
+    "model": "content.page",
+    "pk": "b2676c1e-4dbf-4f38-bf35-5087760bb5ea",
+    "fields": {
+        "created_at": "2021-02-15T18:04:40.189Z",
+        "updated_at": "2021-02-15T18:04:40.189Z",
+        "image": "",
+        "image_alt": "",
+        "parent": "b0ea039d-1885-4ef7-92a3-c459ed8e395e",
+        "title": "Arrangementsregler",
+        "slug": "arrangementsregler",
+        "content": "**_Gjelder kun på arrangementer i regi av Næringsliv og Kurs_**\n\nSkulle det være spørsmål etter at dette er lest, ta gjerne kontakt med Næringsliv og Kurs på [bedpres@tihlde.org](mailto:bedpres@tihlde.org). Dersom man mener man har fått en urettferdig prikk eller at det har skjedd en feil, ta kontakt.\nDet kan gis tilleggsregler til spesifikke arrangement, og da vil dette opplyses om i arrangementsteksten.\n\n## **Hva gir prikker**\n- Å melde seg av et arrangement etter avmeldingsfristen gir én prikk\n- Om man ikke møter opp på et arrangement hvor man er påmeldt gir det to prikker\n- Dersom man er påmeldt og møter opp etter arrangementets starttidspunkt, får man én prikk\n- Dersom deltakeren oppfører seg upassende og ikke retter seg etter advarsler fra arrangementsansvarlig kan arrangerende komité gi opp til tre prikker\n- Flyttes du opp fra venteliste gjelder samme regler som ellers, du må derfor melde deg av ventelisten dersom du ikke har mulighet til å møte opp.\n\n## **Konsekvenser av prikker**\n- Tre prikker eller flere prikker innebærer at du må blir nedprioritert på arrangementene ut semesteret.\n\n## **Ventelisteregler**\nDeltakere som står på venteliste er forventet at kan møte opp dersom det blir en ledig plass. Dette gjelder helt frem til 2 timer før arrangementets starttid. Det er deltakerens ansvar å melde seg av ventelisten, hvis det ikke passer allikevel.\n\n## **Retningslinjer for oppførsel**\nNår bedrifter velger å holde arrangementer med TIHLDE, så gjør de det for å komme i kontakt med våre studenter. Under arrangementet ønsker bedriftene å vise at de er en aktuell arbeidsplass, og på samme måte må vi vise at vi er en aktuell målgruppe for rekruttering. **Gode holdninger** og **interesserte studenter** gir bedriften et bedre inntrykk av besøket. Følgelig vil bedriftene være mer interesserte i å komme tilbake til TIHLDE for å profilere seg overfor oss.\n- Hvis det er bespisning under arrangement bør en oppføre seg som om man selv dro ut for å spise. Dette innebærer å vise **god folkeskikk**, og å oppføre seg som “folk flest”.\n- Hvis noen oppfører seg upassende på et arrangement vil vi, i den grad det er mulig, henvende oss til vedkommende og konfrontere dem med det vi mener er dårlig oppførsel, enten under eller i etterkant av arrangementet.\n\nOppførsel som oppleves av arrangør som uakseptabel vil kunne få konsekvenser. Arrangør har rett til å vurdere og utøve sanksjoner dersom det vurderes som nødvendig eller hensiktsmessig. Om ikke man retter seg etter saklige pålegg fra representant på gjeldende arrangement vil også konsekvenser bli vurdert.",
+        "lft": 17,
+        "rght": 18,
+        "tree_id": 1,
+        "level": 2
+    }
+},
+{
+    "model": "content.page",
+    "pk": "e6ab49c7-fe17-451b-894e-23ad1fefa6d0",
+    "fields": {
+        "created_at": "2021-02-09T15:49:00.643Z",
+        "updated_at": "2021-02-09T15:49:00.643Z",
+        "image": null,
+        "image_alt": null,
+        "parent": null,
+        "title": "Om",
+        "slug": "om",
+        "content": "",
+        "lft": 1,
+        "rght": 26,
+        "tree_id": 1,
+        "level": 0
+    }
+},
+{
+    "model": "content.page",
+    "pk": "edda5e4c-670b-4139-8ae6-013cf1943078",
+    "fields": {
+        "created_at": "2021-02-15T18:05:02.345Z",
+        "updated_at": "2021-02-15T18:05:02.345Z",
+        "image": "",
+        "image_alt": "",
+        "parent": "b0ea039d-1885-4ef7-92a3-c459ed8e395e",
+        "title": "Personvern",
+        "slug": "personvern",
+        "content": "Denne siden brukes til å informere besøkende på nettstedet om retningslinjene våre for innsamling og bruk av personlig informasjon hvis noen bestemte seg for å bruke tjenesten vår, nettstedet TIHLDE.org.\n\nHvis du velger å bruke tjenesten vår, samtykker du til innsamling og bruk av informasjon i henhold til denne policyen. Den personlige informasjonen vi samler inn brukes til å levere og forbedre tjenesten. Vi vil ikke bruke eller dele informasjonen din med noen, bortsett fra som beskrevet i denne personvernpolitikken.\n\nBetingelsene som brukes i denne personvernpolitikken har de samme betydningene som i våre vilkår og betingelser, som er tilgjengelige på https://tihlde.org, med mindre annet er definert i disse personvernreglene.\n\n## **Innsamling og bruk av informasjon**\nFor en bedre opplevelse når du bruker tjenesten vår, kan det hende vi krever at du gir oss personlig identifiserbar informasjon, inkludert, men ikke begrenset til ditt navn, telefonnummer og postadresse. Informasjonen vi samler inn vil bli brukt til å kontakte eller identifisere deg.\n\n## **Loggdata**\nVi vil informere deg om at hver gang du besøker tjenesten vår, samler vi inn informasjon som nettleseren din sender til oss som kalles loggdata. Disse loggdataene kan inneholde informasjon som datamaskinens IP-adresse (nettprotokoll), nettleserversjon, sider på tjenesten du besøker, klokkeslett og dato for besøket, tidsbruken på disse sidene og annen statistikk.\n\n## **Kapsler**\nInformasjonskapsler er filer med liten mengde data som ofte brukes en anonym unik identifikator. Disse sendes til nettleseren din fra nettstedet du besøker og er lagret på datamaskinens harddisk.\n\nNettstedet vårt bruker disse \"informasjonskapslene\" for å samle informasjon og for å forbedre tjenesten vår. Ved å fortsette å bruke denne siden godtar du bruken av informasjonskapsler.\n\n## **Tjenesteytere**\nVi kan ansette tredjepartsbedrifter og enkeltpersoner på grunn av følgende årsaker:\n\n- For å lette tjenesten vår;\n- For å tilby tjenesten på våre vegne;\n- For å utføre Tjenester-relaterte tjenester; eller\n- For å hjelpe oss med å analysere hvordan tjenesten vår brukes.\n\nVi vil informere våre tjenestebrukere om at disse tredjepartene har tilgang til din personlige informasjon. Årsaken er å utføre oppgavene som er tildelt dem på våre vegne. De er imidlertid forpliktet til ikke å avsløre eller bruke informasjonen til noe annet formål.\n\n## **Sikkerhet**\nVi verdsetter din tillit til å gi oss din personlige informasjon, og vi prøver derfor å bruke kommersielt akseptable metoder for å beskytte den. Men husk at ingen overføringsmetode over internett, eller metode for elektronisk lagring er 100% sikker og pålitelig, og vi kan ikke garantere dets absolutte sikkerhet.\n\n## **Koblinger til andre nettsteder**\nTjenesten vår kan inneholde lenker til andre nettsteder. Hvis du klikker på en kobling fra tredjepart, blir du ledet til det nettstedet. Merk at disse eksterne nettstedene ikke drives av oss. Derfor anbefaler vi deg på det sterkeste å gjennomgå personvernreglene på disse nettstedene. Vi har ingen kontroll over og påtar oss intet ansvar for innhold, personvernpolitikk eller praksis på tredjeparts nettsteder eller tjenester.\n\n**Barns personvern**\n\nVåre tjenester adresserer ikke personer under 13 år. Vi samler ikke bevisst personlig identifiserbar informasjon fra barn under 13 år. I tilfelle vi oppdager at et barn under 13 år har gitt oss personlig informasjon, sletter vi umiddelbart dette fra serverne våre. Hvis du er forelder eller foresatt og du er klar over at barnet ditt har gitt oss personlig informasjon, vennligst kontakt oss slik at vi kan gjøre nødvendige handlinger.\n\n## **Endringer i denne personvernpolitikken**\nVi kan oppdatere personvernreglene våre fra tid til annen. Dermed anbefaler vi deg å gjennomgå denne siden med jevne mellomrom for eventuelle endringer. Vi vil varsle deg om endringer ved å legge ut den nye personvernregelen på denne siden. Disse endringene trer i kraft umiddelbart etter at de er lagt ut på denne siden.\n\n## **Kontakt oss**\nHvis du har spørsmål eller forslag til personvernreglene våre, ikke nøl med å kontakte oss.",
+        "lft": 19,
+        "rght": 20,
+        "tree_id": 1,
+        "level": 2
+    }
+},
+{
+    "model": "content.page",
+    "pk": "ff6231cf-5992-44fe-bc9c-26104eb89153",
+    "fields": {
+        "created_at": "2021-02-15T16:57:40.848Z",
+        "updated_at": "2021-02-15T17:19:38.147Z",
+        "image": "",
+        "image_alt": "",
+        "parent": "b2507b12-6e9a-4a37-bece-7ad3e909aca8",
+        "title": "Index",
+        "slug": "index",
+        "content": "",
+        "lft": 4,
+        "rght": 7,
+        "tree_id": 1,
+        "level": 3
+    }
+},
+{
+    "model": "content.shortlink",
+    "pk": "github",
+    "fields": {
+        "created_at": "2021-03-04T16:34:00.210Z",
+        "updated_at": "2021-03-14T15:49:28.792Z",
+        "user": "index",
+        "url": "https://github.com/tihlde/kvark"
+    }
+},
+{
+    "model": "group.group",
+    "pk": "gloshaugen",
+    "fields": {
+        "created_at": "2021-03-21T15:46:17.099Z",
+        "updated_at": "2021-03-21T15:46:17.099Z",
+        "image": null,
+        "image_alt": null,
+        "name": "Gløshaugen",
+        "description": "",
+        "contact_email": null,
+        "type": "COMMITTEE",
+        "permissions": []
+    }
+},
+{
+    "model": "group.group",
+    "pk": "index",
+    "fields": {
+        "created_at": "2021-02-22T14:35:48.373Z",
+        "updated_at": "2021-02-22T14:35:48.373Z",
+        "image": null,
+        "image_alt": null,
+        "name": "Index",
+        "description": "",
+        "contact_email": null,
+        "type": "SUBGROUP",
+        "permissions": []
+    }
+},
+{
+    "model": "group.group",
+    "pk": "olafs-disipler",
+    "fields": {
+        "created_at": "2021-03-21T15:32:46.212Z",
+        "updated_at": "2021-03-21T15:32:46.212Z",
+        "image": null,
+        "image_alt": null,
+        "name": "Olafs Disipler",
+        "description": "",
+        "contact_email": null,
+        "type": "COMMITTEE",
+        "permissions": []
+    }
+},
+{
+    "model": "group.group",
+    "pk": "promo",
+    "fields": {
+        "created_at": "2021-03-21T15:44:47.652Z",
+        "updated_at": "2021-03-21T15:44:47.652Z",
+        "image": null,
+        "image_alt": null,
+        "name": "Promo",
+        "description": "",
+        "contact_email": null,
+        "type": "SUBGROUP",
+        "permissions": []
+    }
+},
+{
+    "model": "group.group",
+    "pk": "tihlde",
+    "fields": {
+        "created_at": "2021-03-25T15:44:47.652Z",
+        "updated_at": "2021-03-25T15:44:47.652Z",
+        "image": null,
+        "image_alt": null,
+        "name": "TIHLDE",
+        "description": "",
+        "contact_email": "hs@tihlde.org",
+        "type": "TIHLDE",
+        "permissions": []
+    }
+},
+{
+    "model": "group.membership",
+    "pk": 1,
+    "fields": {
+        "created_at": "2021-02-22T14:35:57.542Z",
+        "updated_at": "2021-02-22T14:35:57.542Z",
+        "user": "index",
+        "group": "index",
+        "membership_type": "LEADER",
+        "expiration_date": null
+    }
+},
+{
+    "model": "group.membership",
+    "pk": 2,
+    "fields": {
+        "created_at": "2021-02-22T14:37:18.284Z",
+        "updated_at": "2021-02-22T14:37:18.284Z",
+        "user": "eivindste",
+        "group": "index",
+        "membership_type": "MEMBER",
+        "expiration_date": null
+    }
+},
+{
+    "model": "group.membership",
+    "pk": 8,
+    "fields": {
+        "created_at": "2021-03-21T15:46:39.487Z",
+        "updated_at": "2021-03-21T15:46:39.487Z",
+        "user": "eivindste",
+        "group": "gloshaugen",
+        "membership_type": "LEADER",
+        "expiration_date": null
+    }
+},
+{
+    "model": "forms.form",
+    "pk": "281be1f5-dec5-457f-a765-8fc44622a2ba",
+    "fields": {
+        "polymorphic_ctype": 27,
+        "title": "3"
+    }
+},
+{
+    "model": "forms.eventform",
+    "pk": "281be1f5-dec5-457f-a765-8fc44622a2ba",
+    "fields": {
+        "event": 3,
+        "type": "SURVEY"
+    }
+},
+{
+    "model": "forms.field",
+    "pk": "67ebda6e-cc88-4da6-8a3f-dfb911d297a3",
+    "fields": {
+        "title": "Hei",
+        "form": "281be1f5-dec5-457f-a765-8fc44622a2ba",
+        "type": "TEXT_ANSWER",
+        "required": true
+    }
+}
 ]
