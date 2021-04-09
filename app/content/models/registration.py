@@ -144,6 +144,6 @@ class Registration(BaseModel):
         if self.is_on_wait:
             for waiting in self.event.get_waiting_list():
                 if self == waiting:
-                    return list(self.event.get_waiting_list()).index(self)+1
+                    return list(self.event.get_waiting_list()).index(self) + 1
         else:
             return None
