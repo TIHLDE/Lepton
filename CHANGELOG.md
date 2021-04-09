@@ -14,7 +14,7 @@
 
 ## Neste versjon
 - ✨ **Azure**. Satt opp dev-miljø i Azure for å migrere vekk fra Drift og til skyen.
-- ✨ **Event**. Henter nå ut hvilken plass du er på i ventelisten
+- ✨ **Venteliste nummer**. Henter nå ut hvilken plass du er på i ventelisten
 
 ## Versjon 1.0.5 (24.03.2021)
 - 🦟 **Opprett arrangement**. Fikset feil der det ikke var mulig å opprette et arrangement.
