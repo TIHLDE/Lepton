@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+- 🦟 **Oppdatert arrangement**. Fikset bug der det ikke var mulig å oppdatere arrangement.
 - ✨ **Azure**. Satt opp dev-miljø i Azure for å migrere vekk fra Drift og til skyen.
 
 ## Versjon 1.0.5 (24.03.2021)
