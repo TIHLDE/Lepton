@@ -81,7 +81,7 @@ class Registration(BaseModel):
     @property
     def is_prioritized(self):
         if self.user.user_class == -1:
-            return Fals
+            return False
         user_class, user_study = EnumUtils.get_user_enums(**self.user.__dict__)
         return self.event.registration_priorities.filter(
             user_class=user_class, user_study=user_study
