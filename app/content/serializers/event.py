@@ -140,8 +140,10 @@ class EventCreateAndUpdateSerializer(BaseModelSerializer):
     def update(self, instance, validated_data):
         if "registration_priorities" in validated_data:
             registration_priorities_data = validated_data.pop("registration_priorities")
-            self.set_registration_priorities(instance, registration_priorities_data)
-        return super().update(instance, validated_data)
+        event = super().update(instance, validated_data)
+        if registration_priorities_data:
+            self.set_registration_priorities(event, registration_priorities_data)
+        return event
 
     def set_registration_priorities(self, event, registration_priorities_data):
         event.registration_priorities.clear()
