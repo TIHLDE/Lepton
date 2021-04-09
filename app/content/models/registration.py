@@ -139,3 +139,11 @@ class Registration(BaseModel):
     def check_registration_has_ended(self):
         if self.event.end_registration_at < today():
             raise ValidationError("The registration for this event has ended.")
+
+    def get_waiting_number(self):
+        if self.is_on_wait:
+            for waiting in self.event.get_waiting_list():
+                if self == waiting:
+                    return list(self.event.get_waiting_list()).index(self)+1
+        else:
+            return None
