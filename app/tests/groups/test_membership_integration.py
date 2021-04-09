@@ -9,8 +9,8 @@ from app.util.test_utils import get_api_client
 GROUP_URL = "/api/v1/group"
 
 
-def _get_membership_url(membership):
-    return f"{GROUP_URL}/{membership.group.slug}/membership/"
+def _get_membership_url(membership=None, group=None):
+    return f"{GROUP_URL}/{group.slug if group else membership.group.slug}/membership/"
 
 
 def _get_membership_url_detail(membership):
@@ -96,7 +96,7 @@ def test_update_as_user(user, membership):
     ],
 )
 def test_update_as_group_user(
-    membership, user, group_name, expected_status_code, membership_type,
+    membership, user, group_name, expected_status_code, membership_type, group
 ):
     """Tests if different groups ability to update a membership """
     expected_membership_type = (
@@ -105,12 +105,34 @@ def test_update_as_group_user(
 
     client = get_api_client(user=user, group_name=group_name)
     url = _get_membership_url_detail(membership)
-    data = _get_membership_data(membership, leader=True)
+    data = _get_membership_data(membership=membership, leader=True)
     response = client.put(url, data=data, format="json")
     membership.refresh_from_db()
 
     assert response.status_code == expected_status_code
     assert membership.membership_type == expected_membership_type
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    ("group_name", "expected_status_code"),
+    [
+        (AdminGroup.HS, status.HTTP_200_OK),
+        (AdminGroup.INDEX, status.HTTP_200_OK),
+        (AdminGroup.NOK, status.HTTP_403_FORBIDDEN),
+        (AdminGroup.PROMO, status.HTTP_403_FORBIDDEN),
+        ("Non_admin_group", status.HTTP_403_FORBIDDEN),
+    ],
+)
+def test_create_as_group_user(user, group_name, expected_status_code, group):
+    """Tests if different groups ability to create a membership """
+
+    client = get_api_client(user=user, group_name=group_name)
+    url = _get_membership_url(group=group)
+    data = _get_post_membership_data(group=group, user=user)
+    response = client.post(url, data=data, format="json")
+
+    assert response.status_code == expected_status_code
 
 
 @pytest.mark.django_db
