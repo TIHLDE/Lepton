@@ -8,7 +8,10 @@ from app.content.serializers import StrikeSerializer
 
 class StrikeViewSet(viewsets.ModelViewSet):
     serializer_class = StrikeSerializer
-    queryset = (strike for strike in Strike.objects.all() if strike.active)
+    queryset = Strike.objects.all()
+
+    def get_queryset(self):
+        return (strike for strike in Strike.objects.all() if strike.active)
 
     def update(self, request, *args, **kwargs):
         return Response(
