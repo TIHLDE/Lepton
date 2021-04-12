@@ -129,6 +129,7 @@ class EventCreateAndUpdateSerializer(BaseModelSerializer):
         )
 
     def create(self, validated_data):
+        registration_priorities_data = None
         if "registration_priorities" in validated_data:
             registration_priorities_data = validated_data.pop("registration_priorities")
         event = super().create(validated_data)
@@ -138,6 +139,7 @@ class EventCreateAndUpdateSerializer(BaseModelSerializer):
         return event
 
     def update(self, instance, validated_data):
+        registration_priorities_data = None
         if "registration_priorities" in validated_data:
             registration_priorities_data = validated_data.pop("registration_priorities")
         event = super().update(instance, validated_data)
