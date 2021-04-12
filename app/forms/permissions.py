@@ -31,7 +31,6 @@ class FormPermissions(BasePermission):
                 .exists()
             )
 
- 
 
 class SubmissionPermissions(BasePermission):
     def __init__(self, groups):
@@ -51,14 +50,15 @@ class SubmissionPermissions(BasePermission):
 
         return check_strict_group_permission(request, self.groups)
 
-    def _is_own_permission(self, request, view):        
+    def _is_own_permission(self, request, view):
         form_id = view.kwargs.get("form_id")
         form = Form.objects.get(id=form_id)
-        
+
         submission_id = view.kwargs.get("pk")
         submission = form.submissions.get(id=submission_id)
 
         return submission.user is request.user
+
 
 class SubmissionPermissions(BasePermission):
     def __init__(self, groups):
