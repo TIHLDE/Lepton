@@ -1,23 +1,20 @@
-FROM python:3.6-alpine
+FROM python:3.6-slim-buster
 ENV PYTHONUNBUFFERED 1
 
-WORKDIR /usr/src
+RUN apt-get update \
+  # dependencies for building Python packages
+  && apt-get install -y build-essential \
+  # mysqlclient dependencies
+  && apt-get install -y default-libmysqlclient-dev \
+  # cleaning up unused files
+  && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
+  && rm -rf /var/lib/apt/lists/*
 
-RUN pip install --no-cache-dir --upgrade pip && \
-    apk add --no-cache mariadb-dev
-
+# Requirements are installed here to ensure they will be cached.
 COPY requirements.txt ./
+RUN pip install -r requirements.txt
 
-# Install required python packages
-RUN apk --update add --no-cache --virtual .build-deps gcc musl-dev python3-dev libffi-dev openssl-dev cargo py-pip linux-headers libc-dev build-base && \
-      pip install --upgrade pip && \
-      pip install -r requirements.txt && \
-      rm -rf ~/.cache/pip && \
-    apk del .build-deps
-
-COPY . .
-
-VOLUME /usr/src/app/volume
+WORKDIR /app
 
 EXPOSE 8000
 
