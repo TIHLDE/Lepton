@@ -18,10 +18,9 @@ class AnswerSerializer(BaseModelSerializer):
 
 
 class SubmissionSerializer(BaseModelSerializer):
-    form = FormInSubmissionSerializer(read_only=True)
     user = UserInAnswerSerializer(read_only=True)
     answer = AnswerSerializer(read_only=True)
 
     class Meta:
         model = Submission
-        fields = ["form", "user", "answers"]
+        fields = ["user", "answers"]
