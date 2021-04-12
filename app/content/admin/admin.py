@@ -28,6 +28,12 @@ def admin_delete_registration(modeladmin, request, queryset):
 @admin.register(models.Registration)
 class RegistrationAdmin(admin.ModelAdmin):
     list_display = ("user", "event", "is_on_wait", "has_attended")
+    search_fields = (
+        "user__user_id",
+        "event__title",
+        "user__first_name",
+        "user__last_name",
+    )
     # Enables checks bypassing from the 'Action' dropdown in Registration overview
     actions = [
         admin_delete_registration,
