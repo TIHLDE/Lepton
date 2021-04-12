@@ -4,9 +4,11 @@ from app.content.models import Event, Strike, User
 
 
 class BaseStrikeSerializer(serializers.ModelSerializer):
+    expires_at = serializers.ReadOnlyField()
+
     class Meta:
         model = Strike
-        fields = ("id", "description", "nr_of_strikes", "expires_at", "created_at")
+        fields = ("id", "description", "strike_size", "expires_at", "created_at")
 
 
 class StrikeSerializer(BaseStrikeSerializer):
@@ -33,7 +35,7 @@ class StrikeSerializer(BaseStrikeSerializer):
             return
         event = Event.objects.get(id=obj.event_id)
         return {
-            "id": event.user_id,
+            "id": event.id,
             "title": event.title,
         }
 
