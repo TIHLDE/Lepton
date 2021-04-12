@@ -18,6 +18,7 @@ admin.site.register(models.Badge)
 admin.site.register(models.UserBadge)
 admin.site.register(models.Page)
 admin.site.register(models.ShortLink)
+admin.site.register(models.Strike)
 
 
 def admin_delete_registration(modeladmin, request, queryset):
