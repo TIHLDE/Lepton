@@ -20,6 +20,7 @@
 ## Versjon 1.0.5 (24.03.2021)
 - 🦟 **Opprett arrangement**. Fikset feil der det ikke var mulig å opprette et arrangement.
 - ✨ **Logging** av endringer skjer automatisk ved bruk.
+- ✨ **Prikksystemet**. Da er det endelig laget endepunkter for prikksystemet, slik at admin kan nå hente, lage og slette prikker.
 
 ## Versjon 1.0.4 (15.03.2021)
 - ✨ **Filopplastning**. Lagt til støtte for filopplastning til Azure gjennom eget endepunkt. Kun for medlemmer.
