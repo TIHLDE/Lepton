@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 
@@ -46,11 +47,10 @@ class MembershipViewSet(viewsets.ModelViewSet):
         try:
             user = User.objects.get(user_id=request.data["user"]["user_id"])
             group = Group.objects.get(slug=kwargs["slug"])
-            membership = Membership.objects.get_or_create(user=user, group=group)[0]
+            membership = Membership.objects.create(user=user, group=group)
             serializer = MembershipSerializer(membership, data=request.data)
             serializer.is_valid(raise_exception=True)
             return Response(data=serializer.data, status=status.HTTP_200_OK)
-
         except Membership.DoesNotExist:
             return Response(
                 {"detail": "Medlemskapet eksisterer ikke"},
@@ -64,3 +64,14 @@ class MembershipViewSet(viewsets.ModelViewSet):
             return Response(
                 {"detail": "Gruppen eksisterer ikke"}, status=status.HTTP_404_NOT_FOUND,
             )
+        except ValidationError:
+            return Response(
+                {"detail": "Medlemskapet eksisterer allerede "},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    def destroy(self, request, *args, **kwargs):
+        super().destroy(request, *args, **kwargs)
+        return Response(
+            {"detail": "Medlemskapet ble slettet "}, status=status.HTTP_200_OK,
+        )
