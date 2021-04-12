@@ -7,6 +7,7 @@ from ..models import Registration, User
 
 class RegistrationSerializer(BaseModelSerializer):
     user_info = serializers.SerializerMethodField()
+    submissions = serializers.SerializerMethodField()
     waiting_number = serializers.SerializerMethodField()
 
     class Meta:
@@ -22,7 +23,6 @@ class RegistrationSerializer(BaseModelSerializer):
         ]
 
     def get_user_info(self, obj):
-        """ Gets the necessary info from user """
         user = User.objects.get(user_id=obj.user_id)
         return {
             "user_id": user.user_id,
@@ -35,5 +35,9 @@ class RegistrationSerializer(BaseModelSerializer):
             "allergy": user.allergy,
         }
 
+    def get_submissions(self, obj):       
+        forms = obj.event.forms.all()
+        submissions = forms.submissions.filter(user=obj.user)
+        return SubmissionInRegistrationSerializer(submissions, many=True)
     def get_waiting_number(self, obj):
         return obj.get_waiting_number()
