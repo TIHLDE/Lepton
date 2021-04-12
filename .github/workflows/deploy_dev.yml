@@ -3,7 +3,7 @@ name: Deploy to Azure development
 on:
   push:
     branches:
-      - fix/azure
+      - dev
   workflow_dispatch:
 
 jobs:
