@@ -35,9 +35,10 @@ class RegistrationSerializer(BaseModelSerializer):
             "allergy": user.allergy,
         }
 
-    def get_submissions(self, obj):       
+    def get_submissions(self, obj):
         forms = obj.event.forms.all()
         submissions = forms.submissions.filter(user=obj.user)
         return SubmissionInRegistrationSerializer(submissions, many=True)
+
     def get_waiting_number(self, obj):
         return obj.get_waiting_number()
