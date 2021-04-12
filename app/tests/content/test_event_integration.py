@@ -1,62 +1,46 @@
-from django.contrib.auth.models import Group
+from datetime import timedelta
+
 from django.db.models import signals
-from rest_framework.test import force_authenticate
+from django.utils import timezone
 
 import factory
 import pytest
 
 from app.common.enums import AdminGroup
-from app.content.views import EventViewSet
 from app.forms.enums import EventFormType
 from app.forms.tests.form_factories import EventFormFactory
+from app.util.test_utils import get_api_client
+
+API_EVENTS_BASE_URL = "/api/v1/events/"
 
 
-def add_user_to_group_with_name(user, group_name):
-    group = Group.objects.create(name=group_name)
-    user.groups.add(group)
+def get_events_url_detail(event=None):
+    return f"{API_EVENTS_BASE_URL}{event.pk}/"
 
 
-def get_response(request, user=None, event=None):
-    """
-    Converts a request to a response.
-
-    :param request: the desired HTTP-request.
-    :param user: the user performing the request. None represents an anonymous user
-    :param event: the desired event. None represents all events.
-    :return: the HTTP-response from Django.
-    """
-
-    force_authenticate(request, user=user)
-
-    if event:
-        view = EventViewSet.as_view(
-            {"get": "retrieve", "put": "update", "delete": "destroy"}
-        )
-        return view(request, pk=event.pk)
-    else:
-        view = EventViewSet.as_view(
-            {"get": "list", "put": "update", "delete": "destroy"}
-        )
-        return view(request)
+def get_event_data():
+    start_date = timezone.now() + timedelta(days=10)
+    end_date = timezone.now() + timedelta(days=11)
+    return {
+        "title": "New Title",
+        "location": "New Location",
+        "start_date": start_date,
+        "end_date": end_date,
+    }
 
 
 @pytest.mark.django_db
-def test_list_as_anonymous_user(request_factory):
+def test_list_as_anonymous_user(default_client):
     """An anonymous user should be able to list all events."""
-
-    request = request_factory.get("/events/")
-    response = get_response(request=request)
-
+    response = default_client.get(API_EVENTS_BASE_URL)
     assert response.status_code == 200
 
 
 @pytest.mark.django_db
-def test_retrieve_as_anonymous_user(request_factory, event):
+def test_retrieve_as_anonymous_user(default_client, event):
     """An anonymous user should be able to retrieve an event."""
-
-    request = request_factory.get(f"/events/{event.pk}/")
-    response = get_response(request=request, event=event)
-
+    url = get_events_url_detail(event)
+    response = default_client.get(url)
     assert response.status_code == 200
 
 
@@ -65,40 +49,35 @@ def test_retrieve_as_anonymous_user(request_factory, event):
     ("group_name", "expected_status_code"),
     [(AdminGroup.HS, 200), (AdminGroup.INDEX, 200),],
 )
-def test_retrieve_as_admin_user(
-    request_factory, event, user, token, group_name, expected_status_code
-):
+def test_retrieve_as_admin_user(event, user, group_name, expected_status_code):
     """An admin user should be able to retrieve an event with more data."""
-
-    add_user_to_group_with_name(user, group_name)
-
-    request = request_factory.get(f"/events/{event.pk}/", HTTP_X_CSRF_TOKEN=token.key)
-    response = get_response(request=request, user=user, event=event)
+    url = get_events_url_detail(event)
+    client = get_api_client(user=user, group_name=group_name)
+    response = client.get(url)
 
     assert response.status_code == expected_status_code
     assert "evaluate_link" in response.data.keys()
 
 
 @pytest.mark.django_db
-def test_update_as_anonymous_user(request_factory, event):
+def test_update_as_anonymous_user(default_client, event):
     """An anonymous user should not be able to update an event entity."""
 
-    data = {"title": "new_title", "location": "new_location"}
-
-    request = request_factory.put(f"/events/{event.pk}/", data=data)
-    response = get_response(request=request, event=event)
+    data = get_event_data()
+    url = get_events_url_detail(event)
+    response = default_client.put(url, data=data)
 
     assert response.status_code == 403
 
 
 @pytest.mark.django_db
-def test_update_as_user(request_factory, event, user):
+def test_update_as_user(event, user):
     """A user should not be able to update an event entity."""
 
-    data = {"title": "new_title", "location": "new_location"}
-
-    request = request_factory.put(f"/events/{event.pk}/", data=data)
-    response = get_response(request=request, user=user, event=event)
+    data = get_event_data()
+    url = get_events_url_detail(event)
+    client = get_api_client(user=user)
+    response = client.put(url, data=data)
 
     assert response.status_code == 403
 
@@ -115,25 +94,14 @@ def test_update_as_user(request_factory, event, user):
     ],
 )
 @factory.django.mute_signals(signals.post_save)
-def test_update_as_admin_user(
-    request_factory, event, user, token, group_name, expected_status_code, new_title
-):
+def test_update_as_admin_user(event, user, group_name, expected_status_code, new_title):
     """Only users in an admin group should be able to update an event entity."""
 
-    add_user_to_group_with_name(user, group_name)
     expected_title = new_title if new_title else event.title
-
-    data = {
-        "id": event.pk,
-        "title": "New Title",
-        "location": "New Location",
-        "registration_priorities": [{"user_class": 1, "user_study": 1}],
-    }
-
-    request = request_factory.put(
-        f"/events/{event.pk}/", data=data, format="json", HTTP_X_CSRF_TOKEN=token.key
-    )
-    response = get_response(request=request, user=user, event=event)
+    data = get_event_data()
+    url = get_events_url_detail(event)
+    client = get_api_client(user=user, group_name=group_name)
+    response = client.put(url, data)
     event.refresh_from_db()
 
     assert response.status_code == expected_status_code
@@ -141,22 +109,60 @@ def test_update_as_admin_user(
 
 
 @pytest.mark.django_db
-def test_delete_as_anonymous_user(request_factory, event):
-    """An anonymous user should not be able to delete an event entity."""
+def test_create_as_anonymous_user(default_client):
+    """An anonymous user should not be able to create an event entity."""
 
-    request = request_factory.delete(f"/events/{event.pk}/")
-    response = get_response(request=request, event=event)
+    data = get_event_data()
+    response = default_client.post(API_EVENTS_BASE_URL, data=data)
 
     assert response.status_code == 403
 
 
 @pytest.mark.django_db
-def test_delete_as_user(request_factory, user, event):
+def test_create_as_user(user):
+    """A user should not be able to create an event entity."""
+
+    data = get_event_data()
+    client = get_api_client(user=user)
+    response = client.post(API_EVENTS_BASE_URL, data=data)
+
+    assert response.status_code == 403
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    ("group_name", "expected_status_code"),
+    [
+        (AdminGroup.HS, 201),
+        (AdminGroup.INDEX, 201),
+        (AdminGroup.NOK, 201),
+        (AdminGroup.PROMO, 201),
+        ("Non_admin_group", 403),
+    ],
+)
+def test_create_as_admin_user(user, group_name, expected_status_code):
+    """Only users in an admin group should be able to create an event entity."""
+
+    data = get_event_data()
+    client = get_api_client(user=user, group_name=group_name)
+    response = client.post(API_EVENTS_BASE_URL, data)
+    assert response.status_code == expected_status_code
+
+
+@pytest.mark.django_db
+def test_delete_as_anonymous_user(default_client, event):
+    """An anonymous user should not be able to delete an event entity."""
+    url = get_events_url_detail(event)
+    response = default_client.delete(url)
+    assert response.status_code == 403
+
+
+@pytest.mark.django_db
+def test_delete_as_user(user, event):
     """A user should not be able to to delete an event entity."""
-
-    request = request_factory.delete(f"/events/{event.pk}/")
-    response = get_response(request=request, user=user, event=event)
-
+    client = get_api_client(user=user)
+    url = get_events_url_detail(event)
+    response = client.delete(url)
     assert response.status_code == 403
 
 
@@ -171,18 +177,11 @@ def test_delete_as_user(request_factory, user, event):
         ("Non_admin_group", 403),
     ],
 )
-def test_delete_as_group_members(
-    request_factory, event, user, token, group_name, expected_status_code
-):
+def test_delete_as_group_members(event, user, group_name, expected_status_code):
     """Only users in an admin group should be able to delete an event entity."""
-
-    add_user_to_group_with_name(user, group_name)
-
-    request = request_factory.delete(
-        f"/events/{event.pk}/", HTTP_X_CSRF_TOKEN=token.key
-    )
-    response = get_response(request=request, user=user, event=event)
-
+    client = get_api_client(user=user, group_name=group_name)
+    url = get_events_url_detail(event)
+    response = client.delete(url)
     assert response.status_code == expected_status_code
 
 
@@ -192,8 +191,8 @@ def test_retrieve_event_includes_form_evaluation(default_client, event):
     evaluation = EventFormFactory(type=EventFormType.EVALUATION)
     event.forms.add(evaluation)
     event.save()
-
-    response = default_client.get(f"/api/v1/events/{event.pk}/")
+    url = get_events_url_detail(event)
+    response = default_client.get(url)
 
     assert response.json().get("evaluation") == str(evaluation.id)
 
@@ -204,7 +203,7 @@ def test_retrieve_event_includes_form_survey(default_client, event):
     survey = EventFormFactory(type=EventFormType.SURVEY)
     event.forms.add(survey)
     event.save()
-
-    response = default_client.get(f"/api/v1/events/{event.pk}/")
+    url = get_events_url_detail(event)
+    response = default_client.get(url)
 
     assert response.json().get("survey") == str(survey.id)

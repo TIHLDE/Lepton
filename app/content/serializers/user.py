@@ -2,10 +2,10 @@ from django.contrib.auth.hashers import make_password
 from django.core.exceptions import ValidationError
 from rest_framework import serializers
 
-from app.common.serializers import BaseModelSerializer
-from app.content.models import Notification, Registration, User
+from app.content.models import Notification, Registration, Strike, User
 from app.content.serializers.badge import BadgeSerializer
 from app.content.serializers.event import EventListSerializer
+from app.content.serializers.strike import StrikeSerializer
 
 
 class DefaultUserSerializer(serializers.ModelSerializer):
@@ -30,6 +30,7 @@ class UserSerializer(serializers.ModelSerializer):
     groups = serializers.SerializerMethodField()
     badges = serializers.SerializerMethodField()
     unread_notifications = serializers.SerializerMethodField()
+    strikes = serializers.SerializerMethodField()
 
     class Meta:
         model = User
@@ -52,6 +53,7 @@ class UserSerializer(serializers.ModelSerializer):
             "groups",
             "badges",
             "unread_notifications",
+            "strikes",
         )
         read_only_fields = ("user_id",)
         write_only_fields = ("app_token",)
@@ -82,8 +84,15 @@ class UserSerializer(serializers.ModelSerializer):
         """ Counts all unread notifications and returns the count """
         return Notification.objects.filter(user=obj, read=False).count()
 
+    def get_strikes(self, obj):
+        """ Get all active strikes """
+        active_strikes = [
+            strike for strike in Strike.objects.filter(user=obj) if strike.active
+        ]
+        return StrikeSerializer(active_strikes, many=True).data
 
-class UserMemberSerializer(UserSerializer, BaseModelSerializer):
+
+class UserMemberSerializer(UserSerializer):
     """Serializer for user update to prevent them from updating extra_kwargs fields"""
 
     class Meta(UserSerializer.Meta):

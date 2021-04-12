@@ -12,6 +12,7 @@ from .views import (
     PageViewSet,
     RegistrationViewSet,
     ShortLinkViewSet,
+    StrikeViewSet,
     UserBadgeViewSet,
     UserViewSet,
     WarningViewSet,
@@ -40,6 +41,7 @@ router.register(
 )
 router.register("badge", UserBadgeViewSet, basename="badge")
 router.register("page", PageViewSet)
+router.register("strikes", StrikeViewSet, basename="strikes")
 
 urlpatterns = [
     url(r"", include(router.urls)),
