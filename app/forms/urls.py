@@ -6,6 +6,9 @@ from app.forms.views.form import FormViewSet
 
 router = routers.DefaultRouter()
 router.register("", FormViewSet)
+router.register(
+    r"(?P<form_id>[0-9a-f-]+)/submission", SubmissionViewSet
+)
 
 urlpatterns = [
     url(r"", include(router.urls)),
