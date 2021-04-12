@@ -9,12 +9,10 @@ from app.util.utils import today
 
 STRIKE_DURATION_IN_DAYS = 20
 
+
 class Strike(BaseModel):
     id = models.UUIDField(
-        auto_created=True,
-        primary_key=True,
-        default=uuid.uuid4,
-        serialize=False,
+        auto_created=True, primary_key=True, default=uuid.uuid4, serialize=False,
     )
     description = models.CharField(max_length=200)
     strike_size = models.IntegerField(default=1)

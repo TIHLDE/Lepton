@@ -4,7 +4,7 @@ from rest_framework.response import Response
 
 from app.content.models import Event, Strike, User
 from app.content.serializers import StrikeSerializer
-from app.util.utils import today
+
 
 class StrikeViewSet(viewsets.ModelViewSet):
     serializer_class = StrikeSerializer
@@ -29,7 +29,4 @@ class StrikeViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         super().destroy(request, *args, **kwargs)
-        return Response(
-            {"detail": "Prikken ble slettet"},
-            status=status.HTTP_200_OK,
-        )
+        return Response({"detail": "Prikken ble slettet"}, status=status.HTTP_200_OK,)
