@@ -1,4 +1,8 @@
 from app.common.enums import Groups
+from app.group.models import Membership, Group
+from app.content.models.user import User
+from app.common.permissions import IsDev, IsHS
+
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, permission_classes
@@ -6,11 +10,8 @@ from rest_framework.response import Response
 
 from sentry_sdk import capture_exception
 
-from app.common.permissions import IsDev, IsHS
 
-from app.group.models import Membership, Group
 
-from app.content.models.user import User
 from .exceptions import APIAuthUserDoesNotExist
 from .serializers import AuthSerializer, MakeUserSerializer
 
