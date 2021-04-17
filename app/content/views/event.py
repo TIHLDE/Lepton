@@ -48,7 +48,7 @@ class EventViewSet(viewsets.ModelViewSet):
     def retrieve(self, request, pk):
         """Return detailed information about the event with the specified pk."""
         try:
-            event = Event.objects.get(pk=pk)
+            event = self.get_object()
             if is_admin_user(request):
                 serializer = EventAdminSerializer(
                     event, context={"request": request}, many=False
@@ -67,7 +67,7 @@ class EventViewSet(viewsets.ModelViewSet):
     def update(self, request, pk):
         """Update the event with the specified pk."""
         try:
-            event = Event.objects.get(pk=pk)
+            event = self.get_object()
             self.check_object_permissions(self.request, event)
             serializer = EventCreateAndUpdateSerializer(
                 event, data=request.data, partial=True, context={"request": request}
