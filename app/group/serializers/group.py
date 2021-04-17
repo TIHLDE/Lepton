@@ -10,7 +10,7 @@ from app.group.models import Group, Membership
 class DefaultGroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = Group
-        fields = ("name","slug")
+        fields = ("name", "slug")
 
 
 class GroupSerializer(BaseModelSerializer):
