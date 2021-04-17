@@ -13,12 +13,16 @@
 ---
 
 ## Neste versjon
+- ✨ **Endring i permissions**. Endret hvordan vi håndterer tillatelser på nettsiden til å bruke våre nye grupper.
+## Versjon 1.0.6 (09.04.2021)
+- 🦟 **Oppdatert arrangement**. Fikset bug der det ikke var mulig å oppdatere arrangement.
 - ✨ **Azure**. Satt opp dev-miljø i Azure for å migrere vekk fra Drift og til skyen.
 - ✨ **Venteliste nummer**. Henter nå ut hvilken plass du er på i ventelisten
 
 ## Versjon 1.0.5 (24.03.2021)
 - 🦟 **Opprett arrangement**. Fikset feil der det ikke var mulig å opprette et arrangement.
 - ✨ **Logging** av endringer skjer automatisk ved bruk.
+- ✨ **Prikksystemet**. Da er det endelig laget endepunkter for prikksystemet, slik at admin kan nå hente, lage og slette prikker.
 
 ## Versjon 1.0.4 (15.03.2021)
 - ✨ **Filopplastning**. Lagt til støtte for filopplastning til Azure gjennom eget endepunkt. Kun for medlemmer.

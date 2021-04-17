@@ -1,7 +1,8 @@
+from django.core.exceptions import ValidationError
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 
-from app.common.permissions import IsDev, IsHS, IsLeader, is_admin_user
+from app.common.permissions import BasicViewPermission, IsLeader, is_admin_user
 from app.content.models import User
 from app.group.models import Group, Membership
 from app.group.serializers import MembershipSerializer
@@ -15,7 +16,7 @@ class MembershipViewSet(viewsets.ModelViewSet):
 
     serializer_class = MembershipSerializer
     queryset = Membership.objects.all()
-    permission_classes = [IsDev | IsHS | IsLeader]
+    permission_classes = [BasicViewPermission]
     lookup_field = "user_id"
 
     def get_queryset(self):
@@ -27,11 +28,6 @@ class MembershipViewSet(viewsets.ModelViewSet):
         if IsLeader().has_permission(request=self.request, view=self):
             return MembershipLeaderSerializer
         return super().get_serializer_class()
-
-    def get_permissions(self):
-        if self.request.method == "GET":
-            self.permission_classes = []
-        return super(MembershipViewSet, self).get_permissions()
 
     def update(self, request, *args, **kwargs):
         try:
@@ -51,11 +47,10 @@ class MembershipViewSet(viewsets.ModelViewSet):
         try:
             user = User.objects.get(user_id=request.data["user"]["user_id"])
             group = Group.objects.get(slug=kwargs["slug"])
-            membership = Membership.objects.get_or_create(user=user, group=group)[0]
+            membership = Membership.objects.create(user=user, group=group)
             serializer = MembershipSerializer(membership, data=request.data)
             serializer.is_valid(raise_exception=True)
             return Response(data=serializer.data, status=status.HTTP_200_OK)
-
         except Membership.DoesNotExist:
             return Response(
                 {"detail": "Medlemskapet eksisterer ikke"},
@@ -69,3 +64,14 @@ class MembershipViewSet(viewsets.ModelViewSet):
             return Response(
                 {"detail": "Gruppen eksisterer ikke"}, status=status.HTTP_404_NOT_FOUND,
             )
+        except ValidationError:
+            return Response(
+                {"detail": "Medlemskapet eksisterer allerede "},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    def destroy(self, request, *args, **kwargs):
+        super().destroy(request, *args, **kwargs)
+        return Response(
+            {"detail": "Medlemskapet ble slettet "}, status=status.HTTP_200_OK,
+        )

@@ -11,3 +11,25 @@ class Notification(BaseModel):
 
     def __str__(self):
         return f"Notification for {self.user}"
+
+    @classmethod
+    def has_read_permission(cls, request):
+        return request.user is not None
+
+    def has_object_read_permission(self, request):
+        if request.user is None:
+            return False
+        return self.user == request.user
+
+    @classmethod
+    def has_write_permission(cls, request):
+        if request.user is None:
+            return False
+        return request.method == "PUT"
+
+    def has_object_write_permission(self, request):
+        if request.user is None:
+            return False
+        if request.method == "PUT":
+            return self.user == request.user
+        return False

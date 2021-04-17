@@ -1089,30 +1089,6 @@
         "membership_type": "LEADER",
         "expiration_date": null
     }
-},
-{
-    "model": "forms.form",
-    "pk": "281be1f5-dec5-457f-a765-8fc44622a2ba",
-    "fields": {
-        "title": "3"
-    }
-},
-{
-    "model": "forms.eventform",
-    "pk": "281be1f5-dec5-457f-a765-8fc44622a2ba",
-    "fields": {
-        "event": 3,
-        "type": "SURVEY"
-    }
-},
-{
-    "model": "forms.field",
-    "pk": "67ebda6e-cc88-4da6-8a3f-dfb911d297a3",
-    "fields": {
-        "title": "Hei",
-        "form": "281be1f5-dec5-457f-a765-8fc44622a2ba",
-        "type": "TEXT_ANSWER",
-        "required": true
-    }
 }
+
 ]

@@ -2,6 +2,8 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import signals
 
+from app.common.enums import AdminGroup
+from app.common.permissions import BasePermissionModel
 from app.forms.enums import EventFormType
 from app.util.models import BaseModel, OptionalImage
 from app.util.utils import today, yesterday
@@ -12,7 +14,8 @@ from .prioritiy import Priority
 from .user import User
 
 
-class Event(BaseModel, OptionalImage):
+class Event(BaseModel, OptionalImage, BasePermissionModel):
+
     title = models.CharField(max_length=200)
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
@@ -52,6 +55,7 @@ class Event(BaseModel, OptionalImage):
     sign_off_deadline_schedular_id = models.CharField(
         max_length=100, blank=True, null=True
     )
+    write_access = [AdminGroup.HS, AdminGroup.INDEX, AdminGroup.NOK, AdminGroup.PROMO]
 
     def __str__(self):
         return f"{self.title} - starting {self.start_date} at {self.location}"

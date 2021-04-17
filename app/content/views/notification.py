@@ -3,7 +3,7 @@ from rest_framework import status, viewsets
 from rest_framework.response import Response
 
 from app.common.pagination import BasePagination
-from app.common.permissions import NotificationPermission
+from app.common.permissions import BasicViewPermission
 from app.content.models import Notification
 from app.content.serializers import (
     NotificationSerializer,
@@ -16,7 +16,7 @@ class NotificationViewSet(viewsets.ModelViewSet):
 
     queryset = Notification.objects.all().order_by("-created_at")
     serializer_class = NotificationSerializer
-    permission_classes = (NotificationPermission,)
+    permission_classes = [BasicViewPermission]
     pagination_class = BasePagination
 
     def get_queryset(self):
