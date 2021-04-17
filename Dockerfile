@@ -1,6 +1,8 @@
 FROM python:3.6-slim-buster
 ENV PYTHONUNBUFFERED 1
 
+WORKDIR /usr/src
+
 RUN apt-get update \
   # dependencies for building Python packages
   && apt-get install -y build-essential \
@@ -14,7 +16,9 @@ RUN apt-get update \
 COPY requirements.txt ./
 RUN pip install -r requirements.txt
 
-WORKDIR /app
+COPY . .
+
+VOLUME /usr/src/app/volume
 
 EXPOSE 8000
 
