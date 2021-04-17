@@ -1,7 +1,7 @@
 from django.conf.urls import include, url
 from rest_framework import routers
 
-from .views import login, makeMember
+from .views import login, makeMember, makeTIHLDEMember
 
 router = routers.DefaultRouter()
 
@@ -10,6 +10,7 @@ urlpatterns = [
     url(r"", include(router.urls)),
     url(r"^login", login),
     url(r"^make", makeMember),
+    url(r"^activate-user", makeTIHLDEMember),
     url(r"^rest-auth/", include("rest_auth.urls")),
     url(r"^", include("django.contrib.auth.urls")),
     # url(r'^token', obtain_auth_token), #Used to bypass all restrictions when getting token
