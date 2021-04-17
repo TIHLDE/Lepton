@@ -5,10 +5,15 @@ from django.utils.text import slugify
 
 from mptt.models import MPTTModel, TreeForeignKey
 
+from app.common.enums import AdminGroup
+from app.common.permissions import BasePermissionModel
 from app.util.models import BaseModel, OptionalImage
 
 
-class Page(MPTTModel, OptionalImage, BaseModel):
+class Page(MPTTModel, OptionalImage, BaseModel, BasePermissionModel):
+
+    write_access = [AdminGroup.HS, AdminGroup.INDEX]
+
     parent = TreeForeignKey(
         "self", null=True, blank=True, on_delete=models.CASCADE, related_name="children"
     )

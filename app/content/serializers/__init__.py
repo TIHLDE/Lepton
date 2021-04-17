@@ -26,3 +26,4 @@ from app.content.serializers.user import (
 from app.content.serializers.user_badge import UserBadgeSerializer
 from app.content.serializers.short_link import ShortLinkSerializer
 from app.content.serializers.warning import WarningSerializer
+from app.content.serializers.strike import BaseStrikeSerializer, StrikeSerializer
