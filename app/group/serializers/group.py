@@ -4,6 +4,7 @@ from app.common.enums import MembershipType
 from app.common.serializers import BaseModelSerializer
 from app.group.models import Group, Membership
 
+from dry_rest_permissions.generics import DRYGlobalPermissionsField
 
 class DefaultGroupSerializer(serializers.ModelSerializer):
     class Meta:
@@ -14,6 +15,8 @@ class DefaultGroupSerializer(serializers.ModelSerializer):
 class GroupSerializer(BaseModelSerializer):
 
     leader = serializers.SerializerMethodField()
+    permissions = DRYGlobalPermissionsField(actions=["write", "read"])
+
 
     class Meta:
         model = Group

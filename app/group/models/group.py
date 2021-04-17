@@ -1,4 +1,3 @@
-from django.contrib.auth.models import Permission
 from django.db import models
 from django.utils.text import slugify
 
@@ -14,9 +13,6 @@ class Group(OptionalImage, BaseModel, BasePermissionModel):
 
     write_access = [AdminGroup.HS, AdminGroup.INDEX, AdminGroup.NOK, AdminGroup.PROMO]
     name = models.CharField(max_length=50)
-    permissions = models.ManyToManyField(
-        Permission, related_name="groups_permissions", blank=True
-    )
     slug = models.SlugField(max_length=50, primary_key=True)
     description = models.TextField(max_length=1000, null=True, blank=True)
     contact_email = models.EmailField(max_length=200, null=True, blank=True)
