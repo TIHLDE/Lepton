@@ -9,6 +9,7 @@ class UserClass(ChoiceEnum):
     THIRD = "3. Klasse"
     FOURTH = "4. Klasse"
     FIFTH = "5. Klasse"
+    ALUMNI = "Alumni"
 
 
 class UserStudy(ChoiceEnum):
