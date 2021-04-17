@@ -19,6 +19,9 @@ help:
 start:
 	docker-compose up
 
+down:
+	docker-compose down
+
 restart:
 	docker-compose build
 	docker-compose up
