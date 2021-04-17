@@ -1,8 +1,3 @@
-from app.common.enums import GroupType, Groups
-from app.group.models import Membership, Group
-from app.content.models.user import User
-from app.common.permissions import IsDev, IsHS
-
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, permission_classes
@@ -10,8 +5,11 @@ from rest_framework.response import Response
 
 from sentry_sdk import capture_exception
 
+from app.common.enums import Groups, GroupType
+from app.common.permissions import IsDev, IsHS
+from app.content.models.user import User
+from app.group.models import Group, Membership
 from app.util import today
-
 
 from .exceptions import APIAuthUserDoesNotExist
 from .serializers import AuthSerializer, MakeUserSerializer
@@ -62,7 +60,9 @@ def _try_to_get_user(user_id):
 def makeTIHLDEMember(request):
     serializer = MakeUserSerializer(data=request.data)
     if not serializer.is_valid():
-        return Response({"detail": "Ugyldig brukernavn"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {"detail": "Ugyldig brukernavn"}, status=status.HTTP_400_BAD_REQUEST
+        )
 
     TIHLDE = Group.objects.get(slug=Groups.TIHLDE)
     user_id = serializer.data["user_id"]
@@ -71,15 +71,13 @@ def makeTIHLDEMember(request):
 
         Membership.objects.get_or_create(user=user, group=TIHLDE)
         return Response(
-            {"detail": "Brukeren ble lagt til som TIHLDE medlem"}, status=status.HTTP_200_OK
+            {"detail": "Brukeren ble lagt til som TIHLDE medlem"},
+            status=status.HTTP_200_OK,
         )
     else:
-        return Response({"detail": "Ugyldig brukernavn"}, status=status.HTTP_400_BAD_REQUEST)
-
-
-
-
-
+        return Response(
+            {"detail": "Ugyldig brukernavn"}, status=status.HTTP_400_BAD_REQUEST
+        )
 
 
 @api_view(["POST"])
