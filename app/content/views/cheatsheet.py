@@ -6,7 +6,7 @@ from sentry_sdk import capture_exception
 
 from app.common.enums import UserClass, UserStudy
 from app.common.pagination import BasePagination
-from app.common.permissions import IsMember, is_admin_user
+from app.common.permissions import BasicViewPermission, is_admin_user
 from app.content.filters import CheatsheetFilter
 from app.content.models import Cheatsheet
 from app.content.serializers import CheatsheetSerializer
@@ -14,7 +14,7 @@ from app.content.serializers import CheatsheetSerializer
 
 class CheatsheetViewSet(viewsets.ModelViewSet):
     serializer_class = CheatsheetSerializer
-    permission_classes = [IsMember]
+    permission_classes = [BasicViewPermission]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     queryset = Cheatsheet.objects.all()
     pagination_class = BasePagination

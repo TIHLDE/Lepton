@@ -19,6 +19,9 @@ django-rest-framework
 django-cors-headers
 django-rest-auth
 
+#django dry rest permissions
+django-dry-rest-permissions
+
 # Django Polymorphic
 django-polymorphic ~= 3.0
 django-rest-polymorphic

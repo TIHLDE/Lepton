@@ -2,7 +2,7 @@ from django.core.exceptions import ValidationError
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 
-from app.common.permissions import IsDev, IsHS, IsLeader, is_admin_user
+from app.common.permissions import BasicViewPermission, IsLeader, is_admin_user
 from app.content.models import User
 from app.group.models import Group, Membership
 from app.group.serializers import MembershipSerializer
@@ -16,7 +16,7 @@ class MembershipViewSet(viewsets.ModelViewSet):
 
     serializer_class = MembershipSerializer
     queryset = Membership.objects.all()
-    permission_classes = [IsDev | IsHS | IsLeader]
+    permission_classes = [BasicViewPermission]
     lookup_field = "user_id"
 
     def get_queryset(self):
@@ -28,11 +28,6 @@ class MembershipViewSet(viewsets.ModelViewSet):
         if IsLeader().has_permission(request=self.request, view=self):
             return MembershipLeaderSerializer
         return super().get_serializer_class()
-
-    def get_permissions(self):
-        if self.request.method == "GET":
-            self.permission_classes = []
-        return super(MembershipViewSet, self).get_permissions()
 
     def update(self, request, *args, **kwargs):
         try:
