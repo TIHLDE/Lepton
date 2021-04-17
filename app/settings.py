@@ -80,8 +80,8 @@ INSTALLED_APPS = [
     # Our apps
     "app.content",
     "app.common",
-    "app.authentication",
     "app.group",
+    "app.authentication",
     "app.util",
     "app.career",
     "app.forms",
