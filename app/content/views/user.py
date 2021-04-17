@@ -49,8 +49,8 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer = UserCreateSerializer(data=self.request.data)
         if serializer.is_valid():
             serializer.save()
-            add_user_to_grade(request.data["user_id"])
-            add_user_to_study(request.data["user_id"], request.data["user_study"])
+            # add_user_to_grade(request.data["user_id"])
+            # add_user_to_study(request.data["user_id"], request.data["user_study"])
             return Response({"detail": serializer.data}, status=status.HTTP_201_CREATED)
 
         return Response(
