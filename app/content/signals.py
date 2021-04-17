@@ -3,7 +3,8 @@ from datetime import timedelta
 
 from django.conf import settings
 
-from app.celery import app
+from celery.task.control import revoke
+
 from app.common.enums import EnvironmentOptions
 from app.content.tasks.event import (
     event_end_schedular,
@@ -22,8 +23,8 @@ def send_event_reminders(sender, instance, created, **kwargs):
 
 def run_celery_tasks_for_event(event):
     try:
-        app.control.revoke(event.end_date_schedular_id, terminate=True)
-        app.control.revoke(event.sign_off_deadline_schedular_id, terminate=True)
+        revoke(event.end_date_schedular_id, terminate=True)
+        revoke(event.sign_off_deadline_schedular_id, terminate=True)
         if should_send_incoming_end_date_reminder(event):
             event.end_date_schedular_id = event_end_schedular.apply_async(
                 eta=(midday(event.end_date + timedelta(days=1))),

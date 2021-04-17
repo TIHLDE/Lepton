@@ -4,7 +4,7 @@ aiohttp-cors
 wheel
 mysqlclient ==1.4.4
 sentry-sdk
-celery == 5.0.5
+celery ~= 4.4
 azure-storage-blob == 12.8.0
 
 # Django
