@@ -5,11 +5,9 @@ from rest_framework.response import Response
 
 from sentry_sdk import capture_exception
 
-from app.common.enums import Groups, GroupType
 from app.common.permissions import IsDev, IsHS
 from app.content.models.user import User
 from app.group.models import Group, Membership
-from app.util import today
 
 from .exceptions import APIAuthUserDoesNotExist
 from .serializers import AuthSerializer, MakeUserSerializer
