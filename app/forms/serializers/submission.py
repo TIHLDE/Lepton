@@ -4,7 +4,6 @@ from app.content.serializers import UserInAnswerSerializer
 from app.forms.models import Answer, Submission
 from app.forms.serializers import (
     FieldInAnswerSerializer,
-    FormInSubmissionSerializer,
     OptionSerializer,
 )
 
@@ -18,7 +17,7 @@ class AnswerSerializer(serializers.ModelSerializer):
         fields = ["id", "field", "selected_options", "answer_text"]
 
     def validate(self, data):
-        if data["selected_options"] and data["answer_text"]:
+        if data.get("selected_options") and data.get("answer_text"):
             raise serializers.ValidationError(
                 "Du kan ikke svare med både alternativer og tekst på samme spørsmål."
             )
@@ -36,4 +35,9 @@ class SubmissionSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         print(validated_data)
-        raise NotImplementedError()
+        return submission
+
+    def update(self, validated_data):
+        print(validated_data)
+
+        pass

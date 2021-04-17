@@ -41,7 +41,7 @@ def test_sending_both_selected_options_and_text_is_not_permitted(member):
     submission = SubmissionFactory(form=form)
     answer = AnswerFactory(submission=submission, field=form.fields.first())
     url = _get_submission_url(answer.submission.form)
-    submission_data = _create_submission_data(
+    submission_data = _create_submission_data_with_selected_options_and_text_answer(
         member, form.fields.first(), form.fields.first().options.first(), "I love this!"
     )
     response = client.post(url, submission_data)
@@ -50,23 +50,52 @@ def test_sending_both_selected_options_and_text_is_not_permitted(member):
     print(response.json())
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
-    assert False
 
 
-def test_sending_selected_options_is_permitted():
-    pass
+def test_member_can_add_submission_with_options(member):
+    client = get_api_client(user=member)
+    form = EventFormFactory()
+    submission = SubmissionFactory(form=form)
+    answer = AnswerFactory(submission=submission, field=form.fields.first())
+    url = _get_submission_url(answer.submission.form)
+    submission_data = _create_submission_data_with_selected_options(
+        member, form.fields.first(), form.fields.first().options.first()
+    )
+    response = client.post(url, submission_data)
+
+    assert response.status_code == status.HTTP_201_CREATED
+
+def test_member_can_add_submission_with_answer_text(member):
+    client = get_api_client(user=member)
+    form = EventFormFactory()
+    submission = SubmissionFactory(form=form)
+    answer = AnswerFactory(submission=submission, field=form.fields.first())
+    url = _get_submission_url(answer.submission.form)
+    submission_data = _create_submission_data_with_text_answer(
+        member, form.fields.first(), "I love this!"
+    )
+    response = client.post(url, submission_data)
+
+    assert response.status_code == status.HTTP_201_CREATED
 
 
-def test_sending_text_is_permitted():
-    pass
+def test_member_cannot_add_several_submissions(member):
+    client = get_api_client(user=member)
+    form = EventFormFactory()
+    submission = SubmissionFactory(form=form)
+    answer = AnswerFactory(submission=submission, field=form.fields.first())
+    url = _get_submission_url(answer.submission.form)
+    submission_data = _create_submission_data_with_text_answer(
+        member, form.fields.first(), "This is the first time I love this!"
+    )
+    client.post(url, submission_data)
 
+    submission_data = _create_submission_data_with_text_answer(
+        member, form.fields.first(), "This is the second time I love this!"
+    )
+    response = client.post(url, submission_data)
 
-def test_member_can_add_submission():
-    pass
-
-
-def test_member_cannot_add_several_submissions():
-    pass
+    assert response.status_code == status.HTTP_409_CONFLICT
 
 
 def test_cannot_create_event_form_evaluation_submission_if_not_attended():

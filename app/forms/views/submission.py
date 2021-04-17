@@ -37,4 +37,4 @@ class SubmissionViewSet(viewsets.ModelViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-        super().create(request, *args, **kwargs)
+        return super().create(request, *args, **kwargs)
