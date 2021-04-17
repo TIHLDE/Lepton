@@ -1,3 +1,5 @@
+from app.common.enums import GroupType
+from app.group.models import Membership, Group
 import logging
 from datetime import datetime, timedelta, timezone
 from functools import wraps
@@ -41,3 +43,11 @@ def disable_for_loaddata(signal_handler):
         signal_handler(*args, **kwargs)
 
     return wrapper
+    
+def add_user_to_grade(user_id):
+    grade = Group.objects.get_or_create(name=today().year, type=GroupType.STUDYYEAR)
+    Membership.objects.get_or_create(user__user_id=user_id, group=grade)
+
+def add_user_to_study(user_id, study):
+    study = Group.objects.get_or_create(name=study)
+    Membership.objects.get_or_create(user__user_id=user_id, group=study)

@@ -1,3 +1,4 @@
+from app.util.utils import add_user_to_grade, add_user_to_study
 from django.core.exceptions import ObjectDoesNotExist
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status, viewsets
@@ -46,9 +47,10 @@ class UserViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         serializer = UserCreateSerializer(data=self.request.data)
-
         if serializer.is_valid():
             serializer.save()
+            add_user_to_grade(request.data['user_id'])
+            add_user_to_study(request.data['user_id'], request.data['user_study'])
             return Response({"detail": serializer.data}, status=status.HTTP_201_CREATED)
 
         return Response(
