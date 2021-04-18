@@ -43,7 +43,8 @@ class Group(OptionalImage, BaseModel, BasePermissionModel):
     def has_object_write_permission(self, request):
         from app.group.models import Membership
 
-        set_user_id(request)
+        if request.id is None:
+            set_user_id(request)
         try:
             return self.membership.get(
                 group__slug=self.slug, user__user_id=request.id
