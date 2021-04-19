@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+## Versjon 1.0.7 (19.04.2021)
 - ✨ **Endring i permissions**. Endret hvordan vi håndterer tillatelser på nettsiden til å bruke våre nye grupper.
 ## Versjon 1.0.6 (09.04.2021)
 - 🦟 **Oppdatert arrangement**. Fikset bug der det ikke var mulig å oppdatere arrangement.
