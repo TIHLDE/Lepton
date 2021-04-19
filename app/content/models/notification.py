@@ -5,7 +5,7 @@ from app.util.models import BaseModel
 
 
 class Notification(BaseModel):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey("content.User", on_delete=models.CASCADE)
     message = models.CharField(max_length=150)
     read = models.BooleanField(default=False)
 

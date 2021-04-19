@@ -4,8 +4,8 @@ from celery import shared_task
 
 from app.content.models.notification import Notification
 from app.content.models.registration import Registration
+from app.content.models.strike import strike_creator
 from app.util.mailer import send_html_email
-
 
 @shared_task
 def event_sign_off_deadline_schedular(pk, title):
@@ -29,6 +29,8 @@ def event_sign_off_deadline_schedular(pk, title):
 
 @shared_task
 def event_end_schedular(pk, title, start_date, evaluate_link):
+    for registration in Registration.objects.filter(event__pk=pk, has_attended=False):
+        strike_creator("NO_SHOW", registration.user, registration.event)
     for registration in Registration.objects.filter(event__pk=pk, has_attended=True):
         send_html_email(
             "Evaluering av " + title,

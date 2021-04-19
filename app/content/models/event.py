@@ -7,6 +7,7 @@ from app.common.permissions import BasePermissionModel
 from app.forms.enums import EventFormType
 from app.util.models import BaseModel, OptionalImage
 from app.util.utils import today, yesterday
+from datetime import timedelta
 
 from ..signals import send_event_reminders
 from .category import Category
@@ -85,6 +86,10 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
     @property
     def is_past_sign_off_deadline(self):
         return today() >= self.sign_off_deadline
+
+    @property
+    def is_one_hour_before_event_start(self):
+        return today() >= self.start_date - timedelta(hours=1)
 
     @property
     def event_has_ended(self):

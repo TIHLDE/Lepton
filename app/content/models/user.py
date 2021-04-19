@@ -100,6 +100,10 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
 
     def has_module_perms(self, app_label):
         return self.is_superuser
+    
+    def get_number_of_strikes(self):
+        strikes = (strike for strike in self.strikes.all() if strike.active)
+        return sum(strike.strike_size for strike in strikes)
 
     objects = UserManager()
 
