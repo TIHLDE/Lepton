@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from app.common.serializers import BaseModelSerializer
+from app.forms.serializers.submission import SubmissionInRegistrationSerializer
 
 from ..models import Registration, User
 

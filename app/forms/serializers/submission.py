@@ -1,11 +1,7 @@
 from app.common.serializers import BaseModelSerializer
 from app.content.serializers import UserInAnswerSerializer
 from app.forms.models import Answer, Submission
-from app.forms.serializers import (
-    FieldInAnswerSerializer,
-    FormInSubmissionSerializer,
-    OptionSerializer,
-)
+from app.forms.serializers import FieldInAnswerSerializer, OptionSerializer
 
 
 class AnswerSerializer(BaseModelSerializer):
