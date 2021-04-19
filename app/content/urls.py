@@ -17,8 +17,8 @@ from .views import (
     UserViewSet,
     WarningViewSet,
     accept_form,
+    makeTIHLDEMember,
     upload,
-    makeTIHLDEMember
 )
 
 router = routers.DefaultRouter()

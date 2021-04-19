@@ -10,7 +10,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 
-from app.common.enums import AdminGroup
+from app.common.enums import AdminGroup, Groups
 from app.common.permissions import check_has_access
 from app.util.models import BaseModel, OptionalImage
 from app.util.utils import disable_for_loaddata
@@ -82,14 +82,16 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
 
     app_token = models.CharField(max_length=60, blank=True, null=True)
 
-    is_TIHLDE_member = models.BooleanField(default=False)
-
     USERNAME_FIELD = "user_id"
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return f"User - {self.user_id}: {self.first_name} {self.last_name}"
+
+    @property
+    def is_TIHLDE_member(self):
+        return self.membership.filter(group__slug=Groups.TIHLDE).exists()
 
     def has_perm(self, perm, obj=None):
         return self.is_superuser
@@ -126,7 +128,7 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
     def has_object_write_permission(self, request):
         if request.method == "DELETE":
             return check_has_access(self.has_access, request,)
-        return self.user == request.user or check_has_access(self.has_access, request,)
+        return self == request.user or check_has_access(self.has_access, request,)
 
     def has_object_retrieve_permission(self, request):
         return self == request.user or check_has_access(self.has_access, request,)

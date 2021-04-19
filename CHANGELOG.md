@@ -14,6 +14,7 @@
 
 ## Neste versjon
 - ✨ **Endring i permissions**. Endret hvordan vi håndterer tillatelser på nettsiden til å bruke våre nye grupper.
+- ⚡ **Medlemskap i TIHLDE**. Sjekk av medlemskap i TIHLDE bruker nå medlemskap til grupper.
 ## Versjon 1.0.6 (09.04.2021)
 - 🦟 **Oppdatert arrangement**. Fikset bug der det ikke var mulig å oppdatere arrangement.
 - ✨ **Azure**. Satt opp dev-miljø i Azure for å migrere vekk fra Drift og til skyen.
