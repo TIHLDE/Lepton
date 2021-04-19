@@ -28,7 +28,6 @@ class Group(OptionalImage, BaseModel, BasePermissionModel):
         self.slug = slugify(self.name)
         super().save(*args, **kwargs)
 
-
     @classmethod
     def check_request_user_is_leader(cls, request):
         if request.id is None:
@@ -42,6 +41,7 @@ class Group(OptionalImage, BaseModel, BasePermissionModel):
     @classmethod
     def has_write_permission(cls, request):
         from app.group.models import Membership
+
         try:
             return cls.check_request_user_is_leader(
                 request
