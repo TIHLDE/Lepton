@@ -107,7 +107,7 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
 
     @classmethod
     def has_list_permission(cls, request):
-        return check_has_access(cls.has_access, request) or len(request.user.membership.filter(membership_type= MembershipType.LEADER))
+        return check_has_access(cls.has_access, request) or len(request.user.membership.filter(membership_type=MembershipType.LEADER))
 
     @staticmethod
     def has_read_permission(request):

@@ -28,17 +28,26 @@ class Group(OptionalImage, BaseModel, BasePermissionModel):
         self.slug = slugify(self.name)
         super().save(*args, **kwargs)
 
+
     @classmethod
-    def _check_request_user_is_leader(cls, request):
-        set_user_id(request)
+    def check_request_user_is_leader(cls, request):
+        if request.id is None:
+            set_user_id(request)
         group_slug = request.parser_context["kwargs"]["slug"]
         group = cls.objects.get(slug=group_slug)
-        group.membership.get(
-            group__slug=group_slug, user__user_id=request.id
-        ).is_leader()
         return group.membership.get(
             group__slug=group_slug, user__user_id=request.id
         ).is_leader()
+
+    @classmethod
+    def has_write_permission(cls, request):
+        from app.group.models import Membership
+        try:
+            return cls.check_request_user_is_leader(
+                request
+            ) or super().has_write_permission(request)
+        except (Membership.DoesNotExist, KeyError, AssertionError):
+            return super().has_write_permission(request)
 
     def has_object_write_permission(self, request):
         from app.group.models import Membership
