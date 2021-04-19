@@ -2,7 +2,7 @@ from rest_framework.permissions import BasePermission
 
 from app.common.permissions import check_strict_group_permission, get_user_id
 from app.forms.enums import EventFormType
-from app.forms.models.forms import EventForm
+from app.forms.models.forms import EventForm, Form
 
 
 class FormPermissions(BasePermission):
@@ -58,22 +58,3 @@ class SubmissionPermissions(BasePermission):
         submission = form.submissions.get(id=submission_id)
 
         return submission.user is request.user
-
-
-class SubmissionPermissions(BasePermission):
-    def __init__(self, groups):
-        self.groups = groups
-
-    def __call__(self, *args, **kwargs):
-        return self
-
-    def has_permission(self, request, view):
-        get_user_id(request)
-
-        if not request.user.is_authenticated:
-            return False
-
-        if view.action in ["create"]:
-            return True
-
-        return check_strict_group_permission(request, self.groups)
