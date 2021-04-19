@@ -1,5 +1,4 @@
 from app.common.serializers import BaseModelSerializer
-from app.content.serializers import UserInAnswerSerializer
 from app.forms.models import Answer, Submission
 from app.forms.serializers import FieldInAnswerSerializer, OptionSerializer
 
@@ -22,6 +21,8 @@ class BaseSubmissionSerializer(BaseModelSerializer):
 
 
 class SubmissionSerializer(BaseSubmissionSerializer):
+    from app.content.serializers.user import UserInAnswerSerializer
+
     user = UserInAnswerSerializer(read_only=True)
 
     class Meta:

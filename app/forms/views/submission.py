@@ -6,7 +6,7 @@ from app.forms.permissions import SubmissionPermissions
 from app.forms.serializers.submission import SubmissionSerializer
 
 
-class SubmissionViewSet(viewset.ModelViewSet):
+class SubmissionViewSet(viewsets.ModelViewSet):
     serializer_class = SubmissionSerializer
     queryset = Submission.objects.all()
     permission_classes = [

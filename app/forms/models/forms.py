@@ -5,6 +5,8 @@ from django.db import models
 from enumchoicefield import EnumChoiceField
 from polymorphic.models import PolymorphicModel
 
+from app.common.enums import AdminGroup
+from app.common.permissions import check_has_access
 from app.content.models.event import Event
 from app.content.models.user import User
 from app.forms.enums import EventFormType, FormFieldType
@@ -12,7 +14,7 @@ from app.util.models import BaseModel
 
 
 class Form(PolymorphicModel):
-
+    write_access = [AdminGroup.HS, AdminGroup.NOK, AdminGroup.INDEX]
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=200)
 
@@ -30,6 +32,40 @@ class Form(PolymorphicModel):
 
             if options:
                 field.add_options(options)
+
+    @classmethod
+    def has_retrieve_permission(cls, request):
+        if not request.user:
+            return False
+        return True
+
+    @classmethod
+    def has_list_permission(cls, request):
+        return check_has_access(cls.write_access, request)
+
+    @classmethod
+    def has_write_permission(cls, request):
+        if not request.user:
+            return False
+        return check_has_access(cls.write_access, request)
+
+    def has_object_write_permission(self, request):
+        if isinstance(self, EventForm) and self.type == EventFormType.EVALUATION:
+            return (
+                self.event.get_queue()
+                .filter(user=request.user, has_attended=True)
+                .exists()
+            )
+        return True
+
+    def has_object_read_permission(self, request):
+        if isinstance(self, EventForm) and self.type == EventFormType.EVALUATION:
+            return (
+                self.event.get_queue()
+                .filter(user=request.user, has_attended=True)
+                .exists()
+            )
+        return True
 
 
 class EventForm(Form):

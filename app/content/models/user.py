@@ -10,6 +10,8 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 
+from app.common.enums import AdminGroup
+from app.common.permissions import check_has_access
 from app.util.models import BaseModel, OptionalImage
 from app.util.utils import disable_for_loaddata
 
@@ -38,6 +40,7 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
+    has_access = [AdminGroup.HS, AdminGroup.INDEX]
     user_id = models.CharField(max_length=15, primary_key=True)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
@@ -95,6 +98,38 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
         return self.is_superuser
 
     objects = UserManager()
+
+    @classmethod
+    def has_retrieve_permission(cls, request):
+        return request.id == request._user.user_id or check_has_access(
+            cls.has_access, request,
+        )
+
+    @classmethod
+    def has_list_permission(cls, request):
+        return check_has_access(cls.has_access, request)
+
+    @staticmethod
+    def has_read_permission(request):
+        return User.has_list_permission(request) or User.has_retrieve_permission(
+            request
+        )
+
+    @classmethod
+    def has_write_permission(cls, request):
+        return check_has_access(cls.has_access, request,)
+
+    @classmethod
+    def has_create_permission(cls, request):
+        return True
+
+    def has_object_write_permission(self, request):
+        if request.method == "DELETE":
+            return check_has_access(self.has_access, request,)
+        return self.user == request.user or check_has_access(self.has_access, request,)
+
+    def has_object_retrieve_permission(self, request):
+        return self == request.user or check_has_access(self.has_access, request,)
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
