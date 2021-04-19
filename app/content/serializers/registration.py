@@ -20,6 +20,7 @@ class RegistrationSerializer(BaseModelSerializer):
             "has_attended",
             "allow_photo",
             "created_at",
+            "submissions",
             "waiting_number",
         ]
 
