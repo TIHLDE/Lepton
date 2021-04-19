@@ -18,6 +18,7 @@ from .views import (
     WarningViewSet,
     accept_form,
     upload,
+    makeTIHLDEMember
 )
 
 router = routers.DefaultRouter()
@@ -46,5 +47,6 @@ router.register("strikes", StrikeViewSet, basename="strikes")
 urlpatterns = [
     url(r"", include(router.urls)),
     path("accept-form/", accept_form),
+    path("activate-user/", makeTIHLDEMember),
     path("upload/", upload),
 ]
