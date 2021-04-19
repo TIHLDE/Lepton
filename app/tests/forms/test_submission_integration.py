@@ -2,11 +2,9 @@ from rest_framework import status
 
 import pytest
 
-from app.forms.models.forms import Form, Submission
 from app.forms.tests.form_factories import (
     AnswerFactory,
     EventFormFactory,
-    FieldFactory,
     SubmissionFactory,
 )
 from app.util.test_utils import get_api_client
@@ -22,17 +20,28 @@ def _get_submission_detail_url(form, submission):
     return f"/api/v1/forms/{form.id}/submission/{submission.id}/"
 
 
-def _create_submission_data(user, field, option, text_answer):
+def _create_submission_data(user, field, **kwargs):
     return {
-        "user": str(user.user_id),
+        "user": str(user.user_id),  # TODO - we should be able to remove this, but when we do... ka-boom
         "answers": [
             {
                 "field": {"id": str(field.id)},
-                "selected_options": [{"id": str(option.id)}],
-                "text_answer": text_answer,
+                **kwargs,
             }
         ],
     }
+
+
+def _create_submission_data_with_selected_options_and_answer_text(user, field, option, answer_text):
+    return _create_submission_data(user, field, selected_options=[{"id": str(option.id)}], answer_text=answer_text)
+
+
+def _create_submission_data_with_selected_options(user, field, option):
+    return _create_submission_data(user, field, selected_options=[{"id": str(option.id)}])
+
+
+def _create_submission_data_with_text_answer(user, field, answer_text):
+    return _create_submission_data(user, field, answer_text=answer_text)
 
 
 def test_sending_both_selected_options_and_text_is_not_permitted(member):
@@ -41,13 +50,10 @@ def test_sending_both_selected_options_and_text_is_not_permitted(member):
     submission = SubmissionFactory(form=form)
     answer = AnswerFactory(submission=submission, field=form.fields.first())
     url = _get_submission_url(answer.submission.form)
-    submission_data = _create_submission_data_with_selected_options_and_text_answer(
+    submission_data = _create_submission_data_with_selected_options_and_answer_text(
         member, form.fields.first(), form.fields.first().options.first(), "I love this!"
     )
     response = client.post(url, submission_data)
-
-    print(form.id)
-    print(response.json())
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
 
@@ -64,6 +70,7 @@ def test_member_can_add_submission_with_options(member):
     response = client.post(url, submission_data)
 
     assert response.status_code == status.HTTP_201_CREATED
+
 
 def test_member_can_add_submission_with_answer_text(member):
     client = get_api_client(user=member)

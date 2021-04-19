@@ -1,7 +1,6 @@
 from rest_framework import serializers
 
-from app.content.serializers import UserInAnswerSerializer
-from app.forms.models import Answer, Submission
+from app.forms.models import Answer, Submission, Field, Option
 from app.forms.serializers import (
     FieldInAnswerSerializer,
     OptionSerializer,
@@ -9,35 +8,45 @@ from app.forms.serializers import (
 
 
 class AnswerSerializer(serializers.ModelSerializer):
-    field = FieldInAnswerSerializer(read_only=True)
-    selected_options = OptionSerializer(read_only=True)
+    field = FieldInAnswerSerializer()
+    selected_options = OptionSerializer(many=True, required=False)
 
     class Meta:
         model = Answer
         fields = ["id", "field", "selected_options", "answer_text"]
 
     def validate(self, data):
-        if data.get("selected_options") and data.get("answer_text"):
+        if "selected_options" in data and "answer_text" in data:
             raise serializers.ValidationError(
                 "Du kan ikke svare med både alternativer og tekst på samme spørsmål."
             )
-
         return data
 
 
 class SubmissionSerializer(serializers.ModelSerializer):
-    user = UserInAnswerSerializer(read_only=True)
-    answers = AnswerSerializer(read_only=True)
+    answers = AnswerSerializer(many=True)
 
     class Meta:
         model = Submission
-        fields = ["user", "answers"]
+        fields = ("answers", )
 
     def create(self, validated_data):
-        print(validated_data)
+        form_id = self.context.get("form_id")
+        user = self.context.get("user")
+        answers_data = validated_data.pop("answers")
+
+        submission = Submission.objects.create(user=user, form_id=form_id)
+        for answer_data in answers_data:
+            field_id = answer_data.pop("field").get("id")
+            selected_options_data = answer_data.pop("selected_options", None)
+            answer = Answer.objects.create(submission=submission, field=Field.objects.get(id=field_id), **answer_data)
+
+            if selected_options_data:
+                selected_options_ids = [option.get("id") for option in selected_options_data]
+                selected_options = Option.objects.filter(id__in=selected_options_ids)
+                answer.selected_options.set(selected_options)
+
         return submission
 
     def update(self, validated_data):
-        print(validated_data)
-
-        pass
+        raise NotImplementedError()

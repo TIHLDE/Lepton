@@ -19,9 +19,13 @@ class SubmissionViewSet(viewsets.ModelViewSet):
         SubmissionPermissions([AdminGroup.HS, AdminGroup.NOK, AdminGroup.INDEX])
     ]
 
+    def get_serializer_context(self):
+        context = super(SubmissionViewSet, self).get_serializer_context()
+        context.update({"form_id": self.kwargs.get("form_id"), "user": self.request.user})
+        return context
+
     def create(self, request, *args, **kwargs):
         form = get_object_or_404(Form.objects.all(), id=kwargs.get("form_id"))
-
         if isinstance(form, EventForm):
             user = get_object_or_404(
                 User.objects.all(), user_id=request.data.get("user")

@@ -116,6 +116,8 @@ class EventFormSerializer(FormSerializer):
 
 
 class FieldInAnswerSerializer(serializers.ModelSerializer):
+    id = serializers.UUIDField(read_only=False, required=True)
+
     class Meta:
         model = Field
         fields = ("id",)
