@@ -1,4 +1,4 @@
-name: Deploy to Azure development
+name: Deploy to Azure production
 
 on:
   push:
