@@ -74,7 +74,7 @@ class Membership(BaseModel, BasePermissionModel):
             return super().has_write_permission(request)
 
     def has_object_write_permission(self, request):
-        return Membership.has_write_permission(request)
+        return super().has_write_permission(request)
 
     def __str__(self):
         return f"{self.user} - {self.group} - {self.membership_type}"
