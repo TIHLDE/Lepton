@@ -51,3 +51,8 @@ pytest-cov == 2.10.0
 pytest-django == 3.8.0
 factory-boy == 3.0.0
 pytest-factoryboy == 2.0.3
+
+# PDF
+fpdf==1.7.2 
+pdf2image==1.14.0
+pyheif==0.5.1
