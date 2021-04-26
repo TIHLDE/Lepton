@@ -5,10 +5,8 @@ from rest_framework.response import Response
 
 from app.career.models import WeeklyBusiness
 from app.career.serializers import WeeklyBusinessSerializer
-from app.common.drive_handler import upload_and_replace_image_with_cloud_link
-from app.common.enums import AppModel
 from app.common.pagination import BasePagination
-from app.common.permissions import IsNoK
+from app.common.permissions import BasicViewPermission
 from app.util import today, week_nr
 
 
@@ -16,7 +14,7 @@ class WeeklyBusinessViewSet(viewsets.ModelViewSet):
 
     queryset = WeeklyBusiness.objects.none()
     serializer_class = WeeklyBusinessSerializer
-    permission_classes = [IsNoK]
+    permission_classes = [BasicViewPermission]
     pagination_class = BasePagination
 
     def get_queryset(self):
@@ -51,9 +49,9 @@ class WeeklyBusinessViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         try:
-            upload_and_replace_image_with_cloud_link(request, AppModel.WEEKLY_BUSINESS)
-
-            serializer = WeeklyBusinessSerializer(data=request.data, partial=True)
+            serializer = WeeklyBusinessSerializer(
+                data=request.data, partial=True, context={"request": request}
+            )
 
             if serializer.is_valid():
                 serializer.save()
@@ -70,9 +68,11 @@ class WeeklyBusinessViewSet(viewsets.ModelViewSet):
     def update(self, request, pk):
         weekly_business = get_object_or_404(WeeklyBusiness, id=pk)
         self.check_object_permissions(self.request, weekly_business)
-        upload_and_replace_image_with_cloud_link(request, AppModel.WEEKLY_BUSINESS)
         serializer = WeeklyBusinessSerializer(
-            weekly_business, data=request.data, partial=True
+            weekly_business,
+            data=request.data,
+            partial=True,
+            context={"request": request},
         )
         try:
             if serializer.is_valid():

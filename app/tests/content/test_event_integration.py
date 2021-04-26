@@ -63,7 +63,10 @@ def test_retrieve_as_anonymous_user(request_factory, event):
 @pytest.mark.django_db
 @pytest.mark.parametrize(
     ("group_name", "expected_status_code"),
-    [(AdminGroup.HS, 200), (AdminGroup.INDEX, 200),],
+    [
+        (AdminGroup.HS, 200),
+        (AdminGroup.INDEX, 200),
+    ],
 )
 def test_retrieve_as_admin_user(
     request_factory, event, user, token, group_name, expected_status_code

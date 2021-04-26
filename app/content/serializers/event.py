@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from sentry_sdk import capture_exception
 
+from app.common.serializers import BaseModelSerializer
 from app.content.models import Event, Priority
 from app.content.serializers.priority import PrioritySerializer
 from app.util import EnumUtils
@@ -101,7 +102,7 @@ class EventListSerializer(serializers.ModelSerializer):
         ]
 
 
-class EventCreateAndUpdateSerializer(serializers.ModelSerializer):
+class EventCreateAndUpdateSerializer(BaseModelSerializer):
     registration_priorities = PrioritySerializer(many=True, required=False)
 
     class Meta:
@@ -128,18 +129,23 @@ class EventCreateAndUpdateSerializer(serializers.ModelSerializer):
         )
 
     def create(self, validated_data):
-        event = Event.objects.create(**validated_data)
+        registration_priorities_data = None
         if "registration_priorities" in validated_data:
             registration_priorities_data = validated_data.pop("registration_priorities")
+        event = super().create(validated_data)
+        if registration_priorities_data:
             self.set_registration_priorities(event, registration_priorities_data)
 
         return event
 
     def update(self, instance, validated_data):
+        registration_priorities_data = None
         if "registration_priorities" in validated_data:
             registration_priorities_data = validated_data.pop("registration_priorities")
-            self.set_registration_priorities(instance, registration_priorities_data)
-        return super().update(instance, validated_data)
+        event = super().update(instance, validated_data)
+        if registration_priorities_data:
+            self.set_registration_priorities(event, registration_priorities_data)
+        return event
 
     def set_registration_priorities(self, event, registration_priorities_data):
         event.registration_priorities.clear()

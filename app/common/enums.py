@@ -9,6 +9,7 @@ class UserClass(ChoiceEnum):
     THIRD = "3. Klasse"
     FOURTH = "4. Klasse"
     FIFTH = "5. Klasse"
+    ALUMNI = "Alumni"
 
 
 class UserStudy(ChoiceEnum):
@@ -25,6 +26,18 @@ class AdminGroup(ChoiceEnum):
     NOK = "Nok"
     PROMO = "Promo"
     SOSIALEN = "Sosialen"
+
+    @classmethod
+    def all(cls):
+        return (cls.HS, cls.INDEX, cls.NOK, cls.PROMO, cls.SOSIALEN)
+
+    @classmethod
+    def admin(cls):
+        return (cls.HS, cls.INDEX)
+
+
+class Groups(ChoiceEnum):
+    TIHLDE = "TIHLDE"
 
 
 class AppModel(ChoiceEnum):

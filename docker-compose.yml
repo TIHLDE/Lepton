@@ -12,6 +12,7 @@ services:
       - MYSQL_USER=dev
       - MYSQL_PASSWORD=password
       - MYSQL_DATABASE=nettside-dev
+
   phpmyadmin:
     depends_on:
       - db
@@ -22,25 +23,24 @@ services:
     environment:
       PMA_HOST: db
       MYSQL_ROOT_PASSWORD: password
-  celery:
+
+  web: &web
     env_file:
       - .env
     build: .
-    container_name: celery
-    command: pipenv run celery -A app worker -l info
-    volumes:
-      - .:/usr/src/
-    depends_on:
-      - db
-  web:
-    env_file:
-      - .env
-    build: .
+    image: web
     container_name: web
-    command: pipenv run python manage.py runserver 0.0.0.0:8000
+    command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - .:/usr/src/
     ports:
       - "8000:8000"
     depends_on:
       - db
+
+  celery:
+    <<: *web
+    image: celery
+    container_name: celery
+    command: celery -A app worker -l info
+    ports: []

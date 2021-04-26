@@ -4,11 +4,12 @@ from rest_framework.test import APIClient, APIRequestFactory
 import pytest
 
 from app.career.factories import WeeklyBusinessFactory
-from app.common.enums import AdminGroup, MembershipType
+from app.common.enums import AdminGroup, Groups, MembershipType
 from app.content.factories import (
     CheatsheetFactory,
     EventFactory,
     NewsFactory,
+    NotificationFactory,
     PageFactory,
     ParentPageFactory,
     RegistrationFactory,
@@ -47,7 +48,7 @@ def admin_user():
 
 @pytest.fixture()
 def member():
-    return UserFactory(is_TIHLDE_member=True)
+    return add_user_to_group_with_name(UserFactory(), Groups.TIHLDE)
 
 
 @pytest.fixture()
@@ -103,6 +104,11 @@ def form():
 @pytest.fixture()
 def short_link():
     return ShortLinkFactory()
+
+
+@pytest.fixture()
+def notification():
+    return NotificationFactory()
 
 
 @pytest.fixture()

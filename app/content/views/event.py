@@ -1,14 +1,11 @@
-from django.utils.translation import gettext as _
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status, viewsets
 from rest_framework.response import Response
 
 from sentry_sdk import capture_exception
 
-from app.common.drive_handler import upload_and_replace_image_with_cloud_link
-from app.common.enums import AppModel
 from app.common.pagination import BasePagination
-from app.common.permissions import IsNoKorPromo, is_admin_user
+from app.common.permissions import BasicViewPermission, is_admin_user
 from app.content.filters import EventFilter
 from app.content.models import Event
 from app.content.serializers import (
@@ -22,7 +19,7 @@ from app.util.utils import yesterday
 
 class EventViewSet(viewsets.ModelViewSet):
     serializer_class = EventSerializer
-    permission_classes = [IsNoKorPromo]
+    permission_classes = [BasicViewPermission]
     queryset = Event.objects.filter(start_date__gte=yesterday()).order_by("start_date")
     pagination_class = BasePagination
 
@@ -51,7 +48,7 @@ class EventViewSet(viewsets.ModelViewSet):
     def retrieve(self, request, pk):
         """Return detailed information about the event with the specified pk."""
         try:
-            event = Event.objects.get(pk=pk)
+            event = self.get_object()
             if is_admin_user(request):
                 serializer = EventAdminSerializer(
                     event, context={"request": request}, many=False
@@ -64,19 +61,16 @@ class EventViewSet(viewsets.ModelViewSet):
         except Event.DoesNotExist as event_not_exist:
             capture_exception(event_not_exist)
             return Response(
-                {"detail": _("Fant ikke arrangementet")},
-                status=status.HTTP_404_NOT_FOUND,
+                {"detail": "Fant ikke arrangementet"}, status=status.HTTP_404_NOT_FOUND,
             )
 
     def update(self, request, pk):
         """Update the event with the specified pk."""
         try:
-            upload_and_replace_image_with_cloud_link(request, AppModel.EVENT)
-
-            event = Event.objects.get(pk=pk)
+            event = self.get_object()
             self.check_object_permissions(self.request, event)
             serializer = EventCreateAndUpdateSerializer(
-                event, data=request.data, partial=True
+                event, data=request.data, partial=True, context={"request": request}
             )
 
             if serializer.is_valid():
@@ -85,7 +79,7 @@ class EventViewSet(viewsets.ModelViewSet):
                 return Response(serializer.data, status=status.HTTP_200_OK)
             else:
                 return Response(
-                    {"detail": _("Kunne ikke utføre oppdatering av arrangementet")},
+                    {"detail": "Kunne ikke utføre oppdatering av arrangementet"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
@@ -96,10 +90,9 @@ class EventViewSet(viewsets.ModelViewSet):
             )
 
     def create(self, request, *args, **kwargs):
-        """Create an event."""
-        upload_and_replace_image_with_cloud_link(request, AppModel.EVENT)
-
-        serializer = EventCreateAndUpdateSerializer(data=request.data)
+        serializer = EventCreateAndUpdateSerializer(
+            data=request.data, context={"request": request}
+        )
 
         if serializer.is_valid():
             event = serializer.save()

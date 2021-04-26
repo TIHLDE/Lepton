@@ -1,9 +1,9 @@
-from rest_framework import serializers
+from app.common.serializers import BaseModelSerializer
 
 from ..models import Category
 
 
-class CategorySerializer(serializers.ModelSerializer):
+class CategorySerializer(BaseModelSerializer):
     class Meta:
         model = Category
         fields = "__all__"  # bad form

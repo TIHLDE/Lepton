@@ -1,28 +1,96 @@
+from django.db import models
 from rest_framework.authtoken.models import Token
-from rest_framework.permissions import SAFE_METHODS, BasePermission
+from rest_framework.permissions import BasePermission
+
+from dry_rest_permissions.generics import DRYPermissions
 
 from app.common.enums import AdminGroup
-from app.content.models import User
-from app.group.models import Membership
+
+
+class BasePermissionModel(models.Model):
+    read_access = []
+    write_access = []
+
+    class Meta:
+        abstract = True
+
+    @classmethod
+    def has_read_permission(cls, request):
+        if not len(cls.read_access):
+            return True
+        return check_has_access(cls.read_access, request)
+
+    @classmethod
+    def has_write_permission(cls, request):
+        if not len(cls.write_access):
+            return True
+        return check_has_access(cls.write_access, request)
+
+    def has_object_write_permission(self, request):
+        if not len(self.write_access):
+            return True
+        return check_has_access(self.write_access, request)
+
+    def has_object_read_permission(self, request):
+        if not len(self.read_access):
+            return True
+        return check_has_access(self.read_access, request)
+
+
+class BasicViewPermission(DRYPermissions):
+    def has_permission(self, request, view):
+        set_user_id(request)
+        return super().has_permission(request, view)
+
+    def has_object_permission(self, request, view, obj):
+        return super().has_object_permission(request, view, obj)
+
+
+def check_has_access(access, request=None, user=None):
+    set_user_id(request)
+    try:
+        user = request.user
+        memberships = user.membership.all()
+        for membership in memberships:
+            for name in access:
+                if str(membership.group_id).lower() == str(name).lower():
+                    return True
+        return False
+    except AttributeError:
+        return False
+
+
+def set_user_id(request):
+    token = request.META.get("HTTP_X_CSRF_TOKEN")
+    request.id = None
+    request.user = None
+
+    if token is None:
+        return None
+
+    try:
+        user_token = Token.objects.get(key=token)
+    except Token.DoesNotExist:
+        return None
+
+    request.id = user_token.user_id
+    request.user = user_token.user
 
 
 class IsLeader(BasePermission):
     """ Checks if the user is a leader on a group """
 
-    message = "You are not a leader of this group"
+    message = "You are not the leader of this group"
 
-    def has_permission(self, request, view):
+    def has_permission(self, request, view, group_slug=None):
+        set_user_id(request)
         # Check if session-token is provided
-        user_id = get_user_id(request)
-        group_slug = view.kwargs["slug"]
-        try:
-            if Membership.objects.get(
-                user__user_id=user_id, group__slug=group_slug
-            ).is_leader():
-                return True
-        except Membership.DoesNotExist:
-            return False
-        return False
+        group_slug = group_slug if group_slug else view.kwargs["slug"]
+        user = request.user
+        memberships = user.membership.all() if user else []
+        for membership in memberships:
+            if membership.group.slug == group_slug:
+                return membership.is_leader()
 
 
 class IsMember(BasePermission):
@@ -31,8 +99,9 @@ class IsMember(BasePermission):
     message = "You are not a member"
 
     def has_permission(self, request, view):
+        set_user_id(request)
         # Check if session-token is provided
-        user_id = get_user_id(request)
+        user_id = request.id
 
         if user_id is None:
             return False
@@ -43,185 +112,31 @@ class IsMember(BasePermission):
 class IsDev(BasePermission):
     """ Checks if the user is in HS or Drift """
 
-    message = "You are not in DevKom"
+    message = "You are not in Index"
 
     def has_permission(self, request, view):
-        user_id = get_user_id(request)
+        set_user_id(request)
+        user_id = request.user
         if user_id is None:
             return False
-        return (
-            User.objects.filter(user_id=user_id)
-            .filter(groups__name__in=[AdminGroup.INDEX])
-            .count()
-            > 0
-        )
+        return check_has_access([AdminGroup.INDEX], request)
 
 
 class IsHS(BasePermission):
-    """ Checks if the user is in HS or Drift """
+    """ Checks if the user is in HS or Index """
 
     message = "You are not in HS"
 
     def has_permission(self, request, view):
-        return check_group_permission(request, [AdminGroup.HS, AdminGroup.INDEX])
-
-
-class IsPromo(BasePermission):
-    """ Checks if the user is in HS, Drift, or Promo """
-
-    message = "You are not in Promo"
-
-    def has_permission(self, request, view):
-        return check_group_permission(
-            request, [AdminGroup.HS, AdminGroup.INDEX, AdminGroup.PROMO]
-        )
-
-
-class IsNoK(BasePermission):
-    """ Checks if the user is in HS, Drift, or NoK """
-
-    message = "You are not in NoK"
-
-    def has_permission(self, request, view):
-        return check_group_permission(
-            request, [AdminGroup.HS, AdminGroup.INDEX, AdminGroup.NOK]
-        )
-
-
-class IsNoKorPromo(BasePermission):
-    """ Checks if the user is in HS, Drift, or NoK """
-
-    message = "You are not in NoK"
-
-    def has_permission(self, request, view):
-        return check_group_permission(
-            request,
-            [AdminGroup.HS, AdminGroup.INDEX, AdminGroup.NOK, AdminGroup.PROMO],
-        )
-
-
-class RegistrationPermission(BasePermission):
-    message = "You are not an admin"
-
-    def has_permission(self, request, view):
-        user_id = get_user_id(request)
-        if user_id is None:
-            return False
-
-        if view.action in ["retrieve", "destroy", "create"]:
-            return True
-
-        return check_strict_group_permission(
-            request,
-            [AdminGroup.HS, AdminGroup.INDEX, AdminGroup.NOK, AdminGroup.SOSIALEN],
-        )
-
-
-class UserPermission(BasePermission):
-    """ Checks if user is admin or getting or posting own self """
-
-    message = "You are not an admin"
-
-    def has_permission(self, request, view):
-        get_user_id(request)
-
-        if view.action == "list":
-            return is_admin_user(request)
-        elif view.action == "create":
-            return True
-        elif view.action in ["retrieve", "update", "partial_update", "destroy"]:
-            return True
-        else:
-            return False
-
-    def has_object_permission(self, request, view, obj):
-        get_user_id(request)
-
-        if not request.user.is_authenticated:
-            return False
-
-        if view.action == "retrieve":
-            return obj == request.user or is_admin_user(request)
-        elif view.action in ["update", "partial_update"]:
-            return obj == request.user or is_admin_user(request)
-        elif view.action == "destroy":
-            return is_admin_user(request)
-        else:
-            return False
-
-
-class NotificationPermission(BasePermission):
-    """Allow users to see and edit own notifications"""
-
-    def has_permission(self, request, view):
-        get_user_id(request)
-
-        if view.action in ["list", "create"]:
-            # Only admin can list out all notifications and create new ones.
-            return is_admin_user(request)
-        elif view.action in ["retrieve", "update"]:
-            # This is handled by has_object_permission, so pass down there.
-            return True
-        elif view.action in ["partial_update", "destroy"]:
-            return False
-
-    def has_object_permission(self, request, view, obj):
-        get_user_id(request)
-
-        if not request.user.is_authenticated:
-            return False
-
-        # Only allow the user to acces own notifications
-        return obj.user == request.user
-
-
-def check_group_permission(request, groups):
-    # Allow GET, HEAD or OPTIONS requests
-    if request.method in SAFE_METHODS:
-        return True
-
-    return check_strict_group_permission(request, groups)
-
-
-def check_strict_group_permission(request, groups):
-    # Check if session-token is provided
-    user_id = get_user_id(request)
-
-    if user_id is None:
-        return False
-
-    # Check if user with given id is connected to Groups
-    return User.objects.filter(user_id=user_id, groups__name__in=groups).count() > 0
-
-
-def get_user_id(request):
-    token = request.META.get("HTTP_X_CSRF_TOKEN")
-
-    if token is None:
-        return None
-
-    try:
-        userToken = Token.objects.get(key=token)
-    except Token.DoesNotExist:
-        return None
-
-    request.id = userToken.user_id
-    request.user = User.objects.get(user_id=userToken.user_id)
-
-    return userToken.user_id
+        return check_has_access(AdminGroup.admin(), request)
 
 
 def is_admin_user(request):
+    set_user_id(request)
     """ Checks if user is in dev or HS """
-    user_id = get_user_id(request)
+    user_id = request.user
 
     if user_id is None:
         return False
 
-    return (
-        User.objects.filter(user_id=user_id)
-        .filter(groups__name__in=[AdminGroup.INDEX, AdminGroup.HS])
-        .count()
-        > 0
-        or request.user.is_staff
-    )
+    return check_has_access(AdminGroup.admin(), request)

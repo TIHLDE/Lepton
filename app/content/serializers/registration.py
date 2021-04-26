@@ -1,10 +1,13 @@
 from rest_framework import serializers
 
+from app.common.serializers import BaseModelSerializer
+
 from ..models import Registration, User
 
 
-class RegistrationSerializer(serializers.ModelSerializer):
+class RegistrationSerializer(BaseModelSerializer):
     user_info = serializers.SerializerMethodField()
+    waiting_number = serializers.SerializerMethodField()
 
     class Meta:
         model = Registration
@@ -15,6 +18,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
             "has_attended",
             "allow_photo",
             "created_at",
+            "waiting_number",
         ]
 
     def get_user_info(self, obj):
@@ -30,3 +34,6 @@ class RegistrationSerializer(serializers.ModelSerializer):
             "user_study": user.user_study,
             "allergy": user.allergy,
         }
+
+    def get_waiting_number(self, obj):
+        return obj.get_waiting_number()

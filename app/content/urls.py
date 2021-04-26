@@ -12,10 +12,12 @@ from .views import (
     PageViewSet,
     RegistrationViewSet,
     ShortLinkViewSet,
+    StrikeViewSet,
     UserBadgeViewSet,
     UserViewSet,
     WarningViewSet,
     accept_form,
+    upload,
 )
 
 router = routers.DefaultRouter()
@@ -39,8 +41,10 @@ router.register(
 )
 router.register("badge", UserBadgeViewSet, basename="badge")
 router.register("page", PageViewSet)
+router.register("strikes", StrikeViewSet, basename="strikes")
 
 urlpatterns = [
     url(r"", include(router.urls)),
     path("accept-form/", accept_form),
+    path("upload/", upload),
 ]

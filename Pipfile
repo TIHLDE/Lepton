@@ -18,6 +18,10 @@ travis = "*"
 sentry-sdk = "*"
 pyocclient = "*"
 celery = "~=4.4"
+azure-storage-blob = "*"
+fpdf="*"
+pdf2image="*"
+pyheif="*"
 # Django
 # ------------------------------------------------------------------------------
 django-enumchoicefield = "*"
@@ -34,6 +38,7 @@ django-polymorphic = "~=3.0"
 django-rest-polymorphic = "*"
 
 django-mptt="*"
+django-dry-rest-permissions="*"
 # Documentation
 # ------------------------------------------------------------------------------
 drf-yasg = "*"

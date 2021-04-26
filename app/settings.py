@@ -75,20 +75,25 @@ INSTALLED_APPS = [
     "drf_yasg",
     "rest_framework.authtoken",
     "rest_auth",
+    "dry_rest_permissions",
     "polymorphic",
     # Our apps
-    "app.authentication",
-    "app.career",
     "app.content",
-    "app.util",
+    "app.common",
     "app.group",
+    "app.authentication",
+    "app.util",
+    "app.career",
     "app.forms",
+    "app.payment",
 ]
 
 # Django rest framework
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "rest_framework.schemas.coreapi.AutoSchema",
-    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.AllowAny",],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.AllowAny",
+    ],
     "EXCEPTION_HANDLER": "app.util.exceptions.exception_handler",
     "TEST_REQUEST_DEFAULT_FORMAT": "json",
 }
@@ -171,9 +176,15 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
-    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",},
-    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",},
-    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",},
+    {
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
+    },
 ]
 
 
@@ -247,8 +258,15 @@ LOGGING = {
         },
     },
     "loggers": {
-        "django": {"handlers": ["file"], "propagate": True, "level": "DEBUG",},
-        "MYAPP": {"handlers": ["file"], "level": "DEBUG",},
+        "django": {
+            "handlers": ["file"],
+            "propagate": True,
+            "level": "DEBUG",
+        },
+        "MYAPP": {
+            "handlers": ["file"],
+            "level": "DEBUG",
+        },
     },
 }
 

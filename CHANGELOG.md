@@ -13,6 +13,25 @@
 ---
 
 ## Neste versjon
+- ⚡ **Azure**. Satt opp produksjon i Azure og automatisk oppdatering ved push til master.
+- ✨ **Endring i permissions**. Endret hvordan vi håndterer tillatelser på nettsiden til å bruke våre nye grupper.
+## Versjon 1.0.6 (09.04.2021)
+- 🦟 **Oppdatert arrangement**. Fikset bug der det ikke var mulig å oppdatere arrangement.
+- ✨ **Azure**. Satt opp dev-miljø i Azure for å migrere vekk fra Drift og til skyen.
+- ✨ **Venteliste nummer**. Henter nå ut hvilken plass du er på i ventelisten
+- ✨ **Refusjons skjema**. Lagt til mulighet for å sende refusjons skjema rett til økonomiansvarlig, med kvittering. 
+
+## Versjon 1.0.5 (24.03.2021)
+- 🦟 **Opprett arrangement**. Fikset feil der det ikke var mulig å opprette et arrangement.
+- ✨ **Logging** av endringer skjer automatisk ved bruk.
+- ✨ **Prikksystemet**. Da er det endelig laget endepunkter for prikksystemet, slik at admin kan nå hente, lage og slette prikker.
+
+## Versjon 1.0.4 (15.03.2021)
+- ✨ **Filopplastning**. Lagt til støtte for filopplastning til Azure gjennom eget endepunkt. Kun for medlemmer.
+- ✨ **Forms**. Admins kan opprette, redigere og slette forms. Forms kan brukes i blant annet arrangement-påmelding.
+
+## Versjon 1.0.3 (09.03.2021)
+- ⚡ **Pagination i varsler**. Lagt til pagination i varsler, samt lagt til tester og fjernet admin's muligheter til å opprette/endre/slette andres varsler.
 - ✨ **Korte URL's**. Opprettet en ny tjeneste der brukere kan lagre url'er bak korte, valgfrie slugs.
 - ✨ **Ukens Bedrift**. Nå er det mulig for NoK å lage en kø med ukens bedrifter basert på ukenr
 

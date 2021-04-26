@@ -3,7 +3,7 @@ from rest_framework.response import Response
 
 from sentry_sdk import capture_exception
 
-from app.common.permissions import IsDev, IsMember
+from app.common.permissions import BasicViewPermission
 
 from ..models import Badge, User, UserBadge
 from ..serializers import UserBadgeSerializer
@@ -11,13 +11,8 @@ from ..serializers import UserBadgeSerializer
 
 class UserBadgeViewSet(viewsets.ModelViewSet):
     serializer_class = UserBadgeSerializer
-    permission_classes = [IsDev]
+    permission_classes = [BasicViewPermission]
     queryset = UserBadge.objects.all()
-
-    def get_permissions(self):
-        if self.request.method in ["POST"]:
-            self.permission_classes = [IsMember]
-        return super(UserBadgeViewSet, self).get_permissions()
 
     def create(self, request):
         try:

@@ -106,7 +106,6 @@ def test_retrieve_as_member(member):
 
     url = _get_registration_detail_url(registration)
     response = client.get(url)
-
     actual_user_id = response.json().get("user_info").get("user_id")
 
     assert response.status_code == status.HTTP_200_OK

@@ -1,10 +1,10 @@
-from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
 
+from app.common.serializers import BaseModelSerializer
 from app.content.models import Badge, User, UserBadge
 
 
-class BadgeSerializer(serializers.ModelSerializer):
+class BadgeSerializer(BaseModelSerializer):
     total_completion_percentage = SerializerMethodField()
 
     class Meta:

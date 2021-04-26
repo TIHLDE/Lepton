@@ -1,24 +1,27 @@
-FROM python:3.6-alpine
+FROM python:3.6-slim-buster
 ENV PYTHONUNBUFFERED 1
 
 WORKDIR /usr/src
 
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir pipenv && \
-    # Install required linux packages (remove postgresql-dev when Heroku isn't needed)
-    apk add --no-cache mariadb-dev postgresql-dev
+RUN apt-get update \
+  # dependencies for building Python packages
+  && apt-get install -y build-essential \
+  # mysqlclient dependencies
+  && apt-get install -y default-libmysqlclient-dev \
+  # cleaning up unused files
+  && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
+  && rm -rf /var/lib/apt/lists/*
 
-COPY Pipfile Pipfile.lock ./
-
-# Install required python packages
-RUN apk add --no-cache --virtual .build-deps gcc linux-headers libc-dev && \
-      pipenv install -d && \
-      rm -rf ~/.cache/pip ~/.cache/pipenv && \
-    apk del .build-deps
+# Requirements are installed here to ensure they will be cached.
+COPY requirements.txt ./
+RUN pip install -r requirements.txt
 
 COPY . .
 
 VOLUME /usr/src/app/volume
 
-CMD ./manage.py collectstatic --noinput && \
-    gnuicorn -w 3 --bind 0.0.0.0:8000 --acess-logfile - app.wsgi:application
+EXPOSE 8000
+
+CMD python manage.py collectstatic --noinput && \
+    python manage.py migrate && \
+    python manage.py runserver 0.0.0.0:8000

@@ -1,11 +1,13 @@
 from django.contrib.auth.hashers import make_password
 from django.core.exceptions import ValidationError
-from django.utils.translation import gettext as _
 from rest_framework import serializers
 
-from app.content.models import Notification, Registration, User
+from dry_rest_permissions.generics import DRYGlobalPermissionsField
+
+from app.content.models import Notification, Registration, Strike, User
 from app.content.serializers.badge import BadgeSerializer
 from app.content.serializers.event import EventListSerializer
+from app.content.serializers.strike import StrikeSerializer
 
 
 class DefaultUserSerializer(serializers.ModelSerializer):
@@ -30,7 +32,8 @@ class UserSerializer(serializers.ModelSerializer):
     groups = serializers.SerializerMethodField()
     badges = serializers.SerializerMethodField()
     unread_notifications = serializers.SerializerMethodField()
-    notifications = serializers.SerializerMethodField()
+    permissions = DRYGlobalPermissionsField(actions=["write", "read"])
+    strikes = serializers.SerializerMethodField()
 
     class Meta:
         model = User
@@ -53,7 +56,8 @@ class UserSerializer(serializers.ModelSerializer):
             "groups",
             "badges",
             "unread_notifications",
-            "notifications",
+            "permissions",
+            "strikes",
         )
         read_only_fields = ("user_id",)
         write_only_fields = ("app_token",)
@@ -84,16 +88,12 @@ class UserSerializer(serializers.ModelSerializer):
         """ Counts all unread notifications and returns the count """
         return Notification.objects.filter(user=obj, read=False).count()
 
-    def get_notifications(self, obj):
-        """ Gets all notifications for user """
-        return [
-            {
-                "id": notification.id,
-                "message": notification.message,
-                "read": notification.read,
-            }
-            for notification in Notification.objects.filter(user=obj)
+    def get_strikes(self, obj):
+        """ Get all active strikes """
+        active_strikes = [
+            strike for strike in Strike.objects.filter(user=obj) if strike.active
         ]
+        return StrikeSerializer(active_strikes, many=True).data
 
 
 class UserMemberSerializer(UserSerializer):
@@ -160,9 +160,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
     def validate_email(self, data):
         if "@ntnu.no" in data:
             raise ValidationError(
-                _(
-                    "Vi kan ikke sende epost til @ntnu.no-adresser, bruk @stud.ntnu.no-adressen istedenfor."
-                )
+                "Vi kan ikke sende epost til @ntnu.no-adresser, bruk @stud.ntnu.no-adressen istedenfor."
             )
         return data
 
