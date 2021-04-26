@@ -3,7 +3,6 @@ from rest_framework.response import Response
 
 from app.common.permissions import BasicViewPermission
 from app.forms.models import Form
-from app.forms.permissions import FormPermissions
 from app.forms.serializers import FormPolymorphicSerializer
 
 
