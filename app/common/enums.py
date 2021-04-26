@@ -55,11 +55,12 @@ class GroupType(ChoiceEnum):
     SUBGROUP = "Undergruppe"
     COMMITTEE = "Komité"
     STUDYYEAR = "Studieår"
+    INTERESTGROUP = "Interesse Gruppe"
     OTHER = "Annet"
 
     @classmethod
-    def main(cls):
-        return (cls.BOARD, cls.SUBGROUP, cls.COMMITTEE)
+    def public_group(cls):
+        return (cls.BOARD, cls.SUBGROUP, cls.COMMITTEE, cls.INTERESTGROUP)
 
 
 class EnvironmentOptions(Enum):
