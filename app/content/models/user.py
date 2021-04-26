@@ -38,6 +38,7 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
+
 CLASS = (
     (-1, "Alumni"),
     (1, "1. Klasse"),
@@ -48,11 +49,11 @@ CLASS = (
 )
 
 STUDY = (
-  (1, "Dataing"),
-  (2, "DigFor"),
-  (3, "DigInc"),
-  (4, "DigSam"),
-  (5, "Drift"),
+    (1, "Dataing"),
+    (2, "DigFor"),
+    (3, "DigInc"),
+    (4, "DigSam"),
+    (5, "Drift"),
 )
 
 GENDER = (
@@ -60,6 +61,7 @@ GENDER = (
     (2, "Kvinne"),
     (3, "Annet"),
 )
+
 
 class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
     has_access = [AdminGroup.HS, AdminGroup.INDEX]

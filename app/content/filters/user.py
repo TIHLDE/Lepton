@@ -1,11 +1,13 @@
-from django_filters.rest_framework import BooleanFilter, FilterSet, ChoiceFilter
-from app.content.models.user import CLASS, STUDY
+from django_filters.rest_framework import BooleanFilter, ChoiceFilter, FilterSet
+
 from app.common.enums import Groups
 from app.content.models import User
+from app.content.models.user import CLASS, STUDY
 
 
 class UserFilter(FilterSet):
     """ Filters users """
+
     user_class = ChoiceFilter(choices=CLASS)
     user_study = ChoiceFilter(choices=STUDY)
     is_TIHLDE_member = BooleanFilter(
@@ -22,4 +24,3 @@ class UserFilter(FilterSet):
         elif value is False:
             return queryset.exclude(membership__group__slug=Groups.TIHLDE)
         return queryset
-
