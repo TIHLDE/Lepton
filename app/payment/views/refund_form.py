@@ -2,8 +2,8 @@ import logging
 
 from rest_framework import status, viewsets
 from rest_framework.response import Response
-from app.common.permissions import IsMember
 
+from app.common.permissions import IsMember
 from app.payment.util.refund_form_mail import (
     UnsupportedFileException,
     create_pdf,
@@ -43,12 +43,8 @@ class RefundFormViewSet(viewsets.ModelViewSet):
         except RuntimeError as e:
             logging.exception(e)
             return Response(
-                "Kunne ikke generere PDF",
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                "Kunne ikke generere PDF", status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
         except Exception as e:
             logging.exception(e)
-            return Response(
-                f"Noe uventet skjedde",
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            return Response(f"Noe uventet skjedde", status=status.HTTP_400_BAD_REQUEST,)

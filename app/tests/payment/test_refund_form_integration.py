@@ -1,5 +1,6 @@
-import pytest
 from rest_framework import status
+
+import pytest
 
 from app.content.factories.user_factory import UserFactory
 from app.util.test_utils import get_api_client
@@ -46,7 +47,7 @@ def test_send_valid_refund_form_request(user):
     client = get_api_client(user=user)
 
     response = client.post(refund_form_url, data=data)
-    
+
     assert response.status_code == status.HTTP_200_OK
 
 

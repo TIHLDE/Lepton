@@ -10,7 +10,6 @@ from django.core.mail import EmailMultiAlternatives
 # Handle HEIC photoes
 import pyheif
 from fpdf import FPDF
-
 # Handle PDF files
 from pdf2image import convert_from_path
 from PIL import Image
@@ -30,7 +29,8 @@ field_title_map = {
     "comment": "Kommentar:",
 }
 
-mailto = "okonomi@tihlde.org"#"okonomi@tihlde.org"
+mailto = "okonomi@tihlde.org"  # "okonomi@tihlde.org"
+
 
 def data_is_valid(data):
     fields = [
