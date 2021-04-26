@@ -38,6 +38,28 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
+CLASS = (
+    (-1, "Alumni"),
+    (1, "1. Klasse"),
+    (2, "2. Klasse"),
+    (3, "3. Klasse"),
+    (4, "4. Klasse"),
+    (5, "5. Klasse"),
+)
+
+STUDY = (
+  (1, "Dataing"),
+  (2, "DigFor"),
+  (3, "DigInc"),
+  (4, "DigSam"),
+  (5, "Drift"),
+)
+
+GENDER = (
+    (1, "Mann"),
+    (2, "Kvinne"),
+    (3, "Annet"),
+)
 
 class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
     has_access = [AdminGroup.HS, AdminGroup.INDEX]
@@ -50,31 +72,9 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
 
     home_busstop = models.IntegerField(null=True, blank=True)
 
-    GENDER = (
-        (1, "Mann"),
-        (2, "Kvinne"),
-        (3, "Annet"),
-    )
     gender = models.IntegerField(default=2, choices=GENDER, null=True, blank=True)
 
-    CLASS = (
-        (-1, "Alumni"),
-        (1, "1. Klasse"),
-        (2, "2. Klasse"),
-        (3, "3. Klasse"),
-        (4, "4. Klasse"),
-        (5, "5. Klasse"),
-    )
     user_class = models.IntegerField(default=1, choices=CLASS, null=True, blank=True)
-
-    STUDY = (
-        (1, "Dataing"),
-        (2, "DigFor"),
-        (3, "DigInc"),
-        (4, "DigSam"),
-        (5, "Drift"),
-    )
-
     user_study = models.IntegerField(default=1, choices=STUDY, null=True, blank=True)
     allergy = models.CharField(max_length=250, blank=True)
 
