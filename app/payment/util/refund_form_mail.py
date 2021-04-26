@@ -2,6 +2,7 @@ import base64
 import functools
 import io
 import operator
+import os
 import tempfile
 from datetime import datetime
 
@@ -19,7 +20,7 @@ class UnsupportedFileException(Exception):
 
 field_title_map = {
     "date": "Dato:",
-    "committee": "Gruppe/utvalg:",
+    "committee": "Gruppe/Utvalg/Person:",
     "name": "Navn:",
     "accountNumber": "Kontonummer:",
     "amount": "Beløp:",
@@ -27,7 +28,7 @@ field_title_map = {
     "comment": "Kommentar:",
 }
 
-mailto = "okonomi@tihlde.org"
+mailto = "okonomi@tihlde.org" if os.environ.get("PROD") else "test@tihlde.org"
 
 
 def data_is_valid(data):
@@ -39,7 +40,7 @@ def data_is_valid(data):
         "accountNumber",
         "mailfrom",
     ]
-    return [field for field in fields if field not in data or len(data[field]) == 0]
+    return [field for field in fields if field not in data or not len(data[field])]
 
 
 class PDF(FPDF):
@@ -75,21 +76,21 @@ def create_image_file(image):
     decoded = base64.b64decode(parts[1])
     suffix = "pdf" if "application/pdf" in image else parts[0].split("image/")[1]
     suffix = suffix.lower()
-    f = tempfile.NamedTemporaryFile(suffix=f".{suffix}")
-    f.write(decoded)
-    f.flush()
+    file = tempfile.NamedTemporaryFile(suffix=f".{suffix}")
+    file.write(decoded)
+    file.flush()
 
     """
     FPDF does not support pdf files as input, therefore convert file:pdf to array[image:jpg]
     """
     if suffix == "pdf":
         files = []
-        pil_images = convert_from_path(f.name, fmt="jpeg")
+        pil_images = convert_from_path(file.name, fmt="jpeg")
         for img in pil_images:
-            f = tempfile.NamedTemporaryFile(suffix=f".{suffix}")
-            f.write(image_to_byte_array(img))
-            files.append({"file": f, "type": "jpeg"})
-            f.flush()
+            file = tempfile.NamedTemporaryFile(suffix=f".{suffix}")
+            file.write(image_to_byte_array(img))
+            files.append({"file": file, "type": "jpeg"})
+            file.flush()
         return files
 
     """
@@ -97,7 +98,7 @@ def create_image_file(image):
     """
     if suffix == "heic":
         fmt = "JPEG"
-        heif_file = pyheif.read(f.name)
+        heif_file = pyheif.read(file.name)
         img = Image.frombytes(
             heif_file.mode,
             heif_file.size,
@@ -106,12 +107,12 @@ def create_image_file(image):
             heif_file.mode,
             heif_file.stride,
         )
-        f = tempfile.NamedTemporaryFile(suffix=f".{fmt}")
-        f.write(image_to_byte_array(img, fmt))
-        f.flush()
-        return [{"file": f, "type": fmt}]
+        file = tempfile.NamedTemporaryFile(suffix=f".{fmt}")
+        file.write(image_to_byte_array(img, fmt))
+        file.flush()
+        return [{"file": file, "type": fmt}]
 
-    return [{"file": f, "type": suffix.upper()}]
+    return [{"file": file, "type": suffix.upper()}]
 
 
 def format_image_data(data):
@@ -174,7 +175,7 @@ def format_mail(data):
     text += (
         f'Dato: {datetime.strptime(data["date"], "%Y-%m-%d").strftime("%d %b %Y")}\n'
     )
-    text += f'Gruppe: {data["committee"]}\n'
+    text += f'Gruppe/Utvalg/Person: {data["committee"]}\n'
     text += f'Navn: {data["name"]}\n'
     text += f'Kontonummer: {data["accountNumber"]}\n'
     text += f'Beløp: {data["amount"]}\n'

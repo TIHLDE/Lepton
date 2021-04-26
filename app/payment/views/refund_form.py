@@ -22,7 +22,7 @@ class RefundFormViewSet(viewsets.ModelViewSet):
         data["mailfrom"] = request.user.email
         try:
             req_fields = data_is_valid(data)
-            if len(req_fields) > 0:
+            if len(req_fields):
                 return Response(
                     f'Påkrevde felt {", ".join(req_fields)}',
                     status=status.HTTP_400_BAD_REQUEST,
@@ -31,20 +31,25 @@ class RefundFormViewSet(viewsets.ModelViewSet):
             file = create_pdf(data)
             send_refund_mail(data, file)
             return Response(
-                "Kvittering er generert og sendt til økonomi ansvarlig!",
+                {"details": "Kvittering er generert og sendt til økonomi ansvarlig!"},
                 status=status.HTTP_200_OK,
             )
         except UnsupportedFileException:
             return Response(
-                """En eller flere filer er ikke støttet.
-                Bruk PNG, JPEG, GIF, HEIC or PDF""",
+                {
+                    "details": """En eller flere filer er ikke støttet.
+                Bruk PNG, JPEG, GIF, HEIC or PDF"""
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
         except RuntimeError as e:
             logging.exception(e)
             return Response(
-                "Kunne ikke generere PDF", status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                {"details": "Kunne ikke generere PDF"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
         except Exception as e:
             logging.exception(e)
-            return Response("Noe uventet skjedde", status=status.HTTP_400_BAD_REQUEST,)
+            return Response(
+                {"details": "Noe uventet skjedde"}, status=status.HTTP_400_BAD_REQUEST,
+            )

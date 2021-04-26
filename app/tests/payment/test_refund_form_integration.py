@@ -25,11 +25,9 @@ def _get_valid_refund_form_data():
         "occasion": "pytest",
         "amount": "69",
         "comment": "Running pytest",
-        "mailto": "index_test@tihlde.org",
         "name": "Index",
         "committee": "Index",
         "accountNumber": "69420666",
-        "mailfrom": "index_test@tihlde.org",
     }
 
 
