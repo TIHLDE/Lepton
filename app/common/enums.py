@@ -59,8 +59,8 @@ class GroupType(ChoiceEnum):
     OTHER = "Annet"
 
     @classmethod
-    def public_group(cls):
-        return (cls.BOARD, cls.SUBGROUP, cls.COMMITTEE, cls.INTERESTGROUP)
+    def public_groups(cls):
+        return (cls.BOARD, cls.SUBGROUP, cls.COMMITTEE,cls.INTERESTGROUP )
 
 
 class EnvironmentOptions(Enum):
