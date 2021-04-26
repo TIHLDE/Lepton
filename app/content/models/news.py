@@ -10,7 +10,7 @@ class News(BaseModel, OptionalImage, BasePermissionModel):
     header = models.CharField(max_length=200)
     body = models.TextField()
 
-    write_access = [AdminGroup.INDEX, AdminGroup.HS, AdminGroup.NOK]
+    write_access = AdminGroup.all()
 
     class Meta:
         verbose_name_plural = "News"
