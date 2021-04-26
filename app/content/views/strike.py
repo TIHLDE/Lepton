@@ -2,7 +2,13 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 
-from app.content.models import Event, Strike, User
+from app.content.models import (
+    Event,
+    Strike,
+    User,
+    get_strike_description,
+    get_strike_strike_size,
+)
 from app.content.serializers import StrikeSerializer
 
 
@@ -20,6 +26,10 @@ class StrikeViewSet(viewsets.ModelViewSet):
         )
 
     def create(self, request):
+        if "enum" in request.data:
+            enum = request.data["enum"]
+            request.data["description"] = get_strike_description(enum)
+            request.data["strike_size"] = get_strike_strike_size(enum)
         serializer = StrikeSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = get_object_or_404(User, user_id=request.data["user_id"])
@@ -32,4 +42,4 @@ class StrikeViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         super().destroy(request, *args, **kwargs)
-        return Response({"detail": "Prikken ble slettet"}, status=status.HTTP_200_OK,)
+        return Response({"detail": "Prikken ble slettet"}, status=status.HTTP_200_OK)

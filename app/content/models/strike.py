@@ -3,13 +3,17 @@ from datetime import timedelta
 
 from django.db import models
 
+from app.common.enums import AdminGroup
 from app.util.models import BaseModel
+from app.common.permissions import BasePermissionModel
 from app.util.utils import today
 
 STRIKE_DURATION_IN_DAYS = 20
 
 
-class Strike(BaseModel):
+class Strike(BaseModel, BasePermissionModel):
+    write_access = [AdminGroup.HS, AdminGroup.INDEX, AdminGroup.NOK, AdminGroup.SOSIALEN]
+    
     id = models.UUIDField(
         auto_created=True, primary_key=True, default=uuid.uuid4, serialize=False,
     )
