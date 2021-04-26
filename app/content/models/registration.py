@@ -1,6 +1,8 @@
 from django.core.exceptions import ValidationError
 from django.db import models
 
+from app.common.enums import AdminGroup, Groups
+from app.common.permissions import check_has_access
 from app.content.exceptions import EventSignOffDeadlineHasPassed
 from app.content.models.user import User
 from app.util import EnumUtils, today
@@ -9,6 +11,14 @@ from app.util.models import BaseModel
 
 
 class Registration(BaseModel):
+    has_access = [AdminGroup.HS, AdminGroup.INDEX, AdminGroup.NOK, AdminGroup.SOSIALEN]
+    has_retrieve_access = [
+        AdminGroup.HS,
+        AdminGroup.INDEX,
+        AdminGroup.NOK,
+        AdminGroup.SOSIALEN,
+        Groups.TIHLDE,
+    ]
     """ Model for user registration for an event """
 
     registration_id = models.AutoField(primary_key=True)
@@ -28,6 +38,35 @@ class Registration(BaseModel):
         unique_together = ("user", "event")
         verbose_name = "Registration"
         verbose_name_plural = "Registrations"
+
+    @classmethod
+    def has_retrieve_permission(cls, request):
+        return check_has_access(cls.has_retrieve_access, request,)
+
+    @classmethod
+    def has_list_permission(cls, request):
+        return check_has_access(cls.has_access, request,)
+
+    @staticmethod
+    def has_write_permission(request):
+        return bool(request.user)
+
+    @staticmethod
+    def has_create_permission(request):
+        return request.id is not None
+
+    def has_object_update_permission(self, request):
+        return check_has_access(self.has_access, request,)
+
+    def has_object_destroy_permission(self, request):
+        if self.user.user_id == request.id:
+            return True
+        return check_has_access(self.has_access, request,)
+
+    def has_object_retrieve_permission(self, request):
+        if self.user.user_id == request.id:
+            return True
+        return check_has_access(self.has_access, request,)
 
     def __str__(self):
         return (
@@ -139,3 +178,10 @@ class Registration(BaseModel):
     def check_registration_has_ended(self):
         if self.event.end_registration_at < today():
             raise ValidationError("The registration for this event has ended.")
+
+    def get_waiting_number(self):
+        if self.is_on_wait:
+            for waiting in self.event.get_waiting_list():
+                if self == waiting:
+                    return list(self.event.get_waiting_list()).index(self) + 1
+        return None

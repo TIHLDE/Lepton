@@ -1,5 +1,7 @@
 from rest_framework import serializers
 
+from dry_rest_permissions.generics import DRYPermissionsField
+
 from app.common.enums import MembershipType
 from app.common.serializers import BaseModelSerializer
 from app.group.models import Group, Membership
@@ -8,12 +10,13 @@ from app.group.models import Group, Membership
 class DefaultGroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = Group
-        fields = ("name",)
+        fields = ("name", "slug")
 
 
 class GroupSerializer(BaseModelSerializer):
 
     leader = serializers.SerializerMethodField()
+    permissions = DRYPermissionsField(actions=["write", "read"], object_only=True)
 
     class Meta:
         model = Group

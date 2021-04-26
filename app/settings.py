@@ -75,14 +75,17 @@ INSTALLED_APPS = [
     "drf_yasg",
     "rest_framework.authtoken",
     "rest_auth",
+    "dry_rest_permissions",
     "polymorphic",
     # Our apps
-    "app.authentication",
-    "app.career",
     "app.content",
-    "app.util",
+    "app.common",
     "app.group",
+    "app.authentication",
+    "app.util",
+    "app.career",
     "app.forms",
+    "app.payment",
 ]
 
 # Django rest framework

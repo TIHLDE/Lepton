@@ -2,6 +2,8 @@ from django.contrib.auth.hashers import make_password
 from django.core.exceptions import ValidationError
 from rest_framework import serializers
 
+from dry_rest_permissions.generics import DRYGlobalPermissionsField
+
 from app.content.models import Notification, Registration, Strike, User
 from app.content.serializers.badge import BadgeSerializer
 from app.content.serializers.event import EventListSerializer
@@ -30,6 +32,7 @@ class UserSerializer(serializers.ModelSerializer):
     groups = serializers.SerializerMethodField()
     badges = serializers.SerializerMethodField()
     unread_notifications = serializers.SerializerMethodField()
+    permissions = DRYGlobalPermissionsField(actions=["write", "read"])
     strikes = serializers.SerializerMethodField()
 
     class Meta:
@@ -53,6 +56,7 @@ class UserSerializer(serializers.ModelSerializer):
             "groups",
             "badges",
             "unread_notifications",
+            "permissions",
             "strikes",
         )
         read_only_fields = ("user_id",)

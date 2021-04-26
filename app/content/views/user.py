@@ -6,7 +6,8 @@ from rest_framework.response import Response
 from sentry_sdk import capture_exception
 
 from app.common.pagination import BasePagination
-from app.common.permissions import UserPermission, is_admin_user
+from app.common.permissions import BasicViewPermission, is_admin_user
+from app.content.filters import UserFilter
 from app.content.models import User
 from app.content.serializers import (
     UserAdminSerializer,
@@ -20,12 +21,12 @@ class UserViewSet(viewsets.ModelViewSet):
     """ API endpoint to display one user """
 
     serializer_class = UserSerializer
-    permission_classes = [UserPermission]
+    permission_classes = [BasicViewPermission]
     queryset = User.objects.all()
     pagination_class = BasePagination
 
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
-    filterset_fields = ["user_class", "user_study", "is_TIHLDE_member"]
+    filterset_class = UserFilter
     search_fields = ["user_id", "first_name", "last_name"]
 
     def retrieve(self, request, *args, **kwargs):

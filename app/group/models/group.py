@@ -1,19 +1,18 @@
-from django.contrib.auth.models import Permission
 from django.db import models
+from django.utils.text import slugify
 
 from enumchoicefield import EnumChoiceField
 
-from app.common.enums import GroupType
+from app.common.enums import AdminGroup, GroupType
+from app.common.permissions import BasePermissionModel, set_user_id
 from app.util.models import BaseModel, OptionalImage
 
 
-class Group(OptionalImage, BaseModel):
+class Group(OptionalImage, BaseModel, BasePermissionModel):
     """Model for Custom Groups"""
 
+    write_access = [AdminGroup.HS, AdminGroup.INDEX]
     name = models.CharField(max_length=50)
-    permissions = models.ManyToManyField(
-        Permission, related_name="groups_permissions", blank=True
-    )
     slug = models.SlugField(max_length=50, primary_key=True)
     description = models.TextField(max_length=1000, null=True, blank=True)
     contact_email = models.EmailField(max_length=200, null=True, blank=True)
@@ -24,3 +23,40 @@ class Group(OptionalImage, BaseModel):
 
     def __str__(self):
         return f"{self.name}"
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
+
+    @classmethod
+    def check_request_user_is_leader(cls, request):
+        if request.id is None:
+            set_user_id(request)
+        group_slug = request.parser_context["kwargs"]["slug"]
+        group = cls.objects.get(slug=group_slug)
+        return group.membership.get(
+            group__slug=group_slug, user__user_id=request.id
+        ).is_leader()
+
+    @classmethod
+    def has_write_permission(cls, request):
+        from app.group.models import Membership
+
+        try:
+            return cls.check_request_user_is_leader(
+                request
+            ) or super().has_write_permission(request)
+        except (Membership.DoesNotExist, KeyError, AssertionError):
+            return super().has_write_permission(request)
+
+    def has_object_write_permission(self, request):
+        from app.group.models import Membership
+
+        if request.id is None:
+            set_user_id(request)
+        try:
+            return self.membership.get(
+                group__slug=self.slug, user__user_id=request.id
+            ).is_leader() or super().has_object_write_permission(request)
+        except Membership.DoesNotExist:
+            return super().has_object_write_permission(request)

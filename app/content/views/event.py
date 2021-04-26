@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from sentry_sdk import capture_exception
 
 from app.common.pagination import BasePagination
-from app.common.permissions import IsNoKorPromo, is_admin_user
+from app.common.permissions import BasicViewPermission, is_admin_user
 from app.content.filters import EventFilter
 from app.content.models import Event
 from app.content.serializers import (
@@ -19,7 +19,7 @@ from app.util.utils import yesterday
 
 class EventViewSet(viewsets.ModelViewSet):
     serializer_class = EventSerializer
-    permission_classes = [IsNoKorPromo]
+    permission_classes = [BasicViewPermission]
     queryset = Event.objects.filter(start_date__gte=yesterday()).order_by("start_date")
     pagination_class = BasePagination
 
@@ -48,7 +48,7 @@ class EventViewSet(viewsets.ModelViewSet):
     def retrieve(self, request, pk):
         """Return detailed information about the event with the specified pk."""
         try:
-            event = Event.objects.get(pk=pk)
+            event = self.get_object()
             if is_admin_user(request):
                 serializer = EventAdminSerializer(
                     event, context={"request": request}, many=False
@@ -67,7 +67,7 @@ class EventViewSet(viewsets.ModelViewSet):
     def update(self, request, pk):
         """Update the event with the specified pk."""
         try:
-            event = Event.objects.get(pk=pk)
+            event = self.get_object()
             self.check_object_permissions(self.request, event)
             serializer = EventCreateAndUpdateSerializer(
                 event, data=request.data, partial=True, context={"request": request}

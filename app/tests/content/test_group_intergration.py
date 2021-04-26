@@ -81,8 +81,8 @@ def test_update_as_user(group, user):
     [
         (AdminGroup.HS, status.HTTP_200_OK, "New Description"),
         (AdminGroup.INDEX, status.HTTP_200_OK, "New Description"),
-        (AdminGroup.NOK, status.HTTP_200_OK, "New Description"),
-        (AdminGroup.PROMO, status.HTTP_200_OK, "New Description"),
+        (AdminGroup.NOK, status.HTTP_403_FORBIDDEN, None),
+        (AdminGroup.PROMO, status.HTTP_403_FORBIDDEN, None),
         ("Non_admin_group", status.HTTP_403_FORBIDDEN, None),
     ],
 )
