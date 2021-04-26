@@ -13,6 +13,8 @@
 ---
 
 ## Neste versjon
+- ✨ **Svar på spørreskjemaer** Medlemmer kan nå svare på spørreskjemaer.
+
 ## Versjon 1.0.7 (26.04.2021)
 - ⚡ **Azure**. Satt opp produksjon i Azure og automatisk oppdatering ved push til master.
 - ✨ **Endring i permissions**. Endret hvordan vi håndterer tillatelser på nettsiden til å bruke våre nye grupper.
@@ -32,7 +34,7 @@
 
 ## Versjon 1.0.4 (15.03.2021)
 - ✨ **Filopplastning**. Lagt til støtte for filopplastning til Azure gjennom eget endepunkt. Kun for medlemmer.
-- ✨ **Forms**. Admins kan opprette, redigere og slette forms. Forms kan brukes i blant annet arrangement-påmelding.
+- ✨ **Spørreskjemaer**. Admins kan opprette, redigere og slette spørreskjemaer. Disse kan brukes i blant annet arrangement-påmelding.
 
 ## Versjon 1.0.3 (09.03.2021)
 - ⚡ **Pagination i varsler**. Lagt til pagination i varsler, samt lagt til tester og fjernet admin's muligheter til å opprette/endre/slette andres varsler.
