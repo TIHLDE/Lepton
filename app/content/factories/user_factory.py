@@ -8,9 +8,7 @@ class UserFactory(DjangoModelFactory):
     class Meta:
         model = User
 
-    user_id = factory.LazyAttribute(
-        lambda user: f"{user.first_name[:3]}{user.last_name[3:]}"
-    )
+    user_id = factory.Sequence(lambda n: f"User {n}")
     first_name = factory.Faker("first_name")
     last_name = factory.Faker("last_name")
 
