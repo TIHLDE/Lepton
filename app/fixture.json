@@ -251,7 +251,6 @@
         "allergy": "",
         "tool": "",
         "app_token": null,
-        "is_TIHLDE_member": true,
         "is_staff": false,
         "is_active": true,
         "groups": [],
@@ -280,7 +279,6 @@
         "allergy": "Gode karakterer",
         "tool": "Parentes",
         "app_token": null,
-        "is_TIHLDE_member": true,
         "is_staff": true,
         "is_active": true,
         "groups": [
@@ -311,7 +309,6 @@
         "allergy": "",
         "tool": "",
         "app_token": null,
-        "is_TIHLDE_member": true,
         "is_staff": false,
         "is_active": true,
         "groups": [
