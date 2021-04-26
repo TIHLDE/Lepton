@@ -23,17 +23,16 @@ def _get_submission_detail_url(form, submission):
 
 def _create_submission_data(field, **kwargs):
     return {
-        "answers": [
-            {
-                "field": {"id": str(field.id)},
-                **kwargs,
-            }
-        ],
+        "answers": [{"field": {"id": str(field.id)}, **kwargs,}],
     }
 
 
-def _create_submission_data_with_selected_options_and_answer_text(field, option, answer_text):
-    return _create_submission_data(field, selected_options=[{"id": str(option.id)}], answer_text=answer_text)
+def _create_submission_data_with_selected_options_and_answer_text(
+    field, option, answer_text
+):
+    return _create_submission_data(
+        field, selected_options=[{"id": str(option.id)}], answer_text=answer_text
+    )
 
 
 def _create_submission_data_with_selected_options(field, option):
@@ -64,7 +63,9 @@ def answer(submission, form):
     return AnswerFactory(submission=submission, field=form.fields.first())
 
 
-def test_sending_both_selected_options_and_text_is_not_permitted(member_client, form, submission, answer):
+def test_sending_both_selected_options_and_text_is_not_permitted(
+    member_client, form, submission, answer
+):
     url = _get_submission_url(answer.submission.form)
     submission_data = _create_submission_data_with_selected_options_and_answer_text(
         form.fields.first(), form.fields.first().options.first(), "I love this!"
@@ -75,7 +76,9 @@ def test_sending_both_selected_options_and_text_is_not_permitted(member_client, 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
 
 
-def test_member_can_add_submission_with_options(member_client, form, submission, answer):
+def test_member_can_add_submission_with_options(
+    member_client, form, submission, answer
+):
     url = _get_submission_url(answer.submission.form)
     submission_data = _create_submission_data_with_selected_options(
         form.fields.first(), form.fields.first().options.first()
@@ -86,7 +89,9 @@ def test_member_can_add_submission_with_options(member_client, form, submission,
     assert response.status_code == status.HTTP_201_CREATED
 
 
-def test_member_can_add_submission_with_answer_text(member_client, form, submission, answer):
+def test_member_can_add_submission_with_answer_text(
+    member_client, form, submission, answer
+):
     url = _get_submission_url(answer.submission.form)
     submission_data = _create_submission_data_with_text_answer(
         form.fields.first(), "I love this!"
@@ -129,13 +134,17 @@ def test_cannot_create_event_form_evaluation_submission_if_not_attended(member_c
 def test_post_submission_returns_created(member_client, form, submission, answer):
     url = _get_submission_url(answer.submission.form)
 
-    response = member_client.post(url, data=_create_submission_data(form.fields.first()))
+    response = member_client.post(
+        url, data=_create_submission_data(form.fields.first())
+    )
 
     assert response.status_code == status.HTTP_201_CREATED
 
 
 @pytest.mark.parametrize("method", ("get", "put", "patch", "delete"))
-def test_submission_detail_illegal_methods_are_forbidden(method, member_client, form, submission, answer):
+def test_submission_detail_illegal_methods_are_forbidden(
+    method, member_client, form, submission, answer
+):
     url = _get_submission_detail_url(answer.submission.form, submission)
 
     response = member_client.generic(method, url)
