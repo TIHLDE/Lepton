@@ -990,8 +990,7 @@
         "name": "Gløshaugen",
         "description": "",
         "contact_email": null,
-        "type": "COMMITTEE",
-        "permissions": []
+        "type": "COMMITTEE"
     }
 },
 {
@@ -1005,8 +1004,7 @@
         "name": "Index",
         "description": "",
         "contact_email": null,
-        "type": "SUBGROUP",
-        "permissions": []
+        "type": "SUBGROUP"
     }
 },
 {
@@ -1020,8 +1018,7 @@
         "name": "Olafs Disipler",
         "description": "",
         "contact_email": null,
-        "type": "COMMITTEE",
-        "permissions": []
+        "type": "COMMITTEE"
     }
 },
 {
@@ -1035,8 +1032,7 @@
         "name": "Promo",
         "description": "",
         "contact_email": null,
-        "type": "SUBGROUP",
-        "permissions": []
+        "type": "SUBGROUP"
     }
 },
 {
@@ -1050,8 +1046,7 @@
         "name": "TIHLDE",
         "description": "",
         "contact_email": "hs@tihlde.org",
-        "type": "TIHLDE",
-        "permissions": []
+        "type": "TIHLDE"
     }
 },
 {

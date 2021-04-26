@@ -16,7 +16,7 @@ class DefaultGroupSerializer(serializers.ModelSerializer):
 class GroupSerializer(BaseModelSerializer):
 
     leader = serializers.SerializerMethodField()
-    permissions = DRYPermissionsField(actions=["write", "read"])
+    permissions = DRYPermissionsField(actions=["write", "read"], object_only=True)
 
     class Meta:
         model = Group
