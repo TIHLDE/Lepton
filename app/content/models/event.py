@@ -55,7 +55,7 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
     sign_off_deadline_schedular_id = models.CharField(
         max_length=100, blank=True, null=True
     )
-    write_access = [AdminGroup.HS, AdminGroup.INDEX, AdminGroup.NOK, AdminGroup.PROMO]
+    write_access = AdminGroup.all()
 
     def __str__(self):
         return f"{self.title} - starting {self.start_date} at {self.location}"
