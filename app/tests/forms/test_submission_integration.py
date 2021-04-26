@@ -21,9 +21,8 @@ def _get_submission_detail_url(form, submission):
     return f"/api/v1/forms/{form.id}/submission/{submission.id}/"
 
 
-def _create_submission_data(user, field, **kwargs):
+def _create_submission_data(field, **kwargs):
     return {
-        "user": str(user.user_id),  # TODO - we should be able to remove this, but when we do... ka-boom
         "answers": [
             {
                 "field": {"id": str(field.id)},
@@ -33,16 +32,16 @@ def _create_submission_data(user, field, **kwargs):
     }
 
 
-def _create_submission_data_with_selected_options_and_answer_text(user, field, option, answer_text):
-    return _create_submission_data(user, field, selected_options=[{"id": str(option.id)}], answer_text=answer_text)
+def _create_submission_data_with_selected_options_and_answer_text(field, option, answer_text):
+    return _create_submission_data(field, selected_options=[{"id": str(option.id)}], answer_text=answer_text)
 
 
-def _create_submission_data_with_selected_options(user, field, option):
-    return _create_submission_data(user, field, selected_options=[{"id": str(option.id)}])
+def _create_submission_data_with_selected_options(field, option):
+    return _create_submission_data(field, selected_options=[{"id": str(option.id)}])
 
 
-def _create_submission_data_with_text_answer(user, field, answer_text):
-    return _create_submission_data(user, field, answer_text=answer_text)
+def _create_submission_data_with_text_answer(field, answer_text):
+    return _create_submission_data(field, answer_text=answer_text)
 
 
 def test_sending_both_selected_options_and_text_is_not_permitted(member):
@@ -52,7 +51,7 @@ def test_sending_both_selected_options_and_text_is_not_permitted(member):
     answer = AnswerFactory(submission=submission, field=form.fields.first())
     url = _get_submission_url(answer.submission.form)
     submission_data = _create_submission_data_with_selected_options_and_answer_text(
-        member, form.fields.first(), form.fields.first().options.first(), "I love this!"
+        form.fields.first(), form.fields.first().options.first(), "I love this!"
     )
     response = client.post(url, submission_data)
 
@@ -66,7 +65,7 @@ def test_member_can_add_submission_with_options(member):
     answer = AnswerFactory(submission=submission, field=form.fields.first())
     url = _get_submission_url(answer.submission.form)
     submission_data = _create_submission_data_with_selected_options(
-        member, form.fields.first(), form.fields.first().options.first()
+        form.fields.first(), form.fields.first().options.first()
     )
     response = client.post(url, submission_data)
 
@@ -80,7 +79,7 @@ def test_member_can_add_submission_with_answer_text(member):
     answer = AnswerFactory(submission=submission, field=form.fields.first())
     url = _get_submission_url(answer.submission.form)
     submission_data = _create_submission_data_with_text_answer(
-        member, form.fields.first(), "I love this!"
+        form.fields.first(), "I love this!"
     )
     response = client.post(url, submission_data)
 
@@ -94,12 +93,12 @@ def test_member_cannot_add_several_submissions(member):
     answer = AnswerFactory(submission=submission, field=form.fields.first())
     url = _get_submission_url(answer.submission.form)
     submission_data = _create_submission_data_with_text_answer(
-        member, form.fields.first(), "This is the first time I love this!"
+        form.fields.first(), "This is the first time I love this!"
     )
     client.post(url, submission_data)
 
     submission_data = _create_submission_data_with_text_answer(
-        member, form.fields.first(), "This is the second time I love this!"
+        form.fields.first(), "This is the second time I love this!"
     )
     response = client.post(url, submission_data)
 
@@ -113,7 +112,7 @@ def test_cannot_create_event_form_evaluation_submission_if_not_attended(member):
     answer = AnswerFactory(submission=submission, field=form.fields.first())
     url = _get_submission_url(answer.submission.form)
     submission_data = _create_submission_data_with_selected_options(
-        member, form.fields.first(), form.fields.first().options.first()
+        form.fields.first(), form.fields.first().options.first()
     )
 
     response = client.post(url, submission_data)
