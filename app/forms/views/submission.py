@@ -31,7 +31,6 @@ class SubmissionViewSet(viewsets.ModelViewSet):
                 User.objects.all(), user_id=request.data.get("user")
             )
             event = form.event
-
             attended = event.get_queue().filter(user=user).exists()
 
             # Only allow submission if user has attended event.
