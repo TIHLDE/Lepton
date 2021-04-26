@@ -19,6 +19,7 @@ class RefundFormViewSet(viewsets.ModelViewSet):
 
     def create(self, request):
         data = request.data.copy()
+        data["mailfrom"] = request.user.email
         try:
             req_fields = data_is_valid(data)
             if len(req_fields) > 0:

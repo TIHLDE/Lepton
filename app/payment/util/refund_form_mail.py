@@ -30,13 +30,13 @@ field_title_map = {
     "comment": "Kommentar:",
 }
 
+mailto = "okonomi@tihlde.org"#"okonomi@tihlde.org"
 
 def data_is_valid(data):
     fields = [
         "images",
         "date",
         "amount",
-        "mailto",
         "name",
         "accountNumber",
         "mailfrom",
@@ -191,7 +191,7 @@ def send_refund_mail(data, file):
         f'Refusjonsskjema - {data["name"]}',
         format_mail(data),
         data["mailfrom"],
-        [data["mailto"], data["mailfrom"]],
+        [mailto, data["mailfrom"]],
     )
     msg = EmailMultiAlternatives(subject, text, from_email, to)
     msg.attach(f'{data["date"]}_Attachment_{data["name"]}.pdf', file, "application/pdf")
