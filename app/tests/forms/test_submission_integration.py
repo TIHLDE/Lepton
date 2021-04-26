@@ -44,69 +44,75 @@ def _create_submission_data_with_text_answer(field, answer_text):
     return _create_submission_data(field, answer_text=answer_text)
 
 
-def test_sending_both_selected_options_and_text_is_not_permitted(member):
-    client = get_api_client(user=member)
-    form = EventFormFactory()
-    submission = SubmissionFactory(form=form)
-    answer = AnswerFactory(submission=submission, field=form.fields.first())
+@pytest.fixture()
+def member_client(member):
+    return get_api_client(user=member)
+
+
+@pytest.fixture()
+def form():
+    return EventFormFactory()
+
+
+@pytest.fixture()
+def submission(form):
+    return SubmissionFactory(form=form)
+
+
+@pytest.fixture()
+def answer(submission, form):
+    return AnswerFactory(submission=submission, field=form.fields.first())
+
+
+def test_sending_both_selected_options_and_text_is_not_permitted(member_client, form, submission, answer):
     url = _get_submission_url(answer.submission.form)
     submission_data = _create_submission_data_with_selected_options_and_answer_text(
         form.fields.first(), form.fields.first().options.first(), "I love this!"
     )
-    response = client.post(url, submission_data)
+
+    response = member_client.post(url, submission_data)
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
 
 
-def test_member_can_add_submission_with_options(member):
-    client = get_api_client(user=member)
-    form = EventFormFactory()
-    submission = SubmissionFactory(form=form)
-    answer = AnswerFactory(submission=submission, field=form.fields.first())
+def test_member_can_add_submission_with_options(member_client, form, submission, answer):
     url = _get_submission_url(answer.submission.form)
     submission_data = _create_submission_data_with_selected_options(
         form.fields.first(), form.fields.first().options.first()
     )
-    response = client.post(url, submission_data)
+
+    response = member_client.post(url, submission_data)
 
     assert response.status_code == status.HTTP_201_CREATED
 
 
-def test_member_can_add_submission_with_answer_text(member):
-    client = get_api_client(user=member)
-    form = EventFormFactory()
-    submission = SubmissionFactory(form=form)
-    answer = AnswerFactory(submission=submission, field=form.fields.first())
+def test_member_can_add_submission_with_answer_text(member_client, form, submission, answer):
     url = _get_submission_url(answer.submission.form)
     submission_data = _create_submission_data_with_text_answer(
         form.fields.first(), "I love this!"
     )
-    response = client.post(url, submission_data)
+
+    response = member_client.post(url, submission_data)
 
     assert response.status_code == status.HTTP_201_CREATED
 
 
-def test_member_cannot_add_several_submissions(member):
-    client = get_api_client(user=member)
-    form = EventFormFactory()
-    submission = SubmissionFactory(form=form)
-    answer = AnswerFactory(submission=submission, field=form.fields.first())
+def test_member_cannot_add_several_submissions(member_client, form, submission, answer):
     url = _get_submission_url(answer.submission.form)
-    submission_data = _create_submission_data_with_text_answer(
+    first_submission_data = _create_submission_data_with_text_answer(
         form.fields.first(), "This is the first time I love this!"
     )
-    client.post(url, submission_data)
-
-    submission_data = _create_submission_data_with_text_answer(
+    second_submission_data = _create_submission_data_with_text_answer(
         form.fields.first(), "This is the second time I love this!"
     )
-    response = client.post(url, submission_data)
+
+    member_client.post(url, first_submission_data)
+    response = member_client.post(url, second_submission_data)
 
     assert response.status_code == status.HTTP_409_CONFLICT
 
 
-def test_cannot_create_event_form_evaluation_submission_if_not_attended(member):
-    client = get_api_client(user=member)
+def test_cannot_create_event_form_evaluation_submission_if_not_attended(member_client):
     form = EventFormFactory(type=EventFormType.EVALUATION)
     submission = SubmissionFactory(form=form)
     answer = AnswerFactory(submission=submission, field=form.fields.first())
@@ -115,66 +121,23 @@ def test_cannot_create_event_form_evaluation_submission_if_not_attended(member):
         form.fields.first(), form.fields.first().options.first()
     )
 
-    response = client.post(url, submission_data)
+    response = member_client.post(url, submission_data)
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
 
 
-def test_post_can_only_be_done_by_members():
-    client = get_api_client()
-    form = EventFormFactory()
-    submission = SubmissionFactory(form=form)
-    answer = AnswerFactory(submission=submission, field=form.fields.first())
+def test_post_submission_returns_created(member_client, form, submission, answer):
+    url = _get_submission_url(answer.submission.form)
+
+    response = member_client.post(url, data=_create_submission_data(form.fields.first()))
+
+    assert response.status_code == status.HTTP_201_CREATED
+
+
+@pytest.mark.parametrize("method", ("get", "put", "patch", "delete"))
+def test_submission_detail_illegal_methods_are_forbidden(method, member_client, form, submission, answer):
     url = _get_submission_detail_url(answer.submission.form, submission)
 
-    response = client.get(url)
-
-    assert response.status_code == status.HTTP_403_FORBIDDEN
-
-
-def test_get_operations_are_not_allowed(member):
-    client = get_api_client(user=member)
-    form = EventFormFactory()
-    submission = SubmissionFactory(form=form)
-    answer = AnswerFactory(submission=submission, field=form.fields.first())
-    url = _get_submission_detail_url(answer.submission.form, submission)
-
-    response = client.get(url)
-
-    assert response.status_code == status.HTTP_403_FORBIDDEN
-
-
-def test_put_operations_are_not_allowed(member):
-    client = get_api_client(user=member)
-    form = EventFormFactory()
-    submission = SubmissionFactory(form=form)
-    answer = AnswerFactory(submission=submission, field=form.fields.first())
-    url = _get_submission_detail_url(answer.submission.form, submission)
-
-    response = client.put(url)
-
-    assert response.status_code == status.HTTP_403_FORBIDDEN
-
-
-def test_patch_operations_are_not_allowed(member):
-    client = get_api_client(user=member)
-    form = EventFormFactory()
-    submission = SubmissionFactory(form=form)
-    answer = AnswerFactory(submission=submission, field=form.fields.first())
-    url = _get_submission_detail_url(answer.submission.form, submission)
-
-    response = client.patch(url)
-
-    assert response.status_code == status.HTTP_403_FORBIDDEN
-
-
-def test_delete_operations_are_not_allowed(member):
-    client = get_api_client(user=member)
-    form = EventFormFactory()
-    submission = SubmissionFactory(form=form)
-    answer = AnswerFactory(submission=submission, field=form.fields.first())
-    url = _get_submission_detail_url(answer.submission.form, submission)
-
-    response = client.delete(url)
+    response = member_client.generic(method, url)
 
     assert response.status_code == status.HTTP_403_FORBIDDEN
