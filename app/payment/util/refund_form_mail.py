@@ -29,7 +29,7 @@ field_title_map = {
     "comment": "Kommentar:",
 }
 
-mailto = "okonomi@tihlde.org"  # "okonomi@tihlde.org"
+mailto = "okonomi@tihlde.org"
 
 
 def data_is_valid(data):
