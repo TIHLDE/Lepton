@@ -18,8 +18,7 @@ class GroupViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         if is_admin_user(self.request):
             return self.queryset
-        return (group for group in Group.objects.all() if group.type in GroupType.main())
-
+        return self.queryset.filter(type__in=GroupType.main())
     def retrieve(self, request, slug):
         """Returns a spesific group by slug"""
         try:

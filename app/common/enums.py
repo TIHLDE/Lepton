@@ -58,7 +58,7 @@ class GroupType(ChoiceEnum):
     OTHER = "Annet"
 
     @classmethod
-    def main(cls):
+    def xmain(cls):
         return (cls.BOARD, cls.SUBGROUP, cls.COMMITTEE)
 
 
