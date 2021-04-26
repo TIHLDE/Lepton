@@ -7,10 +7,8 @@ from datetime import datetime
 
 from django.core.mail import EmailMultiAlternatives
 
-# Handle HEIC photoes
 import pyheif
 from fpdf import FPDF
-# Handle PDF files
 from pdf2image import convert_from_path
 from PIL import Image
 
