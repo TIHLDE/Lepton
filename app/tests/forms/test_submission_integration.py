@@ -2,6 +2,7 @@ from rest_framework import status
 
 import pytest
 
+from app.forms.enums import EventFormType
 from app.forms.tests.form_factories import (
     AnswerFactory,
     EventFormFactory,
@@ -105,8 +106,19 @@ def test_member_cannot_add_several_submissions(member):
     assert response.status_code == status.HTTP_409_CONFLICT
 
 
-def test_cannot_create_event_form_evaluation_submission_if_not_attended():
-    pass
+def test_cannot_create_event_form_evaluation_submission_if_not_attended(member):
+    client = get_api_client(user=member)
+    form = EventFormFactory(type=EventFormType.EVALUATION)
+    submission = SubmissionFactory(form=form)
+    answer = AnswerFactory(submission=submission, field=form.fields.first())
+    url = _get_submission_url(answer.submission.form)
+    submission_data = _create_submission_data_with_selected_options(
+        member, form.fields.first(), form.fields.first().options.first()
+    )
+
+    response = client.post(url, submission_data)
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
 
 
 def test_post_can_only_be_done_by_members():
