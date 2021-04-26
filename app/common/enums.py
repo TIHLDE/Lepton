@@ -57,6 +57,10 @@ class GroupType(ChoiceEnum):
     STUDYYEAR = "Studieår"
     OTHER = "Annet"
 
+    @classmethod
+    def main(cls):
+        return (cls.BOARD, cls.SUBGROUP, cls.COMMITTEE)
+
 
 class EnvironmentOptions(Enum):
     LOCAL = "LOCAL"
