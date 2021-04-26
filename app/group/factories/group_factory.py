@@ -17,4 +17,4 @@ class GroupFactory(DjangoModelFactory):
     contact_email = factory.LazyAttributeSequence(
         lambda o, n: f"{o.slug}@{n}.example.com"
     )
-    type = factory.Iterator(GroupType)
+    type = GroupType.SUBGROUP
