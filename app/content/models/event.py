@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import signals
@@ -7,7 +9,6 @@ from app.common.permissions import BasePermissionModel
 from app.forms.enums import EventFormType
 from app.util.models import BaseModel, OptionalImage
 from app.util.utils import today, yesterday
-from datetime import timedelta
 
 from ..signals import send_event_reminders
 from .category import Category

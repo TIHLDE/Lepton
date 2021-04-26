@@ -7,6 +7,7 @@ from app.content.models.registration import Registration
 from app.content.models.strike import strike_creator
 from app.util.mailer import send_html_email
 
+
 @shared_task
 def event_sign_off_deadline_schedular(pk, title):
     for registration in Registration.objects.filter(event__pk=pk, is_on_wait=False):

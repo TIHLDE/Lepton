@@ -1,13 +1,13 @@
+from datetime import timedelta
+
 from django.core.exceptions import ValidationError
 from django.db import models
-
-from datetime import timedelta
 
 from app.common.enums import AdminGroup, Groups
 from app.common.permissions import check_has_access
 from app.content.exceptions import EventSignOffDeadlineHasPassed, StrikeError
+from app.content.models.strike import Strike, strike_creator
 from app.content.models.user import User
-from app.content.models.strike import strike_creator, Strike
 from app.util import EnumUtils, today
 from app.util.mailer import send_event_verification, send_event_waitlist
 from app.util.models import BaseModel
@@ -110,14 +110,16 @@ class Registration(BaseModel):
 
     def strike_handler(self):
         number_of_strikes = self.user.get_number_of_strikes()
-        if(number_of_strikes >= 1):
+        if number_of_strikes >= 1:
             hours_offset = 3
-            if(number_of_strikes >= 2):
+            if number_of_strikes >= 2:
                 hours_offset = 12
-            if(not today() >= self.event.start_registration_at + timedelta(hours=hours_offset)):
+            if not today() >= self.event.start_registration_at + timedelta(
+                hours=hours_offset
+            ):
                 raise StrikeError(
-                        f"Kan ikke melde deg på før etter {hours_offset} timer etter påmeldingsstart"
-                    )
+                    f"Kan ikke melde deg på før etter {hours_offset} timer etter påmeldingsstart"
+                )
 
     def send_notification_and_mail(self):
         has_not_attended = not self.has_attended
@@ -136,7 +138,7 @@ class Registration(BaseModel):
 
     @property
     def is_prioritized(self):
-        if(self.user.get_number_of_strikes() >= 3):
+        if self.user.get_number_of_strikes() >= 3:
             return False
         user_class, user_study = EnumUtils.get_user_enums(**self.user.__dict__)
         return self.event.registration_priorities.filter(

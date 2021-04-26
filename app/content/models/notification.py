@@ -1,6 +1,5 @@
 from django.db import models
 
-from app.content.models.user import User
 from app.util.models import BaseModel
 
 
@@ -33,3 +32,7 @@ class Notification(BaseModel):
         if request.method == "PUT":
             return self.user == request.user
         return False
+
+
+def notification_creator(user, message):
+    return Notification.objects.create(user=user, message=message)
