@@ -27,13 +27,10 @@ class SubmissionViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         form = get_object_or_404(Form.objects.all(), id=kwargs.get("form_id"))
         if isinstance(form, EventForm):
-            user = get_object_or_404(
-                User.objects.all(), user_id=request.data.get("user")
-            )
+            user = request.user
             event = form.event
             attended = event.get_queue().filter(user=user).exists()
 
-            # Only allow submission if user has attended event.
             if form.type == EventFormType.EVALUATION and not attended:
                 return Response(
                     {"detail": "Du har ikke deltatt på dette arrangementet."},
