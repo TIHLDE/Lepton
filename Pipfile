@@ -19,6 +19,9 @@ sentry-sdk = "*"
 pyocclient = "*"
 celery = "~=4.4"
 azure-storage-blob = "*"
+fpdf="*"
+pdf2image="*"
+pyheif="*"
 # Django
 # ------------------------------------------------------------------------------
 django-enumchoicefield = "*"

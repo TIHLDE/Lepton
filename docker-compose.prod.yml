@@ -1,0 +1,14 @@
+version: '3'
+
+# Config file for registry settings in Azure App Service production
+
+services:
+  web:
+    image: leptonregistry.azurecr.io/lepton:latest
+    container_name: web
+    ports:
+      - 8000:8000
+  celery:
+    image: leptonregistry.azurecr.io/lepton:latest
+    container_name: celery
+    command: celery -A app worker -l info
