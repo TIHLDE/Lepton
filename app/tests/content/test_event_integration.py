@@ -90,6 +90,7 @@ def test_update_as_user(event, user):
         (AdminGroup.INDEX, 200, "New Title"),
         (AdminGroup.NOK, 200, "New Title"),
         (AdminGroup.PROMO, 200, "New Title"),
+        (AdminGroup.SOSIALEN, 200, "New Title"),
         ("Non_admin_group", 403, None),
     ],
 )
@@ -137,6 +138,7 @@ def test_create_as_user(user):
         (AdminGroup.INDEX, 201),
         (AdminGroup.NOK, 201),
         (AdminGroup.PROMO, 201),
+        (AdminGroup.SOSIALEN, 201),
         ("Non_admin_group", 403),
     ],
 )
@@ -174,6 +176,7 @@ def test_delete_as_user(user, event):
         (AdminGroup.INDEX, 200),
         (AdminGroup.NOK, 200),
         (AdminGroup.PROMO, 200),
+        (AdminGroup.SOSIALEN, 200),
         ("Non_admin_group", 403),
     ],
 )
