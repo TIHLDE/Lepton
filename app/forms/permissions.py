@@ -24,12 +24,9 @@ class FormPermissions(BasePermission):
         return check_strict_group_permission(request, self.groups)
 
     def has_object_permission(self, request, view, obj):
-
         if isinstance(obj, EventForm) and obj.type == EventFormType.EVALUATION:
             return (
                 obj.event.get_queue()
                 .filter(user=request.user, has_attended=True)
                 .exists()
             )
-
-        return True

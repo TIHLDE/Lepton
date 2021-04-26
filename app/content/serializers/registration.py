@@ -1,12 +1,14 @@
 from rest_framework import serializers
 
 from app.common.serializers import BaseModelSerializer
+from app.forms.serializers.submission import SubmissionInRegistrationSerializer
 
 from ..models import Registration, User
 
 
 class RegistrationSerializer(BaseModelSerializer):
     user_info = serializers.SerializerMethodField()
+    submissions = serializers.SerializerMethodField()
     waiting_number = serializers.SerializerMethodField()
 
     class Meta:
@@ -18,11 +20,11 @@ class RegistrationSerializer(BaseModelSerializer):
             "has_attended",
             "allow_photo",
             "created_at",
+            "submissions",
             "waiting_number",
         ]
 
     def get_user_info(self, obj):
-        """ Gets the necessary info from user """
         user = User.objects.get(user_id=obj.user_id)
         return {
             "user_id": user.user_id,
@@ -34,6 +36,11 @@ class RegistrationSerializer(BaseModelSerializer):
             "user_study": user.user_study,
             "allergy": user.allergy,
         }
+
+    def get_submissions(self, obj):
+        forms = obj.event.forms.all()
+        submissions = forms.filter(submissions__user=obj.user)
+        return SubmissionInRegistrationSerializer(submissions, many=True).data
 
     def get_waiting_number(self, obj):
         return obj.get_waiting_number()

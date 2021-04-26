@@ -6,7 +6,7 @@ from enumchoicefield import EnumChoiceField
 from polymorphic.models import PolymorphicModel
 
 from app.common.enums import AdminGroup
-from app.common.permissions import check_has_access
+from app.common.permissions import BasePermissionModel, check_has_access
 from app.content.models.event import Event
 from app.content.models.user import User
 from app.forms.enums import EventFormType, FormFieldType
@@ -105,8 +105,8 @@ class Option(models.Model):
         return self.title
 
 
-class Submission(BaseModel):
-
+class Submission(BaseModel, BasePermissionModel):
+    read_access = AdminGroup.admin()
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     form = models.ForeignKey(Form, on_delete=models.CASCADE, related_name="submissions")
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="submissions")
@@ -116,6 +116,43 @@ class Submission(BaseModel):
 
     def __str__(self):
         return f"{self.user.user_id}'s submission to {self.form}"
+
+    @classmethod
+    def has_write_permission(cls, request):
+        return True
+
+    @classmethod
+    def has_retrieve_permission(cls, request):
+
+        if request.user is None:
+            return False
+
+        return cls._is_own_permission(request) or check_has_access(
+            cls.read_access, request
+        )
+
+    @classmethod
+    def _is_own_permission(cls, request):
+        form_id = request.parser_context["kwargs"]["form_id"]
+        form = Form.objects.get(id=form_id)
+
+        submission_id = request.parser_context["kwargs"]["pk"]
+        submission = form.submissions.get(id=submission_id)
+
+        return submission.user is request.user
+
+    @classmethod
+    def has_list_permission(cls, request):
+
+        if request.user is None:
+            return False
+
+        return check_has_access(cls.read_access, request)
+
+    def has_object_read_permission(self, request):
+        return self._is_own_permission(request) or check_has_access(
+            self.read_access, request
+        )
 
 
 class Answer(BaseModel):

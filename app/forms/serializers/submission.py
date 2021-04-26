@@ -1,11 +1,6 @@
 from app.common.serializers import BaseModelSerializer
-from app.content.serializers import UserInAnswerSerializer
 from app.forms.models import Answer, Submission
-from app.forms.serializers import (
-    FieldInAnswerSerializer,
-    FormInSubmissionSerializer,
-    OptionSerializer,
-)
+from app.forms.serializers import FieldInAnswerSerializer, OptionSerializer
 
 
 class AnswerSerializer(BaseModelSerializer):
@@ -17,11 +12,25 @@ class AnswerSerializer(BaseModelSerializer):
         fields = ["id", "field", "selected_options", "answer_text"]
 
 
-class SubmissionSerializer(BaseModelSerializer):
-    form = FormInSubmissionSerializer(read_only=True)
-    user = UserInAnswerSerializer(read_only=True)
+class BaseSubmissionSerializer(BaseModelSerializer):
     answer = AnswerSerializer(read_only=True)
 
     class Meta:
         model = Submission
-        fields = ["form", "user", "answers"]
+        fields = ["answers"]
+
+
+class SubmissionSerializer(BaseSubmissionSerializer):
+    from app.content.serializers.user import UserInAnswerSerializer
+
+    user = UserInAnswerSerializer(read_only=True)
+
+    class Meta:
+        model = BaseSubmissionSerializer.Meta.model
+        fields = BaseSubmissionSerializer.Meta.fields + ["user"]
+
+
+class SubmissionInRegistrationSerializer(BaseSubmissionSerializer):
+    class Meta:
+        model = BaseSubmissionSerializer.Meta.model
+        fields = BaseSubmissionSerializer.Meta.fields + ["form"]

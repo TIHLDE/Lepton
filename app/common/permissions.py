@@ -46,7 +46,7 @@ class BasicViewPermission(DRYPermissions):
         return super().has_object_permission(request, view, obj)
 
 
-def check_has_access(access, request=None, user=None):
+def check_has_access(access, request):
     set_user_id(request)
     try:
         user = request.user
@@ -71,7 +71,7 @@ def set_user_id(request):
     try:
         user_token = Token.objects.get(key=token)
     except Token.DoesNotExist:
-        return None
+        return
 
     request.id = user_token.user_id
     request.user = user_token.user
