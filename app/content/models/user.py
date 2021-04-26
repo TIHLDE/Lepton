@@ -10,7 +10,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 
-from app.common.enums import AdminGroup, Groups
+from app.common.enums import AdminGroup, Groups, MembershipType
 from app.common.permissions import check_has_access
 from app.util.models import BaseModel, OptionalImage
 from app.util.utils import disable_for_loaddata
@@ -111,7 +111,9 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
 
     @classmethod
     def has_list_permission(cls, request):
-        return check_has_access(cls.has_access, request)
+        return check_has_access(cls.has_access, request) or len(
+            request.user.membership.filter(membership_type=MembershipType.LEADER)
+        )
 
     @staticmethod
     def has_read_permission(request):

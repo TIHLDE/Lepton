@@ -1,7 +1,8 @@
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 
-from app.common.permissions import BasicViewPermission
+from app.common.enums import GroupType
+from app.common.permissions import BasicViewPermission, is_admin_user
 from app.group.models import Group
 from app.group.serializers import GroupSerializer
 
@@ -13,6 +14,11 @@ class GroupViewSet(viewsets.ModelViewSet):
     permission_classes = [BasicViewPermission]
     queryset = Group.objects.all()
     lookup_field = "slug"
+
+    def get_queryset(self):
+        if is_admin_user(self.request):
+            return self.queryset
+        return self.queryset.filter(type__in=GroupType.public_groups())
 
     def retrieve(self, request, slug):
         """Returns a spesific group by slug"""
