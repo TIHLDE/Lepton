@@ -25,7 +25,10 @@ class Group(OptionalImage, BaseModel, BasePermissionModel):
         return f"{self.name}"
 
     def save(self, *args, **kwargs):
-        self.slug = slugify(self.name)
+        if self.slug == "":
+            self.slug = slugify(self.name)
+        else:
+            self.slug = slugify(self.slug)
         super().save(*args, **kwargs)
 
     @classmethod

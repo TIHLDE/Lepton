@@ -112,12 +112,12 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
     @classmethod
     def has_list_permission(cls, request):
         try:
-                
+
             return check_has_access(cls.has_access, request) or len(
                 request.user.membership.filter(membership_type=MembershipType.LEADER)
             )
         except AttributeError:
-            return  check_has_access(cls.has_access, request)
+            return check_has_access(cls.has_access, request)
 
     @staticmethod
     def has_read_permission(request):
