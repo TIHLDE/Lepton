@@ -33,7 +33,7 @@ class GroupSerializer(BaseModelSerializer):
 
     def get_leader(self, obj):
         try:
-            leader = obj.membership.get(
+            leader = obj.memberships.get(
                 group__slug=obj.slug, membership_type=MembershipType.LEADER
             )
             return {
