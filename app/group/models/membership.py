@@ -44,9 +44,9 @@ class Membership(BaseModel, BasePermissionModel):
     """Model for a Group Membership"""
 
     write_access = [AdminGroup.HS, AdminGroup.INDEX]
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="membership")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="memberships")
     group = models.ForeignKey(
-        Group, on_delete=models.CASCADE, related_name="membership"
+        Group, on_delete=models.CASCADE, related_name="memberships"
     )
     membership_type = EnumChoiceField(MembershipType, default=MembershipType.MEMBER)
     expiration_date = models.DateField(null=True, blank=True)
