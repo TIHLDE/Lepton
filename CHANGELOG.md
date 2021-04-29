@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+## Versjon 1.0.8 (29.04.2021)
 ## Versjon 1.0.7 (26.04.2021)
 - ⚡ **Azure**. Satt opp produksjon i Azure og automatisk oppdatering ved push til master.
 - ✨ **Endring i permissions**. Endret hvordan vi håndterer tillatelser på nettsiden til å bruke våre nye grupper.
