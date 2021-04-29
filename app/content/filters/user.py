@@ -20,7 +20,7 @@ class UserFilter(FilterSet):
 
     def filter_is_TIHLDE_member(self, queryset, name, value):
         if value is True:
-            return queryset.filter(membership__group__slug=Groups.TIHLDE)
+            return queryset.filter(memberships__group__slug=Groups.TIHLDE)
         elif value is False:
-            return queryset.exclude(membership__group__slug=Groups.TIHLDE)
+            return queryset.exclude(memberships__group__slug=Groups.TIHLDE)
         return queryset
