@@ -27,29 +27,37 @@ class SubmissionSerializer(serializers.ModelSerializer):
         model = Submission
         fields = ("answers",)
 
+    def __create_answer_for_submission(self, submission, answer_data):
+        field_id = answer_data.pop("field").get("id")
+        selected_options_data = answer_data.pop("selected_options", None)
+
+        answer = Answer.objects.create(
+            submission=submission, field=Field.objects.get(id=field_id), **answer_data
+        )
+
+        if selected_options_data:
+            selected_options_ids = [
+                option.get("id") for option in selected_options_data
+            ]
+            selected_options = Option.objects.filter(id__in=selected_options_ids)
+            answer.selected_options.set(selected_options)
+
+        return answer
+
+    def __create_submission(self, user, form_id, answers_data):
+        submission = Submission.objects.create(user=user, form_id=form_id)
+
+        for answer_data in answers_data:
+            self.__create_answer_for_submission(submission, answer_data)
+
+        return submission
+
     def create(self, validated_data):
         form_id = self.context.get("form_id")
         user = self.context.get("user")
         answers_data = validated_data.pop("answers")
 
-        submission = Submission.objects.create(user=user, form_id=form_id)
-        for answer_data in answers_data:
-            field_id = answer_data.pop("field").get("id")
-            selected_options_data = answer_data.pop("selected_options", None)
-            answer = Answer.objects.create(
-                submission=submission,
-                field=Field.objects.get(id=field_id),
-                **answer_data
-            )
-
-            if selected_options_data:
-                selected_options_ids = [
-                    option.get("id") for option in selected_options_data
-                ]
-                selected_options = Option.objects.filter(id__in=selected_options_ids)
-                answer.selected_options.set(selected_options)
-
-        return submission
+        return self.__create_submission(user, form_id, answers_data)
 
     def update(self, validated_data):
         raise NotImplementedError()
