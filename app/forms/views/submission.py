@@ -14,7 +14,7 @@ class SubmissionViewSet(viewsets.ModelViewSet):
     permission_classes = [BasicViewPermission]
 
     def get_serializer_context(self):
-        context = super(SubmissionViewSet, self).get_serializer_context()
+        context = super().get_serializer_context()
         context.update(
             {"form_id": self.kwargs.get("form_id"), "user": self.request.user}
         )
