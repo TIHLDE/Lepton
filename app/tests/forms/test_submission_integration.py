@@ -8,7 +8,6 @@ from app.forms.tests.form_factories import (
     EventFormFactory,
     SubmissionFactory,
 )
-from app.util.test_utils import get_api_client
 
 pytestmark = pytest.mark.django_db
 
@@ -41,11 +40,6 @@ def _create_submission_data_with_selected_options(field, option):
 
 def _create_submission_data_with_text_answer(field, answer_text):
     return _create_submission_data(field, answer_text=answer_text)
-
-
-@pytest.fixture()
-def member_client(member):
-    return get_api_client(user=member)
 
 
 @pytest.fixture()
@@ -120,8 +114,8 @@ def test_member_cannot_add_several_submissions(member_client, form, submission, 
 def test_cannot_create_event_form_evaluation_submission_if_not_attended(member_client):
     form = EventFormFactory(type=EventFormType.EVALUATION)
     submission = SubmissionFactory(form=form)
-    answer = AnswerFactory(submission=submission, field=form.fields.first())
-    url = _get_submission_url(answer.submission.form)
+    AnswerFactory(submission=submission, field=form.fields.first())
+    url = _get_submission_url(form)
     submission_data = _create_submission_data_with_selected_options(
         form.fields.first(), form.fields.first().options.first()
     )
@@ -131,7 +125,9 @@ def test_cannot_create_event_form_evaluation_submission_if_not_attended(member_c
     assert response.status_code == status.HTTP_400_BAD_REQUEST
 
 
-def test_post_submission_returns_created(member_client, form, submission, answer):
+def test_post_submission_returns_http_status_201_created(
+    member_client, form, submission, answer
+):
     url = _get_submission_url(answer.submission.form)
 
     response = member_client.post(
