@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework.exceptions import MethodNotAllowed
 
 from app.forms.models import Answer, Field, Option, Submission
 from app.forms.serializers import FieldInAnswerSerializer, OptionSerializer
@@ -60,4 +61,4 @@ class SubmissionSerializer(serializers.ModelSerializer):
         return self.__create_submission(user, form_id, answers_data)
 
     def update(self, validated_data):
-        raise NotImplementedError()
+        raise MethodNotAllowed()
