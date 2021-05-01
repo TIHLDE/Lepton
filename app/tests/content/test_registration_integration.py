@@ -188,7 +188,6 @@ def test_create_as_member_registers_themselves(member, event):
     assert actual_user_id == member.user_id
 
 
-
 @pytest.mark.django_db
 def test_create_as_member_registers_themselves_not_allow_photo(member, event):
     """A member should be able to create a registration and not allow photo."""
