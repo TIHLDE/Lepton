@@ -15,6 +15,7 @@
 ## Neste versjon
 
 ## Versjon 1.0.8 (01.05.2021)
+- ⚡ **Brukere**. Fjernet felter fra brukere som hentes ut i liste, slik at forespørselen går raskere.
 - 🦟 **Påmelding**. Fikset bug der brukere ikke kunne avslå å bli avbildet på arrangementer.
 - 🦟 **Tilbakestilling av passord** tar brukeren til riktig side fremfor en som ikke finnes.
 

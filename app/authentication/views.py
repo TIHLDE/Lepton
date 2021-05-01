@@ -5,11 +5,10 @@ from rest_framework.response import Response
 
 from sentry_sdk import capture_exception
 
+from app.authentication.exceptions import APIAuthUserDoesNotExist
+from app.authentication.serializers import AuthSerializer, MakeUserSerializer
 from app.common.permissions import IsDev, IsHS
-
-from ..content.models.user import User
-from .exceptions import APIAuthUserDoesNotExist
-from .serializers import AuthSerializer, MakeUserSerializer
+from app.content.models.user import User
 
 
 @api_view(["POST"])
