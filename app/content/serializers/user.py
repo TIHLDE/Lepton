@@ -29,7 +29,6 @@ class DefaultUserSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     events = serializers.SerializerMethodField()
-    groups = serializers.SerializerMethodField()
     badges = serializers.SerializerMethodField()
     unread_notifications = serializers.SerializerMethodField()
     permissions = DRYGlobalPermissionsField(actions=["write", "read"])
@@ -52,7 +51,6 @@ class UserSerializer(serializers.ModelSerializer):
             "tool",
             "app_token",
             "events",
-            "groups",
             "badges",
             "unread_notifications",
             "permissions",
@@ -79,10 +77,6 @@ class UserSerializer(serializers.ModelSerializer):
         badges = [user_badge.badge for user_badge in user_badges]
         return BadgeSerializer(badges, many=True).data
 
-    def get_groups(self, obj):
-        """ Lists all groups a user is a member of """
-        return [group.name for group in obj.groups.all()]
-
     def get_unread_notifications(self, obj):
         """ Counts all unread notifications and returns the count """
         return Notification.objects.filter(user=obj, read=False).count()
@@ -94,6 +88,24 @@ class UserSerializer(serializers.ModelSerializer):
         ]
         return StrikeSerializer(active_strikes, many=True).data
 
+class UserListSerializer(UserSerializer):
+
+    class Meta:
+        model = User
+        fields = (
+            "user_id",
+            "first_name",
+            "last_name",
+            "image",
+            "email",
+            "cell",
+            "gender",
+            "user_class",
+            "user_study",
+            "allergy",
+            "tool",
+            "strikes",
+        )
 
 class UserMemberSerializer(UserSerializer):
     """Serializer for user update to prevent them from updating extra_kwargs fields"""

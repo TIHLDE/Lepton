@@ -12,6 +12,7 @@ from app.content.models import User
 from app.content.serializers import (
     UserAdminSerializer,
     UserCreateSerializer,
+    UserListSerializer,
     UserMemberSerializer,
     UserSerializer,
 )
@@ -28,6 +29,12 @@ class UserViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_class = UserFilter
     search_fields = ["user_id", "first_name", "last_name"]
+
+    def get_serializer_class(self):
+        if hasattr(self, "action") and self.action == "list":
+            return UserListSerializer
+        return super().get_serializer_class()
+
 
     def retrieve(self, request, *args, **kwargs):
         try:
