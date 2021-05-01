@@ -88,8 +88,8 @@ class UserSerializer(serializers.ModelSerializer):
         ]
         return StrikeSerializer(active_strikes, many=True).data
 
-class UserListSerializer(UserSerializer):
 
+class UserListSerializer(UserSerializer):
     class Meta:
         model = User
         fields = (
@@ -106,6 +106,7 @@ class UserListSerializer(UserSerializer):
             "tool",
             "strikes",
         )
+
 
 class UserMemberSerializer(UserSerializer):
     """Serializer for user update to prevent them from updating extra_kwargs fields"""

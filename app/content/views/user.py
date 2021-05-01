@@ -35,7 +35,6 @@ class UserViewSet(viewsets.ModelViewSet):
             return UserListSerializer
         return super().get_serializer_class()
 
-
     def retrieve(self, request, *args, **kwargs):
         try:
             user = request.user
