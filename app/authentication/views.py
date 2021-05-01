@@ -7,7 +7,6 @@ from sentry_sdk import capture_exception
 
 from app.authentication.exceptions import APIAuthUserDoesNotExist
 from app.authentication.serializers import AuthSerializer, MakeUserSerializer
-from app.common.enums import Groups
 from app.common.permissions import IsDev, IsHS
 from app.content.models.user import User
 
@@ -27,7 +26,7 @@ def login(request):
     user = _try_to_get_user(user_id=user_id)
 
     if user.check_password(password):
-        if user.memberships.filter(group__slug=Groups.TIHLDE).exists():
+        if user.is_TIHLDE_member:
             try:
                 token = Token.objects.get(user_id=user_id).key
                 return Response({"token": token}, status=status.HTTP_200_OK)

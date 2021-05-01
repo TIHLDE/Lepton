@@ -10,7 +10,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 
-from app.common.enums import AdminGroup, MembershipType
+from app.common.enums import AdminGroup, Groups, MembershipType
 from app.common.permissions import check_has_access
 from app.util.models import BaseModel, OptionalImage
 from app.util.utils import disable_for_loaddata
@@ -90,6 +90,11 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
 
     def __str__(self):
         return f"User - {self.user_id}: {self.first_name} {self.last_name}"
+
+    @property
+    def is_TIHLDE_member(self):
+        return self.memberships.filter(group__slug=Groups.TIHLDE).exists()
+
 
     def has_perm(self, perm, obj=None):
         return self.is_superuser
