@@ -50,7 +50,7 @@ def check_has_access(access, request=None, user=None):
     set_user_id(request)
     try:
         user = request.user
-        memberships = user.membership.all()
+        memberships = user.memberships.all()
         for membership in memberships:
             for name in access:
                 if str(membership.group_id).lower() == str(name).lower():
@@ -87,7 +87,7 @@ class IsLeader(BasePermission):
         # Check if session-token is provided
         group_slug = group_slug if group_slug else view.kwargs["slug"]
         user = request.user
-        memberships = user.membership.all() if user else []
+        memberships = user.memberships.all() if user else []
         for membership in memberships:
             if membership.group.slug == group_slug:
                 return membership.is_leader()

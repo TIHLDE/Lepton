@@ -47,7 +47,7 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, viewsets.ModelViewSet):
         current_user = request.user
 
         registration = Registration.objects.get_or_create(
-            user=current_user, event=event
+            user=current_user, event=event, allow_photo=request.data["allow_photo"]
         )[0]
         registration_serializer = RegistrationSerializer(
             registration, context={"user": registration.user}
