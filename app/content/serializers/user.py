@@ -51,7 +51,6 @@ class UserSerializer(serializers.ModelSerializer):
             "allergy",
             "tool",
             "app_token",
-            "is_TIHLDE_member",
             "events",
             "groups",
             "badges",
@@ -106,7 +105,6 @@ class UserMemberSerializer(UserSerializer):
             "first_name",
             "last_name",
             "email",
-            "is_TIHLDE_member",
         )
 
 
@@ -119,7 +117,6 @@ class UserAdminSerializer(serializers.ModelSerializer):
             "user_id",
             "first_name",
             "last_name",
-            "is_TIHLDE_member",
         )
         read_only_fields = (
             "user_id",

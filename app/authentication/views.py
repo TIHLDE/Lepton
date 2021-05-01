@@ -5,11 +5,12 @@ from rest_framework.response import Response
 
 from sentry_sdk import capture_exception
 
+from app.common.enums import Groups
 from app.common.permissions import IsDev, IsHS
 
-from ..content.models.user import User
-from .exceptions import APIAuthUserDoesNotExist
-from .serializers import AuthSerializer, MakeUserSerializer
+from app.content.models.user import User
+from app.authentication.exceptions import APIAuthUserDoesNotExist
+from app.authentication.serializers import AuthSerializer, MakeUserSerializer
 
 
 @api_view(["POST"])
@@ -27,7 +28,7 @@ def login(request):
     user = _try_to_get_user(user_id=user_id)
 
     if user.check_password(password):
-        if user.is_TIHLDE_member:
+        if user.memberships.filter(group__slug=Groups.TIHLDE).exists():
             try:
                 token = Token.objects.get(user_id=user_id).key
                 return Response({"token": token}, status=status.HTTP_200_OK)
