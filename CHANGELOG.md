@@ -13,8 +13,10 @@
 ---
 
 ## Neste versjon
+- ⚡ **Brukere**. Fjernet felter fra brukere som hentes ut i liste, slik at forespørselen går raskere.
 - 🦟 **Påmelding**. Fikset bug der brukere ikke kunne avslå å bli avbildet på arrangementer.
 - 🦟 **Tilbakestilling av passord** tar brukeren til riktig side fremfor en som ikke finnes.
+
 ## Versjon 1.0.7 (26.04.2021)
 - ⚡ **Azure**. Satt opp produksjon i Azure og automatisk oppdatering ved push til master.
 - ✨ **Endring i permissions**. Endret hvordan vi håndterer tillatelser på nettsiden til å bruke våre nye grupper.
