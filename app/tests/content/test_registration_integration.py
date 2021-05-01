@@ -29,7 +29,7 @@ def _get_registration_post_data(user, event):
     return {
         "user_id": user.user_id,
         "event": event.pk,
-        "allow_photo": False,
+        "allow_photo": True,
     }
 
 
@@ -186,6 +186,20 @@ def test_create_as_member_registers_themselves(member, event):
 
     assert response.status_code == status.HTTP_201_CREATED
     assert actual_user_id == member.user_id
+
+
+@pytest.mark.django_db
+def test_create_as_member_registers_themselves_not_allow_photo(member, event):
+    """A member should be able to create a registration and not allow photo."""
+    data = _get_registration_post_data(member, event)
+    data["allow_photo"] = False
+    client = get_api_client(user=member)
+
+    url = _get_registration_url(event=event)
+    response = client.post(url, data=data)
+
+    assert response.status_code == status.HTTP_201_CREATED
+    assert not response.json().get("allow_photo")
 
 
 @pytest.mark.django_db
