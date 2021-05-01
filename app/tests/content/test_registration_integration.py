@@ -199,7 +199,7 @@ def test_create_as_member_registers_themselves_not_allow_photo(member, event):
     response = client.post(url, data=data)
 
     assert response.status_code == status.HTTP_201_CREATED
-    assert response.json().get("allow_photo") == False
+    assert not response.json().get("allow_photo")
 
 
 @pytest.mark.django_db
