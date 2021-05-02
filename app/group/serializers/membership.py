@@ -1,7 +1,10 @@
 from rest_framework import serializers
 
 from app.common.serializers import BaseModelSerializer
-from app.content.serializers.user import DefaultUserSerializer, UserListSerializer
+from app.content.serializers.user import (
+    DefaultUserSerializer,
+    UserListSerializer,
+)
 from app.group.models import Membership, MembershipHistory
 from app.group.serializers.group import DefaultGroupSerializer
 
