@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+- 🦟 **Tilganger**. Fikset bug der HS ikke hadde tilgang til å aktivere nye brukere.
 
 ## Versjon 1.0.8 (01.05.2021)
 - ⚡ **Brukere**. Fjernet felter fra brukere som hentes ut i liste, slik at forespørselen går raskere.

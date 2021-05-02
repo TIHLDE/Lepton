@@ -49,29 +49,3 @@ def _try_to_get_user(user_id):
         return User.objects.get(user_id=user_id)
     except User.DoesNotExist:
         raise APIAuthUserDoesNotExist
-
-
-@api_view(["POST"])
-@permission_classes([IsDev, IsHS])
-def makeMember(request):
-    # Serialize data and check if valid
-    serializer = MakeUserSerializer(data=request.data)
-    if not serializer.is_valid():
-        return Response({"detail": "Ugyldig brukernavn"}, status=400)
-
-    # Get username and password
-    user_id = serializer.data["user_id"]
-
-    user = User.objects.get(user_id=user_id)
-    if user is not None:
-        try:
-            Token.objects.get(user_id=user_id)
-            return Response(
-                {"detail": "Brukeren er allerede et TIHLDE medlem"}, status=400
-            )
-        except Token.DoesNotExist as token_not_exist:
-            capture_exception(token_not_exist)
-            Token.objects.create(user=user)
-            return Response({"detail": "Nytt TIHLDE medlem opprettet"}, status=200)
-    else:
-        return Response({"detail": "Ugyldig brukernavn"}, status=400)
