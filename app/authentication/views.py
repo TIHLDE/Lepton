@@ -1,13 +1,12 @@
 from rest_framework import status
 from rest_framework.authtoken.models import Token
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from sentry_sdk import capture_exception
 
 from app.authentication.exceptions import APIAuthUserDoesNotExist
-from app.authentication.serializers import AuthSerializer, MakeUserSerializer
-from app.common.permissions import IsDev, IsHS
+from app.authentication.serializers import AuthSerializer
 from app.content.models.user import User
 
 
