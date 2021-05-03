@@ -38,9 +38,13 @@ class MembershipViewSet(viewsets.ModelViewSet):
                 membership, data=request.data, partial=True
             )
             serializer.is_valid(raise_exception=True)
-            if str(request.data["membership_type"]).lower() == str(MembershipType.LEADER).lower():
+            if (
+                str(request.data["membership_type"]).lower()
+                == str(MembershipType.LEADER).lower()
+            ):
                 Notification.objects.create(
-                    user=membership.user, message=f"Du har blitt gjort til leder i gruppen {membership.group.name}"
+                    user=membership.user,
+                    message=f"Du har blitt gjort til leder i gruppen {membership.group.name}",
                 )
             return super().update(request, *args, **kwargs)
         except Membership.DoesNotExist:
@@ -57,7 +61,8 @@ class MembershipViewSet(viewsets.ModelViewSet):
             serializer = MembershipSerializer(membership, data=request.data)
             serializer.is_valid(raise_exception=True)
             Notification.objects.create(
-                user=user, message=f"Du har blitt lagt til som medlem i gruppen {group.name}"
+                user=user,
+                message=f"Du har blitt lagt til som medlem i gruppen {group.name}",
             )
             return Response(data=serializer.data, status=status.HTTP_200_OK)
         except Membership.DoesNotExist:

@@ -1,5 +1,5 @@
-from django.template.loader import render_to_string
 from django.shortcuts import get_object_or_404
+from django.template.loader import render_to_string
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
@@ -21,10 +21,7 @@ def makeTIHLDEMember(request):
     send_html_email(
         "Brukeren din er godkjent",
         render_to_string(
-            "activated_member.html",
-            context={
-                "user_name": user.first_name,
-            },
+            "activated_member.html", context={"user_name": user.first_name,},
         ),
         user.email,
     )
