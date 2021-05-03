@@ -10,7 +10,7 @@ from app.group.models import Group, Membership
 
 
 @api_view(["POST"])
-@permission_classes([IsDev, IsHS])
+@permission_classes((IsHS | IsDev,))
 def makeTIHLDEMember(request):
     TIHLDE = Group.objects.get(slug=Groups.TIHLDE)
     user_id = request.data["user_id"]
