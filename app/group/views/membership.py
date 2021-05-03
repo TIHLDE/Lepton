@@ -39,7 +39,7 @@ class MembershipViewSet(viewsets.ModelViewSet):
             )
             serializer.is_valid(raise_exception=True)
             if (
-                str(request.data["membership_type"]).lower()
+                str(request.data.get("membership_type")).lower()
                 == str(MembershipType.LEADER).lower()
             ):
                 Notification.objects.create(
