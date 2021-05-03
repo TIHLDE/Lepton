@@ -1,9 +1,11 @@
 from django.core.exceptions import ValidationError
+from django.shortcuts import get_object_or_404
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 
+from app.common.enums import MembershipType
 from app.common.permissions import BasicViewPermission, IsLeader, is_admin_user
-from app.content.models import User
+from app.content.models import Notification, User
 from app.group.models import Group, Membership
 from app.group.serializers import MembershipSerializer
 from app.group.serializers.membership import (
@@ -36,6 +38,10 @@ class MembershipViewSet(viewsets.ModelViewSet):
                 membership, data=request.data, partial=True
             )
             serializer.is_valid(raise_exception=True)
+            if str(request.data["membership_type"]).lower() == str(MembershipType.LEADER).lower():
+                Notification.objects.create(
+                    user=membership.user, message=f"Du har blitt gjort til leder i gruppen {membership.group.name}"
+                )
             return super().update(request, *args, **kwargs)
         except Membership.DoesNotExist:
             return Response(
@@ -45,24 +51,19 @@ class MembershipViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         try:
-            user = User.objects.get(user_id=request.data["user"]["user_id"])
-            group = Group.objects.get(slug=kwargs["slug"])
+            user = get_object_or_404(User, user_id=request.data["user"]["user_id"])
+            group = get_object_or_404(Group, slug=kwargs["slug"])
             membership = Membership.objects.create(user=user, group=group)
             serializer = MembershipSerializer(membership, data=request.data)
             serializer.is_valid(raise_exception=True)
+            Notification.objects.create(
+                user=user, message=f"Du har blitt lagt til som medlem i gruppen {group.name}"
+            )
             return Response(data=serializer.data, status=status.HTTP_200_OK)
         except Membership.DoesNotExist:
             return Response(
                 {"detail": "Medlemskapet eksisterer ikke"},
                 status=status.HTTP_404_NOT_FOUND,
-            )
-        except User.DoesNotExist:
-            return Response(
-                {"detail": "Bruker eksisterer ikke"}, status=status.HTTP_404_NOT_FOUND,
-            )
-        except Group.DoesNotExist:
-            return Response(
-                {"detail": "Gruppen eksisterer ikke"}, status=status.HTTP_404_NOT_FOUND,
             )
         except ValidationError:
             return Response(
@@ -73,5 +74,5 @@ class MembershipViewSet(viewsets.ModelViewSet):
     def destroy(self, request, *args, **kwargs):
         super().destroy(request, *args, **kwargs)
         return Response(
-            {"detail": "Medlemskapet ble slettet "}, status=status.HTTP_200_OK,
+            {"detail": "Medlemskapet ble slettet"}, status=status.HTTP_200_OK,
         )

@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+- ⚡ **Varsler**. Nye brukere får epost om at bruker er blitt godkjent. Brukere som blir lagt til i en gruppe får varsel.
 
 ## Versjon 1.0.8 (01.05.2021)
 - ⚡ **Brukere**. Fjernet felter fra brukere som hentes ut i liste, slik at forespørselen går raskere.
