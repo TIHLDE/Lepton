@@ -93,7 +93,7 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
 
     @property
     def is_TIHLDE_member(self):
-        return self.membership.filter(group__slug=Groups.TIHLDE).exists()
+        return self.memberships.filter(group__slug=Groups.TIHLDE).exists()
 
     def has_perm(self, perm, obj=None):
         return self.is_superuser
@@ -120,9 +120,13 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
 
     @classmethod
     def has_list_permission(cls, request):
-        return check_has_access(cls.has_access, request) or len(
-            request.user.membership.filter(membership_type=MembershipType.LEADER)
-        )
+        try:
+
+            return check_has_access(cls.has_access, request) or len(
+                request.user.memberships.filter(membership_type=MembershipType.LEADER)
+            )
+        except AttributeError:
+            return check_has_access(cls.has_access, request)
 
     @staticmethod
     def has_read_permission(request):

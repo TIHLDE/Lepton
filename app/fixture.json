@@ -1081,6 +1081,18 @@
         "membership_type": "LEADER",
         "expiration_date": null
     }
+},
+{
+    "model": "group.membership",
+    "pk": 9,
+    "fields": {
+        "created_at": "2021-05-01T10:02:30.243Z",
+        "updated_at": "2021-05-01T10:02:30.243Z",
+        "user": "index",
+        "group": "tihlde",
+        "membership_type": "MEMBER",
+        "expiration_date": "2029-05-01"
+    }
 }
 
 ]
