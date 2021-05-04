@@ -83,3 +83,11 @@ class MembershipType(ChoiceEnum):
     @classmethod
     def board_members(cls):
         return (cls.LEADER,)
+
+
+class StrikeEnum(ChoiceEnum):
+    PAST_DEADLINE = "PAST_DEADLINE"
+    NO_SHOW = "NO_SHOW"
+    LATE = "LATE"
+    BAD_BEHAVIOR = "BAD_BEHAVIOR"
+    EVAL_FORM = "EVAL_FORM"

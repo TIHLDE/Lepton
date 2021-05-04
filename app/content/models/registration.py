@@ -3,11 +3,10 @@ from datetime import timedelta
 from django.core.exceptions import ValidationError
 from django.db import models
 
-from app.common.enums import AdminGroup, Groups
+from app.common.enums import AdminGroup, Groups, StrikeEnum
 from app.common.permissions import check_has_access
 from app.content.exceptions import EventSignOffDeadlineHasPassed, StrikeError
-from app.content.models.strike import Strike, strike_creator
-from app.content.models.user import User
+from app.content.models.strike import create_strike
 from app.util import EnumUtils, today
 from app.util.mailer import send_event_verification, send_event_waitlist
 from app.util.models import BaseModel
@@ -80,11 +79,11 @@ class Registration(BaseModel):
     def delete(self, *args, **kwargs):
         if not self.is_on_wait:
             if self.event.is_past_sign_off_deadline:
-                if self.event.is_one_hour_before_event_start:
+                if self.event.is_one_hour_before_event_start():
                     raise EventSignOffDeadlineHasPassed(
                         "Kan ikke melde av brukeren etter en time før arrangementstart"
                     )
-                strike_creator("PAST_DEADLINE", self.user, self.event)
+                create_strike(StrikeEnum.PAST_DEADLINE, self.user, self.event)
             self.move_from_waiting_list_to_queue()
 
         return super().delete(*args, **kwargs)

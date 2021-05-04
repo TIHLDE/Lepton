@@ -102,8 +102,13 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
         return self.is_superuser
 
     def get_number_of_strikes(self):
-        strikes = (strike for strike in self.strikes.all() if strike.active)
-        return sum(strike.strike_size for strike in strikes)
+        from django.db.models import Sum
+
+        aggregate_sum = self.strikes.all().aggregate(Sum("strike_size"))
+        number_of_strikes = aggregate_sum["strike_size__sum"]
+        if number_of_strikes is None:
+            return 0
+        return number_of_strikes
 
     objects = UserManager()
 

@@ -34,5 +34,5 @@ class Notification(BaseModel):
         return False
 
 
-def notification_creator(user, message):
+def create_notification(user, message):
     return Notification.objects.create(user=user, message=message)

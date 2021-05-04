@@ -1,6 +1,7 @@
 import uuid
 from datetime import timedelta
 
+from django.conf import settings
 from django.db import models
 
 from app.common.enums import AdminGroup
@@ -26,7 +27,7 @@ class Strike(BaseModel, BasePermissionModel):
     strike_size = models.IntegerField(default=1)
 
     user = models.ForeignKey(
-        "content.User", on_delete=models.CASCADE, related_name="strikes"
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="strikes"
     )
     event = models.ForeignKey(
         "content.Event",
@@ -36,7 +37,7 @@ class Strike(BaseModel, BasePermissionModel):
         related_name="strikes",
     )
     creator = models.ForeignKey(
-        "content.User",
+        settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
         blank=True,
         null=True,
@@ -52,9 +53,9 @@ class Strike(BaseModel, BasePermissionModel):
 
     def save(self, *args, **kwargs):
         if self.created_at is None:
-            from app.content.models import notification_creator
+            from app.content.models import create_notification
 
-            notification_creator(self.user, self.description)
+            create_notification(self.user, self.description)
         super(Strike, self).save(*args, **kwargs)
 
     @property
@@ -66,7 +67,7 @@ class Strike(BaseModel, BasePermissionModel):
         return self.created_at + timedelta(days=STRIKE_DURATION_IN_DAYS)
 
 
-def strike_creator(enum, user, event=None, creator=None):
+def create_strike(enum, user, event=None, creator=None):
     return Strike.objects.create(
         description=get_strike_description(enum),
         strike_size=get_strike_strike_size(enum),
