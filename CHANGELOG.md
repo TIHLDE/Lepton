@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+- ⚡ **Varsler**. Nye brukere får epost om at bruker er blitt godkjent. Brukere som blir lagt til i en gruppe får varsel.
 - 🦟 **Tilganger**. Fikset bug der HS ikke hadde tilgang til å aktivere nye brukere.
 
 ## Versjon 1.0.8 (01.05.2021)
