@@ -20,6 +20,7 @@ from app.content.serializers.user import (
     UserAdminSerializer,
     UserCreateSerializer,
     UserInAnswerSerializer,
+    UserListSerializer,
     UserMemberSerializer,
     UserSerializer,
 )

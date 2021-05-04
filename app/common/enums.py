@@ -60,7 +60,7 @@ class GroupType(ChoiceEnum):
 
     @classmethod
     def public_groups(cls):
-        return (cls.BOARD, cls.SUBGROUP, cls.COMMITTEE, cls.INTERESTGROUP)
+        return [cls.BOARD, cls.SUBGROUP, cls.COMMITTEE, cls.INTERESTGROUP]
 
 
 class EnvironmentOptions(Enum):
