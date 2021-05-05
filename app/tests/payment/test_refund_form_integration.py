@@ -66,6 +66,5 @@ def test_not_authenticated_refund_form_request(default_client):
     data = _get_valid_refund_form_data()
 
     response = default_client.post(refund_form_url, data=data)
-    print(response)
 
     assert response.status_code == status.HTTP_403_FORBIDDEN
