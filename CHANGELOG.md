@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+## Versjon 1.0.10 (05.05.2021)
 ## Versjon 1.0.9 (05.05.2021)
 - ⚡ **Medlemskap**.Lagt til pagination på listing av medlemskap, og filtrering for å hente ut list med bare medlemmer.
 - ⚡ **Varsler**. Nye brukere får epost om at bruker er blitt godkjent. Brukere som blir lagt til i en gruppe får varsel.
