@@ -53,6 +53,8 @@ class Membership(BaseModel, BasePermissionModel):
 
     class Meta:
         unique_together = ("user", "group")
+        ordering = ['user__first_name', 'user__last_name']
+
 
     @classmethod
     def _check_request_user_is_leader(cls, request):
