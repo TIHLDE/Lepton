@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+- ⚡ **Medlemskap**.Lagt til pagination på listing av medlemskap, og filtrering for å hente ut list med bare medlemmer.
 - ⚡ **Varsler**. Nye brukere får epost om at bruker er blitt godkjent. Brukere som blir lagt til i en gruppe får varsel.
 - 🦟 **Tilganger**. Fikset bug der HS ikke hadde tilgang til å aktivere nye brukere.
 - ✨ **Brukeradmin**. HS og Index har nå mulighet til å oppdatere brukerdata.
