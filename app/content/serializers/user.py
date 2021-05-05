@@ -118,23 +118,19 @@ class UserMemberSerializer(UserSerializer):
             "first_name",
             "last_name",
             "email",
+            "user_class",
+            "user_study",
         )
 
 
 class UserAdminSerializer(serializers.ModelSerializer):
     """Serializer for admin update to prevent them from updating extra_kwargs fields"""
 
-    class Meta:
-        model = User
-        fields = (
-            "user_id",
-            "first_name",
-            "last_name",
-        )
+    class Meta(UserListSerializer.Meta):
+        fields = UserListSerializer.Meta.fields
         read_only_fields = (
             "user_id",
-            "first_name",
-            "last_name",
+            "strikes",
         )
 
 
