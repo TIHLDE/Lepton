@@ -1,12 +1,16 @@
-from django_filters.filters import BooleanFilter, ChoiceFilter
+from django_filters.filters import BooleanFilter
 from django_filters.rest_framework import FilterSet
-from app.common.enums import MembershipType
 
+from app.common.enums import MembershipType
 from app.group.models import Membership
+
 
 class MembershipFilter(FilterSet):
     """ Filters Membership by membership_type """
-    onlyMembers = BooleanFilter(method="filter_membership_type", label= "Filter only members" )
+
+    onlyMembers = BooleanFilter(
+        method="filter_membership_type", label="Filter only members"
+    )
 
     class Meta:
         model = Membership
