@@ -67,20 +67,12 @@ class UserViewSet(viewsets.ModelViewSet):
         try:
             self.check_object_permissions(self.request, User.objects.get(user_id=pk))
             if is_admin_user(request):
-                if self.request.id == pk:
-                    serializer = UserMemberSerializer(
-                        User.objects.get(user_id=pk),
-                        context={"request": request},
-                        many=False,
-                        data=request.data,
-                    )
-                else:
-                    serializer = UserAdminSerializer(
-                        User.objects.get(user_id=pk),
-                        context={"request": request},
-                        many=False,
-                        data=request.data,
-                    )
+                serializer = UserAdminSerializer(
+                    User.objects.get(user_id=pk),
+                    context={"request": request},
+                    many=False,
+                    data=request.data,
+                )
             else:
                 if self.request.id == pk:
                     serializer = UserMemberSerializer(
