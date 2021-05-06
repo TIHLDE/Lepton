@@ -1,11 +1,14 @@
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 
 from app.common.enums import MembershipType
+from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission, IsLeader, is_admin_user
 from app.content.models import Notification, User
+from app.group.filters.membership import MembershipFilter
 from app.group.models import Group, Membership
 from app.group.serializers import MembershipSerializer
 from app.group.serializers.membership import (
@@ -19,6 +22,9 @@ class MembershipViewSet(viewsets.ModelViewSet):
     serializer_class = MembershipSerializer
     queryset = Membership.objects.all()
     permission_classes = [BasicViewPermission]
+    pagination_class = BasePagination
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = MembershipFilter
     lookup_field = "user_id"
 
     def get_queryset(self):

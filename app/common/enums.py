@@ -83,7 +83,10 @@ class MembershipType(ChoiceEnum):
     @classmethod
     def board_members(cls):
         return (cls.LEADER,)
-
+    
+    @classmethod
+    def all(cls):
+        return tuple((i.name, i.value) for i in cls)
 
 class StrikeEnum(ChoiceEnum):
     PAST_DEADLINE = "PAST_DEADLINE"

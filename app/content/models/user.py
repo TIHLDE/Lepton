@@ -139,6 +139,16 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
         return check_has_access(cls.has_access, request,)
 
     @classmethod
+    def has_update_permission(cls, request):
+        try:
+            if request.user:
+                return request.user.user_id == request.parser_context["kwargs"][
+                    "pk"
+                ] or check_has_access(cls.has_access, request,)
+        except (AssertionError, KeyError):
+            return check_has_access(cls.has_access, request,)
+
+    @classmethod
     def has_create_permission(cls, request):
         return True
 

@@ -13,8 +13,11 @@
 ---
 
 ## Neste versjon
+## Versjon 1.0.9 (05.05.2021)
+- ⚡ **Medlemskap**.Lagt til pagination på listing av medlemskap, og filtrering for å hente ut list med bare medlemmer.
 - ⚡ **Varsler**. Nye brukere får epost om at bruker er blitt godkjent. Brukere som blir lagt til i en gruppe får varsel.
 - 🦟 **Tilganger**. Fikset bug der HS ikke hadde tilgang til å aktivere nye brukere.
+- ✨ **Brukeradmin**. HS og Index har nå mulighet til å oppdatere brukerdata.
 
 ## Versjon 1.0.8 (01.05.2021)
 - ⚡ **Brukere**. Fjernet felter fra brukere som hentes ut i liste, slik at forespørselen går raskere.
