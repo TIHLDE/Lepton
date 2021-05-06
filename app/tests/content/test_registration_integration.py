@@ -544,7 +544,7 @@ def test_delete_as_member_when_sign_off_deadline_has_passed_and_not_on_wait(memb
     url = _get_registration_detail_url(registration)
     response = client.delete(url)
 
-    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db
