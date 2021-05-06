@@ -101,6 +101,15 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
     def has_module_perms(self, app_label):
         return self.is_superuser
 
+    def get_number_of_strikes(self):
+        from django.db.models import Sum
+
+        aggregate_sum = self.strikes.all().aggregate(Sum("strike_size"))
+        number_of_strikes = aggregate_sum["strike_size__sum"]
+        if number_of_strikes is None:
+            return 0
+        return number_of_strikes
+
     objects = UserManager()
 
     @classmethod

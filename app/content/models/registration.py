@@ -1,10 +1,12 @@
+from datetime import timedelta
+
 from django.core.exceptions import ValidationError
 from django.db import models
 
-from app.common.enums import AdminGroup, Groups
+from app.common.enums import AdminGroup, Groups, StrikeEnum
 from app.common.permissions import check_has_access
-from app.content.exceptions import EventSignOffDeadlineHasPassed
-from app.content.models.user import User
+from app.content.exceptions import EventSignOffDeadlineHasPassed, StrikeError
+from app.content.models.strike import create_strike
 from app.util import EnumUtils, today
 from app.util.mailer import send_event_verification, send_event_waitlist
 from app.util.models import BaseModel
@@ -23,10 +25,10 @@ class Registration(BaseModel):
 
     registration_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="registrations"
+        "content.User", on_delete=models.CASCADE, related_name="registrations"
     )
     event = models.ForeignKey(
-        "Event", on_delete=models.CASCADE, related_name="registrations"
+        "content.Event", on_delete=models.CASCADE, related_name="registrations"
     )
 
     is_on_wait = models.BooleanField(default=False, verbose_name="waiting list")
@@ -75,11 +77,13 @@ class Registration(BaseModel):
         )
 
     def delete(self, *args, **kwargs):
-        if self.event.is_past_sign_off_deadline and not self.is_on_wait:
-            raise EventSignOffDeadlineHasPassed(
-                "Kan ikke melde av brukeren etter avmeldingsfrist"
-            )
         if not self.is_on_wait:
+            if self.event.is_past_sign_off_deadline:
+                if self.event.is_one_hour_before_event_start():
+                    raise EventSignOffDeadlineHasPassed(
+                        "Kan ikke melde av brukeren etter en time før arrangementstart"
+                    )
+                create_strike(str(StrikeEnum.PAST_DEADLINE), self.user, self.event)
             self.move_from_waiting_list_to_queue()
 
         return super().delete(*args, **kwargs)
@@ -96,11 +100,25 @@ class Registration(BaseModel):
 
     def create(self):
         """ Determines whether user is on the waiting list or not when the instance is created. """
+        self.strike_handler()
         self.clean()
         self.is_on_wait = self.event.is_full
 
         if self.should_swap_with_non_prioritized_user():
             self.swap_users()
+
+    def strike_handler(self):
+        number_of_strikes = self.user.get_number_of_strikes()
+        if number_of_strikes >= 1:
+            hours_offset = 3
+            if number_of_strikes >= 2:
+                hours_offset = 12
+            if not today() >= self.event.start_registration_at + timedelta(
+                hours=hours_offset
+            ):
+                raise StrikeError(
+                    f"Kan ikke melde deg på før etter {hours_offset} timer etter påmeldingsstart"
+                )
 
     def send_notification_and_mail(self):
         has_not_attended = not self.has_attended
@@ -119,6 +137,8 @@ class Registration(BaseModel):
 
     @property
     def is_prioritized(self):
+        if self.user.get_number_of_strikes() >= 3:
+            return False
         user_class, user_study = EnumUtils.get_user_enums(**self.user.__dict__)
         return self.event.registration_priorities.filter(
             user_class=user_class, user_study=user_study

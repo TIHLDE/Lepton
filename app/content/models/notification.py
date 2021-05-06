@@ -1,11 +1,10 @@
 from django.db import models
 
-from app.content.models.user import User
 from app.util.models import BaseModel
 
 
 class Notification(BaseModel):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey("content.User", on_delete=models.CASCADE)
     message = models.CharField(max_length=150)
     read = models.BooleanField(default=False)
 
@@ -33,3 +32,7 @@ class Notification(BaseModel):
         if request.method == "PUT":
             return self.user == request.user
         return False
+
+
+def create_notification(user, message):
+    return Notification.objects.create(user=user, message=message)

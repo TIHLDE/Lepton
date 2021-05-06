@@ -14,3 +14,7 @@ class APIEventSignOffDeadlineHasPassed(APIException):
 
 class EventSignOffDeadlineHasPassed(ValueError):
     pass
+
+
+class StrikeError(ValueError):
+    pass

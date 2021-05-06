@@ -87,3 +87,11 @@ class MembershipType(ChoiceEnum):
     @classmethod
     def all(cls):
         return tuple((i.name, i.value) for i in cls)
+
+
+class StrikeEnum(ChoiceEnum):
+    PAST_DEADLINE = "PAST_DEADLINE"
+    NO_SHOW = "NO_SHOW"
+    LATE = "LATE"
+    BAD_BEHAVIOR = "BAD_BEHAVIOR"
+    EVAL_FORM = "EVAL_FORM"
