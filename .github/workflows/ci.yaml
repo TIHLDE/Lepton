@@ -68,8 +68,5 @@ jobs:
       - name: Check for unstaged migrations
         run:  docker-compose run --rm web python manage.py makemigrations --check --no-input
 
-      - name: Run Django Tests
-        run:  docker-compose run --rm web pytest --cov=app
-
       - name: Tear down the Stack
         run:  docker-compose down
