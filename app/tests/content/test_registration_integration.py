@@ -546,6 +546,7 @@ def test_delete_as_member_when_sign_off_deadline_has_passed_and_not_on_wait(memb
 
     assert response.status_code == status.HTTP_200_OK
 
+
 @pytest.mark.django_db
 def test_delete_as_member_when_sign_off_deadline_has_passed_and_on_wait(member):
     """
