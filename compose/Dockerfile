@@ -13,10 +13,14 @@ RUN apt-get update \
   && rm -rf /var/lib/apt/lists/*
 
 # Requirements are installed here to ensure they will be cached.
-COPY requirements.txt ./
+COPY ./requirements.txt ./
 RUN pip install -r requirements.txt
 
 COPY . .
+
+COPY ./compose/wait-for-mysql /wait-for-mysql
+RUN sed -i 's/\r$//g' /wait-for-mysql
+RUN chmod +x /wait-for-mysql
 
 VOLUME /usr/src/app/volume
 
