@@ -29,6 +29,7 @@ class PageSerializer(BaseModelSerializer):
     def get_path(self, obj):
         return obj.get_path()
 
+
 class PageSearchSerializer(BaseModelSerializer):
     path = SerializerMethodField()
 
@@ -37,7 +38,7 @@ class PageSearchSerializer(BaseModelSerializer):
         fields = (
             "slug",
             "title",
-            "path",  
+            "path",
         )
 
     def get_path(self, obj):

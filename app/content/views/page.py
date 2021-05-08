@@ -8,7 +8,11 @@ from sentry_sdk import capture_exception
 from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission
 from app.content.models import Page
-from app.content.serializers import PageSerializer, PageTreeSerializer, PageSearchSerializer
+from app.content.serializers import (
+    PageSearchSerializer,
+    PageSerializer,
+    PageTreeSerializer,
+)
 
 
 class PageViewSet(viewsets.ModelViewSet):
@@ -36,7 +40,6 @@ class PageViewSet(viewsets.ModelViewSet):
         if self.is_serach():
             self.serializer_class = PageSearchSerializer
         return super().get_serializer_class()
-    
 
     def retrieve(self, request, *args, **kwargs):
         try:
