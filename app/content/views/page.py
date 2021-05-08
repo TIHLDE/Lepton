@@ -8,7 +8,7 @@ from sentry_sdk import capture_exception
 from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission
 from app.content.models import Page
-from app.content.serializers import PageSerializer, PageTreeSerializer
+from app.content.serializers import PageSerializer, PageTreeSerializer, PageSearchSerializer
 
 
 class PageViewSet(viewsets.ModelViewSet):
@@ -21,6 +21,9 @@ class PageViewSet(viewsets.ModelViewSet):
     lookup_url_kwarg = "path"
     lookup_value_regex = ".*"
 
+    def is_serach(self):
+        return self.request.query_params.get("search")
+
     def get_page_from_tree(self):
         return Page.get_by_path(self.kwargs["path"])
 
@@ -28,6 +31,12 @@ class PageViewSet(viewsets.ModelViewSet):
         if self.request.method == "GET":
             self.permission_classes = []
         return super(PageViewSet, self).get_permissions()
+
+    def get_serializer_class(self):
+        if self.is_serach():
+            self.serializer_class = PageSearchSerializer
+        return super().get_serializer_class()
+    
 
     def retrieve(self, request, *args, **kwargs):
         try:
@@ -51,7 +60,7 @@ class PageViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         try:
-            if self.request.query_params.get("search"):
+            if self.is_serach():
                 return super().list(request, *args, **kwargs)
             page = self.queryset.get(parent=None)
             serializer = PageSerializer(page, many=False)
