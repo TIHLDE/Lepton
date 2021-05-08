@@ -1,10 +1,11 @@
 from django.core.exceptions import MultipleObjectsReturned
-from rest_framework import status, viewsets
+from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from sentry_sdk import capture_exception
 
+from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission
 from app.content.models import Page
 from app.content.serializers import PageSerializer, PageTreeSerializer
@@ -14,6 +15,9 @@ class PageViewSet(viewsets.ModelViewSet):
     queryset = Page.objects.all()
     serializer_class = PageSerializer
     permission_classes = [BasicViewPermission]
+    pagination_class = BasePagination
+    search_fields = ["title", "content"]
+    filter_backends = (filters.SearchFilter,)
     lookup_url_kwarg = "path"
     lookup_value_regex = ".*"
 
@@ -47,6 +51,8 @@ class PageViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         try:
+            if self.request.query_params.get("search"):
+                return super().list(request, *args, **kwargs)
             page = self.queryset.get(parent=None)
             serializer = PageSerializer(page, many=False)
             return Response(serializer.data, status=status.HTTP_200_OK)
