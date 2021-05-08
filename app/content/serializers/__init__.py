@@ -16,7 +16,7 @@ from app.content.serializers.notification import (
 from app.content.serializers.page import (
     PageSerializer,
     PageTreeSerializer,
-    PageSearchSerializer,
+    PageListSerializer,
 )
 from app.content.serializers.priority import PrioritySerializer
 from app.content.serializers.registration import RegistrationSerializer

@@ -9,7 +9,7 @@ from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission
 from app.content.models import Page
 from app.content.serializers import (
-    PageSearchSerializer,
+    PageListSerializer,
     PageSerializer,
     PageTreeSerializer,
 )
@@ -38,7 +38,7 @@ class PageViewSet(viewsets.ModelViewSet):
 
     def get_serializer_class(self):
         if self.is_serach():
-            self.serializer_class = PageSearchSerializer
+            self.serializer_class = PageListSerializer
         return super().get_serializer_class()
 
     def retrieve(self, request, *args, **kwargs):
