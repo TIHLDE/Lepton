@@ -3,11 +3,10 @@ from rest_framework import serializers
 
 from rest_polymorphic.serializers import PolymorphicSerializer
 
-from app.common.serializers import BaseModelSerializer
 from app.forms.models import EventForm, Field, Form, Option
 
 
-class OptionSerializer(BaseModelSerializer):
+class OptionSerializer(serializers.ModelSerializer):
     id = serializers.UUIDField(read_only=False, required=False)
 
     class Meta:
@@ -18,7 +17,7 @@ class OptionSerializer(BaseModelSerializer):
         )
 
 
-class FieldSerializer(BaseModelSerializer):
+class FieldSerializer(serializers.ModelSerializer):
     options = OptionSerializer(many=True, required=False, allow_null=True)
     id = serializers.UUIDField(read_only=False, required=False)
 
@@ -33,7 +32,7 @@ class FieldSerializer(BaseModelSerializer):
         )
 
 
-class FormSerializer(BaseModelSerializer):
+class FormSerializer(serializers.ModelSerializer):
     fields = FieldSerializer(many=True, required=False, allow_null=True)
 
     class Meta:
@@ -114,12 +113,6 @@ class EventFormSerializer(FormSerializer):
             "fields",
             "type",
         )
-
-
-class FormInSubmissionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Form
-        fields = ("id", "type")
 
 
 class FieldInAnswerSerializer(serializers.ModelSerializer):

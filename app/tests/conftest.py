@@ -1,5 +1,5 @@
 from rest_framework.authtoken.models import Token
-from rest_framework.test import APIClient, APIRequestFactory
+from rest_framework.test import APIRequestFactory
 
 import pytest
 
@@ -18,7 +18,7 @@ from app.content.factories import (
 )
 from app.forms.tests.form_factories import FormFactory
 from app.group.factories import GroupFactory, MembershipFactory
-from app.util.test_utils import add_user_to_group_with_name
+from app.util.test_utils import add_user_to_group_with_name, get_api_client
 
 
 @pytest.fixture()
@@ -28,7 +28,7 @@ def request_factory():
 
 @pytest.fixture()
 def default_client():
-    return APIClient()
+    return get_api_client()
 
 
 @pytest.fixture()
@@ -49,6 +49,11 @@ def admin_user():
 @pytest.fixture()
 def member():
     return add_user_to_group_with_name(UserFactory(), Groups.TIHLDE)
+
+
+@pytest.fixture()
+def member_client(member):
+    return get_api_client(user=member)
 
 
 @pytest.fixture()

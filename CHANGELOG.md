@@ -13,8 +13,10 @@
 ---
 
 ## Neste versjon
-## Versjon 1.0.9 (05.05.2021)
+- ✨ **Svar på spørreskjemaer** Medlemmer kan nå svare på spørreskjemaer.
 - ⚡ **Pages** Implementert søk i pages siden
+
+## Versjon 1.0.9 (05.05.2021)
 - ⚡ **Medlemskap**.Lagt til pagination på listing av medlemskap, og filtrering for å hente ut list med bare medlemmer.
 - ⚡ **Varsler**. Nye brukere får epost om at bruker er blitt godkjent. Brukere som blir lagt til i en gruppe får varsel.
 - 🦟 **Tilganger**. Fikset bug der HS ikke hadde tilgang til å aktivere nye brukere.
@@ -44,7 +46,7 @@
 
 ## Versjon 1.0.4 (15.03.2021)
 - ✨ **Filopplastning**. Lagt til støtte for filopplastning til Azure gjennom eget endepunkt. Kun for medlemmer.
-- ✨ **Forms**. Admins kan opprette, redigere og slette forms. Forms kan brukes i blant annet arrangement-påmelding.
+- ✨ **Spørreskjemaer**. Admins kan opprette, redigere og slette spørreskjemaer. Disse kan brukes i blant annet arrangement-påmelding.
 
 ## Versjon 1.0.3 (09.03.2021)
 - ⚡ **Pagination i varsler**. Lagt til pagination i varsler, samt lagt til tester og fjernet admin's muligheter til å opprette/endre/slette andres varsler.
