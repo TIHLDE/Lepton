@@ -25,7 +25,7 @@ class PageViewSet(viewsets.ModelViewSet):
     lookup_url_kwarg = "path"
     lookup_value_regex = ".*"
 
-    def is_serach(self):
+    def is_search(self):
         return self.request.query_params.get("search")
 
     def get_page_from_tree(self):
@@ -37,7 +37,7 @@ class PageViewSet(viewsets.ModelViewSet):
         return super(PageViewSet, self).get_permissions()
 
     def get_serializer_class(self):
-        if self.is_serach():
+        if self.is_search():
             self.serializer_class = PageListSerializer
         return super().get_serializer_class()
 
@@ -63,7 +63,7 @@ class PageViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         try:
-            if self.is_serach():
+            if self.is_search():
                 return super().list(request, *args, **kwargs)
             page = self.queryset.get(parent=None)
             serializer = PageSerializer(page, many=False)
