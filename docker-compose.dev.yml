@@ -11,4 +11,4 @@ services:
   celery:
     image: leptondevregistry.azurecr.io/lepton:latest
     container_name: celery
-    command: celery -A app worker -l info
+    command: celery -A app worker -l info --without-heartbeat --without-gossip --without-mingle

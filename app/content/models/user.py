@@ -93,13 +93,22 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
 
     @property
     def is_TIHLDE_member(self):
-        return self.membership.filter(group__slug=Groups.TIHLDE).exists()
+        return self.memberships.filter(group__slug=Groups.TIHLDE).exists()
 
     def has_perm(self, perm, obj=None):
         return self.is_superuser
 
     def has_module_perms(self, app_label):
         return self.is_superuser
+
+    def get_number_of_strikes(self):
+        from django.db.models import Sum
+
+        aggregate_sum = self.strikes.all().aggregate(Sum("strike_size"))
+        number_of_strikes = aggregate_sum["strike_size__sum"]
+        if number_of_strikes is None:
+            return 0
+        return number_of_strikes
 
     objects = UserManager()
 
@@ -111,9 +120,13 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
 
     @classmethod
     def has_list_permission(cls, request):
-        return check_has_access(cls.has_access, request) or len(
-            request.user.membership.filter(membership_type=MembershipType.LEADER)
-        )
+        try:
+
+            return check_has_access(cls.has_access, request) or len(
+                request.user.memberships.filter(membership_type=MembershipType.LEADER)
+            )
+        except AttributeError:
+            return check_has_access(cls.has_access, request)
 
     @staticmethod
     def has_read_permission(request):
@@ -124,6 +137,16 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
     @classmethod
     def has_write_permission(cls, request):
         return check_has_access(cls.has_access, request,)
+
+    @classmethod
+    def has_update_permission(cls, request):
+        try:
+            if request.user:
+                return request.user.user_id == request.parser_context["kwargs"][
+                    "pk"
+                ] or check_has_access(cls.has_access, request,)
+        except (AssertionError, KeyError):
+            return check_has_access(cls.has_access, request,)
 
     @classmethod
     def has_create_permission(cls, request):

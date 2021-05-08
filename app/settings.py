@@ -16,6 +16,7 @@ import dj_database_url
 import django_heroku
 import sentry_sdk
 from corsheaders.defaults import default_headers
+from dotenv import load_dotenv
 from sentry_sdk.integrations.django import DjangoIntegration
 
 from app.common.enums import EnvironmentOptions
@@ -23,7 +24,11 @@ from app.common.enums import EnvironmentOptions
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
-DOMAIN = "tihlde.org/"
+DOMAIN = "api.tihlde.org"
+
+READ_DOT_ENV_FILE = os.environ.get("DJANGO_READ_DOT_ENV_FILE", False)
+if READ_DOT_ENV_FILE:
+    load_dotenv(str(BASE_DIR) + "/.env", override=True)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/

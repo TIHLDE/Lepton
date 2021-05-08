@@ -12,6 +12,7 @@ from app.content.models import User
 from app.content.serializers import (
     UserAdminSerializer,
     UserCreateSerializer,
+    UserListSerializer,
     UserMemberSerializer,
     UserSerializer,
 )
@@ -28,6 +29,11 @@ class UserViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_class = UserFilter
     search_fields = ["user_id", "first_name", "last_name"]
+
+    def get_serializer_class(self):
+        if hasattr(self, "action") and self.action == "list":
+            return UserListSerializer
+        return super().get_serializer_class()
 
     def retrieve(self, request, *args, **kwargs):
         try:
@@ -61,20 +67,12 @@ class UserViewSet(viewsets.ModelViewSet):
         try:
             self.check_object_permissions(self.request, User.objects.get(user_id=pk))
             if is_admin_user(request):
-                if self.request.id == pk:
-                    serializer = UserMemberSerializer(
-                        User.objects.get(user_id=pk),
-                        context={"request": request},
-                        many=False,
-                        data=request.data,
-                    )
-                else:
-                    serializer = UserAdminSerializer(
-                        User.objects.get(user_id=pk),
-                        context={"request": request},
-                        many=False,
-                        data=request.data,
-                    )
+                serializer = UserAdminSerializer(
+                    User.objects.get(user_id=pk),
+                    context={"request": request},
+                    many=False,
+                    data=request.data,
+                )
             else:
                 if self.request.id == pk:
                     serializer = UserMemberSerializer(

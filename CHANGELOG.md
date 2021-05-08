@@ -14,6 +14,18 @@
 
 ## Neste versjon
 - ✨ **Svar på spørreskjemaer** Medlemmer kan nå svare på spørreskjemaer.
+- ⚡ **Pages** Implementert søk i pages siden
+
+## Versjon 1.0.9 (05.05.2021)
+- ⚡ **Medlemskap**.Lagt til pagination på listing av medlemskap, og filtrering for å hente ut list med bare medlemmer.
+- ⚡ **Varsler**. Nye brukere får epost om at bruker er blitt godkjent. Brukere som blir lagt til i en gruppe får varsel.
+- 🦟 **Tilganger**. Fikset bug der HS ikke hadde tilgang til å aktivere nye brukere.
+- ✨ **Brukeradmin**. HS og Index har nå mulighet til å oppdatere brukerdata.
+
+## Versjon 1.0.8 (01.05.2021)
+- ⚡ **Brukere**. Fjernet felter fra brukere som hentes ut i liste, slik at forespørselen går raskere.
+- 🦟 **Påmelding**. Fikset bug der brukere ikke kunne avslå å bli avbildet på arrangementer.
+- 🦟 **Tilbakestilling av passord** tar brukeren til riktig side fremfor en som ikke finnes.
 
 ## Versjon 1.0.7 (26.04.2021)
 - ⚡ **Azure**. Satt opp produksjon i Azure og automatisk oppdatering ved push til master.
@@ -25,7 +37,7 @@
 - 🦟 **Oppdatert arrangement**. Fikset bug der det ikke var mulig å oppdatere arrangement.
 - ✨ **Azure**. Satt opp dev-miljø i Azure for å migrere vekk fra Drift og til skyen.
 - ✨ **Venteliste nummer**. Henter nå ut hvilken plass du er på i ventelisten
-- ✨ **Refusjons skjema**. Lagt til mulighet for å sende refusjons skjema rett til økonomiansvarlig, med kvittering. 
+- ✨ **Refusjons skjema**. Lagt til mulighet for å sende refusjons skjema rett til økonomiansvarlig, med kvittering.
 
 ## Versjon 1.0.5 (24.03.2021)
 - 🦟 **Opprett arrangement**. Fikset feil der det ikke var mulig å opprette et arrangement.

@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import signals
@@ -85,6 +87,9 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
     @property
     def is_past_sign_off_deadline(self):
         return today() >= self.sign_off_deadline
+
+    def is_one_hour_before_event_start(self):
+        return today() >= self.start_date - timedelta(hours=1)
 
     @property
     def event_has_ended(self):
