@@ -24,7 +24,22 @@ class PageSerializer(BaseModelSerializer):
         )
 
     def get_children(self, obj):
-        return [{"title": page.title, "slug": page.slug} for page in obj.get_children()]
+        return [PageListSerializer(page).data for page in obj.get_children()]
+
+    def get_path(self, obj):
+        return obj.get_path()
+
+
+class PageListSerializer(BaseModelSerializer):
+    path = SerializerMethodField()
+
+    class Meta:
+        model = Page
+        fields = (
+            "slug",
+            "title",
+            "path",
+        )
 
     def get_path(self, obj):
         return obj.get_path()
