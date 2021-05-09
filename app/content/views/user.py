@@ -1,3 +1,4 @@
+from app.common.enums import GroupType
 from django.core.exceptions import ObjectDoesNotExist
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status, viewsets
@@ -109,7 +110,7 @@ class UserViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["get"], url_path="me/group")
     def get_user_memberships(self, request, *args, **kwargs):
         memberships = request.user.memberships.all()
-        groups = [membership.group for membership in memberships]
+        groups = [membership.group for membership in memberships if membership.group.type in GroupType.public_groups()]
         serializer = DefaultGroupSerializer(
             groups, many=True, context={"request": request}
         )
