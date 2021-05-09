@@ -106,7 +106,7 @@ class UserViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-    @action(detail=False, methods=["get"], url_path="me/groups")
+    @action(detail=False, methods=["get"], url_path="me/group")
     def get_user_memberships(self, request, *args, **kwargs):
         memberships = request.user.memberships.all()
         groups = [membership.group for membership in memberships]
@@ -115,7 +115,7 @@ class UserViewSet(viewsets.ModelViewSet):
         )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @action(detail=False, methods=["get"], url_path="me/badges")
+    @action(detail=False, methods=["get"], url_path="me/badge")
     def get_user_badges(self, request, *args, **kwargs):
         user_badges = request.user.user_badges.order_by("-created_at")
         badges = [user_badge.badge for user_badge in user_badges]
