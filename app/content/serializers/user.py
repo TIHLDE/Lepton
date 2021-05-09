@@ -70,7 +70,6 @@ class UserListSerializer(UserSerializer):
             "user_study",
             "allergy",
             "tool",
-            "strikes",
         )
 
 
