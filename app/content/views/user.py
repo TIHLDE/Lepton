@@ -1,4 +1,3 @@
-from app.common.enums import GroupType
 from django.core.exceptions import ObjectDoesNotExist
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status, viewsets
@@ -7,6 +6,7 @@ from rest_framework.response import Response
 
 from sentry_sdk import capture_exception
 
+from app.common.enums import GroupType
 from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission, is_admin_user
 from app.content.filters import UserFilter
@@ -110,7 +110,11 @@ class UserViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["get"], url_path="me/group")
     def get_user_memberships(self, request, *args, **kwargs):
         memberships = request.user.memberships.all()
-        groups = [membership.group for membership in memberships if membership.group.type in GroupType.public_groups()]
+        groups = [
+            membership.group
+            for membership in memberships
+            if membership.group.type in GroupType.public_groups()
+        ]
         serializer = DefaultGroupSerializer(
             groups, many=True, context={"request": request}
         )
