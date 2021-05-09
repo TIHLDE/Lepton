@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from app.common.enums import GroupType
 from app.common.permissions import BasicViewPermission, is_admin_user
 from app.group.models import Group
-from app.group.serializers import GroupSerializer
+from app.group.serializers import DefaultGroupSerializer, GroupSerializer
 
 
 class GroupViewSet(viewsets.ModelViewSet):
@@ -24,7 +24,7 @@ class GroupViewSet(viewsets.ModelViewSet):
         """Returns a spesific group by slug"""
         try:
             group = self.get_object()
-            serializer = GroupSerializer(
+            serializer = DefaultGroupSerializer(
                 group, context={"request": request}, many=False
             )
             return Response(data=serializer.data, status=status.HTTP_200_OK)

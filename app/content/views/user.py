@@ -1,6 +1,7 @@
 from django.core.exceptions import ObjectDoesNotExist
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status, viewsets
+from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from sentry_sdk import capture_exception
@@ -10,12 +11,16 @@ from app.common.permissions import BasicViewPermission, is_admin_user
 from app.content.filters import UserFilter
 from app.content.models import User
 from app.content.serializers import (
+    BadgeSerializer,
+    EventListSerializer,
+    StrikeSerializer,
     UserAdminSerializer,
     UserCreateSerializer,
     UserListSerializer,
     UserMemberSerializer,
     UserSerializer,
 )
+from app.group.serializers import DefaultGroupSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -100,3 +105,40 @@ class UserViewSet(viewsets.ModelViewSet):
                 {"detail": "Kunne ikke finne brukeren"},
                 status=status.HTTP_404_NOT_FOUND,
             )
+
+    @action(detail=False, methods=["get"], url_path="me/groups")
+    def get_user_memberships(self, request, *args, **kwargs):
+        memberships = request.user.memberships.all()
+        groups = [membership.group for membership in memberships]
+        serializer = DefaultGroupSerializer(
+            groups, many=True, context={"request": request}
+        )
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=["get"], url_path="me/badges")
+    def get_user_badges(self, request, *args, **kwargs):
+        user_badges = request.user.user_badges.order_by("-created_at")
+        badges = [user_badge.badge for user_badge in user_badges]
+        page = self.paginate_queryset(badges)
+        serializer = BadgeSerializer(page, many=True)
+        return self.get_paginated_response(serializer.data)
+
+    @action(detail=False, methods=["get"], url_path="me/strikes")
+    def get_user_strikes(self, request, *args, **kwargs):
+        strikes = request.user.strikes.all()
+        active_strikes = [strike for strike in strikes if strike.active]
+        page = self.paginate_queryset(active_strikes)
+        serializer = StrikeSerializer(page, many=True)
+        return self.get_paginated_response(serializer.data)
+
+    @action(detail=False, methods=["get"], url_path="me/events")
+    def get_user_events(self, request, *args, **kwargs):
+        registrations = request.user.registrations.all()
+        events = [
+            registration.event
+            for registration in registrations
+            if not registration.event.expired
+        ]
+        page = self.paginate_queryset(events)
+        serializer = EventListSerializer(page, many=True)
+        return self.get_paginated_response(serializer.data)
