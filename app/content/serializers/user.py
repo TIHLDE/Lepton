@@ -46,7 +46,6 @@ class UserSerializer(serializers.ModelSerializer):
             "app_token",
             "unread_notifications",
             "permissions",
-            "strikes",
         )
         read_only_fields = ("user_id",)
         write_only_fields = ("app_token",)
