@@ -19,12 +19,17 @@ class GroupViewSet(viewsets.ModelViewSet):
         if is_admin_user(self.request):
             return self.queryset
         return self.queryset.filter(type__in=GroupType.public_groups())
+    
+    def get_serializer_class(self):
+        if hasattr(self, "action") and self.action == "list":
+            return DefaultGroupSerializer
+        return super().get_serializer_class()
 
     def retrieve(self, request, slug):
         """Returns a spesific group by slug"""
         try:
             group = self.get_object()
-            serializer = DefaultGroupSerializer(
+            serializer = GroupSerializer(
                 group, context={"request": request}, many=False
             )
             return Response(data=serializer.data, status=status.HTTP_200_OK)
