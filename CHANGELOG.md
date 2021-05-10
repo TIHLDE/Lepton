@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+## Versjon 1.0.10 (10.05.2021)
 - ⚡ **Bruker** Lagt til egne endpunkter for å hente ut relatert bruker data
 ## Versjon 1.0.9 (05.05.2021)
 - ⚡ **Pages** Implementert søk i pages siden
