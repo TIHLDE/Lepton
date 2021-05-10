@@ -10,41 +10,29 @@ from app.content.tasks.event import (
     event_end_schedular,
     event_sign_off_deadline_schedular,
 )
-from app.util.utils import datetime_format, disable_for_loaddata, midday
+from app.util.utils import disable_for_loaddata, midday
 
 logger = logging.getLogger(__name__)
 
 
 @disable_for_loaddata
 def send_event_reminders(sender, instance, created, **kwargs):
-    # if settings.ENVIRONMENT == EnvironmentOptions.PRODUCTION:
-    run_celery_tasks_for_event(instance)
+    if settings.ENVIRONMENT == EnvironmentOptions.PRODUCTION:
+        run_celery_tasks_for_event(instance)
 
 
 def run_celery_tasks_for_event(event):
     try:
-        print("run celery tasks")
         app.control.revoke(event.end_date_schedular_id, terminate=True)
         app.control.revoke(event.sign_off_deadline_schedular_id, terminate=True)
         if should_send_incoming_end_date_reminder(event):
             event.end_date_schedular_id = event_end_schedular.apply_async(
                 eta=(midday(event.end_date + timedelta(days=1))),
-                kwargs={
-                    "pk": event.pk,
-                    "title": event.title,
-                    "start_date": datetime_format(event.start_date),
-                    "evaluate_link": event.evaluate_link,
-                },
             )
         if should_send_incoming_sign_off_deadline_reminder(event):
-            print("run should_send_incoming_sign_off_deadline_reminder")
-            print(datetime.now())
-            print(datetime.now() + timedelta(seconds=15) - timedelta(hours=2))
             event.sign_off_deadline_schedular_id = event_sign_off_deadline_schedular.apply_async(
-                eta=(datetime.now() + timedelta(seconds=15) - timedelta(hours=2)),
-                kwargs={"pk": event.pk, "title": event.title},
+                eta=(midday(event.sign_off_deadline - timedelta(days=1))),
             )
-            print(event.sign_off_deadline_schedular_id)
         event.save()
     except Exception as e:
         logging.info(e)

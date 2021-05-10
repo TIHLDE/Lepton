@@ -7,16 +7,14 @@ from app.content.models.notification import Notification
 from app.content.models.registration import Registration
 from app.content.models.strike import create_strike
 from app.util.mailer import send_html_email
+from app.util.utils import datetime_format
 
 
 @shared_task
 def event_sign_off_deadline_schedular():
     from app.content.models import Event
-    # request_id = event_sign_off_deadline_schedular.request.id
     try:
       event = Event.objects.get(sign_off_deadline_schedular_id=event_sign_off_deadline_schedular.request.id)
-      # if event.sign_off_deadline_schedular_id == request_id:
-      print(event)
       for registration in Registration.objects.filter(event__pk=event.id, is_on_wait=False):
           send_html_email(
               "Påminnelse om avmeldingsfrist for " + event.title,
@@ -38,23 +36,28 @@ def event_sign_off_deadline_schedular():
 
 
 @shared_task
-def event_end_schedular(pk, title, start_date, evaluate_link):
-    for registration in Registration.objects.filter(event__pk=pk, has_attended=False):
-        create_strike("NO_SHOW", registration.user, registration.event)
-    for registration in Registration.objects.filter(event__pk=pk, has_attended=True):
-        send_html_email(
-            "Evaluering av " + title,
-            render_to_string(
-                "event_evaluation.html",
-                context={
-                    "user_name": registration.user.first_name,
-                    "event_name": title,
-                    "event_date": start_date,
-                    "event_evaluate_link": evaluate_link,
-                },
-            ),
-            registration.user.email,
-        )
+def event_end_schedular():
+    from app.content.models import Event
+    try:
+        event = Event.objects.get(end_date_schedular_id=event_end_schedular.request.id)
+        for registration in Registration.objects.filter(event__pk=event.id, has_attended=False):
+            create_strike("NO_SHOW", registration.user, registration.event)
+        for registration in Registration.objects.filter(event__pk=event.id, has_attended=True):
+            send_html_email(
+                "Evaluering av " + event.title,
+                render_to_string(
+                    "event_evaluation.html",
+                    context={
+                        "user_name": registration.user.first_name,
+                        "event_name": event.title,
+                        "event_date": datetime_format(event.start_date),
+                        "event_evaluate_link": event.evaluate_link,
+                    },
+                ),
+                registration.user.email,
+            )
+    except Event.DoesNotExist as event_not_exist:
+        capture_exception(event_not_exist)
 
 
 # TODO: Check if registration has answered the eval form.
