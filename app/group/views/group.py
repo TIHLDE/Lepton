@@ -19,7 +19,7 @@ class GroupViewSet(viewsets.ModelViewSet):
         if is_admin_user(self.request):
             return self.queryset
         return self.queryset.filter(type__in=GroupType.public_groups())
-    
+
     def get_serializer_class(self):
         if hasattr(self, "action") and self.action == "list":
             return DefaultGroupSerializer
