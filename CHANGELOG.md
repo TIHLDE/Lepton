@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+- ⚡ **Bruker** Lagt til egne endpunkter for å hente ut relatert bruker data
 ## Versjon 1.0.9 (05.05.2021)
 - ⚡ **Pages** Implementert søk i pages siden
 - ⚡ **Medlemskap**.Lagt til pagination på listing av medlemskap, og filtrering for å hente ut list med bare medlemmer.

@@ -8,9 +8,25 @@ from app.group.models import Group, Membership
 
 
 class DefaultGroupSerializer(serializers.ModelSerializer):
+    leader = serializers.SerializerMethodField()
+
     class Meta:
         model = Group
-        fields = ("name", "slug")
+        fields = ("name", "slug", "leader", "type")
+
+    def get_leader(self, obj):
+        try:
+            leader = obj.memberships.get(
+                group__slug=obj.slug, membership_type=MembershipType.LEADER
+            )
+            return {
+                "user_id": leader.user.user_id,
+                "first_name": leader.user.first_name,
+                "last_name": leader.user.last_name,
+                "image": leader.user.image,
+            }
+        except Membership.DoesNotExist:
+            return None
 
 
 class GroupSerializer(BaseModelSerializer):

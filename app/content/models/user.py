@@ -114,9 +114,11 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
 
     @classmethod
     def has_retrieve_permission(cls, request):
-        return request.id == request._user.user_id or check_has_access(
-            cls.has_access, request,
-        )
+        if request.user:
+            return request.id == request._user.user_id or check_has_access(
+                cls.has_access, request,
+            )
+        return check_has_access(cls.has_access, request,)
 
     @classmethod
     def has_list_permission(cls, request):
