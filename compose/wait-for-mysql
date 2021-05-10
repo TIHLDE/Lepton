@@ -1,0 +1,28 @@
+#!/bin/bash
+
+set -o errexit
+set -o pipefail
+set -o nounset
+
+mysql_ready() {
+python << END
+import sys
+
+import MySQLdb
+
+try:
+    db=MySQLdb.connect(host="db",user="root",
+                  passwd="password",db="nettside-dev")
+except MySQLdb._exceptions.OperationalError:
+    sys.exit(-1)
+sys.exit(0)
+
+END
+}
+until mysql_ready; do
+  >&2 echo 'Waiting for MySQL to become available...'
+  sleep 1
+done
+>&2 echo 'MySQL is available'
+
+exec "$@"

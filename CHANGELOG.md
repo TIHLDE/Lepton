@@ -13,7 +13,10 @@
 ---
 
 ## Neste versjon
+## Versjon 1.0.10 (10.05.2021)
+- ⚡ **Bruker** Lagt til egne endpunkter for å hente ut relatert bruker data
 ## Versjon 1.0.9 (05.05.2021)
+- ⚡ **Pages** Implementert søk i pages siden
 - ⚡ **Medlemskap**.Lagt til pagination på listing av medlemskap, og filtrering for å hente ut list med bare medlemmer.
 - ⚡ **Varsler**. Nye brukere får epost om at bruker er blitt godkjent. Brukere som blir lagt til i en gruppe får varsel.
 - 🦟 **Tilganger**. Fikset bug der HS ikke hadde tilgang til å aktivere nye brukere.

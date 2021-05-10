@@ -534,8 +534,8 @@ def test_delete_another_registration_as_member(member, user):
 @pytest.mark.django_db
 def test_delete_as_member_when_sign_off_deadline_has_passed_and_not_on_wait(member):
     """
-    A member should not be able to delete their registration
-    when the events sign off deadline has passed and is not on wait.
+    A member should be able to delete their registration
+    when the events sign off deadline has passed and is not on wait within one hour.
     """
     event = EventFactory(sign_off_deadline=today() - timedelta(days=1), limit=10)
     registration = RegistrationFactory(user=member, event=event, is_on_wait=False)
@@ -544,7 +544,7 @@ def test_delete_as_member_when_sign_off_deadline_has_passed_and_not_on_wait(memb
     url = _get_registration_detail_url(registration)
     response = client.delete(url)
 
-    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db

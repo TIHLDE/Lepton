@@ -25,11 +25,15 @@ services:
       MYSQL_ROOT_PASSWORD: password
 
   web: &web
+    build:
+      context: .
+      dockerfile: compose/Dockerfile
     env_file:
-      - .env
-    build: .
+      - ./.envs/.local
     image: web
     container_name: web
+    restart: on-failure
+    entrypoint: /wait-for-mysql
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - .:/usr/src/
@@ -42,5 +46,6 @@ services:
     <<: *web
     image: celery
     container_name: celery
+    entrypoint: []
     command: celery -A app worker -l info --without-heartbeat --without-gossip --without-mingle
     ports: []

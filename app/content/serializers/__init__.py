@@ -13,7 +13,11 @@ from app.content.serializers.notification import (
     NotificationSerializer,
     UpdateNotificationSerializer,
 )
-from app.content.serializers.page import PageSerializer, PageTreeSerializer
+from app.content.serializers.page import (
+    PageSerializer,
+    PageTreeSerializer,
+    PageListSerializer,
+)
 from app.content.serializers.priority import PrioritySerializer
 from app.content.serializers.registration import RegistrationSerializer
 from app.content.serializers.user import (
