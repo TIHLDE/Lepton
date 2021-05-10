@@ -13,24 +13,30 @@ from app.util.utils import datetime_format
 @shared_task
 def event_sign_off_deadline_schedular():
     from app.content.models import Event
+
     try:
-      event = Event.objects.get(sign_off_deadline_schedular_id=event_sign_off_deadline_schedular.request.id)
-      for registration in Registration.objects.filter(event__pk=event.id, is_on_wait=False):
-          send_html_email(
-              "Påminnelse om avmeldingsfrist for " + event.title,
-              render_to_string(
-                  "sign_off_deadline.html",
-                  context={
-                      "user_name": registration.user.first_name,
-                      "event_name": event.title,
-                      "event_id": event.id,
-                  },
-              ),
-              registration.user.email,
-          )
-          Notification.objects.create(
-              user=registration.user, message="Påminnelse om avmeldingsfrist for " + event.title
-          )
+        event = Event.objects.get(
+            sign_off_deadline_schedular_id=event_sign_off_deadline_schedular.request.id
+        )
+        for registration in Registration.objects.filter(
+            event__pk=event.id, is_on_wait=False
+        ):
+            send_html_email(
+                "Påminnelse om avmeldingsfrist for " + event.title,
+                render_to_string(
+                    "sign_off_deadline.html",
+                    context={
+                        "user_name": registration.user.first_name,
+                        "event_name": event.title,
+                        "event_id": event.id,
+                    },
+                ),
+                registration.user.email,
+            )
+            Notification.objects.create(
+                user=registration.user,
+                message="Påminnelse om avmeldingsfrist for " + event.title,
+            )
     except Event.DoesNotExist as event_not_exist:
         capture_exception(event_not_exist)
 
@@ -38,11 +44,16 @@ def event_sign_off_deadline_schedular():
 @shared_task
 def event_end_schedular():
     from app.content.models import Event
+
     try:
         event = Event.objects.get(end_date_schedular_id=event_end_schedular.request.id)
-        for registration in Registration.objects.filter(event__pk=event.id, has_attended=False):
+        for registration in Registration.objects.filter(
+            event__pk=event.id, has_attended=False
+        ):
             create_strike("NO_SHOW", registration.user, registration.event)
-        for registration in Registration.objects.filter(event__pk=event.id, has_attended=True):
+        for registration in Registration.objects.filter(
+            event__pk=event.id, has_attended=True
+        ):
             send_html_email(
                 "Evaluering av " + event.title,
                 render_to_string(
