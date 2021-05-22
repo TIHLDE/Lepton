@@ -4,7 +4,7 @@ aiohttp-cors
 wheel
 mysqlclient == 2.0.3
 sentry-sdk
-celery ~= 4.4
+celery == 5.0.5
 azure-storage-blob == 12.8.0
 python-dotenv ~= 0.17
 
