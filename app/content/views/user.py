@@ -1,4 +1,5 @@
 from django.core.exceptions import ObjectDoesNotExist
+from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action
@@ -71,18 +72,16 @@ class UserViewSet(viewsets.ModelViewSet):
     def update(self, request, pk, *args, **kwargs):
         """ Updates fields passed in request """
         try:
-            self.check_object_permissions(self.request, User.objects.get(user_id=pk))
+            user = get_object_or_404(User, user_id=pk)
+            self.check_object_permissions(self.request, user)
             if is_admin_user(request):
                 serializer = UserAdminSerializer(
-                    User.objects.get(user_id=pk),
-                    context={"request": request},
-                    many=False,
-                    data=request.data,
+                    user, context={"request": request}, many=False, data=request.data,
                 )
             else:
                 if self.request.id == pk:
                     serializer = UserMemberSerializer(
-                        User.objects.get(user_id=pk),
+                        user,
                         context={"request": request},
                         many=False,
                         data=request.data,
@@ -94,6 +93,11 @@ class UserViewSet(viewsets.ModelViewSet):
                     )
             if serializer.is_valid():
                 serializer.save()
+                serializer = UserMemberSerializer(
+                    User.objects.get(user_id=pk),
+                    context={"request": request},
+                    many=False,
+                )
                 return Response(serializer.data, status=status.HTTP_200_OK)
             else:
                 return Response(
