@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+- ✨ **Brukere**. Admins kan nå slette nye "ventende" brukere og legge ved en begrunnelse.
 - 🦟 **Celery**. Fikset Celery tasks slik at man ikke kjører samme flere ganger lengre.
 - 🦟 **Bruker**. Når admin oppdaterer egen bruker så kommer nå samme data tilbake som for vanlige medlemmer.
 ## Versjon 1.0.10 (10.05.2021)

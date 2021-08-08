@@ -10,7 +10,12 @@ from sentry_sdk import capture_exception
 
 from app.common.enums import Groups, GroupType
 from app.common.pagination import BasePagination
-from app.common.permissions import BasicViewPermission, IsDev, IsHS, is_admin_user
+from app.common.permissions import (
+    BasicViewPermission,
+    IsDev,
+    IsHS,
+    is_admin_user,
+)
 from app.content.filters import UserFilter
 from app.content.models import User
 from app.content.serializers import (
@@ -155,7 +160,12 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer = EventListSerializer(page, many=True)
         return self.get_paginated_response(serializer.data)
 
-    @action(detail=False, methods=["post"], url_path="activate", permission_classes=(IsHS | IsDev,))
+    @action(
+        detail=False,
+        methods=["post"],
+        url_path="activate",
+        permission_classes=(IsHS | IsDev,),
+    )
     def makeTIHLDEMember(self, request, *args, **kwargs):
         TIHLDE = Group.objects.get(slug=Groups.TIHLDE)
         user_id = request.data["user_id"]
@@ -169,16 +179,23 @@ class UserViewSet(viewsets.ModelViewSet):
             user.email,
         )
         return Response(
-            {"detail": "Brukeren ble lagt til som TIHLDE-medlem og har blitt informert på epost"},
+            {
+                "detail": "Brukeren ble lagt til som TIHLDE-medlem og har blitt informert på epost"
+            },
             status=status.HTTP_200_OK,
         )
 
-    @action(detail=False, methods=["post"], url_path="decline", permission_classes=(IsHS | IsDev,))
+    @action(
+        detail=False,
+        methods=["post"],
+        url_path="decline",
+        permission_classes=(IsHS | IsDev,),
+    )
     def declineTIHLDEMember(self, request, *args, **kwargs):
         user_id = request.data["user_id"]
         try:
             reason = request.data["reason"]
-            if reason is None or len(reason) is 0:
+            if reason is None or len(reason) == 0:
                 reason = "Begrunnelse er ikke oppgitt"
         except KeyError:
             reason = "Begrunnelse er ikke oppgitt"
@@ -186,7 +203,8 @@ class UserViewSet(viewsets.ModelViewSet):
         send_html_email(
             "Brukeren din er slettet",
             render_to_string(
-                "declined_member.html", context={"first_name": user.first_name, "reason": reason},
+                "declined_member.html",
+                context={"first_name": user.first_name, "reason": reason},
             ),
             user.email,
         )
