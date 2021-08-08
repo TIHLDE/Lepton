@@ -1,5 +1,6 @@
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
+from django.template.loader import render_to_string
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action
@@ -7,9 +8,9 @@ from rest_framework.response import Response
 
 from sentry_sdk import capture_exception
 
-from app.common.enums import GroupType
+from app.common.enums import Groups, GroupType
 from app.common.pagination import BasePagination
-from app.common.permissions import BasicViewPermission, is_admin_user
+from app.common.permissions import BasicViewPermission, IsDev, IsHS, is_admin_user
 from app.content.filters import UserFilter
 from app.content.models import User
 from app.content.serializers import (
@@ -22,7 +23,9 @@ from app.content.serializers import (
     UserMemberSerializer,
     UserSerializer,
 )
+from app.group.models import Group, Membership
 from app.group.serializers import DefaultGroupSerializer
+from app.util.mailer import send_html_email
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -151,3 +154,22 @@ class UserViewSet(viewsets.ModelViewSet):
         page = self.paginate_queryset(events)
         serializer = EventListSerializer(page, many=True)
         return self.get_paginated_response(serializer.data)
+
+    @action(detail=False, methods=["post"], url_path="activate", permission_classes=(IsHS | IsDev,))
+    def makeTIHLDEMember(self, request, *args, **kwargs):
+        print("New endpoint")
+        TIHLDE = Group.objects.get(slug=Groups.TIHLDE)
+        user_id = request.data["user_id"]
+        user = get_object_or_404(User, user_id=user_id)
+        Membership.objects.get_or_create(user=user, group=TIHLDE)
+        send_html_email(
+            "Brukeren din er godkjent",
+            render_to_string(
+                "activated_member.html", context={"user_name": user.first_name,},
+            ),
+            user.email,
+        )
+        return Response(
+            {"detail": "Brukeren ble lagt til som TIHLDE-medlem"},
+            status=status.HTTP_200_OK,
+        )
