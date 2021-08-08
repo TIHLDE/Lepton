@@ -157,7 +157,6 @@ class UserViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=["post"], url_path="activate", permission_classes=(IsHS | IsDev,))
     def makeTIHLDEMember(self, request, *args, **kwargs):
-        print("New endpoint")
         TIHLDE = Group.objects.get(slug=Groups.TIHLDE)
         user_id = request.data["user_id"]
         user = get_object_or_404(User, user_id=user_id)
@@ -165,11 +164,34 @@ class UserViewSet(viewsets.ModelViewSet):
         send_html_email(
             "Brukeren din er godkjent",
             render_to_string(
-                "activated_member.html", context={"user_name": user.first_name,},
+                "activated_member.html", context={"first_name": user.first_name,},
             ),
             user.email,
         )
         return Response(
-            {"detail": "Brukeren ble lagt til som TIHLDE-medlem"},
+            {"detail": "Brukeren ble lagt til som TIHLDE-medlem og har blitt informert på epost"},
+            status=status.HTTP_200_OK,
+        )
+
+    @action(detail=False, methods=["post"], url_path="decline", permission_classes=(IsHS | IsDev,))
+    def declineTIHLDEMember(self, request, *args, **kwargs):
+        user_id = request.data["user_id"]
+        try:
+            reason = request.data["reason"]
+            if reason is None or len(reason) is 0:
+                reason = "Begrunnelse er ikke oppgitt"
+        except KeyError:
+            reason = "Begrunnelse er ikke oppgitt"
+        user = get_object_or_404(User, user_id=user_id)
+        send_html_email(
+            "Brukeren din er slettet",
+            render_to_string(
+                "declined_member.html", context={"first_name": user.first_name, "reason": reason},
+            ),
+            user.email,
+        )
+        user.delete()
+        return Response(
+            {"detail": "Brukeren ble slettet og har blitt informert på epost"},
             status=status.HTTP_200_OK,
         )
