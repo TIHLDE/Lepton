@@ -201,7 +201,7 @@ class UserViewSet(viewsets.ModelViewSet):
             reason = "Begrunnelse er ikke oppgitt"
         user = get_object_or_404(User, user_id=user_id)
         send_html_email(
-            "Brukeren din er slettet",
+            "Brukeren din ble ikke godkjent",
             render_to_string(
                 "declined_member.html",
                 context={"first_name": user.first_name, "reason": reason},
@@ -210,6 +210,6 @@ class UserViewSet(viewsets.ModelViewSet):
         )
         user.delete()
         return Response(
-            {"detail": "Brukeren ble slettet og har blitt informert på epost"},
+            {"detail": "Brukeren ble avslått og har blitt informert på epost"},
             status=status.HTTP_200_OK,
         )

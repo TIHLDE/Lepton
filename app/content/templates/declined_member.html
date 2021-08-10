@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
 
-{% block title %}TIHLDE - Brukeren din er slettet{% endblock %}
+{% block title %}TIHLDE - Brukeren din ble ikke godkjent{% endblock %}
 
 {% block mail_content %}
 
-<h1 style="font-size: 1.6rem; margin: 0; color: white;">BRUKEREN DIN ER SLETTET</h1>
+<h1 style="font-size: 1.6rem; margin: 0; color: white;">BRUKEREN DIN BLE IKKE GODKJENT</h1>
 <p style="font-size: 1.1rem; color: white;">Hei {{first_name}}!</p>
-<p style="font-size: 1.1rem; color: white;">Vi har slettet brukeren din på TIHLDE.org fordi den ikke oppfylte kravene til å ha bruker.<br>Vedlagt begrunnelse: {{reason}}</p>
+<p style="font-size: 1.1rem; color: white;">Vi har avslått brukeren din på TIHLDE.org fordi den ikke oppfylte kravene til å ha bruker. Du kan lage en ny bruker der du har rettet feilen hvis du ønsker. <a style="color: white; text-decoration: underline;" href="mailto:hs@tihlde.org">Kontakt oss</a> hvis du er uenig i avgjørelsen.<br>Vedlagt begrunnelse: {{reason}}.</p>
 <a class="link" href="https://tihlde.org/?utm_medium=email" style="color: white; text-decoration: none;">
     <button class="button" style="color: black;">Til forsiden</button>
 </a>
