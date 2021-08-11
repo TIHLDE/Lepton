@@ -2,7 +2,7 @@ from django.conf.urls import include, url
 from django.urls import path
 from rest_framework import routers
 
-from .views import (
+from app.content.views import (
     CategoryViewSet,
     CheatsheetViewSet,
     EventViewSet,
@@ -17,7 +17,6 @@ from .views import (
     UserViewSet,
     WarningViewSet,
     accept_form,
-    makeTIHLDEMember,
     upload,
 )
 
@@ -47,6 +46,5 @@ router.register("strikes", StrikeViewSet, basename="strikes")
 urlpatterns = [
     url(r"", include(router.urls)),
     path("accept-form/", accept_form),
-    path("activate-user/", makeTIHLDEMember),
     path("upload/", upload),
 ]
