@@ -21,6 +21,7 @@ def send_event_reminders(sender, instance, created, **kwargs):
     if settings.ENVIRONMENT == EnvironmentOptions.PRODUCTION:
         run_celery_tasks_for_event(instance)
 
+
 def run_celery_tasks_for_event(event):
     try:
         end_date_reminder(event)
@@ -42,10 +43,11 @@ def end_date_reminder(event):
         try:
             app.control.revoke(event.end_date_schedular_id, terminate=True)
             new_task_id = event_end_schedular.apply_async(
-                kwargs={'eventId': event.id, 'eta': eta, 'type': 'end_date_reminder'},
+                kwargs={"eventId": event.id, "eta": eta, "type": "end_date_reminder"},
                 eta=(eta),
             )
             from app.content.models import Event
+
             Event.objects.filter(id=event.id).update(end_date_schedular_id=new_task_id)
         except Exception as e:
             capture_exception(e)
@@ -63,11 +65,18 @@ def sign_off_deadline_reminder(event):
         try:
             app.control.revoke(event.sign_off_deadline_schedular_id, terminate=True)
             new_task_id = event_sign_off_deadline_schedular.apply_async(
-                kwargs={'eventId': event.id, 'eta': eta, 'type': 'sign_off_deadline_reminder'},
+                kwargs={
+                    "eventId": event.id,
+                    "eta": eta,
+                    "type": "sign_off_deadline_reminder",
+                },
                 eta=(eta),
             )
             from app.content.models import Event
-            Event.objects.filter(id=event.id).update(sign_off_deadline_schedular_id=new_task_id)
+
+            Event.objects.filter(id=event.id).update(
+                sign_off_deadline_schedular_id=new_task_id
+            )
         except Exception as e:
             capture_exception(e)
 
