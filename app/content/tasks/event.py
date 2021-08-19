@@ -11,7 +11,7 @@ from app.util.utils import datetime_format
 
 
 @shared_task
-def event_sign_off_deadline_schedular():
+def event_sign_off_deadline_schedular(*args, **kwargs):
     from app.content.models import Event
 
     try:
@@ -42,7 +42,7 @@ def event_sign_off_deadline_schedular():
 
 
 @shared_task
-def event_end_schedular():
+def event_end_schedular(*args, **kwargs):
     from app.content.models import Event
 
     try:
