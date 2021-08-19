@@ -3,6 +3,8 @@ from datetime import timedelta
 
 from django.conf import settings
 
+from sentry_sdk import capture_exception
+
 from app.celery import app
 from app.common.enums import EnvironmentOptions
 from app.content.tasks.event import (
@@ -24,9 +26,9 @@ def run_celery_tasks_for_event(event):
     try:
         end_date_reminder(event)
         sign_off_deadline_reminder(event)
-        event.save()
     except Exception as e:
         logging.info(e)
+        capture_exception(e)
 
 
 def end_date_reminder(event):
@@ -38,8 +40,17 @@ def end_date_reminder(event):
         and not event.closed
         and isFuture(eta)
     ):
-        app.control.revoke(event.end_date_schedular_id, terminate=True)
-        event.end_date_schedular_id = event_end_schedular.apply_async(eta=(eta),)
+        try:
+            app.control.revoke(event.end_date_schedular_id, terminate=True)
+            new_task_id = event_end_schedular.apply_async(
+                kwargs={"eventId": event.id, "eta": eta, "type": "end_date_reminder"},
+                eta=(eta),
+            )
+            from app.content.models import Event
+
+            Event.objects.filter(id=event.id).update(end_date_schedular_id=new_task_id)
+        except Exception as e:
+            capture_exception(e)
 
 
 def sign_off_deadline_reminder(event):
@@ -51,10 +62,23 @@ def sign_off_deadline_reminder(event):
         and not event.closed
         and isFuture(eta)
     ):
-        app.control.revoke(event.sign_off_deadline_schedular_id, terminate=True)
-        event.sign_off_deadline_schedular_id = event_sign_off_deadline_schedular.apply_async(
-            eta=(eta),
-        )
+        try:
+            app.control.revoke(event.sign_off_deadline_schedular_id, terminate=True)
+            new_task_id = event_sign_off_deadline_schedular.apply_async(
+                kwargs={
+                    "eventId": event.id,
+                    "eta": eta,
+                    "type": "sign_off_deadline_reminder",
+                },
+                eta=(eta),
+            )
+            from app.content.models import Event
+
+            Event.objects.filter(id=event.id).update(
+                sign_off_deadline_schedular_id=new_task_id
+            )
+        except Exception as e:
+            capture_exception(e)
 
 
 def isFuture(eta):
