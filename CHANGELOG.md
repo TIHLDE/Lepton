@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+## Versjon 1.0.12 (22.08.2021)
 - 🦟 **Celery**. Fikset problem der oppdatering av arrangement førte til evig rekursjon.
 ## Versjon 1.0.11 (11.08.2021)
 - ✨ **Brukere**. Admins kan nå slette nye "ventende" brukere og legge ved en begrunnelse.
