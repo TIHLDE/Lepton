@@ -31,7 +31,7 @@ def event_sign_off_deadline_schedular(*args, **kwargs):
                         "event_id": event.id,
                     },
                 )
-            ).send_notification()
+            ).send_notification(link=event.website_url)
     except Event.DoesNotExist as event_not_exist:
         capture_exception(event_not_exist)
 

@@ -61,6 +61,10 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
 
     def __str__(self):
         return f"{self.title} - starting {self.start_date} at {self.location}"
+    
+    @property
+    def website_url(self):
+        return f"/arrangementer/{self.id}/"
 
     @property
     def expired(self):

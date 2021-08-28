@@ -36,12 +36,13 @@ class Notify:
 
         return self
 
-    def send_notification(self, message=None):
+    def send_notification(self, message=None, link=None):
         """
         message: str -> Message in notification, defaults to given title
+        link: str -> Link in notification, optional
         """
         if message is None:
             message = self.title
-        Notification(user=self.user, message=message).save()
+        Notification(user=self.user, message=message, link=link).save()
 
         return self

@@ -6,10 +6,11 @@ from app.util.models import BaseModel
 class Notification(BaseModel):
     user = models.ForeignKey("content.User", on_delete=models.CASCADE)
     message = models.CharField(max_length=150)
+    link = models.CharField(max_length=150, blank=True, null=True)
     read = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"Notification for {self.user}"
+        return f"Notification for {self.user}, message: {self.message}"
 
     @classmethod
     def has_read_permission(cls, request):
@@ -34,5 +35,5 @@ class Notification(BaseModel):
         return False
 
 
-def create_notification(user, message):
-    return Notification.objects.create(user=user, message=message)
+def create_notification(user, message, link=None):
+    return Notification.objects.create(user=user, message=message, link=None)

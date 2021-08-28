@@ -136,7 +136,7 @@ class Registration(BaseModel):
                         "event_id": self.event.pk,
                     },
                 )
-            ).send_notification(f"Du har fått plass på {self.event.title}")
+            ).send_notification(f"Du har fått plass på {self.event.title}", self.event.website_url)
         elif self.is_on_wait and has_not_attended:
             Notify(self.user, f"Venteliste for {self.event.title}").send_email(
                 render_to_string(
@@ -149,7 +149,8 @@ class Registration(BaseModel):
                     },
                 )
             ).send_notification(
-                f"På grunn av høy pågang er du satt på venteliste på {self.event.title}"
+                f"På grunn av høy pågang er du satt på venteliste på {self.event.title}",
+                self.event.website_url
             )
 
     def should_swap_with_non_prioritized_user(self):

@@ -27,3 +27,7 @@ class JobPost(BaseModel, OptionalImage, BasePermissionModel):
 
     def __str__(self):
         return f"JobPost: {self.company}  - {self.title}"
+    
+    @property
+    def website_url(self):
+        return f"/karriere/{self.id}/"

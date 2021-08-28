@@ -79,7 +79,7 @@ def create_strike(enum, user, event=None, creator=None):
 
 StrikeDescription = {
     "PAST_DEADLINE": [
-        "Du har fått prikk fordi meldt deg av etter avmeldingsfristen",
+        "Du har fått prikk fordi du meldte deg av etter avmeldingsfristen",
         1,
     ],
     "NO_SHOW": ["Du har fått prikk fordi du ikke møtte på et arrangement", 2],
