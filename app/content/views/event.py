@@ -134,7 +134,7 @@ class EventViewSet(viewsets.ModelViewSet):
                             "event_id": event.pk,
                         },
                     )
-                ).send_notification(f"{title} - {message}", event.website_url)
+                ).send_notification(link=event.website_url)
 
             return Response(
                 {
