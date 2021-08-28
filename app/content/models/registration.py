@@ -2,14 +2,15 @@ from datetime import timedelta
 
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.template.loader import render_to_string
 
 from app.common.enums import AdminGroup, Groups, StrikeEnum
 from app.common.permissions import check_has_access
 from app.content.exceptions import EventSignOffDeadlineHasPassed, StrikeError
 from app.content.models.strike import create_strike
 from app.util import EnumUtils, today
-from app.util.mailer import send_event_verification, send_event_waitlist
 from app.util.models import BaseModel
+from app.util.notifier import Notify
 
 
 class Registration(BaseModel):
@@ -123,9 +124,33 @@ class Registration(BaseModel):
     def send_notification_and_mail(self):
         has_not_attended = not self.has_attended
         if not self.is_on_wait and has_not_attended:
-            send_event_verification(self)
+            Notify(self.user, f"Plassbekreftelse for {self.event.title}").send_email(
+                render_to_string(
+                    "signed_up.html",
+                    context={
+                        "user_name": self.user.first_name,
+                        "event_name": self.event.title,
+                        "event_time": self.event.start_date,
+                        "event_place": self.event.location,
+                        "event_deadline": self.event.sign_off_deadline,
+                        "event_id": self.event.pk,
+                    },
+                )
+            ).send_notification(f"Du har fått plass på {self.event.title}")
         elif self.is_on_wait and has_not_attended:
-            send_event_waitlist(self)
+            Notify(self.user, f"Venteliste for {self.event.title}").send_email(
+                render_to_string(
+                    "waitlist.html",
+                    context={
+                        "user_name": self.user.first_name,
+                        "event_name": self.event.title,
+                        "event_deadline": self.event.sign_off_deadline,
+                        "event_id": self.event.pk,
+                    },
+                )
+            ).send_notification(
+                f"På grunn av høy pågang er du satt på venteliste på {self.event.title}"
+            )
 
     def should_swap_with_non_prioritized_user(self):
         return (

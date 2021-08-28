@@ -30,7 +30,7 @@ from app.content.serializers import (
 )
 from app.group.models import Group, Membership
 from app.group.serializers import DefaultGroupSerializer
-from app.util.mailer import send_html_email
+from app.util.notifier import Notify
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -171,12 +171,10 @@ class UserViewSet(viewsets.ModelViewSet):
         user_id = request.data["user_id"]
         user = get_object_or_404(User, user_id=user_id)
         Membership.objects.get_or_create(user=user, group=TIHLDE)
-        send_html_email(
-            "Brukeren din er godkjent",
+        Notify(user, "Brukeren din er godkjent").send_email(
             render_to_string(
                 "activated_member.html", context={"first_name": user.first_name,},
-            ),
-            user.email,
+            )
         )
         return Response(
             {
@@ -200,13 +198,11 @@ class UserViewSet(viewsets.ModelViewSet):
         except KeyError:
             reason = "Begrunnelse er ikke oppgitt"
         user = get_object_or_404(User, user_id=user_id)
-        send_html_email(
-            "Brukeren din ble ikke godkjent",
+        Notify(user, "Brukeren din ble ikke godkjent").send_email(
             render_to_string(
                 "declined_member.html",
                 context={"first_name": user.first_name, "reason": reason},
-            ),
-            user.email,
+            )
         )
         user.delete()
         return Response(
