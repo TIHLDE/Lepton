@@ -1,5 +1,7 @@
+from django.template.loader import render_to_string
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status, viewsets
+from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from sentry_sdk import capture_exception
@@ -14,6 +16,7 @@ from app.content.serializers import (
     EventListSerializer,
     EventSerializer,
 )
+from app.util.notifier import Notify
 from app.util.utils import yesterday
 
 
@@ -108,3 +111,40 @@ class EventViewSet(viewsets.ModelViewSet):
         return Response(
             {"detail": ("Arrangementet ble slettet")}, status=status.HTTP_200_OK
         )
+
+    @action(
+        detail=True, methods=["post"], url_path="notify",
+    )
+    def notifyRegisteredUsers(self, request, *args, **kwargs):
+        try:
+            title = request.data["title"]
+            message = request.data["message"]
+            event = self.get_object()
+            self.check_object_permissions(self.request, event)
+
+            for registration in event.get_queue():
+                Notify(registration.user, title).send_email(
+                    render_to_string(
+                        "event_message.html",
+                        context={
+                            "first_name": registration.user.first_name,
+                            "event_name": event.title,
+                            "title": title,
+                            "message": message,
+                            "event_id": event.pk,
+                        },
+                    )
+                ).send_notification(f"{title} - {message}", event.website_url)
+
+            return Response(
+                {
+                    "detail": "Meldingen ble sendt ut til alle som er påmeldt og har plass på arrangementet"
+                },
+                status=status.HTTP_200_OK,
+            )
+
+        except Event.DoesNotExist as event_not_exist:
+            capture_exception(event_not_exist)
+            return Response(
+                {"detail": "Fant ikke arrangementet"}, status=status.HTTP_404_NOT_FOUND
+            )
