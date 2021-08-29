@@ -2,15 +2,16 @@ from datetime import timedelta
 
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.template.loader import render_to_string
 
 from app.common.enums import AdminGroup, Groups, StrikeEnum
 from app.common.permissions import check_has_access
 from app.content.exceptions import EventSignOffDeadlineHasPassed, StrikeError
 from app.content.models.strike import create_strike
 from app.util import EnumUtils, today
+from app.util.mail_creator import MailCreator
 from app.util.models import BaseModel
 from app.util.notifier import Notify
+from app.util.utils import datetime_format
 
 
 class Registration(BaseModel):
@@ -123,33 +124,38 @@ class Registration(BaseModel):
 
     def send_notification_and_mail(self):
         has_not_attended = not self.has_attended
+        print(datetime_format(self.event.start_date))
         if not self.is_on_wait and has_not_attended:
             Notify(self.user, f"Plassbekreftelse for {self.event.title}").send_email(
-                render_to_string(
-                    "registered.html",
-                    context={
-                        "user_name": self.user.first_name,
-                        "event_name": self.event.title,
-                        "event_time": self.event.start_date,
-                        "event_place": self.event.location,
-                        "event_deadline": self.event.sign_off_deadline,
-                        "event_id": self.event.pk,
-                    },
+                MailCreator("Du er påmeldt")
+                .add_paragraph(f"Hei {self.user.first_name}!")
+                .add_paragraph(f"Du er påmeldt {self.event.title}!")
+                .add_paragraph(
+                    f"Arrangementet starter {datetime_format(self.event.start_date)} og vil være på {self.event.location}."
                 )
+                .add_paragraph(
+                    f"Du kan melde deg av innen {datetime_format(self.event.sign_off_deadline)}."
+                )
+                .add_event_button(self.event.pk)
+                .generate_string()
             ).send_notification(
                 f"Du har fått plass på {self.event.title}", self.event.website_url
             )
         elif self.is_on_wait and has_not_attended:
             Notify(self.user, f"Venteliste for {self.event.title}").send_email(
-                render_to_string(
-                    "waitlist.html",
-                    context={
-                        "user_name": self.user.first_name,
-                        "event_name": self.event.title,
-                        "event_deadline": self.event.sign_off_deadline,
-                        "event_id": self.event.pk,
-                    },
+                MailCreator("Du er på ventelisten")
+                .add_paragraph(f"Hei {self.user.first_name}!")
+                .add_paragraph(
+                    f"På grunn av stor pågang har du blitt satt på venteliste for {self.event.title}."
                 )
+                .add_paragraph(
+                    "Dersom noen melder seg av vil du automatisk bli flyttet opp på listen. Du vil få beskjed dersom du får plass på arrangementet."
+                )
+                .add_paragraph(
+                    f"PS. De vanlige reglene for prikker gjelder også for venteliste, husk derfor å melde deg av arrangementet innen {datetime_format(self.event.sign_off_deadline)} dersom du ikke kan møte."
+                )
+                .add_event_button(self.event.pk)
+                .generate_string()
             ).send_notification(
                 f"På grunn av høy pågang er du satt på venteliste på {self.event.title}",
                 self.event.website_url,

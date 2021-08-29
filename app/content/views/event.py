@@ -1,4 +1,3 @@
-from django.template.loader import render_to_string
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action
@@ -16,6 +15,7 @@ from app.content.serializers import (
     EventListSerializer,
     EventSerializer,
 )
+from app.util.mail_creator import MailCreator
 from app.util.notifier import Notify
 from app.util.utils import yesterday
 
@@ -124,16 +124,14 @@ class EventViewSet(viewsets.ModelViewSet):
 
             for registration in event.get_queue():
                 Notify(registration.user, title).send_email(
-                    render_to_string(
-                        "event_message.html",
-                        context={
-                            "first_name": registration.user.first_name,
-                            "event_name": event.title,
-                            "title": title,
-                            "message": message,
-                            "event_id": event.pk,
-                        },
+                    MailCreator(title)
+                    .add_paragraph(f"Hei {registration.user.first_name}")
+                    .add_paragraph(
+                        f"Arrangøren av {event.title} har en melding til deg:"
                     )
+                    .add_paragraph(message)
+                    .add_event_button(event.pk)
+                    .generate_string()
                 ).send_notification(link=event.website_url)
 
             return Response(

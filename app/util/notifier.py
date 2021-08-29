@@ -24,15 +24,8 @@ class Notify:
         """
         if subject is None:
             subject = self.title
-        try:
-            text_content = strip_tags(html)
-            msg = EmailMultiAlternatives(
-                subject, text_content, os.environ.get("EMAIL_USER"), [self.user.email]
-            )
-            msg.attach_alternative(html, "text/html")
-            msg.send()
-        except Exception as send_html_email_fail:
-            capture_exception(send_html_email_fail)
+
+        send_html_email(self.user.email, html, subject)
 
         return self
 
@@ -46,3 +39,22 @@ class Notify:
         Notification(user=self.user, message=message, link=link).save()
 
         return self
+
+
+def send_html_email(to_mail, html, subject):
+    """
+        to_mail: str -> Email-address of receiver\n
+        html: str -> The email HTML to be sent to the user\n
+        subject: str -> Subject of email
+        """
+    try:
+        text_content = strip_tags(html)
+        msg = EmailMultiAlternatives(
+            subject, text_content, os.environ.get("EMAIL_USER"), [to_mail]
+        )
+        msg.attach_alternative(html, "text/html")
+        msg.send()
+        return True
+    except Exception as send_html_email_fail:
+        capture_exception(send_html_email_fail)
+        return False
