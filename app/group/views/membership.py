@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from app.common.enums import MembershipType
 from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission, IsLeader, is_admin_user
-from app.content.models import Notification, User
+from app.content.models import User
 from app.group.filters.membership import MembershipFilter
 from app.group.models import Group, Membership
 from app.group.serializers import MembershipSerializer
@@ -15,6 +15,8 @@ from app.group.serializers.membership import (
     MembershipLeaderSerializer,
     UpdateMembershipSerializer,
 )
+from app.util.mail_creator import MailCreator
+from app.util.notifier import Notify
 
 
 class MembershipViewSet(viewsets.ModelViewSet):
@@ -48,9 +50,16 @@ class MembershipViewSet(viewsets.ModelViewSet):
                 str(request.data.get("membership_type")).lower()
                 == str(MembershipType.LEADER).lower()
             ):
-                Notification.objects.create(
-                    user=membership.user,
-                    message=f"Du har blitt gjort til leder i gruppen {membership.group.name}",
+                title = f"Du er nå leder i gruppen {membership.group.name}"
+                description = f"Du har blitt gjort til leder i gruppen {membership.group.name}. Gratulerer så mye og lykke til!"
+                Notify(membership.user, title).send_email(
+                    MailCreator(title)
+                    .add_paragraph(f"Hei {self.user.first_name}!")
+                    .add_paragraph(description)
+                    .add_button("Se gruppen", f"/grupper/{membership.group.slug}/")
+                    .generate_string()
+                ).send_notification(
+                    description=description, link=f"/grupper/{membership.group.slug}/",
                 )
             return super().update(request, *args, **kwargs)
         except Membership.DoesNotExist:
@@ -66,9 +75,16 @@ class MembershipViewSet(viewsets.ModelViewSet):
             membership = Membership.objects.create(user=user, group=group)
             serializer = MembershipSerializer(membership, data=request.data)
             serializer.is_valid(raise_exception=True)
-            Notification.objects.create(
-                user=user,
-                message=f"Du har blitt lagt til som medlem i gruppen {group.name}",
+            title = f"Du er nå med i gruppen {membership.group.name}"
+            description = f"Du har blitt lagt til som medlem i gruppen {membership.group.name}. Gratulerer så mye og lykke til!"
+            Notify(membership.user, title).send_email(
+                MailCreator(title)
+                .add_paragraph(f"Hei {self.user.first_name}!")
+                .add_paragraph(description)
+                .add_button("Se gruppen", f"/grupper/{membership.group.slug}/")
+                .generate_string()
+            ).send_notification(
+                description=description, link=f"/grupper/{membership.group.slug}/",
             )
             return Response(data=serializer.data, status=status.HTTP_200_OK)
         except Membership.DoesNotExist:
