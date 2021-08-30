@@ -63,6 +63,10 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
         return f"{self.title} - starting {self.start_date} at {self.location}"
 
     @property
+    def website_url(self):
+        return f"/arrangementer/{self.id}/"
+
+    @property
     def expired(self):
         return self.end_date <= yesterday()
 
