@@ -17,3 +17,7 @@ class News(BaseModel, OptionalImage, BasePermissionModel):
 
     def __str__(self):
         return f"{self.title} - {self.header} ({len(self.body)} characters)"
+
+    @property
+    def website_url(self):
+        return f"/nyheter/{self.id}/"
