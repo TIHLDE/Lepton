@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+## Versjon 1.0.12 (22.08.2021)
 - 🦟 **Celery**. Fikset problem der oppdatering av arrangement førte til evig rekursjon.
 - ✨ **Varsler**. Varsler kan nå inneholder linker til relevant innhold.
 - ✨ **Arrangement-melding**. Arrangører av arrangementer kan sende ut epost/varsel til de påmeldte deltagerne.
