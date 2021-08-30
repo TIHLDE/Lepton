@@ -15,6 +15,9 @@
 ## Neste versjon
 ## Versjon 1.0.12 (22.08.2021)
 - 🦟 **Celery**. Fikset problem der oppdatering av arrangement førte til evig rekursjon.
+- ✨ **Varsler**. Varsler kan nå inneholder linker til relevant innhold.
+- ✨ **Arrangement-melding**. Arrangører av arrangementer kan sende ut epost/varsel til de påmeldte deltagerne.
+- ⚡ **Bedrifter**. Finere epost fra bedrifter til mottager.
 ## Versjon 1.0.11 (11.08.2021)
 - ✨ **Brukere**. Admins kan nå slette nye "ventende" brukere og legge ved en begrunnelse.
 - 🦟 **Celery**. Fikset Celery tasks slik at man ikke kjører samme flere ganger lengre.

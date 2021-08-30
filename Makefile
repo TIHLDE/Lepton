@@ -55,7 +55,7 @@ test:
 	docker-compose run --rm web pytest ${args}
 
 cov:
-	docker-compose run web pytest --cov-config=.coveragerc --cov=app
+	docker-compose run --rm web pytest --cov-config=.coveragerc --cov=app
 
 format:
 	make black
@@ -67,13 +67,13 @@ check:
 	make flake8
 
 black:
-	docker-compose run web black app/ ${args} --exclude migrations
+	docker-compose run --rm web black app/ ${args} --exclude migrations
 
 isort:
-	docker-compose run web isort . ${args}
+	docker-compose run --rm web isort . ${args}
 
 flake8:
-	docker-compose run web flake8 app
+	docker-compose run --rm web flake8 app
 
 PR:
 	make format

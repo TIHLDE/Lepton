@@ -1,6 +1,5 @@
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
-from django.template.loader import render_to_string
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action
@@ -30,7 +29,8 @@ from app.content.serializers import (
 )
 from app.group.models import Group, Membership
 from app.group.serializers import DefaultGroupSerializer
-from app.util.mailer import send_html_email
+from app.util.mail_creator import MailCreator
+from app.util.notifier import Notify
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -171,12 +171,14 @@ class UserViewSet(viewsets.ModelViewSet):
         user_id = request.data["user_id"]
         user = get_object_or_404(User, user_id=user_id)
         Membership.objects.get_or_create(user=user, group=TIHLDE)
-        send_html_email(
-            "Brukeren din er godkjent",
-            render_to_string(
-                "activated_member.html", context={"first_name": user.first_name,},
-            ),
-            user.email,
+        Notify(user, "Brukeren din er godkjent").send_email(
+            MailCreator("Brukeren din er godkjent")
+            .add_paragraph(f"Hei {user.first_name}!")
+            .add_paragraph(
+                "Vi har godkjent brukeren din på TIHLDE.org! Du kan nå logge inn og ta i bruk siden."
+            )
+            .add_button("Logg inn", "https://tihlde.org/logg-inn/")
+            .generate_string()
         )
         return Response(
             {
@@ -200,13 +202,15 @@ class UserViewSet(viewsets.ModelViewSet):
         except KeyError:
             reason = "Begrunnelse er ikke oppgitt"
         user = get_object_or_404(User, user_id=user_id)
-        send_html_email(
-            "Brukeren din ble ikke godkjent",
-            render_to_string(
-                "declined_member.html",
-                context={"first_name": user.first_name, "reason": reason},
-            ),
-            user.email,
+        Notify(user, "Brukeren din ble ikke godkjent").send_email(
+            MailCreator("Brukeren din ble ikke godkjent")
+            .add_paragraph(f"Hei {user.first_name}!")
+            .add_paragraph(
+                "Vi har avslått brukeren din på TIHLDE.org fordi den ikke oppfylte kravene til å ha bruker. Du kan lage en ny bruker der du har rettet feilen hvis du ønsker. Kontakt oss hvis du er uenig i avgjørelsen."
+            )
+            .add_paragraph(f"Vedlagt begrunnelse: {reason}.")
+            .add_button("Til forsiden", "https://tihlde.org/")
+            .generate_string()
         )
         user.delete()
         return Response(
