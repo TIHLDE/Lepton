@@ -29,14 +29,19 @@ class Notify:
 
         return self
 
-    def send_notification(self, message=None, link=None):
+    def send_notification(self, title=None, description=None, link=None):
         """
-        message: str -> Message in notification, defaults to given title
+        title: str -> Title in notification, defaults to given title
+        description: str -> Description in notification, defaults to blank string
         link: str -> Link in notification, optional
         """
-        if message is None:
-            message = self.title
-        Notification(user=self.user, message=message, link=link).save()
+        if title is None:
+            title = self.title
+        if description is None:
+            description = ""
+        Notification(
+            user=self.user, title=title, description=description, link=link
+        ).save()
 
         return self
 

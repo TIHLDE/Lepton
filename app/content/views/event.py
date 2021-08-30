@@ -132,7 +132,10 @@ class EventViewSet(viewsets.ModelViewSet):
                     .add_paragraph(message)
                     .add_event_button(event.pk)
                     .generate_string()
-                ).send_notification(link=event.website_url)
+                ).send_notification(
+                    description=f"Arrangøren av {event.title} har en melding til deg: {message}",
+                    link=event.website_url,
+                )
 
             return Response(
                 {

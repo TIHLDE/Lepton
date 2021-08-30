@@ -19,18 +19,17 @@ def event_sign_off_deadline_schedular(*args, **kwargs):
         for registration in Registration.objects.filter(
             event__pk=event.id, is_on_wait=False
         ):
+            description = f"Dette er en påminnelse om at avmeldingsfristen for {event.title} er imorgen. Dersom du ikke kan møte ber vi deg om å melde deg av arrangementet slik at andre kan få plassen din. Dersom du ikke melder deg av innen fristen vil du få en prikk for å ikke møte opp."
             Notify(
                 registration.user, f"Påminnelse om avmeldingsfrist for {event.title}"
             ).send_email(
                 MailCreator("Påminnelse om avmeldingsfrist")
                 .add_paragraph(f"Hei {registration.user.first_name}!")
-                .add_paragraph(
-                    f"Dette er en påminnelse om at avmeldingsfristen for {event.title} er imorgen. Dersom du ikke kan møte ber vi deg om å melde deg av arrangementet slik at andre kan få plassen din. Dersom du ikke melder deg av innen fristen vil du få en prikk for å ikke møte opp."
-                )
+                .add_paragraph(description)
                 .add_event_button(event.id)
                 .generate_string()
             ).send_notification(
-                link=event.website_url
+                description=description, link=event.website_url
             )
     except Event.DoesNotExist as event_not_exist:
         capture_exception(event_not_exist)
