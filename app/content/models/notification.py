@@ -34,4 +34,3 @@ class Notification(BaseModel):
         if request.method == "PUT":
             return self.user == request.user
         return False
-
