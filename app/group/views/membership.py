@@ -54,7 +54,7 @@ class MembershipViewSet(viewsets.ModelViewSet):
                 description = f"Du har blitt gjort til leder i gruppen {membership.group.name}. Gratulerer så mye og lykke til!"
                 Notify(membership.user, title).send_email(
                     MailCreator(title)
-                    .add_paragraph(f"Hei {self.user.first_name}!")
+                    .add_paragraph(f"Hei {membership.user.first_name}!")
                     .add_paragraph(description)
                     .add_button("Se gruppen", f"/grupper/{membership.group.slug}/")
                     .generate_string()
@@ -79,7 +79,7 @@ class MembershipViewSet(viewsets.ModelViewSet):
             description = f"Du har blitt lagt til som medlem i gruppen {membership.group.name}. Gratulerer så mye og lykke til!"
             Notify(membership.user, title).send_email(
                 MailCreator(title)
-                .add_paragraph(f"Hei {self.user.first_name}!")
+                .add_paragraph(f"Hei {membership.user.first_name}!")
                 .add_paragraph(description)
                 .add_button("Se gruppen", f"/grupper/{membership.group.slug}/")
                 .generate_string()
