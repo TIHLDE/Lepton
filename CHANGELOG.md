@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+- ✨ **Svar på spørreskjemaer** Medlemmer kan nå svare på spørreskjemaer.
 ## Versjon 1.0.12 (22.08.2021)
 - 🦟 **Celery**. Fikset problem der oppdatering av arrangement førte til evig rekursjon.
 - ✨ **Varsler**. Varsler kan nå inneholder linker til relevant innhold.
@@ -55,7 +56,7 @@
 
 ## Versjon 1.0.4 (15.03.2021)
 - ✨ **Filopplastning**. Lagt til støtte for filopplastning til Azure gjennom eget endepunkt. Kun for medlemmer.
-- ✨ **Forms**. Admins kan opprette, redigere og slette forms. Forms kan brukes i blant annet arrangement-påmelding.
+- ✨ **Spørreskjemaer**. Admins kan opprette, redigere og slette spørreskjemaer. Disse kan brukes i blant annet arrangement-påmelding.
 
 ## Versjon 1.0.3 (09.03.2021)
 - ⚡ **Pagination i varsler**. Lagt til pagination i varsler, samt lagt til tester og fjernet admin's muligheter til å opprette/endre/slette andres varsler.
