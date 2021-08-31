@@ -20,6 +20,7 @@ def membership_leader():
 def group():
     return GroupFactory()
 
+
 @pytest.fixture()
 def hs():
     return GroupFactory(name=AdminGroup.HS, slug=AdminGroup.HS)
@@ -99,13 +100,14 @@ def test_on_swap_creates_hs_membership_with_no_leader(hs):
     membership.membership_type = MembershipType.LEADER
     membership.save()
     membership.refresh_from_db()
-    assert membership.membership_type == MembershipType.LEADER  
-    assert Membership.objects.get(user = membership.user, group=hs)
+    assert membership.membership_type == MembershipType.LEADER
+    assert Membership.objects.get(user=membership.user, group=hs)
+
 
 @pytest.mark.django_db
 def test_on_swap_creates_hs_membership_with_leader(hs):
     """
-    Tests that if you promote as user to leader of a subgroup, 
+    Tests that if you promote as user to leader of a subgroup,
     the user is automaticly added to the HS group
     """
     group = GroupFactory(type=GroupType.SUBGROUP)
@@ -117,14 +119,15 @@ def test_on_swap_creates_hs_membership_with_leader(hs):
     membership.save()
     membership.refresh_from_db()
     membership_leader.refresh_from_db()
-    assert membership.membership_type == MembershipType.LEADER  
-    assert membership_leader.membership_type == MembershipType.MEMBER  
-    assert Membership.objects.get(user = membership.user, group=hs)
+    assert membership.membership_type == MembershipType.LEADER
+    assert membership_leader.membership_type == MembershipType.MEMBER
+    assert Membership.objects.get(user=membership.user, group=hs)
+
 
 @pytest.mark.django_db
 def test_on_remove_leader_without_swap_removes_hs(hs):
     """
-    Tests that if you demote as user from leader to member of a subgroup, 
+    Tests that if you demote as user from leader to member of a subgroup,
     the user is automaticly removed from the HS group
     """
     group = GroupFactory(type=GroupType.SUBGROUP)
@@ -132,8 +135,5 @@ def test_on_remove_leader_without_swap_removes_hs(hs):
     membership.membership_type = MembershipType.MEMBER
     membership.save()
     membership.refresh_from_db()
-    assert membership.membership_type == MembershipType.MEMBER  
-    assert  not len(Membership.objects.filter(user = membership.user, group=hs))
-
-    
-
+    assert membership.membership_type == MembershipType.MEMBER
+    assert not len(Membership.objects.filter(user=membership.user, group=hs))

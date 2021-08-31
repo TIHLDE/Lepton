@@ -87,7 +87,10 @@ class Membership(BaseModel, BasePermissionModel):
         return self.membership_type in MembershipType.board_members
 
     def clean(self):
-        if self.membership_type == MembershipType.MEMBER and self.group.type == GroupType.SUBGROUP:
+        if (
+            self.membership_type == MembershipType.MEMBER
+            and self.group.type == GroupType.SUBGROUP
+        ):
             self.delete_hs_membership()
 
         if self.membership_type in MembershipType.board_members():
@@ -103,18 +106,17 @@ class Membership(BaseModel, BasePermissionModel):
 
     def delete_hs_membership(self):
         seat_to_delete = (
-                Membership.objects.select_for_update()
-                .filter(group__slug=AdminGroup.HS, user=self.user)
-                .first()
-            )
+            Membership.objects.select_for_update()
+            .filter(group__slug=AdminGroup.HS, user=self.user)
+            .first()
+        )
         if seat_to_delete:
             seat_to_delete.delete()
-            
+
     @atomic
     def swap_hs_seat(self, previous_seat):
         seat_to_delete = None
         if previous_seat:
-            print("skjnkjdsdkjsndskjndsk")
             seat_to_delete = (
                 Membership.objects.select_for_update()
                 .filter(group__slug=AdminGroup.HS, user=previous_seat.user)
@@ -124,7 +126,6 @@ class Membership(BaseModel, BasePermissionModel):
         if seat_to_delete:
             MembershipHistory.from_membership(membership=seat_to_delete)
             seat_to_delete.delete()
-
         group = Group.objects.filter(slug=AdminGroup.HS).first()
 
         if group and self:
@@ -135,7 +136,6 @@ class Membership(BaseModel, BasePermissionModel):
 
     @atomic
     def swap_board(self):
-        print("skjnkjdsdkjsndskjndsk")
         previous_board_member = (
             Membership.objects.select_for_update()
             .filter(group=self.group, membership_type=self.membership_type)
