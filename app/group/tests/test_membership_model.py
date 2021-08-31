@@ -121,5 +121,19 @@ def test_on_swap_creates_hs_membership_with_leader(hs):
     assert membership_leader.membership_type == MembershipType.MEMBER  
     assert Membership.objects.get(user = membership.user, group=hs)
 
+@pytest.mark.django_db
+def test_on_remove_leader_without_swap_removes_hs(hs):
+    """
+    Tests that if you demote as user from leader to member of a subgroup, 
+    the user is automaticly removed from the HS group
+    """
+    group = GroupFactory(type=GroupType.SUBGROUP)
+    membership = MembershipFactory(membership_type=MembershipType.LEADER, group=group)
+    membership.membership_type = MembershipType.MEMBER
+    membership.save()
+    membership.refresh_from_db()
+    assert membership.membership_type == MembershipType.MEMBER  
+    assert  not len(Membership.objects.filter(user = membership.user, group=hs))
+
     
 
