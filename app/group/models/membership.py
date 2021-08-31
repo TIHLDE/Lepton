@@ -3,7 +3,7 @@ from django.db.transaction import atomic
 
 from enumchoicefield import EnumChoiceField
 
-from app.common.enums import AdminGroup, MembershipType
+from app.common.enums import AdminGroup, GroupType, MembershipType
 from app.common.permissions import BasePermissionModel
 from app.content.models.user import User
 from app.group.models.group import Group
@@ -99,13 +99,34 @@ class Membership(BaseModel, BasePermissionModel):
         return super().delete(*args, **kwargs)
 
     @atomic
+    def swap_hs_seat(self, previous_seat):
+        seat_to_delete = None
+        if previous_seat:
+            print("skjnkjdsdkjsndskjndsk")
+            seat_to_delete = (Membership.objects.select_for_update()
+                .filter(group__slug=AdminGroup.HS, user=previous_seat.user)
+                .first())
+
+        if seat_to_delete:
+            MembershipHistory.from_membership(membership=seat_to_delete)
+            seat_to_delete.delete()
+
+        group = Group.objects.filter(slug=AdminGroup.HS).first()
+
+        if group and self:
+            membership = Membership.objects.get_or_create(user=self.user, group=group)[0]
+            membership.save()
+        
+
+        
+    @atomic
     def swap_board(self):
+        print("skjnkjdsdkjsndskjndsk")
         previous_board_member = (
             Membership.objects.select_for_update()
             .filter(group=self.group, membership_type=self.membership_type)
             .first()
         )
-
         if previous_board_member and previous_board_member.user != self.user:
             MembershipHistory.from_membership(membership=previous_board_member)
             previous_board_member.membership_type = MembershipType.MEMBER
@@ -116,6 +137,9 @@ class Membership(BaseModel, BasePermissionModel):
             .filter(group=self.group, user=self.user)
             .first()
         )
+        if (current_membership and self.group.type  == GroupType.SUBGROUP
+             and self.membership_type == MembershipType.LEADER):
+            self.swap_hs_seat(previous_board_member)
 
         if current_membership:
             MembershipHistory.from_membership(membership=current_membership)
