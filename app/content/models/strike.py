@@ -52,10 +52,19 @@ class Strike(BaseModel, BasePermissionModel):
         return f"{self.user.first_name} {self.user.last_name} - {self.description} - {self.strike_size}"
 
     def save(self, *args, **kwargs):
-        if self.created_at is None:
-            from app.content.models import create_notification
+        # TODO: Kjør når prikksystem er lansert "offisielt"
+        # if self.created_at is None:
+        #     from app.util.mail_creator import MailCreator
+        #     from app.util.notifier import Notify
 
-            create_notification(self.user, self.description)
+        #     Notify(self.user, "Du har fått en prikk").send_email(
+        #         MailCreator("Du har fått en prikk")
+        #         .add_paragraph(f"Hei {self.user.first_name}!")
+        #         .add_paragraph(self.description)
+        #         .generate_string()
+        #     ).send_notification(
+        #         description=self.description,
+        #     )
         super(Strike, self).save(*args, **kwargs)
 
     @property
@@ -79,7 +88,7 @@ def create_strike(enum, user, event=None, creator=None):
 
 StrikeDescription = {
     "PAST_DEADLINE": [
-        "Du har fått prikk fordi meldt deg av etter avmeldingsfristen",
+        "Du har fått prikk fordi du meldte deg av etter avmeldingsfristen",
         1,
     ],
     "NO_SHOW": ["Du har fått prikk fordi du ikke møtte på et arrangement", 2],

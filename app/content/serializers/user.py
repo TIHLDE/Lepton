@@ -4,10 +4,7 @@ from rest_framework import serializers
 
 from dry_rest_permissions.generics import DRYGlobalPermissionsField
 
-from app.content.models import Notification, Registration, Strike, User
-from app.content.serializers.badge import BadgeSerializer
-from app.content.serializers.event import EventListSerializer
-from app.content.serializers.strike import StrikeSerializer
+from app.content.models import Notification, User
 
 
 class DefaultUserSerializer(serializers.ModelSerializer):
@@ -28,11 +25,8 @@ class DefaultUserSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    events = serializers.SerializerMethodField()
-    badges = serializers.SerializerMethodField()
     unread_notifications = serializers.SerializerMethodField()
     permissions = DRYGlobalPermissionsField(actions=["write", "read"])
-    strikes = serializers.SerializerMethodField()
 
     class Meta:
         model = User
@@ -50,43 +44,15 @@ class UserSerializer(serializers.ModelSerializer):
             "allergy",
             "tool",
             "app_token",
-            "events",
-            "badges",
             "unread_notifications",
             "permissions",
-            "strikes",
         )
         read_only_fields = ("user_id",)
         write_only_fields = ("app_token",)
 
-    def get_events(self, obj):
-        """ Lists all events user is to attend or has attended """
-        registrations = Registration.objects.filter(user__user_id=obj.user_id).order_by(
-            "event__start_date"
-        )
-        events = [
-            registration.event
-            for registration in registrations
-            if not registration.event.expired
-        ]
-        return EventListSerializer(events, many=True).data
-
-    def get_badges(self, obj):
-        """ Lists all badges a user has accomplished """
-        user_badges = obj.user_badges.order_by("-created_at")
-        badges = [user_badge.badge for user_badge in user_badges]
-        return BadgeSerializer(badges, many=True).data
-
     def get_unread_notifications(self, obj):
         """ Counts all unread notifications and returns the count """
         return Notification.objects.filter(user=obj, read=False).count()
-
-    def get_strikes(self, obj):
-        """ Get all active strikes """
-        active_strikes = [
-            strike for strike in Strike.objects.filter(user=obj) if strike.active
-        ]
-        return StrikeSerializer(active_strikes, many=True).data
 
 
 class UserListSerializer(UserSerializer):
@@ -104,7 +70,6 @@ class UserListSerializer(UserSerializer):
             "user_study",
             "allergy",
             "tool",
-            "strikes",
         )
 
 

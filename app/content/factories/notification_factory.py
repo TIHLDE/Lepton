@@ -10,5 +10,7 @@ class NotificationFactory(DjangoModelFactory):
         model = Notification
 
     user = factory.SubFactory(UserFactory)
-    message = factory.Faker("sentence")
+    title = factory.Faker("sentence")
+    description = factory.Faker("paragraph")
+    link = factory.Faker("safe_domain_name")
     read = False

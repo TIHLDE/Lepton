@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}TIHLDE - {{ title }} {% endblock %}
+
+{% block mail_content %}
+
+<h1 style="font-size: 1.4rem; margin: 0; color: white;">{{ title|upper }}</h1>
+{% for item in content %}
+    {% if item.type == "paragraph" %}
+        <p style="font-size: 1.1rem; color: white; margin: 4px 0px;">{{ item.text|urlize }}</p>
+    {% elif item.type == "button" %}
+        <a class="link" href="{{ item.link }}?utm_medium=email" style="color: white; text-decoration: none;">
+          <button>{{ item.text }}</button>
+        </a>
+    {% endif %}
+{% endfor %}
+
+{% endblock %}

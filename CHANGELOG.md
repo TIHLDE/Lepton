@@ -14,9 +14,19 @@
 
 ## Neste versjon
 - ✨ **Svar på spørreskjemaer** Medlemmer kan nå svare på spørreskjemaer.
-- ⚡ **Pages** Implementert søk i pages siden
-
+## Versjon 1.0.12 (22.08.2021)
+- 🦟 **Celery**. Fikset problem der oppdatering av arrangement førte til evig rekursjon.
+- ✨ **Varsler**. Varsler kan nå inneholder linker til relevant innhold.
+- ✨ **Arrangement-melding**. Arrangører av arrangementer kan sende ut epost/varsel til de påmeldte deltagerne.
+- ⚡ **Bedrifter**. Finere epost fra bedrifter til mottager.
+## Versjon 1.0.11 (11.08.2021)
+- ✨ **Brukere**. Admins kan nå slette nye "ventende" brukere og legge ved en begrunnelse.
+- 🦟 **Celery**. Fikset Celery tasks slik at man ikke kjører samme flere ganger lengre.
+- 🦟 **Bruker**. Når admin oppdaterer egen bruker så kommer nå samme data tilbake som for vanlige medlemmer.
+## Versjon 1.0.10 (10.05.2021)
+- ⚡ **Bruker** Lagt til egne endpunkter for å hente ut relatert bruker data
 ## Versjon 1.0.9 (05.05.2021)
+- ⚡ **Pages** Implementert søk i pages siden
 - ⚡ **Medlemskap**.Lagt til pagination på listing av medlemskap, og filtrering for å hente ut list med bare medlemmer.
 - ⚡ **Varsler**. Nye brukere får epost om at bruker er blitt godkjent. Brukere som blir lagt til i en gruppe får varsel.
 - 🦟 **Tilganger**. Fikset bug der HS ikke hadde tilgang til å aktivere nye brukere.

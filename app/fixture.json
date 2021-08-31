@@ -319,23 +319,26 @@
 },
 {
     "model": "content.notification",
-    "pk": 35,
+    "pk": 1,
     "fields": {
         "created_at": "2021-03-08T19:51:56.552Z",
         "updated_at": "2021-03-08T19:51:56.592Z",
         "user": "nok",
-        "message": "På grunn av høy pågang er du satt på venteliste på Catch IDI",
+        "title": "Plassert på venteliste",
+        "description": "På grunn av høy pågang er du satt på venteliste på Catch IDI",
         "read": false
     }
 },
 {
     "model": "content.notification",
-    "pk": 45,
+    "pk": 2,
     "fields": {
         "created_at": "2021-03-20T12:23:12.092Z",
         "updated_at": "2021-03-21T11:34:42.887Z",
         "user": "index",
-        "message": "Du har fått plass på 17 mai",
+        "title": "Du har fått plass på arrangement",
+        "description": "Du har fått plass på Kurs med Kodeworks",
+        "link": "/arrangementer/7/",
         "read": true
     }
 },

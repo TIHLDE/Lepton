@@ -1,5 +1,6 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status, viewsets
+from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from sentry_sdk import capture_exception
@@ -14,6 +15,8 @@ from app.content.serializers import (
     EventListSerializer,
     EventSerializer,
 )
+from app.util.mail_creator import MailCreator
+from app.util.notifier import Notify
 from app.util.utils import yesterday
 
 
@@ -108,3 +111,41 @@ class EventViewSet(viewsets.ModelViewSet):
         return Response(
             {"detail": ("Arrangementet ble slettet")}, status=status.HTTP_200_OK
         )
+
+    @action(
+        detail=True, methods=["post"], url_path="notify",
+    )
+    def notifyRegisteredUsers(self, request, *args, **kwargs):
+        try:
+            title = request.data["title"]
+            message = request.data["message"]
+            event = self.get_object()
+            self.check_object_permissions(self.request, event)
+
+            for registration in event.get_queue():
+                Notify(registration.user, title).send_email(
+                    MailCreator(title)
+                    .add_paragraph(f"Hei {registration.user.first_name}")
+                    .add_paragraph(
+                        f"Arrangøren av {event.title} har en melding til deg:"
+                    )
+                    .add_paragraph(message)
+                    .add_event_button(event.pk)
+                    .generate_string()
+                ).send_notification(
+                    description=f"Arrangøren av {event.title} har en melding til deg: {message}",
+                    link=event.website_url,
+                )
+
+            return Response(
+                {
+                    "detail": "Meldingen ble sendt ut til alle som er påmeldt og har plass på arrangementet"
+                },
+                status=status.HTTP_200_OK,
+            )
+
+        except Event.DoesNotExist as event_not_exist:
+            capture_exception(event_not_exist)
+            return Response(
+                {"detail": "Fant ikke arrangementet"}, status=status.HTTP_404_NOT_FOUND
+            )
