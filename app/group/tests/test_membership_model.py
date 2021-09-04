@@ -86,7 +86,7 @@ def test_swap_leader_does_not_create_two_leaders(group):
 @pytest.mark.django_db
 def test_on_delete_membership_history_is_created(membership):
     membership.delete()
-    assert MembershipHistory.objects.get(start_date=membership.created_at)
+    assert MembershipHistory.objects.filter(start_date=membership.created_at).exists()
 
 
 @pytest.mark.django_db
@@ -101,7 +101,7 @@ def test_on_swap_creates_hs_membership_with_no_leader(hs):
     membership.save()
     membership.refresh_from_db()
     assert membership.membership_type == MembershipType.LEADER
-    assert Membership.objects.get(user=membership.user, group=hs)
+    assert Membership.objects.filter(user=membership.user, group=hs).exists()
 
 
 @pytest.mark.django_db
@@ -121,7 +121,7 @@ def test_on_swap_creates_hs_membership_with_leader(hs):
     membership_leader.refresh_from_db()
     assert membership.membership_type == MembershipType.LEADER
     assert membership_leader.membership_type == MembershipType.MEMBER
-    assert Membership.objects.get(user=membership.user, group=hs)
+    assert Membership.objects.filter(user=membership.user, group=hs).exists()
 
 
 @pytest.mark.django_db
@@ -136,4 +136,18 @@ def test_on_remove_leader_without_swap_removes_hs(hs):
     membership.save()
     membership.refresh_from_db()
     assert membership.membership_type == MembershipType.MEMBER
-    assert not len(Membership.objects.filter(user=membership.user, group=hs))
+    assert not Membership.objects.filter(user=membership.user, group=hs).exists()
+
+
+@pytest.mark.django_db
+def test_on_swap_leader_with_non_subgroup_group(hs):
+    """
+    Tests that if you promote a user to leader of a non subgroup group a hs membership vil not me created
+    """
+    group = GroupFactory(type=GroupType.COMMITTEE)
+    membership = MembershipFactory(membership_type=MembershipType.LEADER, group=group)
+    membership.membership_type = MembershipType.MEMBER
+    membership.save()
+    membership.refresh_from_db()
+    assert membership.membership_type == MembershipType.MEMBER
+    assert not Membership.objects.filter(user=membership.user, group=hs).exists()
