@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+## Versjon 1.0.13 (06.09.2021)
 - ✨ **Svar på spørreskjemaer** Medlemmer kan nå svare på spørreskjemaer.
 ## Versjon 1.0.12 (22.08.2021)
 - 🦟 **Celery**. Fikset problem der oppdatering av arrangement førte til evig rekursjon.
