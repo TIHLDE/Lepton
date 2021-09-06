@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+## Versjon 1.0.13 (06.09.2021)
 - ✨ **Svar på spørreskjemaer** Medlemmer kan nå svare på spørreskjemaer.
 - ✨ **Grupper** Ledere for undergrupper blir nå automagisk medlem av hs gruppen 
 
