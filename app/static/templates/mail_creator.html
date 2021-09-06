@@ -7,10 +7,10 @@
 <h1 style="font-size: 1.4rem; margin: 0; color: white;">{{ title|upper }}</h1>
 {% for item in content %}
     {% if item.type == "paragraph" %}
-        <p style="font-size: 1.1rem; color: white; margin: 4px 0px;">{{ item.text|urlize }}</p>
+        <p style="font-size:1rem;color:white;margin:4px 0px;white-space:break-spaces;overflow-wrap:break-word;">{{ item.text|urlize }}</p>
     {% elif item.type == "button" %}
         <a class="link" href="{{ item.link }}?utm_medium=email" style="color: white; text-decoration: none;">
-          <button>{{ item.text }}</button>
+          <button style="color:black">{{ item.text }}</button>
         </a>
     {% endif %}
 {% endfor %}
