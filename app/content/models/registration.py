@@ -12,10 +12,12 @@ from app.util.mail_creator import MailCreator
 from app.util.models import BaseModel
 from app.util.notifier import Notify
 from app.util.utils import datetime_format
+from app.forms.enums import EventFormType
 
 
 class Registration(BaseModel):
-    has_access = [AdminGroup.HS, AdminGroup.INDEX, AdminGroup.NOK, AdminGroup.SOSIALEN]
+    has_access = [AdminGroup.HS, AdminGroup.INDEX,
+                  AdminGroup.NOK, AdminGroup.SOSIALEN]
     has_retrieve_access = [
         AdminGroup.HS,
         AdminGroup.INDEX,
@@ -78,6 +80,17 @@ class Registration(BaseModel):
             f'{"on the waiting list" if self.is_on_wait else "on the list"}'
         )
 
+    def delete_submission_if_exists(self):
+        from app.forms.models.forms import EventForm, Submission
+        event_form = EventForm.objects.filter(
+            event=self.event,
+            type=EventFormType.SURVEY
+        )[:1]
+        Submission.objects.filter(
+            form=event_form,
+            user=self.user
+        ).delete()
+
     def delete(self, *args, **kwargs):
         if not self.is_on_wait:
             if self.event.is_past_sign_off_deadline:
@@ -85,8 +98,11 @@ class Registration(BaseModel):
                     raise EventSignOffDeadlineHasPassed(
                         "Kan ikke melde av brukeren etter en time før arrangementstart"
                     )
-                create_strike(str(StrikeEnum.PAST_DEADLINE), self.user, self.event)
+                create_strike(str(StrikeEnum.PAST_DEADLINE),
+                              self.user, self.event)
             self.move_from_waiting_list_to_queue()
+
+        self.delete_submission_if_exists()
 
         return super().delete(*args, **kwargs)
 
