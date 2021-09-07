@@ -24,7 +24,6 @@ class EventSerializer(serializers.ModelSerializer):
             "location",
             "description",
             "sign_up",
-            "priority",
             "category",
             "expired",
             "limit",
@@ -67,7 +66,6 @@ class EventSerializer(serializers.ModelSerializer):
                 )
         except AttributeError as attribute_error:
             capture_exception(attribute_error)
-            pass
 
         return limit
 
@@ -114,7 +112,6 @@ class EventCreateAndUpdateSerializer(BaseModelSerializer):
             "location",
             "description",
             "sign_up",
-            "priority",
             "category",
             "expired",
             "limit",
