@@ -1,12 +1,15 @@
 from rest_framework import serializers
 
 from app.common.serializers import BaseModelSerializer
-
-from ..models import Registration, User
+from app.content.models.registration import Registration
+from app.content.serializers.user import UserListSerializer
+from app.forms.enums import EventFormType
+from app.forms.serializers.submission import SubmissionInRegistrationSerializer
 
 
 class RegistrationSerializer(BaseModelSerializer):
-    user_info = serializers.SerializerMethodField()
+    user_info = UserListSerializer(source="user")
+    survey_submission = serializers.SerializerMethodField()
     waiting_number = serializers.SerializerMethodField()
 
     class Meta:
@@ -18,22 +21,16 @@ class RegistrationSerializer(BaseModelSerializer):
             "has_attended",
             "allow_photo",
             "created_at",
+            "survey_submission",
             "waiting_number",
         ]
 
-    def get_user_info(self, obj):
-        """ Gets the necessary info from user """
-        user = User.objects.get(user_id=obj.user_id)
-        return {
-            "user_id": user.user_id,
-            "first_name": user.first_name,
-            "last_name": user.last_name,
-            "image": user.image,
-            "email": user.email,
-            "user_class": user.user_class,
-            "user_study": user.user_study,
-            "allergy": user.allergy,
-        }
+    # def get_user_info(self, obj):
+    #     return obj.user
+
+    def get_survey_submission(self, obj):
+        submissions = obj.get_submissions(type=EventFormType.SURVEY).first()
+        return SubmissionInRegistrationSerializer(submissions).data
 
     def get_waiting_number(self, obj):
         return obj.get_waiting_number()

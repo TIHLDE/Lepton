@@ -2,6 +2,7 @@ from datetime import timedelta
 
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models import Q
 
 from app.common.enums import AdminGroup, Groups, StrikeEnum
 from app.common.permissions import check_has_access
@@ -237,3 +238,14 @@ class Registration(BaseModel):
                 if self == waiting:
                     return list(self.event.get_waiting_list()).index(self) + 1
         return None
+
+    def get_submissions(self, type=None):
+        from app.forms.models import EventForm, Submission
+
+        query = Q(event=self.event)
+
+        if type:
+            query &= Q(type=type)
+
+        forms = EventForm.objects.filter(query)
+        return Submission.objects.filter(form__in=forms, user=self.user)
