@@ -1,12 +1,10 @@
 from django.shortcuts import get_object_or_404
-from rest_framework import serializers, status, viewsets
+from rest_framework import status, viewsets
 from rest_framework.response import Response
 
-from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission
 from app.forms.models import Form
 from app.forms.serializers import FormStatisticsSerializer
-from app.forms.views import form
 
 
 class StatisticsViewSet(viewsets.GenericViewSet, viewsets.mixins.ListModelMixin):

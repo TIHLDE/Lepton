@@ -28,7 +28,7 @@ class SubmissionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Submission
-        fields = ("answers","user")
+        fields = ("answers", "user")
 
     def __create_answer_for_submission(self, submission, answer_data):
         field_id = answer_data.pop("field").get("id")
@@ -64,6 +64,3 @@ class SubmissionSerializer(serializers.ModelSerializer):
 
     def update(self, validated_data):
         raise MethodNotAllowed()
-
-
-

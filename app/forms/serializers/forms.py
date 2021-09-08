@@ -1,12 +1,10 @@
 from django.db.transaction import atomic
 from rest_framework import serializers
-from rest_framework.fields import SerializerMethodField
 
 from rest_polymorphic.serializers import PolymorphicSerializer
 
 from app.common.serializers import BaseModelSerializer
 from app.forms.models import EventForm, Field, Form, Option
-from app.forms.models.forms import Answer
 
 
 class OptionSerializer(BaseModelSerializer):

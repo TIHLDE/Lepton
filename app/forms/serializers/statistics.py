@@ -1,4 +1,3 @@
-from django.db.transaction import atomic
 from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
 
@@ -30,10 +29,9 @@ class FieldStatisticsSerializer(BaseModelSerializer):
         fields = ("id", "title", "options", "type", "required")
 
 
-
 class FormStatisticsSerializer(BaseModelSerializer):
     statistics = FieldStatisticsSerializer(
-        many=True, required=False, allow_null=True, source="fields", 
+        many=True, required=False, allow_null=True, source="fields",
     )
 
     class Meta:
