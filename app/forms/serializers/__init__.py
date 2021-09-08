@@ -8,4 +8,3 @@ from app.forms.serializers.forms import (
 
 from app.forms.serializers.statistics import FormStatisticsSerializer
 
-from app.forms.serializers.submission import BaseSubmissionSerializer

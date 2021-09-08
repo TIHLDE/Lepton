@@ -1,3 +1,4 @@
+from app.common.pagination import BasePagination
 from rest_framework import status, viewsets
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
@@ -12,6 +13,8 @@ class SubmissionViewSet(viewsets.ModelViewSet):
     serializer_class = SubmissionSerializer
     queryset = Submission.objects.all()
     permission_classes = [BasicViewPermission]
+    pagination_class = BasePagination
+
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
