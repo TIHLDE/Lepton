@@ -4,6 +4,7 @@ from rest_framework.fields import SerializerMethodField
 from rest_polymorphic.serializers import PolymorphicSerializer
 
 from app.common.serializers import BaseModelSerializer
+from app.forms.enums import FormFieldType
 from app.forms.models import EventForm, Field, Form, Option
 from app.forms.models.forms import Answer
 
@@ -30,9 +31,7 @@ class FieldStatisticsSerializer(BaseModelSerializer):
 
 
 class FormStatisticsSerializer(BaseModelSerializer):
-    statistics = FieldStatisticsSerializer(
-        many=True, required=False, allow_null=True, source="fields",
-    )
+    statistics = SerializerMethodField()
 
     class Meta:
         model = Form
@@ -41,6 +40,12 @@ class FormStatisticsSerializer(BaseModelSerializer):
             "title",
             "statistics",
         )
+
+    def get_statistics(self, obj):
+        fields = Field.objects.filter(form=obj).exclude(type=FormFieldType.TEXT_ANSWER)
+        return FieldStatisticsSerializer(
+            fields, many=True, required=False, allow_null=True
+        ).data
 
 
 class EventStatisticsFormSerializer(FormStatisticsSerializer):
