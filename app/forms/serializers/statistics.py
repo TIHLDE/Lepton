@@ -16,7 +16,7 @@ class OptionStatisticsSerializer(BaseModelSerializer):
 
     class Meta:
         model = Option
-        fields = ("id", "title", "answer_amount", "prosent")
+        fields = ("id", "title", "answer_amount", "answer_percentage")
 
     def get_answer_amount(self, obj):
         return Answer.objects.filter(selected_options=obj).count()
@@ -24,7 +24,8 @@ class OptionStatisticsSerializer(BaseModelSerializer):
     def get_answer_percentage(self, obj):
         amount = self.get_answer_amount(obj)
         total = obj.field.form.submissions.count()
-        return  amount / total * 100
+        return amount / total * 100
+
 
 class FieldStatisticsSerializer(BaseModelSerializer):
     options = OptionStatisticsSerializer(many=True, required=False, allow_null=True)
