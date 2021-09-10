@@ -485,9 +485,9 @@ def test_delete_form_as_member_is_not_permitted(member, form):
     [
         (AdminGroup.SOSIALEN, status.HTTP_403_FORBIDDEN),
         (AdminGroup.PROMO, status.HTTP_403_FORBIDDEN),
-        (AdminGroup.HS, status.HTTP_204_NO_CONTENT),
-        (AdminGroup.INDEX, status.HTTP_204_NO_CONTENT),
-        (AdminGroup.NOK, status.HTTP_204_NO_CONTENT),
+        (AdminGroup.HS, status.HTTP_200_OK),
+        (AdminGroup.INDEX, status.HTTP_200_OK),
+        (AdminGroup.NOK, status.HTTP_200_OK),
     ],
 )
 def test_delete_form_as_member_of_admin_group(
