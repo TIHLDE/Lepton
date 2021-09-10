@@ -22,6 +22,11 @@ class SubmissionViewSet(viewsets.ModelViewSet):
         )
         return context
 
+    def get_queryset(self):
+        if hasattr(self, "action") and self.action == "list":
+            return self.queryset.filter(form__id=self.kwargs.get("form_id"))
+        return self.queryset
+
     def create(self, request, *args, **kwargs):
         form = get_object_or_404(Form.objects.all(), id=kwargs.get("form_id"))
         if isinstance(form, EventForm):

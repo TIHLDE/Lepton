@@ -24,7 +24,7 @@ class OptionStatisticsSerializer(BaseModelSerializer):
     def get_answer_percentage(self, obj):
         amount = self.get_answer_amount(obj)
         total = obj.field.form.submissions.count()
-        return round(amount / total * 100, 2)
+        return round(amount / total * 100 if total > 0 else 0, 2)
 
 
 class FieldStatisticsSerializer(BaseModelSerializer):
