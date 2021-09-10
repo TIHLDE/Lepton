@@ -26,5 +26,5 @@ class FormViewSet(viewsets.ModelViewSet):
     def destroy(self, request, *args, **kwargs):
         super().destroy(request, *args, **kwargs)
         return Response(
-            {"detail": "Skjemaet ble slettet"}, status=status.HTTP_204_NO_CONTENT
+            {"detail": "Skjemaet ble slettet"}, status=status.HTTP_200_OK
         )
