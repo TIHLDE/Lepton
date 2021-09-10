@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from rest_framework.exceptions import MethodNotAllowed
 
+from app.content.serializers.user import DefaultUserSerializer
 from app.forms.models import Answer, Field, Option, Submission
 from app.forms.serializers import FieldInAnswerSerializer, OptionSerializer
 
@@ -23,10 +24,11 @@ class AnswerSerializer(serializers.ModelSerializer):
 
 class SubmissionSerializer(serializers.ModelSerializer):
     answers = AnswerSerializer(many=True)
+    user = DefaultUserSerializer(read_only=True)
 
     class Meta:
         model = Submission
-        fields = ("answers",)
+        fields = ("answers", "user")
 
     def __create_answer_for_submission(self, submission, answer_data):
         field_id = answer_data.pop("field").get("id")

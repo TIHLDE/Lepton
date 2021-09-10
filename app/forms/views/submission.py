@@ -2,6 +2,7 @@ from rest_framework import status, viewsets
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 
+from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission
 from app.forms.enums import EventFormType
 from app.forms.models.forms import EventForm, Form, Submission
@@ -12,6 +13,7 @@ class SubmissionViewSet(viewsets.ModelViewSet):
     serializer_class = SubmissionSerializer
     queryset = Submission.objects.all()
     permission_classes = [BasicViewPermission]
+    pagination_class = BasePagination
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
