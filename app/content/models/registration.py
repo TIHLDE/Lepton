@@ -7,21 +7,16 @@ from app.common.enums import AdminGroup, Groups, StrikeEnum
 from app.common.permissions import check_has_access
 from app.content.exceptions import EventSignOffDeadlineHasPassed, StrikeError
 from app.content.models.strike import create_strike
+from app.forms.enums import EventFormType
 from app.util import EnumUtils, today
 from app.util.mail_creator import MailCreator
 from app.util.models import BaseModel
 from app.util.notifier import Notify
 from app.util.utils import datetime_format
-from app.forms.enums import EventFormType
 
 
 class Registration(BaseModel):
-    has_access = [
-        AdminGroup.HS, 
-        AdminGroup.INDEX, 
-        AdminGroup.NOK, 
-        AdminGroup.SOSIALEN
-    ]
+    has_access = [AdminGroup.HS, AdminGroup.INDEX, AdminGroup.NOK, AdminGroup.SOSIALEN]
     has_retrieve_access = [
         AdminGroup.HS,
         AdminGroup.INDEX,
@@ -86,14 +81,11 @@ class Registration(BaseModel):
 
     def delete_submission_if_exists(self):
         from app.forms.models.forms import EventForm, Submission
+
         event_form = EventForm.objects.filter(
-            event=self.event,
-            type=EventFormType.SURVEY
+            event=self.event, type=EventFormType.SURVEY
         )[:1]
-        Submission.objects.filter(
-            form=event_form,
-            user=self.user
-        ).delete()
+        Submission.objects.filter(form=event_form, user=self.user).delete()
 
     def delete(self, *args, **kwargs):
         if not self.is_on_wait:
@@ -102,11 +94,7 @@ class Registration(BaseModel):
                     raise EventSignOffDeadlineHasPassed(
                         "Kan ikke melde av brukeren etter en time før arrangementstart"
                     )
-                create_strike(
-                    str(StrikeEnum.PAST_DEADLINE),
-                    self.user,
-                    self.event
-                )
+                create_strike(str(StrikeEnum.PAST_DEADLINE), self.user, self.event)
             self.move_from_waiting_list_to_queue()
 
         self.delete_submission_if_exists()

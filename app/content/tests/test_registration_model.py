@@ -9,13 +9,9 @@ from app.content.factories import (
     RegistrationFactory,
     UserFactory,
 )
-
-from app.forms.models.forms import Submission
-from app.forms.tests.form_factories import (
-    EventFormFactory,
-    SubmissionFactory,
-)
 from app.forms.enums import EventFormType
+from app.forms.models.forms import Submission
+from app.forms.tests.form_factories import EventFormFactory, SubmissionFactory
 
 
 @pytest.fixture()
@@ -155,8 +151,7 @@ def test_bump_user_without_event_priorities():
     registration_not_on_waiting_list = RegistrationFactory(
         event=event, user=UserFactory()
     )
-    registration_on_waiting_list = RegistrationFactory(
-        event=event, user=UserFactory())
+    registration_on_waiting_list = RegistrationFactory(event=event, user=UserFactory())
 
     assert not registration_not_on_waiting_list.is_on_wait
     assert registration_on_waiting_list.is_on_wait
@@ -189,8 +184,7 @@ def test_swap_places_with_swaps_users(
     registration_in_priority_pool, registration_not_in_priority_pool
 ):
     """Should swap is_on_wait values for both users."""
-    registration_in_priority_pool.swap_places_with(
-        registration_not_in_priority_pool)
+    registration_in_priority_pool.swap_places_with(registration_not_in_priority_pool)
 
     assert not registration_in_priority_pool.is_on_wait
     assert registration_not_in_priority_pool.is_on_wait
@@ -341,8 +335,7 @@ def test_delete_registration_when_no_users_on_wait_are_in_a_priority_pool_bumps_
     a registration is deleted and no registered users are prioritized.
     """
     event = EventFactory(limit=1)
-    priority = PriorityFactory(
-        user_study=UserStudy.DATAING, user_class=UserClass.FIRST)
+    priority = PriorityFactory(user_study=UserStudy.DATAING, user_class=UserClass.FIRST)
     event.registration_priorities.add(priority)
 
     user_not_in_priority_pool = UserFactory(
@@ -363,14 +356,10 @@ def test_delete_registration_when_no_users_on_wait_are_in_a_priority_pool_bumps_
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
-    "form_type,should_exist", [
-        (EventFormType.EVALUATION, True),
-        (EventFormType.SURVEY, False)
-    ]
+    "form_type,should_exist",
+    [(EventFormType.EVALUATION, True), (EventFormType.SURVEY, False)],
 )
-def test_deleting_registration_deletes_submission(
-    form_type, should_exist
-):
+def test_deleting_registration_deletes_submission(form_type, should_exist):
     event = EventFactory()
     user = UserFactory()
     form = EventFormFactory(event=event, type=form_type)
