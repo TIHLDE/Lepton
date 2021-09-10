@@ -12,14 +12,19 @@ from app.forms.models.forms import Answer
 class OptionStatisticsSerializer(BaseModelSerializer):
     id = serializers.UUIDField(read_only=False, required=False)
     answer_amount = SerializerMethodField(required=False)
+    prosent = SerializerMethodField()
 
     class Meta:
         model = Option
-        fields = ("id", "title", "answer_amount")
+        fields = ("id", "title", "answer_amount", "prosent")
 
     def get_answer_amount(self, obj):
         return Answer.objects.filter(selected_options=obj).count()
 
+    def get_prosent(self, obj):
+        amount = self.get_answer_amount(obj)
+        total = obj.field.form.submissions.count()
+        return  amount / total * 100
 
 class FieldStatisticsSerializer(BaseModelSerializer):
     options = OptionStatisticsSerializer(many=True, required=False, allow_null=True)
