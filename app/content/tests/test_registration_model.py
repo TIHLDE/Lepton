@@ -9,6 +9,9 @@ from app.content.factories import (
     RegistrationFactory,
     UserFactory,
 )
+from app.forms.enums import EventFormType
+from app.forms.models.forms import Submission
+from app.forms.tests.form_factories import EventFormFactory, SubmissionFactory
 
 
 @pytest.fixture()
@@ -349,3 +352,20 @@ def test_delete_registration_when_no_users_on_wait_are_in_a_priority_pool_bumps_
     registration_on_wait.refresh_from_db()
 
     assert not registration_on_wait.is_on_wait
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "form_type,should_exist",
+    [(EventFormType.EVALUATION, True), (EventFormType.SURVEY, False)],
+)
+def test_deleting_registration_deletes_submission(form_type, should_exist):
+    event = EventFactory()
+    user = UserFactory()
+    form = EventFormFactory(event=event, type=form_type)
+    submission = SubmissionFactory(form=form, user=user)
+    registration = RegistrationFactory(event=event, user=user)
+
+    registration.delete()
+
+    assert Submission.objects.filter(id=submission.id).exists() is should_exist

@@ -2,6 +2,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import MethodNotAllowed
 
 from app.common.serializers import BaseModelSerializer
+from app.content.serializers.user import DefaultUserSerializer
 from app.forms.models import Answer, Field, Option, Submission
 from app.forms.serializers import FieldInAnswerSerializer, OptionSerializer
 
@@ -24,10 +25,11 @@ class AnswerSerializer(serializers.ModelSerializer):
 
 class BaseSubmissionSerializer(BaseModelSerializer):
     answers = AnswerSerializer(many=True)
+    user = DefaultUserSerializer(read_only=True)
 
     class Meta:
         model = Submission
-        fields = ("answers",)
+        fields = ("answers", "user")
 
 
 class SubmissionSerializer(BaseSubmissionSerializer):

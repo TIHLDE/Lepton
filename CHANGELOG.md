@@ -14,6 +14,7 @@
 
 ## Neste versjon
 - ✨ **Svar på spørreskjemaer** blir nå sendt med sammen med påmeldingen.
+- ✨ **Statistikk spørreskjemaer** Kan nå hente ut statistikk over svar på spørreskjemaer.
 
 ## Versjon 1.0.13 (06.09.2021)
 - ✨ **Svar på spørreskjemaer** Medlemmer kan nå svare på spørreskjemaer.

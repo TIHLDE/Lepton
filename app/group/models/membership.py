@@ -104,6 +104,7 @@ class Membership(BaseModel, BasePermissionModel):
         MembershipHistory.from_membership(self)
         return super().delete(*args, **kwargs)
 
+    @atomic
     def delete_hs_membership(self):
         seat_to_delete = (
             Membership.objects.select_for_update()

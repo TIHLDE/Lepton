@@ -8,7 +8,7 @@ from app.forms.serializers.submission import SubmissionInRegistrationSerializer
 
 
 class RegistrationSerializer(BaseModelSerializer):
-    user_info = UserListSerializer(source="user")
+    user_info = UserListSerializer(source="user", read_only=True)
     survey_submission = serializers.SerializerMethodField()
     waiting_number = serializers.SerializerMethodField()
 
@@ -24,9 +24,6 @@ class RegistrationSerializer(BaseModelSerializer):
             "survey_submission",
             "waiting_number",
         ]
-
-    # def get_user_info(self, obj):
-    #     return obj.user
 
     def get_survey_submission(self, obj):
         submissions = obj.get_submissions(type=EventFormType.SURVEY).first()
