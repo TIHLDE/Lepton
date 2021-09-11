@@ -1,4 +1,3 @@
-from django.shortcuts import get_object_or_404
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -6,7 +5,9 @@ from rest_framework.response import Response
 from app.common.permissions import BasicViewPermission
 from app.forms.models import Form
 from app.forms.serializers import FormPolymorphicSerializer
-from app.forms.serializers.statistics import FormStatisticsSerializer
+from app.forms.serializers.statistics import (
+    FormStatisticsSerializer,
+)
 
 
 class FormViewSet(viewsets.ModelViewSet):
