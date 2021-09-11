@@ -1,4 +1,7 @@
+from app.forms.serializers.statistics import FieldStatisticsSerializer, FormStatisticsSerializer
 from rest_framework import status, viewsets
+from django.shortcuts import get_object_or_404
+from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from app.common.permissions import BasicViewPermission
@@ -28,3 +31,9 @@ class FormViewSet(viewsets.ModelViewSet):
         return Response(
             {"detail": "Skjemaet ble slettet"}, status=status.HTTP_200_OK
         )
+
+    @action(detail=True, methods=["get"], url_path="statistics")
+    def statistics(self, request, *args, **kwargs):
+        form = self.get_object()
+        serializer = FormStatisticsSerializer(form)
+        return Response(serializer.data, status=status.HTTP_200_OK)
