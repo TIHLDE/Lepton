@@ -6,10 +6,7 @@ from rest_framework.response import Response
 from app.common.permissions import BasicViewPermission
 from app.forms.models import Form
 from app.forms.serializers import FormPolymorphicSerializer
-from app.forms.serializers.statistics import (
-    FieldStatisticsSerializer,
-    FormStatisticsSerializer,
-)
+from app.forms.serializers.statistics import FormStatisticsSerializer
 
 
 class FormViewSet(viewsets.ModelViewSet):
