@@ -33,8 +33,6 @@ class BaseSubmissionSerializer(BaseModelSerializer):
 
 
 class SubmissionSerializer(BaseSubmissionSerializer):
-
-
     class Meta:
         model = BaseSubmissionSerializer.Meta.model
         fields = BaseSubmissionSerializer.Meta.fields + ("user",)
