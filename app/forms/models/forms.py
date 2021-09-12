@@ -40,6 +40,10 @@ class Form(PolymorphicModel):
         return True
 
     @classmethod
+    def has_statistics_permission(cls, request):
+        return check_has_access(cls.write_access, request)
+
+    @classmethod
     def has_list_permission(cls, request):
         return check_has_access(cls.write_access, request)
 

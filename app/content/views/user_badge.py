@@ -13,7 +13,7 @@ class UserBadgeViewSet(viewsets.ModelViewSet):
     serializer_class = UserBadgeSerializer
     permission_classes = [BasicViewPermission]
     queryset = UserBadge.objects.all()
-    http_method_names = ['post']
+    http_method_names = ["post"]
 
     def create(self, request):
         try:
