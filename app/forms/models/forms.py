@@ -63,7 +63,7 @@ class Form(PolymorphicModel):
         return True
 
     def has_object_read_permission(self, request):
-        if isinstance(self, EventForm) and self.type == EventFormType.EVALUATION :
+        if isinstance(self, EventForm) and self.type == EventFormType.EVALUATION:
             return (
                 self.event.get_queue()
                 .filter(user=request.user, has_attended=True)
