@@ -40,6 +40,10 @@ class Form(PolymorphicModel):
         return True
 
     @classmethod
+    def has_statistics_permission(cls, request):
+        return check_has_access(cls.write_access, request)
+
+    @classmethod
     def has_list_permission(cls, request):
         return check_has_access(cls.write_access, request)
 
@@ -129,20 +133,36 @@ class Submission(BaseModel, BasePermissionModel):
 
     @classmethod
     def has_retrieve_permission(cls, request):
+
         if request.user is None:
             return False
 
-        return check_has_access(cls.read_access, request)
+        return cls._is_own_permission(request) or check_has_access(
+            cls.read_access, request
+        )
+
+    @classmethod
+    def _is_own_permission(cls, request):
+        form_id = request.parser_context["kwargs"]["form_id"]
+        form = Form.objects.get(id=form_id)
+
+        submission_id = request.parser_context["kwargs"]["pk"]
+        submission = form.submissions.get(id=submission_id)
+
+        return submission.user is request.user
 
     @classmethod
     def has_list_permission(cls, request):
+
         if request.user is None:
             return False
 
         return check_has_access(cls.read_access, request)
 
     def has_object_read_permission(self, request):
-        return check_has_access(self.read_access, request)
+        return self._is_own_permission(request) or check_has_access(
+            self.read_access, request
+        )
 
 
 class Answer(BaseModel):

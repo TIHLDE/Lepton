@@ -2,11 +2,13 @@ from datetime import timedelta
 
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models import Q
 
 from app.common.enums import AdminGroup, Groups, StrikeEnum
 from app.common.permissions import check_has_access
 from app.content.exceptions import EventSignOffDeadlineHasPassed, StrikeError
 from app.content.models.strike import create_strike
+from app.forms.enums import EventFormType
 from app.util import EnumUtils, today
 from app.util.mail_creator import MailCreator
 from app.util.models import BaseModel
@@ -78,6 +80,14 @@ class Registration(BaseModel):
             f'{"on the waiting list" if self.is_on_wait else "on the list"}'
         )
 
+    def delete_submission_if_exists(self):
+        from app.forms.models.forms import EventForm, Submission
+
+        event_form = EventForm.objects.filter(
+            event=self.event, type=EventFormType.SURVEY
+        )[:1]
+        Submission.objects.filter(form=event_form, user=self.user).delete()
+
     def delete(self, *args, **kwargs):
         if not self.is_on_wait:
             if self.event.is_past_sign_off_deadline:
@@ -87,6 +97,8 @@ class Registration(BaseModel):
                     )
                 create_strike(str(StrikeEnum.PAST_DEADLINE), self.user, self.event)
             self.move_from_waiting_list_to_queue()
+
+        self.delete_submission_if_exists()
 
         return super().delete(*args, **kwargs)
 
@@ -237,3 +249,14 @@ class Registration(BaseModel):
                 if self == waiting:
                     return list(self.event.get_waiting_list()).index(self) + 1
         return None
+
+    def get_submissions(self, type=None):
+        from app.forms.models import EventForm, Submission
+
+        query = Q(event=self.event)
+
+        if type:
+            query &= Q(type=type)
+
+        forms = EventForm.objects.filter(query)
+        return Submission.objects.filter(form__in=forms, user=self.user)

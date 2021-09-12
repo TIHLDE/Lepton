@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from rest_framework.exceptions import MethodNotAllowed
 
+from app.common.serializers import BaseModelSerializer
+from app.content.serializers.user import DefaultUserSerializer
 from app.forms.models import Answer, Field, Option, Submission
 from app.forms.serializers import FieldInAnswerSerializer, OptionSerializer
 
@@ -21,12 +23,19 @@ class AnswerSerializer(serializers.ModelSerializer):
         return data
 
 
-class SubmissionSerializer(serializers.ModelSerializer):
+class BaseSubmissionSerializer(BaseModelSerializer):
     answers = AnswerSerializer(many=True)
+    user = DefaultUserSerializer(read_only=True)
 
     class Meta:
         model = Submission
-        fields = ("answers",)
+        fields = ("answers", "user")
+
+
+class SubmissionSerializer(BaseSubmissionSerializer):
+    class Meta:
+        model = BaseSubmissionSerializer.Meta.model
+        fields = BaseSubmissionSerializer.Meta.fields + ("user",)
 
     def __create_answer_for_submission(self, submission, answer_data):
         field_id = answer_data.pop("field").get("id")
@@ -60,5 +69,11 @@ class SubmissionSerializer(serializers.ModelSerializer):
 
         return self.__create_submission(user, form_id, answers_data)
 
-    def update(self, validated_data):
+    def update(self, **validated_data):
         raise MethodNotAllowed()
+
+
+class SubmissionInRegistrationSerializer(BaseSubmissionSerializer):
+    class Meta:
+        model = BaseSubmissionSerializer.Meta.model
+        fields = BaseSubmissionSerializer.Meta.fields + ("form",)

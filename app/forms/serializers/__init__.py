@@ -5,3 +5,5 @@ from app.forms.serializers.forms import (
     FormSerializer,
     OptionSerializer,
 )
+
+from app.forms.serializers.statistics import FormStatisticsSerializer

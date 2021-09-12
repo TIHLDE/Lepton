@@ -1,9 +1,11 @@
 from rest_framework import status, viewsets
+from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from app.common.permissions import BasicViewPermission
 from app.forms.models import Form
 from app.forms.serializers import FormPolymorphicSerializer
+from app.forms.serializers.statistics import FormStatisticsSerializer
 
 
 class FormViewSet(viewsets.ModelViewSet):
@@ -25,6 +27,10 @@ class FormViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         super().destroy(request, *args, **kwargs)
-        return Response(
-            {"detail": "Skjemaet ble slettet"}, status=status.HTTP_204_NO_CONTENT
-        )
+        return Response({"detail": "Skjemaet ble slettet"}, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=["get"], url_path="statistics")
+    def statistics(self, request, *args, **kwargs):
+        form = self.get_object()
+        serializer = FormStatisticsSerializer(form)
+        return Response(serializer.data, status=status.HTTP_200_OK)
