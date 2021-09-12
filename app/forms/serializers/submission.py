@@ -33,10 +33,6 @@ class BaseSubmissionSerializer(BaseModelSerializer):
 
 
 class SubmissionSerializer(BaseSubmissionSerializer):
-    from app.content.serializers.user import UserInAnswerSerializer
-
-    user = UserInAnswerSerializer(read_only=True)
-
     class Meta:
         model = BaseSubmissionSerializer.Meta.model
         fields = BaseSubmissionSerializer.Meta.fields + ("user",)
