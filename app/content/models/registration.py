@@ -134,6 +134,13 @@ class Registration(BaseModel):
                     f"Kan ikke melde deg på før etter {hours_offset} timer etter påmeldingsstart"
                 )
 
+    def check_answered_submission(self):
+        from app.forms.models import EventForm
+
+        form = EventForm.objects.filter(event=self.event, type=EventFormType.SURVEY)
+        submission = self.get_submissions(type=EventFormType.SURVEY)
+        return not form.exists() or submission.exists()
+
     def send_notification_and_mail(self):
         has_not_attended = not self.has_attended
         if not self.is_on_wait and has_not_attended:
@@ -223,11 +230,17 @@ class Registration(BaseModel):
         :raises ValidationError if the event or queue is closed.
         """
         if self.event.closed:
-            raise ValidationError("The queue for this event is closed")
+            raise ValidationError(
+                "Dette arrangementet er stengt du kan derfor ikke melde deg på"
+            )
         if not self.event.sign_up:
-            raise ValidationError("Sign up is not possible")
+            raise ValidationError("Påmelding er ikke mulig")
         if not self.registration_id:
             self.validate_start_and_end_registration_time()
+        if not self.check_answered_submission():
+            raise ValidationError(
+                "Du må svare på spørreskjemaet før du kan melde deg på arrangementet"
+            )
 
     def validate_start_and_end_registration_time(self):
         self.check_registration_has_started()
@@ -235,13 +248,11 @@ class Registration(BaseModel):
 
     def check_registration_has_started(self):
         if self.event.start_registration_at > today():
-            raise ValidationError(
-                "The registration for this event has not started yet."
-            )
+            raise ValidationError("Påmeldingen har ikke åpnet enda")
 
     def check_registration_has_ended(self):
         if self.event.end_registration_at < today():
-            raise ValidationError("The registration for this event has ended.")
+            raise ValidationError("Påmeldingsfristen har passert")
 
     def get_waiting_number(self):
         if self.is_on_wait:
