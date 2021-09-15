@@ -1,4 +1,7 @@
-from app.content.factories.event_factory import EventFactory, EventWithSignalsFactory
+from app.content.factories.event_factory import (
+    EventFactory,
+    EventWithSignalsFactory,
+)
 from app.content.factories.priority_factory import PriorityFactory
 from app.content.factories.user_factory import UserFactory
 from app.content.factories.registration_factory import RegistrationFactory
