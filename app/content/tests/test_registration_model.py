@@ -1,5 +1,7 @@
 from unittest.mock import patch
 
+from django.core.exceptions import ValidationError
+
 import pytest
 
 from app.common.enums import UserClass, UserStudy
@@ -22,6 +24,11 @@ def non_priority_user_class():
 @pytest.fixture()
 def non_priority_user_study():
     return UserStudy.DATAING
+
+
+@pytest.fixture()
+def user():
+    return UserFactory()
 
 
 @pytest.fixture()
@@ -359,9 +366,7 @@ def test_delete_registration_when_no_users_on_wait_are_in_a_priority_pool_bumps_
     "form_type,should_exist",
     [(EventFormType.EVALUATION, True), (EventFormType.SURVEY, False)],
 )
-def test_deleting_registration_deletes_submission(form_type, should_exist):
-    event = EventFactory()
-    user = UserFactory()
+def test_deleting_registration_deletes_submission(event, user, form_type, should_exist):
     form = EventFormFactory(event=event, type=form_type)
     submission = SubmissionFactory(form=form, user=user)
     registration = RegistrationFactory(event=event, user=user)
@@ -369,3 +374,10 @@ def test_deleting_registration_deletes_submission(form_type, should_exist):
     registration.delete()
 
     assert Submission.objects.filter(id=submission.id).exists() is should_exist
+
+
+@pytest.mark.django_db
+def test_create_registration_without_submission_answer_fails(event, user):
+    EventFormFactory(event=event, type=EventFormType.SURVEY)
+    with pytest.raises(ValidationError):
+        RegistrationFactory(event=event, user=user)
