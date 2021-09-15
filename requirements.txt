@@ -55,4 +55,4 @@ pytest-factoryboy == 2.0.3
 # PDF
 fpdf==1.7.2
 pdf2image==1.14.0
-pyheif==0.5.1
+pyheif==0.4
