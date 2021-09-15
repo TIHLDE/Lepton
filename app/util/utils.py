@@ -2,8 +2,6 @@ import logging
 from datetime import datetime, timedelta, timezone
 from functools import wraps
 
-from django.utils.formats import date_format, time_format
-
 from pytz import timezone as pytz_timezone
 
 logger = logging.getLogger(__name__)
@@ -18,7 +16,12 @@ def today():
 
 
 def datetime_format(date_time):
-    return f"{date_format(date_time)} {time_format(date_time)}"
+    from django.template import Context, Template
+
+    # Using Django Template to format as it formats dates with both localization and timezone automatically
+    return Template("{{ date_to_format }}").render(
+        Context(dict(date_to_format=date_time))
+    )
 
 
 def midday(date_time):

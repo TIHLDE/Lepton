@@ -13,6 +13,8 @@
 ---
 
 ## Neste versjon
+## Versjon 1.0.15 (15.09.2021)
+- 🦟 **Tidssoner**. Fikset bug der tidspunkter i eposter blir formatert med feil tidssone.
 ## Versjon 1.0.14 (12.09.2021)
 - ✨ **Svar på spørreskjemaer** blir nå sendt med sammen med påmeldingen.
 - ✨ **Statistikk spørreskjemaer** Kan nå hente ut statistikk over svar på spørreskjemaer.
