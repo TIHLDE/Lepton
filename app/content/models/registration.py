@@ -1,5 +1,6 @@
 from datetime import timedelta
 
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q
@@ -117,8 +118,8 @@ class Registration(BaseModel):
         return super(Registration, self).save(*args, **kwargs)
 
     def create(self):
-        if self.user.has_unanswered_evaluations():
-            raise UnansweredFormError()
+        if settings.RESTRICT_REGISTRATION_FOR_UNANSWERED_EVALUATION:
+            self._abort_for_unanswered_evaluations()
 
         self.strike_handler()
         self.clean()
@@ -126,6 +127,10 @@ class Registration(BaseModel):
 
         if self.should_swap_with_non_prioritized_user():
             self.swap_users()
+
+    def _abort_for_unanswered_evaluations(self):
+        if self.user.has_unanswered_evaluations():
+            raise UnansweredFormError()
 
     def strike_handler(self):
         number_of_strikes = self.user.get_number_of_strikes()

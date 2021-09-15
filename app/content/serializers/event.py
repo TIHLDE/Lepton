@@ -88,7 +88,7 @@ class EventSerializer(serializers.ModelSerializer):
     def get_viewer_has_unanswered_evaluations(self, obj):
         request = self.context.get("request", None)
         if request and request.user:
-            return not request.user.has_unanswered_evaluations()
+            return request.user.has_unanswered_evaluations()
 
 
 class EventListSerializer(serializers.ModelSerializer):
