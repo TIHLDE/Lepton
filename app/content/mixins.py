@@ -1,6 +1,8 @@
 from app.content.exceptions import (
     APIEventSignOffDeadlineHasPassed,
+    APIUnansweredFormException,
     EventSignOffDeadlineHasPassed,
+    UnansweredFormError,
 )
 from app.util.mixins import APIErrorsMixin
 
@@ -11,4 +13,5 @@ class APIRegistrationErrorsMixin(APIErrorsMixin):
         return {
             **super().expected_exceptions,
             EventSignOffDeadlineHasPassed: APIEventSignOffDeadlineHasPassed,
+            UnansweredFormError: APIUnansweredFormException,
         }

@@ -1,5 +1,6 @@
 from datetime import timedelta
 
+from django.test import override_settings
 from rest_framework import status
 
 import pytest
@@ -11,6 +12,8 @@ from app.content.factories import (
     RegistrationFactory,
     UserFactory,
 )
+from app.forms.enums import EventFormType
+from app.forms.tests.form_factories import EventFormFactory, SubmissionFactory
 from app.util.test_utils import get_api_client
 from app.util.utils import today
 
@@ -652,3 +655,36 @@ def test_delete_own_registration_as_member_when_no_users_on_wait_are_in_a_priori
     registration_on_wait.refresh_from_db()
 
     assert not registration_on_wait.is_on_wait
+
+
+@override_settings(RESTRICT_REGISTRATION_FOR_UNANSWERED_EVALUATION=True)
+@pytest.mark.django_db
+def test_that_users_cannot_register_when_has_unanswered_evaluations(api_client, user):
+    evaluation = EventFormFactory(type=EventFormType.EVALUATION)
+    RegistrationFactory(event=evaluation.event, user=user, has_attended=True)
+
+    next_event = EventFactory()
+
+    data = _get_registration_post_data(user, next_event)
+    url = _get_registration_url(event=next_event)
+    response = api_client(user=user).post(url, data=data)
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert not next_event.registrations.filter(user=user).exists()
+
+
+@override_settings(RESTRICT_REGISTRATION_FOR_UNANSWERED_EVALUATION=True)
+@pytest.mark.django_db
+def test_that_users_can_register_when_has_no_unanswered_evaluations(api_client, user):
+    evaluation = EventFormFactory(type=EventFormType.EVALUATION)
+    RegistrationFactory(event=evaluation.event, user=user, has_attended=True)
+    SubmissionFactory(form=evaluation, user=user)
+
+    next_event = EventFactory()
+
+    data = _get_registration_post_data(user, next_event)
+    url = _get_registration_url(event=next_event)
+    response = api_client(user=user).post(url, data=data)
+
+    assert response.status_code == status.HTTP_201_CREATED
+    assert next_event.registrations.filter(user=user).exists()

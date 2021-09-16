@@ -16,7 +16,7 @@ from app.content.factories import (
     ShortLinkFactory,
     UserFactory,
 )
-from app.forms.tests.form_factories import FormFactory
+from app.forms.tests.form_factories import FormFactory, SubmissionFactory
 from app.group.factories import GroupFactory, MembershipFactory
 from app.util.test_utils import add_user_to_group_with_name, get_api_client
 
@@ -29,6 +29,24 @@ def request_factory():
 @pytest.fixture()
 def default_client():
     return get_api_client()
+
+
+@pytest.fixture
+def api_client():
+    """
+    Provide a callable fixture that returns an `APIClient` object.
+    If a user is provided when calling the fixture,
+    the client will be authenticated on behalf of it.
+
+    `api_client()` -> anonymous request
+    `api_client(user=user)` -> authenticated request
+    `api_client(user=user, group_name=group_name)` -> authenticated request with group permissions
+    """
+
+    def _get_api_client(user=None, group_name=None):
+        return get_api_client(user=user, group_name=group_name)
+
+    return _get_api_client
 
 
 @pytest.fixture()
@@ -104,6 +122,11 @@ def parent_page():
 @pytest.fixture()
 def form():
     return FormFactory()
+
+
+@pytest.fixture()
+def submission(form):
+    return SubmissionFactory(form=form)
 
 
 @pytest.fixture()
