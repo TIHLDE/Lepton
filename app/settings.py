@@ -74,6 +74,7 @@ INSTALLED_APPS = [
     "whitenoise.runserver_nostatic",
     "django.contrib.staticfiles",
     # Third party
+    "graphene_django",
     "rest_framework",
     "corsheaders",
     "django_filters",
@@ -266,3 +267,5 @@ CELERY_BROKER_URL = os.environ.get("CELERY_URL")
 RESTRICT_REGISTRATION_FOR_UNANSWERED_EVALUATION = os.environ.get(
     "switches" ".restrict_registration_for_unanswered_evaluation", False
 )
+
+GRAPHENE = {"SCHEMA": "app.schema.schema"}

@@ -56,3 +56,5 @@ pytest-factoryboy == 2.0.3
 fpdf==1.7.2
 pdf2image==1.14.0
 pyheif==0.5.1
+
+graphene-django==2.15
