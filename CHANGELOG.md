@@ -14,6 +14,7 @@
 
 ## Neste versjon
 - ✨ **Evalueringer** må bli besvart før neste påmelding.
+- ⚡ **Skjemaer**. Legg ved mer info om arrangementet i spørrskjemaer tilknyttet et arrangement.
 
 ## Versjon 1.0.15 (15.09.2021)
 - 🦟 **Tidssoner**. Fikset bug der tidspunkter i eposter blir formatert med feil tidssone.
