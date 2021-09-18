@@ -106,7 +106,8 @@ class FormSerializer(BaseModelSerializer):
 
 
 class EventFormSerializer(FormSerializer):
-    event = EventListSerializer(many=False, read_only=True) 
+    event = EventListSerializer(many=False, read_only=True)
+    
     class Meta:
         model = EventForm
         fields = (
