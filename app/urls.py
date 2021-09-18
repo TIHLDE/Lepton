@@ -23,6 +23,8 @@ from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from graphene_django.views import GraphQLView
 
+from app.schema import schema
+
 schema_view = get_schema_view(
     openapi.Info(
         title="LEPTON API",
@@ -50,5 +52,7 @@ urlpatterns = [
     path("api/v1/", include("app.payment.urls")),
     path("api/v1/auth/", include("app.authentication.urls")),
     path("api/v1/forms/", include("app.forms.urls")),
-    path("graphql", csrf_exempt(GraphQLView.as_view(graphiql=True))),
+    path(
+        "graphql", csrf_exempt(GraphQLView.as_view(graphiql=True, schema=schema))
+    ),  # TODO: authentication: https://django-graphql-auth.readthedocs.io/en/latest/api/ or https://django-graphql-jwt.domake.io/
 ]
