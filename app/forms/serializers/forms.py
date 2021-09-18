@@ -106,8 +106,6 @@ class FormSerializer(BaseModelSerializer):
 
 
 class EventFormSerializer(FormSerializer):
-    event = EventListSerializer(many=False, read_only=True)
-    
     class Meta:
         model = EventForm
         fields = (
@@ -117,6 +115,10 @@ class EventFormSerializer(FormSerializer):
             "fields",
             "type",
         )
+
+    def to_representation(self, instance):
+        self.fields["event"] = EventListSerializer(read_only=True)
+        return super(EventFormSerializer, self).to_representation(instance)
 
 
 class FormInSubmissionSerializer(serializers.ModelSerializer):
