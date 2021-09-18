@@ -77,6 +77,7 @@ def test_list_forms_data(admin_user):
         "title": form.title,
         "event": EventListSerializer(form.event).data,
         "type": form.type.name,
+        "viewer_has_answered": False,
         "fields": [
             {
                 "id": str(field.id),
