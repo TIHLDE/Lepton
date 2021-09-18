@@ -76,6 +76,7 @@ def test_list_forms_data(admin_user):
         "title": form.title,
         "event": form.event.id,
         "type": form.type.name,
+        "viewer_has_answered": False,
         "fields": [
             {
                 "id": str(field.id),
