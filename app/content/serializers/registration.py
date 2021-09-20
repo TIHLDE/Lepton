@@ -11,6 +11,7 @@ class RegistrationSerializer(BaseModelSerializer):
     user_info = UserListSerializer(source="user", read_only=True)
     survey_submission = serializers.SerializerMethodField()
     waiting_number = serializers.SerializerMethodField()
+    has_unanswered_evaluation = serializers.SerializerMethodField()
 
     class Meta:
         model = Registration
@@ -23,6 +24,7 @@ class RegistrationSerializer(BaseModelSerializer):
             "created_at",
             "survey_submission",
             "waiting_number",
+            "has_unanswered_evaluation",
         ]
 
     def get_survey_submission(self, obj):
@@ -31,3 +33,6 @@ class RegistrationSerializer(BaseModelSerializer):
 
     def get_waiting_number(self, obj):
         return obj.get_waiting_number()
+
+    def get_has_unanswered_evaluation(self, obj):
+        return obj.user.has_unanswered_evaluations_for(obj.event)

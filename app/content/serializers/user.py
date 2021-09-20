@@ -27,6 +27,7 @@ class DefaultUserSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     unread_notifications = serializers.SerializerMethodField()
     permissions = DRYGlobalPermissionsField(actions=["write", "read"])
+    unanswered_evaluations_count = serializers.SerializerMethodField()
 
     class Meta:
         model = User
@@ -45,6 +46,7 @@ class UserSerializer(serializers.ModelSerializer):
             "tool",
             "app_token",
             "unread_notifications",
+            "unanswered_evaluations_count",
             "permissions",
         )
         read_only_fields = ("user_id",)
@@ -53,6 +55,9 @@ class UserSerializer(serializers.ModelSerializer):
     def get_unread_notifications(self, obj):
         """ Counts all unread notifications and returns the count """
         return Notification.objects.filter(user=obj, read=False).count()
+
+    def get_unanswered_evaluations_count(self, obj):
+        obj.get_unanswered_evaluations().count()
 
 
 class UserListSerializer(UserSerializer):

@@ -13,7 +13,6 @@ class EventSerializer(serializers.ModelSerializer):
     registration_priorities = serializers.SerializerMethodField()
     evaluation = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
     survey = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
-    viewer_has_unanswered_evaluations = serializers.SerializerMethodField()
 
     class Meta:
         model = Event
@@ -42,7 +41,6 @@ class EventSerializer(serializers.ModelSerializer):
             "evaluation",
             "survey",
             "updated_at",
-            "viewer_has_unanswered_evaluations",
         )
 
         extra_kwargs = {
@@ -84,11 +82,6 @@ class EventSerializer(serializers.ModelSerializer):
             ]
         except Priority.DoesNotExist:
             return None
-
-    def get_viewer_has_unanswered_evaluations(self, obj):
-        request = self.context.get("request", None)
-        if request and request.user:
-            return request.user.has_unanswered_evaluations()
 
 
 class EventListSerializer(serializers.ModelSerializer):
