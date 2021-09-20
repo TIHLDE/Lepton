@@ -105,6 +105,9 @@ class Option(models.Model):
     title = models.CharField(max_length=200, default="")
     field = models.ForeignKey(Field, on_delete=models.CASCADE, related_name="options")
 
+    class Meta:
+        ordering = ["title", "id"]
+
     def __str__(self):
         return self.title
 
