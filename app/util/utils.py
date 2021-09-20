@@ -46,3 +46,21 @@ def disable_for_loaddata(signal_handler):
         signal_handler(*args, **kwargs)
 
     return wrapper
+
+
+class CaseInsensitiveBooleanQueryParam:
+    value = None
+
+    def __init__(self, value):
+        if value is not None:
+            value = value.lower()
+            if value == "true":
+                self.value = True
+            elif value == "false":
+                self.value = False
+
+    def __bool__(self):
+        return bool(self.value)
+
+    def __str__(self):
+        return f"<{self.__class__.__name__} object ({self.value})"
