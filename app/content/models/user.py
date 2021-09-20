@@ -115,6 +115,9 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
     def has_unanswered_evaluations(self):
         return self.get_unanswered_evaluations().exists()
 
+    def has_unanswered_evaluations_for(self, event):
+        return self.get_unanswered_evaluations().filter(event=event)
+
     def get_unanswered_evaluations(self):
         from app.forms.models.forms import EventForm, EventFormType
 
