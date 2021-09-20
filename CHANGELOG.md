@@ -14,6 +14,7 @@
 
 ## Neste versjon
 - ✨ **Evalueringer** må bli besvart før neste påmelding.
+- ⚡ **Skjemaer**. Alternativ på flervalgsspørsmål er nå sortert etter tittel.
 - ✨ **Skjemaer**. Legg ved info om bruker allerede har svart på et spørreskjema.
 
 ## Versjon 1.0.15 (15.09.2021)
