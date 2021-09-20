@@ -4,6 +4,7 @@ import pytest
 
 from app.common.enums import AdminGroup
 from app.content.factories import EventFactory, RegistrationFactory
+from app.content.serializers import EventListSerializer
 from app.forms.enums import EventFormType
 from app.forms.models.forms import Field
 from app.forms.tests.form_factories import EventFormFactory, FormFactory
@@ -74,7 +75,7 @@ def test_list_forms_data(admin_user):
         "id": str(form.id),
         "resource_type": "EventForm",
         "title": form.title,
-        "event": form.event.id,
+        "event": EventListSerializer(form.event).data,
         "type": form.type.name,
         "viewer_has_answered": False,
         "fields": [

@@ -4,6 +4,7 @@ from rest_framework import serializers
 from rest_polymorphic.serializers import PolymorphicSerializer
 
 from app.common.serializers import BaseModelSerializer
+from app.content.serializers import EventListSerializer
 from app.forms.models import EventForm, Field, Form, Option
 
 
@@ -115,6 +116,10 @@ class EventFormSerializer(FormSerializer):
     class Meta:
         model = EventForm
         fields = FormSerializer.Meta.fields + ("event", "type",)
+
+    def to_representation(self, instance):
+        self.fields["event"] = EventListSerializer(read_only=True)
+        return super(EventFormSerializer, self).to_representation(instance)
 
 
 class FormInSubmissionSerializer(serializers.ModelSerializer):
