@@ -112,6 +112,12 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
 
     objects = UserManager()
 
+    @property
+    def forms(self):
+        from app.forms.models.forms import Form
+
+        return Form.objects.filter(submissions__user=self)
+
     def has_unanswered_evaluations(self):
         return self.get_unanswered_evaluations().exists()
 
