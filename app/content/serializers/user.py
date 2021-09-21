@@ -57,7 +57,7 @@ class UserSerializer(serializers.ModelSerializer):
         return Notification.objects.filter(user=obj, read=False).count()
 
     def get_unanswered_evaluations_count(self, obj):
-        obj.get_unanswered_evaluations().count()
+        return obj.get_unanswered_evaluations().count()
 
 
 class UserListSerializer(UserSerializer):
