@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+## Versjon 1.0.16 (21.09.2021)
 - Skjemaer
     - ✨ **Evalueringer** må bli besvart før neste påmelding.
     - ⚡ **Alternativ på flervalgsspørsmål** er nå sortert etter tittel.
