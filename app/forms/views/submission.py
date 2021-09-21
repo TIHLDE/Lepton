@@ -32,7 +32,7 @@ class SubmissionViewSet(viewsets.ModelViewSet):
         if isinstance(form, EventForm):
             user = request.user
             event = form.event
-            attended = event.get_queue().filter(user=user).exists()
+            attended = event.get_queue().filter(user=user, has_attended=True).exists()
 
             if form.type == EventFormType.EVALUATION and not attended:
                 return Response(

@@ -8,6 +8,7 @@ from rest_framework.response import Response
 from sentry_sdk import capture_exception
 
 from app.common.enums import Groups, GroupType
+from app.common.mixins import ActionMixin
 from app.common.pagination import BasePagination
 from app.common.permissions import (
     BasicViewPermission,
@@ -27,13 +28,15 @@ from app.content.serializers import (
     UserMemberSerializer,
     UserSerializer,
 )
+from app.forms.serializers import FormPolymorphicSerializer
 from app.group.models import Group, Membership
 from app.group.serializers import DefaultGroupSerializer
 from app.util.mail_creator import MailCreator
 from app.util.notifier import Notify
+from app.util.utils import CaseInsensitiveBooleanQueryParam
 
 
-class UserViewSet(viewsets.ModelViewSet):
+class UserViewSet(viewsets.ModelViewSet, ActionMixin):
     """ API endpoint to display one user """
 
     serializer_class = UserSerializer
@@ -136,17 +139,13 @@ class UserViewSet(viewsets.ModelViewSet):
     def get_user_badges(self, request, *args, **kwargs):
         user_badges = request.user.user_badges.order_by("-created_at")
         badges = [user_badge.badge for user_badge in user_badges]
-        page = self.paginate_queryset(badges)
-        serializer = BadgeSerializer(page, many=True)
-        return self.get_paginated_response(serializer.data)
+        return self.paginate_response(data=badges, serializer=BadgeSerializer)
 
     @action(detail=False, methods=["get"], url_path="me/strikes")
     def get_user_strikes(self, request, *args, **kwargs):
         strikes = request.user.strikes.all()
         active_strikes = [strike for strike in strikes if strike.active]
-        page = self.paginate_queryset(active_strikes)
-        serializer = StrikeSerializer(page, many=True)
-        return self.get_paginated_response(serializer.data)
+        return self.paginate_response(data=active_strikes, serializer=StrikeSerializer)
 
     @action(detail=False, methods=["get"], url_path="me/events")
     def get_user_events(self, request, *args, **kwargs):
@@ -156,9 +155,20 @@ class UserViewSet(viewsets.ModelViewSet):
             for registration in registrations
             if not registration.event.expired
         ]
-        page = self.paginate_queryset(events)
-        serializer = EventListSerializer(page, many=True)
-        return self.get_paginated_response(serializer.data)
+
+        return self.paginate_response(data=events, serializer=EventListSerializer)
+
+    @action(detail=False, methods=["get"], url_path="me/forms")
+    def get_user_forms(self, request, *args, **kwargs):
+        forms = request.user.forms
+
+        filter_field = request.query_params.get("unanswered")
+        filter_unanswered = CaseInsensitiveBooleanQueryParam(filter_field)
+
+        if filter_unanswered:
+            forms = request.user.get_unanswered_evaluations()
+
+        return self.paginate_response(data=forms, serializer=FormPolymorphicSerializer)
 
     @action(
         detail=False,

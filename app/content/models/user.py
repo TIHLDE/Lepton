@@ -112,6 +112,26 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
 
     objects = UserManager()
 
+    @property
+    def forms(self):
+        from app.forms.models.forms import Form
+
+        return Form.objects.filter(submissions__user=self)
+
+    def has_unanswered_evaluations(self):
+        return self.get_unanswered_evaluations().exists()
+
+    def has_unanswered_evaluations_for(self, event):
+        return self.get_unanswered_evaluations().filter(event=event).exists()
+
+    def get_unanswered_evaluations(self):
+        from app.forms.models.forms import EventForm, EventFormType
+
+        registrations = self.registrations.filter(has_attended=True)
+        return EventForm.objects.filter(
+            event__registrations__in=registrations, type=EventFormType.EVALUATION
+        ).exclude(submissions__user=self)
+
     @classmethod
     def has_retrieve_permission(cls, request):
         if request.user:
