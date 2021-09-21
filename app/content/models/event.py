@@ -52,7 +52,6 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
     registration_priorities = models.ManyToManyField(
         Priority, blank=True, default=None, related_name="priorities"
     )
-    evaluate_link = models.CharField(max_length=200, blank=True, null=True)
     end_date_schedular_id = models.CharField(max_length=100, blank=True, null=True)
     sign_off_deadline_schedular_id = models.CharField(
         max_length=100, blank=True, null=True
@@ -65,6 +64,10 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
     @property
     def website_url(self):
         return f"/arrangementer/{self.id}/"
+
+    @property
+    def evaluation_url(self):
+        return f"sporreskjema/{self.evaluation.id}/"
 
     @property
     def expired(self):

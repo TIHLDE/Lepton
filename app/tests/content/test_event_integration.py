@@ -56,7 +56,6 @@ def test_retrieve_as_admin_user(event, user, group_name, expected_status_code):
     response = client.get(url)
 
     assert response.status_code == expected_status_code
-    assert "evaluate_link" in response.data.keys()
 
 
 @pytest.mark.django_db

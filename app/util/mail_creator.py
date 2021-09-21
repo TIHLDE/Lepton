@@ -40,6 +40,16 @@ class MailCreator:
             "Se arrangement", f"https://tihlde.org/arrangementer/{event_id}/"
         )
 
+    def add_evaluation_button(self, event):
+        """
+        Add a button which links to an event
+
+        event_id: -> Id of event which you want a link to
+        """
+        return self.add_button(
+            "Åpne undersøkelsen", f"https://tihlde.org/{event.evaluation_url}"
+        )
+
     def generate_string(self):
         """
         Generate a string which can be sent in the email

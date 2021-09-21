@@ -57,7 +57,7 @@ def event_end_schedular(*args, **kwargs):
                 .add_paragraph(
                     "Undersøkelsen tar ca 1 minutt å svare på, og er til stor hjelp for fremtidige arrangementer. Takk på forhånd!"
                 )
-                .add_button("Åpne undersøkelsen", event.evaluate_link)
+                .add_evaluation_button(event)
                 .generate_string()
             )
     except Event.DoesNotExist as event_not_exist:

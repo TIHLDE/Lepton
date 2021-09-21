@@ -37,15 +37,10 @@ class EventSerializer(serializers.ModelSerializer):
             "end_registration_at",
             "sign_off_deadline",
             "registration_priorities",
-            "evaluate_link",
             "evaluation",
             "survey",
             "updated_at",
         )
-
-        extra_kwargs = {
-            "evaluate_link": {"write_only": True},
-        }
 
     def validate_limit(self, limit):
         """
@@ -125,7 +120,6 @@ class EventCreateAndUpdateSerializer(BaseModelSerializer):
             "end_registration_at",
             "sign_off_deadline",
             "registration_priorities",
-            "evaluate_link",
         )
 
     def create(self, validated_data):
@@ -168,4 +162,4 @@ class EventCreateAndUpdateSerializer(BaseModelSerializer):
 class EventAdminSerializer(EventSerializer):
     class Meta:
         model = Event
-        fields = EventSerializer.Meta.fields + ("evaluate_link",)
+        fields = EventSerializer.Meta.fields
