@@ -85,6 +85,7 @@ def registration_not_in_priority_pool(
         event=event_with_registrations_and_priority, user=user_not_in_priority_pool
     )
 
+
 @pytest.fixture(autouse=True)
 def registration_in_priority_pool(
     event_with_registrations_and_priority, user_in_priority_pool
@@ -385,7 +386,7 @@ def test_create_registration_without_submission_answer_fails(event, user):
 @pytest.mark.django_db
 def test_bump_user_from_wait_increments_limit(event_with_registrations_and_priority):
     """
-    Tests if an admin manualy bumps a user up from the wait list when the event is full 
+    Tests if an admin manualy bumps a user up from the wait list when the event is full
     the event limit increases by 1
     """
     registration = RegistrationFactory(event=event_with_registrations_and_priority)
