@@ -67,7 +67,7 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
 
     @property
     def evaluation_url(self):
-        return f"sporreskjema/{self.evaluation.id}/"
+        return f"/sporreskjema/{self.evaluation.id}/"
 
     @property
     def expired(self):

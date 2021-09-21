@@ -157,9 +157,3 @@ class EventCreateAndUpdateSerializer(BaseModelSerializer):
         )
 
         return registration_priority
-
-
-class EventAdminSerializer(EventSerializer):
-    class Meta:
-        model = Event
-        fields = EventSerializer.Meta.fields
