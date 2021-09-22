@@ -1,4 +1,6 @@
 import logging
+from django.conf import settings
+from rest_framework.renderers import JSONRenderer
 
 from django.db.utils import IntegrityError
 from rest_framework import status
@@ -18,6 +20,13 @@ def exception_handler(exc, context):
             status=status.HTTP_409_CONFLICT,
         )
 
+    if not settings.DEBUG:
+        message = str(exc) if exc else "Noe gikk alvorlig galt da vi behandlet forespørselen din "
+        response = Response(
+        {"detail": message },
+        status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+
     if response:
         log_api_error(response, exc)
     else:
@@ -35,9 +44,3 @@ def log_api_error(response, exc):
     )
 
 
-def handler500(request, *args, **argv):
-    response = Response(
-        {"detail": "Noe gikk galt på server siden"},
-        status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-    )
-    return response

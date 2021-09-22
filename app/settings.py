@@ -264,5 +264,5 @@ CELERY_BROKER_URL = os.environ.get("CELERY_URL")
 
 # Custom switches
 RESTRICT_REGISTRATION_FOR_UNANSWERED_EVALUATION = os.environ.get(
-    "switches" ".restrict_registration_for_unanswered_evaluation", False
+    "switches" ".restrict_registration_for_unanswered_evaluation", True
 )

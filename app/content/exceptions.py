@@ -18,6 +18,13 @@ class APIUnansweredFormException(APIException):
         "Du har ubesvarte evalueringsskjemaer som må besvares før du kan melde deg på"
     )
 
+class APIHasStrikeException(APIException):
+    status_code = status.HTTP_403_FORBIDDEN
+    default_detail = (
+        "Kan ikke melde deg på fordi du har en prikk"
+    )
+
+
 
 class EventSignOffDeadlineHasPassed(ValueError):
     pass
@@ -25,7 +32,6 @@ class EventSignOffDeadlineHasPassed(ValueError):
 
 class StrikeError(ValueError):
     pass
-
 
 class UnansweredFormError(ValueError):
     pass

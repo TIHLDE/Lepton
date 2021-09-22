@@ -22,6 +22,7 @@ from rest_framework import permissions
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 
+
 schema_view = get_schema_view(
     openapi.Info(
         title="LEPTON API",
@@ -50,4 +51,3 @@ urlpatterns = [
     path("api/v1/auth/", include("app.authentication.urls")),
     path("api/v1/forms/", include("app.forms.urls")),
 ]
-handler500 = "app.util.exceptions.handle500"

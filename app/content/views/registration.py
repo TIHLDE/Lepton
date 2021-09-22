@@ -38,7 +38,6 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         """Register the current user for the given event."""
-        # try:
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
@@ -54,8 +53,6 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, viewsets.ModelViewSet):
             registration, context={"user": registration.user}
         )
         return Response(registration_serializer.data, status=status.HTTP_201_CREATED)
-        # except StrikeError as strike_error:
-        # return Response({"detail":str(strike_error)}, status=status.HTTP_400_BAD_REQUEST)
 
     def update(self, request, *args, **kwargs):
         registration = self.get_object()
