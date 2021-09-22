@@ -66,10 +66,6 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
         return f"/arrangementer/{self.id}/"
 
     @property
-    def evaluation_url(self):
-        return f"/sporreskjema/{self.evaluation.id}/"
-
-    @property
     def expired(self):
         return self.end_date <= yesterday()
 

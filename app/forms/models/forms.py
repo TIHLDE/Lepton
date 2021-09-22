@@ -25,6 +25,10 @@ class Form(PolymorphicModel):
     def __str__(self):
         return self.title
 
+    @property
+    def website_url(self):
+        return f"/sporreskjema/{self.id}/"
+
     def add_fields(self, fields):
         for field in fields:
             options = field.pop("options", None)
