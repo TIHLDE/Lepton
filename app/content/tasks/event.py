@@ -1,3 +1,5 @@
+from django.conf import settings
+
 from celery import shared_task
 from sentry_sdk import capture_exception
 
@@ -45,21 +47,29 @@ def event_end_schedular(*args, **kwargs):
             event__pk=event.id, has_attended=False
         ):
             create_strike("NO_SHOW", registration.user, registration.event)
-        for registration in Registration.objects.filter(
-            event__pk=event.id, has_attended=True
-        ):
-            Notify(registration.user, f"Evaluering av {event.title}").send_email(
-                MailCreator(f"Evaluering av {event.title}")
-                .add_paragraph(f"Hei {registration.user.first_name}!")
-                .add_paragraph(
-                    f"Vi i TIHLDE hadde satt stor pris på om du hadde tatt deg tid til å svare på denne korte undersøkelsen angående {event.title} den {datetime_format(event.start_date)}"
+
+        if event.evaluation:
+            for registration in Registration.objects.filter(
+                event__pk=event.id, has_attended=True
+            ):
+                Notify(registration.user, f"Evaluering av {event.title}").send_email(
+                    MailCreator(f"Evaluering av {event.title}")
+                    .add_paragraph(f"Hei {registration.user.first_name}!")
+                    .add_paragraph(
+                        f"Vi i TIHLDE setter stor pris på at du tar deg tid til å svare på denne korte undersøkelsen angående {event.title} den {datetime_format(event.start_date)}"
+                    )
+                    .add_paragraph(
+                        "Undersøkelsen tar ca 1 minutt å svare på, og er til stor hjelp for fremtidige arrangementer. Takk på forhånd!"
+                    )
+                    .add_paragraph(
+                        "PS: Du kan ikke melde deg på flere arrangementer gjennom TIHLDE.org før du har svart på denne undersøkelsen. Du kan alltid finne alle dine ubesvarte spørreskjemaer i profilen din."
+                    )
+                    .add_button(
+                        "Åpne undersøkelsen",
+                        f"{settings.WEBSITE_URL}{event.evaluation.website_url}",
+                    )
+                    .generate_string()
                 )
-                .add_paragraph(
-                    "Undersøkelsen tar ca 1 minutt å svare på, og er til stor hjelp for fremtidige arrangementer. Takk på forhånd!"
-                )
-                .add_button("Åpne undersøkelsen", event.evaluate_link)
-                .generate_string()
-            )
     except Event.DoesNotExist as event_not_exist:
         capture_exception(event_not_exist)
 
