@@ -9,7 +9,6 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
-from app.util.utils import website_url
 import logging
 import os
 
@@ -47,9 +46,11 @@ ENVIRONMENT = (
     else EnvironmentOptions.LOCAL
 )
 
-WEBSITE_URL= (
-    "https://tihlde.org" if ENVIRONMENT == EnvironmentOptions.PRODUCTION
-    else "https://dev.tihlde.org"if ENVIRONMENT == EnvironmentOptions.DEVELOPMENT
+WEBSITE_URL = (
+    "https://tihlde.org"
+    if ENVIRONMENT == EnvironmentOptions.PRODUCTION
+    else "https://dev.tihlde.org"
+    if ENVIRONMENT == EnvironmentOptions.DEVELOPMENT
     else "https://localhost:3000"
 )
 

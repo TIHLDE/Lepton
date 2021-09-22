@@ -34,7 +34,7 @@ from app.group.models import Group, Membership
 from app.group.serializers import DefaultGroupSerializer
 from app.util.mail_creator import MailCreator
 from app.util.notifier import Notify
-from app.util.utils import CaseInsensitiveBooleanQueryParam, website_url
+from app.util.utils import CaseInsensitiveBooleanQueryParam
 
 
 class UserViewSet(viewsets.ModelViewSet, ActionMixin):

@@ -1,8 +1,6 @@
 from django.conf import settings
 from django.template.loader import render_to_string
 
-from app.util.utils import website_url
-
 
 class MailCreator:
     def __init__(self, title):
