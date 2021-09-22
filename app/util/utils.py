@@ -16,7 +16,7 @@ def website_url() -> str:
         return "https://tihlde.org"
     if settings.ENVIRONMENT == EnvironmentOptions.DEVELOPMENT:
         return "https://dev.tihlde.org"
-    if settings.ENVIRONMENT == EnvironmentOptions.DEVELOPMENT:
+    if settings.ENVIRONMENT == EnvironmentOptions.LOCAL:
         return "https://localhost:3000"
 
 
