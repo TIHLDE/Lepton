@@ -33,7 +33,7 @@ from app.group.models import Group, Membership
 from app.group.serializers import DefaultGroupSerializer
 from app.util.mail_creator import MailCreator
 from app.util.notifier import Notify
-from app.util.utils import CaseInsensitiveBooleanQueryParam
+from app.util.utils import CaseInsensitiveBooleanQueryParam, website_url
 
 
 class UserViewSet(viewsets.ModelViewSet, ActionMixin):
@@ -187,7 +187,7 @@ class UserViewSet(viewsets.ModelViewSet, ActionMixin):
             .add_paragraph(
                 "Vi har godkjent brukeren din på TIHLDE.org! Du kan nå logge inn og ta i bruk siden."
             )
-            .add_button("Logg inn", "https://tihlde.org/logg-inn/")
+            .add_button("Logg inn", f"{website_url()}/logg-inn/")
             .generate_string()
         )
         return Response(
@@ -219,7 +219,7 @@ class UserViewSet(viewsets.ModelViewSet, ActionMixin):
                 "Vi har avslått brukeren din på TIHLDE.org fordi den ikke oppfylte kravene til å ha bruker. Du kan lage en ny bruker der du har rettet feilen hvis du ønsker. Kontakt oss hvis du er uenig i avgjørelsen."
             )
             .add_paragraph(f"Vedlagt begrunnelse: {reason}.")
-            .add_button("Til forsiden", "https://tihlde.org/")
+            .add_button("Til forsiden", f"{website_url()}/")
             .generate_string()
         )
         user.delete()

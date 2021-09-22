@@ -1,5 +1,7 @@
 from django.template.loader import render_to_string
 
+from app.util.utils import website_url
+
 
 class MailCreator:
     def __init__(self, title):
@@ -37,7 +39,7 @@ class MailCreator:
         event_id: -> Id of event which you want a link to
         """
         return self.add_button(
-            "Se arrangement", f"https://tihlde.org/arrangementer/{event_id}/"
+            "Se arrangement", f"{website_url()}/arrangementer/{event_id}/"
         )
 
     def generate_string(self):

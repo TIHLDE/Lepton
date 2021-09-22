@@ -2,9 +2,22 @@ import logging
 from datetime import datetime, timedelta, timezone
 from functools import wraps
 
+from django.conf import settings
+
 from pytz import timezone as pytz_timezone
 
+from app.common.enums import EnvironmentOptions
+
 logger = logging.getLogger(__name__)
+
+
+def website_url() -> str:
+    if settings.ENVIRONMENT == EnvironmentOptions.PRODUCTION:
+        return "https://tihlde.org"
+    if settings.ENVIRONMENT == EnvironmentOptions.DEVELOPMENT:
+        return "https://dev.tihlde.org"
+    if settings.ENVIRONMENT == EnvironmentOptions.DEVELOPMENT:
+        return "https://localhost:3000"
 
 
 def yesterday():

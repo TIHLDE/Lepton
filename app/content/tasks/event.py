@@ -5,7 +5,7 @@ from app.content.models.registration import Registration
 from app.content.models.strike import create_strike
 from app.util.mail_creator import MailCreator
 from app.util.notifier import Notify
-from app.util.utils import datetime_format
+from app.util.utils import datetime_format, website_url
 
 
 @shared_task
@@ -64,7 +64,7 @@ def event_end_schedular(*args, **kwargs):
                     )
                     .add_button(
                         "Åpne undersøkelsen",
-                        f"https://tihlde.org{event.evaluation.website_url}",
+                        f"{website_url()}{event.evaluation.website_url}",
                     )
                     .generate_string()
                 )

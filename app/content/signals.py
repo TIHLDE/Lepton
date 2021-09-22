@@ -34,7 +34,12 @@ def run_celery_tasks_for_event(event):
 def end_date_reminder(event):
     eta = midday(event.end_date + timedelta(days=1))
 
-    if not event.event_has_ended and not event.closed and isFuture(eta):
+    if (
+        event.sign_up
+        and not event.event_has_ended
+        and not event.closed
+        and isFuture(eta)
+    ):
         try:
             app.control.revoke(event.end_date_schedular_id, terminate=True)
             new_task_id = event_end_schedular.apply_async(
