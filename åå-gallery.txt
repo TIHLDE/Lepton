@@ -1,0 +1,11 @@
+id til et bilde som url-pattern
+    for å se på et bilde fullskjerm
+
+class SinglePictureViewSet(viewsets.ModelViewSet):
+    lookup_field            = "title"
+    serializer_class        = PictureSerializer
+    permission_classes      = [BasicViewPermission]
+
+    def get_queryset(self):
+        title = self.kwargs["title"]
+        return Picture.objects.filter(title=title)

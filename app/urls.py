@@ -48,4 +48,5 @@ urlpatterns = [
     path("api/v1/", include("app.payment.urls")),
     path("api/v1/auth/", include("app.authentication.urls")),
     path("api/v1/forms/", include("app.forms.urls")),
+    path("api/v1/gallery/", include("app.gallery.urls")),
 ]
