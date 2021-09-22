@@ -15,6 +15,6 @@ class APIRegistrationErrorsMixin(APIErrorsMixin):
         return {
             **super().expected_exceptions,
             EventSignOffDeadlineHasPassed: APIEventSignOffDeadlineHasPassed,
-            UnansweredFormError: APIUnansweredFormException, 
-            StrikeError : APIHasStrikeException,
+            UnansweredFormError: APIUnansweredFormException,
+            StrikeError: APIHasStrikeException,
         }
