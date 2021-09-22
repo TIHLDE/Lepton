@@ -6,7 +6,7 @@ from django.utils import timezone
 import factory
 from factory.django import DjangoModelFactory
 
-from ..models import Event
+from app.content.models.event import Event
 
 
 class EventWithSignalsFactory(DjangoModelFactory):

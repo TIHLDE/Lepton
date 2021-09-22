@@ -1,12 +1,17 @@
 from datetime import timedelta
 
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q
 
 from app.common.enums import AdminGroup, Groups, StrikeEnum
 from app.common.permissions import check_has_access
-from app.content.exceptions import EventSignOffDeadlineHasPassed, StrikeError
+from app.content.exceptions import (
+    EventSignOffDeadlineHasPassed,
+    StrikeError,
+    UnansweredFormError,
+)
 from app.content.models.strike import create_strike
 from app.forms.enums import EventFormType
 from app.util import EnumUtils, today
@@ -113,13 +118,19 @@ class Registration(BaseModel):
         return super(Registration, self).save(*args, **kwargs)
 
     def create(self):
-        """ Determines whether user is on the waiting list or not when the instance is created. """
+        if settings.RESTRICT_REGISTRATION_FOR_UNANSWERED_EVALUATION:
+            self._abort_for_unanswered_evaluations()
+
         self.strike_handler()
         self.clean()
         self.is_on_wait = self.event.is_full
 
         if self.should_swap_with_non_prioritized_user():
             self.swap_users()
+
+    def _abort_for_unanswered_evaluations(self):
+        if self.user.has_unanswered_evaluations():
+            raise UnansweredFormError()
 
     def strike_handler(self):
         number_of_strikes = self.user.get_number_of_strikes()

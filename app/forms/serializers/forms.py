@@ -35,6 +35,7 @@ class FieldSerializer(BaseModelSerializer):
 
 class FormSerializer(BaseModelSerializer):
     fields = FieldSerializer(many=True, required=False, allow_null=True)
+    viewer_has_answered = serializers.SerializerMethodField()
 
     class Meta:
         model = Form
@@ -42,7 +43,13 @@ class FormSerializer(BaseModelSerializer):
             "id",
             "title",
             "fields",
+            "viewer_has_answered",
         )
+
+    def get_viewer_has_answered(self, obj):
+        request = self.context.get("request", None)
+        if request and request.user:
+            return obj.submissions.filter(user=request.user).exists()
 
     @atomic
     def create(self, validated_data):
@@ -107,13 +114,7 @@ class FormSerializer(BaseModelSerializer):
 class EventFormSerializer(FormSerializer):
     class Meta:
         model = EventForm
-        fields = (
-            "id",
-            "title",
-            "event",
-            "fields",
-            "type",
-        )
+        fields = FormSerializer.Meta.fields + ("event", "type",)
 
 
 class FormInSubmissionSerializer(serializers.ModelSerializer):
