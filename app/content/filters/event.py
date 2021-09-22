@@ -20,5 +20,5 @@ class EventFilter(FilterSet):
         midday_today = midday(datetime.now())
         time = midday_today if midday_today < datetime.now() else midday_yesterday
         if value:
-            return queryset.filter(end_date__lt=time).order_by("-end_date")
-        return queryset.filter(end_date__gte=time).order_by("end_date")
+            return queryset.filter(end_date__lt=time).order_by("-start_date")
+        return queryset.filter(end_date__gte=time).order_by("start_date")
