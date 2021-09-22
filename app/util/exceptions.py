@@ -9,7 +9,8 @@ logger = logging.getLogger(__name__)
 
 
 def exception_handler(exc, context):
-    response = drf_exception_handler(exc, context)
+    # response = drf_exception_handler(exc, context)
+    response = None
 
     if not response and isinstance(exc, IntegrityError):
         response = Response(
@@ -21,7 +22,6 @@ def exception_handler(exc, context):
         log_api_error(response, exc)
     else:
         logger.error(f"Unhandled request exception: {exc}")
-
     return response
 
 
@@ -33,3 +33,11 @@ def log_api_error(response, exc):
     logger.warning(
         f"Request error: status={response.status_code}, detail={detail}, exc={exc}"
     )
+
+
+def handler500(request, *args, **argv):
+    response = Response(
+        {"detail": "Noe gikk galt på server siden"},
+        status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+    )
+    return response

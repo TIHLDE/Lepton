@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action
@@ -17,7 +19,7 @@ from app.content.serializers import (
 )
 from app.util.mail_creator import MailCreator
 from app.util.notifier import Notify
-from app.util.utils import yesterday
+from app.util.utils import midday, yesterday
 
 
 class EventViewSet(viewsets.ModelViewSet):
@@ -39,7 +41,10 @@ class EventViewSet(viewsets.ModelViewSet):
         if self.kwargs or "expired" in self.request.query_params:
             queryset = Event.objects.all()
         else:
-            queryset = Event.objects.filter(end_date__gte=yesterday())
+            midday_yesterday = midday(yesterday())
+            midday_today = midday(datetime.now())
+            time = midday_today if midday_today < datetime.now() else midday_yesterday
+            queryset = Event.objects.filter(end_date__gte=time)
 
         return queryset.prefetch_related("forms").order_by("start_date")
 
