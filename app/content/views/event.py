@@ -8,11 +8,10 @@ from rest_framework.response import Response
 from sentry_sdk import capture_exception
 
 from app.common.pagination import BasePagination
-from app.common.permissions import BasicViewPermission, is_admin_user
+from app.common.permissions import BasicViewPermission
 from app.content.filters import EventFilter
 from app.content.models import Event
 from app.content.serializers import (
-    EventAdminSerializer,
     EventCreateAndUpdateSerializer,
     EventListSerializer,
     EventSerializer,
@@ -57,14 +56,9 @@ class EventViewSet(viewsets.ModelViewSet):
         """Return detailed information about the event with the specified pk."""
         try:
             event = self.get_object()
-            if is_admin_user(request):
-                serializer = EventAdminSerializer(
-                    event, context={"request": request}, many=False
-                )
-            else:
-                serializer = EventSerializer(
-                    event, context={"request": request}, many=False
-                )
+            serializer = EventSerializer(
+                event, context={"request": request}, many=False
+            )
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Event.DoesNotExist as event_not_exist:
             capture_exception(event_not_exist)

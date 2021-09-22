@@ -2,7 +2,6 @@ from app.content.serializers.badge import BadgeSerializer
 from app.content.serializers.category import CategorySerializer
 from app.content.serializers.cheatsheet import CheatsheetSerializer
 from app.content.serializers.event import (
-    EventAdminSerializer,
     EventCreateAndUpdateSerializer,
     EventListSerializer,
     EventSerializer,
