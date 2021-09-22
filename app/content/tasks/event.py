@@ -1,3 +1,4 @@
+from django.conf import settings
 from celery import shared_task
 from sentry_sdk import capture_exception
 
@@ -64,7 +65,7 @@ def event_end_schedular(*args, **kwargs):
                     )
                     .add_button(
                         "Åpne undersøkelsen",
-                        f"{website_url()}{event.evaluation.website_url}",
+                        f"{settings.WEBSITE_URL}{event.evaluation.website_url}",
                     )
                     .generate_string()
                 )

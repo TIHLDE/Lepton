@@ -9,6 +9,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
+from app.util.utils import website_url
 import logging
 import os
 
@@ -38,13 +39,18 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("PROD") == None
-
 ENVIRONMENT = (
     EnvironmentOptions.PRODUCTION
     if os.environ.get("PROD")
     else EnvironmentOptions.DEVELOPMENT
     if os.environ.get("DEV")
     else EnvironmentOptions.LOCAL
+)
+
+WEBSITE_URL= (
+    "https://tihlde.org" if ENVIRONMENT == EnvironmentOptions.PRODUCTION
+    else "https://dev.tihlde.org"if ENVIRONMENT == EnvironmentOptions.DEVELOPMENT
+    else "https://localhost:3000"
 )
 
 # Application definition

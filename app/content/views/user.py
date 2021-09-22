@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
@@ -187,7 +188,7 @@ class UserViewSet(viewsets.ModelViewSet, ActionMixin):
             .add_paragraph(
                 "Vi har godkjent brukeren din på TIHLDE.org! Du kan nå logge inn og ta i bruk siden."
             )
-            .add_button("Logg inn", f"{website_url()}/logg-inn/")
+            .add_button("Logg inn", f"{settings.WEBSITE_URL}/logg-inn/")
             .generate_string()
         )
         return Response(
@@ -219,7 +220,7 @@ class UserViewSet(viewsets.ModelViewSet, ActionMixin):
                 "Vi har avslått brukeren din på TIHLDE.org fordi den ikke oppfylte kravene til å ha bruker. Du kan lage en ny bruker der du har rettet feilen hvis du ønsker. Kontakt oss hvis du er uenig i avgjørelsen."
             )
             .add_paragraph(f"Vedlagt begrunnelse: {reason}.")
-            .add_button("Til forsiden", f"{website_url()}/")
+            .add_button("Til forsiden", f"{settings.WEBSITE_URL}/")
             .generate_string()
         )
         user.delete()

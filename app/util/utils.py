@@ -11,13 +11,8 @@ from app.common.enums import EnvironmentOptions
 logger = logging.getLogger(__name__)
 
 
-def website_url() -> str:
-    if settings.ENVIRONMENT == EnvironmentOptions.PRODUCTION:
-        return "https://tihlde.org"
-    if settings.ENVIRONMENT == EnvironmentOptions.DEVELOPMENT:
-        return "https://dev.tihlde.org"
-    if settings.ENVIRONMENT == EnvironmentOptions.LOCAL:
-        return "https://localhost:3000"
+
+    
 
 
 def yesterday():
