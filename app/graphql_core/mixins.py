@@ -1,6 +1,4 @@
-from rest_framework import status
-
-from app.forms.mutations import Output
+from graphene_django.types import ErrorType
 
 
 class ListModelMixin:
@@ -16,25 +14,28 @@ class RetrieveModelMixin:
         return cls.get_object(request=info, **kwargs)
 
 
-class CreateModelMixin(Output):
-    """
-    Create a model instance.
-    """
-
-    @classmethod
-    def resolve_mutation(cls, request, *args, **kwargs):
-        serializer = cls.get_serializer(data=kwargs)
-        serializer.is_valid(raise_exception=True)  # TODO: Proper error message
-        cls.perform_create(serializer)
-        return cls(serializer.data, message="success", status=status.HTTP_201_CREATED)
-
-    @classmethod
-    def perform_create(cls, serializer):
-        serializer.save()
-
-
 # TODO: handle update properly
 class MutationMixin:
     @classmethod
     def mutate(cls, root, info, **input):
         return cls.resolve_mutation(root, info, **input)
+
+
+class SerializerMutationMixin:
+    @classmethod
+    def resolve_mutation(cls, root, info, **kwargs):
+        return cls.mutate_and_get_payload(root, info, **kwargs)
+
+    @classmethod
+    def mutate_and_get_payload(cls, root, info, **input):
+        serializer = cls.get_serializer(root, info, **input)
+
+        if serializer.is_valid():
+            return cls.perform_mutate(serializer, info)
+        else:
+            errors = ErrorType.from_errors(serializer.errors)
+            return errors
+
+    @classmethod
+    def perform_mutate(cls, serializer, info):
+        return serializer.save()

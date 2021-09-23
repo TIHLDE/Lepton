@@ -2,6 +2,9 @@ from rest_framework import permissions
 from rest_framework.exceptions import NotAuthenticated, PermissionDenied
 from rest_framework.generics import get_object_or_404
 
+import graphene
+from graphene_django.types import ErrorType
+
 
 class DRYGraphQLPermissions(
     permissions.BasePermission
@@ -188,18 +191,24 @@ class GenericQuery:
         return cls.permission_classes
 
 
-class GenericMutation(GenericQuery):
+class GenericSerializerMutation(GenericQuery):
     serializer_class = None
+    lookup_field = "pk"
+    model_operations = ["create", "update"]
+
+    errors = graphene.List(
+        ErrorType, description="May contain more than one error for same field."
+    )
 
     @classmethod
-    def get_serializer(cls, *args, **kwargs):
+    def get_serializer(cls, root, info, *args, **kwargs):
         """
         Return the serializer instance that should be used for validating and
         deserializing input, and for serializing output.
         """
         serializer_class = cls.get_serializer_class()
-        kwargs.setdefault("context", cls.get_serializer_context())
-        return serializer_class(*args, **kwargs)
+        serializer_kwargs = cls.get_serializer_kwargs(root, info, **kwargs)
+        return serializer_class(*args, **serializer_kwargs)
 
     @classmethod
     def get_serializer_class(cls):
@@ -220,8 +229,54 @@ class GenericMutation(GenericQuery):
         return cls.serializer_class
 
     @classmethod
-    def get_serializer_context(cls):
-        """
-        Extra context provided to the serializer class.
-        """
-        return {"request": cls.request, "format": cls.format_kwarg, "view": cls}
+    def get_serializer_kwargs(cls, root, info, **input):
+        lookup_field = cls.get_lookup_field()
+        model_class = cls.get_model_class()
+        model_operations = cls.get_model_operations()
+
+        if model_class:
+            if "update" in model_operations and lookup_field in input:
+                instance = get_object_or_404(
+                    model_class, **{lookup_field: input[lookup_field]}
+                )
+                partial = True
+            elif "create" in model_operations:
+                instance = None
+                partial = False
+            else:
+                raise Exception(
+                    'Invalid update operation. Input parameter "{}" required.'.format(
+                        lookup_field
+                    )
+                )
+
+            return {
+                "instance": instance,
+                "data": input,
+                "context": {"request": info.context},
+                "partial": partial,
+            }
+
+        return {"data": input, "context": {"request": info.context}}
+
+    @classmethod
+    def get_lookup_field(cls):
+        model_class = cls.get_serializer_class
+
+        if not cls.lookup_field and model_class:
+            return model_class._meta.pk.name
+
+        return cls.lookup_field
+
+    @classmethod
+    def get_model_class(cls):
+        return cls.serializer_class.Meta.model
+
+    @classmethod
+    def get_model_operations(cls):
+
+        assert (
+            "update" in cls.model_operations and "create" in cls.model_operations
+        ), "model_operations must contain 'create' and/or 'update'"
+
+        return cls.model_operations
