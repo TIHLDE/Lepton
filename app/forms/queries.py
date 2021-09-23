@@ -7,18 +7,22 @@ from app.forms.models import Form
 from app.forms.types import FormUnionType
 
 
-class BaseQuery:
-    queryset = None
-    lookup_field = "pk"
+class RetrieveModelMixin:
+    @classmethod
+    def resolve_retrieve(cls, root, info, **kwargs):
+        return cls.get_object(info, **kwargs)
 
+
+class ListModelMixin:
     @classmethod
     def resolve_list(cls, root, info, **kwargs):
         cls.check_permissions(info)
         return cls.get_queryset()
 
-    @classmethod
-    def resolve_retrieve(cls, root, info, **kwargs):
-        return cls.get_object(info, **kwargs)
+
+class GenericQuery:
+    queryset = None
+    lookup_field = "pk"
 
     @classmethod
     def get_object(cls, info, **kwargs):
@@ -72,7 +76,11 @@ class BaseQuery:
         raise PermissionDenied(detail=message, code=code)
 
 
-class FormQuery(BaseQuery):
+class ModelQuery(RetrieveModelMixin, ListModelMixin, GenericQuery):
+    pass
+
+
+class FormQuery(ModelQuery):
     queryset = Form.objects.all()
     lookup_field = "id"
 
