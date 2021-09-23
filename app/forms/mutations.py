@@ -1,3 +1,4 @@
+from rest_framework import status
 from rest_framework.exceptions import PermissionDenied
 
 import graphene
@@ -14,43 +15,45 @@ class ObjectField(Scalar):  # to serialize error message from serializer
         return dt
 
 
-class DjangoMutation(graphene.Mutation):
-    serializer = None
-    model = None
+class Output:
+    message = ObjectField()
+    status = graphene.Int()
+
+
+class DjangoMutation(graphene.Mutation, Output):
+    serializer_class = None
+    model_class = None
 
     @classmethod
     def resolve_mutation(cls, root, info, **kwargs):
-        has_permission = cls.model.has_write_permission(request=info.context)
-        print(has_permission)
+        has_permission = cls.model_class.has_write_permission(request=info.context)
 
         if not has_permission:
             raise PermissionDenied
 
+        serializer = cls.serializer_class(data=kwargs)
+        if serializer.is_valid():
+            obj = serializer.save()
+            msg = "success"
+            _status = status.HTTP_200_OK
+        else:
+            msg = serializer.errors
+            obj = None
+            _status = status.HTTP_400_BAD_REQUEST
+
+        return cls(form=obj, message=msg, status=_status)
+
+    @classmethod
+    def mutate(cls, root, info, **kwargs):
+        return cls.resolve_mutation(root, info, **kwargs)
+
 
 class FormMutation(DjangoMutation):
-    form = graphene.Field(FormUnionType)
-    message = ObjectField()
-    status = graphene.Int()
+    serializer_class = FormPolymorphicSerializer
+    model_class = Form
 
     class Arguments:
         resource_type = graphene.String(required=True)
         title = graphene.String(required=True)
 
-    @classmethod
-    def mutate(cls, root, info, **kwargs):
-        has_permission = Form.has_write_permission(request=info.context)
-        print(has_permission)
-        if not has_permission:
-            raise PermissionDenied
-
-        serializer = FormPolymorphicSerializer(data=kwargs)
-        if serializer.is_valid():
-            obj = serializer.save()
-            msg = "success"
-        else:
-            msg = serializer.errors
-            obj = None
-            print(msg)
-        return cls(form=obj, message=msg, status=200)
-
-    # form = graphene.Field()
+    form = graphene.Field(FormUnionType)
