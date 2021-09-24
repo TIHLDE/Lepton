@@ -5,7 +5,7 @@ from django.db import models
 from django.db.models import Q
 
 from app.common.enums import AdminGroup, Groups, StrikeEnum
-from app.common.permissions import check_has_access
+from app.common.permissions import BasePermissionModel, check_has_access
 from app.content.exceptions import (
     EventSignOffDeadlineHasPassed,
     StrikeError,
@@ -20,7 +20,7 @@ from app.util.notifier import Notify
 from app.util.utils import datetime_format
 
 
-class Registration(BaseModel):
+class Registration(BaseModel, BasePermissionModel):
     has_access = [AdminGroup.HS, AdminGroup.INDEX, AdminGroup.NOK, AdminGroup.SOSIALEN]
     has_retrieve_access = [
         AdminGroup.HS,
@@ -114,6 +114,9 @@ class Registration(BaseModel):
         if not self.registration_id:
             self.create()
         self.send_notification_and_mail()
+
+        if self.event.is_full and not self.is_on_wait:
+            self.event.increment_limit()
         return super(Registration, self).save(*args, **kwargs)
 
     def create(self):
