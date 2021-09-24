@@ -1,6 +1,5 @@
 from datetime import timedelta
 
-from django.test import override_settings
 from rest_framework import status
 
 import pytest
@@ -657,7 +656,6 @@ def test_delete_own_registration_as_member_when_no_users_on_wait_are_in_a_priori
     assert not registration_on_wait.is_on_wait
 
 
-@override_settings(RESTRICT_REGISTRATION_FOR_UNANSWERED_EVALUATION=True)
 @pytest.mark.django_db
 def test_that_users_cannot_register_when_has_unanswered_evaluations(api_client, user):
     evaluation = EventFormFactory(type=EventFormType.EVALUATION)
@@ -673,7 +671,6 @@ def test_that_users_cannot_register_when_has_unanswered_evaluations(api_client, 
     assert not next_event.registrations.filter(user=user).exists()
 
 
-@override_settings(RESTRICT_REGISTRATION_FOR_UNANSWERED_EVALUATION=True)
 @pytest.mark.django_db
 def test_that_users_can_register_when_has_no_unanswered_evaluations(api_client, user):
     evaluation = EventFormFactory(type=EventFormType.EVALUATION)
