@@ -21,7 +21,7 @@ class APIUnansweredFormException(APIException):
 
 class APIHasStrikeException(APIException):
     status_code = status.HTTP_403_FORBIDDEN
-    default_detail = "Kan ikke melde deg på fordi du har en prikk"
+    default_detail = "Kan ikke melde deg på fordi du har en eller flere prikker"
 
 
 class EventSignOffDeadlineHasPassed(ValueError):

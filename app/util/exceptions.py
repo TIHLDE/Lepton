@@ -18,20 +18,17 @@ def exception_handler(exc, context):
             status=status.HTTP_409_CONFLICT,
         )
 
-    if not settings.DEBUG and not response:
-        message = (
-            str(exc)
-            if exc
-            else "Noe gikk alvorlig galt da vi behandlet forespørselen din "
-        )
-        response = Response(
-            {"detail": message}, status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        )
-
     if response:
         log_api_error(response, exc)
     else:
         logger.error(f"Unhandled request exception: {exc}")
+
+    if not settings.DEBUG and not response:
+        response = Response(
+            {"detail": "Noe gikk alvorlig galt da vi behandlet forespørselen din"},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+
     return response
 
 
