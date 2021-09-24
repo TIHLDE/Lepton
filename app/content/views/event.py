@@ -45,7 +45,7 @@ class EventViewSet(viewsets.ModelViewSet):
             time = midday_today if midday_today < datetime.now() else midday_yesterday
             queryset = Event.objects.filter(end_date__gte=time)
 
-        return queryset.prefetch_related("forms").order_by("start_date")
+        return queryset.select_related("category").order_by("start_date")
 
     def get_serializer_class(self):
         if hasattr(self, "action") and self.action == "list":

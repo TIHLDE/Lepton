@@ -17,18 +17,20 @@ def accept_form(request):
     try:
         body = request.data
         title = f"{body['info']['bedrift']} vil ha {', '.join(body['type'][:-2])} og {', '.join(body['type'][-2:])} i {', '.join(body['time'][:-2])} og {', '.join(body['time'][-2:])}"
-        success = send_html_email(
-            os.environ.get("EMAIL_RECEIVER") or "orakel@tihlde.org",
-            MailCreator(title)
-            .add_paragraph(f"Bedrift: {body['info']['bedrift']}")
-            .add_paragraph(
-                f"Kontaktperson: {body['info']['kontaktperson']}, epost: {body['info']['epost']}"
+        success = send_html_email.apply_async(
+            (
+                os.environ.get("EMAIL_RECEIVER") or "orakel@tihlde.org",
+                MailCreator(title)
+                .add_paragraph(f"Bedrift: {body['info']['bedrift']}")
+                .add_paragraph(
+                    f"Kontaktperson: {body['info']['kontaktperson']}, epost: {body['info']['epost']}"
+                )
+                .add_paragraph(f"Valgt semester: {', '.join(body['time'])}")
+                .add_paragraph(f"Valgt arrangement: {', '.join(body['type'])}")
+                .add_paragraph(f"Kommentar: {body['comment']}")
+                .generate_string(),
+                title,
             )
-            .add_paragraph(f"Valgt semester: {', '.join(body['time'])}")
-            .add_paragraph(f"Valgt arrangement: {', '.join(body['type'])}")
-            .add_paragraph(f"Kommentar: {body['comment']}")
-            .generate_string(),
-            title,
         )
         return Response(
             {"detail": "Vi har mottatt din forespørsel"}, status=200 if success else 400

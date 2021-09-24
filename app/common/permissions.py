@@ -1,3 +1,4 @@
+from django.core.cache import cache
 from django.db import models
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import BasePermission
@@ -46,14 +47,20 @@ class BasicViewPermission(DRYPermissions):
         return super().has_object_permission(request, view, obj)
 
 
-def check_has_access(access, request):
-    set_user_id(request)
+def check_has_access(groups_with_access, request):
+    user = request.user
+
+    CACHE_USER_MEMBERSHIPS_SECONDS = 600
+    CACHE_KEY = f"user__{user.user_id}_-_memberships"
+
     try:
-        user = request.user
-        memberships = user.memberships.all()
-        for membership in memberships:
-            for name in access:
-                if str(membership.group_id).lower() == str(name).lower():
+        all_memberships = cache.get(CACHE_KEY)
+        if all_memberships is None:
+            all_memberships = user.memberships.all()
+            cache.set(CACHE_KEY, all_memberships, CACHE_USER_MEMBERSHIPS_SECONDS)
+        for membership in all_memberships:
+            for group_name in groups_with_access:
+                if str(membership.group_id).lower() == str(group_name).lower():
                     return True
         return False
     except AttributeError:
@@ -62,19 +69,24 @@ def check_has_access(access, request):
 
 def set_user_id(request):
     token = request.META.get("HTTP_X_CSRF_TOKEN")
-    request.id = None
-    request.user = None
-
     if token is None:
         return None
 
-    try:
-        user_token = Token.objects.get(key=token)
-    except Token.DoesNotExist:
-        return
+    request.id = None
+    request.user = None
 
-    request.id = user_token.user_id
-    request.user = user_token.user
+    CACHE_KEY = f"set_user_from_token_{token}"
+
+    queryset = cache.get(CACHE_KEY)
+    if queryset is None:
+        try:
+            queryset = Token.objects.get(key=token)
+            cache.set(CACHE_KEY, queryset, 3600)
+        except Token.DoesNotExist:
+            return
+
+    request.id = queryset.user_id
+    request.user = queryset.user
 
 
 class IsLeader(BasePermission):

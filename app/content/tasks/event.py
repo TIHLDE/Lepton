@@ -72,9 +72,3 @@ def event_end_schedular(*args, **kwargs):
                 )
     except Event.DoesNotExist as event_not_exist:
         capture_exception(event_not_exist)
-
-
-# TODO: Check if registration has answered the eval form.
-@shared_task
-def evaluation_form_answered_schedular():
-    pass
