@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+## Versjon 1.0.17 (24.09.2021)
 ## Versjon 1.0.16 (21.09.2021)
 - Skjemaer
     - ✨ **Evalueringer** må bli besvart før neste påmelding.
