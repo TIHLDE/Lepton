@@ -107,8 +107,7 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
         from django.db.models import Sum
 
         aggregate_sum = self.strikes.filter(
-            created_at__lte=today() + timedelta(days=1),
-            created_at__gte=today() - timedelta(days=20),
+            created_at__lte=today(), created_at__gte=today() - timedelta(days=20),
         ).aggregate(Sum("strike_size"))
 
         number_of_strikes = aggregate_sum["strike_size__sum"]
