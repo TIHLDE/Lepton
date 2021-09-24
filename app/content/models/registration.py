@@ -114,6 +114,9 @@ class Registration(BaseModel, BasePermissionModel):
         if not self.registration_id:
             self.create()
         self.send_notification_and_mail()
+
+        if self.event.is_full and not self.is_on_wait:
+            self.event.increment_limit()
         return super(Registration, self).save(*args, **kwargs)
 
     def create(self):
