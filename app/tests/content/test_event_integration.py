@@ -45,21 +45,6 @@ def test_retrieve_as_anonymous_user(default_client, event):
 
 
 @pytest.mark.django_db
-@pytest.mark.parametrize(
-    ("group_name", "expected_status_code"),
-    [(AdminGroup.HS, 200), (AdminGroup.INDEX, 200),],
-)
-def test_retrieve_as_admin_user(event, user, group_name, expected_status_code):
-    """An admin user should be able to retrieve an event with more data."""
-    url = get_events_url_detail(event)
-    client = get_api_client(user=user, group_name=group_name)
-    response = client.get(url)
-
-    assert response.status_code == expected_status_code
-    assert "evaluate_link" in response.data.keys()
-
-
-@pytest.mark.django_db
 def test_update_as_anonymous_user(default_client, event):
     """An anonymous user should not be able to update an event entity."""
 

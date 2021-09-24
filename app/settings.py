@@ -38,13 +38,20 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("PROD") == None
-
 ENVIRONMENT = (
     EnvironmentOptions.PRODUCTION
     if os.environ.get("PROD")
     else EnvironmentOptions.DEVELOPMENT
     if os.environ.get("DEV")
     else EnvironmentOptions.LOCAL
+)
+
+WEBSITE_URL = (
+    "https://tihlde.org"
+    if ENVIRONMENT == EnvironmentOptions.PRODUCTION
+    else "https://dev.tihlde.org"
+    if ENVIRONMENT == EnvironmentOptions.DEVELOPMENT
+    else "https://localhost:3000"
 )
 
 # Application definition
@@ -261,8 +268,3 @@ LOGGING = {
 }
 
 CELERY_BROKER_URL = os.environ.get("CELERY_URL")
-
-# Custom switches
-RESTRICT_REGISTRATION_FOR_UNANSWERED_EVALUATION = os.environ.get(
-    "switches" ".restrict_registration_for_unanswered_evaluation", False
-)
