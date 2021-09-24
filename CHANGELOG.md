@@ -13,7 +13,11 @@
 ---
 
 ## Neste versjon
+
 ## Versjon 1.0.17 (24.09.2021)
+- ✨ **Svar på skjemaer** kan nå lastes ned som en csv-fil.
+- ⚡ **Maksgrensen på arrangementer** økes nå hvis en admin melder på noen og det er fullt.
+
 ## Versjon 1.0.16 (21.09.2021)
 - Skjemaer
     - ✨ **Evalueringer** må bli besvart før neste påmelding.
