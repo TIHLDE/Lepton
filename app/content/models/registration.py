@@ -1,6 +1,5 @@
 from datetime import timedelta
 
-from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q
@@ -118,9 +117,7 @@ class Registration(BaseModel, BasePermissionModel):
         return super(Registration, self).save(*args, **kwargs)
 
     def create(self):
-        if settings.RESTRICT_REGISTRATION_FOR_UNANSWERED_EVALUATION:
-            self._abort_for_unanswered_evaluations()
-
+        self._abort_for_unanswered_evaluations()
         self.strike_handler()
         self.clean()
         self.is_on_wait = self.event.is_full
