@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+- ⚡ **Ytelse**. Forbedret ytelsen på API'et gjennom blant annet mer caching, async eposter og andre forbedringer.
 
 ## Versjon 1.0.17 (24.09.2021)
 - ✨ **Svar på skjemaer** kan nå lastes ned som en csv-fil.
