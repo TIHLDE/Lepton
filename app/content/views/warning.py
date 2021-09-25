@@ -1,3 +1,4 @@
+from django.core.cache import cache
 from rest_framework import viewsets
 
 from app.common.permissions import BasicViewPermission
@@ -10,3 +11,12 @@ class WarningViewSet(viewsets.ModelViewSet):
     queryset = Warning.objects.all()
     serializer_class = WarningSerializer
     permission_classes = [BasicViewPermission]
+
+    def get_queryset(self):
+        CACHE_KEY = "warnings_cache"
+        CACHE_WARNINGS_SECONDS = 60 * 10
+        queryset = cache.get(CACHE_KEY)
+        if queryset is None:
+            queryset = self.queryset
+            cache.set(CACHE_KEY, queryset, CACHE_WARNINGS_SECONDS)
+        return queryset

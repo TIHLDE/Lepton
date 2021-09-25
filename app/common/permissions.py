@@ -51,7 +51,6 @@ def check_has_access(groups_with_access, request):
     set_user_id(request)
     user = request.user
 
-
     try:
         CACHE_USER_MEMBERSHIPS_SECONDS = 600
         CACHE_KEY = f"user__{user.user_id}_-_memberships"
@@ -70,24 +69,25 @@ def check_has_access(groups_with_access, request):
 
 def set_user_id(request):
     token = request.META.get("HTTP_X_CSRF_TOKEN")
-    if token is None:
-        return None
-
     request.id = None
     request.user = None
 
-    CACHE_KEY = f"set_user_from_token_{token}"
+    if token is None:
+        return None
 
-    queryset = cache.get(CACHE_KEY)
-    if queryset is None:
+    CACHE_KEY = f"get_user_from_token_{token}"
+    CACHE_TOKEN_SECONDS = 60 * 60
+
+    user = cache.get(CACHE_KEY)
+    if user is None:
         try:
-            queryset = Token.objects.get(key=token)
-            cache.set(CACHE_KEY, queryset, 3600)
+            user = Token.objects.get(key=token).user
+            cache.set(CACHE_KEY, user, CACHE_TOKEN_SECONDS)
         except Token.DoesNotExist:
             return
 
-    request.id = queryset.user_id
-    request.user = queryset.user
+    request.id = user.user_id
+    request.user = user
 
 
 class IsLeader(BasePermission):

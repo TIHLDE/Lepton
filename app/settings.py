@@ -258,7 +258,7 @@ LOGGING = {
         },
         "console": {"class": "logging.StreamHandler", "formatter": "verbose",},
     },
-    "loggers": {"django": {"propagate": True, "level": "DEBUG",},},
+    "loggers": {"django.db.backends": {"propagate": True, "level": "DEBUG",},},
     "root": {"handlers": ["file"],},
 }
 
