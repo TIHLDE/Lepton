@@ -48,12 +48,13 @@ class BasicViewPermission(DRYPermissions):
 
 
 def check_has_access(groups_with_access, request):
+    set_user_id(request)
     user = request.user
 
-    CACHE_USER_MEMBERSHIPS_SECONDS = 600
-    CACHE_KEY = f"user__{user.user_id}_-_memberships"
 
     try:
+        CACHE_USER_MEMBERSHIPS_SECONDS = 600
+        CACHE_KEY = f"user__{user.user_id}_-_memberships"
         all_memberships = cache.get(CACHE_KEY)
         if all_memberships is None:
             all_memberships = user.memberships.all()
