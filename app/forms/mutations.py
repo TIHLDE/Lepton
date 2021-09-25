@@ -19,12 +19,13 @@ class Output:
 
 
 class FormMutation(SerializerMutation):
-    permission_classes = [DRYGraphQLPermissions]
-    serializer_class = FormPolymorphicSerializer
-    model_operations = (
-        "create",
-        "update",
-    )
+    class Meta:
+        permission_classes = [DRYGraphQLPermissions]
+        serializer_class = FormPolymorphicSerializer
+        model_operations = (
+            "create",
+            "update",
+        )
 
     class Arguments:
         resource_type = graphene.String(required=True)

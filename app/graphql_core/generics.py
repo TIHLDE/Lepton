@@ -1,8 +1,11 @@
+from collections import OrderedDict
+
 from rest_framework import permissions
 from rest_framework.exceptions import NotAuthenticated, PermissionDenied
 from rest_framework.generics import get_object_or_404
 
 import graphene
+from graphene.types.mutation import MutationOptions
 from graphene_django.types import ErrorType
 
 
@@ -55,14 +58,13 @@ class DRYGraphQLPermissions(
         if not cls.global_permissions:
             return True
 
-        model_class = cls._get_model_class(view)
+        model_class = view.get_model_class()
 
         assert model_class is not None, (
             "global_permissions set to true without a model "
             "queryset for '%s'" % view.__class__.__name__
         )
 
-        # TODO: this does not work well
         operation = request.operation.operation
 
         if operation == "query":  # request.method in permissions.SAFE_METHODS:
@@ -84,9 +86,7 @@ class DRYGraphQLPermissions(
         if not cls.object_permissions:
             return True
 
-        model_class = cls._get_model_class(view)
-
-        print("OPERATION: ", request.operation.operation)
+        model_class = view.get_model_class()
         operation = request.operation.operation
 
         if operation == "query":
@@ -190,15 +190,77 @@ class GenericQuery:
     def get_permissions(cls):
         return cls.permission_classes
 
+    @classmethod
+    def get_model_class(cls):
+        return cls.get_queryset().model
+
+
+class SerializerMutationOptions(MutationOptions):
+    lookup_field = None
+    model_class = None
+    model_operations = ["create", "update"]
+    serializer_class = None
+    permission_classes = []
+    fields = None
+    input_fields = None
+
 
 class GenericSerializerMutation(GenericQuery):
-    serializer_class = None
-    lookup_field = "pk"
-    model_operations = ["create", "update"]
+    # serializer_class = None
+    # lookup_field = "pk"
+    # model_operations = ["create", "update"]
 
     errors = graphene.List(
         ErrorType, description="May contain more than one error for same field."
     )
+
+    @classmethod
+    def __init_subclass_with_meta__(
+        cls,
+        lookup_field=None,
+        serializer_class=None,
+        model_class=None,
+        model_operations=("create", "update"),
+        permission_classes=[],
+        output_field_name=None,
+        input_field_name=None,
+        only_fields=(),
+        exclude_fields=(),
+        convert_choices_to_enum=True,
+        description="",
+        _meta=None,
+        **options
+    ):
+        print("INITIALIZED")
+        model = serializer_class.Meta.model  # TODO: assert serializer_class
+
+        description = description or "SerializerMutation for {} model".format(
+            model.__name__
+        )
+        input_field_name = input_field_name or "new_{}".format(model._meta.model_name)
+        output_field_name = output_field_name or model._meta.model_name
+
+        from app.forms.types import FormUnionType
+
+        django_fields = OrderedDict(
+            {output_field_name: graphene.Field(FormUnionType)}
+        )  # TODO: generic
+
+        if not _meta:
+            _meta = SerializerMutationOptions(cls)
+        _meta.output = cls
+        _meta.lookup_field = lookup_field
+        _meta.model_operations = model_operations
+        _meta.serializer_class = serializer_class
+        _meta.permission_classes = permission_classes
+        _meta.model_class = model_class
+        _meta.fields = django_fields
+        _meta.input_field_name = input_field_name
+        _meta.output_field_name = output_field_name
+
+        super(GenericSerializerMutation, cls).__init_subclass_with_meta__(
+            _meta=_meta, description=description, **options
+        )
 
     @classmethod
     def get_serializer(cls, root, info, *args, **kwargs):
@@ -221,12 +283,12 @@ class GenericSerializerMutation(GenericQuery):
 
         (Eg. admins get full serialization, others get basic serialization)
         """
-        assert cls.serializer_class is not None, (
+        assert cls._meta.serializer_class is not None, (
             "'%s' should either include a `serializer_class` attribute, "
             "or override the `get_serializer_class()` method." % cls.__class__.__name__
         )
 
-        return cls.serializer_class
+        return cls._meta.serializer_class
 
     @classmethod
     def get_serializer_kwargs(cls, root, info, **input):
@@ -261,22 +323,23 @@ class GenericSerializerMutation(GenericQuery):
 
     @classmethod
     def get_lookup_field(cls):
-        model_class = cls.get_serializer_class
+        model_class = cls.get_model_class()
 
         if not cls.lookup_field and model_class:
             return model_class._meta.pk.name
 
-        return cls.lookup_field
+        return cls._meta.lookup_field
 
     @classmethod
     def get_model_class(cls):
-        return cls.serializer_class.Meta.model
+        return cls.get_serializer_class().Meta.model
 
     @classmethod
     def get_model_operations(cls):
 
         assert (
-            "update" in cls.model_operations and "create" in cls.model_operations
+            "update" in cls._meta.model_operations
+            and "create" in cls._meta.model_operations
         ), "model_operations must contain 'create' and/or 'update'"
 
-        return cls.model_operations
+        return cls._meta.model_operations

@@ -38,4 +38,6 @@ class SerializerMutationMixin:
 
     @classmethod
     def perform_mutate(cls, serializer, info):
+        cls.check_permissions(info)
+        print(serializer)
         return serializer.save()
