@@ -77,8 +77,8 @@ def test_list_as_member_in_hs_devkom_sosialen_or_nok(registration, member, group
     response = client.get(url)
 
     assert response.status_code == status.HTTP_200_OK
-    assert len(response.json()) > 0
-    assert response.json()[0]["user_info"]
+    assert response.json()["count"] > 0
+    assert response.json()["results"][0]["user_info"]
 
 
 @pytest.mark.django_db

@@ -53,7 +53,7 @@ def check_has_access(groups_with_access, request):
 
     try:
         CACHE_USER_MEMBERSHIPS_SECONDS = 600
-        CACHE_KEY = f"user__{user.user_id}_-_memberships"
+        CACHE_KEY = f"user__{str(user.user_id)}__memberships"
         all_memberships = cache.get(CACHE_KEY)
         if all_memberships is None:
             all_memberships = user.memberships.all()
@@ -75,7 +75,7 @@ def set_user_id(request):
     if token is None:
         return None
 
-    CACHE_KEY = f"get_user_from_token_{token}"
+    CACHE_KEY = f"get_user_from_token_{str(token)}"
     CACHE_TOKEN_SECONDS = 60 * 60
 
     user = cache.get(CACHE_KEY)

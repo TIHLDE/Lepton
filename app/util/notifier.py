@@ -1,11 +1,13 @@
 import os
 
+from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.utils.html import strip_tags
 
 from celery import shared_task
 from sentry_sdk import capture_exception
 
+from app.common.enums import EnvironmentOptions
 from app.content.models.notification import Notification
 
 
@@ -26,7 +28,7 @@ class Notify:
         if subject is None:
             subject = self.title
 
-        send_html_email.apply_async((self.user.email, html, subject))
+        send_html_email(self.user.email, html, subject)
 
         return self
 
@@ -47,8 +49,18 @@ class Notify:
         return self
 
 
-@shared_task
 def send_html_email(to_mail, html, subject):
+    if (
+        settings.ENVIRONMENT == EnvironmentOptions.PRODUCTION
+        or settings.ENVIRONMENT == EnvironmentOptions.DEVELOPMENT
+    ):
+        __send_email.apply_async((to_mail, html, subject))
+    else:
+        __send_email(to_mail, html, subject)
+
+
+@shared_task
+def __send_email(to_mail, html, subject):
     """
         to_mail: str -> Email-address of receiver\n
         html: str -> The email HTML to be sent to the user\n
