@@ -2,7 +2,6 @@ from rest_framework import status, viewsets
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 
-from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission, is_admin_user
 from app.content.exceptions import APIUserAlreadyAttendedEvent
 from app.content.mixins import APIRegistrationErrorsMixin
@@ -15,7 +14,6 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, viewsets.ModelViewSet):
     serializer_class = RegistrationSerializer
     permission_classes = [BasicViewPermission]
     lookup_field = "user_id"
-    pagination_class = BasePagination
 
     def get_queryset(self):
         event_id = self.kwargs.get("event_id", None)
