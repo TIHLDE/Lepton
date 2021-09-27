@@ -1,7 +1,7 @@
 import graphene
 
-from app.graphql_core.generics import GenericSerializerMutation
-from app.graphql_core.mixins import MutationMixin, SerializerMutationMixin
+from app.graphql.generics import GenericSerializerMutation
+from app.graphql.mixins import MutationMixin, SerializerMutationMixin
 
 
 class SerializerMutation(

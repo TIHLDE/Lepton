@@ -92,7 +92,7 @@ INSTALLED_APPS = [
     "app.career",
     "app.forms",
     "app.payment",
-    "app.graphql_core",
+    "app.graphql",
 ]
 
 # Django rest framework

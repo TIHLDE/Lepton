@@ -1,4 +1,5 @@
 from django.core.exceptions import ImproperlyConfigured
+from django.db.models import QuerySet
 from rest_framework.exceptions import NotAuthenticated, PermissionDenied
 from rest_framework.generics import get_object_or_404
 
@@ -6,14 +7,12 @@ import graphene
 from graphene.types.mutation import MutationOptions
 from graphene_django.types import ErrorType
 
-from app.graphql_core.registry import registry
-from app.graphql_core.utils import get_model_name
+from app.graphql.fields import Output
+from app.graphql.registry import registry
+from app.graphql.utils import get_model_name
 
 
-class GenericQuery:
-    class Meta:
-        abstract = True
-
+class GenericObjectType:
     @classmethod
     def __init_subclass_with_meta__(
         cls,
@@ -66,10 +65,6 @@ class GenericQuery:
         return obj
 
     @classmethod
-    def get_queryset(cls):
-        return cls.queryset
-
-    @classmethod
     def permission_denied(cls, context, message=None, code=None):
         """
         If request is not permitted, determine what kind of exception to raise.
@@ -108,24 +103,55 @@ class GenericQuery:
 
     @classmethod
     def get_permissions(cls):
-        return cls.permission_classes
+        return cls._meta.permission_classes
+
+
+class ModelQueryOptions(MutationOptions):
+    lookup_field = None
+    serializer_class = None
+    permission_classes = []
+    queryset = None
+
+
+class GenericQuery(GenericObjectType):
+    class Meta:
+        abstract = True
+
+    @classmethod
+    def __init_subclass_with_meta__(
+        cls, queryset=None, _meta=None, **options,
+    ):
+        if not _meta:
+            _meta = ModelQueryOptions(cls)
+
+        if queryset and not isinstance(queryset, QuerySet):
+            raise ImproperlyConfigured(
+                "queryset should be a defined and be an instance of QuerySet in class Meta"
+            )
+
+        _meta.queryset = queryset
+        super().__init_subclass_with_meta__(_meta=_meta, **options)
 
     @classmethod
     def get_model_class(cls):
         return cls.get_queryset().model
 
+    @classmethod
+    def get_queryset(cls):
+        return cls.queryset
+
 
 class ModelMutationOptions(MutationOptions):
-    lookup_field = None
-    model_class = None
+    lookup_field = "pk"
     model_operations = ["create", "update"]
     serializer_class = None
     permission_classes = []
     exclude = None
     return_field_name = "instance"
+    return_field_type = None
 
 
-class BaseMutation:
+class BaseMutation(Output):
     errors = graphene.List(
         ErrorType, description="May contain more than one error for same field."
     )
@@ -137,11 +163,12 @@ class BaseMutation:
     def __init_subclass_with_meta__(
         cls,
         description=None,
-        permissions=None,
         _meta=None,
-        error_type_class=None,
-        error_type_field=None,
-        errors_mapping=None,
+        lookup_field="pk",
+        model_operations=("create", "update"),
+        serializer_class=None,
+        permissions=(),
+        exclude=None,
         **options,
     ):
         if not _meta:
@@ -156,9 +183,12 @@ class BaseMutation:
             )
 
         _meta.permissions = permissions
-        _meta.error_type_class = error_type_class
-        _meta.error_type_field = error_type_field
-        _meta.errors_mapping = errors_mapping
+        _meta.lookup_field = lookup_field
+        _meta.description = description
+        _meta.model_operations = model_operations
+        _meta.serializer_class = serializer_class
+        _meta.exclude = exclude
+
         super().__init_subclass_with_meta__(
             description=description, _meta=_meta, **options
         )
@@ -169,7 +199,7 @@ class BaseMutation:
         cls._meta.fields.update(fields)
 
 
-class GenericSerializerMutation(BaseMutation, GenericQuery):
+class GenericSerializerMutation(BaseMutation, GenericObjectType):
     class Meta:
         abstract = True
 
@@ -177,20 +207,19 @@ class GenericSerializerMutation(BaseMutation, GenericQuery):
     def __init_subclass_with_meta__(
         cls,
         arguments=None,
-        model_class=None,
         serializer_class=None,
         exclude=None,
         return_field_name=None,
+        return_field_type=None,
         _meta=None,
         **options,
     ):
         if not serializer_class:
             raise ImproperlyConfigured(
-                "Field serializer_class is required for ModelMutation"
+                "Field serializer_class is required for SerializerMutation"
             )
 
-        if not model_class:
-            model_class = serializer_class.Meta.model
+        model_class = serializer_class.Meta.model
 
         if not _meta:
             _meta = ModelMutationOptions(cls)
@@ -204,16 +233,23 @@ class GenericSerializerMutation(BaseMutation, GenericQuery):
             arguments = {}
 
         _meta.model_class = model_class
-        _meta.return_field_name = return_field_name
         _meta.serializer_class = serializer_class
+        _meta.return_field_name = return_field_name
+        _meta.return_field_type = return_field_type
         _meta.exclude = exclude
-        super().__init_subclass_with_meta__(_meta=_meta, **options)
 
-        model_type = cls.get_type_for_model()
-        if not model_type:
+        super().__init_subclass_with_meta__(
+            _meta=_meta, serializer_class=serializer_class, **options
+        )
+
+        model_type = (
+            return_field_type if return_field_type else cls.get_type_for_model()
+        )
+
+        if not model_type and not return_field_type:
             raise ImproperlyConfigured(
-                "Unable to find type for model %s in graphene registry"
-                % model_class.__name__
+                f"return_field_type was not specified in Meta and type for model {model_class.__name__} "
+                "was not found in graphene registry."
             )
         fields = {return_field_name: graphene.Field(model_type)}
 
@@ -286,7 +322,7 @@ class GenericSerializerMutation(BaseMutation, GenericQuery):
     def get_lookup_field(cls):
         model_class = cls.get_model_class()
 
-        if not cls.lookup_field and model_class:
+        if not cls._meta.lookup_field and model_class:
             return model_class._meta.pk.name
 
         return cls._meta.lookup_field

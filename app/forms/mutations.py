@@ -1,24 +1,14 @@
 import graphene
-from graphene.types.scalars import Scalar
 
 from app.forms.serializers import FormPolymorphicSerializer
-from app.graphql_core.mutations import SerializerMutation
-from app.graphql_core.permissions import DRYGraphQLPermissions
-
-
-class ObjectField(Scalar):  # to serialize error message from serializer
-    @staticmethod
-    def serialize(dt):
-        return dt
-
-
-class Output:
-    message = ObjectField()
-    status = graphene.Int()
+from app.forms.types import FormUnionType
+from app.graphql.mutations import SerializerMutation
+from app.graphql.permissions import DRYGraphQLPermissions
 
 
 class FormMutation(SerializerMutation):
     class Meta:
+        return_field_type = FormUnionType
         permission_classes = [DRYGraphQLPermissions]
         serializer_class = FormPolymorphicSerializer
         model_operations = (
