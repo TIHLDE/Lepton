@@ -1,7 +1,10 @@
 import graphene
 
-from app.content.types import EventModelType
+from app.content.types import EventType
 
 
 class EventQuery(graphene.ObjectType):
-    retrieve_event, list_events = EventModelType.QueryFields()
+    class Meta:
+        pass
+
+    list_events = graphene.List(EventType)

@@ -5,7 +5,8 @@ from app.forms.queries import FormQuery
 
 
 class Query(FormQuery):
-    pass
+    class Meta:
+        pass
 
 
 class Mutation(graphene.ObjectType):

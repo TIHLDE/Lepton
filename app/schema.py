@@ -16,7 +16,8 @@ import app.forms.schema  # noqa E402
 class Query(
     app.forms.schema.Query, graphene.ObjectType,
 ):
-    pass
+    class Meta:
+        pass
 
 
 class Mutation(

@@ -7,4 +7,5 @@ from app.graphql_core.mixins import MutationMixin, SerializerMutationMixin
 class SerializerMutation(
     MutationMixin, SerializerMutationMixin, GenericSerializerMutation, graphene.Mutation
 ):
-    pass
+    class Meta:
+        abstract = True

@@ -2,11 +2,14 @@ import graphene
 
 from app.forms.models import Form
 from app.forms.types import FormUnionType
-from app.graphql_core.generics import DRYGraphQLPermissions
+from app.graphql_core.permissions import DRYGraphQLPermissions
 from app.graphql_core.queries import ModelQuery
 
 
 class FormQuery(ModelQuery):
+    class Meta:
+        pass
+
     queryset = Form.objects.all()
     permission_classes = [DRYGraphQLPermissions]
     lookup_field = "id"
