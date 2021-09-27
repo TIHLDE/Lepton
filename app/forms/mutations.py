@@ -19,3 +19,4 @@ class FormMutation(SerializerMutation):
     class Arguments:
         resource_type = graphene.String(required=True)
         title = graphene.String(required=True)
+        # fields = graphene.List(FieldType)

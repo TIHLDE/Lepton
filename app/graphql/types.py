@@ -11,4 +11,3 @@ class ObjectField(graphene.Scalar):
 
 class Output:
     message = ObjectField()
-    status = graphene.Int()

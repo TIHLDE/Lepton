@@ -3,5 +3,4 @@ from app.graphql.mixins import ListModelMixin, RetrieveModelMixin
 
 
 class ModelQuery(RetrieveModelMixin, ListModelMixin, GenericQuery):
-    class Meta:
-        abstract = True
+    pass

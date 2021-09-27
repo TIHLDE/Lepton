@@ -7,12 +7,11 @@ from app.graphql.queries import ModelQuery
 
 
 class FormQuery(ModelQuery):
-    class Meta:
-        queryset = Form.objects.all()
-        permission_classes = [DRYGraphQLPermissions]
-        lookup_field = "id"
+    lookup_field = "id"
+    queryset = Form.objects.all()
+    permission_classes = [DRYGraphQLPermissions]
 
-    forms = graphene.List(FormUnionType, resolver=ModelQuery.resolve_list)
+    forms = graphene.List(FormUnionType)
     form = graphene.Field(FormUnionType, id=graphene.UUID())
 
     @classmethod

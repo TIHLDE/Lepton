@@ -2,7 +2,13 @@ import graphene
 from graphene_django import DjangoObjectType
 
 from app.content.types import EventType
-from app.forms.models import EventForm, Form
+from app.forms.models import EventForm, Field, Form
+
+
+class FieldType(DjangoObjectType):
+    class Meta:
+        model = Field
+        fields = "__all__"
 
 
 class FormInterface(graphene.Interface):
@@ -16,17 +22,26 @@ class FormType(DjangoObjectType):
         model = Form
         interfaces = (FormInterface,)
 
+    fields = graphene.List(FieldType)
+
+    def resolve_fields(self, info, **kwargs):
+        return self.fields
+
 
 class EventFormType(DjangoObjectType):
     class Meta:
         model = EventForm
-        fields = ("id", "title", "type")
+        fields = ("id", "title", "type", "fields")
         interfaces = (FormInterface,)
 
+    fields = graphene.List(FieldType)
     event = graphene.Field(EventType)
 
     def resolve_event(self, info, **kwargs):
         return self.event
+
+    def resolve_fields(self, info, **kwargs):
+        return self.fields
 
 
 class FormUnionType(graphene.Union):
