@@ -418,7 +418,7 @@ def test_create_registration_on_priority_only_event_when_user_is_prioritized(use
     event = EventFactory(limit=1, only_allow_prioritized=True)
     priority = PriorityFactory(user_study=UserStudy.DATAING, user_class=UserClass.FIRST)
     event.registration_priorities.add(priority)
-    
+
     event.save()
 
     RegistrationFactory(event=event, user=user)
