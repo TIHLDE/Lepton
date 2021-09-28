@@ -1,8 +1,9 @@
+from datetime import datetime
+
 from django_filters.rest_framework import BooleanFilter, FilterSet
 
-from app.util.utils import yesterday
-
-from ..models import Event
+from app.content.models import Event
+from app.util.utils import midday, yesterday
 
 
 class EventFilter(FilterSet):
@@ -15,6 +16,9 @@ class EventFilter(FilterSet):
         fields = ["category", "expired"]
 
     def filter_expired(self, queryset, name, value):
+        midday_yesterday = midday(yesterday())
+        midday_today = midday(datetime.now())
+        time = midday_today if midday_today < datetime.now() else midday_yesterday
         if value:
-            return queryset.filter(start_date__lt=yesterday()).order_by("-start_date")
-        return queryset.filter(start_date__gte=yesterday()).order_by("start_date")
+            return queryset.filter(end_date__lt=time).order_by("-start_date")
+        return queryset.filter(end_date__gte=time).order_by("start_date")

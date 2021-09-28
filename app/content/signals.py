@@ -35,7 +35,7 @@ def end_date_reminder(event):
     eta = midday(event.end_date + timedelta(days=1))
 
     if (
-        event.evaluate_link
+        event.sign_up
         and not event.event_has_ended
         and not event.closed
         and isFuture(eta)

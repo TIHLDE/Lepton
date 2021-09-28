@@ -5,8 +5,12 @@ from django.db import models
 from django.db.models import Q
 
 from app.common.enums import AdminGroup, Groups, StrikeEnum
-from app.common.permissions import check_has_access
-from app.content.exceptions import EventSignOffDeadlineHasPassed, StrikeError
+from app.common.permissions import BasePermissionModel, check_has_access
+from app.content.exceptions import (
+    EventSignOffDeadlineHasPassed,
+    StrikeError,
+    UnansweredFormError,
+)
 from app.content.models.strike import create_strike
 from app.forms.enums import EventFormType
 from app.util import EnumUtils, today
@@ -16,7 +20,7 @@ from app.util.notifier import Notify
 from app.util.utils import datetime_format
 
 
-class Registration(BaseModel):
+class Registration(BaseModel, BasePermissionModel):
     has_access = [AdminGroup.HS, AdminGroup.INDEX, AdminGroup.NOK, AdminGroup.SOSIALEN]
     has_retrieve_access = [
         AdminGroup.HS,
@@ -110,16 +114,23 @@ class Registration(BaseModel):
         if not self.registration_id:
             self.create()
         self.send_notification_and_mail()
+
+        if self.event.is_full and not self.is_on_wait:
+            self.event.increment_limit()
         return super(Registration, self).save(*args, **kwargs)
 
     def create(self):
-        """ Determines whether user is on the waiting list or not when the instance is created. """
+        self._abort_for_unanswered_evaluations()
         self.strike_handler()
         self.clean()
         self.is_on_wait = self.event.is_full
 
         if self.should_swap_with_non_prioritized_user():
             self.swap_users()
+
+    def _abort_for_unanswered_evaluations(self):
+        if self.user.has_unanswered_evaluations():
+            raise UnansweredFormError()
 
     def strike_handler(self):
         number_of_strikes = self.user.get_number_of_strikes()

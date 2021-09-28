@@ -25,6 +25,10 @@ class Form(PolymorphicModel):
     def __str__(self):
         return self.title
 
+    @property
+    def website_url(self):
+        return f"/sporreskjema/{self.id}/"
+
     def add_fields(self, fields):
         for field in fields:
             options = field.pop("options", None)
@@ -104,6 +108,9 @@ class Option(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=200, default="")
     field = models.ForeignKey(Field, on_delete=models.CASCADE, related_name="options")
+
+    class Meta:
+        ordering = ["title", "id"]
 
     def __str__(self):
         return self.title

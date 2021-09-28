@@ -384,6 +384,19 @@ def test_create_registration_without_submission_answer_fails(event, user):
 
 
 @pytest.mark.django_db
+def test_bump_user_from_wait_increments_limit(event_with_registrations_and_priority):
+    """
+    Tests if an admin manualy bumps a user up from the wait list when the event is full
+    the event limit increases by 1
+    """
+    registration = RegistrationFactory(event=event_with_registrations_and_priority)
+    limit = event_with_registrations_and_priority.limit
+    registration.is_on_wait = False
+    registration.save()
+    assert event_with_registrations_and_priority.limit == limit + 1
+
+
+@pytest.mark.django_db
 def test_create_registration_on_priority_only_event_when_user_is_not_prioritized():
     
     event = EventFactory(limit=1, only_allow_prioritized=True)
