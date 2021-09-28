@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+- 🦟 **Prikk**. Påmeldte på venteliste får nå ikke lenger prikk
 
 ## Versjon 1.0.17 (24.09.2021)
 - ✨ **Svar på skjemaer** kan nå lastes ned som en csv-fil.
