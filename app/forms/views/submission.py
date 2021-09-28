@@ -32,11 +32,11 @@ class SubmissionViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = self.queryset
+        print(self.action)
         if (
-            hasattr(self, "action")
-            and self.action == "list"
-            or self.action == "download"
+            hasattr(self, "action") and self.action in [ "list", "download"]
         ):
+            print("dsdskdslds")
             queryset = self.queryset.filter(form__id=self.kwargs.get("form_id"))
         return queryset.prefetch_related("user", "answers")
 
@@ -58,4 +58,4 @@ class SubmissionViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["get"], url_path="download")
     def download(self, request, *args, **kwargs):
         """To return the response as csv, include header 'Accept: text/csv. """
-        return SubmissionsCsvWriter(self.queryset).write_csv()
+        return SubmissionsCsvWriter(self.get_queryset()).write_csv()
