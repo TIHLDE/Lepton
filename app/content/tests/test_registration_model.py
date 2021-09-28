@@ -381,3 +381,25 @@ def test_create_registration_without_submission_answer_fails(event, user):
     EventFormFactory(event=event, type=EventFormType.SURVEY)
     with pytest.raises(ValidationError):
         RegistrationFactory(event=event, user=user)
+        
+
+@pytest.mark.django_db
+def test_create_registration_on_priority_only_event_when_user_not_prioritized():
+    
+    event = EventFactory(limit=1, only_allow_prioritized=True)
+    priority = PriorityFactory(user_study=UserStudy.DATAING, user_class=UserClass.FIRST)
+    event.registration_priorities.add(priority)
+
+    user_not_in_priority_pool = UserFactory(
+        user_study=UserStudy.DIGFOR.value, user_class=UserClass.SECOND.value
+    )
+
+    user_in_priority_pool = UserFactory(
+        user_study=UserStudy.DATAING.value, user_class=UserClass.FIRST.value
+    )
+    event.save()
+
+    with pytest.raises(ValidationError):
+        RegistrationFactory(event=event, user=user_not_in_priority_pool)
+
+    RegistrationFactory(event=event, user=user_in_priority_pool)
