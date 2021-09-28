@@ -54,7 +54,6 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
         Priority, blank=True, default=None, related_name="priorities"
     )
     only_allow_prioritized = models.BooleanField(default=False)
-    evaluate_link = models.CharField(max_length=200, blank=True, null=True)
     end_date_schedular_id = models.CharField(max_length=100, blank=True, null=True)
     sign_off_deadline_schedular_id = models.CharField(
         max_length=100, blank=True, null=True
