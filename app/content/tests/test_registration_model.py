@@ -398,7 +398,7 @@ def test_bump_user_from_wait_increments_limit(event_with_registrations_and_prior
 
 @pytest.mark.django_db
 def test_create_registration_on_priority_only_event_when_user_is_not_prioritized():
-    
+
     event = EventFactory(limit=1, only_allow_prioritized=True)
     priority = PriorityFactory(user_study=UserStudy.DATAING, user_class=UserClass.FIRST)
     event.registration_priorities.add(priority)
@@ -407,18 +407,18 @@ def test_create_registration_on_priority_only_event_when_user_is_not_prioritized
         user_study=UserStudy.DIGFOR.value, user_class=UserClass.SECOND.value
     )
 
-    user_in_priority_pool = UserFactory(
-        user_study=UserStudy.DATAING.value, user_class=UserClass.FIRST.value
-    )
     event.save()
 
     with pytest.raises(ValidationError):
         RegistrationFactory(event=event, user=user_not_in_priority_pool)
+
 
 @pytest.mark.django_db
 def test_create_registration_on_priority_only_event_when_user_is_prioritized(user):
     event = EventFactory(limit=1, only_allow_prioritized=True)
     priority = PriorityFactory(user_study=UserStudy.DATAING, user_class=UserClass.FIRST)
     event.registration_priorities.add(priority)
+    
+    event.save()
 
     RegistrationFactory(event=event, user=user)

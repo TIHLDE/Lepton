@@ -252,7 +252,11 @@ class Registration(BaseModel, BasePermissionModel):
             raise ValidationError(
                 "Du må svare på spørreskjemaet før du kan melde deg på arrangementet"
             )
-        if self.event.registration_priorities and self.event.only_allow_prioritized and not self.is_prioritized:
+        if (
+            self.event.registration_priorities
+            and self.event.only_allow_prioritized
+            and not self.is_prioritized
+        ):
             raise ValidationError(
                 "Dette arrangementet er kun åpent for de prioriterte gruppene"
             )
