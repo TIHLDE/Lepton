@@ -32,11 +32,7 @@ class SubmissionViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = self.queryset
-        print(self.action)
-        if (
-            hasattr(self, "action") and self.action in [ "list", "download"]
-        ):
-            print("dsdskdslds")
+        if hasattr(self, "action") and self.action in ["list", "download"]:
             queryset = self.queryset.filter(form__id=self.kwargs.get("form_id"))
         return queryset.prefetch_related("user", "answers")
 
