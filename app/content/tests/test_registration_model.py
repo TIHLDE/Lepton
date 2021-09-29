@@ -399,7 +399,7 @@ def test_bump_user_from_wait_increments_limit(event_with_registrations_and_prior
 @pytest.mark.django_db
 def test_auto_bump_user_from_wait_does_not_increments_limit():
     """
-    Tests if an automatic bump of a registration happens the event limit wil not be incremented
+    Tests if an automatic bump of a registration happens, the event limit wil not be incremented
     """
     event = EventFactory(limit=1)
     limit = event.limit
