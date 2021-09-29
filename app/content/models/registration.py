@@ -93,6 +93,7 @@ class Registration(BaseModel, BasePermissionModel):
         Submission.objects.filter(form=event_form, user=self.user).delete()
 
     def delete(self, *args, **kwargs):
+        moved_registration = None
         if not self.is_on_wait:
             if self.event.is_past_sign_off_deadline:
                 if self.event.is_one_hour_before_event_start():
@@ -100,11 +101,12 @@ class Registration(BaseModel, BasePermissionModel):
                         "Kan ikke melde av brukeren etter en time før arrangementstart"
                     )
                 create_strike(str(StrikeEnum.PAST_DEADLINE), self.user, self.event)
-            self.move_from_waiting_list_to_queue()
+            moved_registration =  self.move_from_waiting_list_to_queue()
 
         self.delete_submission_if_exists()
-
-        return super().delete(*args, **kwargs)
+        registration = super().delete(*args, **kwargs)
+        if moved_registration: moved_registration.save()
+        return registration
 
     def admin_unregister(self, *args, **kwargs):
         return super().delete(*args, **kwargs)
@@ -232,7 +234,7 @@ class Registration(BaseModel, BasePermissionModel):
                 registrations_in_waiting_list[0],
             )
             registration_move_to_queue.is_on_wait = False
-            registration_move_to_queue.save()
+            return registration_move_to_queue
 
     def clean(self):
         """

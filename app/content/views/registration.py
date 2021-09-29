@@ -58,7 +58,7 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, viewsets.ModelViewSet):
         registration = self.get_object()
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-
+    
         if self._user_has_already_attended_event(registration):
             # Prevent other registrations from using the same QR-code
             raise APIUserAlreadyAttendedEvent()
