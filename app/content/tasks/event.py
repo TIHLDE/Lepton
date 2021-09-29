@@ -20,27 +20,37 @@ def event_sign_off_deadline_schedular(*args, **kwargs):
 
         registrations_not_on_wait = event.registrations.filter(is_on_wait=False)
         description_not_on_wait = f"Dette er en påminnelse om at avmeldingsfristen for {event.title} er imorgen. Dersom du ikke kan møte ber vi deg om å melde deg av arrangementet slik at andre kan få plassen din. Dersom du ikke melder deg av innen fristen vil du få en prikk for å ikke møte opp."
-        users_not_on_wait = (registration.user for registration in registrations_not_on_wait)
-        Notify(users_not_on_wait, f"Påminnelse om avmeldingsfrist for {event.title}").send_email(
+        users_not_on_wait = (
+            registration.user for registration in registrations_not_on_wait
+        )
+        Notify(
+            users_not_on_wait, f"Påminnelse om avmeldingsfrist for {event.title}"
+        ).send_email(
             MailCreator("Påminnelse om avmeldingsfrist")
             .add_paragraph("Hei!")
             .add_paragraph(description_not_on_wait)
             .add_event_button(event.id)
             .generate_string(),
             send_async=False,
-        ).send_notification(description=description_not_on_wait, link=event.website_url)
-        
+        ).send_notification(
+            description=description_not_on_wait, link=event.website_url
+        )
+
         registrations_on_wait = event.registrations.filter(is_on_wait=True)
         users_on_wait = (registration.user for registration in registrations_on_wait)
         description_on_wait = f"Dette er en påminnelse om at avmeldingsfristen for {event.title} er imorgen. Det forventes at du som står på venteliste kan møte opp dersom det blir en ledig plass. Dette gjelder helt frem til 2 timer før arrangementets starttid. Det er ditt ansvar å melde deg av ventelisten, hvis det ikke passer allikevel."
-        Notify(users_on_wait, f"Påminnelse om avmeldingsfrist for {event.title}").send_email(
+        Notify(
+            users_on_wait, f"Påminnelse om avmeldingsfrist for {event.title}"
+        ).send_email(
             MailCreator("Påminnelse om avmeldingsfrist")
             .add_paragraph("Hei!")
             .add_paragraph(description_on_wait)
             .add_event_button(event.id)
             .generate_string(),
             send_async=False,
-        ).send_notification(description=description_on_wait, link=event.website_url)
+        ).send_notification(
+            description=description_on_wait, link=event.website_url
+        )
     except Event.DoesNotExist as event_not_exist:
         capture_exception(event_not_exist)
 
