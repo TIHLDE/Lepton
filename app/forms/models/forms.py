@@ -14,7 +14,7 @@ from app.util.models import BaseModel
 
 
 class Form(PolymorphicModel):
-    write_access = [AdminGroup.HS, AdminGroup.NOK, AdminGroup.INDEX]
+    write_access = [AdminGroup.HS, AdminGroup.NOK, AdminGroup.SOSIALEN, AdminGroup.INDEX]
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=200)
 
@@ -117,7 +117,7 @@ class Option(models.Model):
 
 
 class Submission(BaseModel, BasePermissionModel):
-    read_access = AdminGroup.admin()
+    read_access = [AdminGroup.HS, AdminGroup.INDEX, AdminGroup.SOSIALEN, AdminGroup.NOK]
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     form = models.ForeignKey(Form, on_delete=models.CASCADE, related_name="submissions")
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="submissions")
