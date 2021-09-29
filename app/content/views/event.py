@@ -121,20 +121,17 @@ class EventViewSet(viewsets.ModelViewSet):
             event = self.get_object()
             self.check_object_permissions(self.request, event)
 
-            for registration in event.get_queue():
-                Notify(registration.user, title).send_email(
-                    MailCreator(title)
-                    .add_paragraph(f"Hei {registration.user.first_name}")
-                    .add_paragraph(
-                        f"Arrangøren av {event.title} har en melding til deg:"
-                    )
-                    .add_paragraph(message)
-                    .add_event_button(event.pk)
-                    .generate_string()
-                ).send_notification(
-                    description=f"Arrangøren av {event.title} har en melding til deg: {message}",
-                    link=event.website_url,
-                )
+            users = (registration.user for registration in event.get_queue())
+            Notify(users, title).send_email(
+                MailCreator(title)
+                .add_paragraph(f"Arrangøren av {event.title} har en melding til deg:")
+                .add_paragraph(message)
+                .add_event_button(event.pk)
+                .generate_string()
+            ).send_notification(
+                description=f"Arrangøren av {event.title} har en melding til deg: {message}",
+                link=event.website_url,
+            )
 
             return Response(
                 {
