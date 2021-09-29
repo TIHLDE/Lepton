@@ -31,13 +31,21 @@ class SubmissionViewSet(viewsets.ModelViewSet):
         return context
 
     def get_queryset(self):
-        queryset = self.queryset
+        form_id = self.kwargs.get("form_id")
+        queryset = self.queryset.filter(form__id=form_id).prefetch_related(
+            "user", "answers"
+        )
         if hasattr(self, "action") and self.action in ["list", "download"]:
-            queryset = self.queryset.filter(form__id=self.kwargs.get("form_id"))
-        return queryset.prefetch_related("user", "answers")
+            form = get_object_or_404(Form, id=form_id)
+            if isinstance(form, EventForm):
+                users_in_event = form.event.registrations.filter(
+                    is_on_wait=False
+                ).values_list("user")
+                queryset = queryset.filter(user__in=users_in_event)
+        return queryset
 
     def create(self, request, *args, **kwargs):
-        form = get_object_or_404(Form.objects.all(), id=kwargs.get("form_id"))
+        form = get_object_or_404(Form, id=kwargs.get("form_id"))
         if isinstance(form, EventForm):
             user = request.user
             event = form.event
