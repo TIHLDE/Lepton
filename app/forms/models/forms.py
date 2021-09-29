@@ -117,7 +117,7 @@ class Option(models.Model):
 
 
 class Submission(BaseModel, BasePermissionModel):
-    read_access = AdminGroup.admin()
+    read_access = [AdminGroup.HS, AdminGroup.INDEX, AdminGroup.NOK]
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     form = models.ForeignKey(Form, on_delete=models.CASCADE, related_name="submissions")
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="submissions")
