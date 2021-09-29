@@ -101,11 +101,12 @@ class Registration(BaseModel, BasePermissionModel):
                         "Kan ikke melde av brukeren etter en time før arrangementstart"
                     )
                 create_strike(str(StrikeEnum.PAST_DEADLINE), self.user, self.event)
-            moved_registration =  self.move_from_waiting_list_to_queue()
+            moved_registration = self.move_from_waiting_list_to_queue()
 
         self.delete_submission_if_exists()
         registration = super().delete(*args, **kwargs)
-        if moved_registration: moved_registration.save()
+        if moved_registration:
+            moved_registration.save()
         return registration
 
     def admin_unregister(self, *args, **kwargs):
