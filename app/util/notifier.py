@@ -9,6 +9,7 @@ from sentry_sdk import capture_exception
 
 from app.common.enums import EnvironmentOptions
 from app.content.models.notification import Notification
+from app.util.utils import chunk_list
 
 
 class Notify:
@@ -59,22 +60,28 @@ class Notify:
 
 
 def send_html_email(to_mails, html, subject, send_async=True):
+    """
+    to_mails: str -> Email-addresses of receivers\n
+    html: str -> The email HTML to be sent to the receivers\n
+    subject: str -> Subject of email\n
+    send_async: bool -> Should the email be sent asynchronous
+    """
+
+    MAX_EMAILS_PER_SENDING = 100
+
     if (
         settings.ENVIRONMENT == EnvironmentOptions.PRODUCTION
         or settings.ENVIRONMENT == EnvironmentOptions.DEVELOPMENT
     ) and send_async:
-        __send_email.apply_async((to_mails, html, subject))
+        for mails in chunk_list(to_mails, MAX_EMAILS_PER_SENDING):
+            __send_email.apply_async((mails, html, subject))
     else:
-        __send_email(to_mails, html, subject)
+        for mails in chunk_list(to_mails, MAX_EMAILS_PER_SENDING):
+            __send_email(mails, html, subject)
 
 
 @shared_task
 def __send_email(to_mails, html, subject):
-    """
-        to_mails: str -> Email-addresses of receivers\n
-        html: str -> The email HTML to be sent to the users\n
-        subject: str -> Subject of email
-        """
     try:
         text_content = strip_tags(html)
         email_recipient = os.environ.get("EMAIL_USER")
