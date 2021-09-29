@@ -485,8 +485,8 @@ def test_delete_form_as_member_is_not_permitted(member, form):
 @pytest.mark.parametrize(
     ("group_name", "expected_status_code"),
     [
-        (AdminGroup.SOSIALEN, status.HTTP_403_FORBIDDEN),
-        (AdminGroup.PROMO, status.HTTP_200_OK),
+        (AdminGroup.SOSIALEN, status.HTTP_200_OK),
+        (AdminGroup.PROMO, status.HTTP_403_FORBIDDEN),
         (AdminGroup.HS, status.HTTP_200_OK),
         (AdminGroup.INDEX, status.HTTP_200_OK),
         (AdminGroup.NOK, status.HTTP_200_OK),
