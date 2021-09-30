@@ -40,7 +40,7 @@ class SubmissionViewSet(viewsets.ModelViewSet):
             if isinstance(form, EventForm):
                 users_in_event = form.event.registrations.filter(
                     is_on_wait=False
-                ).values_list("user")
+                ).values_list("user", flat=True)
                 queryset = queryset.filter(user__in=users_in_event)
         return queryset
 

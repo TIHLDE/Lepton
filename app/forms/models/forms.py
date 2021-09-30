@@ -14,7 +14,12 @@ from app.util.models import BaseModel
 
 
 class Form(PolymorphicModel):
-    write_access = [AdminGroup.HS, AdminGroup.NOK, AdminGroup.SOSIALEN, AdminGroup.INDEX]
+    write_access = [
+        AdminGroup.HS,
+        AdminGroup.NOK,
+        AdminGroup.SOSIALEN,
+        AdminGroup.INDEX,
+    ]
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=200)
 
