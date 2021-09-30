@@ -13,6 +13,10 @@
 ---
 
 ## Neste versjon
+## Versjon 1.0.18 (30.09.2021)
+- 🦟 **Arrangement**. Hent ut kun svar til spørreskjema for dem som ha plass på arrangementet.
+- 🦟 **Spørreskjema**. Fikset bug der medlemmer av NoK ikke hadde tilgang til å redigere spørreskjemaer.
+- 🦟 **Prikk**. Påmeldte på venteliste får nå ikke lenger prikk
 
 ## Versjon 1.0.17 (24.09.2021)
 - ✨ **Svar på skjemaer** kan nå lastes ned som en csv-fil.
