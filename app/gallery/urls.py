@@ -6,7 +6,7 @@ from rest_framework import routers
 
 router = routers.DefaultRouter()
 router.register("", PictureViewSet)
-router.register(r'(<title>)', PictureViewSet, basename=picture)
+router.register("<str:title>/", PictureViewSet, basename="picture_detail")
 
 
 urlpatterns = [

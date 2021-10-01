@@ -8,7 +8,7 @@ class PictureSerializer(serializers.ModelSerializer):
         model = Picture
         fields = (
             "picture",
-            #"event",
+            "event",
             "title",
             "description",
             "picture_alt",
