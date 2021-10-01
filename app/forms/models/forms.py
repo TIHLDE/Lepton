@@ -14,7 +14,12 @@ from app.util.models import BaseModel
 
 
 class Form(PolymorphicModel):
-    write_access = [AdminGroup.HS, AdminGroup.NOK, AdminGroup.INDEX]
+    write_access = [
+        AdminGroup.HS,
+        AdminGroup.NOK,
+        AdminGroup.SOSIALEN,
+        AdminGroup.INDEX,
+    ]
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=200)
 
@@ -24,6 +29,10 @@ class Form(PolymorphicModel):
 
     def __str__(self):
         return self.title
+
+    @property
+    def website_url(self):
+        return f"/sporreskjema/{self.id}/"
 
     def add_fields(self, fields):
         for field in fields:
@@ -105,12 +114,15 @@ class Option(models.Model):
     title = models.CharField(max_length=200, default="")
     field = models.ForeignKey(Field, on_delete=models.CASCADE, related_name="options")
 
+    class Meta:
+        ordering = ["title", "id"]
+
     def __str__(self):
         return self.title
 
 
 class Submission(BaseModel, BasePermissionModel):
-    read_access = AdminGroup.admin()
+    read_access = [AdminGroup.HS, AdminGroup.INDEX, AdminGroup.SOSIALEN, AdminGroup.NOK]
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     form = models.ForeignKey(Form, on_delete=models.CASCADE, related_name="submissions")
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="submissions")

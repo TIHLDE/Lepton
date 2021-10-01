@@ -13,7 +13,6 @@ class EventSerializer(serializers.ModelSerializer):
     registration_priorities = serializers.SerializerMethodField()
     evaluation = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
     survey = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
-    viewer_has_unanswered_evaluations = serializers.SerializerMethodField()
 
     class Meta:
         model = Event
@@ -38,16 +37,10 @@ class EventSerializer(serializers.ModelSerializer):
             "end_registration_at",
             "sign_off_deadline",
             "registration_priorities",
-            "evaluate_link",
             "evaluation",
             "survey",
             "updated_at",
-            "viewer_has_unanswered_evaluations",
         )
-
-        extra_kwargs = {
-            "evaluate_link": {"write_only": True},
-        }
 
     def validate_limit(self, limit):
         """
@@ -84,11 +77,6 @@ class EventSerializer(serializers.ModelSerializer):
             ]
         except Priority.DoesNotExist:
             return None
-
-    def get_viewer_has_unanswered_evaluations(self, obj):
-        request = self.context.get("request", None)
-        if request and request.user:
-            return request.user.has_unanswered_evaluations()
 
 
 class EventListSerializer(serializers.ModelSerializer):
@@ -132,7 +120,6 @@ class EventCreateAndUpdateSerializer(BaseModelSerializer):
             "end_registration_at",
             "sign_off_deadline",
             "registration_priorities",
-            "evaluate_link",
         )
 
     def create(self, validated_data):
@@ -170,9 +157,3 @@ class EventCreateAndUpdateSerializer(BaseModelSerializer):
         )
 
         return registration_priority
-
-
-class EventAdminSerializer(EventSerializer):
-    class Meta:
-        model = Event
-        fields = EventSerializer.Meta.fields + ("evaluate_link",)
