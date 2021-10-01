@@ -10,7 +10,7 @@ from sentry_sdk import capture_exception
 from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission
 from app.content.filters import EventFilter
-from app.content.models import Event
+from app.content.models import Event, User
 from app.content.serializers import (
     EventCreateAndUpdateSerializer,
     EventListSerializer,
@@ -121,7 +121,7 @@ class EventViewSet(viewsets.ModelViewSet):
             event = self.get_object()
             self.check_object_permissions(self.request, event)
 
-            users = (registration.user for registration in event.get_queue())
+            users = User.objects.filter(registrations__in=event.get_queue())
             Notify(users, title).send_email(
                 MailCreator(title)
                 .add_paragraph(f"Arrangøren av {event.title} har en melding til deg:")

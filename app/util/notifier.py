@@ -84,9 +84,9 @@ def send_html_email(to_mails, html, subject, send_async=True):
 def __send_email(to_mails, html, subject):
     try:
         text_content = strip_tags(html)
-        email_recipient = os.environ.get("EMAIL_USER")
+        email_sender = os.environ.get("EMAIL_USER")
         msg = EmailMultiAlternatives(
-            subject, text_content, f"TIHLDE <{email_recipient}>", bcc=to_mails
+            subject, text_content, f"TIHLDE <{email_sender}>", bcc=to_mails
         )
         msg.attach_alternative(html, "text/html")
         msg.send()

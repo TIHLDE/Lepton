@@ -11,18 +11,17 @@ from app.util.utils import datetime_format
 
 @shared_task
 def event_sign_off_deadline_schedular(*args, **kwargs):
-    from app.content.models import Event
+    from app.content.models import Event, User
 
     try:
         event = Event.objects.get(
             sign_off_deadline_schedular_id=event_sign_off_deadline_schedular.request.id
         )
 
-        registrations_not_on_wait = event.registrations.filter(is_on_wait=False)
-        description_not_on_wait = f"Dette er en påminnelse om at avmeldingsfristen for {event.title} er imorgen. Dersom du ikke kan møte ber vi deg om å melde deg av arrangementet slik at andre kan få plassen din. Dersom du ikke melder deg av innen fristen vil du få en prikk for å ikke møte opp."
-        users_not_on_wait = (
-            registration.user for registration in registrations_not_on_wait
+        users_not_on_wait = User.objects.filter(
+            registrations__event=event, registrations__is_on_wait=False
         )
+        description_not_on_wait = f"Dette er en påminnelse om at avmeldingsfristen for {event.title} er imorgen. Dersom du ikke kan møte ber vi deg om å melde deg av arrangementet slik at andre kan få plassen din. Dersom du ikke melder deg av innen fristen vil du få en prikk for å ikke møte opp."
         Notify(
             users_not_on_wait, f"Påminnelse om avmeldingsfrist for {event.title}"
         ).send_email(
@@ -36,8 +35,9 @@ def event_sign_off_deadline_schedular(*args, **kwargs):
             description=description_not_on_wait, link=event.website_url
         )
 
-        registrations_on_wait = event.registrations.filter(is_on_wait=True)
-        users_on_wait = (registration.user for registration in registrations_on_wait)
+        users_on_wait = User.objects.filter(
+            registrations__event=event, registrations__is_on_wait=True
+        )
         description_on_wait = f"Dette er en påminnelse om at avmeldingsfristen for {event.title} er imorgen. Det forventes at du som står på venteliste kan møte opp dersom det blir en ledig plass. Dette gjelder helt frem til 2 timer før arrangementets starttid. Det er ditt ansvar å melde deg av ventelisten, hvis det ikke passer allikevel."
         Notify(
             users_on_wait, f"Påminnelse om avmeldingsfrist for {event.title}"
@@ -57,7 +57,7 @@ def event_sign_off_deadline_schedular(*args, **kwargs):
 
 @shared_task
 def event_end_schedular(*args, **kwargs):
-    from app.content.models import Event
+    from app.content.models import Event, User
 
     try:
         event = Event.objects.get(end_date_schedular_id=event_end_schedular.request.id)
@@ -67,8 +67,9 @@ def event_end_schedular(*args, **kwargs):
             create_strike("NO_SHOW", registration.user, registration.event)
 
         if event.evaluation:
-            registrations = event.registrations.filter(has_attended=True)
-            users = (registration.user for registration in registrations)
+            users = User.objects.filter(
+                registrations__event=event, registrations__has_attended=True
+            )
             description = [
                 f"Vi i TIHLDE setter stor pris på at du tar deg tid til å svare på denne korte undersøkelsen angående {event.title} den {datetime_format(event.start_date)}",
                 "Undersøkelsen tar ca 1 minutt å svare på, og er til stor hjelp for fremtidige arrangementer. Takk på forhånd!",
