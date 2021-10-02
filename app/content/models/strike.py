@@ -78,9 +78,9 @@ class Strike(BaseModel, BasePermissionModel):
         return self.created_at + timedelta(days=STRIKE_DURATION_IN_DAYS)
 
     def has_object_read_permission(self, request):
-        if self.user.user_id == request.id:
-            return True
-        return super.check_has_access(self.read_access, request)
+        return self.user.user_id == request.id or super.check_has_access(
+            self.read_access, request
+        )
 
 
 def create_strike(enum, user, event=None, creator=None):
