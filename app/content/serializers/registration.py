@@ -41,5 +41,5 @@ class RegistrationSerializer(BaseModelSerializer):
         return obj.user.has_unanswered_evaluations_for(obj.event)
 
     def get_strikes(self, obj):
-        print(obj.event.strikes)
-        return RegistrationStrikeSerializer(instance=obj.event.strikes, many=True).data
+        strikes = obj.event.strikes.filter(user = obj.user)
+        return RegistrationStrikeSerializer(instance=strikes, many=True).data
