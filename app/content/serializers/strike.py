@@ -34,6 +34,7 @@ class UserInfoStrikeSerializer(StrikeSerializer):
 class RegistrationStrikeSerializer(StrikeSerializer):
     user = None
     event = None
+
     class Meta:
         model = Strike
         exclude = ("user", "event")

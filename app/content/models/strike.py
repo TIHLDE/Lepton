@@ -46,7 +46,6 @@ class Strike(BaseModel, BasePermissionModel):
         related_name="created_strikes",
     )
 
-
     class Meta:
         verbose_name = "Strike"
         verbose_name_plural = "Strikes"
@@ -82,6 +81,7 @@ class Strike(BaseModel, BasePermissionModel):
         if self.user.user_id == request.id:
             return True
         return super.check_has_access(self.read_access, request)
+
 
 def create_strike(enum, user, event=None, creator=None):
     return Strike.objects.create(
