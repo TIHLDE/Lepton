@@ -1,9 +1,9 @@
-from rest_framework import serializers
+from app.common.serializers import BaseModelSerializer
 
 from app.gallery.models import Picture
 
 
-class PictureSerializer(serializers.ModelSerializer):
+class PictureSerializer(BaseModelSerializer):
     class Meta():
         model = Picture
         fields = (
