@@ -20,6 +20,8 @@ class Strike(BaseModel, BasePermissionModel):
         AdminGroup.SOSIALEN,
     ]
 
+    read_access = write_access
+
     id = models.UUIDField(
         auto_created=True, primary_key=True, default=uuid.uuid4, serialize=False,
     )
@@ -43,6 +45,7 @@ class Strike(BaseModel, BasePermissionModel):
         null=True,
         related_name="created_strikes",
     )
+
 
     class Meta:
         verbose_name = "Strike"
@@ -75,6 +78,10 @@ class Strike(BaseModel, BasePermissionModel):
     def expires_at(self):
         return self.created_at + timedelta(days=STRIKE_DURATION_IN_DAYS)
 
+    def has_object_read_permission(self, request):
+        if self.user.user_id == request.id:
+            return True
+        return super.check_has_access(self.read_access, request)
 
 def create_strike(enum, user, event=None, creator=None):
     return Strike.objects.create(
