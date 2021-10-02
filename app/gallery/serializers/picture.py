@@ -1,10 +1,9 @@
 from app.common.serializers import BaseModelSerializer
-
 from app.gallery.models import Picture
 
 
 class PictureSerializer(BaseModelSerializer):
-    class Meta():
+    class Meta:
         model = Picture
         fields = (
             "picture",
@@ -15,4 +14,3 @@ class PictureSerializer(BaseModelSerializer):
             "created_at",
             "updated_at",
         )
-
