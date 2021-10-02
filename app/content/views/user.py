@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
+from app.content.serializers.strike import  UserInfoStrikeSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action
@@ -22,7 +23,6 @@ from app.content.models import User
 from app.content.serializers import (
     BadgeSerializer,
     EventListSerializer,
-    StrikeSerializer,
     UserAdminSerializer,
     UserCreateSerializer,
     UserListSerializer,
@@ -146,7 +146,7 @@ class UserViewSet(viewsets.ModelViewSet, ActionMixin):
     def get_user_strikes(self, request, *args, **kwargs):
         strikes = request.user.strikes.all()
         active_strikes = [strike for strike in strikes if strike.active]
-        return self.paginate_response(data=active_strikes, serializer=StrikeSerializer)
+        return self.paginate_response(data=active_strikes, serializer=UserInfoStrikeSerializer)
 
     @action(detail=False, methods=["get"], url_path="me/events")
     def get_user_events(self, request, *args, **kwargs):
