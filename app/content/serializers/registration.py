@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from app.common.serializers import BaseModelSerializer
 from app.content.models.registration import Registration
-from app.content.serializers.strike import  RegistrationStrikeSerializer
+from app.content.serializers.strike import RegistrationStrikeSerializer
 from app.content.serializers.user import UserListSerializer
 from app.forms.enums import EventFormType
 from app.forms.serializers.submission import SubmissionInRegistrationSerializer
@@ -13,7 +13,7 @@ class RegistrationSerializer(BaseModelSerializer):
     survey_submission = serializers.SerializerMethodField()
     waiting_number = serializers.SerializerMethodField()
     has_unanswered_evaluation = serializers.SerializerMethodField()
-    strikes =  serializers.SerializerMethodField()
+    strikes = serializers.SerializerMethodField()
 
     class Meta:
         model = Registration
@@ -27,7 +27,7 @@ class RegistrationSerializer(BaseModelSerializer):
             "survey_submission",
             "waiting_number",
             "has_unanswered_evaluation",
-            "strikes"
+            "strikes",
         ]
 
     def get_survey_submission(self, obj):
@@ -39,7 +39,7 @@ class RegistrationSerializer(BaseModelSerializer):
 
     def get_has_unanswered_evaluation(self, obj):
         return obj.user.has_unanswered_evaluations_for(obj.event)
-    
+
     def get_strikes(self, obj):
         print(obj.event.strikes)
         return RegistrationStrikeSerializer(instance=obj.event.strikes, many=True).data
