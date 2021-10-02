@@ -1,5 +1,6 @@
 import uuid
 from datetime import timedelta
+from datetime import datetime
 
 from django.conf import settings
 from django.db import models
@@ -8,6 +9,10 @@ from app.common.enums import AdminGroup
 from app.common.permissions import BasePermissionModel
 from app.util.models import BaseModel
 from app.util.utils import today
+
+import pytz
+
+utc = pytz.UTC
 
 STRIKE_DURATION_IN_DAYS = 20
 
@@ -69,11 +74,20 @@ class Strike(BaseModel, BasePermissionModel):
 
     @property
     def active(self):
-        return self.expires_at >= today()
+        return self.expires_at.replace(tzinfo=utc) >= today().replace(tzinfo=utc)
 
     @property
     def expires_at(self):
-        return self.created_at + timedelta(days=STRIKE_DURATION_IN_DAYS)
+        
+        start, end = ((6, 1), (8, 15))
+        start_date = datetime(today().year, start[0], start[1])
+        end_date = datetime(today().year, end[0], end[1])
+
+        offset = 0
+        if self.created_at + timedelta(STRIKE_DURATION_IN_DAYS) > start_date:
+            offset = end_date - start_date
+
+        return self.created_at + timedelta(days=STRIKE_DURATION_IN_DAYS) + offset
 
 
 def create_strike(enum, user, event=None, creator=None):
