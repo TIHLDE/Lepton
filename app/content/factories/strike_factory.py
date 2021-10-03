@@ -1,8 +1,9 @@
+import factory
+from factory.django import DjangoModelFactory
+
 from app.content.factories.event_factory import EventFactory
 from app.content.factories.user_factory import UserFactory
 from app.content.models.strike import Strike
-from factory.django import DjangoModelFactory
-import factory
 
 
 class StrikeFactory(DjangoModelFactory):

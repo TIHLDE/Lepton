@@ -1,16 +1,15 @@
 import uuid
-from datetime import timedelta
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.db import models
+
+import pytz
 
 from app.common.enums import AdminGroup
 from app.common.permissions import BasePermissionModel
 from app.util.models import BaseModel
 from app.util.utils import today
-
-import pytz
 
 utc = pytz.UTC
 
@@ -78,7 +77,7 @@ class Strike(BaseModel, BasePermissionModel):
 
     @property
     def expires_at(self):
-        
+
         start, end = ((6, 1), (8, 15))
         start_date = datetime(today().year, start[0], start[1])
         end_date = datetime(today().year, end[0], end[1])
