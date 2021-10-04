@@ -3,6 +3,7 @@ from rest_framework import status, viewsets
 from rest_framework.response import Response
 
 from app.common.enums import StrikeEnum
+from app.common.permissions import BasicViewPermission
 from app.content.models import (
     Event,
     Strike,
@@ -16,6 +17,7 @@ from app.content.serializers import StrikeSerializer
 class StrikeViewSet(viewsets.ModelViewSet):
     serializer_class = StrikeSerializer
     queryset = Strike.objects.all()
+    permission_classes = [BasicViewPermission]
 
     def get_queryset(self):
         return (strike for strike in Strike.objects.all() if strike.active)
@@ -40,14 +42,16 @@ class StrikeViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
 
         user = get_object_or_404(User, user_id=request.data["user_id"])
+        creator = get_object_or_404(User, user_id=request.id)
 
         if "event_id" in request.data:
             event = get_object_or_404(Event, id=request.data["event_id"])
-            serializer.save(user=user, event=event)
+            serializer.save(user=user, event=event, creator=creator)
         else:
-            serializer.save(user=user)
+            serializer.save(user=user, creator=creator)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def destroy(self, request, *args, **kwargs):
-        super().destroy(request, *args, **kwargs)
+        strike = get_object_or_404(Strike, id=kwargs["pk"])
+        strike.delete()
         return Response({"detail": "Prikken ble slettet"}, status=status.HTTP_200_OK)
