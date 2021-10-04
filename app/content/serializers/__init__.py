@@ -24,7 +24,7 @@ from app.content.serializers.strike import (
     BaseStrikeSerializer,
     RegistrationStrikeSerializer,
     StrikeSerializer,
-    UserInfoStrikeSerializer
+    UserInfoStrikeSerializer,
 )
 from app.content.serializers.user import (
     UserAdminSerializer,
