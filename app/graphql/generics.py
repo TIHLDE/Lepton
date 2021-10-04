@@ -95,6 +95,7 @@ class GenericObjectType(graphene.ObjectType):
         raise NotImplementedError()
 
 
+# TODO: add fields with resolvers in meta
 class GenericQuery(GenericObjectType, ModelOptions):
     @classmethod
     def get_model_class(cls):
