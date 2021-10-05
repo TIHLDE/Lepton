@@ -5,7 +5,7 @@ from django.conf import settings
 from django.db import models
 
 from app.common.enums import AdminGroup
-from app.common.permissions import BasePermissionModel
+from app.common.permissions import BasePermissionModel, check_has_access
 from app.util.models import BaseModel
 from app.util.utils import today
 
@@ -78,7 +78,7 @@ class Strike(BaseModel, BasePermissionModel):
         return self.created_at + timedelta(days=STRIKE_DURATION_IN_DAYS)
 
     def has_object_read_permission(self, request):
-        return self.user.user_id == request.id or super.check_has_access(
+        return self.user.user_id == request.id or check_has_access(
             self.read_access, request
         )
 

@@ -1,6 +1,8 @@
 from django.db.transaction import atomic
 from rest_framework import serializers
+from rest_framework.fields import SerializerMethodField
 
+from drf_yasg.utils import swagger_serializer_method
 from rest_polymorphic.serializers import PolymorphicSerializer
 
 from app.common.serializers import BaseModelSerializer
@@ -36,7 +38,7 @@ class FieldSerializer(BaseModelSerializer):
 
 class FormSerializer(BaseModelSerializer):
     fields = FieldSerializer(many=True, required=False, allow_null=True)
-    viewer_has_answered = serializers.SerializerMethodField()
+    viewer_has_answered = SerializerMethodField()
 
     class Meta:
         model = Form
@@ -47,10 +49,12 @@ class FormSerializer(BaseModelSerializer):
             "viewer_has_answered",
         )
 
+    @swagger_serializer_method(serializer_or_field=serializers.BooleanField)
     def get_viewer_has_answered(self, obj):
         request = self.context.get("request", None)
         if request and request.user:
             return obj.submissions.filter(user=request.user).exists()
+        return False
 
     @atomic
     def create(self, validated_data):
