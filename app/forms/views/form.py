@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from app.common.permissions import BasicViewPermission
 from app.forms.models import Form
 from app.forms.serializers import FormPolymorphicSerializer
+from app.forms.serializers.forms import FormSerializer
 from app.forms.serializers.statistics import FormStatisticsSerializer
 
 
@@ -24,6 +25,16 @@ class FormViewSet(viewsets.ModelViewSet):
         return Response(
             {"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST
         )
+
+    def get_queryset(self):
+        if hasattr(self, "action") and self.action == "list" and "all" not in self.request.query_params:
+            return self.queryset.filter(template=True)
+        return self.queryset
+
+    def get_serializer(self):
+        if hasattr(self, "action") and self.action == "list" and "all" not in self.request.query_params:
+            return FormSerializer()
+        return super().get_serializer()
 
     def destroy(self, request, *args, **kwargs):
         super().destroy(request, *args, **kwargs)
