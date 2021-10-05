@@ -27,12 +27,20 @@ class FormViewSet(viewsets.ModelViewSet):
         )
 
     def get_queryset(self):
-        if hasattr(self, "action") and self.action == "list" and "all" not in self.request.query_params:
+        if (
+            hasattr(self, "action")
+            and self.action == "list"
+            and "all" not in self.request.query_params
+        ):
             return self.queryset.filter(template=True)
         return self.queryset
 
     def get_serializer_class(self):
-        if hasattr(self, "action") and self.action == "list" and "all" not in self.request.query_params:
+        if (
+            hasattr(self, "action")
+            and self.action == "list"
+            and "all" not in self.request.query_params
+        ):
             return FormSerializer
         return super().get_serializer_class()
 

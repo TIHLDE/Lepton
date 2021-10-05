@@ -4,7 +4,6 @@ import pytest
 
 from app.common.enums import AdminGroup
 from app.content.factories import EventFactory, RegistrationFactory
-from app.content.serializers import EventListSerializer
 from app.forms.enums import EventFormType
 from app.forms.models.forms import Field
 from app.forms.tests.form_factories import EventFormFactory, FormFactory
