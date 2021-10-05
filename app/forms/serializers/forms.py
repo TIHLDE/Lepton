@@ -35,6 +35,8 @@ class FieldSerializer(BaseModelSerializer):
 
 
 class FormSerializer(BaseModelSerializer):
+    fields = FieldSerializer(many=True, required=False, allow_null=True)
+
     class Meta:
         model = Form
         fields = (
@@ -88,10 +90,10 @@ class FormSerializer(BaseModelSerializer):
         created = list()
 
         for option in options:
-            id = option.get("id")
-            if id:
-                Option.objects.filter(id=id).update(**option)
-                updated_ids.append(id)
+            option_id = option.get("id")
+            if option_id:
+                Option.objects.filter(id=option_id).update(**option)
+                updated_ids.append(option_id)
             else:
                 created.append(option)
 
@@ -104,7 +106,6 @@ class FormSerializer(BaseModelSerializer):
 
 
 class AnswerableFormSerializer(FormSerializer):
-    fields = FieldSerializer(many=True, required=False, allow_null=True)
     viewer_has_answered = serializers.SerializerMethodField()
 
     class Meta:
