@@ -1,5 +1,5 @@
 from app.common.serializers import BaseModelSerializer
-from app.gallery.models import Picture
+from app.gallery.models.picture import Picture
 
 
 class PictureSerializer(BaseModelSerializer):
