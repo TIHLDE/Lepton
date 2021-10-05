@@ -74,7 +74,7 @@ class Strike(BaseModel, BasePermissionModel):
         #     from app.util.mail_creator import MailCreator
         #     from app.util.notifier import Notify
 
-        #     Notify(self.user, "Du har fått en prikk").send_email(
+        #     Notify([self.user], "Du har fått en prikk").send_email(
         #         MailCreator("Du har fått en prikk")
         #         .add_paragraph(f"Hei {self.user.first_name}!")
         #         .add_paragraph(self.description)

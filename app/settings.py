@@ -26,9 +26,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 DOMAIN = "api.tihlde.org"
 
-READ_DOT_ENV_FILE = os.environ.get("DJANGO_READ_DOT_ENV_FILE", False)
-if READ_DOT_ENV_FILE:
-    load_dotenv(str(BASE_DIR) + "/.env", override=True)
+load_dotenv(str(BASE_DIR) + "/.env", override=True)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
@@ -177,6 +175,7 @@ DATABASES = {
         "HOST": os.environ.get("DATABASE_HOST"),
         "PORT": os.environ.get("DATABASE_PORT"),
         "OPTIONS": {"charset": "utf8mb4", "use_unicode": True},
+        "CONN_MAX_AGE": 60,
     }
 }
 
@@ -200,9 +199,6 @@ TIME_ZONE = "Europe/Oslo"
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
-
-# Change 'default' database configuration with $DATABASE_URL.
-DATABASES["default"].update(dj_database_url.config(conn_max_age=500, ssl_require=True))
 
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
@@ -260,11 +256,10 @@ LOGGING = {
             "filename": "mysite.log",
             "formatter": "verbose",
         },
+        "console": {"class": "logging.StreamHandler", "formatter": "verbose",},
     },
-    "loggers": {
-        "django": {"handlers": ["file"], "propagate": True, "level": "DEBUG",},
-        "MYAPP": {"handlers": ["file"], "level": "DEBUG",},
-    },
+    "loggers": {"django": {"propagate": True, "level": "DEBUG",},},
+    "root": {"handlers": ["file"],},
 }
 
 CELERY_BROKER_URL = os.environ.get("CELERY_URL")

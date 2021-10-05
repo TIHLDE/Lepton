@@ -52,7 +52,7 @@ class MembershipViewSet(viewsets.ModelViewSet):
             ):
                 title = f"Du er nå leder i gruppen {membership.group.name}"
                 description = f"Du har blitt gjort til leder i gruppen {membership.group.name}. Gratulerer så mye og lykke til!"
-                Notify(membership.user, title).send_email(
+                Notify([membership.user], title).send_email(
                     MailCreator(title)
                     .add_paragraph(f"Hei {membership.user.first_name}!")
                     .add_paragraph(description)
@@ -77,7 +77,7 @@ class MembershipViewSet(viewsets.ModelViewSet):
             serializer.is_valid(raise_exception=True)
             title = f"Du er nå med i gruppen {membership.group.name}"
             description = f"Du har blitt lagt til som medlem i gruppen {membership.group.name}. Gratulerer så mye og lykke til!"
-            Notify(membership.user, title).send_email(
+            Notify([membership.user], title).send_email(
                 MailCreator(title)
                 .add_paragraph(f"Hei {membership.user.first_name}!")
                 .add_paragraph(description)

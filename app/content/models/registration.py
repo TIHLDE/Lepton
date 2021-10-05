@@ -163,7 +163,7 @@ class Registration(BaseModel, BasePermissionModel):
                 f"Arrangementet starter {datetime_format(self.event.start_date)} og vil være på {self.event.location}.",
                 f"Du kan melde deg av innen {datetime_format(self.event.sign_off_deadline)}.",
             ]
-            Notify(self.user, f"Du har fått plass på {self.event.title}").send_email(
+            Notify([self.user], f"Du har fått plass på {self.event.title}").send_email(
                 MailCreator("Du er påmeldt")
                 .add_paragraph(f"Hei {self.user.first_name}!")
                 .add_paragraph(description[0])
@@ -180,7 +180,7 @@ class Registration(BaseModel, BasePermissionModel):
                 "Dersom noen melder seg av vil du automatisk bli flyttet opp på listen. Du vil få beskjed dersom du får plass på arrangementet.",
                 f"PS. De vanlige reglene for prikker gjelder også for venteliste, husk derfor å melde deg av arrangementet innen {datetime_format(self.event.sign_off_deadline)} dersom du ikke kan møte.",
             ]
-            Notify(self.user, f"Venteliste for {self.event.title}").send_email(
+            Notify([self.user], f"Venteliste for {self.event.title}").send_email(
                 MailCreator("Du er på ventelisten")
                 .add_paragraph(f"Hei {self.user.first_name}!")
                 .add_paragraph(description[0])

@@ -38,19 +38,16 @@ class UserSerializer(serializers.ModelSerializer):
             "image",
             "email",
             "cell",
-            "home_busstop",
             "gender",
             "user_class",
             "user_study",
             "allergy",
             "tool",
-            "app_token",
             "unread_notifications",
             "unanswered_evaluations_count",
             "permissions",
         )
         read_only_fields = ("user_id",)
-        write_only_fields = ("app_token",)
 
     def get_unread_notifications(self, obj):
         """ Counts all unread notifications and returns the count """

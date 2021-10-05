@@ -72,8 +72,6 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
     email = models.EmailField(max_length=254)
     cell = models.CharField(max_length=8, blank=True)
 
-    home_busstop = models.IntegerField(null=True, blank=True)
-
     gender = models.IntegerField(default=2, choices=GENDER, null=True, blank=True)
 
     user_class = models.IntegerField(default=1, choices=CLASS, null=True, blank=True)
@@ -81,8 +79,6 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
     allergy = models.CharField(max_length=250, blank=True)
 
     tool = models.CharField(max_length=100, blank=True)
-
-    app_token = models.CharField(max_length=60, blank=True, null=True)
 
     USERNAME_FIELD = "user_id"
     is_staff = models.BooleanField(default=False)
@@ -138,7 +134,6 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
     @classmethod
     def has_list_permission(cls, request):
         try:
-
             return check_has_access(cls.has_access, request) or len(
                 request.user.memberships.filter(membership_type=MembershipType.LEADER)
             )
