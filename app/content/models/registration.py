@@ -136,7 +136,7 @@ class Registration(BaseModel, BasePermissionModel):
             raise UnansweredFormError()
 
     def strike_handler(self):
-        number_of_strikes = self.user.get_number_of_strikes()
+        number_of_strikes = self.user.number_of_strikes
         if number_of_strikes >= 1:
             hours_offset = 3
             if number_of_strikes >= 2:
@@ -202,7 +202,7 @@ class Registration(BaseModel, BasePermissionModel):
 
     @property
     def is_prioritized(self):
-        if self.user.get_number_of_strikes() >= 3:
+        if self.user.number_of_strikes >= 3:
             return False
         user_class, user_study = EnumUtils.get_user_enums(**self.user.__dict__)
         return self.event.registration_priorities.filter(

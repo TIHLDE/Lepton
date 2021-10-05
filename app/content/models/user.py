@@ -1,5 +1,3 @@
-from datetime import timedelta
-
 from django.conf import settings
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import (
@@ -15,7 +13,7 @@ from rest_framework.authtoken.models import Token
 from app.common.enums import AdminGroup, Groups, MembershipType
 from app.common.permissions import check_has_access
 from app.util.models import BaseModel, OptionalImage
-from app.util.utils import disable_for_loaddata, today
+from app.util.utils import disable_for_loaddata
 
 
 class UserManager(BaseUserManager):
@@ -99,17 +97,9 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
     def has_module_perms(self, app_label):
         return self.is_superuser
 
-    def get_number_of_strikes(self):
-        from django.db.models import Sum
-
-        aggregate_sum = self.strikes.filter(
-            created_at__lte=today(), created_at__gte=today() - timedelta(days=20),
-        ).aggregate(Sum("strike_size"))
-
-        number_of_strikes = aggregate_sum["strike_size__sum"]
-        if number_of_strikes is None:
-            return 0
-        return number_of_strikes
+    @property
+    def number_of_strikes(self):
+        return self.strikes.sum_active()
 
     objects = UserManager()
 
