@@ -144,18 +144,15 @@ class UserViewSet(viewsets.ModelViewSet, ActionMixin):
 
     @action(detail=False, methods=["get"], url_path="me/strikes")
     def get_user_strikes(self, request, *args, **kwargs):
-        strikes = request.user.strikes.all()
-        active_strikes = [strike for strike in strikes if strike.active]
-        return self.paginate_response(
-            data=active_strikes, serializer=UserInfoStrikeSerializer
-        )
+        strikes = request.user.strikes.active()
+        serializer = UserInfoStrikeSerializer(instance=strikes, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=["get"], url_path="strikes")
     def get_user_detail_strikes(self, request, *args, **kwargs):
         user = self.get_object()
-        strikes = user.strikes.filter(user=user)
-        active_strikes = (strike for strike in strikes if strike.active)
-        serializer = UserInfoStrikeSerializer(instance=active_strikes, many=True)
+        strikes = user.strikes.filter(user=user).active()
+        serializer = UserInfoStrikeSerializer(instance=strikes, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=["get"], url_path="me/events")

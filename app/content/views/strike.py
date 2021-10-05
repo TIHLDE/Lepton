@@ -21,7 +21,7 @@ class StrikeViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return (
-            (strike for strike in Strike.objects.all() if strike.active)
+            self.queryset.active()
             if hasattr(self, "action") and self.action == "list"
             else self.queryset
         )
