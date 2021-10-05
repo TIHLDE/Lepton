@@ -2,7 +2,6 @@ from rest_framework import serializers
 
 from app.common.serializers import BaseModelSerializer
 from app.content.models.registration import Registration
-from app.content.serializers.strike import RegistrationStrikeSerializer
 from app.content.serializers.user import UserListSerializer
 from app.forms.enums import EventFormType
 from app.forms.serializers.submission import SubmissionInRegistrationSerializer
