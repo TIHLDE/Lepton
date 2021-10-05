@@ -23,18 +23,10 @@ class StrikeSerializer(BaseStrikeSerializer):
         fields = BaseStrikeSerializer.Meta.fields + ("user", "creator", "event")
 
 
-class UserInfoStrikeSerializer(StrikeSerializer):
-    user = None
+class UserInfoStrikeSerializer(BaseStrikeSerializer):
+    creator = DefaultUserSerializer(read_only=True)
+    event = EventListSerializer(read_only=True)
 
     class Meta:
         model = Strike
-        exclude = ("user",)
-
-
-class RegistrationStrikeSerializer(StrikeSerializer):
-    user = None
-    event = None
-
-    class Meta:
-        model = Strike
-        exclude = ("user", "event")
+        fields = BaseStrikeSerializer.Meta.fields + ("creator", "event")

@@ -1,16 +1,12 @@
 from rest_framework import status, viewsets
-from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 
 from app.common.permissions import BasicViewPermission, is_admin_user
 from app.content.exceptions import APIUserAlreadyAttendedEvent
 from app.content.mixins import APIRegistrationErrorsMixin
-from app.content.models import Event, Registration, Strike
-from app.content.serializers import (
-    RegistrationSerializer,
-    RegistrationStrikeSerializer,
-)
+from app.content.models import Event, Registration
+from app.content.serializers import RegistrationSerializer
 
 
 class RegistrationViewSet(APIRegistrationErrorsMixin, viewsets.ModelViewSet):
@@ -98,13 +94,3 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, viewsets.ModelViewSet):
             {"detail": "Brukeren har blitt meldt av arrangement"},
             status=status.HTTP_200_OK,
         )
-
-    @action(detail=True, methods=["get"], url_path="strikes")
-    def get_registration_strikes(self, request, *args, **kwargs):
-        registration = self.get_object()
-        strikes = Strike.objects.filter(
-            user=registration.user, event=registration.event
-        )
-        active_strikes = (strike for strike in strikes if strike.active)
-        serializer = RegistrationStrikeSerializer(instance=active_strikes, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)

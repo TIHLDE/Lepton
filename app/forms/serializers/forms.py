@@ -2,7 +2,6 @@ from django.db.transaction import atomic
 from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
 
-from drf_yasg.utils import swagger_serializer_method
 from rest_polymorphic.serializers import PolymorphicSerializer
 
 from app.common.serializers import BaseModelSerializer
