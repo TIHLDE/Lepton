@@ -46,13 +46,12 @@ class StrikeViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
 
         user = get_object_or_404(User, user_id=request.data["user_id"])
-        creator = get_object_or_404(User, user_id=request.user)
 
         if "event_id" in request.data:
             event = get_object_or_404(Event, id=request.data["event_id"])
-            serializer.save(user=user, event=event, creator=creator)
+            serializer.save(user=user, event=event, creator=request.user)
         else:
-            serializer.save(user=user, creator=creator)
+            serializer.save(user=user, creator=request.user)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def destroy(self, request, *args, **kwargs):
