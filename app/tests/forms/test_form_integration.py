@@ -62,7 +62,7 @@ def _get_form_update_data(form):
 
 def test_list_forms_data(admin_user):
     """Should return the correct fields about the forms."""
-    form = EventFormFactory()
+    form = FormFactory(template=True)
     field = form.fields.first()
     option = field.options.first()
 
@@ -73,11 +73,7 @@ def test_list_forms_data(admin_user):
 
     assert response[0] == {
         "id": str(form.id),
-        "resource_type": "EventForm",
         "title": form.title,
-        "event": EventListSerializer(form.event).data,
-        "type": form.type.name,
-        "viewer_has_answered": False,
         "fields": [
             {
                 "id": str(field.id),

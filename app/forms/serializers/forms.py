@@ -110,12 +110,7 @@ class AnswerableFormSerializer(FormSerializer):
 
     class Meta:
         model = Form
-        fields = (
-            "id",
-            "title",
-            "fields",
-            "viewer_has_answered",
-        )
+        fields = FormSerializer.Meta.fields + ("viewer_has_answered",)
 
     def get_viewer_has_answered(self, obj):
         request = self.context.get("request", None)
