@@ -49,7 +49,6 @@ class FormSerializer(BaseModelSerializer):
             "viewer_has_answered",
         )
 
-    @swagger_serializer_method(serializer_or_field=serializers.BooleanField)
     def get_viewer_has_answered(self, obj):
         request = self.context.get("request", None)
         if request and request.user:
