@@ -85,7 +85,7 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
-        return f"User - {self.user_id}: {self.first_name} {self.last_name}"
+        return f"{self.first_name} {self.last_name} - {self.user_id}"
 
     @property
     def is_TIHLDE_member(self):
