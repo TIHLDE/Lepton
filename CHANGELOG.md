@@ -14,6 +14,7 @@
 
 ## Neste versjon
 - ✨ **Skjemamaler**. La inn støtte for skjemamaler.
+- ⚡ **Ytelse**. Forbedret ytelsen på API'et gjennom blant annet mer caching, async eposter og andre forbedringer.
 
 ## Versjon 1.0.18 (30.09.2021)
 - 🦟 **Arrangement**. Hent ut kun svar til spørreskjema for dem som ha plass på arrangementet.
