@@ -35,7 +35,7 @@
 
 ## 🚀 Getting started
 
-Lepton requires Python 3.6 or higher, Docker and Docker Compose. Other services are handled by Docker.
+Lepton requires Docker and Docker Compose.
 
 
 ```
@@ -57,12 +57,8 @@ Have a look at the `makefile` to find out more about how to run the project with
 
 #### ⚙ Configuration
 No configuration is required to get started, but if you would like to
-configure further or override existing ones, uncomment this line from `.envs/.local`:
-```
-# DJANGO_READ_DOT_ENV_FILE=True
-```
-
-And put the following environment variables in a _.env_ file in the repository root.
+configure further or override existing ones, put the following environment variables
+in a _.env_ file in the repository root.
 
 ```
 # Database connection variables
@@ -80,6 +76,9 @@ EMAIL_PASSWORD= EMAIL_PASSWORD
 
 # Optional for connecting to celery broker
 CELERY_URL= CELERY_BROKER_URL
+
+# Optional for uploading files to Azure
+AZURE_STORAGE_CONNECTION_STRING= CONNECTION_STRING
 ```
 
 ## ✅ Test the application
