@@ -13,6 +13,26 @@
 ---
 
 ## Neste versjon
+## Versjon 1.0.18 (30.09.2021)
+- 🦟 **Arrangement**. Hent ut kun svar til spørreskjema for dem som ha plass på arrangementet.
+- 🦟 **Spørreskjema**. Fikset bug der medlemmer av NoK ikke hadde tilgang til å redigere spørreskjemaer.
+- 🦟 **Prikk**. Påmeldte på venteliste får nå ikke lenger prikk
+
+## Versjon 1.0.17 (24.09.2021)
+- ✨ **Svar på skjemaer** kan nå lastes ned som en csv-fil.
+- ⚡ **Maksgrensen på arrangementer** økes nå hvis en admin melder på noen og det er fullt.
+
+## Versjon 1.0.16 (21.09.2021)
+- Skjemaer
+    - ✨ **Evalueringer** må bli besvart før neste påmelding.
+    - ⚡ **Alternativ på flervalgsspørsmål** er nå sortert etter tittel.
+    - ✨ **Egne skjemaer** kan nå hentes ut i eget endepunkt.
+    - ⚡ **Skjemaer**. Legg ved mer info om arrangementet i spørrskjemaer tilknyttet et arrangement.
+    - ✨ **Skjemaer**. Legg ved info om bruker allerede har svart på et spørreskjema.
+
+## Versjon 1.0.15 (15.09.2021)
+- 🦟 **Tidssoner**. Fikset bug der tidspunkter i eposter blir formatert med feil tidssone.
+
 ## Versjon 1.0.14 (12.09.2021)
 - ✨ **Svar på spørreskjemaer** blir nå sendt med sammen med påmeldingen.
 - ✨ **Statistikk spørreskjemaer** Kan nå hente ut statistikk over svar på spørreskjemaer.

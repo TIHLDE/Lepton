@@ -5,8 +5,12 @@ from django.db import models
 from django.db.models import Q
 
 from app.common.enums import AdminGroup, Groups, StrikeEnum
-from app.common.permissions import check_has_access
-from app.content.exceptions import EventSignOffDeadlineHasPassed, StrikeError
+from app.common.permissions import BasePermissionModel, check_has_access
+from app.content.exceptions import (
+    EventSignOffDeadlineHasPassed,
+    StrikeError,
+    UnansweredFormError,
+)
 from app.content.models.strike import create_strike
 from app.forms.enums import EventFormType
 from app.util import EnumUtils, today
@@ -16,7 +20,7 @@ from app.util.notifier import Notify
 from app.util.utils import datetime_format
 
 
-class Registration(BaseModel):
+class Registration(BaseModel, BasePermissionModel):
     has_access = [AdminGroup.HS, AdminGroup.INDEX, AdminGroup.NOK, AdminGroup.SOSIALEN]
     has_retrieve_access = [
         AdminGroup.HS,
@@ -89,6 +93,7 @@ class Registration(BaseModel):
         Submission.objects.filter(form=event_form, user=self.user).delete()
 
     def delete(self, *args, **kwargs):
+        moved_registration = None
         if not self.is_on_wait:
             if self.event.is_past_sign_off_deadline:
                 if self.event.is_one_hour_before_event_start():
@@ -96,11 +101,13 @@ class Registration(BaseModel):
                         "Kan ikke melde av brukeren etter en time før arrangementstart"
                     )
                 create_strike(str(StrikeEnum.PAST_DEADLINE), self.user, self.event)
-            self.move_from_waiting_list_to_queue()
+            moved_registration = self.move_from_waiting_list_to_queue()
 
         self.delete_submission_if_exists()
-
-        return super().delete(*args, **kwargs)
+        registration = super().delete(*args, **kwargs)
+        if moved_registration:
+            moved_registration.save()
+        return registration
 
     def admin_unregister(self, *args, **kwargs):
         return super().delete(*args, **kwargs)
@@ -110,16 +117,23 @@ class Registration(BaseModel):
         if not self.registration_id:
             self.create()
         self.send_notification_and_mail()
+
+        if self.event.is_full and not self.is_on_wait:
+            self.event.increment_limit()
         return super(Registration, self).save(*args, **kwargs)
 
     def create(self):
-        """ Determines whether user is on the waiting list or not when the instance is created. """
+        self._abort_for_unanswered_evaluations()
         self.strike_handler()
         self.clean()
         self.is_on_wait = self.event.is_full
 
         if self.should_swap_with_non_prioritized_user():
             self.swap_users()
+
+    def _abort_for_unanswered_evaluations(self):
+        if self.user.has_unanswered_evaluations():
+            raise UnansweredFormError()
 
     def strike_handler(self):
         number_of_strikes = self.user.get_number_of_strikes()
@@ -221,7 +235,7 @@ class Registration(BaseModel):
                 registrations_in_waiting_list[0],
             )
             registration_move_to_queue.is_on_wait = False
-            registration_move_to_queue.save()
+            return registration_move_to_queue
 
     def clean(self):
         """
