@@ -2,7 +2,6 @@ import uuid
 
 from django.db import models
 from django.db.models.fields.related import ForeignKey
-from django.utils.text import slugify
 
 from app.common.enums import AdminGroup
 from app.common.permissions import BasePermissionModel
@@ -22,16 +21,3 @@ class Picture(BaseModel, BasePermissionModel):
 
     def __str__(self):
         return self.title
-
-    def save(self, *args, **kwargs):
-        self.slug = slugify(self.title)
-
-        antall_kopier = 2
-        while len(Picture.objects.all().filter(slug=self.slug)) > 0:
-
-            self.slug = self.slug[:-2] if antall_kopier > 2 else self.slug
-            self.slug += "-" + str(antall_kopier)
-
-            antall_kopier += 1
-
-        super().save(*args, **kwargs)
