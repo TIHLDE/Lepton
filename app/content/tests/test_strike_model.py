@@ -13,9 +13,9 @@ pytestmark = pytest.mark.django_db
 def test_strike_freezer(mock_today):
 
     # Arrange
-    mock_today.return_value = datetime(2021, 6, 1)
+    mock_today.return_value = datetime(2021, 12, 30)
     StrikeFactory()
-    strike = Strike(created_at=datetime(2021, 5, 31))
+    strike = Strike(created_at=datetime(2021, 12, 1))
 
     # Act and Assert
     assert strike.active

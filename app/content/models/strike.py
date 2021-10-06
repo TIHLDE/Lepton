@@ -14,6 +14,9 @@ from app.util.utils import today
 utc = pytz.UTC
 
 STRIKE_DURATION_IN_DAYS = 20
+SUMMER = ((6, 1), (8, 15))
+WINTER = ((12, 3),(1, 10))
+HOLIDAYS = {SUMMER, WINTER}
 
 
 class Strike(BaseModel, BasePermissionModel):
@@ -78,15 +81,22 @@ class Strike(BaseModel, BasePermissionModel):
     @property
     def expires_at(self):
 
-        start, end = ((6, 1), (8, 15))
-        start_date = datetime(today().year, start[0], start[1])
-        end_date = datetime(today().year, end[0], end[1])
+        expired_date = self.created_at + timedelta(STRIKE_DURATION_IN_DAYS)
 
-        offset = 0
-        if self.created_at + timedelta(STRIKE_DURATION_IN_DAYS) > start_date:
-            offset = end_date - start_date
+        for holiday in HOLIDAYS:
 
-        return self.created_at + timedelta(days=STRIKE_DURATION_IN_DAYS) + offset
+            start, end = holiday
+            offset = 1 if end[0] < start[0] else 0
+
+            start_date = datetime(today().year, start[0], start[1])
+            end_date = datetime(today().year + offset, end[0], end[1])
+
+            offset = timedelta(0)
+            if expired_date > start_date and expired_date < end_date:
+                offset = end_date - start_date
+                break
+
+        return expired_date + offset
 
 
 def create_strike(enum, user, event=None, creator=None):
