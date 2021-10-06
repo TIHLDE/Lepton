@@ -80,3 +80,6 @@ PR:
 	git add .
 	make check
 	make test
+
+shell: ## Open an interactive Django shell
+	docker-compose run --rm web python manage.py shell

@@ -136,7 +136,7 @@ class Registration(BaseModel, BasePermissionModel):
             raise UnansweredFormError()
 
     def strike_handler(self):
-        number_of_strikes = self.user.get_number_of_strikes()
+        number_of_strikes = self.user.number_of_strikes
         if number_of_strikes >= 1:
             hours_offset = 3
             if number_of_strikes >= 2:
@@ -163,7 +163,7 @@ class Registration(BaseModel, BasePermissionModel):
                 f"Arrangementet starter {datetime_format(self.event.start_date)} og vil være på {self.event.location}.",
                 f"Du kan melde deg av innen {datetime_format(self.event.sign_off_deadline)}.",
             ]
-            Notify(self.user, f"Du har fått plass på {self.event.title}").send_email(
+            Notify([self.user], f"Du har fått plass på {self.event.title}").send_email(
                 MailCreator("Du er påmeldt")
                 .add_paragraph(f"Hei {self.user.first_name}!")
                 .add_paragraph(description[0])
@@ -180,7 +180,7 @@ class Registration(BaseModel, BasePermissionModel):
                 "Dersom noen melder seg av vil du automatisk bli flyttet opp på listen. Du vil få beskjed dersom du får plass på arrangementet.",
                 f"PS. De vanlige reglene for prikker gjelder også for venteliste, husk derfor å melde deg av arrangementet innen {datetime_format(self.event.sign_off_deadline)} dersom du ikke kan møte.",
             ]
-            Notify(self.user, f"Venteliste for {self.event.title}").send_email(
+            Notify([self.user], f"Venteliste for {self.event.title}").send_email(
                 MailCreator("Du er på ventelisten")
                 .add_paragraph(f"Hei {self.user.first_name}!")
                 .add_paragraph(description[0])
@@ -202,7 +202,7 @@ class Registration(BaseModel, BasePermissionModel):
 
     @property
     def is_prioritized(self):
-        if self.user.get_number_of_strikes() >= 3:
+        if self.user.number_of_strikes >= 3:
             return False
         user_class, user_study = EnumUtils.get_user_enums(**self.user.__dict__)
         return self.event.registration_priorities.filter(

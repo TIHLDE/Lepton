@@ -1,5 +1,6 @@
 from django.db.transaction import atomic
 from rest_framework import serializers
+from rest_framework.fields import SerializerMethodField
 
 from rest_polymorphic.serializers import PolymorphicSerializer
 
@@ -36,7 +37,7 @@ class FieldSerializer(BaseModelSerializer):
 
 class FormSerializer(BaseModelSerializer):
     fields = FieldSerializer(many=True, required=False, allow_null=True)
-    viewer_has_answered = serializers.SerializerMethodField()
+    viewer_has_answered = SerializerMethodField()
 
     class Meta:
         model = Form
@@ -51,6 +52,7 @@ class FormSerializer(BaseModelSerializer):
         request = self.context.get("request", None)
         if request and request.user:
             return obj.submissions.filter(user=request.user).exists()
+        return False
 
     @atomic
     def create(self, validated_data):
