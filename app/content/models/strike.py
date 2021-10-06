@@ -7,7 +7,7 @@ from django.db.models import Q
 from django.db.models.aggregates import Sum
 
 from app.common.enums import AdminGroup
-from app.common.permissions import BasePermissionModel
+from app.common.permissions import BasePermissionModel, check_has_access
 from app.util.models import BaseModel
 from app.util.utils import today
 
@@ -39,6 +39,8 @@ class Strike(BaseModel, BasePermissionModel):
         AdminGroup.NOK,
         AdminGroup.SOSIALEN,
     ]
+
+    read_access = write_access
 
     id = models.UUIDField(
         auto_created=True, primary_key=True, default=uuid.uuid4, serialize=False,
@@ -96,6 +98,11 @@ class Strike(BaseModel, BasePermissionModel):
     @property
     def expires_at(self):
         return self.created_at + timedelta(days=STRIKE_DURATION_IN_DAYS)
+
+    def has_object_read_permission(self, request):
+        return self.user.user_id == request.id or check_has_access(
+            self.read_access, request
+        )
 
 
 def create_strike(enum, user, event=None, creator=None):
