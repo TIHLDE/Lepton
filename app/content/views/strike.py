@@ -16,15 +16,9 @@ from app.content.serializers import StrikeSerializer
 
 class StrikeViewSet(viewsets.ModelViewSet):
     serializer_class = StrikeSerializer
-    queryset = Strike.objects.all()
+    queryset = Strike.objects.active()
     permission_classes = [BasicViewPermission]
 
-    def get_queryset(self):
-        return (
-            self.queryset.active()
-            if hasattr(self, "action") and self.action == "list"
-            else self.queryset
-        )
 
     def update(self, request, *args, **kwargs):
         return Response(

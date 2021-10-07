@@ -151,7 +151,7 @@ class UserViewSet(viewsets.ModelViewSet, ActionMixin):
     @action(detail=True, methods=["get"], url_path="strikes")
     def get_user_detail_strikes(self, request, *args, **kwargs):
         user = self.get_object()
-        strikes = user.strikes.filter(user=user).active()
+        strikes = user.strikes.active()
         serializer = UserInfoStrikeSerializer(instance=strikes, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
