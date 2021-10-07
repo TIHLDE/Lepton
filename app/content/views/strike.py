@@ -19,7 +19,6 @@ class StrikeViewSet(viewsets.ModelViewSet):
     queryset = Strike.objects.active()
     permission_classes = [BasicViewPermission]
 
-
     def update(self, request, *args, **kwargs):
         return Response(
             {"detail": "Endepunktet ikke støttet"},
