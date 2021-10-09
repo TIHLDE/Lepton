@@ -3,6 +3,17 @@ version: '3.8'
 # Config file for registry settings in Azure App Service production
 
 services:
+  db:
+    image: mysql:5.7
+    container_name: db
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_USER=dev
+      - MYSQL_PASSWORD=password
+      - MYSQL_DATABASE=nettside-dev
   web:
     image: leptonregistry.azurecr.io/lepton:latest
     container_name: web
@@ -11,4 +22,5 @@ services:
   celery:
     image: leptonregistry.azurecr.io/lepton:latest
     container_name: celery
+    entrypoint: []
     command: celery -A app worker -l info --without-heartbeat --without-gossip --without-mingle

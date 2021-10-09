@@ -37,7 +37,7 @@ CMD echo "Starting development-server" && \
 
 # The `prod`-stage uses the dev-files and installed dependencies.
 # Then collects the static files and runs the db-migrations against the db.
-# Then runs them in "production-mode" with Gunicorn and Uvicorn at port 80
+# Then runs them in "production-mode" with Gunicorn and Uvicorn
 FROM dev as prod
 
 ENV PROD=True
@@ -50,4 +50,4 @@ CMD echo "Starting production-server" && \
     python manage.py collectstatic --noinput && \
     python manage.py migrate && \
     # https://docs.gunicorn.org/en/stable/design.html#how-many-workers
-    gunicorn --bind 0.0.0.0:80 -w 3 -k app.uvicorn.UvicornWorker app.asgi:application
+    gunicorn --bind 0.0.0.0:8000 -w 3 -k app.uvicorn.UvicornWorker app.asgi:application

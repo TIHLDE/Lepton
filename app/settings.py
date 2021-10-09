@@ -3,17 +3,15 @@ Django settings for app project on Heroku. For more info, see:
 https://github.com/heroku/heroku-django-template
 
 For more information on this file, see
-https://docs.djangoproject.com/en/2.0/topics/settings/
+https://docs.djangoproject.com/en/3.2/topics/settings/
 
 For the full list of settings and their values, see
-https://docs.djangoproject.com/en/2.0/ref/settings/
+https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 import logging
 import os
 
-import dj_database_url
-import django_heroku
 import sentry_sdk
 from corsheaders.defaults import default_headers
 from dotenv import load_dotenv
@@ -29,7 +27,7 @@ DOMAIN = "api.tihlde.org"
 load_dotenv(str(BASE_DIR) + "/.env", override=True)
 
 # Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
+# See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get("DJANGO_SECRET")
@@ -161,10 +159,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "app.wsgi.application"
-
 # Database
-# https://docs.djangoproject.com/en/2.0/ref/settings/#databases
+# https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
     "default": {
@@ -192,7 +188,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 # Internationalization
-# https://docs.djangoproject.com/en/2.0/topics/i18n/
+# https://docs.djangoproject.com/en/3.2/topics/i18n/
 
 LANGUAGE_CODE = "nb-no"
 TIME_ZONE = "Europe/Oslo"
@@ -207,16 +203,9 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 ALLOWED_HOSTS = ["*"]
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/2.0/howto/static-files/
-
-# STATIC_ROOT = os.path.join(PROJECT_ROOT, 'staticfiles')
+# https://docs.djangoproject.com/en/3.2/howto/static-files/
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 STATIC_URL = "/api/static/"
-
-# Extra places for collectstatic to find static files.
-# STATICFILES_DIRS = [
-#     os.path.join(PROJECT_ROOT, 'static'),
-# ]
 
 CORS_ORIGIN_ALLOW_ALL = True
 
@@ -225,9 +214,6 @@ CORS_ALLOW_HEADERS = default_headers + ("X-CSRF-Token",)
 # Simplified static file serving.
 # https://warehouse.python.org/project/whitenoise/
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
-
-# Activate Django-Heroku.
-# django_heroku.settings(locals())
 
 # EMAIL SMTP Server setup
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
