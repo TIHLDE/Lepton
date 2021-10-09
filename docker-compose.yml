@@ -1,4 +1,4 @@
-version: '3'
+version: '3.8'
 
 services:
   db:
@@ -28,13 +28,12 @@ services:
     build:
       context: .
       dockerfile: compose/Dockerfile
+      # target: dev
     env_file:
       - ./.envs/.local
     image: web
     container_name: web
     restart: on-failure
-    entrypoint: /wait-for-mysql
-    command: python manage.py runserver 0.0.0.0:8000
     platform: linux/amd64
     volumes:
       - .:/usr/src/
