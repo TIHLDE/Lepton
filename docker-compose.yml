@@ -28,7 +28,7 @@ services:
     build:
       context: .
       dockerfile: compose/Dockerfile
-      # target: dev
+      target: dev
     env_file:
       - ./.envs/.local
     image: web
