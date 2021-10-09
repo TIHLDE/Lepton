@@ -248,4 +248,6 @@ LOGGING = {
     "root": {"handlers": ["file"],},
 }
 
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
+
 CELERY_BROKER_URL = os.environ.get("CELERY_URL")

@@ -2,7 +2,7 @@
 # The `dev`-stage installs dependencies copies the required files, waits for the database connection
 # and runs the server in "development-mode".
 # Use --target=dev to only use this stage.
-FROM python:3.6-slim-buster as dev
+FROM python:3.9-slim-buster as dev
 ENV PYTHONUNBUFFERED 1
 
 WORKDIR /usr/src
