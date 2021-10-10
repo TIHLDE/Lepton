@@ -172,6 +172,12 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
     def has_object_retrieve_permission(self, request):
         return self == request.user or check_has_access(self.has_access, request,)
 
+    def has_object_get_user_detail_strikes_permission(self, request):
+        return check_has_access(
+            [AdminGroup.NOK, AdminGroup.INDEX, AdminGroup.HS, AdminGroup.SOSIALEN],
+            request,
+        )
+
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 @disable_for_loaddata

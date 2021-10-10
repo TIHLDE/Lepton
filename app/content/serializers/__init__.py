@@ -23,6 +23,7 @@ from app.content.serializers.short_link import ShortLinkSerializer
 from app.content.serializers.strike import (
     BaseStrikeSerializer,
     StrikeSerializer,
+    UserInfoStrikeSerializer,
 )
 from app.content.serializers.user import (
     UserAdminSerializer,

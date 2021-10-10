@@ -22,13 +22,13 @@ from app.content.models import User
 from app.content.serializers import (
     BadgeSerializer,
     EventListSerializer,
-    StrikeSerializer,
     UserAdminSerializer,
     UserCreateSerializer,
     UserListSerializer,
     UserMemberSerializer,
     UserSerializer,
 )
+from app.content.serializers.strike import UserInfoStrikeSerializer
 from app.forms.serializers import FormPolymorphicSerializer
 from app.group.models import Group, Membership
 from app.group.serializers import DefaultGroupSerializer
@@ -144,9 +144,16 @@ class UserViewSet(viewsets.ModelViewSet, ActionMixin):
 
     @action(detail=False, methods=["get"], url_path="me/strikes")
     def get_user_strikes(self, request, *args, **kwargs):
-        strikes = request.user.strikes.all()
-        active_strikes = [strike for strike in strikes if strike.active]
-        return self.paginate_response(data=active_strikes, serializer=StrikeSerializer)
+        strikes = request.user.strikes.active()
+        serializer = UserInfoStrikeSerializer(instance=strikes, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=["get"], url_path="strikes")
+    def get_user_detail_strikes(self, request, *args, **kwargs):
+        user = self.get_object()
+        strikes = user.strikes.active()
+        serializer = UserInfoStrikeSerializer(instance=strikes, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=["get"], url_path="me/events")
     def get_user_events(self, request, *args, **kwargs):
