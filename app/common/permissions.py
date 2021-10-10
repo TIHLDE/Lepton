@@ -123,7 +123,7 @@ class IsMember(BasePermission):
 
 
 class IsDev(BasePermission):
-    """ Checks if the user is in HS or Drift """
+    """ Checks if the user is in Index """
 
     message = "You are not in Index"
 

@@ -47,5 +47,16 @@ services:
     image: celery
     container_name: celery
     entrypoint: []
-    command: celery -A app worker -l info --without-heartbeat --without-gossip --without-mingle
+    command: celery -A app worker -E -l info --without-heartbeat --without-gossip --without-mingle
     ports: []
+
+  flower:
+    <<: *web
+    image: flower
+    container_name: flower
+    entrypoint: []
+    command: celery -A app -b amqps://vecuosxj:eVqg9CTtGrCaSLATFmbiuHDGyjTrBsz4@hawk.rmq.cloudamqp.com/vecuosxj flower --url_prefix=flower/admin
+    ports:
+      - "5555:5555"
+    depends_on:
+      - celery
