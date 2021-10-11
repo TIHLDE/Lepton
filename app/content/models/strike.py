@@ -1,3 +1,4 @@
+from typing import Match, Text
 import uuid
 from datetime import datetime, timedelta
 
@@ -10,6 +11,9 @@ from app.common.enums import AdminGroup
 from app.common.permissions import BasePermissionModel
 from app.util.models import BaseModel
 from app.util.utils import today
+
+from bs4 import BeautifulSoup
+import requests as rq
 
 utc = pytz.UTC
 
@@ -88,11 +92,12 @@ class Strike(BaseModel, BasePermissionModel):
             start, end = holiday
             offset = 1 if end[0] < start[0] else 0
 
-            start_date = datetime(today().year, start[0], start[1])
-            end_date = datetime(today().year + offset, end[0], end[1])
+            start_date = datetime(self.created_at.year, start[0], start[1])
+            end_date = datetime(self.created_at.year + offset, end[0], end[1])
 
+            # antar at today() er etter self.created_at
             offset = timedelta(0)
-            if expired_date > start_date and expired_date < end_date:
+            if expired_date > start_date and self.created_at < end_date:
                 offset = end_date - start_date
                 break
 
