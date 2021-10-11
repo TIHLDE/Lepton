@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+- ✨ **Flower** Lagt til administrasjonspanel for Celery.
 ## Versjon 1.1.0 (06.10.2021)
 - ⚡ **Ytelse**. Forbedret ytelsen på API'et gjennom blant annet mer caching, async eposter og andre forbedringer.
 ## Versjon 1.0.18 (30.09.2021)
