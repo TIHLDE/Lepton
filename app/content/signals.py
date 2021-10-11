@@ -18,7 +18,10 @@ logger = logging.getLogger(__name__)
 
 @disable_for_loaddata
 def send_event_reminders(sender, instance, created, **kwargs):
-    if settings.ENVIRONMENT == EnvironmentOptions.PRODUCTION:
+    if (
+        settings.ENVIRONMENT == EnvironmentOptions.PRODUCTION
+        or settings.ENVIRONMENT == EnvironmentOptions.DEVELOPMENT
+    ):
         run_celery_tasks_for_event(instance)
 
 
