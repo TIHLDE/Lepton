@@ -40,8 +40,6 @@ CMD echo "Starting development-server" && \
 # Then runs them in "production-mode" with Gunicorn and Uvicorn
 FROM dev as prod
 
-ENV PROD=True
-
 COPY --from=dev /usr/src /usr/src
 
 WORKDIR /usr/src

@@ -55,7 +55,7 @@ services:
     image: flower
     container_name: flower
     entrypoint: []
-    command: celery -A app -b amqps://vecuosxj:eVqg9CTtGrCaSLATFmbiuHDGyjTrBsz4@hawk.rmq.cloudamqp.com/vecuosxj flower --url_prefix=flower/admin
+    command: celery -A app flower --url_prefix=flower/admin
     ports:
       - "5555:5555"
     depends_on:
