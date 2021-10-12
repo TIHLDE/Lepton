@@ -35,7 +35,7 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
 
     """ Strike fields """
     can_cause_strikes = models.BooleanField(default=True)
-    ignores_previous_strikes = models.BooleanField(default=False)
+    enforces_previous_strikes = models.BooleanField(default=False)
 
     """ Registration fields """
     sign_up = models.BooleanField(default=False)
