@@ -12,6 +12,7 @@ from rest_framework.authtoken.models import Token
 
 from app.common.enums import AdminGroup, Groups, MembershipType
 from app.common.permissions import check_has_access
+from app.content.models.strike import Strike
 from app.util.models import BaseModel, OptionalImage
 from app.util.utils import disable_for_loaddata
 
@@ -37,6 +38,12 @@ class UserManager(BaseUserManager):
         user.admin = True
         user.save(using=self._db)
         return user
+    
+    def get_queryset(self):
+        return super().get_queryset().annotate(
+            has_active_strikes=models.Exists(Strike.objects.active(user__user_id=models.OuterRef('user_id')))
+        )
+    
 
 
 CLASS = (

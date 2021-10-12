@@ -13,6 +13,9 @@ class UserFilter(FilterSet):
     is_TIHLDE_member = BooleanFilter(
         method="filter_is_TIHLDE_member", label="Is TIHLDE member"
     )
+    has_active_strikes = BooleanFilter(
+        method="filter_has_active_strikes", label="List of Users with strikes"
+    )
 
     class Meta:
         model: User
@@ -22,3 +25,8 @@ class UserFilter(FilterSet):
         if value is False:
             return queryset.exclude(memberships__group__slug=Groups.TIHLDE)
         return queryset.filter(memberships__group__slug=Groups.TIHLDE)
+    
+    def filter_has_active_strikes(self, queryset, name, value):
+        if value is False:
+            return queryset.filter(has_active_strikes=False)
+        return queryset.filter(has_active_strikes=True)
