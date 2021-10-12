@@ -98,7 +98,8 @@ class Registration(BaseModel, BasePermissionModel):
                     raise EventSignOffDeadlineHasPassed(
                         "Kan ikke melde av brukeren etter en time før arrangementstart"
                     )
-                create_strike(str(StrikeEnum.PAST_DEADLINE), self.user, self.event)
+                if self.event.can_cause_strikes:
+                    create_strike(str(StrikeEnum.PAST_DEADLINE), self.user, self.event)
             moved_registration = self.move_from_waiting_list_to_queue()
 
         self.delete_submission_if_exists()
