@@ -116,6 +116,7 @@ class AnswerableFormSerializer(FormSerializer):
         request = self.context.get("request", None)
         if request and request.user:
             return obj.submissions.filter(user=request.user).exists()
+        return False
 
 
 class EventFormSerializer(AnswerableFormSerializer):

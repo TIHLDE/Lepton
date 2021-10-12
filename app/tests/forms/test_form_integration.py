@@ -4,6 +4,7 @@ import pytest
 
 from app.common.enums import AdminGroup
 from app.content.factories import EventFactory, RegistrationFactory
+from app.content.serializers import EventListSerializer
 from app.forms.enums import EventFormType
 from app.forms.models.forms import Field
 from app.forms.tests.form_factories import EventFormFactory, FormFactory
@@ -60,6 +61,36 @@ def _get_form_update_data(form):
 
 
 def test_list_forms_data(admin_user):
+    """Should return the correct fields about the forms."""
+    form = EventFormFactory()
+    field = form.fields.first()
+    option = field.options.first()
+
+    client = get_api_client(user=admin_user)
+    url = _get_forms_url() + "?all"
+    response = client.get(url)
+    response = response.json()
+
+    assert response[0] == {
+        "id": str(form.id),
+        "resource_type": "EventForm",
+        "title": form.title,
+        "event": EventListSerializer(form.event).data,
+        "type": form.type.name,
+        "viewer_has_answered": False,
+        "fields": [
+            {
+                "id": str(field.id),
+                "title": field.title,
+                "options": [{"id": str(option.id), "title": option.title}],
+                "type": field.type.name,
+                "required": field.required,
+            }
+        ],
+    }
+
+
+def test_list_form_templates_data(admin_user):
     """Should return the correct fields about the forms."""
     form = FormFactory(template=True)
     field = form.fields.first()

@@ -27,22 +27,21 @@ class FormViewSet(viewsets.ModelViewSet):
         )
 
     def get_queryset(self):
-        if (
-            hasattr(self, "action")
-            and self.action == "list"
-            and "all" not in self.request.query_params
-        ):
+        if self.is_template_list_request():
             return self.queryset.filter(template=True)
         return self.queryset
 
     def get_serializer_class(self):
-        if (
+        if self.is_template_list_request():
+            return FormSerializer
+        return super().get_serializer_class()
+
+    def is_template_list_request(self):
+        return (
             hasattr(self, "action")
             and self.action == "list"
             and "all" not in self.request.query_params
-        ):
-            return FormSerializer
-        return super().get_serializer_class()
+        )
 
     def destroy(self, request, *args, **kwargs):
         super().destroy(request, *args, **kwargs)
