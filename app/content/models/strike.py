@@ -25,7 +25,8 @@ class Holiday:
 STRIKE_DURATION_IN_DAYS = 20
 SUMMER = Holiday((6, 1), (8, 15))
 WINTER = Holiday((12, 3),(1, 10))
-HOLIDAYS = {SUMMER, WINTER}
+GRUNNLOVSDAG = Holiday((5, 17), (5, 17))
+HOLIDAYS = {SUMMER, WINTER, GRUNNLOVSDAG}
 
 
 class Strike(BaseModel, BasePermissionModel):
@@ -94,21 +95,20 @@ class Strike(BaseModel, BasePermissionModel):
 
         for holiday in HOLIDAYS:
 
-            start = holiday.end
+            start = holiday.start
             end = holiday.end
-            
-            offset = 1 if end[0] < start[0] else 0
 
             start_date = datetime(self.created_at.year, start[0], start[1])
-            end_date = datetime(self.created_at.year + offset, end[0], end[1])
+            end_date = datetime(self.created_at.year, end[0], end[1])
 
-            # antar at today() er etter self.created_at
-            offset = timedelta(0)
+            if end_date < start_date:
+                end_date = end_date.replace(year = end_date.year + 1)
+
             if expired_date > start_date and self.created_at < end_date:
-                offset = end_date - start_date
+                expired_date += (end_date - start_date) + timedelta(days = 1)
                 break
 
-        return expired_date + offset
+        return expired_date
 
 
 def create_strike(enum, user, event=None, creator=None):
