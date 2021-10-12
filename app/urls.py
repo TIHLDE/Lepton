@@ -1,7 +1,7 @@
 """app URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/2.0/topics/http/urls/
+    https://docs.djangoproject.com/en/3.2/topics/http/urls/
 Examples:
 Function views
     1. Add an import:  from my_app import views
@@ -21,6 +21,8 @@ from rest_framework import permissions
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 
+from app.flower import flower_admin_site
+
 schema_view = get_schema_view(
     openapi.Info(
         title="LEPTON API",
@@ -34,6 +36,7 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
+    path("flower/", flower_admin_site.urls),
     path(
         "api/",
         schema_view.with_ui("swagger", cache_timeout=0),
