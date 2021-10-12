@@ -1,6 +1,8 @@
 from rest_framework import serializers
 
-from app.content.models import Event, Strike, User
+from app.content.models import Strike
+from app.content.serializers.event import EventListSerializer
+from app.content.serializers.user import DefaultUserSerializer
 
 
 class BaseStrikeSerializer(serializers.ModelSerializer):
@@ -12,39 +14,19 @@ class BaseStrikeSerializer(serializers.ModelSerializer):
 
 
 class StrikeSerializer(BaseStrikeSerializer):
-
-    user = serializers.SerializerMethodField()
-    event = serializers.SerializerMethodField()
-    creator = serializers.SerializerMethodField()
+    creator = DefaultUserSerializer(read_only=True)
+    event = EventListSerializer(read_only=True)
+    user = DefaultUserSerializer(read_only=True)
 
     class Meta:
         model = Strike
-        fields = BaseStrikeSerializer.Meta.fields + ("user", "event", "creator")
+        fields = BaseStrikeSerializer.Meta.fields + ("user", "creator", "event")
 
-    def get_user(self, obj):
-        user = User.objects.get(user_id=obj.user_id)
-        return {
-            "user_id": user.user_id,
-            "first_name": user.first_name,
-            "last_name": user.last_name,
-            "email": user.email,
-        }
 
-    def get_event(self, obj):
-        if not obj.event_id:
-            return
-        event = Event.objects.get(id=obj.event_id)
-        return {
-            "id": event.id,
-            "title": event.title,
-        }
+class UserInfoStrikeSerializer(BaseStrikeSerializer):
+    creator = DefaultUserSerializer(read_only=True)
+    event = EventListSerializer(read_only=True)
 
-    def get_creator(self, obj):
-        if not obj.creator_id:
-            return
-        user = User.objects.get(user_id=obj.creator_id)
-        return {
-            "user_id": user.user_id,
-            "first_name": user.first_name,
-            "last_name": user.last_name,
-        }
+    class Meta:
+        model = Strike
+        fields = BaseStrikeSerializer.Meta.fields + ("creator", "event")

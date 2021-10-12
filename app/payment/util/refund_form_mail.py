@@ -8,7 +8,7 @@ from datetime import datetime
 
 from django.core.mail import EmailMultiAlternatives
 
-import pyheif
+import pillow_heif
 from fpdf import FPDF
 from pdf2image import convert_from_path
 from PIL import Image
@@ -67,7 +67,7 @@ def create_image_file(image):
     Take an image in BASE64 format and return a NamedTemporaryFile containing the image.
     Will handle PNG, JPEG and GIF without any changes, as FPDF will handle those files
     without problem. For PDFs we use pdf2image to convert each page to an image. For HEIC
-    pictures we use pyheif to convert it to a jpeg.
+    pictures we use pillow_heif to convert it to a jpeg.
     """
 
     if "image/" not in image and "application/pdf" not in image:
@@ -98,7 +98,7 @@ def create_image_file(image):
     """
     if suffix == "heic":
         fmt = "JPEG"
-        heif_file = pyheif.read(file.name)
+        heif_file = pillow_heif.read(file.name)
         img = Image.frombytes(
             heif_file.mode,
             heif_file.size,
