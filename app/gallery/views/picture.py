@@ -9,4 +9,3 @@ class PictureViewSet(viewsets.ModelViewSet):
     serializer_class = PictureSerializer
     queryset = Picture.objects.all()
     permission_classes = [BasicViewPermission]
-    lookup_field = "slug"

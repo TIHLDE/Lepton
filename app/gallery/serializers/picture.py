@@ -6,7 +6,7 @@ class PictureSerializer(BaseModelSerializer):
     class Meta:
         model = Picture
         fields = (
-            "slug",
+            "id",
             "picture",
             "event",
             "title",
