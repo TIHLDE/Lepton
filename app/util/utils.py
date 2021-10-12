@@ -64,3 +64,10 @@ class CaseInsensitiveBooleanQueryParam:
 
     def __str__(self):
         return f"<{self.__class__.__name__} object ({self.value})"
+
+
+def chunk_list(lst, n):
+    """Chunk a list into smaller lists with a max-length of n"""
+    lst = list(lst)
+    for i in range(0, len(lst), n):
+        yield lst[i : i + n]

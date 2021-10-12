@@ -3,17 +3,15 @@ Django settings for app project on Heroku. For more info, see:
 https://github.com/heroku/heroku-django-template
 
 For more information on this file, see
-https://docs.djangoproject.com/en/2.0/topics/settings/
+https://docs.djangoproject.com/en/3.2/topics/settings/
 
 For the full list of settings and their values, see
-https://docs.djangoproject.com/en/2.0/ref/settings/
+https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 import logging
 import os
 
-import dj_database_url
-import django_heroku
 import sentry_sdk
 from corsheaders.defaults import default_headers
 from dotenv import load_dotenv
@@ -26,12 +24,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 DOMAIN = "api.tihlde.org"
 
-READ_DOT_ENV_FILE = os.environ.get("DJANGO_READ_DOT_ENV_FILE", False)
-if READ_DOT_ENV_FILE:
-    load_dotenv(str(BASE_DIR) + "/.env", override=True)
+load_dotenv(str(BASE_DIR) + "/.env", override=True)
 
 # Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
+# See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get("DJANGO_SECRET")
@@ -164,10 +160,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "app.wsgi.application"
-
 # Database
-# https://docs.djangoproject.com/en/2.0/ref/settings/#databases
+# https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
     "default": {
@@ -178,6 +172,7 @@ DATABASES = {
         "HOST": os.environ.get("DATABASE_HOST"),
         "PORT": os.environ.get("DATABASE_PORT"),
         "OPTIONS": {"charset": "utf8mb4", "use_unicode": True},
+        "CONN_MAX_AGE": 60,
     }
 }
 
@@ -194,16 +189,13 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 # Internationalization
-# https://docs.djangoproject.com/en/2.0/topics/i18n/
+# https://docs.djangoproject.com/en/3.2/topics/i18n/
 
 LANGUAGE_CODE = "nb-no"
 TIME_ZONE = "Europe/Oslo"
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
-
-# Change 'default' database configuration with $DATABASE_URL.
-DATABASES["default"].update(dj_database_url.config(conn_max_age=500, ssl_require=True))
 
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
@@ -212,16 +204,9 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 ALLOWED_HOSTS = ["*"]
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/2.0/howto/static-files/
-
-# STATIC_ROOT = os.path.join(PROJECT_ROOT, 'staticfiles')
+# https://docs.djangoproject.com/en/3.2/howto/static-files/
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 STATIC_URL = "/api/static/"
-
-# Extra places for collectstatic to find static files.
-# STATICFILES_DIRS = [
-#     os.path.join(PROJECT_ROOT, 'static'),
-# ]
 
 CORS_ORIGIN_ALLOW_ALL = True
 
@@ -230,9 +215,6 @@ CORS_ALLOW_HEADERS = default_headers + ("X-CSRF-Token",)
 # Simplified static file serving.
 # https://warehouse.python.org/project/whitenoise/
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
-
-# Activate Django-Heroku.
-# django_heroku.settings(locals())
 
 # EMAIL SMTP Server setup
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
@@ -261,11 +243,12 @@ LOGGING = {
             "filename": "mysite.log",
             "formatter": "verbose",
         },
+        "console": {"class": "logging.StreamHandler", "formatter": "verbose",},
     },
-    "loggers": {
-        "django": {"handlers": ["file"], "propagate": True, "level": "DEBUG",},
-        "MYAPP": {"handlers": ["file"], "level": "DEBUG",},
-    },
+    "loggers": {"django": {"propagate": True, "level": "DEBUG",},},
+    "root": {"handlers": ["file"],},
 }
+
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 CELERY_BROKER_URL = os.environ.get("CELERY_URL")

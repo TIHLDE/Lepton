@@ -3,11 +3,13 @@ from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.db import models
+from django.db.models import Q
+from django.db.models.aggregates import Sum
 
 import pytz
 
 from app.common.enums import AdminGroup
-from app.common.permissions import BasePermissionModel
+from app.common.permissions import BasePermissionModel, check_has_access
 from app.util.models import BaseModel
 from app.util.utils import today
 
@@ -28,6 +30,24 @@ WINTER = Holiday((11, 29), (1, 10))
 HOLIDAYS = (SUMMER, WINTER)
 
 
+def get_active_strikes_query():
+    return Q(
+        created_at__lte=today(),
+        created_at__gte=today() - timedelta(days=STRIKE_DURATION_IN_DAYS),
+    )
+
+
+class StrikeQueryset(models.QuerySet):
+    def active(self):
+        return self.filter(get_active_strikes_query())
+
+    def sum_active(self):
+        sum_active_strikes = (
+            self.active().aggregate(Sum("strike_size")).get("strike_size__sum")
+        )
+        return sum_active_strikes or 0
+
+
 class Strike(BaseModel, BasePermissionModel):
     write_access = [
         AdminGroup.HS,
@@ -35,6 +55,8 @@ class Strike(BaseModel, BasePermissionModel):
         AdminGroup.NOK,
         AdminGroup.SOSIALEN,
     ]
+
+    read_access = write_access
 
     id = models.UUIDField(
         auto_created=True, primary_key=True, default=uuid.uuid4, serialize=False,
@@ -60,6 +82,8 @@ class Strike(BaseModel, BasePermissionModel):
         related_name="created_strikes",
     )
 
+    objects = StrikeQueryset.as_manager()
+
     class Meta:
         verbose_name = "Strike"
         verbose_name_plural = "Strikes"
@@ -73,7 +97,7 @@ class Strike(BaseModel, BasePermissionModel):
         #     from app.util.mail_creator import MailCreator
         #     from app.util.notifier import Notify
 
-        #     Notify(self.user, "Du har fått en prikk").send_email(
+        #     Notify([self.user], "Du har fått en prikk").send_email(
         #         MailCreator("Du har fått en prikk")
         #         .add_paragraph(f"Hei {self.user.first_name}!")
         #         .add_paragraph(self.description)
@@ -108,6 +132,11 @@ class Strike(BaseModel, BasePermissionModel):
                 break
 
         return expired_date
+
+    def has_object_read_permission(self, request):
+        return self.user.user_id == request.id or check_has_access(
+            self.read_access, request
+        )
 
 
 def create_strike(enum, user, event=None, creator=None):

@@ -18,7 +18,27 @@ admin.site.register(models.Badge)
 admin.site.register(models.UserBadge)
 admin.site.register(models.Page)
 admin.site.register(models.ShortLink)
-admin.site.register(models.Strike)
+
+
+@admin.register(models.Strike)
+class StrikeAdmin(admin.ModelAdmin):
+    list_display = (
+        "user",
+        "event",
+        "description",
+        "strike_size",
+    )
+    raw_id_fields = (
+        "user",
+        "event",
+        "creator",
+    )
+    search_fields = (
+        "user__user_id",
+        "event__title",
+        "user__first_name",
+        "user__last_name",
+    )
 
 
 def admin_delete_registration(modeladmin, request, queryset):
@@ -45,6 +65,43 @@ class RegistrationAdmin(admin.ModelAdmin):
 class UserAdmin(admin.ModelAdmin):
     list_display = ("user_id", "first_name", "last_name", "user_class", "user_study")
     search_fields = ("user_id", "first_name", "last_name", "user_class", "user_study")
+
+
+class StrikesOverview(models.User):
+    class Meta:
+        verbose_name_plural = "Strikes Overview"
+        proxy = True
+
+
+@admin.register(StrikesOverview)
+class StrikesOverviewAdmin(UserAdmin):
+    list_display = (
+        "user_id",
+        "first_name",
+        "last_name",
+        "active_strikes",
+    )
+
+    def active_strikes(self, obj):
+        return obj.number_of_strikes
+
+    def get_actions(self, request):
+        """Disallow bulk modifications/deletions of users through this panel."""
+        return []
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        active_strikes = models.Strike.objects.active()
+        return qs.filter(strikes__in=active_strikes).distinct()
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 
 @admin.register(LogEntry)

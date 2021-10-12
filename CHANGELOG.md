@@ -14,6 +14,12 @@
 
 ## Neste versjon
 - ✨ **Strike**. Nedtellingstiden til prikker pauses med ferier
+## Versjon 1.1.1 (11.10.2021)
+- ⚡ **Ytelse**. Produksjon kjører nå med Gunicorn og Uvicorn med flere workers for å bli enda raskere.
+- ⚡ **Avhengigheter**. Python er oppgradert til v3.9 og Django er oppdatert til v3.2.8.
+- ✨ **Flower** Lagt til administrasjonspanel for Celery.
+## Versjon 1.1.0 (06.10.2021)
+- ⚡ **Ytelse**. Forbedret ytelsen på API'et gjennom blant annet mer caching, async eposter og andre forbedringer.
 ## Versjon 1.0.18 (30.09.2021)
 - 🦟 **Arrangement**. Hent ut kun svar til spørreskjema for dem som ha plass på arrangementet.
 - 🦟 **Spørreskjema**. Fikset bug der medlemmer av NoK ikke hadde tilgang til å redigere spørreskjemaer.
