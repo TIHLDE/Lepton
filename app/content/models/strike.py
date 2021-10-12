@@ -1,4 +1,3 @@
-from typing import Match, Text
 import uuid
 from datetime import datetime, timedelta
 
@@ -12,11 +11,10 @@ from app.common.permissions import BasePermissionModel
 from app.util.models import BaseModel
 from app.util.utils import today
 
-
 utc = pytz.UTC
 
-class Holiday:
 
+class Holiday:
     def __init__(self, start, end):
         self.start = start
         self.end = end
@@ -25,7 +23,7 @@ class Holiday:
 STRIKE_DURATION_IN_DAYS = 20
 
 SUMMER = Holiday((5, 10), (8, 15))
-WINTER = Holiday((11, 29),(1, 10))
+WINTER = Holiday((11, 29), (1, 10))
 
 HOLIDAYS = (SUMMER, WINTER)
 
@@ -103,10 +101,10 @@ class Strike(BaseModel, BasePermissionModel):
             end_date = datetime(self.created_at.year, end[0], end[1])
 
             if end_date < start_date:
-                end_date = end_date.replace(year = end_date.year + 1)
+                end_date = end_date.replace(year=end_date.year + 1)
 
             if expired_date > start_date and self.created_at < end_date:
-                expired_date += (end_date - start_date) + timedelta(days = 1)
+                expired_date += (end_date - start_date) + timedelta(days=1)
                 break
 
         return expired_date
