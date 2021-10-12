@@ -38,12 +38,17 @@ class UserManager(BaseUserManager):
         user.admin = True
         user.save(using=self._db)
         return user
-    
+
     def get_queryset(self):
-        return super().get_queryset().annotate(
-            has_active_strikes=models.Exists(Strike.objects.active(user__user_id=models.OuterRef('user_id')))
+        return (
+            super()
+            .get_queryset()
+            .annotate(
+                has_active_strikes=models.Exists(
+                    Strike.objects.active(user__user_id=models.OuterRef("user_id"))
+                )
+            )
         )
-    
 
 
 CLASS = (

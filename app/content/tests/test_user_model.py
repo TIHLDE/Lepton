@@ -64,3 +64,4 @@ def test_has_unanswered_evaluations_when_has_unanswered_evaluations_returns_fals
     has_unanswered_evaluations = user.has_unanswered_evaluations()
 
     assert has_unanswered_evaluations
+
