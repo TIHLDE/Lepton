@@ -12,14 +12,19 @@ from app.common.permissions import BasePermissionModel
 from app.util.models import BaseModel
 from app.util.utils import today
 
-from bs4 import BeautifulSoup
-import requests as rq
 
 utc = pytz.UTC
 
+class Holiday:
+
+    def __init__(self, start, end):
+        self.start = start
+        self.end = end
+
+
 STRIKE_DURATION_IN_DAYS = 20
-SUMMER = ((6, 1), (8, 15))
-WINTER = ((12, 3),(1, 10))
+SUMMER = Holiday((6, 1), (8, 15))
+WINTER = Holiday((12, 3),(1, 10))
 HOLIDAYS = {SUMMER, WINTER}
 
 
@@ -89,7 +94,9 @@ class Strike(BaseModel, BasePermissionModel):
 
         for holiday in HOLIDAYS:
 
-            start, end = holiday
+            start = holiday.end
+            end = holiday.end
+            
             offset = 1 if end[0] < start[0] else 0
 
             start_date = datetime(self.created_at.year, start[0], start[1])
