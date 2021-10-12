@@ -23,10 +23,12 @@ class Holiday:
 
 
 STRIKE_DURATION_IN_DAYS = 20
+
 SUMMER = Holiday((6, 1), (8, 15))
 WINTER = Holiday((12, 3),(1, 10))
 GRUNNLOVSDAG = Holiday((5, 17), (5, 17))
-HOLIDAYS = {SUMMER, WINTER, GRUNNLOVSDAG}
+
+HOLIDAYS = (SUMMER, WINTER, GRUNNLOVSDAG)
 
 
 class Strike(BaseModel, BasePermissionModel):
