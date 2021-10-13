@@ -2,6 +2,7 @@ from django_filters.rest_framework import BooleanFilter, ChoiceFilter, FilterSet
 
 from app.common.enums import Groups
 from app.content.models import User
+from app.content.models.strike import Strike
 from app.content.models.user import CLASS, STUDY
 
 
@@ -28,5 +29,5 @@ class UserFilter(FilterSet):
 
     def filter_has_active_strikes(self, queryset, name, value):
         if value is False:
-            return queryset.filter(has_active_strikes=False)
-        return queryset.filter(has_active_strikes=True)
+            return queryset.exclude(strikes__in=Strike.objects.active())
+        return queryset.filter(strikes__in=Strike.objects.active()).distinct()

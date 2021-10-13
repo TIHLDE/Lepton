@@ -3,6 +3,8 @@ from rest_framework import status
 import pytest
 
 from app.content.factories import RegistrationFactory
+from app.content.factories.strike_factory import StrikeFactory
+from app.content.factories.user_factory import UserFactory
 from app.forms.enums import EventFormType
 from app.forms.tests.form_factories import EventFormFactory
 
@@ -10,9 +12,22 @@ pytestmark = pytest.mark.django_db
 
 API_USER_BASE_URL = "/api/v1/user/"
 
+
 def _get_user_forms_url():
     return f"{API_USER_BASE_URL}me/forms/"
 
+
+@pytest.fixture
+def user():
+    return UserFactory()
+
+
+@pytest.fixture
+def user_with_strike():
+    user = UserFactory()
+    user.strikes.add(StrikeFactory())
+    user.save()
+    return user
 
 
 def test_list_user_forms_returns_all_answered_forms(api_client, submission):
@@ -79,4 +94,29 @@ def test_list_user_forms_filter_on_answered_returns_all_answered_forms(
     actual_form_id = results[0].get("id")
     expected_form_id = str(submission.form.id)
 
-    assert actual_form_id == expected_form_id    
+    assert actual_form_id == expected_form_id
+
+
+@pytest.fixture
+def user_and_filter_value(request, user, user_with_strike):
+    return [(user, "false"), (user_with_strike, "true"),][request.param]
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("user_and_filter_value", [0, 1], indirect=True)
+def test_filter_only_users_with_active_strikes(
+    api_client, admin_user, user_and_filter_value
+):
+    test_user, has_strikes = user_and_filter_value
+    url = f"{API_USER_BASE_URL}?has_active_strikes={has_strikes}"
+    client = api_client(user=admin_user)
+
+    response = client.get(url).json()
+    results = response.get("results")
+    expected_user_id = str(test_user.user_id)
+    found = False
+    for result in results:
+        actual_user_id = result.get("user_id")
+        if actual_user_id == expected_user_id:
+            found = True
+    assert found
