@@ -29,5 +29,5 @@ class UserFilter(FilterSet):
 
     def filter_has_active_strikes(self, queryset, name, value):
         if value is False:
-            return queryset.exclude(strikes__in=Strike.objects.active())
+            return queryset.exclude(strikes__in=Strike.objects.active()).distinct()
         return queryset.filter(strikes__in=Strike.objects.active()).distinct()
