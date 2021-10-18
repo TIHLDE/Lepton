@@ -5,6 +5,7 @@ from sentry_sdk import capture_exception
 from app.common.serializers import BaseModelSerializer
 from app.content.models import Event, Priority
 from app.content.serializers.priority import PrioritySerializer
+from app.group.serializers.group import DefaultGroupSerializer
 from app.util import EnumUtils
 
 
@@ -13,6 +14,7 @@ class EventSerializer(serializers.ModelSerializer):
     registration_priorities = serializers.SerializerMethodField()
     evaluation = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
     survey = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
+    group = DefaultGroupSerializer(read_only=True)
 
     class Meta:
         model = Event
@@ -31,6 +33,7 @@ class EventSerializer(serializers.ModelSerializer):
             "closed",
             "list_count",
             "waiting_list_count",
+            "group",
             "image",
             "image_alt",
             "start_registration_at",
@@ -81,6 +84,7 @@ class EventSerializer(serializers.ModelSerializer):
 
 class EventListSerializer(serializers.ModelSerializer):
     expired = serializers.BooleanField(read_only=True)
+    group = DefaultGroupSerializer(read_only=True)
 
     class Meta:
         model = Event
@@ -91,6 +95,7 @@ class EventListSerializer(serializers.ModelSerializer):
             "end_date",
             "location",
             "expired",
+            "group",
             "image",
             "image_alt",
             "updated_at",

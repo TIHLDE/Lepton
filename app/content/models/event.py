@@ -11,10 +11,11 @@ from app.forms.enums import EventFormType
 from app.util.models import BaseModel, OptionalImage
 from app.util.utils import today, yesterday
 
-from ..signals import send_event_reminders
-from .category import Category
-from .prioritiy import Priority
-from .user import User
+from app.content.signals import send_event_reminders
+from app.content.models import Category
+from app.content.models.prioritiy import Priority
+from app.content.models.user import User
+from app.group.models.group import Group
 
 
 class Event(BaseModel, OptionalImage, BasePermissionModel):
@@ -32,6 +33,9 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
     priority = models.IntegerField(default=0, choices=PRIORITIES, null=True)
     category = models.ForeignKey(
         Category, blank=True, null=True, default=None, on_delete=models.SET_NULL
+    )
+    group = models.ForeignKey(
+        Group, blank=True, null=True, default=None, on_delete=models.SET_NULL, related_name="events"
     )
 
     """ Registration fields """
