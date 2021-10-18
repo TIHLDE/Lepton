@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+- **Spørreskjema**. Tekstfelt kan nå svares på med lengre tekst enn bare 255 tegn.
 ## Versjon 1.1.1 (11.10.2021)
 - ⚡ **Ytelse**. Produksjon kjører nå med Gunicorn og Uvicorn med flere workers for å bli enda raskere.
 - ⚡ **Avhengigheter**. Python er oppgradert til v3.9 og Django er oppdatert til v3.2.8.
