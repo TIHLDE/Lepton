@@ -74,9 +74,7 @@ class Registration(BaseModel, BasePermissionModel):
         return check_has_access(self.has_access, request,)
 
     def has_object_retrieve_permission(self, request):
-        if self.user.user_id == request.id:
-            return True
-        return check_has_access(self.has_access, request,)
+        return self.has_object_destroy_permission(request)
 
     def __str__(self):
         return (
@@ -100,7 +98,8 @@ class Registration(BaseModel, BasePermissionModel):
                     raise EventSignOffDeadlineHasPassed(
                         "Kan ikke melde av brukeren etter en time før arrangementstart"
                     )
-                create_strike(str(StrikeEnum.PAST_DEADLINE), self.user, self.event)
+                if self.event.can_cause_strikes:
+                    create_strike(str(StrikeEnum.PAST_DEADLINE), self.user, self.event)
             moved_registration = self.move_from_waiting_list_to_queue()
 
         self.delete_submission_if_exists()
@@ -123,8 +122,10 @@ class Registration(BaseModel, BasePermissionModel):
         return super(Registration, self).save(*args, **kwargs)
 
     def create(self):
-        self._abort_for_unanswered_evaluations()
-        self.strike_handler()
+        if self.event.enforces_previous_strikes:
+            self._abort_for_unanswered_evaluations()
+            self.strike_handler()
+
         self.clean()
         self.is_on_wait = self.event.is_full
 

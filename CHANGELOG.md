@@ -13,7 +13,8 @@
 ---
 
 ## Neste versjon
-- ✨ **Jobannonser** har nå stillingstype og år.
+- ✨ **Jobbannonser** har nå stillingstype og år.
+- ⚡ **Prikker**. På arrangement kan man nå velge om man ønsker å ignorere prikker / gi nye prikker.
 - ⚡ **Prikker**. Kun Index og HS-medlemmer kan nå slette prikker.
 - ✨ **Prikker**. Brukere mottar nå varsel om at de har fått en ny prikk.
 
