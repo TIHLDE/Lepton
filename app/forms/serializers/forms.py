@@ -61,30 +61,6 @@ class FormSerializer(BaseModelSerializer):
 
         return form
 
-    @staticmethod
-    def update_field_options(field, options):
-        """Creates new options from data without `id` attached, updates options with `id` attached and removes unreferenced options."""
-        updated_ids = list()
-        created = list()
-
-        for option in options:
-            id = option.get("id")
-            if id:
-                options_query = Option.objects.filter(id=id)
-                options_query.update(**option)
-                option_instance = options_query.first()
-                updated_ids.append(id)
-                OrderedModelSerializerMixin.do_update_order(option_instance, option)
-            else:
-                created.append(option)
-
-        options_to_delete = field.options.exclude(id__in=updated_ids)
-        options_to_delete.delete()
-
-        Option.objects.bulk_create(
-            [Option(field=field, **option) for option in created]
-        )
-
     @atomic
     def update(self, instance, validated_data):
         validated_fields = validated_data.pop("fields")
@@ -125,8 +101,11 @@ class FormSerializer(BaseModelSerializer):
         for option in options:
             option_id = option.get("id")
             if option_id:
-                Option.objects.filter(id=option_id).update(**option)
-                updated_ids.append(option_id)
+                options_query = Option.objects.filter(id=id)
+                options_query.update(**option)
+                option_instance = options_query.first()
+                updated_ids.append(id)
+                OrderedModelSerializerMixin.do_update_order(option_instance, option)
             else:
                 created.append(option)
 
