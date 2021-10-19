@@ -40,6 +40,8 @@ class EventSerializer(serializers.ModelSerializer):
             "evaluation",
             "survey",
             "updated_at",
+            "can_cause_strikes",
+            "enforces_previous_strikes",
         )
 
     def validate_limit(self, limit):
@@ -62,7 +64,6 @@ class EventSerializer(serializers.ModelSerializer):
                 )
         except AttributeError as attribute_error:
             capture_exception(attribute_error)
-            pass
 
         return limit
 
