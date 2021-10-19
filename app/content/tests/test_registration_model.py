@@ -384,16 +384,59 @@ def test_create_registration_without_submission_answer_fails(event, user):
 
 
 @pytest.mark.django_db
-def test_bump_user_from_wait_increments_limit(event_with_registrations_and_priority):
+def test_bump_user_from_wait_when_event_is_full_does_not_increments_limit(
+    event_with_registrations_and_priority,
+):
     """
-    Tests if an admin manualy bumps a user up from the wait list when the event is full
-    the event limit increases by 1
+    Tests that event limit is not incremented
+    when an admin attempts to bump a user up from the wait list when the event is full.
     """
     registration = RegistrationFactory(event=event_with_registrations_and_priority)
     limit = event_with_registrations_and_priority.limit
     registration.is_on_wait = False
-    registration.save()
-    assert event_with_registrations_and_priority.limit == limit + 1
+
+    with pytest.raises(ValueError):
+        registration.save()
+
+    assert event_with_registrations_and_priority.limit == limit
+
+
+@pytest.mark.django_db
+def test_attempted_bump_user_from_wait_when_event_is_full_does_not_bump_user(
+    event_with_registrations_and_priority,
+):
+    """
+    Tests that an admin cannot manualy bump a user up from the wait list when the event is full.
+    """
+    registration = RegistrationFactory(event=event_with_registrations_and_priority)
+    registration.is_on_wait = False
+
+    with pytest.raises(ValueError):
+        registration.save()
+
+    registration.refresh_from_db()
+
+    assert registration.is_on_wait
+
+
+@pytest.mark.django_db
+def test_bump_user_from_wait_does_not_increments_limit(
+    event_with_registrations_and_priority,
+):
+    """
+    Tests that an admin cannot manualy bump a user up from the wait list when the event is full.
+    """
+    registration = RegistrationFactory(event=event_with_registrations_and_priority)
+    limit = event_with_registrations_and_priority.limit
+    registration.is_on_wait = False
+
+    with pytest.raises(ValueError):
+        registration.save()
+
+    registration.refresh_from_db()
+
+    assert event_with_registrations_and_priority.limit == limit
+    assert registration.is_on_wait
 
 
 @pytest.mark.django_db

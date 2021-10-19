@@ -29,7 +29,6 @@ class Registration(BaseModel, BasePermissionModel):
         AdminGroup.SOSIALEN,
         Groups.TIHLDE,
     ]
-    """ Model for user registration for an event """
 
     registration_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(
@@ -112,13 +111,13 @@ class Registration(BaseModel, BasePermissionModel):
         return super().delete(*args, **kwargs)
 
     def save(self, *args, **kwargs):
-        """ Determines whether the object is being created or updated and acts accordingly """
         if not self.registration_id:
             self.create()
         self.send_notification_and_mail()
 
         if self.event.is_full and not self.is_on_wait:
-            self.event.increment_limit()
+            raise
+
         return super(Registration, self).save(*args, **kwargs)
 
     def create(self):

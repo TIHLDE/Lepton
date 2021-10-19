@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+- ⚡ **Arrangement** blir nå ikke overbooket når en person blir flyttet opp fra ventelisten.
 - ✨ **Skjemamaler**. La inn støtte for skjemamaler.
 - ⚡ **Arrangementer**. Prioritet på arrangementer har blitt fjernet.
 - ✨ **Jobbannonser** har nå stillingstype og år.

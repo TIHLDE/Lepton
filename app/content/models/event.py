@@ -3,7 +3,6 @@ from datetime import timedelta
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import signals
-from django.db.transaction import atomic
 
 from app.common.enums import AdminGroup
 from app.common.permissions import BasePermissionModel
@@ -106,7 +105,7 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
 
     @property
     def is_full(self):
-        return self.get_queue().count() >= self.limit
+        return self.has_limit() and self.get_queue().count() >= self.limit
 
     def has_priorities(self):
         return self.registration_priorities.all().exists()
@@ -134,11 +133,6 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
             self.check_start_registration_is_after_deadline()
             self.check_end_time_is_before_end_registration()
             self.check_start_date_is_before_deadline()
-
-    @atomic
-    def increment_limit(self):
-        self.limit += 1
-        self.save()
 
     def check_sign_up_and_registration_times(self):
         if not self.sign_up and (
