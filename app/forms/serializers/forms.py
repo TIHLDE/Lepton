@@ -43,6 +43,7 @@ class FormSerializer(BaseModelSerializer):
             "id",
             "title",
             "fields",
+            "template",
         )
 
     @atomic
