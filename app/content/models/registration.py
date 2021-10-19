@@ -7,6 +7,7 @@ from django.db.models import Q
 from app.common.enums import AdminGroup, Groups, StrikeEnum
 from app.common.permissions import BasePermissionModel, check_has_access
 from app.content.exceptions import (
+    EventIsFullError,
     EventSignOffDeadlineHasPassed,
     StrikeError,
     UnansweredFormError,
@@ -116,7 +117,7 @@ class Registration(BaseModel, BasePermissionModel):
         self.send_notification_and_mail()
 
         if self.event.is_full and not self.is_on_wait:
-            raise
+            raise EventIsFullError
 
         return super(Registration, self).save(*args, **kwargs)
 
