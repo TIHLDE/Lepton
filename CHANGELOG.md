@@ -13,6 +13,8 @@
 ---
 
 ## Neste versjon
+- ⚡ **Prikker**. Kun Index og HS-medlemmer kan nå slette prikker.
+- ✨ **Prikker**. Brukere mottar nå varsel om at de har fått en ny prikk.
 ## Versjon 1.1.1 (11.10.2021)
 - ⚡ **Ytelse**. Produksjon kjører nå med Gunicorn og Uvicorn med flere workers for å bli enda raskere.
 - ⚡ **Avhengigheter**. Python er oppgradert til v3.9 og Django er oppdatert til v3.2.8.
