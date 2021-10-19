@@ -72,8 +72,6 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
     email = models.EmailField(max_length=254)
     cell = models.CharField(max_length=8, blank=True)
 
-    home_busstop = models.IntegerField(null=True, blank=True)
-
     gender = models.IntegerField(default=2, choices=GENDER, null=True, blank=True)
 
     user_class = models.IntegerField(default=1, choices=CLASS, null=True, blank=True)
@@ -82,14 +80,12 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
 
     tool = models.CharField(max_length=100, blank=True)
 
-    app_token = models.CharField(max_length=60, blank=True, null=True)
-
     USERNAME_FIELD = "user_id"
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
-        return f"User - {self.user_id}: {self.first_name} {self.last_name}"
+        return f"{self.first_name} {self.last_name} - {self.user_id}"
 
     @property
     def is_TIHLDE_member(self):
@@ -101,16 +97,31 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
     def has_module_perms(self, app_label):
         return self.is_superuser
 
-    def get_number_of_strikes(self):
-        from django.db.models import Sum
-
-        aggregate_sum = self.strikes.all().aggregate(Sum("strike_size"))
-        number_of_strikes = aggregate_sum["strike_size__sum"]
-        if number_of_strikes is None:
-            return 0
-        return number_of_strikes
+    @property
+    def number_of_strikes(self):
+        return self.strikes.sum_active()
 
     objects = UserManager()
+
+    @property
+    def forms(self):
+        from app.forms.models.forms import Form
+
+        return Form.objects.filter(submissions__user=self)
+
+    def has_unanswered_evaluations(self):
+        return self.get_unanswered_evaluations().exists()
+
+    def has_unanswered_evaluations_for(self, event):
+        return self.get_unanswered_evaluations().filter(event=event).exists()
+
+    def get_unanswered_evaluations(self):
+        from app.forms.models.forms import EventForm, EventFormType
+
+        registrations = self.registrations.filter(has_attended=True)
+        return EventForm.objects.filter(
+            event__registrations__in=registrations, type=EventFormType.EVALUATION
+        ).exclude(submissions__user=self)
 
     @classmethod
     def has_retrieve_permission(cls, request):
@@ -123,7 +134,6 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
     @classmethod
     def has_list_permission(cls, request):
         try:
-
             return check_has_access(cls.has_access, request) or len(
                 request.user.memberships.filter(membership_type=MembershipType.LEADER)
             )
@@ -161,6 +171,12 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
 
     def has_object_retrieve_permission(self, request):
         return self == request.user or check_has_access(self.has_access, request,)
+
+    def has_object_get_user_detail_strikes_permission(self, request):
+        return check_has_access(
+            [AdminGroup.NOK, AdminGroup.INDEX, AdminGroup.HS, AdminGroup.SOSIALEN],
+            request,
+        )
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)

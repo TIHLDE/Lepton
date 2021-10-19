@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action
@@ -6,18 +8,17 @@ from rest_framework.response import Response
 from sentry_sdk import capture_exception
 
 from app.common.pagination import BasePagination
-from app.common.permissions import BasicViewPermission, is_admin_user
+from app.common.permissions import BasicViewPermission
 from app.content.filters import EventFilter
-from app.content.models import Event
+from app.content.models import Event, User
 from app.content.serializers import (
-    EventAdminSerializer,
     EventCreateAndUpdateSerializer,
     EventListSerializer,
     EventSerializer,
 )
 from app.util.mail_creator import MailCreator
 from app.util.notifier import Notify
-from app.util.utils import yesterday
+from app.util.utils import midday, yesterday
 
 
 class EventViewSet(viewsets.ModelViewSet):
@@ -39,9 +40,12 @@ class EventViewSet(viewsets.ModelViewSet):
         if self.kwargs or "expired" in self.request.query_params:
             queryset = Event.objects.all()
         else:
-            queryset = Event.objects.filter(start_date__gte=yesterday())
+            midday_yesterday = midday(yesterday())
+            midday_today = midday(datetime.now())
+            time = midday_today if midday_today < datetime.now() else midday_yesterday
+            queryset = Event.objects.filter(end_date__gte=time)
 
-        return queryset.prefetch_related("forms").order_by("start_date")
+        return queryset.select_related("category").order_by("start_date")
 
     def get_serializer_class(self):
         if hasattr(self, "action") and self.action == "list":
@@ -52,14 +56,9 @@ class EventViewSet(viewsets.ModelViewSet):
         """Return detailed information about the event with the specified pk."""
         try:
             event = self.get_object()
-            if is_admin_user(request):
-                serializer = EventAdminSerializer(
-                    event, context={"request": request}, many=False
-                )
-            else:
-                serializer = EventSerializer(
-                    event, context={"request": request}, many=False
-                )
+            serializer = EventSerializer(
+                event, context={"request": request}, many=False
+            )
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Event.DoesNotExist as event_not_exist:
             capture_exception(event_not_exist)
@@ -122,20 +121,17 @@ class EventViewSet(viewsets.ModelViewSet):
             event = self.get_object()
             self.check_object_permissions(self.request, event)
 
-            for registration in event.get_queue():
-                Notify(registration.user, title).send_email(
-                    MailCreator(title)
-                    .add_paragraph(f"Hei {registration.user.first_name}")
-                    .add_paragraph(
-                        f"Arrangøren av {event.title} har en melding til deg:"
-                    )
-                    .add_paragraph(message)
-                    .add_event_button(event.pk)
-                    .generate_string()
-                ).send_notification(
-                    description=f"Arrangøren av {event.title} har en melding til deg: {message}",
-                    link=event.website_url,
-                )
+            users = User.objects.filter(registrations__in=event.get_queue())
+            Notify(users, title).send_email(
+                MailCreator(title)
+                .add_paragraph(f"Arrangøren av {event.title} har en melding til deg:")
+                .add_paragraph(message)
+                .add_event_button(event.pk)
+                .generate_string()
+            ).send_notification(
+                description=f"Arrangøren av {event.title} har en melding til deg: {message}",
+                link=event.website_url,
+            )
 
             return Response(
                 {

@@ -2,7 +2,6 @@ from app.content.serializers.badge import BadgeSerializer
 from app.content.serializers.category import CategorySerializer
 from app.content.serializers.cheatsheet import CheatsheetSerializer
 from app.content.serializers.event import (
-    EventAdminSerializer,
     EventCreateAndUpdateSerializer,
     EventListSerializer,
     EventSerializer,
@@ -24,6 +23,7 @@ from app.content.serializers.short_link import ShortLinkSerializer
 from app.content.serializers.strike import (
     BaseStrikeSerializer,
     StrikeSerializer,
+    UserInfoStrikeSerializer,
 )
 from app.content.serializers.user import (
     UserAdminSerializer,

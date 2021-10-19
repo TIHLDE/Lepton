@@ -14,7 +14,12 @@ from app.util.models import BaseModel
 
 
 class Form(PolymorphicModel):
-    write_access = [AdminGroup.HS, AdminGroup.NOK, AdminGroup.INDEX]
+    write_access = [
+        AdminGroup.HS,
+        AdminGroup.NOK,
+        AdminGroup.SOSIALEN,
+        AdminGroup.INDEX,
+    ]
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=200)
 
@@ -24,6 +29,10 @@ class Form(PolymorphicModel):
 
     def __str__(self):
         return self.title
+
+    @property
+    def website_url(self):
+        return f"/sporreskjema/{self.id}/"
 
     def add_fields(self, fields):
         for field in fields:
@@ -38,6 +47,10 @@ class Form(PolymorphicModel):
         if not request.user:
             return False
         return True
+
+    @classmethod
+    def has_statistics_permission(cls, request):
+        return check_has_access(cls.write_access, request)
 
     @classmethod
     def has_list_permission(cls, request):
@@ -55,7 +68,7 @@ class Form(PolymorphicModel):
                 self.event.get_queue()
                 .filter(user=request.user, has_attended=True)
                 .exists()
-            )
+            ) or check_has_access(self.write_access, request)
         return True
 
     def has_object_read_permission(self, request):
@@ -64,7 +77,7 @@ class Form(PolymorphicModel):
                 self.event.get_queue()
                 .filter(user=request.user, has_attended=True)
                 .exists()
-            )
+            ) or check_has_access(self.write_access, request)
         return True
 
 
@@ -101,12 +114,15 @@ class Option(models.Model):
     title = models.CharField(max_length=200, default="")
     field = models.ForeignKey(Field, on_delete=models.CASCADE, related_name="options")
 
+    class Meta:
+        ordering = ["title", "id"]
+
     def __str__(self):
         return self.title
 
 
 class Submission(BaseModel, BasePermissionModel):
-    read_access = AdminGroup.admin()
+    read_access = [AdminGroup.HS, AdminGroup.INDEX, AdminGroup.SOSIALEN, AdminGroup.NOK]
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     form = models.ForeignKey(Form, on_delete=models.CASCADE, related_name="submissions")
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="submissions")
@@ -129,20 +145,36 @@ class Submission(BaseModel, BasePermissionModel):
 
     @classmethod
     def has_retrieve_permission(cls, request):
+
         if request.user is None:
             return False
 
-        return check_has_access(cls.read_access, request)
+        return cls._is_own_permission(request) or check_has_access(
+            cls.read_access, request
+        )
+
+    @classmethod
+    def _is_own_permission(cls, request):
+        form_id = request.parser_context["kwargs"]["form_id"]
+        form = Form.objects.get(id=form_id)
+
+        submission_id = request.parser_context["kwargs"]["pk"]
+        submission = form.submissions.get(id=submission_id)
+
+        return submission.user is request.user
 
     @classmethod
     def has_list_permission(cls, request):
+
         if request.user is None:
             return False
 
         return check_has_access(cls.read_access, request)
 
     def has_object_read_permission(self, request):
-        return check_has_access(self.read_access, request)
+        return self._is_own_permission(request) or check_has_access(
+            self.read_access, request
+        )
 
 
 class Answer(BaseModel):

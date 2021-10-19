@@ -3,6 +3,7 @@ from datetime import timedelta
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import signals
+from django.db.transaction import atomic
 
 from app.common.enums import AdminGroup
 from app.common.permissions import BasePermissionModel
@@ -17,7 +18,6 @@ from .user import User
 
 
 class Event(BaseModel, OptionalImage, BasePermissionModel):
-
     title = models.CharField(max_length=200)
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
@@ -26,6 +26,10 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
     category = models.ForeignKey(
         Category, blank=True, null=True, default=None, on_delete=models.SET_NULL
     )
+
+    """ Strike fields """
+    can_cause_strikes = models.BooleanField(default=True)
+    enforces_previous_strikes = models.BooleanField(default=True)
 
     """ Registration fields """
     sign_up = models.BooleanField(default=False)
@@ -42,15 +46,16 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
     start_registration_at = models.DateTimeField(blank=True, null=True, default=None)
     end_registration_at = models.DateTimeField(blank=True, null=True, default=None)
     sign_off_deadline = models.DateTimeField(blank=True, null=True, default=None)
-
     registration_priorities = models.ManyToManyField(
         Priority, blank=True, default=None, related_name="priorities"
     )
-    evaluate_link = models.CharField(max_length=200, blank=True, null=True)
+
+    """ Schedular fields """
     end_date_schedular_id = models.CharField(max_length=100, blank=True, null=True)
     sign_off_deadline_schedular_id = models.CharField(
         max_length=100, blank=True, null=True
     )
+
     write_access = AdminGroup.all()
 
     def __str__(self):
@@ -129,6 +134,11 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
             self.check_start_registration_is_after_deadline()
             self.check_end_time_is_before_end_registration()
             self.check_start_date_is_before_deadline()
+
+    @atomic
+    def increment_limit(self):
+        self.limit += 1
+        self.save()
 
     def check_sign_up_and_registration_times(self):
         if not self.sign_up and (

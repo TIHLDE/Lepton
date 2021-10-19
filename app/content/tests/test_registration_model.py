@@ -1,5 +1,7 @@
 from unittest.mock import patch
 
+from django.core.exceptions import ValidationError
+
 import pytest
 
 from app.common.enums import UserClass, UserStudy
@@ -9,6 +11,9 @@ from app.content.factories import (
     RegistrationFactory,
     UserFactory,
 )
+from app.forms.enums import EventFormType
+from app.forms.models.forms import Submission
+from app.forms.tests.form_factories import EventFormFactory, SubmissionFactory
 
 
 @pytest.fixture()
@@ -19,6 +24,11 @@ def non_priority_user_class():
 @pytest.fixture()
 def non_priority_user_study():
     return UserStudy.DATAING
+
+
+@pytest.fixture()
+def user():
+    return UserFactory()
 
 
 @pytest.fixture()
@@ -349,3 +359,65 @@ def test_delete_registration_when_no_users_on_wait_are_in_a_priority_pool_bumps_
     registration_on_wait.refresh_from_db()
 
     assert not registration_on_wait.is_on_wait
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "form_type,should_exist",
+    [(EventFormType.EVALUATION, True), (EventFormType.SURVEY, False)],
+)
+def test_deleting_registration_deletes_submission(event, user, form_type, should_exist):
+    form = EventFormFactory(event=event, type=form_type)
+    submission = SubmissionFactory(form=form, user=user)
+    registration = RegistrationFactory(event=event, user=user)
+
+    registration.delete()
+
+    assert Submission.objects.filter(id=submission.id).exists() is should_exist
+
+
+@pytest.mark.django_db
+def test_create_registration_without_submission_answer_fails(event, user):
+    EventFormFactory(event=event, type=EventFormType.SURVEY)
+    with pytest.raises(ValidationError):
+        RegistrationFactory(event=event, user=user)
+
+
+@pytest.mark.django_db
+def test_bump_user_from_wait_increments_limit(event_with_registrations_and_priority):
+    """
+    Tests if an admin manualy bumps a user up from the wait list when the event is full
+    the event limit increases by 1
+    """
+    registration = RegistrationFactory(event=event_with_registrations_and_priority)
+    limit = event_with_registrations_and_priority.limit
+    registration.is_on_wait = False
+    registration.save()
+    assert event_with_registrations_and_priority.limit == limit + 1
+
+
+@pytest.mark.django_db
+def test_auto_bump_user_from_wait_does_not_increments_limit():
+    """
+    Tests if an automatic bump of a registration happens, the event limit wil not be incremented
+    """
+    event = EventFactory(limit=1)
+    limit = event.limit
+    priority = PriorityFactory(user_study=UserStudy.DATAING, user_class=UserClass.FIRST)
+    event.registration_priorities.add(priority)
+
+    user_not_in_priority_pool = UserFactory(
+        user_study=UserStudy.DIGFOR.value, user_class=UserClass.SECOND.value
+    )
+
+    registration_to_delete = RegistrationFactory(event=event)
+    registration_on_wait = RegistrationFactory(
+        event=event, user=user_not_in_priority_pool
+    )
+
+    registration_to_delete.delete()
+
+    registration_on_wait.refresh_from_db()
+    event.refresh_from_db()
+    assert not registration_on_wait.is_on_wait
+    assert event.limit == limit

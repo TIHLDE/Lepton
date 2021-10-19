@@ -13,11 +13,47 @@
 ---
 
 ## Neste versjon
-- ⚡ **Arrangementer**. Prioritet på arrangementer har blitt fjernet grunnet lite bruk.
+- ⚡ **Arrangementer**. Prioritet på arrangementer har blitt fjernet.
+- ✨ **Jobbannonser** har nå stillingstype og år.
+- ⚡ **Prikker**. På arrangement kan man nå velge om man ønsker å ignorere prikker / gi nye prikker.
+- ⚡ **Prikker**. Kun Index og HS-medlemmer kan nå slette prikker.
+- ✨ **Prikker**. Brukere mottar nå varsel om at de har fått en ny prikk.
+
+## Versjon 1.1.1 (11.10.2021)
+- ⚡ **Ytelse**. Produksjon kjører nå med Gunicorn og Uvicorn med flere workers for å bli enda raskere.
+- ⚡ **Avhengigheter**. Python er oppgradert til v3.9 og Django er oppdatert til v3.2.8.
+- ✨ **Flower** Lagt til administrasjonspanel for Celery.
+
+## Versjon 1.1.0 (06.10.2021)
+- ⚡ **Ytelse**. Forbedret ytelsen på API'et gjennom blant annet mer caching, async eposter og andre forbedringer.
+
+## Versjon 1.0.18 (30.09.2021)
+- 🦟 **Arrangement**. Hent ut kun svar til spørreskjema for dem som ha plass på arrangementet.
+- 🦟 **Spørreskjema**. Fikset bug der medlemmer av NoK ikke hadde tilgang til å redigere spørreskjemaer.
+- 🦟 **Prikk**. Påmeldte på venteliste får nå ikke lenger prikk
+
+## Versjon 1.0.17 (24.09.2021)
+- ✨ **Svar på skjemaer** kan nå lastes ned som en csv-fil.
+- ⚡ **Maksgrensen på arrangementer** økes nå hvis en admin melder på noen og det er fullt.
+
+## Versjon 1.0.16 (21.09.2021)
+- Skjemaer
+    - ✨ **Evalueringer** må bli besvart før neste påmelding.
+    - ⚡ **Alternativ på flervalgsspørsmål** er nå sortert etter tittel.
+    - ✨ **Egne skjemaer** kan nå hentes ut i eget endepunkt.
+    - ⚡ **Skjemaer**. Legg ved mer info om arrangementet i spørrskjemaer tilknyttet et arrangement.
+    - ✨ **Skjemaer**. Legg ved info om bruker allerede har svart på et spørreskjema.
+
+## Versjon 1.0.15 (15.09.2021)
+- 🦟 **Tidssoner**. Fikset bug der tidspunkter i eposter blir formatert med feil tidssone.
+
+## Versjon 1.0.14 (12.09.2021)
+- ✨ **Svar på spørreskjemaer** blir nå sendt med sammen med påmeldingen.
+- ✨ **Statistikk spørreskjemaer** Kan nå hente ut statistikk over svar på spørreskjemaer.
 
 ## Versjon 1.0.13 (06.09.2021)
-- ✨ **Svar på spørreskjemaer**. Medlemmer kan nå svare på spørreskjemaer.
-- ✨ **Grupper**. Ledere for undergrupper blir nå automagisk medlem av hs gruppen
+- ✨ **Svar på spørreskjemaer** Medlemmer kan nå svare på spørreskjemaer.
+- ✨ **Grupper** Ledere for undergrupper blir nå automagisk medlem av hs gruppen
 
 ## Versjon 1.0.12 (22.08.2021)
 - 🦟 **Celery**. Fikset problem der oppdatering av arrangement førte til evig rekursjon.

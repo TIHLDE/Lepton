@@ -43,7 +43,7 @@ class MembershipHistory(BaseModel):
 class Membership(BaseModel, BasePermissionModel):
     """Model for a Group Membership"""
 
-    write_access = [AdminGroup.HS, AdminGroup.INDEX]
+    write_access = AdminGroup.admin()
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="memberships")
     group = models.ForeignKey(
         Group, on_delete=models.CASCADE, related_name="memberships"
@@ -104,6 +104,7 @@ class Membership(BaseModel, BasePermissionModel):
         MembershipHistory.from_membership(self)
         return super().delete(*args, **kwargs)
 
+    @atomic
     def delete_hs_membership(self):
         seat_to_delete = (
             Membership.objects.select_for_update()

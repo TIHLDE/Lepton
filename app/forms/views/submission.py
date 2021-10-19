@@ -1,8 +1,14 @@
 from rest_framework import status, viewsets
+from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
+from rest_framework.settings import api_settings
 
+from rest_framework_csv.renderers import CSVRenderer
+
+from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission
+from app.forms.csv_writer import SubmissionsCsvWriter
 from app.forms.enums import EventFormType
 from app.forms.models.forms import EventForm, Form, Submission
 from app.forms.serializers.submission import SubmissionSerializer
@@ -12,6 +18,10 @@ class SubmissionViewSet(viewsets.ModelViewSet):
     serializer_class = SubmissionSerializer
     queryset = Submission.objects.all()
     permission_classes = [BasicViewPermission]
+    pagination_class = BasePagination
+    renderer_classes = tuple(api_settings.DEFAULT_RENDERER_CLASSES) + (
+        CSVRenderer,
+    )  # Order matters. Default first.
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
@@ -20,12 +30,26 @@ class SubmissionViewSet(viewsets.ModelViewSet):
         )
         return context
 
+    def get_queryset(self):
+        form_id = self.kwargs.get("form_id")
+        queryset = self.queryset.filter(form__id=form_id).prefetch_related(
+            "user", "answers"
+        )
+        if hasattr(self, "action") and self.action in ["list", "download"]:
+            form = get_object_or_404(Form, id=form_id)
+            if isinstance(form, EventForm):
+                users_in_event = form.event.registrations.filter(
+                    is_on_wait=False
+                ).values_list("user", flat=True)
+                queryset = queryset.filter(user__in=users_in_event)
+        return queryset
+
     def create(self, request, *args, **kwargs):
-        form = get_object_or_404(Form.objects.all(), id=kwargs.get("form_id"))
+        form = get_object_or_404(Form, id=kwargs.get("form_id"))
         if isinstance(form, EventForm):
             user = request.user
             event = form.event
-            attended = event.get_queue().filter(user=user).exists()
+            attended = event.get_queue().filter(user=user, has_attended=True).exists()
 
             if form.type == EventFormType.EVALUATION and not attended:
                 return Response(
@@ -34,3 +58,8 @@ class SubmissionViewSet(viewsets.ModelViewSet):
                 )
 
         return super().create(request, *args, **kwargs)
+
+    @action(detail=False, methods=["get"], url_path="download")
+    def download(self, request, *args, **kwargs):
+        """To return the response as csv, include header 'Accept: text/csv. """
+        return SubmissionsCsvWriter(self.get_queryset()).write_csv()
