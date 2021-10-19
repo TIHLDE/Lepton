@@ -1,7 +1,6 @@
 from datetime import datetime
 
 from django.shortcuts import get_object_or_404
-
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action
@@ -81,7 +80,7 @@ class EventViewSet(viewsets.ModelViewSet):
             if serializer.is_valid():
                 group = None
                 if not request.data["group"] is None:
-                  group = get_object_or_404(Group, slug=request.data["group"])
+                    group = get_object_or_404(Group, slug=request.data["group"])
                 event = serializer.save(group=group)
                 serializer = EventSerializer(event)
                 return Response(serializer.data, status=status.HTTP_200_OK)
@@ -105,7 +104,7 @@ class EventViewSet(viewsets.ModelViewSet):
         if serializer.is_valid():
             group = None
             if not request.data["group"] is None:
-              group = get_object_or_404(Group, slug=request.data["group"])
+                group = get_object_or_404(Group, slug=request.data["group"])
             event = serializer.save(group=group)
             serializer = EventSerializer(event)
             return Response(serializer.data, status=status.HTTP_201_CREATED)

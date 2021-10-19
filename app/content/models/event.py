@@ -5,20 +5,26 @@ from django.db import models
 from django.db.models import signals
 from django.db.transaction import atomic
 
-from app.common.enums import AdminGroup
-from app.common.permissions import BasePermissionModel
-from app.forms.enums import EventFormType
-from app.util.models import BaseModel, OptionalImage
-from app.util.utils import today, yesterday
-
-from app.content.signals import send_event_reminders
+from app.common.enums import AdminGroup, GroupType, MembershipType
+from app.common.permissions import (
+    BasePermissionModel,
+    check_has_access,
+    set_user_id,
+)
 from app.content.models import Category
 from app.content.models.prioritiy import Priority
 from app.content.models.user import User
+from app.content.signals import send_event_reminders
+from app.forms.enums import EventFormType
 from app.group.models.group import Group
+from app.util.models import BaseModel, OptionalImage
+from app.util.utils import today, yesterday
 
 
 class Event(BaseModel, OptionalImage, BasePermissionModel):
+
+    write_access = AdminGroup.all()
+
     title = models.CharField(max_length=200)
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
@@ -28,7 +34,12 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
         Category, blank=True, null=True, default=None, on_delete=models.SET_NULL
     )
     group = models.ForeignKey(
-        Group, blank=True, null=True, default=None, on_delete=models.SET_NULL, related_name="events"
+        Group,
+        blank=True,
+        null=True,
+        default=None,
+        on_delete=models.SET_NULL,
+        related_name="events",
     )
 
     """ Strike fields """
@@ -59,8 +70,6 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
     sign_off_deadline_schedular_id = models.CharField(
         max_length=100, blank=True, null=True
     )
-
-    write_access = AdminGroup.all()
 
     def __str__(self):
         return f"{self.title} - starting {self.start_date} at {self.location}"
@@ -122,6 +131,26 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
     @property
     def survey(self):
         return self.forms.filter(type=EventFormType.SURVEY).first()
+
+    def check_request_user_has_access_through_group(self, request):
+        if request.id is None:
+            set_user_id(request)
+
+        if self.group.type is GroupType.BOARD or self.group.type is GroupType.SUBGROUP:
+            return self.group.memberships.filter(user=request.user).exists()
+        return self.group.memberships.filter(
+            user=request.user, membership_type=MembershipType.LEADER
+        ).exists()
+
+    def has_object_write_permission(self, request):
+        return (
+            check_has_access(self.write_access, request)
+            if self.group is None
+            else (
+                check_has_access(AdminGroup.admin(), request)
+                or self.check_request_user_has_access_through_group(request)
+            )
+        )
 
     def clean(self):
         self.validate_start_end_registration_times()
