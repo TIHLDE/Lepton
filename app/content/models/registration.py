@@ -122,7 +122,6 @@ class Registration(BaseModel, BasePermissionModel):
         return super(Registration, self).save(*args, **kwargs)
 
     def create(self):
-        # Only cancel registration if the event enforces previous strikes.
         if self.event.enforces_previous_strikes:
             self._abort_for_unanswered_evaluations()
             self.strike_handler()
