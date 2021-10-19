@@ -3,6 +3,7 @@ from rest_framework import serializers
 
 from rest_polymorphic.serializers import PolymorphicSerializer
 
+from app.common.mixins import OrderedModelSerializerMixin
 from app.common.serializers import BaseModelSerializer
 from app.content.serializers import EventListSerializer
 from app.forms.models import EventForm, Field, Form, Option
@@ -10,18 +11,21 @@ from app.forms.models import EventForm, Field, Form, Option
 
 class OptionSerializer(BaseModelSerializer):
     id = serializers.UUIDField(read_only=False, required=False)
+    order = serializers.IntegerField(read_only=False, required=True)
 
     class Meta:
         model = Option
         fields = (
             "id",
             "title",
+            "order",
         )
 
 
 class FieldSerializer(BaseModelSerializer):
     options = OptionSerializer(many=True, required=False, allow_null=True)
     id = serializers.UUIDField(read_only=False, required=False)
+    order = serializers.IntegerField(read_only=False, required=True)
 
     class Meta:
         model = Field
@@ -31,6 +35,7 @@ class FieldSerializer(BaseModelSerializer):
             "options",
             "type",
             "required",
+            "order",
         )
 
 
@@ -56,6 +61,30 @@ class FormSerializer(BaseModelSerializer):
 
         return form
 
+    @staticmethod
+    def update_field_options(field, options):
+        """Creates new options from data without `id` attached, updates options with `id` attached and removes unreferenced options."""
+        updated_ids = list()
+        created = list()
+
+        for option in options:
+            id = option.get("id")
+            if id:
+                options_query = Option.objects.filter(id=id)
+                options_query.update(**option)
+                option_instance = options_query.first()
+                updated_ids.append(id)
+                OrderedModelSerializerMixin.do_update_order(option_instance, option)
+            else:
+                created.append(option)
+
+        options_to_delete = field.options.exclude(id__in=updated_ids)
+        options_to_delete.delete()
+
+        Option.objects.bulk_create(
+            [Option(field=field, **option) for option in created]
+        )
+
     @atomic
     def update(self, instance, validated_data):
         validated_fields = validated_data.pop("fields")
@@ -71,9 +100,12 @@ class FormSerializer(BaseModelSerializer):
                 field_query = Field.objects.filter(id=field_id)
                 field_query.update(**field_data)
                 field_instance = field_query[0]
+                OrderedModelSerializerMixin.do_update_order(field_instance, field_data)
             else:
                 field_instance = Field.objects.create(form=instance, **field_data)
                 field_id = field_instance.id
+
+            OrderedModelSerializerMixin.do_update_order(field_instance, field_data)
 
             field_ids_to_keep.append(field_id)
 

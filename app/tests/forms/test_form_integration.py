@@ -7,7 +7,11 @@ from app.content.factories import EventFactory, RegistrationFactory
 from app.content.serializers import EventListSerializer
 from app.forms.enums import EventFormType
 from app.forms.models.forms import Field
-from app.forms.tests.form_factories import EventFormFactory, FormFactory
+from app.forms.tests.form_factories import (
+    EventFormFactory,
+    FieldFactory,
+    FormFactory,
+)
 from app.util.test_utils import get_api_client
 
 pytestmark = pytest.mark.django_db
@@ -28,9 +32,10 @@ def _get_form_post_data(form):
         "fields": [
             {
                 "title": "string",
-                "options": [{"title": "string"}],
+                "options": [{"title": "string", "order": 0}],
                 "type": "SINGLE_SELECT",
                 "required": True,
+                "order": 0,
             }
         ],
     }
@@ -106,9 +111,12 @@ def test_list_forms_data(admin_user):
             {
                 "id": str(field.id),
                 "title": field.title,
-                "options": [{"id": str(option.id), "title": option.title}],
+                "options": [
+                    {"id": str(option.id), "title": option.title, "order": option.order}
+                ],
                 "type": field.type.name,
                 "required": field.required,
+                "order": field.order,
             }
         ],
         "template": False,
@@ -562,3 +570,46 @@ def test_delete_form_returns_detail(admin_user, form):
     response = client.delete(url)
 
     assert response.data.get("detail")
+
+
+def test_update_form_field_ordering_reorders_fields(api_client, admin_user, form):
+    """Test that updating fields work, by flipping order of fields"""
+    FieldFactory(form=form)
+
+    client = api_client(user=admin_user)
+    url = _get_form_detail_url(form)
+
+    first_in_order, second_in_order = 0, 1
+    first_field_in_order, second_field_in_order = form.fields.all()
+
+    expected_field_data = [
+        {
+            "id": str(first_field_in_order.id),
+            "title": "i love this field <3",
+            "type": "SINGLE_SELECT",
+            "options": [],
+            "required": False,
+            "order": second_in_order,
+        },
+        {
+            "id": str(second_field_in_order.id),
+            "title": "i love this field <3",
+            "type": "SINGLE_SELECT",
+            "options": [],
+            "required": False,
+            "order": first_in_order,
+        },
+    ]
+    data = {
+        "resource_type": "Form",
+        "title": "testform",
+        "fields": expected_field_data,
+    }
+
+    client.put(url, data)
+
+    first_field_in_order.refresh_from_db()
+    second_field_in_order.refresh_from_db()
+
+    assert first_field_in_order.order == second_in_order
+    assert second_field_in_order.order == first_in_order

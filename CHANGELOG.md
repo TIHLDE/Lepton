@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+- ✨ **Rekkefølge på spørsmål** er nå lagt til.
 - ✨ **Skjemamaler**. La inn støtte for skjemamaler.
 - ⚡ **Arrangementer**. Prioritet på arrangementer har blitt fjernet.
 - ✨ **Jobbannonser** har nå stillingstype og år.
