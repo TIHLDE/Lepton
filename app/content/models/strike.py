@@ -23,8 +23,8 @@ def get_active_strikes_query():
 
 
 class StrikeQueryset(models.QuerySet):
-    def active(self):
-        return self.filter(get_active_strikes_query())
+    def active(self, *args, **kwargs):
+        return self.filter(get_active_strikes_query(), *args, **kwargs)
 
     def sum_active(self):
         sum_active_strikes = (

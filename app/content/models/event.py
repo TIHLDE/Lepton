@@ -18,7 +18,6 @@ from .user import User
 
 
 class Event(BaseModel, OptionalImage, BasePermissionModel):
-
     title = models.CharField(max_length=200)
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
