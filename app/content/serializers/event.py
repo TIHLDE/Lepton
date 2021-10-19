@@ -121,6 +121,8 @@ class EventCreateAndUpdateSerializer(BaseModelSerializer):
             "end_registration_at",
             "sign_off_deadline",
             "registration_priorities",
+            "can_cause_strikes",
+            "enforces_previous_strikes",
         )
 
     def create(self, validated_data):
