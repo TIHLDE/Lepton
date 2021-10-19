@@ -19,7 +19,6 @@ from app.group.models.group import Group
 
 
 class Event(BaseModel, OptionalImage, BasePermissionModel):
-
     title = models.CharField(max_length=200)
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
@@ -38,6 +37,10 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
         Group, blank=True, null=True, default=None, on_delete=models.SET_NULL, related_name="events"
     )
 
+    """ Strike fields """
+    can_cause_strikes = models.BooleanField(default=True)
+    enforces_previous_strikes = models.BooleanField(default=True)
+
     """ Registration fields """
     sign_up = models.BooleanField(default=False)
     limit = models.IntegerField(default=0)
@@ -53,14 +56,16 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
     start_registration_at = models.DateTimeField(blank=True, null=True, default=None)
     end_registration_at = models.DateTimeField(blank=True, null=True, default=None)
     sign_off_deadline = models.DateTimeField(blank=True, null=True, default=None)
-
     registration_priorities = models.ManyToManyField(
         Priority, blank=True, default=None, related_name="priorities"
     )
+
+    """ Schedular fields """
     end_date_schedular_id = models.CharField(max_length=100, blank=True, null=True)
     sign_off_deadline_schedular_id = models.CharField(
         max_length=100, blank=True, null=True
     )
+
     write_access = AdminGroup.all()
 
     def __str__(self):

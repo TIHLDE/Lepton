@@ -2,6 +2,7 @@ from django.db import models
 
 from app.common.enums import AdminGroup
 from app.common.permissions import BasePermissionModel
+from app.content.enums import JobPostType, UserClass
 from app.util.models import BaseModel, OptionalImage
 from app.util.utils import yesterday
 
@@ -14,10 +15,18 @@ class JobPost(BaseModel, OptionalImage, BasePermissionModel):
 
     deadline = models.DateTimeField(null=True, blank=True)
     is_continuously_hiring = models.BooleanField(default=False)
+    job_type = models.CharField(
+        max_length=30, choices=JobPostType.choices, default=JobPostType.OTHER
+    )
 
     company = models.CharField(max_length=200)
     email = models.EmailField(blank=True, null=True)
     link = models.URLField(max_length=300, blank=True, null=True)
+
+    class_start = models.IntegerField(
+        choices=UserClass.choices, default=UserClass.FIRST
+    )
+    class_end = models.IntegerField(choices=UserClass.choices, default=UserClass.FIFTH)
 
     write_access = [AdminGroup.HS, AdminGroup.INDEX, AdminGroup.NOK]
 
