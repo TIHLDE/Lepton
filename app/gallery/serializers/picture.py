@@ -1,6 +1,16 @@
+from django.db.models import fields
 from app.common.serializers import BaseModelSerializer
-from app.gallery.models.picture import Picture
+from app.gallery.models.picture import Album, Picture
 
+
+class AlbumSerializer(BaseModelSerializer):
+    class Meta:
+        model = Album
+        fields = (
+            'title',
+            'description',
+            'event',
+        )
 
 class PictureSerializer(BaseModelSerializer):
     class Meta:
@@ -8,7 +18,6 @@ class PictureSerializer(BaseModelSerializer):
         fields = (
             "id",
             "picture",
-            "event",
             "title",
             "description",
             "picture_alt",
