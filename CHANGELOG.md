@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+- ⚡ **Arrangementer**. Prioritet på arrangementer har blitt fjernet.
 - ✨ **Jobbannonser** har nå stillingstype og år.
 - ⚡ **Prikker**. På arrangement kan man nå velge om man ønsker å ignorere prikker / gi nye prikker.
 - ⚡ **Prikker**. Kun Index og HS-medlemmer kan nå slette prikker.
