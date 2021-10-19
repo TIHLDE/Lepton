@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+## Versjon 1.1.2 (19.10.2021)
 - ✨ **Skjemamaler**. La inn støtte for skjemamaler.
 - ⚡ **Arrangementer**. Prioritet på arrangementer har blitt fjernet.
 - ✨ **Jobbannonser** har nå stillingstype og år.
