@@ -14,6 +14,11 @@
 
 ## Neste versjon
 - ✨ **Skjemamaler**. La inn støtte for skjemamaler.
+- ⚡ **Arrangementer**. Prioritet på arrangementer har blitt fjernet.
+- ✨ **Jobbannonser** har nå stillingstype og år.
+- ⚡ **Prikker**. På arrangement kan man nå velge om man ønsker å ignorere prikker / gi nye prikker.
+- ⚡ **Prikker**. Kun Index og HS-medlemmer kan nå slette prikker.
+- ✨ **Prikker**. Brukere mottar nå varsel om at de har fått en ny prikk.
 
 ## Versjon 1.1.1 (11.10.2021)
 - ⚡ **Ytelse**. Produksjon kjører nå med Gunicorn og Uvicorn med flere workers for å bli enda raskere.

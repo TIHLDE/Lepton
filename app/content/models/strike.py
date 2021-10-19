@@ -16,14 +16,15 @@ STRIKE_DURATION_IN_DAYS = 20
 
 def get_active_strikes_query():
     return Q(
-        created_at__lte=today(),
+        # TODO: Remove the "+ timedelta(days=1)" after standarizing timezones
+        created_at__lte=today() + timedelta(days=1),
         created_at__gte=today() - timedelta(days=STRIKE_DURATION_IN_DAYS),
     )
 
 
 class StrikeQueryset(models.QuerySet):
-    def active(self):
-        return self.filter(get_active_strikes_query())
+    def active(self, *args, **kwargs):
+        return self.filter(get_active_strikes_query(), *args, **kwargs)
 
     def sum_active(self):
         sum_active_strikes = (
@@ -76,19 +77,19 @@ class Strike(BaseModel, BasePermissionModel):
         return f"{self.user.first_name} {self.user.last_name} - {self.description} - {self.strike_size}"
 
     def save(self, *args, **kwargs):
-        # TODO: Kjør når prikksystem er lansert "offisielt"
-        # if self.created_at is None:
-        #     from app.util.mail_creator import MailCreator
-        #     from app.util.notifier import Notify
+        if self.created_at is None:
+            from app.util.mail_creator import MailCreator
+            from app.util.notifier import Notify
 
-        #     Notify([self.user], "Du har fått en prikk").send_email(
-        #         MailCreator("Du har fått en prikk")
-        #         .add_paragraph(f"Hei {self.user.first_name}!")
-        #         .add_paragraph(self.description)
-        #         .generate_string()
-        #     ).send_notification(
-        #         description=self.description,
-        #     )
+            strike_info = "Prikken varer i 20 dager. Ta kontakt med arrangøren om du er uenig. Konsekvenser kan sees i arrangementsreglene. Du kan finne dine aktive prikker og mer info om dem i profilen."
+
+            Notify([self.user], "Du har fått en prikk").send_email(
+                MailCreator("Du har fått en prikk")
+                .add_paragraph(f"Hei {self.user.first_name}!")
+                .add_paragraph(self.description)
+                .add_paragraph(strike_info)
+                .generate_string()
+            ).send_notification(description=f"{self.description}\n{strike_info}",)
         super(Strike, self).save(*args, **kwargs)
 
     @property
@@ -98,6 +99,10 @@ class Strike(BaseModel, BasePermissionModel):
     @property
     def expires_at(self):
         return self.created_at + timedelta(days=STRIKE_DURATION_IN_DAYS)
+
+    @classmethod
+    def has_destroy_permission(cls, request):
+        return check_has_access(AdminGroup.admin(), request)
 
     def has_object_read_permission(self, request):
         return self.user.user_id == request.id or check_has_access(
