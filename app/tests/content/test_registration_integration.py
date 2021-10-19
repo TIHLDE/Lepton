@@ -450,7 +450,7 @@ def test_bump_another_registration_as_admin_when_event_is_full_is_not_allowed(
     registration_to_update.refresh_from_db()
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
-    assert not registration_to_update.is_on_wait
+    assert registration_to_update.is_on_wait
 
 
 @pytest.mark.django_db
