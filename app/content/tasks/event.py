@@ -61,10 +61,12 @@ def event_end_schedular(*args, **kwargs):
 
     try:
         event = Event.objects.get(end_date_schedular_id=event_end_schedular.request.id)
-        for registration in event.registrations.filter(
-            has_attended=False, is_on_wait=False
-        ):
-            create_strike("NO_SHOW", registration.user, registration.event)
+
+        if event.can_cause_strikes:
+            for registration in event.registrations.filter(
+                has_attended=False, is_on_wait=False
+            ):
+                create_strike("NO_SHOW", registration.user, registration.event)
 
         if event.evaluation:
             users = User.objects.filter(
