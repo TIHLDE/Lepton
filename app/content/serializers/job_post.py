@@ -1,8 +1,7 @@
 from rest_framework import serializers
 
 from app.common.serializers import BaseModelSerializer
-
-from ..models import JobPost
+from app.content.models.job_post import JobPost
 
 
 class JobPostSerializer(BaseModelSerializer):
