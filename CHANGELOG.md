@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+- ✨ **Skjemamaler**. La inn støtte for skjemamaler.
 - ⚡ **Arrangementer**. Prioritet på arrangementer har blitt fjernet.
 - ✨ **Jobbannonser** har nå stillingstype og år.
 - ⚡ **Prikker**. På arrangement kan man nå velge om man ønsker å ignorere prikker / gi nye prikker.
