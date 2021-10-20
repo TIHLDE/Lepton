@@ -18,7 +18,7 @@ def accept_form(request):
         body = request.data
         title = f"{body['info']['bedrift']} vil ha {', '.join(body['type'][:-2])} og {', '.join(body['type'][-2:])} i {', '.join(body['time'][:-2])} og {', '.join(body['time'][-2:])}"
         success = send_html_email(
-            os.environ.get("EMAIL_RECEIVER") or "orakel@tihlde.org",
+            [os.environ.get("EMAIL_RECEIVER") or "orakel@tihlde.org"],
             MailCreator(title)
             .add_paragraph(f"Bedrift: {body['info']['bedrift']}")
             .add_paragraph(
