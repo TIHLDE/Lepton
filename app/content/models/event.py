@@ -91,8 +91,8 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
     def is_past_sign_off_deadline(self):
         return today() >= self.sign_off_deadline
 
-    def is_one_hour_before_event_start(self):
-        return today() >= self.start_date - timedelta(hours=1)
+    def is_two_hours_before_event_start(self):
+        return today() >= self.start_date - timedelta(hours=2)
 
     @property
     def event_has_ended(self):
