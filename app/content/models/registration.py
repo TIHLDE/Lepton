@@ -94,9 +94,9 @@ class Registration(BaseModel, BasePermissionModel):
         moved_registration = None
         if not self.is_on_wait:
             if self.event.is_past_sign_off_deadline:
-                if self.event.is_one_hour_before_event_start():
+                if self.event.is_two_hours_before_event_start():
                     raise EventSignOffDeadlineHasPassed(
-                        "Kan ikke melde av brukeren etter en time før arrangementstart"
+                        "Kan ikke melde av brukeren etter to timer før arrangementstart"
                     )
                 if self.event.can_cause_strikes:
                     create_strike(str(StrikeEnum.PAST_DEADLINE), self.user, self.event)

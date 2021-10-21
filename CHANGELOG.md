@@ -14,12 +14,14 @@
 
 ## Neste versjon
 - ⚡ **Arrangement** blir nå ikke overbooket når en person blir flyttet opp fra ventelisten.
+- 🦟 **Bedrifter-skjema**. Fikset bug der bedrifts-skjema ikke ble sendt korrekt til NoK.
 - ✨ **Skjemamaler**. La inn støtte for skjemamaler.
 - ⚡ **Arrangementer**. Prioritet på arrangementer har blitt fjernet.
 - ✨ **Jobbannonser** har nå stillingstype og år.
 - ⚡ **Prikker**. På arrangement kan man nå velge om man ønsker å ignorere prikker / gi nye prikker.
 - ⚡ **Prikker**. Kun Index og HS-medlemmer kan nå slette prikker.
 - ✨ **Prikker**. Brukere mottar nå varsel om at de har fått en ny prikk.
+- ⚡ **Spørreskjema**. Tekstfelt kan nå svares på med lengre tekst enn bare 255 tegn.
 
 ## Versjon 1.1.1 (11.10.2021)
 - ⚡ **Ytelse**. Produksjon kjører nå med Gunicorn og Uvicorn med flere workers for å bli enda raskere.
