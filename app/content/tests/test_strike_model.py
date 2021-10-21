@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from unittest import mock
 
 import pytest
@@ -10,12 +10,64 @@ pytestmark = pytest.mark.django_db
 
 
 @mock.patch("app.content.models.strike.today")
-def test_strike_freezer(mock_today):
+def test_active_or_not_strike_with_freeze_through_holidays(mock_today):
+    '''
+    Test that uses a mock function of today() and a specified 
+    creation date to check if a strike is active or not on the 
+    date made by the mocked today() function. This test can be 
+    especially used to check if a strike is active after a holiday
 
-    # Arrange
-    mock_today.return_value = datetime(2022, 1, 28, 1)
+    :mock_today: the mocked today() function\n
+    :strike: Strike object with modified creation date\n
+    :assert: weather or not strike is active on specified day\n
+    '''
+
+    mock_today.return_value = datetime(2021, 9, 4, 1)
     StrikeFactory()
-    strike = Strike(created_at=datetime(2021, 12, 1))
+    strike = Strike(created_at=datetime(2021, 5, 9, 22))
 
-    # Act and Assert
     assert strike.active
+
+def test_active_days_of_a_strike():
+    '''
+    Test that uses a specified creation date to check 
+    how many days a strike has been active for. If 
+    creation date is set far from a holiday, active
+    days will be 20. To check if strike is active 
+    during a holiday, 
+    assert active_days > timedelta(days=20)
+
+    :strike: Strike object with modified creation date\n
+    :strike.created_at: date of when strike is created\n
+    :strike.expires_at: date of when strike is expired\n
+    :active_days: difference between expried and created date\n
+    :assert: weather or not number of active days of strike is equal to number of days\n
+    '''
+
+    StrikeFactory()
+    strike = Strike(created_at=datetime(2021, 5, 1))
+
+    active_days = strike.expires_at - strike.created_at
+
+    assert active_days == timedelta(days=118)
+
+def test_year_of_expire_date():
+    '''
+    Test that checks if start if expired date of strike
+    is a different year than date strike is created. 
+    For example a strike created in desember will have 
+    a expired date in the next year
+
+    :strike: Strike object with modified creation date\n
+    :created_year: year of when strike is created\n
+    :expired_year: year of when strike is expired\n
+    :assert: weather or not expired_year is one year after created_year\n
+    '''
+
+    StrikeFactory()
+    strike = Strike(created_at=datetime(2021, 12, 20))
+
+    created_year = strike.created_at.year
+    expired_year = strike.expires_at.year
+
+    assert expired_year == created_year + 1
