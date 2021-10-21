@@ -36,6 +36,22 @@ def _get_form_post_data(form):
     }
 
 
+def _get_form_template_post_data():
+    return {
+        "resource_type": "Form",
+        "title": "form",
+        "fields": [
+            {
+                "title": "string",
+                "options": [{"title": "string"}],
+                "type": "SINGLE_SELECT",
+                "required": True,
+            }
+        ],
+        "template": True,
+    }
+
+
 def _get_event_form_post_data(form, event):
     return {
         "resource_type": "EventForm",
@@ -60,6 +76,14 @@ def _get_form_update_data(form):
     }
 
 
+def test_create_template_form(admin_user):
+    client = get_api_client(user=admin_user)
+    form = client.post(_get_forms_url(), _get_form_template_post_data()).json()
+    response = client.get(_get_forms_url() + form.get("id") + "/").json()
+
+    assert response == form
+
+
 def test_list_forms_data(admin_user):
     """Should return the correct fields about the forms."""
     form = EventFormFactory()
@@ -67,7 +91,7 @@ def test_list_forms_data(admin_user):
     option = field.options.first()
 
     client = get_api_client(user=admin_user)
-    url = _get_forms_url()
+    url = _get_forms_url() + "?all"
     response = client.get(url)
     response = response.json()
 
@@ -87,6 +111,34 @@ def test_list_forms_data(admin_user):
                 "required": field.required,
             }
         ],
+        "template": False,
+    }
+
+
+def test_list_form_templates_data(admin_user):
+    """Should return the correct fields about the forms."""
+    form = FormFactory(template=True)
+    field = form.fields.first()
+    option = field.options.first()
+
+    client = get_api_client(user=admin_user)
+    url = _get_forms_url()
+    response = client.get(url)
+    response = response.json()
+
+    assert response[0] == {
+        "id": str(form.id),
+        "title": form.title,
+        "fields": [
+            {
+                "id": str(field.id),
+                "title": field.title,
+                "options": [{"id": str(option.id), "title": option.title}],
+                "type": field.type.name,
+                "required": field.required,
+            }
+        ],
+        "template": True,
     }
 
 

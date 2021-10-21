@@ -3,6 +3,7 @@ from rest_framework import status, viewsets
 from rest_framework.response import Response
 
 from app.common.enums import StrikeEnum
+from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission
 from app.content.models import (
     Event,
@@ -18,6 +19,7 @@ class StrikeViewSet(viewsets.ModelViewSet):
     serializer_class = StrikeSerializer
     queryset = Strike.objects.active()
     permission_classes = [BasicViewPermission]
+    pagination_class = BasePagination
 
     def update(self, request, *args, **kwargs):
         return Response(
