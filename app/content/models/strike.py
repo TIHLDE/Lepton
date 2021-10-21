@@ -6,14 +6,10 @@ from django.db import models
 from django.db.models import Q
 from django.db.models.aggregates import Sum
 
-import pytz
-
 from app.common.enums import AdminGroup
 from app.common.permissions import BasePermissionModel, check_has_access
 from app.util.models import BaseModel
 from app.util.utils import today
-
-utc = pytz.UTC
 
 
 class Holiday:
@@ -109,7 +105,7 @@ class Strike(BaseModel, BasePermissionModel):
 
     @property
     def active(self):
-        return self.expires_at.replace(tzinfo=utc) >= today().replace(tzinfo=utc)
+        return self.expires_at >= today()
 
     @property
     def expires_at(self):
