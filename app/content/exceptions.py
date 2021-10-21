@@ -24,6 +24,11 @@ class APIHasStrikeException(APIException):
     default_detail = "Kan ikke melde deg på fordi du har en eller flere prikker"
 
 
+class APIEventIsFullException(APIException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_detail = "Du kan ikke flytte opp en fra ventelisten når arrangementet er fullt. Flytt en bruker ned først."
+
+
 class EventSignOffDeadlineHasPassed(ValueError):
     pass
 
@@ -33,4 +38,8 @@ class StrikeError(ValueError):
 
 
 class UnansweredFormError(ValueError):
+    pass
+
+
+class EventIsFullError(ValueError):
     pass

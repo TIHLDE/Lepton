@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+- ⚡ **Arrangement** blir nå ikke overbooket når en person blir flyttet opp fra ventelisten.
 - 🦟 **Bedrifter-skjema**. Fikset bug der bedrifts-skjema ikke ble sendt korrekt til NoK.
 - ✨ **Skjemamaler**. La inn støtte for skjemamaler.
 - ⚡ **Arrangementer**. Prioritet på arrangementer har blitt fjernet.
