@@ -13,7 +13,7 @@ class Album(BaseModel, BasePermissionModel):
 
     title = models.CharField(max_length=100)
     description = models.TextField(blank=True)
-    event = ForeignKey(Event, on_delete=models.SET_NULL, null=True)
+    event = models.ForeignKey(Event, on_delete=models.SET_NULL, null=True)
     write_access = AdminGroup.all()
 
     def __str__(self):
@@ -23,12 +23,12 @@ class Album(BaseModel, BasePermissionModel):
 class Picture(BaseModel, BasePermissionModel):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    picture = models.URLField(max_length=300)
+    picture = models.URLField(max_length=400)
     title = models.CharField(max_length=100, blank=True)
     description = models.TextField(blank=True)
     picture_alt = models.CharField(max_length=100, blank=True)
-    write_access = AdminGroup.all()
     album = models.ForeignKey(Album, on_delete=models.SET_NULL, null=True)
+    write_access = AdminGroup.all()
 
     def __str__(self):
-        return str(self.picture)
+        return self.picture

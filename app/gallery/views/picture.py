@@ -11,7 +11,6 @@ class AlbumViewSet(viewsets.ModelViewSet):
     serializer_class = AlbumSerializer
     queryset = Album.objects.all()
     permission_classes= [BasicViewPermission]
-    lookup_field = 'title'
 
 class PictureViewSet(viewsets.ModelViewSet, OptionalImage):
     serializer_class = PictureSerializer

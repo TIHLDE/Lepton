@@ -13,3 +13,7 @@ class AlbumAdmin(ModelAdmin):
     inlines = (
         PictureInline,
     )
+
+@admin.register(Picture)
+class PictureAdmin(ModelAdmin):
+    base_model = Picture
