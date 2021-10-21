@@ -13,6 +13,9 @@
 ---
 
 ## Neste versjon
+
+
+## Versjon 1.1.2 (19.10.2021)
 - ⚡ **Arrangement** blir nå ikke overbooket når en person blir flyttet opp fra ventelisten.
 - 🦟 **Bedrifter-skjema**. Fikset bug der bedrifts-skjema ikke ble sendt korrekt til NoK.
 - ✨ **Skjemamaler**. La inn støtte for skjemamaler.
