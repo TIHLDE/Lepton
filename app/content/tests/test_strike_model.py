@@ -22,11 +22,12 @@ def test_active_or_not_strike_with_freeze_through_holidays(mock_today):
     :assert: weather or not strike is active on specified day\n
     '''
 
-    mock_today.return_value = datetime(2021, 9, 25)
+    mock_today.return_value = datetime(2022, 1, 30, 1)
     StrikeFactory()
-    strike = Strike(created_at=datetime(2021, 9, 5))
+    strike = Strike(created_at=datetime(2022, 1, 9))
 
-    assert  strike.active
+
+    assert not strike.active
 
 def test_active_days_of_a_strike_with_freeze_through_holidays():
     '''
