@@ -25,7 +25,7 @@ class Holiday:
 STRIKE_DURATION_IN_DAYS = 20
 
 SUMMER = Holiday((5, 10), (8, 15))
-WINTER = Holiday((11, 29), (1, 10))
+WINTER = Holiday((11, 29), (1, 9))
 
 HOLIDAYS = (SUMMER, WINTER)
 
@@ -128,7 +128,8 @@ class Strike(BaseModel, BasePermissionModel):
                 end_date = end_date.replace(year=end_date.year + 1)
 
             if expired_date > start_date and self.created_at < end_date:
-                expired_date += (end_date - start_date) + timedelta(days=1)
+                smallest_difference = min((end_date - start_date), (end_date - self.created_at))
+                expired_date += smallest_difference + timedelta(days=1)
                 break
 
         return expired_date
