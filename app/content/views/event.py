@@ -78,10 +78,7 @@ class EventViewSet(viewsets.ModelViewSet):
             )
 
             if serializer.is_valid():
-                group = None
-                if not request.data["group"] is None:
-                    group = get_object_or_404(Group, slug=request.data["group"])
-                event = serializer.save(group=group)
+                event = serializer.save()
                 serializer = EventSerializer(event)
                 return Response(serializer.data, status=status.HTTP_200_OK)
             else:
@@ -102,10 +99,7 @@ class EventViewSet(viewsets.ModelViewSet):
         )
 
         if serializer.is_valid():
-            group = None
-            if not request.data["group"] is None:
-                group = get_object_or_404(Group, slug=request.data["group"])
-            event = serializer.save(group=group)
+            event = serializer.save()
             serializer = EventSerializer(event)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 

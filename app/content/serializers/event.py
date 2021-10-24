@@ -1,11 +1,12 @@
 from rest_framework import serializers
 
+from dry_rest_permissions.generics import DRYPermissionsField
 from sentry_sdk import capture_exception
 
 from app.common.serializers import BaseModelSerializer
 from app.content.models import Event, Priority
 from app.content.serializers.priority import PrioritySerializer
-from app.group.serializers.group import DefaultGroupSerializer
+from app.group.serializers.group import GroupSerializer
 from app.util import EnumUtils
 
 
@@ -14,7 +15,8 @@ class EventSerializer(serializers.ModelSerializer):
     registration_priorities = serializers.SerializerMethodField()
     evaluation = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
     survey = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
-    group = DefaultGroupSerializer(read_only=True)
+    group = GroupSerializer(read_only=True)
+    permissions = DRYPermissionsField(actions=["write", "read"], object_only=True)
 
     class Meta:
         model = Event
@@ -44,6 +46,7 @@ class EventSerializer(serializers.ModelSerializer):
             "updated_at",
             "can_cause_strikes",
             "enforces_previous_strikes",
+            "permissions",
         )
 
     def validate_limit(self, limit):
@@ -84,7 +87,7 @@ class EventSerializer(serializers.ModelSerializer):
 
 class EventListSerializer(serializers.ModelSerializer):
     expired = serializers.BooleanField(read_only=True)
-    group = DefaultGroupSerializer(read_only=True)
+    group = GroupSerializer(read_only=True)
 
     class Meta:
         model = Event
@@ -108,24 +111,25 @@ class EventCreateAndUpdateSerializer(BaseModelSerializer):
     class Meta:
         model = Event
         fields = (
-            "title",
-            "start_date",
-            "end_date",
-            "location",
-            "description",
-            "sign_up",
+            "can_cause_strikes",
             "category",
-            "expired",
-            "limit",
             "closed",
+            "description",
+            "end_date",
+            "end_registration_at",
+            "enforces_previous_strikes",
+            "expired",
+            "group",
             "image",
             "image_alt",
-            "start_registration_at",
-            "end_registration_at",
-            "sign_off_deadline",
+            "limit",
+            "location",
             "registration_priorities",
-            "can_cause_strikes",
-            "enforces_previous_strikes",
+            "sign_off_deadline",
+            "sign_up",
+            "start_date",
+            "start_registration_at",
+            "title",
         )
 
     def create(self, validated_data):

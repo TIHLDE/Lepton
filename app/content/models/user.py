@@ -91,6 +91,12 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
     def is_TIHLDE_member(self):
         return self.memberships.filter(group__slug=Groups.TIHLDE).exists()
 
+    @property
+    def is_HS_or_Index_member(self):
+        return self.memberships.filter(
+            group__slug__in=[AdminGroup.HS, AdminGroup.INDEX]
+        ).exists()
+
     def has_perm(self, perm, obj=None):
         return self.is_superuser
 
