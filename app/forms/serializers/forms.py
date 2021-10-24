@@ -101,10 +101,10 @@ class FormSerializer(BaseModelSerializer):
         for option in options:
             option_id = option.get("id")
             if option_id:
-                options_query = Option.objects.filter(id=id)
+                options_query = Option.objects.filter(id=option_id)
                 options_query.update(**option)
                 option_instance = options_query.first()
-                updated_ids.append(id)
+                updated_ids.append(option_id)
                 OrderedModelSerializerMixin.do_update_order(option_instance, option)
             else:
                 created.append(option)

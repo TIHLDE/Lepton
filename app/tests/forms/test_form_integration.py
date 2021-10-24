@@ -48,9 +48,10 @@ def _get_form_template_post_data():
         "fields": [
             {
                 "title": "string",
-                "options": [{"title": "string"}],
+                "options": [{"title": "string", "order": 0}],
                 "type": "SINGLE_SELECT",
                 "required": True,
+                "order": 0,
             }
         ],
         "template": True,
@@ -84,7 +85,7 @@ def _get_form_update_data(form):
 def test_create_template_form(admin_user):
     client = get_api_client(user=admin_user)
     form = client.post(_get_forms_url(), _get_form_template_post_data()).json()
-    response = client.get(_get_forms_url() + form.get("id") + "/").json()
+    response = client.get(_get_forms_url() + str(form.get("id")) + "/").json()
 
     assert response == form
 
@@ -141,9 +142,16 @@ def test_list_form_templates_data(admin_user):
             {
                 "id": str(field.id),
                 "title": field.title,
-                "options": [{"id": str(option.id), "title": option.title}],
+                "options": [
+                    {
+                        "id": str(option.id),
+                        "title": option.title,
+                        "order": option.order,
+                    }
+                ],
                 "type": field.type.name,
                 "required": field.required,
+                "order": field.order,
             }
         ],
         "template": True,
@@ -471,6 +479,7 @@ def test_update_options_when_previous_option_is_not_included_in_request_removes_
     assert not field.options.exists()
 
 
+@pytest.mark.django_db
 def test_update_options_when_id_is_passed_in_options_request_data_updates_the_option(
     admin_user, form
 ):
@@ -484,13 +493,21 @@ def test_update_options_when_id_is_passed_in_options_request_data_updates_the_op
         "fields": [
             {
                 "id": str(field.id),
-                "options": [{"id": str(option.id), "title": updated_title,},],
+                "options": [
+                    {
+                        "id": str(option.id),
+                        "title": updated_title,
+                        "order": option.order,
+                    },
+                ],
+                "order": field.order,
             }
         ],
     }
     client = get_api_client(user=admin_user)
     url = _get_form_detail_url(form)
-    client.patch(url, data)
+    response = client.put(url, data)
+    print(response)
 
     option.refresh_from_db()
 
