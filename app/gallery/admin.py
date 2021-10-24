@@ -1,7 +1,8 @@
 from django.contrib import admin
 from django.contrib.admin.options import ModelAdmin
 
-from app.gallery.models.picture import Album, Picture
+from app.gallery.models.album import Album
+from app.gallery.models.picture import Picture
 
 
 class PictureInline(admin.TabularInline):

@@ -1,20 +1,19 @@
-from django.db.models import lookups
-from app.util.models import OptionalImage
 from rest_framework import viewsets
 
 from app.common.permissions import BasicViewPermission
-from app.gallery.models.picture import Album, Picture
-from app.gallery.serializers.picture import AlbumSerializer, PictureSerializer
+from app.gallery.models.picture import Picture
+from app.gallery.serializers.picture import PictureSerializer
 
 
-class AlbumViewSet(viewsets.ModelViewSet):
-    serializer_class = AlbumSerializer
-    queryset = Album.objects.all()
-    permission_classes= [BasicViewPermission]
 
-class PictureViewSet(viewsets.ModelViewSet, OptionalImage):
+class PictureViewSet(viewsets.ModelViewSet):
     serializer_class = PictureSerializer
     queryset = Picture.objects.all()
     permission_classes = [BasicViewPermission]
+
+    def get_queryset(self):
+        album_id = self.kwargs.get("slug", None)
+        return Picture.objects.filter(album__slug=album_id)
+
 
 

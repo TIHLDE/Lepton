@@ -1,25 +1,16 @@
 from app.common.serializers import BaseModelSerializer
-from app.gallery.models.picture import Album, Picture
+from app.gallery.models.picture import Picture
 
-
-class AlbumSerializer(BaseModelSerializer):
-    class Meta:
-        model = Album
-        fields = [
-            'title',
-            'description',
-            'event',
-        ]
 
 class PictureSerializer(BaseModelSerializer):
     class Meta:
         model = Picture
         fields = (
             "id",
-            "picture",
+            "image",
             "title",
             "description",
-            "picture_alt",
+            "image_alt",
             "created_at",
             "updated_at",
         )
