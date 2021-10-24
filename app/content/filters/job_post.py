@@ -1,20 +1,32 @@
-from django_filters.rest_framework import BooleanFilter, FilterSet
+from django.db.models.query_utils import Q
+from django_filters.rest_framework import (
+    BooleanFilter,
+    FilterSet,
+    MultipleChoiceFilter,
+)
 
+from app.common.filters import NumberInFilter
+from app.content.enums import JobPostType
+from app.content.models.job_post import JobPost
 from app.util.utils import yesterday
-
-from ..models import JobPost
 
 
 class JobPostFilter(FilterSet):
-    """ Filters job posts by expired """
-
     expired = BooleanFilter(method="filter_expired", label="Expired")
+    job_type = MultipleChoiceFilter(choices=JobPostType.choices)
+    classes = NumberInFilter(method="filter_classes")
 
     class Meta:
         model: JobPost
-        fields = ["expired"]
+        fields = ["expired", "job_type"]
 
     def filter_expired(self, queryset, name, value):
         if value:
             return queryset.filter(deadline__lt=yesterday()).order_by("-deadline")
         return queryset.filter(deadline__gte=yesterday()).order_by("deadline")
+
+    def filter_classes(self, queryset, name, value):
+        query = Q()
+        for year in value:
+            query |= Q(class_start__lte=year, class_end__gte=year)
+        return queryset.filter(query)

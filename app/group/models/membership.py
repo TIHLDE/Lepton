@@ -43,7 +43,7 @@ class MembershipHistory(BaseModel):
 class Membership(BaseModel, BasePermissionModel):
     """Model for a Group Membership"""
 
-    write_access = [AdminGroup.HS, AdminGroup.INDEX]
+    write_access = AdminGroup.admin()
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="memberships")
     group = models.ForeignKey(
         Group, on_delete=models.CASCADE, related_name="memberships"

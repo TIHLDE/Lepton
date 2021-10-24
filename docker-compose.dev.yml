@@ -1,4 +1,4 @@
-version: '3'
+version: '3.8'
 
 # Config file for registry settings in Azure App Service dev
 
@@ -11,4 +11,14 @@ services:
   celery:
     image: leptondevregistry.azurecr.io/lepton:latest
     container_name: celery
-    command: celery -A app worker -l info --without-heartbeat --without-gossip --without-mingle
+    entrypoint: []
+    command: celery -A app worker -E -l info --without-heartbeat --without-gossip --without-mingle
+  flower:
+    image: leptondevregistry.azurecr.io/lepton:latest
+    container_name: flower
+    entrypoint: []
+    command: celery -A app flower --url_prefix=flower/admin
+    ports:
+      - 5555:5555
+    depends_on:
+      - celery

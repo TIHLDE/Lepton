@@ -22,6 +22,7 @@ class Form(PolymorphicModel):
     ]
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=200)
+    template = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = "Form"
@@ -72,13 +73,7 @@ class Form(PolymorphicModel):
         return True
 
     def has_object_read_permission(self, request):
-        if isinstance(self, EventForm) and self.type == EventFormType.EVALUATION:
-            return (
-                self.event.get_queue()
-                .filter(user=request.user, has_attended=True)
-                .exists()
-            ) or check_has_access(self.write_access, request)
-        return True
+        return self.has_object_write_permission(request)
 
 
 class EventForm(Form):
@@ -189,7 +184,7 @@ class Answer(BaseModel):
     field = models.ForeignKey(
         Field, on_delete=models.CASCADE, related_name="answers", blank=True, null=True
     )
-    answer_text = models.CharField(max_length=255, blank=True)
+    answer_text = models.TextField(default="", blank=True)
 
     def get_field(self):
         return self.field if self.field else self.selected_options.first().field

@@ -7,6 +7,7 @@ from django.db.models import Q
 from app.common.enums import AdminGroup, Groups, StrikeEnum
 from app.common.permissions import BasePermissionModel, check_has_access
 from app.content.exceptions import (
+    EventIsFullError,
     EventSignOffDeadlineHasPassed,
     StrikeError,
     UnansweredFormError,
@@ -29,7 +30,6 @@ class Registration(BaseModel, BasePermissionModel):
         AdminGroup.SOSIALEN,
         Groups.TIHLDE,
     ]
-    """ Model for user registration for an event """
 
     registration_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(
@@ -74,9 +74,7 @@ class Registration(BaseModel, BasePermissionModel):
         return check_has_access(self.has_access, request,)
 
     def has_object_retrieve_permission(self, request):
-        if self.user.user_id == request.id:
-            return True
-        return check_has_access(self.has_access, request,)
+        return self.has_object_destroy_permission(request)
 
     def __str__(self):
         return (
@@ -96,11 +94,12 @@ class Registration(BaseModel, BasePermissionModel):
         moved_registration = None
         if not self.is_on_wait:
             if self.event.is_past_sign_off_deadline:
-                if self.event.is_one_hour_before_event_start():
+                if self.event.is_two_hours_before_event_start():
                     raise EventSignOffDeadlineHasPassed(
-                        "Kan ikke melde av brukeren etter en time før arrangementstart"
+                        "Kan ikke melde av brukeren etter to timer før arrangementstart"
                     )
-                create_strike(str(StrikeEnum.PAST_DEADLINE), self.user, self.event)
+                if self.event.can_cause_strikes:
+                    create_strike(str(StrikeEnum.PAST_DEADLINE), self.user, self.event)
             moved_registration = self.move_from_waiting_list_to_queue()
 
         self.delete_submission_if_exists()
@@ -113,18 +112,20 @@ class Registration(BaseModel, BasePermissionModel):
         return super().delete(*args, **kwargs)
 
     def save(self, *args, **kwargs):
-        """ Determines whether the object is being created or updated and acts accordingly """
         if not self.registration_id:
             self.create()
         self.send_notification_and_mail()
 
         if self.event.is_full and not self.is_on_wait:
-            self.event.increment_limit()
+            raise EventIsFullError
+
         return super(Registration, self).save(*args, **kwargs)
 
     def create(self):
-        self._abort_for_unanswered_evaluations()
-        self.strike_handler()
+        if self.event.enforces_previous_strikes:
+            self._abort_for_unanswered_evaluations()
+            self.strike_handler()
+
         self.clean()
         self.is_on_wait = self.event.is_full
 
@@ -136,7 +137,7 @@ class Registration(BaseModel, BasePermissionModel):
             raise UnansweredFormError()
 
     def strike_handler(self):
-        number_of_strikes = self.user.get_number_of_strikes()
+        number_of_strikes = self.user.number_of_strikes
         if number_of_strikes >= 1:
             hours_offset = 3
             if number_of_strikes >= 2:
@@ -163,7 +164,7 @@ class Registration(BaseModel, BasePermissionModel):
                 f"Arrangementet starter {datetime_format(self.event.start_date)} og vil være på {self.event.location}.",
                 f"Du kan melde deg av innen {datetime_format(self.event.sign_off_deadline)}.",
             ]
-            Notify(self.user, f"Du har fått plass på {self.event.title}").send_email(
+            Notify([self.user], f"Du har fått plass på {self.event.title}").send_email(
                 MailCreator("Du er påmeldt")
                 .add_paragraph(f"Hei {self.user.first_name}!")
                 .add_paragraph(description[0])
@@ -180,7 +181,7 @@ class Registration(BaseModel, BasePermissionModel):
                 "Dersom noen melder seg av vil du automatisk bli flyttet opp på listen. Du vil få beskjed dersom du får plass på arrangementet.",
                 f"PS. De vanlige reglene for prikker gjelder også for venteliste, husk derfor å melde deg av arrangementet innen {datetime_format(self.event.sign_off_deadline)} dersom du ikke kan møte.",
             ]
-            Notify(self.user, f"Venteliste for {self.event.title}").send_email(
+            Notify([self.user], f"Venteliste for {self.event.title}").send_email(
                 MailCreator("Du er på ventelisten")
                 .add_paragraph(f"Hei {self.user.first_name}!")
                 .add_paragraph(description[0])
@@ -202,7 +203,7 @@ class Registration(BaseModel, BasePermissionModel):
 
     @property
     def is_prioritized(self):
-        if self.user.get_number_of_strikes() >= 3:
+        if self.user.number_of_strikes >= 3:
             return False
         user_class, user_study = EnumUtils.get_user_enums(**self.user.__dict__)
         return self.event.registration_priorities.filter(

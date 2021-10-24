@@ -13,6 +13,27 @@
 ---
 
 ## Neste versjon
+
+
+## Versjon 1.1.2 (19.10.2021)
+- ⚡ **Arrangement** blir nå ikke overbooket når en person blir flyttet opp fra ventelisten.
+- 🦟 **Bedrifter-skjema**. Fikset bug der bedrifts-skjema ikke ble sendt korrekt til NoK.
+- ✨ **Skjemamaler**. La inn støtte for skjemamaler.
+- ⚡ **Arrangementer**. Prioritet på arrangementer har blitt fjernet.
+- ✨ **Jobbannonser** har nå stillingstype og år.
+- ⚡ **Prikker**. På arrangement kan man nå velge om man ønsker å ignorere prikker / gi nye prikker.
+- ⚡ **Prikker**. Kun Index og HS-medlemmer kan nå slette prikker.
+- ✨ **Prikker**. Brukere mottar nå varsel om at de har fått en ny prikk.
+- ⚡ **Spørreskjema**. Tekstfelt kan nå svares på med lengre tekst enn bare 255 tegn.
+
+## Versjon 1.1.1 (11.10.2021)
+- ⚡ **Ytelse**. Produksjon kjører nå med Gunicorn og Uvicorn med flere workers for å bli enda raskere.
+- ⚡ **Avhengigheter**. Python er oppgradert til v3.9 og Django er oppdatert til v3.2.8.
+- ✨ **Flower** Lagt til administrasjonspanel for Celery.
+
+## Versjon 1.1.0 (06.10.2021)
+- ⚡ **Ytelse**. Forbedret ytelsen på API'et gjennom blant annet mer caching, async eposter og andre forbedringer.
+
 ## Versjon 1.0.18 (30.09.2021)
 - 🦟 **Arrangement**. Hent ut kun svar til spørreskjema for dem som ha plass på arrangementet.
 - 🦟 **Spørreskjema**. Fikset bug der medlemmer av NoK ikke hadde tilgang til å redigere spørreskjemaer.
