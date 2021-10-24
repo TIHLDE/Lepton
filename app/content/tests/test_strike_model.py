@@ -18,16 +18,16 @@ def test_active_or_not_strike_with_freeze_through_holidays(mock_today):
     especially used to check if a strike is active after a holiday
 
     :mock_today: the mocked today() function\n
-    :strike: Strike object with modified creation date\n
+    :strike: Strike instance with modified creation date\n
     :assert: weather or not strike is active on specified day\n
     '''
 
-    mock_today.return_value = datetime(2022, 1, 30, 1)
+    mock_today.return_value = datetime(2022, 1, 30)
     StrikeFactory()
-    strike = Strike(created_at=datetime(2022, 1, 9))
+    strike = Strike(created_at=datetime(2022, 12, 7))
 
 
-    assert not strike.active
+    assert strike.active
 
 def test_active_days_of_a_strike_with_freeze_through_holidays():
     '''
@@ -38,7 +38,7 @@ def test_active_days_of_a_strike_with_freeze_through_holidays():
     during a holiday, 
     assert active_days > timedelta(days=20)
 
-    :strike: Strike object with modified creation date\n
+    :strike: Strike instance with modified creation date\n
     :strike.created_at: date of when strike is created\n
     :strike.expires_at: date of when strike is expired\n
     :active_days: difference between expried and created date\n
@@ -59,7 +59,7 @@ def test_year_of_expire_date_different_than_created_year_with_freeze_through_hol
     For example a strike created in desember will have 
     an expired date the next year
 
-    :strike: Strike object with modified creation date\n
+    :strike: Strike instance with modified creation date\n
     :created_year: year of when strike is created\n
     :expired_year: year of when strike is expired\n
     :assert: weather or not expired_year is one year after created_year\n

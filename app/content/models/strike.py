@@ -21,7 +21,7 @@ class Holiday:
 STRIKE_DURATION_IN_DAYS = 20
 
 SUMMER = Holiday((5, 10), (8, 15))
-WINTER = Holiday((11, 29), (1, 10))
+WINTER = Holiday((11, 29), (1, 9))
 
 HOLIDAYS = (SUMMER, WINTER)
 
