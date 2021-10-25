@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import signals
 
-from app.common.enums import AdminGroup, GroupType, MembershipType
+from app.common.enums import AdminGroup
 from app.common.permissions import (
     BasePermissionModel,
     check_has_access,
@@ -135,10 +135,8 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
         if request.id is None:
             set_user_id(request)
 
-        if self.group.type is GroupType.BOARD or self.group.type is GroupType.SUBGROUP:
-            return self.group.memberships.filter(user=request.user).exists()
-        return self.group.memberships.filter(
-            user=request.user, membership_type=MembershipType.LEADER
+        return request.user.memberships_with_events_access.filter(
+            group=self.group
         ).exists()
 
     def has_object_write_permission(self, request):
@@ -149,6 +147,15 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
                 check_has_access(AdminGroup.admin(), request)
                 or self.check_request_user_has_access_through_group(request)
             )
+        )
+
+    @classmethod
+    def has_write_permission(cls, request):
+        if request.user is None:
+            return False
+        return (
+            check_has_access(cls.write_access, request)
+            or request.user.memberships_with_events_access.exists()
         )
 
     def clean(self):

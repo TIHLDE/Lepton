@@ -1,6 +1,5 @@
 from datetime import datetime
 
-from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action
@@ -17,7 +16,6 @@ from app.content.serializers import (
     EventListSerializer,
     EventSerializer,
 )
-from app.group.models import Group
 from app.util.mail_creator import MailCreator
 from app.util.notifier import Notify
 from app.util.utils import midday, yesterday
@@ -79,7 +77,7 @@ class EventViewSet(viewsets.ModelViewSet):
 
             if serializer.is_valid():
                 event = serializer.save()
-                serializer = EventSerializer(event)
+                serializer = EventSerializer(event, context={"request": request})
                 return Response(serializer.data, status=status.HTTP_200_OK)
             else:
                 return Response(
@@ -100,7 +98,7 @@ class EventViewSet(viewsets.ModelViewSet):
 
         if serializer.is_valid():
             event = serializer.save()
-            serializer = EventSerializer(event)
+            serializer = EventSerializer(event, context={"request": request})
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(

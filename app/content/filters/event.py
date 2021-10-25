@@ -3,9 +3,8 @@ from datetime import datetime
 from django.db.models import Q
 from django_filters.rest_framework import BooleanFilter, FilterSet
 
-from app.common.enums import GroupType, MembershipType
 from app.content.models import Event
-from app.group.models import Group, Membership
+from app.group.models import Group
 from app.util.utils import midday, yesterday
 
 
@@ -30,16 +29,7 @@ class EventFilter(FilterSet):
     def filter_is_admin(self, queryset, name, value):
         if self.request.user.is_HS_or_Index_member:
             return queryset
-        allowed_memberships = self.request.user.memberships.filter(
-            (
-                Q(membership_type=MembershipType.LEADER)
-                & (
-                    Q(group__type=GroupType.COMMITTEE)
-                    | Q(group__type=GroupType.INTERESTGROUP)
-                )
-            )
-            | Q(group__type=GroupType.SUBGROUP)
-            | Q(group__type=GroupType.BOARD)
+        allowed_groups = Group.objects.filter(
+            memberships__in=self.request.user.memberships_with_events_access
         )
-        allowed_groups = Group.objects.filter(memberships__in=allowed_memberships)
         return queryset.filter(Q(group__in=allowed_groups) | Q(group=None))
