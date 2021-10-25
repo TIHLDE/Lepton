@@ -6,8 +6,6 @@ import pytest
 from app.content.factories.strike_factory import StrikeFactory
 from app.content.models.strike import Strike
 
-pytestmark = pytest.mark.django_db
-
 
 @mock.patch("app.content.models.strike.today")
 def test_active_or_not_strike_with_freeze_through_holidays(mock_today):
@@ -22,12 +20,11 @@ def test_active_or_not_strike_with_freeze_through_holidays(mock_today):
     :assert: weather or not strike is active on specified day\n
     '''
 
-    mock_today.return_value = datetime(2022, 1, 30)
-    StrikeFactory()
-    strike = Strike(created_at=datetime(2022, 12, 7))
+    mock_today.return_value = datetime(2022, 1, 30, 1)
+    strike = StrikeFactory.build(created_at=datetime(2021, 12, 7))
 
 
-    assert strike.active
+    assert not strike.active
 
 def test_active_days_of_a_strike_with_freeze_through_holidays():
     '''
@@ -42,15 +39,14 @@ def test_active_days_of_a_strike_with_freeze_through_holidays():
     :strike.created_at: date of when strike is created\n
     :strike.expires_at: date of when strike is expired\n
     :active_days: difference between expried and created date\n
-    :assert: weather or not number of active days of strike is equal to number of days\n
+    :assert: whether or not number of active days of strike is equal to number of days\n
     '''
 
-    StrikeFactory()
-    strike = Strike(created_at=datetime(2021, 5, 1))
+    strike = StrikeFactory.build(created_at=datetime(2021, 12, 24))
 
     active_days = strike.expires_at - strike.created_at
 
-    assert active_days == timedelta(days=118)
+    assert active_days == timedelta(days=37)
 
 def test_year_of_expire_date_different_than_created_year_with_freeze_through_holidays():
     '''
@@ -65,8 +61,7 @@ def test_year_of_expire_date_different_than_created_year_with_freeze_through_hol
     :assert: weather or not expired_year is one year after created_year\n
     '''
 
-    StrikeFactory()
-    strike = Strike(created_at=datetime(2021, 11, 30))
+    strike = StrikeFactory.build(created_at=datetime(2021, 11, 30))
 
     created_year = strike.created_at.year
     expired_year = strike.expires_at.year

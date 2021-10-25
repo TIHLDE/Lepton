@@ -13,7 +13,7 @@
 ---
 
 ## Neste versjon
-- ✨ **Strike**. Nedtellingstiden til prikker pauses med ferier
+- ✨ **Prikk**.  Nedtellingstiden til prikker settes på vent med ferier.
 ## Versjon 1.1.1 (11.10.2021)
 - ⚡ **Ytelse**. Produksjon kjører nå med Gunicorn og Uvicorn med flere workers for å bli enda raskere.
 - ⚡ **Avhengigheter**. Python er oppgradert til v3.9 og Django er oppdatert til v3.2.8.
