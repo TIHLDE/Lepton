@@ -1,13 +1,17 @@
 from rest_framework import status, viewsets
+from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from app.common.enums import GroupType
+from app.common.mixins import ActionMixin
+from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission, is_admin_user
 from app.group.models import Group
 from app.group.serializers import GroupSerializer
+from app.group.serializers.membership import MembershipHistorySerializer
 
 
-class GroupViewSet(viewsets.ModelViewSet):
+class GroupViewSet(viewsets.ModelViewSet, ActionMixin):
     """API endpoint for Groups"""
 
     serializer_class = GroupSerializer
@@ -70,3 +74,12 @@ class GroupViewSet(viewsets.ModelViewSet):
                 {"detail": ("Gruppen eksisterer ikke")},
                 status=status.HTTP_404_NOT_FOUND,
             )
+
+    @action(detail=True, methods=["get"], url_path="membership-history")
+    def get_group_history(self, request, *args, **kwargs):
+        group = self.get_object()
+        self.pagination_class = BasePagination
+        membership_history = group.membership_histories.order_by("end_date")
+        return self.paginate_response(
+            data=membership_history, serializer=MembershipHistorySerializer
+        )
