@@ -175,7 +175,11 @@ class UserViewSet(viewsets.ModelViewSet, ActionMixin):
         if filter_unanswered:
             forms = request.user.get_unanswered_evaluations()
 
-        return self.paginate_response(data=forms, serializer=FormPolymorphicSerializer)
+        return self.paginate_response(
+            data=forms,
+            serializer=FormPolymorphicSerializer,
+            context={"request": request},
+        )
 
     @action(
         detail=False,

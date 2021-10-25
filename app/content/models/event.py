@@ -131,22 +131,33 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
     def survey(self):
         return self.forms.filter(type=EventFormType.SURVEY).first()
 
-    def check_request_user_has_access_through_group(self, request):
+    def check_request_user_has_access_through_group(self, user, group):
+        return user.memberships_with_events_access.filter(group=group).exists()
+
+    def has_object_write_permission(self, request):
         if request.id is None:
             set_user_id(request)
 
-        return request.user.memberships_with_events_access.filter(
-            group=self.group
-        ).exists()
+        if request.user is None:
+            return False
 
-    def has_object_write_permission(self, request):
         return (
-            check_has_access(self.write_access, request)
-            if self.group is None
-            else (
-                check_has_access(AdminGroup.admin(), request)
-                or self.check_request_user_has_access_through_group(request)
+            check_has_access(AdminGroup.admin(), request)
+            or (
+                self.check_request_user_has_access_through_group(
+                    request.user, self.group
+                )
+                and (
+                    self.check_request_user_has_access_through_group(
+                        request.user, request.data["group"]
+                    )
+                    if request.data.get("group", None)
+                    and request.data["group"] != self.group
+                    else True
+                )
             )
+            if self.group
+            else request.user.memberships_with_events_access.exists()
         )
 
     @classmethod
@@ -154,8 +165,14 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
         if request.user is None:
             return False
         return (
-            check_has_access(cls.write_access, request)
-            or request.user.memberships_with_events_access.exists()
+            (
+                check_has_access(AdminGroup.admin(), request)
+                or cls.check_request_user_has_access_through_group(
+                    cls, request.user, request.data["group"]
+                )
+            )
+            if request.data.get("group", None)
+            else request.user.memberships_with_events_access.exists()
         )
 
     def clean(self):
