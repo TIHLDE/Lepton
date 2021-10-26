@@ -32,4 +32,6 @@ class EventFilter(FilterSet):
         allowed_groups = Group.objects.filter(
             memberships__in=self.request.user.memberships_with_events_access
         )
+        if allowed_groups.count() == 0:
+            return queryset.none()
         return queryset.filter(Q(group__in=allowed_groups) | Q(group=None))

@@ -380,22 +380,138 @@ def test_delete_as_user(user, event):
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
-    ("group_name", "expected_status_code"),
+    ("user_member_of_group", "event_current_group", "expected_status_code"),
     [
-        (AdminGroup.HS, 200),
-        (AdminGroup.INDEX, 200),
-        (AdminGroup.NOK, 200),
-        (AdminGroup.PROMO, 200),
-        (AdminGroup.SOSIALEN, 200),
-        ("Non_admin_group", 403),
+        # Members of admin-groups can delete events if event.group is None
+        (AdminGroup.HS, None, 200),
+        (AdminGroup.INDEX, None, 200),
+        (AdminGroup.NOK, None, 200),
+        (AdminGroup.PROMO, None, 200),
+        (AdminGroup.SOSIALEN, None, 200),
+        # Members of admin-groups can delete events if member of the event.group
+        (AdminGroup.HS, AdminGroup.HS, 200),
+        (AdminGroup.INDEX, AdminGroup.INDEX, 200),
+        (AdminGroup.NOK, AdminGroup.NOK, 200),
+        (AdminGroup.PROMO, AdminGroup.PROMO, 200),
+        (AdminGroup.SOSIALEN, AdminGroup.SOSIALEN, 200),
+        # HS and Index can delete event if not member of the event.group
+        (AdminGroup.HS, AdminGroup.NOK, 200),
+        (AdminGroup.INDEX, AdminGroup.SOSIALEN, 200),
+        # Members of admin-groups can't delete if not member of the event.group
+        (AdminGroup.NOK, AdminGroup.PROMO, 403),
+        (AdminGroup.PROMO, AdminGroup.SOSIALEN, 403),
+        (AdminGroup.SOSIALEN, AdminGroup.NOK, 403),
+        # Not member of admin group can't update event
+        ("Non_admin_group", AdminGroup.NOK, 403),
+        ("Non_admin_group", None, 403),
     ],
 )
-def test_delete_as_group_members(event, user, group_name, expected_status_code):
-    """Only users in an admin group should be able to delete an event entity."""
-    client = get_api_client(user=user, group_name=group_name)
+def test_delete_as_board_or_subgroup_group_member(user, user_member_of_group, event_current_group, expected_status_code):
+    """
+    HS and Index members should be able to delete events no matter which group is selected.
+    Other subgroup members can delete events where event.group is their group or None.
+    """
+    group = (
+        Group.objects.get_or_create(
+            type=get_group_type_from_group_name(event_current_group),
+            name=event_current_group,
+        )[0]
+        if event_current_group
+        else None
+    )
+    event = EventFactory(group=group)
+    client = get_api_client(user=user, group_name=user_member_of_group)
     url = get_events_url_detail(event)
     response = client.delete(url)
     assert response.status_code == expected_status_code
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    ("user_member_of_group", "membership_type", "group_type", "event_current_group", "expected_status_code"),
+    [
+        # Leaders of committees and interest-groups can delete events if event.group is None
+        ("Kont", MembershipType.LEADER, GroupType.COMMITTEE, None, 200),
+        ("Py", MembershipType.LEADER, GroupType.INTERESTGROUP, None, 200),
+        # Leaders of committees and interest-groups can delete events if has access of the event.group
+        ("Kont", MembershipType.LEADER, GroupType.COMMITTEE, "Kont", 200),
+        ("Py", MembershipType.LEADER, GroupType.INTERESTGROUP, "Py", 200),
+        # Leaders of committees and interest-groups can't delete event if not has access of the event.group
+        ("Kont", MembershipType.LEADER, GroupType.COMMITTEE, "Py", 403),
+        ("Py", MembershipType.LEADER, GroupType.INTERESTGROUP, "Kont", 403),
+        # Members of committees and interest-groups can't delete even if member of event.group
+        ("Kont", MembershipType.MEMBER, GroupType.COMMITTEE, None, 403),
+        ("Py", MembershipType.MEMBER, GroupType.INTERESTGROUP, None, 403,),
+    ],
+)
+def test_delete_as_committee_or_interest_group_member(user, user_member_of_group, membership_type, group_type, event_current_group, expected_status_code):
+    """
+    Leaders of committees and interest groups should be able to
+    delete events where event.group is their group or None.
+    """
+    group = (
+        Group.objects.get_or_create(
+            type=group_type,
+            name=event_current_group,
+        )[0]
+        if event_current_group
+        else None
+    )
+    event = EventFactory(group=group)
+    client = get_api_client(user=user)
+    add_user_to_group_with_name(
+        user=user,
+        group_name=user_member_of_group,
+        group_type=group_type,
+        membership_type=membership_type,
+    )
+    url = get_events_url_detail(event)
+    response = client.delete(url)
+    assert response.status_code == expected_status_code
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    ("member_of_group", "group_type", "membership_type", "expected_events_amount"),
+    [
+        (AdminGroup.HS, GroupType.BOARD, MembershipType.MEMBER, 9),
+        (AdminGroup.INDEX, GroupType.SUBGROUP, MembershipType.MEMBER, 9),
+        (AdminGroup.NOK, GroupType.SUBGROUP, MembershipType.MEMBER, 3),
+        (AdminGroup.SOSIALEN, GroupType.SUBGROUP, MembershipType.MEMBER, 2),
+        (AdminGroup.PROMO, GroupType.SUBGROUP, MembershipType.MEMBER, 2),
+        ("Pythons", GroupType.INTERESTGROUP, MembershipType.LEADER, 2),
+        ("KontKom", GroupType.COMMITTEE, MembershipType.LEADER, 2),
+        ("Pythons", GroupType.INTERESTGROUP, MembershipType.MEMBER, 0),
+        ("KontKom", GroupType.COMMITTEE, MembershipType.MEMBER, 0),
+        ("Not_admin", GroupType.OTHER, MembershipType.MEMBER, 0),
+    ],
+)
+def test_retrieve_events_where_is_admin_only_includes_events_where_is_admin(user, member_of_group, group_type, membership_type, expected_events_amount):
+    """When retrieving events where is admin, only events where is admin should be returned"""
+    EventFactory(group=Group.objects.get_or_create(type=get_group_type_from_group_name(AdminGroup.HS), name=AdminGroup.HS)[0])
+    EventFactory(group=Group.objects.get_or_create(type=get_group_type_from_group_name(AdminGroup.INDEX), name=AdminGroup.INDEX)[0])
+    EventFactory(group=Group.objects.get_or_create(type=get_group_type_from_group_name(AdminGroup.NOK), name=AdminGroup.NOK)[0])
+    EventFactory(group=Group.objects.get_or_create(type=get_group_type_from_group_name(AdminGroup.NOK), name=AdminGroup.NOK)[0])
+    EventFactory(group=Group.objects.get_or_create(type=get_group_type_from_group_name(AdminGroup.SOSIALEN), name=AdminGroup.SOSIALEN)[0])
+    EventFactory(group=Group.objects.get_or_create(type=get_group_type_from_group_name(AdminGroup.PROMO), name=AdminGroup.PROMO)[0])
+
+    EventFactory(group=Group.objects.get_or_create(type=GroupType.COMMITTEE, name="KontKom")[0])
+    EventFactory(group=Group.objects.get_or_create(type=GroupType.INTERESTGROUP, name="Pythons")[0])
+
+    EventFactory(group=None)
+
+    client = get_api_client(user=user)
+    add_user_to_group_with_name(
+        user=user,
+        group_name=member_of_group,
+        group_type=group_type,
+        membership_type=membership_type,
+    )
+
+    url = f"{API_EVENTS_BASE_URL}?is_admin=true"
+    response = client.get(url)
+
+    assert int(response.json().get("count")) == expected_events_amount
 
 
 @pytest.mark.django_db

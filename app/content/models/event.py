@@ -22,7 +22,7 @@ from app.util.utils import today, yesterday
 
 class Event(BaseModel, OptionalImage, BasePermissionModel):
 
-    write_access = AdminGroup.all()
+    write_access = AdminGroup.admin()
 
     title = models.CharField(max_length=200)
     start_date = models.DateTimeField()
@@ -142,7 +142,7 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
             return False
 
         return (
-            check_has_access(AdminGroup.admin(), request)
+            check_has_access(self.write_access, request)
             or (
                 self.check_request_user_has_access_through_group(
                     request.user, self.group
@@ -166,7 +166,7 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
             return False
         return (
             (
-                check_has_access(AdminGroup.admin(), request)
+                check_has_access(cls.write_access, request)
                 or cls.check_request_user_has_access_through_group(
                     cls, request.user, request.data["group"]
                 )
