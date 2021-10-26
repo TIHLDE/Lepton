@@ -4,7 +4,13 @@ from rest_framework import status
 
 import pytest
 
-from app.common.enums import AdminGroup, UserClass, UserStudy
+from app.common.enums import (
+    AdminGroup,
+    GroupType,
+    MembershipType,
+    UserClass,
+    UserStudy,
+)
 from app.content.factories import (
     EventFactory,
     PriorityFactory,
@@ -13,7 +19,8 @@ from app.content.factories import (
 )
 from app.forms.enums import EventFormType
 from app.forms.tests.form_factories import EventFormFactory, SubmissionFactory
-from app.util.test_utils import get_api_client
+from app.group.factories import GroupFactory
+from app.util.test_utils import add_user_to_group_with_name, get_api_client
 from app.util.utils import today
 
 API_EVENT_BASE_URL = "/api/v1/events/"
@@ -64,31 +71,62 @@ def test_list_as_member(member, registration):
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
-    "group_name",
-    [AdminGroup.HS, AdminGroup.INDEX, AdminGroup.SOSIALEN, AdminGroup.NOK],
+    (
+        "group_name",
+        "group_type",
+        "membership_type",
+        "expected_status_code",
+        "event_group",
+    ),
+    (
+        [AdminGroup.HS, GroupType.BOARD, MembershipType.MEMBER, 200, "same"],
+        [AdminGroup.HS, GroupType.BOARD, MembershipType.MEMBER, 200, "other"],
+        [AdminGroup.HS, GroupType.BOARD, MembershipType.MEMBER, 200, None],
+        [AdminGroup.INDEX, GroupType.SUBGROUP, MembershipType.MEMBER, 200, "same"],
+        [AdminGroup.INDEX, GroupType.SUBGROUP, MembershipType.MEMBER, 200, "other"],
+        [AdminGroup.INDEX, GroupType.SUBGROUP, MembershipType.MEMBER, 200, None],
+        [AdminGroup.NOK, GroupType.SUBGROUP, MembershipType.MEMBER, 200, "same"],
+        [AdminGroup.NOK, GroupType.SUBGROUP, MembershipType.MEMBER, 403, "other"],
+        [AdminGroup.NOK, GroupType.SUBGROUP, MembershipType.MEMBER, 200, None],
+        ["KontKom", GroupType.COMMITTEE, MembershipType.LEADER, 200, "same"],
+        ["Pythons", GroupType.INTERESTGROUP, MembershipType.LEADER, 200, "same"],
+        ["KontKom", GroupType.COMMITTEE, MembershipType.LEADER, 200, None],
+        ["Pythons", GroupType.INTERESTGROUP, MembershipType.LEADER, 200, None],
+        ["KontKom", GroupType.COMMITTEE, MembershipType.LEADER, 403, "other"],
+        ["Pythons", GroupType.INTERESTGROUP, MembershipType.LEADER, 403, "other"],
+        ["KontKom", GroupType.COMMITTEE, MembershipType.MEMBER, 403, "same"],
+        ["Pythons", GroupType.INTERESTGROUP, MembershipType.MEMBER, 403, "same"],
+    ),
 )
-def test_list_as_member_in_hs_devkom_sosialen_or_nok(registration, member, group_name):
+def test_list_as_member_in_group(
+    registration,
+    member,
+    group_name,
+    group_type,
+    membership_type,
+    expected_status_code,
+    event_group,
+):
     """
-    A member of HS, Devkom, Sosialen or NoK should
-    be able to list all registrations for an event with info about users.
+    A member of HS or Index should be able to list all registrations.
+    A member of subgroup or leader of committee and interest groups should be able to
+    list all registrations for an event that has event.group None or equal the same group.
     """
-    client = get_api_client(user=member, group_name=group_name)
+    group = add_user_to_group_with_name(member, group_name, group_type, membership_type)
+    if event_group == "same":
+        event_group = group
+    elif event_group == "other":
+        event_group = GroupFactory()
+    event = EventFactory(group=event_group)
+    registration = RegistrationFactory(event=event)
+    client = get_api_client(user=member)
     url = _get_registration_url(registration.event)
     response = client.get(url)
 
-    assert response.status_code == status.HTTP_200_OK
-    assert len(response.json()) > 0
-    assert response.json()[0]["user_info"]
-
-
-@pytest.mark.django_db
-def test_list_as_member_in_promo(registration, member):
-    """A member of PROMO should not be able to list all registrations for an event."""
-    client = get_api_client(user=member, group_name=AdminGroup.PROMO)
-    url = _get_registration_url(registration.event)
-    response = client.get(url)
-
-    assert response.status_code == status.HTTP_403_FORBIDDEN
+    assert response.status_code == expected_status_code
+    if expected_status_code == 200:
+        assert len(response.json()) > 0
+        assert response.json()[0]["user_info"]
 
 
 @pytest.mark.django_db
@@ -126,33 +164,60 @@ def test_retrieve_another_registration_as_member(member, registration):
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
-    "group_name", [AdminGroup.HS, AdminGroup.INDEX,],
+    (
+        "group_name",
+        "group_type",
+        "membership_type",
+        "expected_status_code",
+        "event_group",
+    ),
+    (
+        [AdminGroup.HS, GroupType.BOARD, MembershipType.MEMBER, 200, "same"],
+        [AdminGroup.HS, GroupType.BOARD, MembershipType.MEMBER, 200, "other"],
+        [AdminGroup.HS, GroupType.BOARD, MembershipType.MEMBER, 200, None],
+        [AdminGroup.INDEX, GroupType.SUBGROUP, MembershipType.MEMBER, 200, "same"],
+        [AdminGroup.INDEX, GroupType.SUBGROUP, MembershipType.MEMBER, 200, "other"],
+        [AdminGroup.INDEX, GroupType.SUBGROUP, MembershipType.MEMBER, 200, None],
+        [AdminGroup.NOK, GroupType.SUBGROUP, MembershipType.MEMBER, 200, "same"],
+        [AdminGroup.NOK, GroupType.SUBGROUP, MembershipType.MEMBER, 403, "other"],
+        [AdminGroup.NOK, GroupType.SUBGROUP, MembershipType.MEMBER, 200, None],
+        ["KontKom", GroupType.COMMITTEE, MembershipType.LEADER, 200, "same"],
+        ["Pythons", GroupType.INTERESTGROUP, MembershipType.LEADER, 200, "same"],
+        ["KontKom", GroupType.COMMITTEE, MembershipType.LEADER, 200, None],
+        ["Pythons", GroupType.INTERESTGROUP, MembershipType.LEADER, 200, None],
+        ["KontKom", GroupType.COMMITTEE, MembershipType.LEADER, 403, "other"],
+        ["Pythons", GroupType.INTERESTGROUP, MembershipType.LEADER, 403, "other"],
+        ["KontKom", GroupType.COMMITTEE, MembershipType.MEMBER, 403, "same"],
+        ["Pythons", GroupType.INTERESTGROUP, MembershipType.MEMBER, 403, "same"],
+    ),
 )
-def test_retrieve_as_member_in_hs_or_devkom(registration, member, group_name):
-    """A member of HS or Devkom should be able to retrieve any registration for an event."""
-    client = get_api_client(user=member, group_name=group_name)
-    url = _get_registration_detail_url(registration)
-    response = client.get(url)
-
-    assert response.status_code == status.HTTP_200_OK
-    assert len(response.json()) > 0
-
-
-@pytest.mark.django_db
-@pytest.mark.parametrize(
-    "group_name", [AdminGroup.PROMO, AdminGroup.NOK,],
-)
-def test_retrieve_other_registrations_as_member_in_nok_or_promo(
-    member, group_name, user
+def test_retrieve_as_member_in_group(
+    registration,
+    member,
+    group_name,
+    group_type,
+    membership_type,
+    expected_status_code,
+    event_group,
 ):
-    """A member of NOK or PROMO should not be able to retrieve other registrations than themselves."""
-    registration = RegistrationFactory(user=user)
-    client = get_api_client(user=member, group_name=group_name)
-
+    """
+    A member of HS or Index should be able to retrieve any registration.
+    A member of subgroup or leader of committee and interest groups should be able to
+    retrieve any registration for an event that has event.group None or equal the same group.
+    """
+    group = add_user_to_group_with_name(member, group_name, group_type, membership_type)
+    if event_group == "same":
+        event_group = group
+    elif event_group == "other":
+        event_group = GroupFactory()
+    event = EventFactory(group=event_group)
+    registration = RegistrationFactory(event=event)
+    client = get_api_client(user=member)
     url = _get_registration_detail_url(registration)
     response = client.get(url)
 
-    assert response.status_code == status.HTTP_403_FORBIDDEN
+    assert response.status_code == expected_status_code
+    assert len(response.json()) > 0
 
 
 @pytest.mark.django_db
@@ -355,6 +420,7 @@ def test_update_as_member(member):
     assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
+# TODO
 @pytest.mark.django_db
 def test_update_own_registration_as_admin(admin_user):
     """An admin user should be able to update their own registration."""
@@ -378,6 +444,7 @@ def test_update_own_registration_as_admin(admin_user):
     assert not updated_is_on_wait == registration_to_update.is_on_wait
 
 
+# TODO
 @pytest.mark.django_db
 def test_update_registration_updated_fields(admin_user):
     """An update should actually update the registration."""
@@ -400,6 +467,7 @@ def test_update_registration_updated_fields(admin_user):
     assert updated_is_on_wait == registration_to_update.is_on_wait
 
 
+# TODO
 @pytest.mark.django_db
 def test_update_another_registration_as_admin(admin_user, member):
     """An admin user should be able to update any registration."""
@@ -423,6 +491,7 @@ def test_update_another_registration_as_admin(admin_user, member):
     assert not updated_is_on_wait == registration_to_update.is_on_wait
 
 
+# TODO
 @pytest.mark.django_db
 def test_bump_another_registration_as_admin_when_event_is_full_is_not_allowed(
     admin_user,
@@ -615,6 +684,7 @@ def test_delete_as_member_when_sign_off_deadline_has_passed_and_on_wait(member):
     assert response.status_code == status.HTTP_200_OK
 
 
+# TODO
 @pytest.mark.django_db
 @pytest.mark.parametrize(
     "group_name", [AdminGroup.PROMO, AdminGroup.NOK,],
@@ -630,6 +700,7 @@ def test_delete_another_registration_as_member_in_nok_or_promo(
     assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
+# TODO
 @pytest.mark.django_db
 def test_delete_another_registration_as_admin(admin_user, member):
     """An admin user should be able to delete any registration."""
@@ -642,6 +713,7 @@ def test_delete_another_registration_as_admin(admin_user, member):
     assert response.status_code == status.HTTP_200_OK
 
 
+# TODO
 @pytest.mark.django_db
 def test_delete_another_registration_as_admin_after_sign_off_deadline(
     admin_user, member
@@ -657,6 +729,7 @@ def test_delete_another_registration_as_admin_after_sign_off_deadline(
     assert response.status_code == status.HTTP_200_OK
 
 
+# TODO
 @pytest.mark.django_db
 def test_delete_own_registration_as_admin_bumps_first_user_on_wait(admin_user):
     """

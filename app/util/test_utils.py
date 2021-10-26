@@ -28,7 +28,7 @@ def add_user_to_group_with_name(
     Membership.objects.get_or_create(
         group=group, user=user, membership_type=membership_type
     )
-    return user
+    return group
 
 
 def get_group_type_from_group_name(group_name):

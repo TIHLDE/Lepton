@@ -144,11 +144,9 @@ def test_update_as_board_or_subgroup_group_member(
     new_group = None
     if event_new_group:
         new_group = str(event_new_group)
-        print(new_group)
-        g = Group.objects.get_or_create(
+        Group.objects.get_or_create(
             type=get_group_type_from_group_name(event_new_group), name=new_group,
         )[0]
-        print(g)
 
     client = get_api_client(user=user, group_name=user_member_of_group)
     url = get_events_url_detail(event)
@@ -406,7 +404,9 @@ def test_delete_as_user(user, event):
         ("Non_admin_group", None, 403),
     ],
 )
-def test_delete_as_board_or_subgroup_group_member(user, user_member_of_group, event_current_group, expected_status_code):
+def test_delete_as_board_or_subgroup_group_member(
+    user, user_member_of_group, event_current_group, expected_status_code
+):
     """
     HS and Index members should be able to delete events no matter which group is selected.
     Other subgroup members can delete events where event.group is their group or None.
@@ -428,7 +428,13 @@ def test_delete_as_board_or_subgroup_group_member(user, user_member_of_group, ev
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
-    ("user_member_of_group", "membership_type", "group_type", "event_current_group", "expected_status_code"),
+    (
+        "user_member_of_group",
+        "membership_type",
+        "group_type",
+        "event_current_group",
+        "expected_status_code",
+    ),
     [
         # Leaders of committees and interest-groups can delete events if event.group is None
         ("Kont", MembershipType.LEADER, GroupType.COMMITTEE, None, 200),
@@ -444,16 +450,20 @@ def test_delete_as_board_or_subgroup_group_member(user, user_member_of_group, ev
         ("Py", MembershipType.MEMBER, GroupType.INTERESTGROUP, None, 403,),
     ],
 )
-def test_delete_as_committee_or_interest_group_member(user, user_member_of_group, membership_type, group_type, event_current_group, expected_status_code):
+def test_delete_as_committee_or_interest_group_member(
+    user,
+    user_member_of_group,
+    membership_type,
+    group_type,
+    event_current_group,
+    expected_status_code,
+):
     """
     Leaders of committees and interest groups should be able to
     delete events where event.group is their group or None.
     """
     group = (
-        Group.objects.get_or_create(
-            type=group_type,
-            name=event_current_group,
-        )[0]
+        Group.objects.get_or_create(type=group_type, name=event_current_group,)[0]
         if event_current_group
         else None
     )
@@ -486,17 +496,50 @@ def test_delete_as_committee_or_interest_group_member(user, user_member_of_group
         ("Not_admin", GroupType.OTHER, MembershipType.MEMBER, 0),
     ],
 )
-def test_retrieve_events_where_is_admin_only_includes_events_where_is_admin(user, member_of_group, group_type, membership_type, expected_events_amount):
+def test_retrieve_events_where_is_admin_only_includes_events_where_is_admin(
+    user, member_of_group, group_type, membership_type, expected_events_amount
+):
     """When retrieving events where is admin, only events where is admin should be returned"""
-    EventFactory(group=Group.objects.get_or_create(type=get_group_type_from_group_name(AdminGroup.HS), name=AdminGroup.HS)[0])
-    EventFactory(group=Group.objects.get_or_create(type=get_group_type_from_group_name(AdminGroup.INDEX), name=AdminGroup.INDEX)[0])
-    EventFactory(group=Group.objects.get_or_create(type=get_group_type_from_group_name(AdminGroup.NOK), name=AdminGroup.NOK)[0])
-    EventFactory(group=Group.objects.get_or_create(type=get_group_type_from_group_name(AdminGroup.NOK), name=AdminGroup.NOK)[0])
-    EventFactory(group=Group.objects.get_or_create(type=get_group_type_from_group_name(AdminGroup.SOSIALEN), name=AdminGroup.SOSIALEN)[0])
-    EventFactory(group=Group.objects.get_or_create(type=get_group_type_from_group_name(AdminGroup.PROMO), name=AdminGroup.PROMO)[0])
+    EventFactory(
+        group=Group.objects.get_or_create(
+            type=get_group_type_from_group_name(AdminGroup.HS), name=AdminGroup.HS
+        )[0]
+    )
+    EventFactory(
+        group=Group.objects.get_or_create(
+            type=get_group_type_from_group_name(AdminGroup.INDEX), name=AdminGroup.INDEX
+        )[0]
+    )
+    EventFactory(
+        group=Group.objects.get_or_create(
+            type=get_group_type_from_group_name(AdminGroup.NOK), name=AdminGroup.NOK
+        )[0]
+    )
+    EventFactory(
+        group=Group.objects.get_or_create(
+            type=get_group_type_from_group_name(AdminGroup.NOK), name=AdminGroup.NOK
+        )[0]
+    )
+    EventFactory(
+        group=Group.objects.get_or_create(
+            type=get_group_type_from_group_name(AdminGroup.SOSIALEN),
+            name=AdminGroup.SOSIALEN,
+        )[0]
+    )
+    EventFactory(
+        group=Group.objects.get_or_create(
+            type=get_group_type_from_group_name(AdminGroup.PROMO), name=AdminGroup.PROMO
+        )[0]
+    )
 
-    EventFactory(group=Group.objects.get_or_create(type=GroupType.COMMITTEE, name="KontKom")[0])
-    EventFactory(group=Group.objects.get_or_create(type=GroupType.INTERESTGROUP, name="Pythons")[0])
+    EventFactory(
+        group=Group.objects.get_or_create(type=GroupType.COMMITTEE, name="KontKom")[0]
+    )
+    EventFactory(
+        group=Group.objects.get_or_create(type=GroupType.INTERESTGROUP, name="Pythons")[
+            0
+        ]
+    )
 
     EventFactory(group=None)
 
