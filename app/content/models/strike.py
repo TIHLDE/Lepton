@@ -102,7 +102,7 @@ class Strike(BaseModel, BasePermissionModel):
 
     @property
     def active(self):
-        return self.expires_at.replace(tzinfo=utc) >= today().replace(tzinfo=utc)
+        return self.expires_at >= today()
 
     @property
     def expires_at(self):
