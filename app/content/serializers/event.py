@@ -37,6 +37,7 @@ class EventSerializer(serializers.ModelSerializer):
             "end_registration_at",
             "sign_off_deadline",
             "registration_priorities",
+            "only_allow_prioritized",
             "evaluation",
             "survey",
             "updated_at",
@@ -120,6 +121,7 @@ class EventCreateAndUpdateSerializer(BaseModelSerializer):
             "end_registration_at",
             "sign_off_deadline",
             "registration_priorities",
+            "only_allow_prioritized",
         )
 
     def create(self, validated_data):
