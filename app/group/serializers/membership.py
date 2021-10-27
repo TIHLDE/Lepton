@@ -1,5 +1,3 @@
-from rest_framework import serializers
-
 from app.common.serializers import BaseModelSerializer
 from app.content.serializers.user import (
     DefaultUserSerializer,
@@ -28,7 +26,7 @@ class MembershipSerializer(BaseModelSerializer):
         )
 
 
-class MembershipLeaderSerializer(serializers.ModelSerializer):
+class MembershipLeaderSerializer(BaseModelSerializer):
     user = UserListSerializer(read_only=True)
     group = DefaultGroupSerializer(read_only=True)
 
@@ -57,16 +55,15 @@ class UpdateMembershipSerializer(MembershipSerializer):
         )
 
 
-class MembershipHistorySerializer(serializers.ModelSerializer):
+class MembershipHistorySerializer(BaseModelSerializer):
     user = DefaultUserSerializer(read_only=True)
-    group = DefaultGroupSerializer(read_only=True)
 
     class Meta:
         model = MembershipHistory
-        read_only_fields = (
+        fields = (
             "user",
-            "group",
             "membership_type",
             "start_date",
             "end_date",
         )
+        read_only_fields = fields

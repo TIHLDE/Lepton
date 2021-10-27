@@ -1,7 +1,9 @@
 from app.content.exceptions import (
+    APIEventIsFullException,
     APIEventSignOffDeadlineHasPassed,
     APIHasStrikeException,
     APIUnansweredFormException,
+    EventIsFullError,
     EventSignOffDeadlineHasPassed,
     StrikeError,
     UnansweredFormError,
@@ -17,4 +19,5 @@ class APIRegistrationErrorsMixin(APIErrorsMixin):
             EventSignOffDeadlineHasPassed: APIEventSignOffDeadlineHasPassed,
             UnansweredFormError: APIUnansweredFormException,
             StrikeError: APIHasStrikeException,
+            EventIsFullError: APIEventIsFullException,
         }

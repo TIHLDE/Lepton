@@ -7,6 +7,7 @@ from django.db.models import Q
 from app.common.enums import AdminGroup, Groups, StrikeEnum
 from app.common.permissions import BasePermissionModel, check_has_access
 from app.content.exceptions import (
+    EventIsFullError,
     EventSignOffDeadlineHasPassed,
     StrikeError,
     UnansweredFormError,
@@ -29,7 +30,6 @@ class Registration(BaseModel, BasePermissionModel):
         AdminGroup.SOSIALEN,
         Groups.TIHLDE,
     ]
-    """ Model for user registration for an event """
 
     registration_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(
@@ -74,9 +74,7 @@ class Registration(BaseModel, BasePermissionModel):
         return check_has_access(self.has_access, request,)
 
     def has_object_retrieve_permission(self, request):
-        if self.user.user_id == request.id:
-            return True
-        return check_has_access(self.has_access, request,)
+        return self.has_object_destroy_permission(request)
 
     def __str__(self):
         return (
@@ -96,11 +94,12 @@ class Registration(BaseModel, BasePermissionModel):
         moved_registration = None
         if not self.is_on_wait:
             if self.event.is_past_sign_off_deadline:
-                if self.event.is_one_hour_before_event_start():
+                if self.event.is_two_hours_before_event_start():
                     raise EventSignOffDeadlineHasPassed(
-                        "Kan ikke melde av brukeren etter en time før arrangementstart"
+                        "Kan ikke melde av brukeren etter to timer før arrangementstart"
                     )
-                create_strike(str(StrikeEnum.PAST_DEADLINE), self.user, self.event)
+                if self.event.can_cause_strikes:
+                    create_strike(str(StrikeEnum.PAST_DEADLINE), self.user, self.event)
             moved_registration = self.move_from_waiting_list_to_queue()
 
         self.delete_submission_if_exists()
@@ -113,18 +112,20 @@ class Registration(BaseModel, BasePermissionModel):
         return super().delete(*args, **kwargs)
 
     def save(self, *args, **kwargs):
-        """ Determines whether the object is being created or updated and acts accordingly """
         if not self.registration_id:
             self.create()
         self.send_notification_and_mail()
 
         if self.event.is_full and not self.is_on_wait:
-            self.event.increment_limit()
+            raise EventIsFullError
+
         return super(Registration, self).save(*args, **kwargs)
 
     def create(self):
-        self._abort_for_unanswered_evaluations()
-        self.strike_handler()
+        if self.event.enforces_previous_strikes:
+            self._abort_for_unanswered_evaluations()
+            self.strike_handler()
+
         self.clean()
         self.is_on_wait = self.event.is_full
 

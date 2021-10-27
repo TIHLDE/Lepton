@@ -424,6 +424,56 @@ def test_update_another_registration_as_admin(admin_user, member):
 
 
 @pytest.mark.django_db
+def test_bump_another_registration_as_admin_when_event_is_full_is_not_allowed(
+    admin_user,
+):
+    """An admin user should not be able to move registration up from the waiting list when the event is full."""
+    event = EventFactory(limit=1)
+    RegistrationFactory(event=event)
+
+    assert event.is_full
+
+    registration_to_update = RegistrationFactory(event=event)
+
+    assert registration_to_update.is_on_wait
+
+    data = _get_registration_put_data(
+        user=admin_user, event=registration_to_update.event
+    )
+
+    data["is_on_wait"] = False
+
+    client = get_api_client(user=admin_user)
+    url = _get_registration_detail_url(registration_to_update)
+    response = client.put(url, data=data)
+
+    registration_to_update.refresh_from_db()
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert registration_to_update.is_on_wait
+
+
+@pytest.mark.django_db
+def test_new_registration_on_full_event_goes_to_wait(member):
+    """Tests if a new registation on a full event goes to waiting list"""
+    event = EventFactory(limit=1)
+    RegistrationFactory(event=event)
+
+    assert event.is_full
+
+    data = _get_registration_post_data(member, event)
+
+    client = get_api_client(user=member)
+    url = _get_registration_url(event=event)
+    response = client.post(url, data=data)
+
+    actual_registration = event.registrations.get(user=member)
+
+    assert response.status_code == status.HTTP_201_CREATED
+    assert actual_registration.is_on_wait
+
+
+@pytest.mark.django_db
 def test_update_when_registration_not_found(admin_user, member, event):
     """Should return a status code of status.HTTP_404_NOT_FOUND."""
     unsaved_registration = RegistrationFactory.build(user=member, event=event)
