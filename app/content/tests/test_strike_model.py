@@ -20,11 +20,32 @@ def test_active_or_not_strike_with_freeze_through_holidays(mock_today):
     :assert: weather or not strike is active on specified day\n
     '''
 
-    mock_today.return_value = datetime(2022, 1, 30, 1)
+    mock_today.return_value = datetime(2022, 1, 5)
     strike = StrikeFactory.build(created_at=datetime(2021, 12, 7))
 
+    print(strike.expired_date)
 
     assert not strike.active
+
+def test_strike_offset_is_added_when_created_after_new_year():
+    '''
+    Test that checks the duration of active days for 
+    a strike is a certain number of days when it is 
+    created between new year and the end of winter holiday
+    For a strike created 5th of january it should last 25 days
+    
+    :strike: Strike instance with modified creation date\n
+    :strike.created_at: date of when strike is created\n
+    :strike.expires_at: date of when strike is expired\n
+    :active_days: difference between expried and created date\n
+    :assert: whether or not number of active days of strike is equal to number of days\n
+    '''
+
+    strike = StrikeFactory.build(created_at=datetime(2022, 1, 5))
+
+    active_days = strike.expires_at - strike.created_at
+
+    assert active_days == timedelta(days=25)
 
 def test_active_days_of_a_strike_with_freeze_through_holidays():
     '''
