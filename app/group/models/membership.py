@@ -14,8 +14,12 @@ from app.util.utils import today
 class MembershipHistory(BaseModel):
     """Model for a Group Membership History"""
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    group = models.ForeignKey(Group, on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="membership_histories"
+    )
+    group = models.ForeignKey(
+        Group, on_delete=models.CASCADE, related_name="membership_histories"
+    )
     membership_type = EnumChoiceField(MembershipType, default=MembershipType.MEMBER)
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
@@ -43,7 +47,7 @@ class MembershipHistory(BaseModel):
 class Membership(BaseModel, BasePermissionModel):
     """Model for a Group Membership"""
 
-    write_access = [AdminGroup.HS, AdminGroup.INDEX]
+    write_access = AdminGroup.admin()
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="memberships")
     group = models.ForeignKey(
         Group, on_delete=models.CASCADE, related_name="memberships"

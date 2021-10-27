@@ -11,7 +11,7 @@ from app.util.models import BaseModel, OptionalImage
 class Group(OptionalImage, BaseModel, BasePermissionModel):
     """Model for Custom Groups"""
 
-    write_access = [AdminGroup.HS, AdminGroup.INDEX]
+    write_access = AdminGroup.admin()
     name = models.CharField(max_length=50)
     slug = models.SlugField(max_length=50, primary_key=True)
     description = models.TextField(max_length=1000, null=True, blank=True)

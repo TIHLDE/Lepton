@@ -3,7 +3,6 @@ from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.db import models
-from django.db.models import Q
 from django.db.models.aggregates import Sum
 
 from app.common.enums import AdminGroup
@@ -26,16 +25,13 @@ WINTER = Holiday((11, 29), (1, 9))
 HOLIDAYS = (SUMMER, WINTER)
 
 
-def get_active_strikes_query():
-    return Q(
-        created_at__lte=today(),
-        created_at__gte=today() - timedelta(days=STRIKE_DURATION_IN_DAYS),
-    )
-
-
 class StrikeQueryset(models.QuerySet):
-    def active(self):
-        return self.filter(get_active_strikes_query())
+    def active(self, *args, **kwargs):
+        active_filter = {
+            "created_at__gte": today() - timedelta(days=STRIKE_DURATION_IN_DAYS),
+            **kwargs,
+        }
+        return self.filter(*args, **active_filter)
 
     def sum_active(self):
         sum_active_strikes = (
@@ -83,24 +79,25 @@ class Strike(BaseModel, BasePermissionModel):
     class Meta:
         verbose_name = "Strike"
         verbose_name_plural = "Strikes"
+        ordering = ("-created_at",)
 
     def __str__(self):
         return f"{self.user.first_name} {self.user.last_name} - {self.description} - {self.strike_size}"
 
     def save(self, *args, **kwargs):
-        # TODO: Kjør når prikksystem er lansert "offisielt"
-        # if self.created_at is None:
-        #     from app.util.mail_creator import MailCreator
-        #     from app.util.notifier import Notify
+        if self.created_at is None:
+            from app.util.mail_creator import MailCreator
+            from app.util.notifier import Notify
 
-        #     Notify([self.user], "Du har fått en prikk").send_email(
-        #         MailCreator("Du har fått en prikk")
-        #         .add_paragraph(f"Hei {self.user.first_name}!")
-        #         .add_paragraph(self.description)
-        #         .generate_string()
-        #     ).send_notification(
-        #         description=self.description,
-        #     )
+            strike_info = "Prikken varer i 20 dager. Ta kontakt med arrangøren om du er uenig. Konsekvenser kan sees i arrangementsreglene. Du kan finne dine aktive prikker og mer info om dem i profilen."
+
+            Notify([self.user], "Du har fått en prikk").send_email(
+                MailCreator("Du har fått en prikk")
+                .add_paragraph(f"Hei {self.user.first_name}!")
+                .add_paragraph(self.description)
+                .add_paragraph(strike_info)
+                .generate_string()
+            ).send_notification(description=f"{self.description}\n{strike_info}",)
         super(Strike, self).save(*args, **kwargs)
 
     @property
@@ -129,6 +126,10 @@ class Strike(BaseModel, BasePermissionModel):
                 break
 
         return expired_date
+
+    @classmethod
+    def has_destroy_permission(cls, request):
+        return check_has_access(AdminGroup.admin(), request)
 
     def has_object_read_permission(self, request):
         return self.user.user_id == request.id or check_has_access(

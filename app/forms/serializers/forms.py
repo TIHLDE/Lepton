@@ -1,9 +1,9 @@
 from django.db.transaction import atomic
 from rest_framework import serializers
-from rest_framework.fields import SerializerMethodField
 
 from rest_polymorphic.serializers import PolymorphicSerializer
 
+from app.common.mixins import OrderedModelSerializerMixin
 from app.common.serializers import BaseModelSerializer
 from app.content.serializers import EventListSerializer
 from app.forms.models import EventForm, Field, Form, Option
@@ -11,18 +11,21 @@ from app.forms.models import EventForm, Field, Form, Option
 
 class OptionSerializer(BaseModelSerializer):
     id = serializers.UUIDField(read_only=False, required=False)
+    order = serializers.IntegerField(read_only=False, required=False)
 
     class Meta:
         model = Option
         fields = (
             "id",
             "title",
+            "order",
         )
 
 
 class FieldSerializer(BaseModelSerializer):
     options = OptionSerializer(many=True, required=False, allow_null=True)
     id = serializers.UUIDField(read_only=False, required=False)
+    order = serializers.IntegerField(read_only=False, required=False)
 
     class Meta:
         model = Field
@@ -32,12 +35,12 @@ class FieldSerializer(BaseModelSerializer):
             "options",
             "type",
             "required",
+            "order",
         )
 
 
 class FormSerializer(BaseModelSerializer):
     fields = FieldSerializer(many=True, required=False, allow_null=True)
-    viewer_has_answered = SerializerMethodField()
 
     class Meta:
         model = Form
@@ -45,14 +48,8 @@ class FormSerializer(BaseModelSerializer):
             "id",
             "title",
             "fields",
-            "viewer_has_answered",
+            "template",
         )
-
-    def get_viewer_has_answered(self, obj):
-        request = self.context.get("request", None)
-        if request and request.user:
-            return obj.submissions.filter(user=request.user).exists()
-        return False
 
     @atomic
     def create(self, validated_data):
@@ -63,27 +60,6 @@ class FormSerializer(BaseModelSerializer):
             form.add_fields(fields)
 
         return form
-
-    @staticmethod
-    def update_field_options(field, options):
-        """Creates new options from data without `id` attached, updates options with `id` attached and removes unreferenced options."""
-        updated_ids = list()
-        created = list()
-
-        for option in options:
-            id = option.get("id")
-            if id:
-                Option.objects.filter(id=id).update(**option)
-                updated_ids.append(id)
-            else:
-                created.append(option)
-
-        options_to_delete = field.options.exclude(id__in=updated_ids)
-        options_to_delete.delete()
-
-        Option.objects.bulk_create(
-            [Option(field=field, **option) for option in created]
-        )
 
     @atomic
     def update(self, instance, validated_data):
@@ -100,9 +76,12 @@ class FormSerializer(BaseModelSerializer):
                 field_query = Field.objects.filter(id=field_id)
                 field_query.update(**field_data)
                 field_instance = field_query[0]
+                OrderedModelSerializerMixin.do_update_order(field_instance, field_data)
             else:
                 field_instance = Field.objects.create(form=instance, **field_data)
                 field_id = field_instance.id
+
+            OrderedModelSerializerMixin.do_update_order(field_instance, field_data)
 
             field_ids_to_keep.append(field_id)
 
@@ -113,11 +92,49 @@ class FormSerializer(BaseModelSerializer):
 
         return instance
 
+    @staticmethod
+    def update_field_options(field, options):
+        """Creates new options from data without `id` attached, updates options with `id` attached and removes unreferenced options."""
+        updated_ids = list()
+        created = list()
 
-class EventFormSerializer(FormSerializer):
+        for option in options:
+            option_id = option.get("id")
+            if option_id:
+                options_query = Option.objects.filter(id=option_id)
+                options_query.update(**option)
+                option_instance = options_query.first()
+                updated_ids.append(option_id)
+                OrderedModelSerializerMixin.do_update_order(option_instance, option)
+            else:
+                created.append(option)
+
+        options_to_delete = field.options.exclude(id__in=updated_ids)
+        options_to_delete.delete()
+
+        Option.objects.bulk_create(
+            [Option(field=field, **option) for option in created]
+        )
+
+
+class AnswerableFormSerializer(FormSerializer):
+    viewer_has_answered = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Form
+        fields = FormSerializer.Meta.fields + ("viewer_has_answered",)
+
+    def get_viewer_has_answered(self, obj):
+        request = self.context.get("request", None)
+        if request and request.user:
+            return obj.submissions.filter(user=request.user).exists()
+        return False
+
+
+class EventFormSerializer(AnswerableFormSerializer):
     class Meta:
         model = EventForm
-        fields = FormSerializer.Meta.fields + ("event", "type",)
+        fields = AnswerableFormSerializer.Meta.fields + ("event", "type",)
 
     def to_representation(self, instance):
         self.fields["event"] = EventListSerializer(read_only=True)
@@ -143,10 +160,10 @@ class FormPolymorphicSerializer(PolymorphicSerializer, serializers.ModelSerializ
     resource_type_field_name = "resource_type"
 
     model_serializer_mapping = {
-        Form: FormSerializer,
+        Form: AnswerableFormSerializer,
         EventForm: EventFormSerializer,
     }
 
     class Meta:
         model = Form
-        fields = ("resource_type",) + FormSerializer.Meta.fields
+        fields = ("resource_type",) + AnswerableFormSerializer.Meta.fields
