@@ -146,7 +146,7 @@ class Registration(BaseModel, BasePermissionModel):
                 hours=hours_offset
             ):
                 raise StrikeError(
-                    f"Kan ikke melde deg på før etter {hours_offset} timer etter påmeldingsstart"
+                    f"Du har for mange prikker og kan derfor ikke melde deg på arrangementet før {hours_offset} timer etter påmeldingsstart."
                 )
 
     def check_answered_submission(self):

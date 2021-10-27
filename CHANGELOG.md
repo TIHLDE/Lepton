@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+- ✨ **Prikk**.  Nedtellingstiden til prikker settes på vent med ferier.
 - ✨ **Rekkefølge på spørsmål** er nå lagt til.
 
 ## Versjon 1.1.2 (19.10.2021)
