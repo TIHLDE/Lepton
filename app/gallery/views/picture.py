@@ -1,11 +1,9 @@
-from rest_framework import viewsets, status
+from rest_framework import status, viewsets
 from rest_framework.response import Response
 
 from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission
-
 from app.gallery.models.picture import Picture
-from app.gallery.models.album import Album
 from app.gallery.serializers.picture import PictureSerializer
 
 
@@ -19,10 +17,10 @@ class PictureViewSet(viewsets.ModelViewSet):
         album_id = self.kwargs.get("slug", None)
         return Picture.objects.filter(album__slug=album_id)
 
-    def create(self, request, *args, **kwargs):    
+    def create(self, request, *args, **kwargs):
 
         album_id = self.kwargs.get("slug", None)
-       
+
         serializer = PictureSerializer(
             data=request.data, partial=True, many=True, context={"slug": album_id}
         )
@@ -33,6 +31,3 @@ class PictureViewSet(viewsets.ModelViewSet):
             return Response(
                 {"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST
             )
-
-
-

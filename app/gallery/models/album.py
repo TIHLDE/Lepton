@@ -15,7 +15,6 @@ class Album(BaseModel, BasePermissionModel, OptionalImage):
     slug = models.SlugField(max_length=50, primary_key=True)
     write_access = AdminGroup.all()
 
-
     def __str__(self):
         return self.title
 

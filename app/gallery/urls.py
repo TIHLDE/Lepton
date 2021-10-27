@@ -7,9 +7,7 @@ from app.gallery.views.picture import PictureViewSet
 
 router = routers.DefaultRouter()
 router.register("", AlbumViewSet)
-router.register(
-    r"(?P<slug>[^.]+)/pictures", PictureViewSet, basename="pictures"
-)
+router.register(r"(?P<slug>[^.]+)/pictures", PictureViewSet, basename="pictures")
 
 urlpatterns = [
     url(r"", include(router.urls)),
