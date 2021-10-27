@@ -35,7 +35,6 @@ def _get_form_post_data(form):
                 "options": [{"title": "string", "order": 0}],
                 "type": "SINGLE_SELECT",
                 "required": True,
-                "order": 0,
             }
         ],
     }

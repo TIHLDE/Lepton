@@ -9,7 +9,7 @@ class ActionMixin:
 
 
 class OrderedModelSerializerMixin:
-    order = serializers.IntegerField(read_only=False, required=True)
+    order = serializers.IntegerField(read_only=False, required=False)
 
     def update(self, instance, validated_data):
         self.do_update_order(instance, validated_data)

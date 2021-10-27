@@ -11,7 +11,7 @@ from app.forms.models import EventForm, Field, Form, Option
 
 class OptionSerializer(BaseModelSerializer):
     id = serializers.UUIDField(read_only=False, required=False)
-    order = serializers.IntegerField(read_only=False, required=True)
+    order = serializers.IntegerField(read_only=False, required=False)
 
     class Meta:
         model = Option
@@ -25,7 +25,7 @@ class OptionSerializer(BaseModelSerializer):
 class FieldSerializer(BaseModelSerializer):
     options = OptionSerializer(many=True, required=False, allow_null=True)
     id = serializers.UUIDField(read_only=False, required=False)
-    order = serializers.IntegerField(read_only=False, required=True)
+    order = serializers.IntegerField(read_only=False, required=False)
 
     class Meta:
         model = Field
