@@ -12,7 +12,7 @@ from app.util.models import BaseModel, OptionalImage
 
 class Page(MPTTModel, OptionalImage, BaseModel, BasePermissionModel):
 
-    write_access = [AdminGroup.HS, AdminGroup.INDEX]
+    write_access = AdminGroup.admin()
 
     parent = TreeForeignKey(
         "self", null=True, blank=True, on_delete=models.CASCADE, related_name="children"

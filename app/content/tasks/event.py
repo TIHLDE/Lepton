@@ -21,7 +21,9 @@ def event_sign_off_deadline_schedular(*args, **kwargs):
         users_not_on_wait = User.objects.filter(
             registrations__event=event, registrations__is_on_wait=False
         )
-        description_not_on_wait = f"Dette er en påminnelse om at avmeldingsfristen for {event.title} er imorgen. Dersom du ikke kan møte ber vi deg om å melde deg av arrangementet slik at andre kan få plassen din. Dersom du ikke melder deg av innen fristen vil du få en prikk for å ikke møte opp."
+        description_not_on_wait = f"Dette er en påminnelse om at avmeldingsfristen for {event.title} er imorgen. Dersom du ikke kan møte ber vi deg om å melde deg av arrangementet slik at andre kan få plassen din."
+        if event.can_cause_strikes:
+            description_not_on_wait += " Du kan melde deg av etter avmeldingsfristen og helt frem til 2 timer før arrangementsstart, men du vil da få 1 prikk. Dersom du ikke møter opp vil du få 2 prikker."
         Notify(
             users_not_on_wait, f"Påminnelse om avmeldingsfrist for {event.title}"
         ).send_email(
@@ -61,10 +63,12 @@ def event_end_schedular(*args, **kwargs):
 
     try:
         event = Event.objects.get(end_date_schedular_id=event_end_schedular.request.id)
-        for registration in event.registrations.filter(
-            has_attended=False, is_on_wait=False
-        ):
-            create_strike("NO_SHOW", registration.user, registration.event)
+
+        if event.can_cause_strikes:
+            for registration in event.registrations.filter(
+                has_attended=False, is_on_wait=False
+            ):
+                create_strike("NO_SHOW", registration.user, registration.event)
 
         if event.evaluation:
             users = User.objects.filter(
