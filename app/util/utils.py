@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 from functools import wraps
 
 from pytz import timezone as pytz_timezone
@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 
 def yesterday():
-    return datetime.now(tz=timezone.utc) - timedelta(days=1)
+    return datetime.now(tz=pytz_timezone("Europe/Oslo")) - timedelta(days=1)
 
 
 def today():
