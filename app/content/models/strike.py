@@ -3,7 +3,6 @@ from datetime import timedelta
 
 from django.conf import settings
 from django.db import models
-from django.db.models import Q
 from django.db.models.aggregates import Sum
 
 from app.common.enums import AdminGroup
@@ -14,17 +13,13 @@ from app.util.utils import today
 STRIKE_DURATION_IN_DAYS = 20
 
 
-def get_active_strikes_query():
-    return Q(
-        # TODO: Remove the "+ timedelta(days=1)" after standarizing timezones
-        created_at__lte=today() + timedelta(days=1),
-        created_at__gte=today() - timedelta(days=STRIKE_DURATION_IN_DAYS),
-    )
-
-
 class StrikeQueryset(models.QuerySet):
     def active(self, *args, **kwargs):
-        return self.filter(get_active_strikes_query(), *args, **kwargs)
+        active_filter = {
+            "created_at__gte": today() - timedelta(days=STRIKE_DURATION_IN_DAYS),
+            **kwargs,
+        }
+        return self.filter(*args, **active_filter)
 
     def sum_active(self):
         sum_active_strikes = (
@@ -72,6 +67,7 @@ class Strike(BaseModel, BasePermissionModel):
     class Meta:
         verbose_name = "Strike"
         verbose_name_plural = "Strikes"
+        ordering = ("-created_at",)
 
     def __str__(self):
         return f"{self.user.first_name} {self.user.last_name} - {self.description} - {self.strike_size}"
