@@ -34,6 +34,57 @@ def _get_registration_detail_url(registration):
     return f"{_get_registration_url(registration.event)}{registration.user.user_id}/"
 
 
+permission_params = pytest.mark.parametrize(
+    (
+        "group_name",
+        "group_type",
+        "membership_type",
+        "expected_status_code",
+        "event_group",
+    ),
+    (
+        [AdminGroup.HS, GroupType.BOARD, MembershipType.MEMBER, 200, "same"],
+        [AdminGroup.HS, GroupType.BOARD, MembershipType.MEMBER, 200, "other"],
+        [AdminGroup.HS, GroupType.BOARD, MembershipType.MEMBER, 200, None],
+        [AdminGroup.INDEX, GroupType.SUBGROUP, MembershipType.MEMBER, 200, "same"],
+        [AdminGroup.INDEX, GroupType.SUBGROUP, MembershipType.MEMBER, 200, "other"],
+        [AdminGroup.INDEX, GroupType.SUBGROUP, MembershipType.MEMBER, 200, None],
+        [AdminGroup.NOK, GroupType.SUBGROUP, MembershipType.MEMBER, 200, "same"],
+        [AdminGroup.NOK, GroupType.SUBGROUP, MembershipType.MEMBER, 403, "other"],
+        [AdminGroup.NOK, GroupType.SUBGROUP, MembershipType.MEMBER, 200, None],
+        ["KontKom", GroupType.COMMITTEE, MembershipType.LEADER, 200, "same"],
+        ["Pythons", GroupType.INTERESTGROUP, MembershipType.LEADER, 200, "same"],
+        ["KontKom", GroupType.COMMITTEE, MembershipType.LEADER, 200, None],
+        ["Pythons", GroupType.INTERESTGROUP, MembershipType.LEADER, 200, None],
+        ["KontKom", GroupType.COMMITTEE, MembershipType.LEADER, 403, "other"],
+        ["Pythons", GroupType.INTERESTGROUP, MembershipType.LEADER, 403, "other"],
+        ["KontKom", GroupType.COMMITTEE, MembershipType.MEMBER, 403, "same"],
+        ["Pythons", GroupType.INTERESTGROUP, MembershipType.MEMBER, 403, "same"],
+    ),
+)
+
+
+@pytest.fixture
+@permission_params
+def permission_test_util(
+    registration,
+    member,
+    group_name,
+    group_type,
+    membership_type,
+    expected_status_code,
+    event_group,
+):
+    group = add_user_to_group_with_name(member, group_name, group_type, membership_type)
+    if event_group == "same":
+        event_group = group
+    elif event_group == "other":
+        event_group = GroupFactory()
+    event = EventFactory(group=event_group)
+    registration = RegistrationFactory(event=event)
+    return member, registration, event_group, expected_status_code
+
+
 def _get_registration_post_data(user, event):
     return {
         "user_id": user.user_id,
@@ -70,55 +121,14 @@ def test_list_as_member(member, registration):
 
 
 @pytest.mark.django_db
-@pytest.mark.parametrize(
-    (
-        "group_name",
-        "group_type",
-        "membership_type",
-        "expected_status_code",
-        "event_group",
-    ),
-    (
-        [AdminGroup.HS, GroupType.BOARD, MembershipType.MEMBER, 200, "same"],
-        [AdminGroup.HS, GroupType.BOARD, MembershipType.MEMBER, 200, "other"],
-        [AdminGroup.HS, GroupType.BOARD, MembershipType.MEMBER, 200, None],
-        [AdminGroup.INDEX, GroupType.SUBGROUP, MembershipType.MEMBER, 200, "same"],
-        [AdminGroup.INDEX, GroupType.SUBGROUP, MembershipType.MEMBER, 200, "other"],
-        [AdminGroup.INDEX, GroupType.SUBGROUP, MembershipType.MEMBER, 200, None],
-        [AdminGroup.NOK, GroupType.SUBGROUP, MembershipType.MEMBER, 200, "same"],
-        [AdminGroup.NOK, GroupType.SUBGROUP, MembershipType.MEMBER, 403, "other"],
-        [AdminGroup.NOK, GroupType.SUBGROUP, MembershipType.MEMBER, 200, None],
-        ["KontKom", GroupType.COMMITTEE, MembershipType.LEADER, 200, "same"],
-        ["Pythons", GroupType.INTERESTGROUP, MembershipType.LEADER, 200, "same"],
-        ["KontKom", GroupType.COMMITTEE, MembershipType.LEADER, 200, None],
-        ["Pythons", GroupType.INTERESTGROUP, MembershipType.LEADER, 200, None],
-        ["KontKom", GroupType.COMMITTEE, MembershipType.LEADER, 403, "other"],
-        ["Pythons", GroupType.INTERESTGROUP, MembershipType.LEADER, 403, "other"],
-        ["KontKom", GroupType.COMMITTEE, MembershipType.MEMBER, 403, "same"],
-        ["Pythons", GroupType.INTERESTGROUP, MembershipType.MEMBER, 403, "same"],
-    ),
-)
-def test_list_as_member_in_group(
-    registration,
-    member,
-    group_name,
-    group_type,
-    membership_type,
-    expected_status_code,
-    event_group,
-):
+@permission_params
+def test_list_as_member_in_group(permission_test_util):
     """
     A member of HS or Index should be able to list all registrations.
     A member of subgroup or leader of committee and interest groups should be able to
     list all registrations for an event that has event.group None or equal the same group.
     """
-    group = add_user_to_group_with_name(member, group_name, group_type, membership_type)
-    if event_group == "same":
-        event_group = group
-    elif event_group == "other":
-        event_group = GroupFactory()
-    event = EventFactory(group=event_group)
-    registration = RegistrationFactory(event=event)
+    member, registration, event_group, expected_status_code = permission_test_util
     client = get_api_client(user=member)
     url = _get_registration_url(registration.event)
     response = client.get(url)
@@ -163,55 +173,14 @@ def test_retrieve_another_registration_as_member(member, registration):
 
 
 @pytest.mark.django_db
-@pytest.mark.parametrize(
-    (
-        "group_name",
-        "group_type",
-        "membership_type",
-        "expected_status_code",
-        "event_group",
-    ),
-    (
-        [AdminGroup.HS, GroupType.BOARD, MembershipType.MEMBER, 200, "same"],
-        [AdminGroup.HS, GroupType.BOARD, MembershipType.MEMBER, 200, "other"],
-        [AdminGroup.HS, GroupType.BOARD, MembershipType.MEMBER, 200, None],
-        [AdminGroup.INDEX, GroupType.SUBGROUP, MembershipType.MEMBER, 200, "same"],
-        [AdminGroup.INDEX, GroupType.SUBGROUP, MembershipType.MEMBER, 200, "other"],
-        [AdminGroup.INDEX, GroupType.SUBGROUP, MembershipType.MEMBER, 200, None],
-        [AdminGroup.NOK, GroupType.SUBGROUP, MembershipType.MEMBER, 200, "same"],
-        [AdminGroup.NOK, GroupType.SUBGROUP, MembershipType.MEMBER, 403, "other"],
-        [AdminGroup.NOK, GroupType.SUBGROUP, MembershipType.MEMBER, 200, None],
-        ["KontKom", GroupType.COMMITTEE, MembershipType.LEADER, 200, "same"],
-        ["Pythons", GroupType.INTERESTGROUP, MembershipType.LEADER, 200, "same"],
-        ["KontKom", GroupType.COMMITTEE, MembershipType.LEADER, 200, None],
-        ["Pythons", GroupType.INTERESTGROUP, MembershipType.LEADER, 200, None],
-        ["KontKom", GroupType.COMMITTEE, MembershipType.LEADER, 403, "other"],
-        ["Pythons", GroupType.INTERESTGROUP, MembershipType.LEADER, 403, "other"],
-        ["KontKom", GroupType.COMMITTEE, MembershipType.MEMBER, 403, "same"],
-        ["Pythons", GroupType.INTERESTGROUP, MembershipType.MEMBER, 403, "same"],
-    ),
-)
-def test_retrieve_as_member_in_group(
-    registration,
-    member,
-    group_name,
-    group_type,
-    membership_type,
-    expected_status_code,
-    event_group,
-):
+@permission_params
+def test_retrieve_as_member_in_group(permission_test_util):
     """
     A member of HS or Index should be able to retrieve any registration.
     A member of subgroup or leader of committee and interest groups should be able to
     retrieve any registration for an event that has event.group None or equal the same group.
     """
-    group = add_user_to_group_with_name(member, group_name, group_type, membership_type)
-    if event_group == "same":
-        event_group = group
-    elif event_group == "other":
-        event_group = GroupFactory()
-    event = EventFactory(group=event_group)
-    registration = RegistrationFactory(event=event)
+    member, registration, event_group, expected_status_code = permission_test_util
     client = get_api_client(user=member)
     url = _get_registration_detail_url(registration)
     response = client.get(url)
@@ -467,27 +436,28 @@ def test_update_registration_updated_fields(admin_user):
     assert updated_is_on_wait == registration_to_update.is_on_wait
 
 
-# TODO
 @pytest.mark.django_db
-def test_update_another_registration_as_admin(admin_user, member):
+@permission_params
+def test_update_another_registration_as_admin(permission_test_util):
     """An admin user should be able to update any registration."""
-    registration_to_update = RegistrationFactory(user=member)
-    data = _get_registration_put_data(
-        user=admin_user, event=registration_to_update.event
-    )
+    (
+        member,
+        registration_to_update,
+        event_group,
+        expected_status_code,
+    ) = permission_test_util
+    data = _get_registration_put_data(user=member, event=registration_to_update.event)
 
     is_on_wait_negated = not registration_to_update.is_on_wait
     data["is_on_wait"] = is_on_wait_negated
 
-    client = get_api_client(user=admin_user)
+    client = get_api_client(user=member)
     url = _get_registration_detail_url(registration_to_update)
     response = client.put(url, data=data)
 
-    actual_user_id = response.json().get("user_info").get("user_id")
     updated_is_on_wait = response.json().get("is_on_wait")
 
-    assert response.status_code == status.HTTP_200_OK
-    assert actual_user_id == member.user_id
+    assert response.status_code == expected_status_code
     assert not updated_is_on_wait == registration_to_update.is_on_wait
 
 
