@@ -13,7 +13,7 @@
 ---
 
 ## Neste versjon
-
+- ✨ **Rekkefølge på spørsmål** er nå lagt til.
 
 ## Versjon 1.1.2 (19.10.2021)
 - ⚡ **Arrangement** blir nå ikke overbooket når en person blir flyttet opp fra ventelisten.
