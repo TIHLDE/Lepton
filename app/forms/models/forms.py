@@ -3,6 +3,7 @@ import uuid
 from django.db import models
 
 from enumchoicefield import EnumChoiceField
+from ordered_model.models import OrderedModel
 from polymorphic.models import PolymorphicModel
 
 from app.common.enums import AdminGroup
@@ -17,7 +18,7 @@ from app.forms.enums import EventFormType, FormFieldType
 from app.util.models import BaseModel
 
 
-class Form(PolymorphicModel):
+class Form(PolymorphicModel, BasePermissionModel):
     write_access = [
         AdminGroup.HS,
         AdminGroup.NOK,
@@ -27,6 +28,9 @@ class Form(PolymorphicModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=200)
     template = models.BooleanField(default=False)
+
+    # TODO: https://github.com/TIHLDE/Lepton/issues/286
+    viewer_has_answered = None
 
     class Meta:
         verbose_name = "Form"
@@ -127,13 +131,14 @@ class EventForm(Form):
         return True
 
 
-class Field(models.Model):
+class Field(OrderedModel):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=200)
     form = models.ForeignKey(Form, on_delete=models.CASCADE, related_name="fields")
     type = EnumChoiceField(FormFieldType, default=FormFieldType.TEXT_ANSWER)
     required = models.BooleanField(default=False)
+    order_with_respect_to = "form"
 
     def __str__(self):
         return self.title
@@ -142,18 +147,22 @@ class Field(models.Model):
         for option in options:
             Option.objects.create(field=self, **option)
 
+    class Meta(OrderedModel.Meta):
+        pass
 
-class Option(models.Model):
+
+class Option(OrderedModel):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=200, default="")
     field = models.ForeignKey(Field, on_delete=models.CASCADE, related_name="options")
-
-    class Meta:
-        ordering = ["title", "id"]
+    order_with_respect_to = "field"
 
     def __str__(self):
         return self.title
+
+    class Meta(OrderedModel.Meta):
+        pass
 
 
 class Submission(BaseModel, BasePermissionModel):
