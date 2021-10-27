@@ -6,7 +6,11 @@ from enumchoicefield import EnumChoiceField
 from polymorphic.models import PolymorphicModel
 
 from app.common.enums import AdminGroup
-from app.common.permissions import BasePermissionModel, check_has_access, set_user_id
+from app.common.permissions import (
+    BasePermissionModel,
+    check_has_access,
+    set_user_id,
+)
 from app.content.models.event import Event
 from app.content.models.user import User
 from app.forms.enums import EventFormType, FormFieldType
@@ -77,7 +81,7 @@ class Form(PolymorphicModel):
 
     def has_object_write_permission(self, request):
         return check_has_access(self.write_access, request)
-    
+
     def has_object_read_permission(self, request):
         if not request.user:
             return False
@@ -116,9 +120,11 @@ class EventForm(Form):
         return self.has_event_permission(request)
 
     def has_object_read_permission(self, request):
-          if self.type == EventFormType.EVALUATION:
-              return self.has_attended_event(request.user) or self.has_event_permission(request)
-          return True
+        if self.type == EventFormType.EVALUATION:
+            return self.has_attended_event(request.user) or self.has_event_permission(
+                request
+            )
+        return True
 
 
 class Field(models.Model):
