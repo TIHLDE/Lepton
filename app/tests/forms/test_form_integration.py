@@ -166,10 +166,10 @@ def test_list_forms_as_member_is_not_permitted(member):
         (AdminGroup.INDEX, status.HTTP_200_OK),
         (AdminGroup.NOK, status.HTTP_200_OK),
         (AdminGroup.SOSIALEN, status.HTTP_200_OK),
-        (AdminGroup.PROMO, status.HTTP_403_FORBIDDEN),
+        (AdminGroup.PROMO, status.HTTP_200_OK),
     ],
 )
-def test_list_forms_as_member_of_nok_hs_or_index(
+def test_list_forms_as_member_of_board_or_sub_group(
     member, group_name, expected_status_code
 ):
     """A user in NOK, HS or Index should be able to list forms."""
