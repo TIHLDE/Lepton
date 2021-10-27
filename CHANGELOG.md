@@ -13,7 +13,9 @@
 ---
 
 ## Neste versjon
-
+- ✨ **Digitalt fotalbum**. La til funksjonalitet for å legge til et fotoalbum.
+- ✨ **Prikk**.  Nedtellingstiden til prikker settes på vent med ferier.
+- ✨ **Rekkefølge på spørsmål** er nå lagt til.
 
 ## Versjon 1.1.2 (19.10.2021)
 - ⚡ **Arrangement** blir nå ikke overbooket når en person blir flyttet opp fra ventelisten.

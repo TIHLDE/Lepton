@@ -18,6 +18,8 @@ flower == 1.0.0
 Django~=3.2.8
 django-enumchoicefield
 django-filter
+django-ordered-model~=3.4
+
 # Django REST Framework
 django-rest-framework
 django-cors-headers
