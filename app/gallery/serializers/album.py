@@ -8,7 +8,6 @@ class AlbumSerializer(BaseModelSerializer):
 
     event = EventListSerializer(read_only=True)
 
-
     class Meta:
         model = Album
         fields = [
