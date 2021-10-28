@@ -67,7 +67,6 @@ permission_params = pytest.mark.parametrize(
 @pytest.fixture
 @permission_params
 def permission_test_util(
-    registration,
     member,
     group_name,
     group_type,

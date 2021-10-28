@@ -1,0 +1,190 @@
+from rest_framework import status
+
+import pytest
+
+from app.common.enums import (
+    AdminGroup,
+    GroupType,
+    MembershipType,
+)
+from app.content.factories import EventFactory, RegistrationFactory
+from app.content.serializers import EventListSerializer
+from app.forms.enums import EventFormType
+from app.forms.models.forms import Field
+from app.forms.tests.form_factories import (
+    EventFormFactory,
+    FieldFactory,
+    FormFactory,
+)
+from app.group.factories import GroupFactory
+from app.util.test_utils import add_user_to_group_with_name, get_api_client
+
+pytestmark = pytest.mark.django_db
+
+permission_params = pytest.mark.parametrize(
+    (
+        "group_name",
+        "group_type",
+        "membership_type",
+        "expected_create_status_code",
+        "expected_update_delete_status_code",
+        "event_group",
+    ),
+    (
+        [AdminGroup.HS, GroupType.BOARD, MembershipType.MEMBER, 201, 200, "same"],
+        [AdminGroup.HS, GroupType.BOARD, MembershipType.MEMBER, 201, 200, "other"],
+        [AdminGroup.HS, GroupType.BOARD, MembershipType.MEMBER,  201,200, None],
+        [AdminGroup.INDEX, GroupType.SUBGROUP, MembershipType.MEMBER, 201, 200, "same"],
+        [AdminGroup.INDEX, GroupType.SUBGROUP, MembershipType.MEMBER, 201, 200, "other"],
+        [AdminGroup.INDEX, GroupType.SUBGROUP, MembershipType.MEMBER, 201, 200, None],
+        [AdminGroup.NOK, GroupType.SUBGROUP, MembershipType.MEMBER, 201, 200, "same"],
+        [AdminGroup.NOK, GroupType.SUBGROUP, MembershipType.MEMBER, 403, 403, "other"],
+        [AdminGroup.NOK, GroupType.SUBGROUP, MembershipType.MEMBER, 201, 200, None],
+        ["KontKom", GroupType.COMMITTEE, MembershipType.LEADER, 201, 200, "same"],
+        ["Pythons", GroupType.INTERESTGROUP, MembershipType.LEADER, 201, 200, "same"],
+        ["KontKom", GroupType.COMMITTEE, MembershipType.LEADER, 201, 200, None],
+        ["Pythons", GroupType.INTERESTGROUP, MembershipType.LEADER, 201, 200, None],
+        ["KontKom", GroupType.COMMITTEE, MembershipType.LEADER, 403, 403, "other"],
+        ["Pythons", GroupType.INTERESTGROUP, MembershipType.LEADER, 403, 403, "other"],
+        ["KontKom", GroupType.COMMITTEE, MembershipType.MEMBER, 403, 403, "same"],
+        ["Pythons", GroupType.INTERESTGROUP, MembershipType.MEMBER, 403, 403, "same"],
+    ),
+)
+
+
+@pytest.fixture
+@permission_params
+def permission_test_util(
+    member,
+    group_name,
+    group_type,
+    membership_type,
+    expected_create_status_code,
+    expected_update_delete_status_code,
+    event_group,
+):
+    group = add_user_to_group_with_name(member, group_name, group_type, membership_type)
+    if event_group == "same":
+        event_group = group
+    elif event_group == "other":
+        event_group = GroupFactory()
+    event = EventFactory(group=event_group)
+    form = EventFormFactory(event=event)
+    return member, form, event_group, expected_create_status_code, expected_update_delete_status_code
+
+
+def _get_forms_url():
+    return "/api/v1/forms/"
+
+
+def _get_form_detail_url(form):
+    return f"{_get_forms_url()}{form.id}/"
+
+
+def _get_event_form_post_data(form, event):
+    return {
+        "resource_type": "EventForm",
+        "title": form.title,
+        "event": event.pk,
+        "fields": [],
+    }
+
+
+def test_list_forms_data(admin_user):
+    """Should return the correct fields about the forms."""
+    form = EventFormFactory()
+    field = form.fields.first()
+    option = field.options.first()
+
+    client = get_api_client(user=admin_user)
+    url = _get_forms_url() + "?all"
+    response = client.get(url)
+    response = response.json()
+
+    assert response[0] == {
+        "id": str(form.id),
+        "resource_type": "EventForm",
+        "title": form.title,
+        "event": EventListSerializer(form.event).data,
+        "type": form.type.name,
+        "viewer_has_answered": False,
+        "fields": [
+            {
+                "id": str(field.id),
+                "title": field.title,
+                "options": [
+                    {"id": str(option.id), "title": option.title, "order": option.order}
+                ],
+                "type": field.type.name,
+                "required": field.required,
+                "order": field.order,
+            }
+        ],
+        "template": False,
+    }
+
+
+def test_retrieve_evaluation_event_form_as_member_when_has_attended_event(member):
+    """
+    A member should be able to retrieve an event form of type evaluation if
+    they has attended the event.
+    """
+    event = EventFactory(limit=1)
+    registration = RegistrationFactory(
+        user=member, event=event, is_on_wait=False, has_attended=True
+    )
+    form = EventFormFactory(event=registration.event, type=EventFormType.EVALUATION)
+
+    client = get_api_client(user=member)
+    url = _get_form_detail_url(form)
+    response = client.get(url)
+
+    assert response.status_code == status.HTTP_200_OK
+    assert response.json()
+
+
+def test_retrieve_evaluation_event_form_as_member_when_has_not_attended_event(member):
+    """A member should not be able to retrieve an event evaluation form if they have not attended the event."""
+    event = EventFactory(limit=1)
+    registration = RegistrationFactory(
+        user=member, event=event, is_on_wait=False, has_attended=False
+    )
+    form = EventFormFactory(event=registration.event, type=EventFormType.EVALUATION)
+
+    client = get_api_client(user=member)
+    url = _get_form_detail_url(form)
+    response = client.get(url)
+
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+@pytest.mark.django_db
+@permission_params
+def test_create_event_form_as_admin(admin_user, permission_test_util):
+    """An admin should be able to create an event form."""
+    member, _, event_group, expected_create_status_code, expected_update_delete_status_code = permission_test_util
+    form = EventFormFactory.build()
+
+    client = get_api_client(user=member)
+    url = _get_forms_url()
+    response = client.post(url, _get_event_form_post_data(form, form.event))
+
+    print(response.json())
+
+    assert response.status_code == expected_create_status_code
+
+    if expected_create_status_code == status.HTTP_201_CREATED:
+        assert form.event.forms.filter(title=form.title).exists()
+
+
+# def test_create_event_form_as_admin_adds_the_form_to_the_event(admin_user, event):
+#     """The form created should be connected to the event."""
+#     form = FormFactory.build()
+
+#     client = get_api_client(user=admin_user)
+#     url = _get_forms_url()
+#     data = _get_event_form_post_data(form, event)
+#     client.post(url, data)
+
+#     assert event.forms.filter(title=form.title).exists()
+
