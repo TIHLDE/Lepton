@@ -72,7 +72,15 @@ class Form(PolymorphicModel, BasePermissionModel):
 
     @classmethod
     def has_write_permission(cls, request):
-        return check_has_access(cls.write_access, request)
+        if not request.user:
+            return False
+        form_id = request.parser_context.get("kwargs").get("pk")
+        form = Form.objects.get(id=form_id)
+        if form:
+            if isinstance(form, EventForm):
+                return form.event.has_object_write_permission(request)
+            return check_has_access(cls.write_access, request)
+        return False
 
     @classmethod
     def has_create_permission(cls, request):
@@ -117,10 +125,7 @@ class EventForm(Form):
     def has_object_statistics_permission(self, request):
         return self.has_event_permission(request)
 
-    def has_object_update_permission(self, request):
-        return self.has_event_permission(request)
-
-    def has_object_destroy_permission(self, request):
+    def has_object_write_permission(self, request):
         return self.has_event_permission(request)
 
     def has_object_read_permission(self, request):

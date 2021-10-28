@@ -69,8 +69,7 @@ def permission_test_util(
     elif event_group == "other":
         event_group = GroupFactory()
     event = EventFactory(group=event_group)
-    form = EventFormFactory(event=event)
-    return member, form, event_group, expected_create_status_code, expected_update_delete_status_code
+    return member, event, expected_create_status_code, expected_update_delete_status_code
 
 
 def _get_forms_url():
@@ -87,6 +86,25 @@ def _get_event_form_post_data(form, event):
         "title": form.title,
         "event": event.pk,
         "fields": [],
+        "type": "SURVEY",
+    }
+
+
+
+def _get_event_form_update_data(form, title="New EventForm Title"):
+    return {
+        "resource_type": "EventForm",
+        "title": title,
+        "event": form.event.pk,
+        "type": "SURVEY",
+        "fields": [
+            {
+                "title": "another string",
+                "options": [{"title": "another string"}],
+                "type": "SINGLE_SELECT",
+                "required": True,
+            }
+        ],
     }
 
 
@@ -160,31 +178,51 @@ def test_retrieve_evaluation_event_form_as_member_when_has_not_attended_event(me
 
 @pytest.mark.django_db
 @permission_params
-def test_create_event_form_as_admin(admin_user, permission_test_util):
+def test_create_event_form_as_admin(permission_test_util):
     """An admin should be able to create an event form."""
-    member, _, event_group, expected_create_status_code, expected_update_delete_status_code = permission_test_util
+    member, event, expected_create_status_code, expected_update_delete_status_code = permission_test_util
     form = EventFormFactory.build()
 
     client = get_api_client(user=member)
     url = _get_forms_url()
-    response = client.post(url, _get_event_form_post_data(form, form.event))
-
-    print(response.json())
+    response = client.post(url, _get_event_form_post_data(form, event))
 
     assert response.status_code == expected_create_status_code
 
     if expected_create_status_code == status.HTTP_201_CREATED:
-        assert form.event.forms.filter(title=form.title).exists()
+        assert event.forms.filter(title=form.title).exists()
 
 
-# def test_create_event_form_as_admin_adds_the_form_to_the_event(admin_user, event):
-#     """The form created should be connected to the event."""
-#     form = FormFactory.build()
+@pytest.mark.django_db
+@permission_params
+def test_update_event_form_as_admin(permission_test_util):
+    """An admin should be able to update an event form."""
+    member, event, _, expected_update_delete_status_code = permission_test_util
+    form = EventFormFactory(event=event)
 
-#     client = get_api_client(user=admin_user)
-#     url = _get_forms_url()
-#     data = _get_event_form_post_data(form, event)
-#     client.post(url, data)
+    client = get_api_client(user=member)
+    url = _get_form_detail_url(form)
+    new_title = "New form title"
+    response = client.put(url, _get_event_form_update_data(form, new_title))
 
-#     assert event.forms.filter(title=form.title).exists()
+    assert response.status_code == expected_update_delete_status_code
 
+    if expected_update_delete_status_code == status.HTTP_200_OK:
+        assert event.forms.filter(title=new_title).exists()
+
+
+@pytest.mark.django_db
+@permission_params
+def test_delete_event_form_as_admin(permission_test_util):
+    """An admin should be able to delete an event form."""
+    member, event, _, expected_update_delete_status_code = permission_test_util
+    form = EventFormFactory(event=event)
+
+    client = get_api_client(user=member)
+    url = _get_form_detail_url(form)
+    response = client.delete(url)
+
+    assert response.status_code == expected_update_delete_status_code
+
+    if expected_update_delete_status_code == status.HTTP_200_OK:
+        assert not event.forms.filter(title=form.title).exists()

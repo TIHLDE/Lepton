@@ -402,8 +402,7 @@ def test_update_options_when_id_is_passed_in_options_request_data_updates_the_op
     }
     client = get_api_client(user=admin_user)
     url = _get_form_detail_url(form)
-    response = client.put(url, data)
-    print(response)
+    client.put(url, data)
 
     option.refresh_from_db()
 
