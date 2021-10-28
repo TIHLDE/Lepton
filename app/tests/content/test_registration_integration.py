@@ -34,6 +34,10 @@ def _get_registration_detail_url(registration):
     return f"{_get_registration_url(registration.event)}{registration.user.user_id}/"
 
 
+# "event_group" should have one of 3 different values:
+# - None -> The event has no connected group
+# - "same" -> The event is connected to same group as user is member of
+# - "other" -> The event is connected to another group as user i member of
 permission_params = pytest.mark.parametrize(
     (
         "group_name",
@@ -67,12 +71,7 @@ permission_params = pytest.mark.parametrize(
 @pytest.fixture
 @permission_params
 def permission_test_util(
-    member,
-    group_name,
-    group_type,
-    membership_type,
-    expected_status_code,
-    event_group,
+    member, group_name, group_type, membership_type, expected_status_code, event_group,
 ):
     group = add_user_to_group_with_name(member, group_name, group_type, membership_type)
     if event_group == "same":

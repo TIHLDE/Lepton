@@ -2,25 +2,20 @@ from rest_framework import status
 
 import pytest
 
-from app.common.enums import (
-    AdminGroup,
-    GroupType,
-    MembershipType,
-)
+from app.common.enums import AdminGroup, GroupType, MembershipType
 from app.content.factories import EventFactory, RegistrationFactory
 from app.content.serializers import EventListSerializer
 from app.forms.enums import EventFormType
-from app.forms.models.forms import Field
-from app.forms.tests.form_factories import (
-    EventFormFactory,
-    FieldFactory,
-    FormFactory,
-)
+from app.forms.tests.form_factories import EventFormFactory
 from app.group.factories import GroupFactory
 from app.util.test_utils import add_user_to_group_with_name, get_api_client
 
 pytestmark = pytest.mark.django_db
 
+# "event_group" should have one of 3 different values:
+# - None -> The event has no connected group
+# - "same" -> The event is connected to same group as user is member of
+# - "other" -> The event is connected to another group as user i member of
 permission_params = pytest.mark.parametrize(
     (
         "group_name",
@@ -33,9 +28,16 @@ permission_params = pytest.mark.parametrize(
     (
         [AdminGroup.HS, GroupType.BOARD, MembershipType.MEMBER, 201, 200, "same"],
         [AdminGroup.HS, GroupType.BOARD, MembershipType.MEMBER, 201, 200, "other"],
-        [AdminGroup.HS, GroupType.BOARD, MembershipType.MEMBER,  201,200, None],
+        [AdminGroup.HS, GroupType.BOARD, MembershipType.MEMBER, 201, 200, None],
         [AdminGroup.INDEX, GroupType.SUBGROUP, MembershipType.MEMBER, 201, 200, "same"],
-        [AdminGroup.INDEX, GroupType.SUBGROUP, MembershipType.MEMBER, 201, 200, "other"],
+        [
+            AdminGroup.INDEX,
+            GroupType.SUBGROUP,
+            MembershipType.MEMBER,
+            201,
+            200,
+            "other",
+        ],
         [AdminGroup.INDEX, GroupType.SUBGROUP, MembershipType.MEMBER, 201, 200, None],
         [AdminGroup.NOK, GroupType.SUBGROUP, MembershipType.MEMBER, 201, 200, "same"],
         [AdminGroup.NOK, GroupType.SUBGROUP, MembershipType.MEMBER, 403, 403, "other"],
@@ -69,7 +71,12 @@ def permission_test_util(
     elif event_group == "other":
         event_group = GroupFactory()
     event = EventFactory(group=event_group)
-    return member, event, expected_create_status_code, expected_update_delete_status_code
+    return (
+        member,
+        event,
+        expected_create_status_code,
+        expected_update_delete_status_code,
+    )
 
 
 def _get_forms_url():
@@ -88,7 +95,6 @@ def _get_event_form_post_data(form, event):
         "fields": [],
         "type": "SURVEY",
     }
-
 
 
 def _get_event_form_update_data(form, title="New EventForm Title"):
@@ -176,11 +182,15 @@ def test_retrieve_evaluation_event_form_as_member_when_has_not_attended_event(me
     assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
-@pytest.mark.django_db
 @permission_params
 def test_create_event_form_as_admin(permission_test_util):
     """An admin should be able to create an event form."""
-    member, event, expected_create_status_code, expected_update_delete_status_code = permission_test_util
+    (
+        member,
+        event,
+        expected_create_status_code,
+        expected_update_delete_status_code,
+    ) = permission_test_util
     form = EventFormFactory.build()
 
     client = get_api_client(user=member)
@@ -193,7 +203,6 @@ def test_create_event_form_as_admin(permission_test_util):
         assert event.forms.filter(title=form.title).exists()
 
 
-@pytest.mark.django_db
 @permission_params
 def test_update_event_form_as_admin(permission_test_util):
     """An admin should be able to update an event form."""
@@ -211,7 +220,6 @@ def test_update_event_form_as_admin(permission_test_util):
         assert event.forms.filter(title=new_title).exists()
 
 
-@pytest.mark.django_db
 @permission_params
 def test_delete_event_form_as_admin(permission_test_util):
     """An admin should be able to delete an event form."""
