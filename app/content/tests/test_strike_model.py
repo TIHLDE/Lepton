@@ -2,23 +2,24 @@ from datetime import datetime, timedelta
 from unittest import mock
 
 from app.content.factories.strike_factory import StrikeFactory
+from app.util.utils import getTimezone
 
 
-@mock.patch("app.content.models.strike.today")
-def test_active_or_not_strike_with_freeze_through_holidays(mock_today):
+@mock.patch("app.content.models.strike.now")
+def test_active_or_not_strike_with_freeze_through_holidays(mock_now):
     """
-    Test that uses a mock function of today() and a specified
+    Test that uses a mock function of now() and a specified
     creation date to check if a strike is active or not on the
-    date made by the mocked today() function. This test can be
+    date made by the mocked now() function. This test can be
     especially used to check if a strike is active after a holiday
 
-    :mock_today: the mocked today() function\n
+    :mock_now: the mocked now() function\n
     :strike: Strike instance with modified creation date\n
     :assert: whether or not strike is active on specified day\n
     """
 
-    mock_today.return_value = datetime(2022, 1, 5)
-    strike = StrikeFactory.build(created_at=datetime(2021, 12, 7))
+    mock_now.return_value = datetime(2022, 1, 5, tzinfo=getTimezone())
+    strike = StrikeFactory.build(created_at=datetime(2021, 12, 7, tzinfo=getTimezone()))
 
     assert strike.active
 
@@ -37,7 +38,7 @@ def test_strike_offset_is_added_when_created_after_new_year():
     :assert: whether or not number of active days of strike is equal to number of days\n
     """
 
-    strike = StrikeFactory.build(created_at=datetime(2022, 1, 5))
+    strike = StrikeFactory.build(created_at=datetime(2022, 1, 5, tzinfo=getTimezone()))
 
     active_days = strike.expires_at - strike.created_at
 
@@ -60,7 +61,9 @@ def test_active_days_of_a_strike_with_freeze_through_holidays():
     :assert: whether or not number of active days of strike is equal to number of days\n
     """
 
-    strike = StrikeFactory.build(created_at=datetime(2021, 12, 24))
+    strike = StrikeFactory.build(
+        created_at=datetime(2021, 12, 24, tzinfo=getTimezone())
+    )
 
     active_days = strike.expires_at - strike.created_at
 
@@ -80,7 +83,9 @@ def test_year_of_expire_date_different_than_created_year_with_freeze_through_hol
     :assert: whether or not expired_year is one year after created_year\n
     """
 
-    strike = StrikeFactory.build(created_at=datetime(2021, 11, 30))
+    strike = StrikeFactory.build(
+        created_at=datetime(2021, 11, 30, tzinfo=getTimezone())
+    )
 
     created_year = strike.created_at.year
     expired_year = strike.expires_at.year

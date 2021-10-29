@@ -14,7 +14,7 @@ from app.content.exceptions import (
 )
 from app.content.models.strike import create_strike
 from app.forms.enums import EventFormType
-from app.util import EnumUtils, today
+from app.util import EnumUtils, now
 from app.util.mail_creator import MailCreator
 from app.util.models import BaseModel
 from app.util.notifier import Notify
@@ -142,7 +142,7 @@ class Registration(BaseModel, BasePermissionModel):
             hours_offset = 3
             if number_of_strikes >= 2:
                 hours_offset = 12
-            if not today() >= self.event.start_registration_at + timedelta(
+            if not now() >= self.event.start_registration_at + timedelta(
                 hours=hours_offset
             ):
                 raise StrikeError(
@@ -262,11 +262,11 @@ class Registration(BaseModel, BasePermissionModel):
         self.check_registration_has_ended()
 
     def check_registration_has_started(self):
-        if self.event.start_registration_at > today():
+        if self.event.start_registration_at > now():
             raise ValidationError("Påmeldingen har ikke åpnet enda")
 
     def check_registration_has_ended(self):
-        if self.event.end_registration_at < today():
+        if self.event.end_registration_at < now():
             raise ValidationError("Påmeldingsfristen har passert")
 
     def get_waiting_number(self):
