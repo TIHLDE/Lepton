@@ -74,13 +74,7 @@ class Form(PolymorphicModel, BasePermissionModel):
     def has_write_permission(cls, request):
         if not request.user:
             return False
-        form_id = request.parser_context.get("kwargs").get("pk")
-        form = Form.objects.get(id=form_id)
-        if form:
-            if isinstance(form, EventForm):
-                return form.event.has_object_write_permission(request)
-            return check_has_access(cls.write_access, request)
-        return False
+        return bool(request.user)
 
     @classmethod
     def has_create_permission(cls, request):
