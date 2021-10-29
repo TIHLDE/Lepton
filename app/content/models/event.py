@@ -17,7 +17,7 @@ from app.content.signals import send_event_reminders
 from app.forms.enums import EventFormType
 from app.group.models.group import Group
 from app.util.models import BaseModel, OptionalImage
-from app.util.utils import today, yesterday
+from app.util.utils import now, yesterday
 
 
 class Event(BaseModel, OptionalImage, BasePermissionModel):
@@ -101,14 +101,14 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
 
     @property
     def is_past_sign_off_deadline(self):
-        return today() >= self.sign_off_deadline
+        return now() >= self.sign_off_deadline
 
     def is_two_hours_before_event_start(self):
-        return today() >= self.start_date - timedelta(hours=2)
+        return now() >= self.start_date - timedelta(hours=2)
 
     @property
     def event_has_ended(self):
-        return today() >= self.end_date
+        return now() >= self.end_date
 
     def has_waiting_list(self):
         return self.has_limit() and (self.is_full or self.get_waiting_list().exists())

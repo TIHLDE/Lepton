@@ -8,7 +8,7 @@ from django.db.models.aggregates import Sum
 from app.common.enums import AdminGroup
 from app.common.permissions import BasePermissionModel, check_has_access
 from app.util.models import BaseModel
-from app.util.utils import today
+from app.util.utils import getTimezone, now
 
 
 class Holiday:
@@ -28,7 +28,7 @@ HOLIDAYS = (SUMMER, WINTER)
 class StrikeQueryset(models.QuerySet):
     def active(self, *args, **kwargs):
         active_filter = {
-            "created_at__gte": today() - timedelta(days=STRIKE_DURATION_IN_DAYS),
+            "created_at__gte": now() - timedelta(days=STRIKE_DURATION_IN_DAYS),
             **kwargs,
         }
         return self.filter(*args, **active_filter)
@@ -102,7 +102,7 @@ class Strike(BaseModel, BasePermissionModel):
 
     @property
     def active(self):
-        return self.expires_at >= today()
+        return self.expires_at >= now()
 
     @property
     def expires_at(self):
@@ -114,8 +114,12 @@ class Strike(BaseModel, BasePermissionModel):
             start = holiday.start
             end = holiday.end
 
-            start_date = datetime(self.created_at.year, start[0], start[1])
-            end_date = datetime(self.created_at.year, end[0], end[1])
+            start_date = datetime(
+                self.created_at.year, start[0], start[1], tzinfo=getTimezone()
+            )
+            end_date = datetime(
+                self.created_at.year, end[0], end[1], tzinfo=getTimezone()
+            )
 
             if end_date < start_date:
                 end_date = end_date.replace(year=end_date.year + 1)
@@ -127,7 +131,7 @@ class Strike(BaseModel, BasePermissionModel):
                 expired_date += smallest_difference + timedelta(days=1)
                 break
 
-        return expired_date
+        return expired_date.astimezone(getTimezone())
 
     @classmethod
     def has_destroy_permission(cls, request):
