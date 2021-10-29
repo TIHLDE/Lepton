@@ -11,7 +11,7 @@ from app.content.tasks.event import (
     event_end_schedular,
     event_sign_off_deadline_schedular,
 )
-from app.util.utils import disable_for_loaddata, midday, today
+from app.util.utils import disable_for_loaddata, midday, now
 
 logger = logging.getLogger(__name__)
 
@@ -85,4 +85,4 @@ def sign_off_deadline_reminder(event):
 
 
 def isFuture(eta):
-    return eta > today()
+    return eta > now()

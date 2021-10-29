@@ -7,7 +7,7 @@ from app.career.models import WeeklyBusiness
 from app.career.serializers import WeeklyBusinessSerializer
 from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission
-from app.util import today, week_nr
+from app.util import now, week_nr
 
 
 class WeeklyBusinessViewSet(viewsets.ModelViewSet):
@@ -25,13 +25,9 @@ class WeeklyBusinessViewSet(viewsets.ModelViewSet):
         if "expired" in self.request.query_params:
             return WeeklyBusiness.objects.all().order_by("year", "week")
         if "this_week" in self.request.query_params:
-            return WeeklyBusiness.objects.filter(
-                year=today().year, week=week_nr(today())
-            )
-        in_future_this_year_filter = Q(year=today().year) & Q(
-            week__gte=week_nr(today())
-        )
-        next_year_filter = Q(year__gt=today().year)
+            return WeeklyBusiness.objects.filter(year=now().year, week=week_nr(now()))
+        in_future_this_year_filter = Q(year=now().year) & Q(week__gte=week_nr(now()))
+        next_year_filter = Q(year__gt=now().year)
         return WeeklyBusiness.objects.filter(
             (in_future_this_year_filter) | next_year_filter
         ).order_by("year", "week")
