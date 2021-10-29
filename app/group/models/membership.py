@@ -8,7 +8,7 @@ from app.common.permissions import BasePermissionModel
 from app.content.models.user import User
 from app.group.models.group import Group
 from app.util.models import BaseModel
-from app.util.utils import today
+from app.util.utils import now
 
 
 class MembershipHistory(BaseModel):
@@ -40,7 +40,7 @@ class MembershipHistory(BaseModel):
             group=membership.group,
             membership_type=membership.membership_type,
             start_date=membership.created_at,
-            end_date=today(),
+            end_date=now(),
         )
 
 
