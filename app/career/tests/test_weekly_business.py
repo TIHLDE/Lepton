@@ -1,7 +1,7 @@
 import pytest
 
 from app.career.factories import WeeklyBusinessFactory
-from app.util import today
+from app.util import now
 
 
 @pytest.fixture()
@@ -118,7 +118,7 @@ def test_create_weekly_business_this_year(weekly_business):
     """
     Test if possible to create weekly_business object this year
     """
-    assert weekly_business.year == today().year + 1
+    assert weekly_business.year == now().year + 1
 
 
 @pytest.mark.django_db
@@ -126,8 +126,8 @@ def test_create_weekly_business_next_year():
     """
     Test if possible to create weekly_business object next year
     """
-    weekly_business = WeeklyBusinessFactory(year=(today().year) + 1)
-    assert weekly_business.year == (today().year) + 1
+    weekly_business = WeeklyBusinessFactory(year=(now().year) + 1)
+    assert weekly_business.year == (now().year) + 1
 
 
 @pytest.mark.django_db
@@ -136,5 +136,5 @@ def test_create_weekly_business_last_year():
     Test if possible to create weekly_business object last year
     """
     with pytest.raises(ValueError) as v_err:
-        WeeklyBusinessFactory(year=(today().year) - 1)
+        WeeklyBusinessFactory(year=(now().year) - 1)
     assert "Ukens bedrift kan ikke opprettes i fortiden" == str(v_err.value)

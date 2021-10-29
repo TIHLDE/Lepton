@@ -1,18 +1,24 @@
 import logging
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 from functools import wraps
+
+from django.conf import settings
 
 from pytz import timezone as pytz_timezone
 
 logger = logging.getLogger(__name__)
 
 
+def getTimezone():
+    return pytz_timezone(settings.TIME_ZONE)
+
+
 def yesterday():
-    return datetime.now(tz=timezone.utc) - timedelta(days=1)
+    return now() - timedelta(days=1)
 
 
-def today():
-    return datetime.now(tz=pytz_timezone("Europe/Oslo"))
+def now():
+    return datetime.now(tz=getTimezone())
 
 
 def datetime_format(date_time):

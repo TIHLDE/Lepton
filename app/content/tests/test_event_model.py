@@ -1,11 +1,16 @@
-from datetime import datetime, timedelta, timezone
+from datetime import timedelta
 from unittest.mock import patch
 
 from django.core.exceptions import ValidationError
 
 import pytest
 
-from ..factories import EventFactory, PriorityFactory, RegistrationFactory
+from app.content.factories import (
+    EventFactory,
+    PriorityFactory,
+    RegistrationFactory,
+)
+from app.util.utils import now
 
 
 @pytest.fixture()
@@ -26,7 +31,7 @@ def priority():
 @pytest.mark.django_db
 def test_expired_when_event_has_not_expired(event):
     """Should return False when end date is before yesterday."""
-    event.end_date = datetime.now(tz=timezone.utc)
+    event.end_date = now()
 
     assert not event.expired
 
@@ -34,7 +39,7 @@ def test_expired_when_event_has_not_expired(event):
 @pytest.mark.django_db
 def test_expired_when_event_has_expired(event):
     """Should return True when end date is after yesterday."""
-    event.end_date = datetime.now(tz=timezone.utc) - timedelta(days=10)
+    event.end_date = now() - timedelta(days=10)
 
     assert event.expired
 
@@ -161,7 +166,7 @@ def test_clean_validates_date_times(mock_validate_start_end_registration_times, 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
     "start_registration_at, end_registration_at",
-    [(None, datetime.now()), (datetime.now(), None), (datetime.now(), datetime.now())],
+    [(None, now()), (now(), None), (now(), now())],
 )
 def test_check_sign_up_and_registration_times_when_event_does_not_have_sign_up_raises_error(
     event, start_registration_at, end_registration_at
@@ -180,11 +185,11 @@ def test_check_sign_up_and_registration_times_when_event_does_not_have_sign_up_r
     "start_registration_at, end_registration_at, sign_off_deadline",
     [
         (None, None, None),
-        (None, None, datetime.now()),
-        (None, datetime.now(), datetime.now()),
-        (datetime.now(), None, None),
-        (datetime.now(), None, datetime.now()),
-        (datetime.now(), datetime.now(), None),
+        (None, None, now()),
+        (None, now(), now()),
+        (now(), None, None),
+        (now(), None, now()),
+        (now(), now(), None),
     ],
 )
 def test_check_if_registration_is_not_set_when_event_has_signup_raises_error(
@@ -206,7 +211,7 @@ def test_check_sign_up_and_sign_off_deadline_when_no_sign_up_but_sign_off_deadli
 ):
     """Should raise ValidationError if event has sign off dead line but no sign up."""
     event.sign_up = False
-    event.sign_off_deadline = datetime.now()
+    event.sign_off_deadline = now()
 
     with pytest.raises(ValidationError):
         event.check_sign_up_and_sign_off_deadline()
@@ -215,8 +220,8 @@ def test_check_sign_up_and_sign_off_deadline_when_no_sign_up_but_sign_off_deadli
 @pytest.mark.django_db
 def test_check_start_time_is_before_end_registration(event):
     """Should raise ValidationError if event end date is before event start date."""
-    event.start_date = datetime.now()
-    event.end_registration_at = datetime.now() + timedelta(days=1)
+    event.start_date = now()
+    event.end_registration_at = now() + timedelta(days=1)
 
     with pytest.raises(ValidationError):
         event.check_start_time_is_before_end_registration()
@@ -225,8 +230,8 @@ def test_check_start_time_is_before_end_registration(event):
 @pytest.mark.django_db
 def test_check_start_registration_is_before_end_registration(event):
     """Should raise ValidationError if start time for registration is after registration end time."""
-    event.start_registration_at = datetime.now()
-    event.end_registration_at = datetime.now() - timedelta(days=1)
+    event.start_registration_at = now()
+    event.end_registration_at = now() - timedelta(days=1)
 
     with pytest.raises(ValidationError):
         event.check_start_registration_is_before_end_registration()
@@ -235,8 +240,8 @@ def test_check_start_registration_is_before_end_registration(event):
 @pytest.mark.django_db
 def test_check_start_registration_is_after_start_time(event):
     """Should raise ValidationError if registration start time is after event start time."""
-    event.start_date = datetime.now()
-    event.start_registration_at = datetime.now() + timedelta(days=1)
+    event.start_date = now()
+    event.start_registration_at = now() + timedelta(days=1)
 
     with pytest.raises(ValidationError):
         event.check_start_registration_is_after_start_time()
@@ -245,8 +250,8 @@ def test_check_start_registration_is_after_start_time(event):
 @pytest.mark.django_db
 def test_check_end_time_is_before_end_registration(event):
     """Should raise ValidationError if registration end time is after event end time."""
-    event.end_date = datetime.now()
-    event.end_registration_at = datetime.now() + timedelta(days=1)
+    event.end_date = now()
+    event.end_registration_at = now() + timedelta(days=1)
 
     with pytest.raises(ValidationError):
         event.check_end_time_is_before_end_registration()
@@ -255,8 +260,8 @@ def test_check_end_time_is_before_end_registration(event):
 @pytest.mark.django_db
 def test_check_start_date_is_before_deadline(event):
     """Should raise ValidationError if sign off deadline is after event start time."""
-    event.start_date = datetime.now()
-    event.sign_off_deadline = datetime.now() + timedelta(days=1)
+    event.start_date = now()
+    event.sign_off_deadline = now() + timedelta(days=1)
 
     with pytest.raises(ValidationError):
         event.check_start_date_is_before_deadline()
@@ -265,8 +270,8 @@ def test_check_start_date_is_before_deadline(event):
 @pytest.mark.django_db
 def test_check_start_registration_is_after_deadline(event):
     """Should raise ValidationError if sign off deadline is after registration start time."""
-    event.sign_off_deadline = datetime.now()
-    event.start_registration_at = datetime.now() + timedelta(days=1)
+    event.sign_off_deadline = now()
+    event.start_registration_at = now() + timedelta(days=1)
 
     with pytest.raises(ValidationError):
         event.check_start_registration_is_after_deadline()

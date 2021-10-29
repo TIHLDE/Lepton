@@ -35,7 +35,9 @@ def _create_submission_data_with_selected_options_and_answer_text(
 
 
 def _create_submission_data_with_selected_options(field, option):
-    return _create_submission_data(field, selected_options=[{"id": str(option.id)}])
+    return _create_submission_data(
+        field, selected_options=[{"id": str(option.id), "order": option.order}]
+    )
 
 
 def _create_submission_data_with_text_answer(field, answer_text):

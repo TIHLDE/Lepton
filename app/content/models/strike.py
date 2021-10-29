@@ -1,30 +1,37 @@
 import uuid
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.db import models
-from django.db.models import Q
 from django.db.models.aggregates import Sum
 
 from app.common.enums import AdminGroup
 from app.common.permissions import BasePermissionModel, check_has_access
 from app.util.models import BaseModel
-from app.util.utils import today
+from app.util.utils import getTimezone, now
+
+
+class Holiday:
+    def __init__(self, start, end):
+        self.start = start
+        self.end = end
+
 
 STRIKE_DURATION_IN_DAYS = 20
 
+SUMMER = Holiday((5, 10), (8, 15))
+WINTER = Holiday((11, 29), (1, 9))
 
-def get_active_strikes_query():
-    return Q(
-        # TODO: Remove the "+ timedelta(days=1)" after standarizing timezones
-        created_at__lte=today() + timedelta(days=1),
-        created_at__gte=today() - timedelta(days=STRIKE_DURATION_IN_DAYS),
-    )
+HOLIDAYS = (SUMMER, WINTER)
 
 
 class StrikeQueryset(models.QuerySet):
     def active(self, *args, **kwargs):
-        return self.filter(get_active_strikes_query(), *args, **kwargs)
+        active_filter = {
+            "created_at__gte": now() - timedelta(days=STRIKE_DURATION_IN_DAYS),
+            **kwargs,
+        }
+        return self.filter(*args, **active_filter)
 
     def sum_active(self):
         sum_active_strikes = (
@@ -72,6 +79,7 @@ class Strike(BaseModel, BasePermissionModel):
     class Meta:
         verbose_name = "Strike"
         verbose_name_plural = "Strikes"
+        ordering = ("-created_at",)
 
     def __str__(self):
         return f"{self.user.first_name} {self.user.last_name} - {self.description} - {self.strike_size}"
@@ -94,11 +102,36 @@ class Strike(BaseModel, BasePermissionModel):
 
     @property
     def active(self):
-        return self.expires_at >= today()
+        return self.expires_at >= now()
 
     @property
     def expires_at(self):
-        return self.created_at + timedelta(days=STRIKE_DURATION_IN_DAYS)
+
+        expired_date = self.created_at + timedelta(STRIKE_DURATION_IN_DAYS)
+
+        for holiday in HOLIDAYS:
+
+            start = holiday.start
+            end = holiday.end
+
+            start_date = datetime(
+                self.created_at.year, start[0], start[1], tzinfo=getTimezone()
+            )
+            end_date = datetime(
+                self.created_at.year, end[0], end[1], tzinfo=getTimezone()
+            )
+
+            if end_date < start_date:
+                end_date = end_date.replace(year=end_date.year + 1)
+
+            if expired_date > start_date and self.created_at < end_date:
+                smallest_difference = min(
+                    (end_date - start_date), (end_date - self.created_at)
+                )
+                expired_date += smallest_difference + timedelta(days=1)
+                break
+
+        return expired_date.astimezone(getTimezone())
 
     @classmethod
     def has_destroy_permission(cls, request):
