@@ -5,7 +5,7 @@ from django.db import models
 from django.db.models import Q
 
 from app.common.enums import AdminGroup, Groups, StrikeEnum
-from app.common.permissions import BasePermissionModel, set_user_id
+from app.common.permissions import BasePermissionModel
 from app.content.exceptions import (
     EventIsFullError,
     EventSignOffDeadlineHasPassed,
