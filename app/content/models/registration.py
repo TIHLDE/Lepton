@@ -118,13 +118,10 @@ class Registration(BaseModel, BasePermissionModel):
             self.create()
         self.send_notification_and_mail()
 
-        response = super(Registration, self).save(*args, **kwargs)
-
-        event = self.event
-        if event.has_limit() and event.get_queue().count() > event.limit:
+        if self.event.is_full and not self.is_on_wait and self in self.event.get_waiting_list():
             raise EventIsFullError
 
-        return response
+        return super(Registration, self).save(*args, **kwargs)
 
     def create(self):
         if self.event.enforces_previous_strikes:
