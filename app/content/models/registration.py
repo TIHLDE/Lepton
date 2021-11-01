@@ -3,6 +3,7 @@ from datetime import timedelta
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q
+from django.db.transaction import atomic
 
 from app.common.enums import AdminGroup, Groups, StrikeEnum
 from app.common.permissions import BasePermissionModel, check_has_access
@@ -111,15 +112,19 @@ class Registration(BaseModel, BasePermissionModel):
     def admin_unregister(self, *args, **kwargs):
         return super().delete(*args, **kwargs)
 
+    @atomic
     def save(self, *args, **kwargs):
         if not self.registration_id:
             self.create()
         self.send_notification_and_mail()
 
-        if self.event.is_full and not self.is_on_wait:
+        response = super(Registration, self).save(*args, **kwargs)
+
+        event = self.event
+        if event.has_limit() and event.get_queue().count() > event.limit:
             raise EventIsFullError
 
-        return super(Registration, self).save(*args, **kwargs)
+        return response
 
     def create(self):
         if self.event.enforces_previous_strikes:
