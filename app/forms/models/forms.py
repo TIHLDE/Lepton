@@ -105,9 +105,6 @@ class EventForm(Form):
         verbose_name_plural = "Event forms"
 
     def has_event_permission(self, request):
-        if request.id is None:
-            set_user_id(request)
-
         if request.user is None:
             return False
 
