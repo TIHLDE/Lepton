@@ -464,3 +464,19 @@ def test_auto_bump_user_from_wait_does_not_increments_limit():
     event.refresh_from_db()
     assert not registration_on_wait.is_on_wait
     assert event.limit == limit
+
+
+@pytest.mark.django_db
+def test_set_attended_is_allowed_when_queue_exists():
+    """
+    Tests that admin can set participant as attended even if someone is on the waiting list
+    """
+    event = EventFactory(limit=1)
+    registration = RegistrationFactory(event=event)
+    RegistrationFactory(event=event, is_on_wait=True)
+    new_attended_state = True
+    registration.has_attended = new_attended_state
+
+    registration.save()
+
+    assert registration.has_attended == new_attended_state
