@@ -97,6 +97,7 @@ class EventListSerializer(serializers.ModelSerializer):
             "start_date",
             "end_date",
             "location",
+            "category",
             "expired",
             "group",
             "image",
