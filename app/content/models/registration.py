@@ -3,7 +3,6 @@ from datetime import timedelta
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q
-from django.db.transaction import atomic
 
 from app.common.enums import AdminGroup, Groups, StrikeEnum
 from app.common.permissions import BasePermissionModel, check_has_access
@@ -112,7 +111,6 @@ class Registration(BaseModel, BasePermissionModel):
     def admin_unregister(self, *args, **kwargs):
         return super().delete(*args, **kwargs)
 
-    @atomic
     def save(self, *args, **kwargs):
         if not self.registration_id:
             self.create()
