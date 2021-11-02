@@ -8,6 +8,7 @@ from app.forms.tests.form_factories import (
     EventFormFactory,
     SubmissionFactory,
 )
+from app.content.factories import RegistrationFactory
 
 pytestmark = pytest.mark.django_db
 
@@ -22,7 +23,7 @@ def _get_submission_detail_url(form, submission):
 
 def _create_submission_data(field, **kwargs):
     return {
-        "answers": [{"field": {"id": str(field.id)}, **kwargs,}],
+        "answers": [{"field": {"id": str(field.id)}, **kwargs, }],
     }
 
 
@@ -45,26 +46,26 @@ def _create_submission_data_with_text_answer(field, answer_text):
 
 
 @pytest.fixture()
-def form():
+def event_form():
     return EventFormFactory()
 
 
 @pytest.fixture()
-def submission(form):
-    return SubmissionFactory(form=form)
+def submission(event_form):
+    return SubmissionFactory(form=event_form)
 
 
 @pytest.fixture()
-def answer(submission, form):
-    return AnswerFactory(submission=submission, field=form.fields.first())
+def answer(submission, event_form):
+    return AnswerFactory(submission=submission, field=event_form.fields.first())
 
 
 def test_sending_both_selected_options_and_text_is_not_permitted(
-    member_client, form, submission, answer
+    member_client, event_form, submission, answer
 ):
     url = _get_submission_url(answer.submission.form)
     submission_data = _create_submission_data_with_selected_options_and_answer_text(
-        form.fields.first(), form.fields.first().options.first(), "I love this!"
+        event_form.fields.first(), event_form.fields.first().options.first(), "I love this!"
     )
 
     response = member_client.post(url, submission_data)
@@ -73,11 +74,11 @@ def test_sending_both_selected_options_and_text_is_not_permitted(
 
 
 def test_member_can_add_submission_with_options(
-    member_client, form, submission, answer
+    member_client, event_form, submission, answer
 ):
     url = _get_submission_url(answer.submission.form)
     submission_data = _create_submission_data_with_selected_options(
-        form.fields.first(), form.fields.first().options.first()
+        event_form.fields.first(), event_form.fields.first().options.first()
     )
 
     response = member_client.post(url, submission_data)
@@ -86,11 +87,11 @@ def test_member_can_add_submission_with_options(
 
 
 def test_member_can_add_submission_with_answer_text(
-    member_client, form, submission, answer
+    member_client, event_form, submission, answer
 ):
     url = _get_submission_url(answer.submission.form)
     submission_data = _create_submission_data_with_text_answer(
-        form.fields.first(), "I love this!"
+        event_form.fields.first(), "I love this!"
     )
 
     response = member_client.post(url, submission_data)
@@ -99,6 +100,8 @@ def test_member_can_add_submission_with_answer_text(
 
 
 def test_member_cannot_add_several_submissions(member_client, form, submission, answer):
+    submission = SubmissionFactory(form=form)
+    answer = AnswerFactory(submission=submission, field=form.fields.first())
     url = _get_submission_url(answer.submission.form)
     first_submission_data = _create_submission_data_with_text_answer(
         form.fields.first(), "This is the first time I love this!"
@@ -128,20 +131,55 @@ def test_cannot_create_event_form_evaluation_submission_if_not_attended(member_c
 
 
 def test_post_submission_returns_http_status_201_created(
-    member_client, form, submission, answer
+    member_client, event_form, submission, answer
 ):
     url = _get_submission_url(answer.submission.form)
 
     response = member_client.post(
-        url, data=_create_submission_data(form.fields.first())
+        url, data=_create_submission_data(event_form.fields.first())
     )
 
     assert response.status_code == status.HTTP_201_CREATED
 
 
+def test_post_submission_to_event_form_can_overwrite_submission_if_unregistered(
+    member_client, event_form, submission, answer
+):
+    url = _get_submission_url(answer.submission.form)
+
+    member_client.post(
+        url, data=_create_submission_data(event_form.fields.first())
+    )
+    response = member_client.post(
+        url, data=_create_submission_data(event_form.fields.first())
+    )
+
+    assert response.status_code == status.HTTP_201_CREATED
+
+
+def test_post_submission_to_event_form_cant_overwrite_submission_if_registered(
+    member, member_client, event_form
+):
+    # TODO: fix these factories (the users must be the same)
+    submission = SubmissionFactory(user=member, form=event_form)
+    answer = AnswerFactory(submission=submission,
+                           field=event_form.fields.first())
+    RegistrationFactory(event=event_form.event, user=member)
+    url = _get_submission_url(answer.submission.form)
+
+    member_client.post(
+        url, data=_create_submission_data(event_form.fields.first())
+    )
+    response = member_client.post(
+        url, data=_create_submission_data(event_form.fields.first())
+    )
+
+    assert response.status_code == status.HTTP_409_CONFLICT
+
+
 @pytest.mark.parametrize("method", ("get", "put", "patch", "delete"))
 def test_submission_detail_illegal_methods_are_forbidden(
-    method, member_client, form, submission, answer
+    method, member_client, event_form, submission, answer
 ):
     url = _get_submission_detail_url(answer.submission.form, submission)
 

@@ -1,3 +1,5 @@
+from django.db import transaction
+
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
@@ -44,8 +46,10 @@ class SubmissionViewSet(viewsets.ModelViewSet):
                 queryset = queryset.filter(user__in=users_in_event)
         return queryset
 
+    @transaction.atomic
     def create(self, request, *args, **kwargs):
         form = get_object_or_404(Form, id=kwargs.get("form_id"))
+        allow_overwrite = False
         if isinstance(form, EventForm):
             user = request.user
             event = form.event
@@ -56,6 +60,14 @@ class SubmissionViewSet(viewsets.ModelViewSet):
                     {"detail": "Du har ikke deltatt på dette arrangementet."},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
+
+            if not form.event.registrations.filter(user=user).exists():
+                allow_overwrite = True
+
+        if allow_overwrite:
+            print("OVERWRITE")
+            print(Submission.objects.filter(user=user, form=form))
+            Submission.objects.filter(user=user, form=form).delete()
 
         return super().create(request, *args, **kwargs)
 
