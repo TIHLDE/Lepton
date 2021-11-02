@@ -31,7 +31,9 @@ router.register("short-link", ShortLinkViewSet, basename="short-link")
 router.register("jobpost", JobPostViewSet, basename="jobpost")
 router.register("user", UserViewSet, basename="user")
 router.register(
-    r"events/(?P<event_id>\d+)/users", RegistrationViewSet, basename="registration"
+    r"events/(?P<event_id>\d+)/registrations",
+    RegistrationViewSet,
+    basename="registration",
 )
 router.register("notification", NotificationViewSet, basename="notification")
 router.register(
