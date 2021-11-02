@@ -37,6 +37,8 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path("flower/", flower_admin_site.urls),
+
+    # Start of old URLs, to be removed after frontend updates config.
     path(
         "api/",
         schema_view.with_ui("swagger", cache_timeout=0),
@@ -52,4 +54,23 @@ urlpatterns = [
     path("api/v1/auth/", include("app.authentication.urls")),
     path("api/v1/forms/", include("app.forms.urls")),
     path("api/v1/gallery/", include("app.gallery.urls")),
+    # End of old URLs
+
+    # Start of new URLs
+    path(
+        "",
+        schema_view.with_ui("swagger", cache_timeout=0),
+        name="schema-swagger-ui",
+    ),
+    path("admin/", admin.site.urls),
+    path("", include("rest_framework.urls")),
+    # Our endpoints
+    path("", include("app.career.urls")),
+    path("", include("app.content.urls")),
+    path("", include("app.group.urls")),
+    path("", include("app.payment.urls")),
+    path("auth/", include("app.authentication.urls")),
+    path("forms/", include("app.forms.urls")),
+    path("gallery/", include("app.gallery.urls")),
+    # End of new URLs
 ]
