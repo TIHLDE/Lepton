@@ -13,9 +13,14 @@
 ---
 
 ## Neste versjon
+## Versjon 1.1.4 (01.11.2021)
+- 🦟 **Arrangement**. Fikset bug der admins ikke kunne melde påmeldte som ankommet hvis noen var på ventelisten.
+
+## Versjon 1.1.3 (28.10.2021)
 - ✨ **Digitalt fotalbum**. La til funksjonalitet for å legge til et fotoalbum.
 - ✨ **Prikk**.  Nedtellingstiden til prikker settes på vent med ferier.
 - ✨ **Rekkefølge på spørsmål** er nå lagt til.
+- 🦟 **Tidssoner**. Standarisert tidssoner.
 
 ## Versjon 1.1.2 (19.10.2021)
 - ⚡ **Arrangement** blir nå ikke overbooket når en person blir flyttet opp fra ventelisten.

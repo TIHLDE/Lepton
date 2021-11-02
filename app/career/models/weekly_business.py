@@ -4,7 +4,7 @@ from django.db import models
 
 from app.common.enums import AdminGroup
 from app.common.permissions import BasePermissionModel
-from app.util import today
+from app.util import now
 from app.util.models import BaseModel, OptionalImage
 
 
@@ -33,7 +33,7 @@ class WeeklyBusiness(BaseModel, OptionalImage, BasePermissionModel):
     def save(self, *args, **kwargs):
         if self.week < 1 or self.week > 52:
             raise ValueError("Uke må være mellom 1 og 52")
-        if self.year < today().year:
+        if self.year < now().year:
             raise ValueError("Ukens bedrift kan ikke opprettes i fortiden")
         try:
             if WeeklyBusiness.objects.get(week=self.week, year=self.year).id != self.id:

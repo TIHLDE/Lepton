@@ -14,7 +14,7 @@ from app.content.factories import (
 from app.forms.enums import EventFormType
 from app.forms.tests.form_factories import EventFormFactory, SubmissionFactory
 from app.util.test_utils import get_api_client
-from app.util.utils import today
+from app.util.utils import now
 
 API_EVENT_BASE_URL = "/api/v1/events/"
 
@@ -294,7 +294,7 @@ def test_create_when_event_does_not_have_signup(admin_user, member):
 @pytest.mark.django_db
 def test_create_when_event_registration_has_not_started(admin_user, member):
     """A registration is not possible if the events registration has not started."""
-    tomorrow = today() + timedelta(days=1)
+    tomorrow = now() + timedelta(days=1)
     event_registration_not_started = EventFactory(start_registration_at=tomorrow)
     data = _get_registration_post_data(member, event_registration_not_started)
 
@@ -308,7 +308,7 @@ def test_create_when_event_registration_has_not_started(admin_user, member):
 @pytest.mark.django_db
 def test_create_when_event_registration_has_ended(admin_user, member):
     """A registration is not possible if the events registration has ended."""
-    yesterday = today() - timedelta(days=1)
+    yesterday = now() - timedelta(days=1)
     event_registration_not_started = EventFactory(end_registration_at=yesterday)
     data = _get_registration_post_data(member, event_registration_not_started)
 
@@ -589,7 +589,7 @@ def test_delete_as_member_when_sign_off_deadline_has_passed_and_not_on_wait(memb
     A member should be able to delete their registration
     when the events sign off deadline has passed and is not on wait within one hour.
     """
-    event = EventFactory(sign_off_deadline=today() - timedelta(days=1), limit=10)
+    event = EventFactory(sign_off_deadline=now() - timedelta(days=1), limit=10)
     registration = RegistrationFactory(user=member, event=event, is_on_wait=False)
     client = get_api_client(user=member)
 
@@ -605,7 +605,7 @@ def test_delete_as_member_when_sign_off_deadline_has_passed_and_on_wait(member):
     A member should be able to delete their registration
     when the events sign off deadline has passed but is on wait.
     """
-    event = EventFactory(sign_off_deadline=today() - timedelta(days=1))
+    event = EventFactory(sign_off_deadline=now() - timedelta(days=1))
     registration = RegistrationFactory(user=member, event=event)
     client = get_api_client(user=member)
 
@@ -647,7 +647,7 @@ def test_delete_another_registration_as_admin_after_sign_off_deadline(
     admin_user, member
 ):
     """An admin user should be able to delete any registration after sign off deadline."""
-    event = EventFactory(sign_off_deadline=today() - timedelta(days=1))
+    event = EventFactory(sign_off_deadline=now() - timedelta(days=1))
     registration = RegistrationFactory(user=member, event=event)
     client = get_api_client(user=admin_user)
 
