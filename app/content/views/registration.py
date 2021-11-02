@@ -1,15 +1,15 @@
-from rest_framework import status, viewsets, filters
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters, status, viewsets
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
-from django_filters.rest_framework import DjangoFilterBackend
 
+from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission, is_admin_user
 from app.content.exceptions import APIUserAlreadyAttendedEvent
+from app.content.filters.registration import RegistrationFilter
 from app.content.mixins import APIRegistrationErrorsMixin
 from app.content.models import Event, Registration
 from app.content.serializers import RegistrationSerializer
-from app.common.pagination import BasePagination
-from app.content.filters.registration import RegistrationFilter
 
 
 class RegistrationViewSet(APIRegistrationErrorsMixin, viewsets.ModelViewSet):
