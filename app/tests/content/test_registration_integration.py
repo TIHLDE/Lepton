@@ -20,7 +20,7 @@ API_EVENT_BASE_URL = "/api/v1/events/"
 
 
 def _get_registration_url(event):
-    return f"{API_EVENT_BASE_URL}{event.pk}/users/"
+    return f"{API_EVENT_BASE_URL}{event.pk}/registrations/"
 
 
 def _get_registration_detail_url(registration):
