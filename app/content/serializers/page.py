@@ -8,6 +8,7 @@ from app.content.models import Page
 class PageSerializer(BaseModelSerializer):
     children = SerializerMethodField()
     path = SerializerMethodField()
+    position = SerializerMethodField()
 
     class Meta:
         model = Page
@@ -21,17 +22,24 @@ class PageSerializer(BaseModelSerializer):
             "updated_at",
             "image",
             "image_alt",
+            "position",
         )
 
     def get_children(self, obj):
-        return [PageListSerializer(page).data for page in obj.get_children()]
+        children = [PageListSerializer(page).data for page in obj.get_children()]
+        return sorted(children, key=lambda child: child["position"])
 
     def get_path(self, obj):
         return obj.get_path()
 
+    def get_position(self, obj):
+        return obj.get_position()
+
+            
 
 class PageListSerializer(BaseModelSerializer):
     path = SerializerMethodField()
+    position = SerializerMethodField()
 
     class Meta:
         model = Page
@@ -39,18 +47,27 @@ class PageListSerializer(BaseModelSerializer):
             "slug",
             "title",
             "path",
+            "position"
         )
 
     def get_path(self, obj):
         return obj.get_path()
 
+    def get_position(self, obj):
+        return obj.get_position()
+
 
 class PageTreeSerializer(serializers.ModelSerializer):
     children = SerializerMethodField()
+    position = SerializerMethodField()
 
     class Meta:
         model = Page
-        fields = ["slug", "title", "children"]
+        fields = ["slug", "title","position", "children"]
 
     def get_children(self, obj):
-        return [PageTreeSerializer(page).data for page in obj.get_children()]
+        children = [PageTreeSerializer(page).data for page in obj.get_children()]
+        return sorted(children, key=lambda child: child["position"])
+
+    def get_position(self, obj):
+        return obj.get_position()

@@ -21,12 +21,13 @@ class Page(MPTTModel, OptionalImage, BaseModel, BasePermissionModel):
     title = models.CharField(max_length=50, unique=False)
     slug = models.SlugField(max_length=50, unique=False)
     content = models.TextField(blank=True)
+    position = models.PositiveIntegerField(default=1)
 
     class Meta:
         unique_together = ("parent", "slug")
         verbose_name = "Page"
         verbose_name_plural = "Pages"
-        ordering = ["title"]
+        ordering = ["position"]
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.title)
@@ -52,6 +53,21 @@ class Page(MPTTModel, OptionalImage, BaseModel, BasePermissionModel):
         for member in family:
             path += f"{member.slug}/"
         return path
+
+    def get_position(self):
+        Page.objects.filter(page_id=self.page_id).update(position=self.position)
+
+        siblings = Page.objects.filter(parent=self.parent).exclude(page_id=self.page_id)
+        for count, page in enumerate(siblings, 1):
+
+            Page.objects.filter(page_id=page.page_id).update(position=count)
+
+        pages = siblings.filter(position__gte=self.position)
+        for count, page in enumerate(pages, self.position + 1):
+
+            Page.objects.filter(page_id=page.page_id).update(position=count)
+
+        return self.position
 
     def __str__(self):
         return f"{self.page_id} {self.title}"
