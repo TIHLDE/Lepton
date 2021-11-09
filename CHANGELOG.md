@@ -13,7 +13,6 @@
 ---
 
 ## Neste versjon
-
 - ✨ **Prioriteringer** En innstilling på arrangementer som gjør at kun prioriterte studenter kan melde seg på.
 
 ## Versjon 1.0.17 (24.09.2021)
