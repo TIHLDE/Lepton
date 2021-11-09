@@ -722,6 +722,25 @@ def test_that_users_cannot_register_when_has_unanswered_evaluations(api_client, 
 
 
 @pytest.mark.django_db
+def test_that_users_can_register_when_has_unanswered_evaluation_over_20_days(
+    api_client, user
+):
+    date_20_days_ago = now() - timedelta(days=20)
+    event = EventFactory(end_date=date_20_days_ago)
+    evaluation = EventFormFactory(type=EventFormType.EVALUATION, event=event)
+    RegistrationFactory(event=evaluation.event, user=user, has_attended=True)
+
+    next_event = EventFactory()
+
+    data = _get_registration_post_data(user, next_event)
+    url = _get_registration_url(event=next_event)
+    response = api_client(user=user).post(url, data=data)
+
+    assert response.status_code == status.HTTP_201_CREATED
+    assert next_event.registrations.filter(user=user).exists()
+
+
+@pytest.mark.django_db
 def test_that_users_can_register_when_has_no_unanswered_evaluations(api_client, user):
     evaluation = EventFormFactory(type=EventFormType.EVALUATION)
     RegistrationFactory(event=evaluation.event, user=user, has_attended=True)
