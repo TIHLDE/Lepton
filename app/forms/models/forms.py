@@ -140,7 +140,7 @@ class Submission(BaseModel, BasePermissionModel):
     @transaction.atomic
     def save(self, *args, **kwargs):
         if isinstance(self.form, EventForm):
-            user_has_registration = not self.form.events.registrations.filter(
+            user_has_registration = not self.form.event.registrations.filter(
                 user=self.user
             ).exists()
             if user_has_registration:
