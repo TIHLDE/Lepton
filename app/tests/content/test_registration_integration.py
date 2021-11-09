@@ -725,8 +725,8 @@ def test_that_users_cannot_register_when_has_unanswered_evaluations(api_client, 
 def test_that_users_can_register_when_has_unanswered_evaluation_over_20_days(
     api_client, user
 ):
-    date_20_days_ago = now() - timedelta(days=20)
-    event = EventFactory(end_date=date_20_days_ago)
+    date_30_days_ago = now() - timedelta(days=30)
+    event = EventFactory(end_date=date_30_days_ago)
     evaluation = EventFormFactory(type=EventFormType.EVALUATION, event=event)
     RegistrationFactory(event=evaluation.event, user=user, has_attended=True)
 
