@@ -45,7 +45,6 @@ class SubmissionViewSet(viewsets.ModelViewSet):
                 queryset = queryset.filter(user__in=users_in_event)
         return queryset
 
-    @transaction.atomic
     def create(self, request, *args, **kwargs):
         form = get_object_or_404(Form, id=kwargs.get("form_id"))
         if isinstance(form, EventForm):
