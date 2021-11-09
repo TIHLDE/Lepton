@@ -160,10 +160,9 @@ def test_post_submission_to_event_form_can_overwrite_submission_if_unregistered(
 def test_post_submission_to_event_form_cant_overwrite_submission_if_registered(
     member, member_client, event_form
 ):
-    # TODO: fix these factories (the users must be the same)
     submission = SubmissionFactory(user=member, form=event_form)
     answer = AnswerFactory(submission=submission, field=event_form.fields.first())
-    RegistrationFactory(event=event_form.event, user=member)
+    RegistrationFactory(user=member, event=event_form.event)
     url = _get_submission_url(answer.submission.form)
 
     member_client.post(url, data=_create_submission_data(event_form.fields.first()))
