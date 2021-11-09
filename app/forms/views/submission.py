@@ -60,11 +60,9 @@ class SubmissionViewSet(viewsets.ModelViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            if not form.event.registrations.filter(user=user).exists():
-                allow_overwrite = True
-
-        if allow_overwrite:
-            Submission.objects.filter(user=user, form=form).delete()
+            existing_submission = Submission.objects.filter(user=user, form=form)
+            if not form.event.registrations.filter(user=user).exists() && existing_submission.exists():
+                existing_submission.delete()
 
         return super().create(request, *args, **kwargs)
 
