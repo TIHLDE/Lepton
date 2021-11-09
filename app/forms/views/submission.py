@@ -65,8 +65,7 @@ class SubmissionViewSet(viewsets.ModelViewSet):
                 allow_overwrite = True
 
         if allow_overwrite:
-            print("OVERWRITE")
-            print(Submission.objects.filter(user=user, form=form))
+
             Submission.objects.filter(user=user, form=form).delete()
 
         return super().create(request, *args, **kwargs)
