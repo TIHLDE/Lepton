@@ -48,7 +48,6 @@ class SubmissionViewSet(viewsets.ModelViewSet):
     @transaction.atomic
     def create(self, request, *args, **kwargs):
         form = get_object_or_404(Form, id=kwargs.get("form_id"))
-        allow_overwrite = False
         if isinstance(form, EventForm):
             user = request.user
             event = form.event
@@ -59,10 +58,6 @@ class SubmissionViewSet(viewsets.ModelViewSet):
                     {"detail": "Du har ikke deltatt på dette arrangementet."},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-
-            existing_submission = Submission.objects.filter(user=user, form=form)
-            if not form.event.registrations.filter(user=user).exists() && existing_submission.exists():
-                existing_submission.delete()
 
         return super().create(request, *args, **kwargs)
 
