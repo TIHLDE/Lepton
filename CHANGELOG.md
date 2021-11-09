@@ -14,6 +14,8 @@
 
 ## Neste versjon
 
+- ✨ **Prioriteringer** En innstilling på arrangementer som gjør at kun prioriterte studenter kan melde seg på.
+
 ## Versjon 1.0.17 (24.09.2021)
 - ✨ **Svar på skjemaer** kan nå lastes ned som en csv-fil.
 - ⚡ **Maksgrensen på arrangementer** økes nå hvis en admin melder på noen og det er fullt.
