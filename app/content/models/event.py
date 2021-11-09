@@ -99,6 +99,9 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
         """ Number of users on the waiting list """
         return self.registrations.filter(is_on_wait=True)
 
+    def user_has_attended_event(self, user):
+        return self.get_queue().filter(user=user, has_attended=True).exists()
+
     @property
     def is_past_sign_off_deadline(self):
         return now() >= self.sign_off_deadline
@@ -141,23 +144,29 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
         if request.user is None:
             return False
 
-        return (
-            check_has_access(self.write_access, request)
-            or (
+        has_access_to_new_organizer = (
+            self.check_request_user_has_access_through_organizer(
+                request.user, request.data["organizer"]
+            )
+            if request.data.get("organizer", None)
+            and request.data["organizer"] != self.organizer
+            else True
+        )
+
+        has_access_to_current_and_new_organizer = (
+            (
                 self.check_request_user_has_access_through_organizer(
                     request.user, self.organizer
                 )
-                and (
-                    self.check_request_user_has_access_through_organizer(
-                        request.user, request.data["organizer"]
-                    )
-                    if request.data.get("organizer", None)
-                    and request.data["organizer"] != self.organizer
-                    else True
-                )
+                and has_access_to_new_organizer
             )
             if self.organizer
             else request.user.memberships_with_events_access.exists()
+        )
+
+        return (
+            check_has_access(self.write_access, request)
+            or has_access_to_current_and_new_organizer
         )
 
     @classmethod

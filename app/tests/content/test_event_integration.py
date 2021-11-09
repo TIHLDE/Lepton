@@ -325,7 +325,12 @@ def test_delete_event_as_admin(permission_test_util):
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
-    ("member_of_organizer", "organizer_type", "membership_type", "expected_events_amount"),
+    (
+        "member_of_organizer",
+        "organizer_type",
+        "membership_type",
+        "expected_events_amount",
+    ),
     [
         (AdminGroup.HS, GroupType.BOARD, MembershipType.MEMBER, 9),
         (AdminGroup.INDEX, GroupType.SUBGROUP, MembershipType.MEMBER, 9),

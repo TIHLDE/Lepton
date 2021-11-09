@@ -65,7 +65,9 @@ def permission_test_util(
     expected_update_delete_status_code,
     event_organizer,
 ):
-    organizer = add_user_to_group_with_name(member, organizer_name, organizer_type, membership_type)
+    organizer = add_user_to_group_with_name(
+        member, organizer_name, organizer_type, membership_type
+    )
     if event_organizer == "same":
         event_organizer = organizer
     elif event_organizer == "other":

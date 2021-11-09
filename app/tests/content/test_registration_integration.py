@@ -71,9 +71,16 @@ permission_params = pytest.mark.parametrize(
 @pytest.fixture
 @permission_params
 def permission_test_util(
-    member, organizer_name, organizer_type, membership_type, expected_status_code, event_organizer,
+    member,
+    organizer_name,
+    organizer_type,
+    membership_type,
+    expected_status_code,
+    event_organizer,
 ):
-    organizer = add_user_to_group_with_name(member, organizer_name, organizer_type, membership_type)
+    organizer = add_user_to_group_with_name(
+        member, organizer_name, organizer_type, membership_type
+    )
     if event_organizer == "same":
         event_organizer = organizer
     elif event_organizer == "other":

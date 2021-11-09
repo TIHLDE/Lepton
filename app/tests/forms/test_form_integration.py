@@ -137,7 +137,7 @@ def test_list_forms_as_member_is_not_permitted(member):
 def test_list_forms_as_member_of_board_or_sub_group(
     member, group_name, expected_status_code
 ):
-    """A user in NOK, HS or Index should be able to list forms."""
+    """A member of the board or a subgroup should be able to list forms."""
     client = get_api_client(user=member, group_name=group_name)
     url = _get_forms_url()
     response = client.get(url)

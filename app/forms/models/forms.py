@@ -106,9 +106,6 @@ class EventForm(Form):
 
         return self.event.has_object_write_permission(request)
 
-    def has_attended_event(self, user):
-        return self.event.get_queue().filter(user=user, has_attended=True).exists()
-
     def has_object_statistics_permission(self, request):
         return self.has_event_permission(request)
 
@@ -117,9 +114,9 @@ class EventForm(Form):
 
     def has_object_read_permission(self, request):
         if self.type == EventFormType.EVALUATION:
-            return self.has_attended_event(request.user) or self.has_event_permission(
-                request
-            )
+            return self.event.user_has_attended_event(
+                request.user
+            ) or self.has_event_permission(request)
         return True
 
 
