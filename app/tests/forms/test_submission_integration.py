@@ -2,13 +2,13 @@ from rest_framework import status
 
 import pytest
 
+from app.content.factories import RegistrationFactory
 from app.forms.enums import EventFormType
 from app.forms.tests.form_factories import (
     AnswerFactory,
     EventFormFactory,
     SubmissionFactory,
 )
-from app.content.factories import RegistrationFactory
 
 pytestmark = pytest.mark.django_db
 
@@ -23,7 +23,7 @@ def _get_submission_detail_url(form, submission):
 
 def _create_submission_data(field, **kwargs):
     return {
-        "answers": [{"field": {"id": str(field.id)}, **kwargs, }],
+        "answers": [{"field": {"id": str(field.id)}, **kwargs,}],
     }
 
 
@@ -65,7 +65,9 @@ def test_sending_both_selected_options_and_text_is_not_permitted(
 ):
     url = _get_submission_url(answer.submission.form)
     submission_data = _create_submission_data_with_selected_options_and_answer_text(
-        event_form.fields.first(), event_form.fields.first().options.first(), "I love this!"
+        event_form.fields.first(),
+        event_form.fields.first().options.first(),
+        "I love this!",
     )
 
     response = member_client.post(url, submission_data)
@@ -147,9 +149,7 @@ def test_post_submission_to_event_form_can_overwrite_submission_if_unregistered(
 ):
     url = _get_submission_url(answer.submission.form)
 
-    member_client.post(
-        url, data=_create_submission_data(event_form.fields.first())
-    )
+    member_client.post(url, data=_create_submission_data(event_form.fields.first()))
     response = member_client.post(
         url, data=_create_submission_data(event_form.fields.first())
     )
@@ -162,14 +162,11 @@ def test_post_submission_to_event_form_cant_overwrite_submission_if_registered(
 ):
     # TODO: fix these factories (the users must be the same)
     submission = SubmissionFactory(user=member, form=event_form)
-    answer = AnswerFactory(submission=submission,
-                           field=event_form.fields.first())
+    answer = AnswerFactory(submission=submission, field=event_form.fields.first())
     RegistrationFactory(event=event_form.event, user=member)
     url = _get_submission_url(answer.submission.form)
 
-    member_client.post(
-        url, data=_create_submission_data(event_form.fields.first())
-    )
+    member_client.post(url, data=_create_submission_data(event_form.fields.first()))
     response = member_client.post(
         url, data=_create_submission_data(event_form.fields.first())
     )

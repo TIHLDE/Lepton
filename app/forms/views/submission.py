@@ -1,5 +1,4 @@
 from django.db import transaction
-
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
@@ -65,7 +64,6 @@ class SubmissionViewSet(viewsets.ModelViewSet):
                 allow_overwrite = True
 
         if allow_overwrite:
-
             Submission.objects.filter(user=user, form=form).delete()
 
         return super().create(request, *args, **kwargs)
