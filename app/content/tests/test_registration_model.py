@@ -478,7 +478,7 @@ def test_set_attended_is_allowed_when_queue_exists():
     registration.has_attended = new_attended_state
 
     registration.save()
-    
+
     assert registration.has_attended == new_attended_state
 
 
