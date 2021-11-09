@@ -13,6 +13,8 @@
 ---
 
 ## Neste versjon
+- ✨ **Prioriteringer** En innstilling på arrangementer som gjør at kun prioriterte studenter kan melde seg på.
+
 ## Versjon 1.1.4 (01.11.2021)
 - 🦟 **Arrangement**. Fikset bug der admins ikke kunne melde påmeldte som ankommet hvis noen var på ventelisten.
 

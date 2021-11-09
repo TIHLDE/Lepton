@@ -36,6 +36,7 @@ class EventSerializer(serializers.ModelSerializer):
             "end_registration_at",
             "sign_off_deadline",
             "registration_priorities",
+            "only_allow_prioritized",
             "evaluation",
             "survey",
             "updated_at",
@@ -119,6 +120,7 @@ class EventCreateAndUpdateSerializer(BaseModelSerializer):
             "end_registration_at",
             "sign_off_deadline",
             "registration_priorities",
+            "only_allow_prioritized",
             "can_cause_strikes",
             "enforces_previous_strikes",
         )
