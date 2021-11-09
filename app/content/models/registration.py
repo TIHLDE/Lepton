@@ -16,12 +16,12 @@ from app.content.models.strike import create_strike
 from app.forms.enums import EventFormType
 from app.util import EnumUtils, now
 from app.util.mail_creator import MailCreator
-from app.util.models import BaseModel
+from app.util.models import TimeStampedModel
 from app.util.notifier import Notify
 from app.util.utils import datetime_format
 
 
-class Registration(BaseModel, BasePermissionModel):
+class Registration(TimeStampedModel, BasePermissionModel):
     has_access = [AdminGroup.HS, AdminGroup.INDEX, AdminGroup.NOK, AdminGroup.SOSIALEN]
     has_retrieve_access = [
         AdminGroup.HS,
@@ -116,7 +116,11 @@ class Registration(BaseModel, BasePermissionModel):
             self.create()
         self.send_notification_and_mail()
 
-        if self.event.is_full and not self.is_on_wait and self in self.event.get_waiting_list():
+        if (
+            self.event.is_full
+            and not self.is_on_wait
+            and self in self.event.get_waiting_list()
+        ):
             raise EventIsFullError
 
         return super(Registration, self).save(*args, **kwargs)

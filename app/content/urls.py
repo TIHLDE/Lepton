@@ -19,6 +19,7 @@ from app.content.views import (
     accept_form,
     upload,
 )
+from app.content.views.content_request import ContentRequestViewSet
 
 router = routers.DefaultRouter()
 
@@ -42,6 +43,8 @@ router.register(
 router.register("badge", UserBadgeViewSet, basename="badge")
 router.register("page", PageViewSet)
 router.register("strikes", StrikeViewSet, basename="strikes")
+router.register("strikes", StrikeViewSet, basename="strikes")
+router.register(r"content_requests", ContentRequestViewSet, basename="news_requests")
 
 urlpatterns = [
     url(r"", include(router.urls)),

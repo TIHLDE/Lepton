@@ -5,10 +5,10 @@ from enumchoicefield import EnumChoiceField
 
 from app.common.enums import AdminGroup, GroupType
 from app.common.permissions import BasePermissionModel, set_user_id
-from app.util.models import BaseModel, OptionalImage
+from app.util.models import OptionalImage, TimeStampedModel
 
 
-class Group(OptionalImage, BaseModel, BasePermissionModel):
+class Group(OptionalImage, TimeStampedModel, BasePermissionModel):
     """Model for Custom Groups"""
 
     write_access = AdminGroup.admin()

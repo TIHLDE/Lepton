@@ -12,10 +12,10 @@ from app.common.enums import (
     UserStudy,
 )
 from app.common.permissions import BasePermissionModel
-from app.util.models import BaseModel
+from app.util.models import TimeStampedModel
 
 
-class Cheatsheet(BaseModel, BasePermissionModel):
+class Cheatsheet(TimeStampedModel, BasePermissionModel):
     write_access = AdminGroup.admin()
     read_access = [Groups.TIHLDE]
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

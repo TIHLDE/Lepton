@@ -11,7 +11,7 @@ class LoggerSerializer(serializers.ModelSerializer):
     """
 
     def create(self, validated_data):
-        user = self._get_user()
+        user = self.get_user()
         instance = super().create(validated_data)
 
         if instance.pk:
@@ -21,11 +21,11 @@ class LoggerSerializer(serializers.ModelSerializer):
 
         return instance
 
-    def _get_user(self):
+    def get_user(self):
         return self.context["request"].user
 
     def update(self, instance, validated_data):
-        user = self._get_user()
+        user = self.get_user()
         instance = super().update(instance, validated_data)
 
         if instance.pk:

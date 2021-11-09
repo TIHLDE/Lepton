@@ -3,11 +3,11 @@ from django.db import models
 from app.common.enums import AdminGroup
 from app.common.permissions import BasePermissionModel
 from app.content.enums import JobPostType, UserClass
-from app.util.models import BaseModel, OptionalImage
+from app.util.models import OptionalImage, TimeStampedModel
 from app.util.utils import yesterday
 
 
-class JobPost(BaseModel, OptionalImage, BasePermissionModel):
+class JobPost(TimeStampedModel, OptionalImage, BasePermissionModel):
     title = models.CharField(max_length=200)
     ingress = models.CharField(max_length=800, blank=True, default="")
     body = models.TextField(blank=True, default="")

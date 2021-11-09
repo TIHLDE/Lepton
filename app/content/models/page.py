@@ -7,10 +7,10 @@ from mptt.models import MPTTModel, TreeForeignKey
 
 from app.common.enums import AdminGroup
 from app.common.permissions import BasePermissionModel
-from app.util.models import BaseModel, OptionalImage
+from app.util.models import OptionalImage, TimeStampedModel
 
 
-class Page(MPTTModel, OptionalImage, BaseModel, BasePermissionModel):
+class Page(MPTTModel, OptionalImage, TimeStampedModel, BasePermissionModel):
 
     write_access = AdminGroup.admin()
 

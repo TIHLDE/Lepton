@@ -1,7 +1,7 @@
 from django.db import models
 
 
-class BaseModel(models.Model):
+class TimeStampedModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True, editable=False)
 
@@ -16,6 +16,16 @@ class OptionalImage(models.Model):
     # or as an URL to another service?
     image = models.URLField(max_length=600, null=True, blank=True)
     image_alt = models.CharField(max_length=200, null=True, blank=True)
+
+    class Meta:
+        abstract = True
+
+
+class Content(OptionalImage):
+    body = models.TextField()
+    header = models.CharField(max_length=200)
+    title = models.CharField(max_length=200)
+    is_published = models.BooleanField(default=True)
 
     class Meta:
         abstract = True

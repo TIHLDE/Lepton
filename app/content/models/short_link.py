@@ -4,10 +4,10 @@ from django.utils.text import slugify
 from app.common.enums import Groups
 from app.common.permissions import BasePermissionModel
 from app.content.models import User
-from app.util.models import BaseModel
+from app.util.models import TimeStampedModel
 
 
-class ShortLink(BaseModel, BasePermissionModel):
+class ShortLink(TimeStampedModel, BasePermissionModel):
     name = models.CharField(max_length=50, primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="short_links")
     url = models.URLField(max_length=600)

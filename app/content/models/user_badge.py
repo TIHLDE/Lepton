@@ -3,10 +3,10 @@ from django.db import models
 from app.common.enums import AdminGroup, Groups
 from app.common.permissions import BasePermissionModel
 from app.content.models import Badge, User
-from app.util.models import BaseModel
+from app.util.models import TimeStampedModel
 
 
-class UserBadge(BaseModel, BasePermissionModel):
+class UserBadge(TimeStampedModel, BasePermissionModel):
     write_access = [AdminGroup.INDEX]
     read_access = [AdminGroup.INDEX]
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_badges")

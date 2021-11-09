@@ -2,10 +2,10 @@ import uuid
 
 from django.db import models
 
-from app.util.models import BaseModel, OptionalImage
+from app.util.models import OptionalImage, TimeStampedModel
 
 
-class Badge(BaseModel, OptionalImage):
+class Badge(TimeStampedModel, OptionalImage):
     id = models.UUIDField(
         auto_created=True, primary_key=True, default=uuid.uuid4, serialize=False,
     )

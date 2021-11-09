@@ -1,15 +1,9 @@
-from django.db import models
-
 from app.common.enums import AdminGroup
 from app.common.permissions import BasePermissionModel
-from app.util.models import BaseModel, OptionalImage
+from app.util.models import Content, TimeStampedModel
 
 
-class News(BaseModel, OptionalImage, BasePermissionModel):
-    title = models.CharField(max_length=200)
-    header = models.CharField(max_length=200)
-    body = models.TextField()
-
+class News(TimeStampedModel, Content, BasePermissionModel):
     write_access = AdminGroup.all()
 
     class Meta:

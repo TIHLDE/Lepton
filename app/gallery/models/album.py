@@ -4,10 +4,10 @@ from django.utils.text import slugify
 from app.common.enums import AdminGroup
 from app.common.permissions import BasePermissionModel
 from app.content.models.event import Event
-from app.util.models import BaseModel, OptionalImage
+from app.util.models import OptionalImage, TimeStampedModel
 
 
-class Album(BaseModel, BasePermissionModel, OptionalImage):
+class Album(TimeStampedModel, BasePermissionModel, OptionalImage):
 
     title = models.CharField(max_length=100)
     event = models.ForeignKey(Event, on_delete=models.SET_NULL, null=True)

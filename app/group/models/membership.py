@@ -7,11 +7,11 @@ from app.common.enums import AdminGroup, GroupType, MembershipType
 from app.common.permissions import BasePermissionModel
 from app.content.models.user import User
 from app.group.models.group import Group
-from app.util.models import BaseModel
+from app.util.models import TimeStampedModel
 from app.util.utils import now
 
 
-class MembershipHistory(BaseModel):
+class MembershipHistory(TimeStampedModel):
     """Model for a Group Membership History"""
 
     user = models.ForeignKey(
@@ -44,7 +44,7 @@ class MembershipHistory(BaseModel):
         )
 
 
-class Membership(BaseModel, BasePermissionModel):
+class Membership(TimeStampedModel, BasePermissionModel):
     """Model for a Group Membership"""
 
     write_access = AdminGroup.admin()

@@ -3,10 +3,10 @@ from django.db import models
 from enumchoicefield import EnumChoiceField
 
 from app.common.enums import UserClass, UserStudy
-from app.util.models import BaseModel
+from app.util.models import TimeStampedModel
 
 
-class Priority(BaseModel):
+class Priority(TimeStampedModel):
     priority_id = models.AutoField(primary_key=True)
 
     user_class = EnumChoiceField(UserClass, default=UserClass.FIRST)

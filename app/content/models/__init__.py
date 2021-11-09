@@ -17,3 +17,4 @@ from app.content.models.strike import (
     get_strike_description,
     get_strike_strike_size,
 )
+from app.content.models.content_request import ContentRequest

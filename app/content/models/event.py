@@ -7,7 +7,7 @@ from django.db.models import signals
 from app.common.enums import AdminGroup
 from app.common.permissions import BasePermissionModel
 from app.forms.enums import EventFormType
-from app.util.models import BaseModel, OptionalImage
+from app.util.models import OptionalImage, TimeStampedModel
 from app.util.utils import now, yesterday
 
 from ..signals import send_event_reminders
@@ -16,7 +16,7 @@ from .prioritiy import Priority
 from .user import User
 
 
-class Event(BaseModel, OptionalImage, BasePermissionModel):
+class Event(TimeStampedModel, OptionalImage, BasePermissionModel):
     title = models.CharField(max_length=200)
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()

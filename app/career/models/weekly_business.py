@@ -5,10 +5,10 @@ from django.db import models
 from app.common.enums import AdminGroup
 from app.common.permissions import BasePermissionModel
 from app.util import now
-from app.util.models import BaseModel, OptionalImage
+from app.util.models import OptionalImage, TimeStampedModel
 
 
-class WeeklyBusiness(BaseModel, OptionalImage, BasePermissionModel):
+class WeeklyBusiness(TimeStampedModel, OptionalImage, BasePermissionModel):
     write_access = [AdminGroup.HS, AdminGroup.INDEX, AdminGroup.NOK]
 
     id = models.UUIDField(

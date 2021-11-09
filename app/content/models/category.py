@@ -2,10 +2,10 @@ from django.db import models
 
 from app.common.enums import AdminGroup
 from app.common.permissions import BasePermissionModel
-from app.util.models import BaseModel
+from app.util.models import TimeStampedModel
 
 
-class Category(BaseModel, BasePermissionModel):
+class Category(TimeStampedModel, BasePermissionModel):
     write_access = AdminGroup.all()
     text = models.CharField(max_length=200, null=True)
 

@@ -7,7 +7,7 @@ from django.db.models.aggregates import Sum
 
 from app.common.enums import AdminGroup
 from app.common.permissions import BasePermissionModel, check_has_access
-from app.util.models import BaseModel
+from app.util.models import TimeStampedModel
 from app.util.utils import getTimezone, now
 
 
@@ -40,7 +40,7 @@ class StrikeQueryset(models.QuerySet):
         return sum_active_strikes or 0
 
 
-class Strike(BaseModel, BasePermissionModel):
+class Strike(TimeStampedModel, BasePermissionModel):
     write_access = [
         AdminGroup.HS,
         AdminGroup.INDEX,

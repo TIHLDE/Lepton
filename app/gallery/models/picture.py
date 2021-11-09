@@ -5,10 +5,10 @@ from django.db import models
 from app.common.enums import AdminGroup
 from app.common.permissions import BasePermissionModel
 from app.gallery.models.album import Album
-from app.util.models import BaseModel
+from app.util.models import TimeStampedModel
 
 
-class Picture(BaseModel, BasePermissionModel):
+class Picture(TimeStampedModel, BasePermissionModel):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     image = models.URLField(max_length=400)

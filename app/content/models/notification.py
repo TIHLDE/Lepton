@@ -1,9 +1,9 @@
 from django.db import models
 
-from app.util.models import BaseModel
+from app.util.models import TimeStampedModel
 
 
-class Notification(BaseModel):
+class Notification(TimeStampedModel):
     user = models.ForeignKey("content.User", on_delete=models.CASCADE)
     title = models.CharField(max_length=150)
     description = models.TextField(default="", blank=True)

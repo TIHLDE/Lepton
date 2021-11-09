@@ -11,7 +11,7 @@ from app.common.permissions import BasePermissionModel, check_has_access
 from app.content.models.event import Event
 from app.content.models.user import User
 from app.forms.enums import EventFormType, FormFieldType
-from app.util.models import BaseModel
+from app.util.models import TimeStampedModel
 
 
 class Form(PolymorphicModel, BasePermissionModel):
@@ -125,7 +125,7 @@ class Option(OrderedModel):
         pass
 
 
-class Submission(BaseModel, BasePermissionModel):
+class Submission(TimeStampedModel, BasePermissionModel):
     read_access = [AdminGroup.HS, AdminGroup.INDEX, AdminGroup.SOSIALEN, AdminGroup.NOK]
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     form = models.ForeignKey(Form, on_delete=models.CASCADE, related_name="submissions")
@@ -181,7 +181,7 @@ class Submission(BaseModel, BasePermissionModel):
         )
 
 
-class Answer(BaseModel):
+class Answer(TimeStampedModel):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     submission = models.ForeignKey(

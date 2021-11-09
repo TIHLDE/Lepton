@@ -12,7 +12,7 @@ from rest_framework.authtoken.models import Token
 
 from app.common.enums import AdminGroup, Groups, MembershipType
 from app.common.permissions import check_has_access
-from app.util.models import BaseModel, OptionalImage
+from app.util.models import OptionalImage, TimeStampedModel
 from app.util.utils import disable_for_loaddata
 
 
@@ -63,7 +63,7 @@ GENDER = (
 )
 
 
-class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
+class User(AbstractBaseUser, PermissionsMixin, TimeStampedModel, OptionalImage):
     has_access = [AdminGroup.HS, AdminGroup.INDEX]
     user_id = models.CharField(max_length=15, primary_key=True)
     first_name = models.CharField(max_length=50)
