@@ -13,6 +13,8 @@
 ---
 
 ## Neste versjon
+- ⚡ **Epost**. Støtter flere epost-leverandører gjennom mer universell formatering.
+
 ## Versjon 1.1.4 (01.11.2021)
 - 🦟 **Arrangement**. Fikset bug der admins ikke kunne melde påmeldte som ankommet hvis noen var på ventelisten.
 
