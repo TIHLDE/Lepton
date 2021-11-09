@@ -1,15 +1,43 @@
 import uuid
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.db import models
+from django.db.models.aggregates import Sum
 
 from app.common.enums import AdminGroup
-from app.common.permissions import BasePermissionModel
+from app.common.permissions import BasePermissionModel, check_has_access
 from app.util.models import BaseModel
-from app.util.utils import today
+from app.util.utils import getTimezone, now
+
+
+class Holiday:
+    def __init__(self, start, end):
+        self.start = start
+        self.end = end
+
 
 STRIKE_DURATION_IN_DAYS = 20
+
+SUMMER = Holiday((5, 10), (8, 15))
+WINTER = Holiday((11, 29), (1, 9))
+
+HOLIDAYS = (SUMMER, WINTER)
+
+
+class StrikeQueryset(models.QuerySet):
+    def active(self, *args, **kwargs):
+        active_filter = {
+            "created_at__gte": now() - timedelta(days=STRIKE_DURATION_IN_DAYS),
+            **kwargs,
+        }
+        return self.filter(*args, **active_filter)
+
+    def sum_active(self):
+        sum_active_strikes = (
+            self.active().aggregate(Sum("strike_size")).get("strike_size__sum")
+        )
+        return sum_active_strikes or 0
 
 
 class Strike(BaseModel, BasePermissionModel):
@@ -19,6 +47,8 @@ class Strike(BaseModel, BasePermissionModel):
         AdminGroup.NOK,
         AdminGroup.SOSIALEN,
     ]
+
+    read_access = write_access
 
     id = models.UUIDField(
         auto_created=True, primary_key=True, default=uuid.uuid4, serialize=False,
@@ -44,36 +74,73 @@ class Strike(BaseModel, BasePermissionModel):
         related_name="created_strikes",
     )
 
+    objects = StrikeQueryset.as_manager()
+
     class Meta:
         verbose_name = "Strike"
         verbose_name_plural = "Strikes"
+        ordering = ("-created_at",)
 
     def __str__(self):
         return f"{self.user.first_name} {self.user.last_name} - {self.description} - {self.strike_size}"
 
     def save(self, *args, **kwargs):
-        # TODO: Kjør når prikksystem er lansert "offisielt"
-        # if self.created_at is None:
-        #     from app.util.mail_creator import MailCreator
-        #     from app.util.notifier import Notify
+        if self.created_at is None:
+            from app.util.mail_creator import MailCreator
+            from app.util.notifier import Notify
 
-        #     Notify(self.user, "Du har fått en prikk").send_email(
-        #         MailCreator("Du har fått en prikk")
-        #         .add_paragraph(f"Hei {self.user.first_name}!")
-        #         .add_paragraph(self.description)
-        #         .generate_string()
-        #     ).send_notification(
-        #         description=self.description,
-        #     )
+            strike_info = "Prikken varer i 20 dager. Ta kontakt med arrangøren om du er uenig. Konsekvenser kan sees i arrangementsreglene. Du kan finne dine aktive prikker og mer info om dem i profilen."
+
+            Notify([self.user], "Du har fått en prikk").send_email(
+                MailCreator("Du har fått en prikk")
+                .add_paragraph(f"Hei {self.user.first_name}!")
+                .add_paragraph(self.description)
+                .add_paragraph(strike_info)
+                .generate_string()
+            ).send_notification(description=f"{self.description}\n{strike_info}",)
         super(Strike, self).save(*args, **kwargs)
 
     @property
     def active(self):
-        return self.expires_at >= today()
+        return self.expires_at >= now()
 
     @property
     def expires_at(self):
-        return self.created_at + timedelta(days=STRIKE_DURATION_IN_DAYS)
+
+        expired_date = self.created_at + timedelta(STRIKE_DURATION_IN_DAYS)
+
+        for holiday in HOLIDAYS:
+
+            start = holiday.start
+            end = holiday.end
+
+            start_date = datetime(
+                self.created_at.year, start[0], start[1], tzinfo=getTimezone()
+            )
+            end_date = datetime(
+                self.created_at.year, end[0], end[1], tzinfo=getTimezone()
+            )
+
+            if end_date < start_date:
+                end_date = end_date.replace(year=end_date.year + 1)
+
+            if expired_date > start_date and self.created_at < end_date:
+                smallest_difference = min(
+                    (end_date - start_date), (end_date - self.created_at)
+                )
+                expired_date += smallest_difference + timedelta(days=1)
+                break
+
+        return expired_date.astimezone(getTimezone())
+
+    @classmethod
+    def has_destroy_permission(cls, request):
+        return check_has_access(AdminGroup.admin(), request)
+
+    def has_object_read_permission(self, request):
+        return self.user.user_id == request.id or check_has_access(
+            self.read_access, request
+        )
 
 
 def create_strike(enum, user, event=None, creator=None):

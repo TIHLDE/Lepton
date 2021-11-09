@@ -1,6 +1,7 @@
 import os
 
 from django.views.decorators.csrf import csrf_exempt
+from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
@@ -17,8 +18,8 @@ def accept_form(request):
     try:
         body = request.data
         title = f"{body['info']['bedrift']} vil ha {', '.join(body['type'][:-2])} og {', '.join(body['type'][-2:])} i {', '.join(body['time'][:-2])} og {', '.join(body['time'][-2:])}"
-        success = send_html_email(
-            os.environ.get("EMAIL_RECEIVER") or "orakel@tihlde.org",
+        send_html_email(
+            [os.environ.get("EMAIL_RECEIVER") or "orakel@tihlde.org"],
             MailCreator(title)
             .add_paragraph(f"Bedrift: {body['info']['bedrift']}")
             .add_paragraph(
@@ -29,11 +30,17 @@ def accept_form(request):
             .add_paragraph(f"Kommentar: {body['comment']}")
             .generate_string(),
             title,
+            send_async=False,
         )
         return Response(
-            {"detail": "Vi har mottatt din forespørsel"}, status=200 if success else 400
+            {"detail": "Vi har mottatt din forespørsel"}, status=status.HTTP_200_OK
         )
 
     except Exception as accept_form_fail:
         capture_exception(accept_form_fail)
-        raise
+        return Response(
+            {
+                "detail": "Ops, det oppsto en feil. Prøv å sende en mail til hs@tihlde.org"
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )

@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action
@@ -10,7 +8,7 @@ from sentry_sdk import capture_exception
 from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission
 from app.content.filters import EventFilter
-from app.content.models import Event
+from app.content.models import Event, User
 from app.content.serializers import (
     EventCreateAndUpdateSerializer,
     EventListSerializer,
@@ -18,7 +16,7 @@ from app.content.serializers import (
 )
 from app.util.mail_creator import MailCreator
 from app.util.notifier import Notify
-from app.util.utils import midday, yesterday
+from app.util.utils import midday, now, yesterday
 
 
 class EventViewSet(viewsets.ModelViewSet):
@@ -41,11 +39,11 @@ class EventViewSet(viewsets.ModelViewSet):
             queryset = Event.objects.all()
         else:
             midday_yesterday = midday(yesterday())
-            midday_today = midday(datetime.now())
-            time = midday_today if midday_today < datetime.now() else midday_yesterday
+            midday_today = midday(now())
+            time = midday_today if midday_today < now() else midday_yesterday
             queryset = Event.objects.filter(end_date__gte=time)
 
-        return queryset.prefetch_related("forms").order_by("start_date")
+        return queryset.select_related("category").order_by("start_date")
 
     def get_serializer_class(self):
         if hasattr(self, "action") and self.action == "list":
@@ -121,20 +119,17 @@ class EventViewSet(viewsets.ModelViewSet):
             event = self.get_object()
             self.check_object_permissions(self.request, event)
 
-            for registration in event.get_queue():
-                Notify(registration.user, title).send_email(
-                    MailCreator(title)
-                    .add_paragraph(f"Hei {registration.user.first_name}")
-                    .add_paragraph(
-                        f"Arrangøren av {event.title} har en melding til deg:"
-                    )
-                    .add_paragraph(message)
-                    .add_event_button(event.pk)
-                    .generate_string()
-                ).send_notification(
-                    description=f"Arrangøren av {event.title} har en melding til deg: {message}",
-                    link=event.website_url,
-                )
+            users = User.objects.filter(registrations__in=event.get_queue())
+            Notify(users, title).send_email(
+                MailCreator(title)
+                .add_paragraph(f"Arrangøren av {event.title} har en melding til deg:")
+                .add_paragraph(message)
+                .add_event_button(event.pk)
+                .generate_string()
+            ).send_notification(
+                description=f"Arrangøren av {event.title} har en melding til deg: {message}",
+                link=event.website_url,
+            )
 
             return Response(
                 {

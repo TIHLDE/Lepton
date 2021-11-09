@@ -11,14 +11,17 @@ from app.content.tasks.event import (
     event_end_schedular,
     event_sign_off_deadline_schedular,
 )
-from app.util.utils import disable_for_loaddata, midday, today
+from app.util.utils import disable_for_loaddata, midday, now
 
 logger = logging.getLogger(__name__)
 
 
 @disable_for_loaddata
 def send_event_reminders(sender, instance, created, **kwargs):
-    if settings.ENVIRONMENT == EnvironmentOptions.PRODUCTION:
+    if (
+        settings.ENVIRONMENT == EnvironmentOptions.PRODUCTION
+        or settings.ENVIRONMENT == EnvironmentOptions.DEVELOPMENT
+    ):
         run_celery_tasks_for_event(instance)
 
 
@@ -82,4 +85,4 @@ def sign_off_deadline_reminder(event):
 
 
 def isFuture(eta):
-    return eta > today()
+    return eta > now()

@@ -1,4 +1,4 @@
-version: '3'
+version: '3.8'
 
 services:
   db:
@@ -28,13 +28,13 @@ services:
     build:
       context: .
       dockerfile: compose/Dockerfile
+      target: dev
     env_file:
       - ./.envs/.local
     image: web
     container_name: web
     restart: on-failure
-    entrypoint: /wait-for-mysql
-    command: python manage.py runserver 0.0.0.0:8000
+    platform: linux/amd64
     volumes:
       - .:/usr/src/
     ports:
@@ -47,5 +47,16 @@ services:
     image: celery
     container_name: celery
     entrypoint: []
-    command: celery -A app worker -l info --without-heartbeat --without-gossip --without-mingle
+    command: celery -A app worker -E -l info --without-heartbeat --without-gossip --without-mingle
     ports: []
+
+  flower:
+    <<: *web
+    image: flower
+    container_name: flower
+    entrypoint: []
+    command: celery -A app flower --url_prefix=flower/admin
+    ports:
+      - "5555:5555"
+    depends_on:
+      - celery

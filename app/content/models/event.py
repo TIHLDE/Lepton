@@ -3,13 +3,12 @@ from datetime import timedelta
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import signals
-from django.db.transaction import atomic
 
 from app.common.enums import AdminGroup
 from app.common.permissions import BasePermissionModel
 from app.forms.enums import EventFormType
 from app.util.models import BaseModel, OptionalImage
-from app.util.utils import today, yesterday
+from app.util.utils import now, yesterday
 
 from ..signals import send_event_reminders
 from .category import Category
@@ -18,21 +17,18 @@ from .user import User
 
 
 class Event(BaseModel, OptionalImage, BasePermissionModel):
-
     title = models.CharField(max_length=200)
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
     location = models.CharField(max_length=200, null=True)
     description = models.TextField(default="", blank=True)
-    PRIORITIES = (
-        (0, "Low"),
-        (1, "Normal"),
-        (2, "High"),
-    )
-    priority = models.IntegerField(default=0, choices=PRIORITIES, null=True)
     category = models.ForeignKey(
         Category, blank=True, null=True, default=None, on_delete=models.SET_NULL
     )
+
+    """ Strike fields """
+    can_cause_strikes = models.BooleanField(default=True)
+    enforces_previous_strikes = models.BooleanField(default=True)
 
     """ Registration fields """
     sign_up = models.BooleanField(default=False)
@@ -49,15 +45,17 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
     start_registration_at = models.DateTimeField(blank=True, null=True, default=None)
     end_registration_at = models.DateTimeField(blank=True, null=True, default=None)
     sign_off_deadline = models.DateTimeField(blank=True, null=True, default=None)
-
     registration_priorities = models.ManyToManyField(
         Priority, blank=True, default=None, related_name="priorities"
     )
     only_allow_prioritized = models.BooleanField(default=False)
+
+    """ Schedular fields """
     end_date_schedular_id = models.CharField(max_length=100, blank=True, null=True)
     sign_off_deadline_schedular_id = models.CharField(
         max_length=100, blank=True, null=True
     )
+
     write_access = AdminGroup.all()
 
     def __str__(self):
@@ -91,14 +89,14 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
 
     @property
     def is_past_sign_off_deadline(self):
-        return today() >= self.sign_off_deadline
+        return now() >= self.sign_off_deadline
 
-    def is_one_hour_before_event_start(self):
-        return today() >= self.start_date - timedelta(hours=1)
+    def is_two_hours_before_event_start(self):
+        return now() >= self.start_date - timedelta(hours=2)
 
     @property
     def event_has_ended(self):
-        return today() >= self.end_date
+        return now() >= self.end_date
 
     def has_waiting_list(self):
         return self.has_limit() and (self.is_full or self.get_waiting_list().exists())
@@ -108,7 +106,7 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
 
     @property
     def is_full(self):
-        return self.get_queue().count() >= self.limit
+        return self.has_limit() and self.get_queue().count() >= self.limit
 
     def has_priorities(self):
         return self.registration_priorities.all().exists()
@@ -136,11 +134,6 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
             self.check_start_registration_is_after_deadline()
             self.check_end_time_is_before_end_registration()
             self.check_start_date_is_before_deadline()
-
-    @atomic
-    def increment_limit(self):
-        self.limit += 1
-        self.save()
 
     def check_sign_up_and_registration_times(self):
         if not self.sign_up and (

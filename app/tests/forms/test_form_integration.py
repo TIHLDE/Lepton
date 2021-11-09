@@ -7,7 +7,11 @@ from app.content.factories import EventFactory, RegistrationFactory
 from app.content.serializers import EventListSerializer
 from app.forms.enums import EventFormType
 from app.forms.models.forms import Field
-from app.forms.tests.form_factories import EventFormFactory, FormFactory
+from app.forms.tests.form_factories import (
+    EventFormFactory,
+    FieldFactory,
+    FormFactory,
+)
 from app.util.test_utils import get_api_client
 
 pytestmark = pytest.mark.django_db
@@ -28,11 +32,28 @@ def _get_form_post_data(form):
         "fields": [
             {
                 "title": "string",
-                "options": [{"title": "string"}],
+                "options": [{"title": "string", "order": 0}],
                 "type": "SINGLE_SELECT",
                 "required": True,
             }
         ],
+    }
+
+
+def _get_form_template_post_data():
+    return {
+        "resource_type": "Form",
+        "title": "form",
+        "fields": [
+            {
+                "title": "string",
+                "options": [{"title": "string", "order": 0}],
+                "type": "SINGLE_SELECT",
+                "required": True,
+                "order": 0,
+            }
+        ],
+        "template": True,
     }
 
 
@@ -60,6 +81,14 @@ def _get_form_update_data(form):
     }
 
 
+def test_create_template_form(admin_user):
+    client = get_api_client(user=admin_user)
+    form = client.post(_get_forms_url(), _get_form_template_post_data()).json()
+    response = client.get(_get_forms_url() + str(form.get("id")) + "/").json()
+
+    assert response == form
+
+
 def test_list_forms_data(admin_user):
     """Should return the correct fields about the forms."""
     form = EventFormFactory()
@@ -67,7 +96,7 @@ def test_list_forms_data(admin_user):
     option = field.options.first()
 
     client = get_api_client(user=admin_user)
-    url = _get_forms_url()
+    url = _get_forms_url() + "?all"
     response = client.get(url)
     response = response.json()
 
@@ -82,11 +111,49 @@ def test_list_forms_data(admin_user):
             {
                 "id": str(field.id),
                 "title": field.title,
-                "options": [{"id": str(option.id), "title": option.title}],
+                "options": [
+                    {"id": str(option.id), "title": option.title, "order": option.order}
+                ],
                 "type": field.type.name,
                 "required": field.required,
+                "order": field.order,
             }
         ],
+        "template": False,
+    }
+
+
+def test_list_form_templates_data(admin_user):
+    """Should return the correct fields about the forms."""
+    form = FormFactory(template=True)
+    field = form.fields.first()
+    option = field.options.first()
+
+    client = get_api_client(user=admin_user)
+    url = _get_forms_url()
+    response = client.get(url)
+    response = response.json()
+
+    assert response[0] == {
+        "id": str(form.id),
+        "title": form.title,
+        "fields": [
+            {
+                "id": str(field.id),
+                "title": field.title,
+                "options": [
+                    {
+                        "id": str(option.id),
+                        "title": option.title,
+                        "order": option.order,
+                    }
+                ],
+                "type": field.type.name,
+                "required": field.required,
+                "order": field.order,
+            }
+        ],
+        "template": True,
     }
 
 
@@ -113,7 +180,7 @@ def test_list_forms_as_member_is_not_permitted(member):
         (AdminGroup.HS, status.HTTP_200_OK),
         (AdminGroup.INDEX, status.HTTP_200_OK),
         (AdminGroup.NOK, status.HTTP_200_OK),
-        (AdminGroup.SOSIALEN, status.HTTP_403_FORBIDDEN),
+        (AdminGroup.SOSIALEN, status.HTTP_200_OK),
         (AdminGroup.PROMO, status.HTTP_403_FORBIDDEN),
     ],
 )
@@ -282,7 +349,7 @@ def test_update_form_as_member_is_not_permitted(member, form):
         (AdminGroup.HS, status.HTTP_200_OK),
         (AdminGroup.INDEX, status.HTTP_200_OK),
         (AdminGroup.NOK, status.HTTP_200_OK),
-        (AdminGroup.SOSIALEN, status.HTTP_403_FORBIDDEN),
+        (AdminGroup.SOSIALEN, status.HTTP_200_OK),
         (AdminGroup.PROMO, status.HTTP_403_FORBIDDEN),
     ],
 )
@@ -411,6 +478,7 @@ def test_update_options_when_previous_option_is_not_included_in_request_removes_
     assert not field.options.exists()
 
 
+@pytest.mark.django_db
 def test_update_options_when_id_is_passed_in_options_request_data_updates_the_option(
     admin_user, form
 ):
@@ -424,13 +492,21 @@ def test_update_options_when_id_is_passed_in_options_request_data_updates_the_op
         "fields": [
             {
                 "id": str(field.id),
-                "options": [{"id": str(option.id), "title": updated_title,},],
+                "options": [
+                    {
+                        "id": str(option.id),
+                        "title": updated_title,
+                        "order": option.order,
+                    },
+                ],
+                "order": field.order,
             }
         ],
     }
     client = get_api_client(user=admin_user)
     url = _get_form_detail_url(form)
-    client.patch(url, data)
+    response = client.put(url, data)
+    print(response)
 
     option.refresh_from_db()
 
@@ -485,7 +561,7 @@ def test_delete_form_as_member_is_not_permitted(member, form):
 @pytest.mark.parametrize(
     ("group_name", "expected_status_code"),
     [
-        (AdminGroup.SOSIALEN, status.HTTP_403_FORBIDDEN),
+        (AdminGroup.SOSIALEN, status.HTTP_200_OK),
         (AdminGroup.PROMO, status.HTTP_403_FORBIDDEN),
         (AdminGroup.HS, status.HTTP_200_OK),
         (AdminGroup.INDEX, status.HTTP_200_OK),
@@ -510,3 +586,46 @@ def test_delete_form_returns_detail(admin_user, form):
     response = client.delete(url)
 
     assert response.data.get("detail")
+
+
+def test_update_form_field_ordering_reorders_fields(api_client, admin_user, form):
+    """Test that updating fields work, by flipping order of fields"""
+    FieldFactory(form=form)
+
+    client = api_client(user=admin_user)
+    url = _get_form_detail_url(form)
+
+    first_in_order, second_in_order = 0, 1
+    first_field_in_order, second_field_in_order = form.fields.all()
+
+    expected_field_data = [
+        {
+            "id": str(first_field_in_order.id),
+            "title": "i love this field <3",
+            "type": "SINGLE_SELECT",
+            "options": [],
+            "required": False,
+            "order": second_in_order,
+        },
+        {
+            "id": str(second_field_in_order.id),
+            "title": "i love this field <3",
+            "type": "SINGLE_SELECT",
+            "options": [],
+            "required": False,
+            "order": first_in_order,
+        },
+    ]
+    data = {
+        "resource_type": "Form",
+        "title": "testform",
+        "fields": expected_field_data,
+    }
+
+    client.put(url, data)
+
+    first_field_in_order.refresh_from_db()
+    second_field_in_order.refresh_from_db()
+
+    assert first_field_in_order.order == second_in_order
+    assert second_field_in_order.order == first_in_order

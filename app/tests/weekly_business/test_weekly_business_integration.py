@@ -7,7 +7,7 @@ import pytest
 from app.career.factories import WeeklyBusinessFactory
 from app.common.enums import AdminGroup
 from app.content.factories.user_factory import UserFactory
-from app.util import today
+from app.util import now
 from app.util.test_utils import get_api_client
 
 API_WEEKLY_BUSINESS_BASE_URL = "/api/v1/weekly-business/"
@@ -28,7 +28,7 @@ def weekly_business_post_data():
         "image_alt": "index_logo",
         "business_name": "Index",
         "body": "Lorem ipsum penum rektum benedikt gagge",
-        "year": today().year + 1,
+        "year": now().year + 1,
         "week": randint(1, 52),
     }
 
@@ -47,9 +47,9 @@ def _get_weekly_business_put_data(weekly_business):
 @pytest.mark.django_db
 def test_weekly_business_ordering(default_client):
     """weekly_business should be ordered by year then week"""
-    oldest = WeeklyBusinessFactory(year=today().year + 1, week=2)
-    middel = WeeklyBusinessFactory(year=today().year + 1, week=10)
-    newest = WeeklyBusinessFactory(year=today().year + 2, week=4)
+    oldest = WeeklyBusinessFactory(year=now().year + 1, week=2)
+    middel = WeeklyBusinessFactory(year=now().year + 1, week=10)
+    newest = WeeklyBusinessFactory(year=now().year + 2, week=4)
 
     response = default_client.get(_get_weekly_business_url())
     response = response.json()

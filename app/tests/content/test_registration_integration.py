@@ -14,7 +14,7 @@ from app.content.factories import (
 from app.forms.enums import EventFormType
 from app.forms.tests.form_factories import EventFormFactory, SubmissionFactory
 from app.util.test_utils import get_api_client
-from app.util.utils import today
+from app.util.utils import now
 
 API_EVENT_BASE_URL = "/api/v1/events/"
 
@@ -294,7 +294,7 @@ def test_create_when_event_does_not_have_signup(admin_user, member):
 @pytest.mark.django_db
 def test_create_when_event_registration_has_not_started(admin_user, member):
     """A registration is not possible if the events registration has not started."""
-    tomorrow = today() + timedelta(days=1)
+    tomorrow = now() + timedelta(days=1)
     event_registration_not_started = EventFactory(start_registration_at=tomorrow)
     data = _get_registration_post_data(member, event_registration_not_started)
 
@@ -308,7 +308,7 @@ def test_create_when_event_registration_has_not_started(admin_user, member):
 @pytest.mark.django_db
 def test_create_when_event_registration_has_ended(admin_user, member):
     """A registration is not possible if the events registration has ended."""
-    yesterday = today() - timedelta(days=1)
+    yesterday = now() - timedelta(days=1)
     event_registration_not_started = EventFactory(end_registration_at=yesterday)
     data = _get_registration_post_data(member, event_registration_not_started)
 
@@ -421,6 +421,56 @@ def test_update_another_registration_as_admin(admin_user, member):
     assert response.status_code == status.HTTP_200_OK
     assert actual_user_id == member.user_id
     assert not updated_is_on_wait == registration_to_update.is_on_wait
+
+
+@pytest.mark.django_db
+def test_bump_another_registration_as_admin_when_event_is_full_is_not_allowed(
+    admin_user,
+):
+    """An admin user should not be able to move registration up from the waiting list when the event is full."""
+    event = EventFactory(limit=1)
+    RegistrationFactory(event=event)
+
+    assert event.is_full
+
+    registration_to_update = RegistrationFactory(event=event)
+
+    assert registration_to_update.is_on_wait
+
+    data = _get_registration_put_data(
+        user=admin_user, event=registration_to_update.event
+    )
+
+    data["is_on_wait"] = False
+
+    client = get_api_client(user=admin_user)
+    url = _get_registration_detail_url(registration_to_update)
+    response = client.put(url, data=data)
+
+    registration_to_update.refresh_from_db()
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert registration_to_update.is_on_wait
+
+
+@pytest.mark.django_db
+def test_new_registration_on_full_event_goes_to_wait(member):
+    """Tests if a new registation on a full event goes to waiting list"""
+    event = EventFactory(limit=1)
+    RegistrationFactory(event=event)
+
+    assert event.is_full
+
+    data = _get_registration_post_data(member, event)
+
+    client = get_api_client(user=member)
+    url = _get_registration_url(event=event)
+    response = client.post(url, data=data)
+
+    actual_registration = event.registrations.get(user=member)
+
+    assert response.status_code == status.HTTP_201_CREATED
+    assert actual_registration.is_on_wait
 
 
 @pytest.mark.django_db
@@ -539,7 +589,7 @@ def test_delete_as_member_when_sign_off_deadline_has_passed_and_not_on_wait(memb
     A member should be able to delete their registration
     when the events sign off deadline has passed and is not on wait within one hour.
     """
-    event = EventFactory(sign_off_deadline=today() - timedelta(days=1), limit=10)
+    event = EventFactory(sign_off_deadline=now() - timedelta(days=1), limit=10)
     registration = RegistrationFactory(user=member, event=event, is_on_wait=False)
     client = get_api_client(user=member)
 
@@ -555,7 +605,7 @@ def test_delete_as_member_when_sign_off_deadline_has_passed_and_on_wait(member):
     A member should be able to delete their registration
     when the events sign off deadline has passed but is on wait.
     """
-    event = EventFactory(sign_off_deadline=today() - timedelta(days=1))
+    event = EventFactory(sign_off_deadline=now() - timedelta(days=1))
     registration = RegistrationFactory(user=member, event=event)
     client = get_api_client(user=member)
 
@@ -597,7 +647,7 @@ def test_delete_another_registration_as_admin_after_sign_off_deadline(
     admin_user, member
 ):
     """An admin user should be able to delete any registration after sign off deadline."""
-    event = EventFactory(sign_off_deadline=today() - timedelta(days=1))
+    event = EventFactory(sign_off_deadline=now() - timedelta(days=1))
     registration = RegistrationFactory(user=member, event=event)
     client = get_api_client(user=admin_user)
 
