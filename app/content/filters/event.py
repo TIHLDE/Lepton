@@ -27,9 +27,9 @@ class EventFilter(FilterSet):
     def filter_is_admin(self, queryset, name, value):
         if self.request.user.is_HS_or_Index_member:
             return queryset
-        allowed_groups = Group.objects.filter(
+        allowed_organizers = Group.objects.filter(
             memberships__in=self.request.user.memberships_with_events_access
         )
-        if allowed_groups.count() == 0:
+        if allowed_organizers.count() == 0:
             return queryset.none()
-        return queryset.filter(Q(group__in=allowed_groups) | Q(group=None))
+        return queryset.filter(Q(organizer__in=allowed_organizers) | Q(organizer=None))

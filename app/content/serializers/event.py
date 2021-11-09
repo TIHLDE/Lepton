@@ -15,7 +15,7 @@ class EventSerializer(serializers.ModelSerializer):
     registration_priorities = serializers.SerializerMethodField()
     evaluation = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
     survey = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
-    group = GroupSerializer(read_only=True)
+    organizer = GroupSerializer(read_only=True)
     permissions = DRYPermissionsField(actions=["write", "read"], object_only=True)
 
     class Meta:
@@ -34,7 +34,7 @@ class EventSerializer(serializers.ModelSerializer):
             "closed",
             "list_count",
             "waiting_list_count",
-            "group",
+            "organizer",
             "image",
             "image_alt",
             "start_registration_at",
@@ -87,7 +87,7 @@ class EventSerializer(serializers.ModelSerializer):
 
 class EventListSerializer(serializers.ModelSerializer):
     expired = serializers.BooleanField(read_only=True)
-    group = GroupSerializer(read_only=True)
+    organizer = GroupSerializer(read_only=True)
 
     class Meta:
         model = Event
@@ -99,7 +99,7 @@ class EventListSerializer(serializers.ModelSerializer):
             "location",
             "category",
             "expired",
-            "group",
+            "organizer",
             "image",
             "image_alt",
             "updated_at",
@@ -120,7 +120,7 @@ class EventCreateAndUpdateSerializer(BaseModelSerializer):
             "end_registration_at",
             "enforces_previous_strikes",
             "expired",
-            "group",
+            "organizer",
             "image",
             "image_alt",
             "limit",

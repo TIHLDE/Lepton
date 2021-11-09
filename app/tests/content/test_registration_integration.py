@@ -34,17 +34,17 @@ def _get_registration_detail_url(registration):
     return f"{_get_registration_url(registration.event)}{registration.user.user_id}/"
 
 
-# "event_group" should have one of 3 different values:
-# - None -> The event has no connected group
-# - "same" -> The event is connected to same group as user is member of
-# - "other" -> The event is connected to another group as user i member of
+# "event_organizer" should have one of 3 different values:
+# - None -> The event has no connected organizer
+# - "same" -> The event is connected to same organizer as user is member of
+# - "other" -> The event is connected to another organizer as user i member of
 permission_params = pytest.mark.parametrize(
     (
-        "group_name",
-        "group_type",
+        "organizer_name",
+        "organizer_type",
         "membership_type",
         "expected_status_code",
-        "event_group",
+        "event_organizer",
     ),
     (
         [AdminGroup.HS, GroupType.BOARD, MembershipType.MEMBER, 200, "same"],
@@ -71,16 +71,16 @@ permission_params = pytest.mark.parametrize(
 @pytest.fixture
 @permission_params
 def permission_test_util(
-    member, group_name, group_type, membership_type, expected_status_code, event_group,
+    member, organizer_name, organizer_type, membership_type, expected_status_code, event_organizer,
 ):
-    group = add_user_to_group_with_name(member, group_name, group_type, membership_type)
-    if event_group == "same":
-        event_group = group
-    elif event_group == "other":
-        event_group = GroupFactory()
-    event = EventFactory(group=event_group)
+    organizer = add_user_to_group_with_name(member, organizer_name, organizer_type, membership_type)
+    if event_organizer == "same":
+        event_organizer = organizer
+    elif event_organizer == "other":
+        event_organizer = GroupFactory()
+    event = EventFactory(organizer=event_organizer)
     registration = RegistrationFactory(event=event)
-    return member, registration, event_group, expected_status_code
+    return member, registration, event_organizer, expected_status_code
 
 
 def _get_registration_post_data(user, event):
@@ -120,13 +120,13 @@ def test_list_as_member(member, registration):
 
 @pytest.mark.django_db
 @permission_params
-def test_list_as_member_in_group(permission_test_util):
+def test_list_as_member_in_organizer(permission_test_util):
     """
     A member of HS or Index should be able to list all registrations.
     A member of subgroup or leader of committee and interest groups should be able to
-    list all registrations for an event that has event.group None or equal the same group.
+    list all registrations for an event that has event.organizer None or equal the same group.
     """
-    member, registration, event_group, expected_status_code = permission_test_util
+    member, registration, event_organizer, expected_status_code = permission_test_util
     client = get_api_client(user=member)
     url = _get_registration_url(registration.event)
     response = client.get(url)
@@ -172,13 +172,13 @@ def test_retrieve_another_registration_as_member(member, registration):
 
 @pytest.mark.django_db
 @permission_params
-def test_retrieve_as_member_in_group(permission_test_util):
+def test_retrieve_as_member_in_organizer(permission_test_util):
     """
     A member of HS or Index should be able to retrieve any registration.
     A member of subgroup or leader of committee and interest groups should be able to
-    retrieve any registration for an event that has event.group None or equal the same group.
+    retrieve any registration for an event that has event.organizer None or equal the same group.
     """
-    member, registration, event_group, expected_status_code = permission_test_util
+    member, registration, event_organizer, expected_status_code = permission_test_util
     client = get_api_client(user=member)
     url = _get_registration_detail_url(registration)
     response = client.get(url)
@@ -387,7 +387,6 @@ def test_update_as_member(member):
     assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
-# TODO
 @pytest.mark.django_db
 def test_update_own_registration_as_admin(admin_user):
     """An admin user should be able to update their own registration."""
@@ -411,7 +410,6 @@ def test_update_own_registration_as_admin(admin_user):
     assert not updated_is_on_wait == registration_to_update.is_on_wait
 
 
-# TODO
 @pytest.mark.django_db
 def test_update_registration_updated_fields(admin_user):
     """An update should actually update the registration."""
@@ -441,7 +439,7 @@ def test_update_another_registration_as_admin(permission_test_util):
     (
         member,
         registration_to_update,
-        event_group,
+        event_organizer,
         expected_status_code,
     ) = permission_test_util
     data = _get_registration_put_data(user=member, event=registration_to_update.event)
@@ -459,7 +457,6 @@ def test_update_another_registration_as_admin(permission_test_util):
     assert not updated_is_on_wait == registration_to_update.is_on_wait
 
 
-# TODO
 @pytest.mark.django_db
 def test_bump_another_registration_as_admin_when_event_is_full_is_not_allowed(
     admin_user,
@@ -652,23 +649,21 @@ def test_delete_as_member_when_sign_off_deadline_has_passed_and_on_wait(member):
     assert response.status_code == status.HTTP_200_OK
 
 
-# TODO
 @pytest.mark.django_db
 @pytest.mark.parametrize(
-    "group_name", [AdminGroup.PROMO, AdminGroup.NOK,],
+    "organizer_name", [AdminGroup.PROMO, AdminGroup.NOK,],
 )
 def test_delete_another_registration_as_member_in_nok_or_promo(
-    member, group_name, user
+    member, organizer_name, user
 ):
     """A member of NOK or PROMO should not be able to delete another registration for an event."""
     registration = RegistrationFactory(user=user)
-    client = get_api_client(user=member, group_name=group_name)
+    client = get_api_client(user=member, group_name=organizer_name)
     response = client.delete(_get_registration_detail_url(registration))
 
     assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
-# TODO
 @pytest.mark.django_db
 def test_delete_another_registration_as_admin(admin_user, member):
     """An admin user should be able to delete any registration."""
@@ -681,7 +676,6 @@ def test_delete_another_registration_as_admin(admin_user, member):
     assert response.status_code == status.HTTP_200_OK
 
 
-# TODO
 @pytest.mark.django_db
 def test_delete_another_registration_as_admin_after_sign_off_deadline(
     admin_user, member
@@ -697,7 +691,6 @@ def test_delete_another_registration_as_admin_after_sign_off_deadline(
     assert response.status_code == status.HTTP_200_OK
 
 
-# TODO
 @pytest.mark.django_db
 def test_delete_own_registration_as_admin_bumps_first_user_on_wait(admin_user):
     """

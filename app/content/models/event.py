@@ -32,7 +32,7 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
     category = models.ForeignKey(
         Category, blank=True, null=True, default=None, on_delete=models.SET_NULL
     )
-    group = models.ForeignKey(
+    organizer = models.ForeignKey(
         Group,
         blank=True,
         null=True,
@@ -131,8 +131,8 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
     def survey(self):
         return self.forms.filter(type=EventFormType.SURVEY).first()
 
-    def check_request_user_has_access_through_group(self, user, group):
-        return user.memberships_with_events_access.filter(group=group).exists()
+    def check_request_user_has_access_through_organizer(self, user, organizer):
+        return user.memberships_with_events_access.filter(group=organizer).exists()
 
     def has_object_write_permission(self, request):
         if request.id is None:
@@ -144,19 +144,19 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
         return (
             check_has_access(self.write_access, request)
             or (
-                self.check_request_user_has_access_through_group(
-                    request.user, self.group
+                self.check_request_user_has_access_through_organizer(
+                    request.user, self.organizer
                 )
                 and (
-                    self.check_request_user_has_access_through_group(
-                        request.user, request.data["group"]
+                    self.check_request_user_has_access_through_organizer(
+                        request.user, request.data["organizer"]
                     )
-                    if request.data.get("group", None)
-                    and request.data["group"] != self.group
+                    if request.data.get("organizer", None)
+                    and request.data["organizer"] != self.organizer
                     else True
                 )
             )
-            if self.group
+            if self.organizer
             else request.user.memberships_with_events_access.exists()
         )
 
@@ -167,11 +167,11 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
         return (
             (
                 check_has_access(cls.write_access, request)
-                or cls.check_request_user_has_access_through_group(
-                    cls, request.user, request.data["group"]
+                or cls.check_request_user_has_access_through_organizer(
+                    cls, request.user, request.data["organizer"]
                 )
             )
-            if request.data.get("group", None)
+            if request.data.get("organizer", None)
             else request.user.memberships_with_events_access.exists()
         )
 

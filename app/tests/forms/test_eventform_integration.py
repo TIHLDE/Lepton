@@ -12,18 +12,18 @@ from app.util.test_utils import add_user_to_group_with_name, get_api_client
 
 pytestmark = pytest.mark.django_db
 
-# "event_group" should have one of 3 different values:
-# - None -> The event has no connected group
-# - "same" -> The event is connected to same group as user is member of
-# - "other" -> The event is connected to another group as user i member of
+# "event_organizer" should have one of 3 different values:
+# - None -> The event has no connected organizer
+# - "same" -> The event is connected to same organizer as user is member of
+# - "other" -> The event is connected to another organizer as user i member of
 permission_params = pytest.mark.parametrize(
     (
-        "group_name",
-        "group_type",
+        "organizer_name",
+        "organizer_type",
         "membership_type",
         "expected_create_status_code",
         "expected_update_delete_status_code",
-        "event_group",
+        "event_organizer",
     ),
     (
         [AdminGroup.HS, GroupType.BOARD, MembershipType.MEMBER, 201, 200, "same"],
@@ -58,19 +58,19 @@ permission_params = pytest.mark.parametrize(
 @permission_params
 def permission_test_util(
     member,
-    group_name,
-    group_type,
+    organizer_name,
+    organizer_type,
     membership_type,
     expected_create_status_code,
     expected_update_delete_status_code,
-    event_group,
+    event_organizer,
 ):
-    group = add_user_to_group_with_name(member, group_name, group_type, membership_type)
-    if event_group == "same":
-        event_group = group
-    elif event_group == "other":
-        event_group = GroupFactory()
-    event = EventFactory(group=event_group)
+    organizer = add_user_to_group_with_name(member, organizer_name, organizer_type, membership_type)
+    if event_organizer == "same":
+        event_organizer = organizer
+    elif event_organizer == "other":
+        event_organizer = GroupFactory()
+    event = EventFactory(organizer=event_organizer)
     return (
         member,
         event,
