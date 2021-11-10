@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+- ✨ **Sider**. Lagt til plassering og rekkefølge på sider.
 ## Versjon 1.1.4 (01.11.2021)
 - 🦟 **Arrangement**. Fikset bug der admins ikke kunne melde påmeldte som ankommet hvis noen var på ventelisten.
 

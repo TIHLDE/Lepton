@@ -1,14 +1,14 @@
 from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
 
+from app.common.mixins import OrderedModelSerializerMixin
 from app.common.serializers import BaseModelSerializer
 from app.content.models import Page
 
 
-class PageSerializer(BaseModelSerializer):
+class PageSerializer(BaseModelSerializer, OrderedModelSerializerMixin):
     children = SerializerMethodField()
     path = SerializerMethodField()
-    position = SerializerMethodField()
 
     class Meta:
         model = Page
@@ -22,52 +22,35 @@ class PageSerializer(BaseModelSerializer):
             "updated_at",
             "image",
             "image_alt",
-            "position",
+            "order",
         )
 
     def get_children(self, obj):
         children = [PageListSerializer(page).data for page in obj.get_children()]
-        return sorted(children, key=lambda child: child["position"])
+        return sorted(children, key=lambda child: child["order"])
 
     def get_path(self, obj):
         return obj.get_path()
 
-    def get_position(self, obj):
-        return obj.get_position()
 
-            
-
-class PageListSerializer(BaseModelSerializer):
+class PageListSerializer(BaseModelSerializer, OrderedModelSerializerMixin):
     path = SerializerMethodField()
-    position = SerializerMethodField()
 
     class Meta:
         model = Page
-        fields = (
-            "slug",
-            "title",
-            "path",
-            "position"
-        )
+        fields = ("slug", "title", "path", "order")
 
     def get_path(self, obj):
         return obj.get_path()
 
-    def get_position(self, obj):
-        return obj.get_position()
 
-
-class PageTreeSerializer(serializers.ModelSerializer):
+class PageTreeSerializer(serializers.ModelSerializer, OrderedModelSerializerMixin):
     children = SerializerMethodField()
-    position = SerializerMethodField()
 
     class Meta:
         model = Page
-        fields = ["slug", "title","position", "children"]
+        fields = ["slug", "title", "order", "children"]
 
     def get_children(self, obj):
         children = [PageTreeSerializer(page).data for page in obj.get_children()]
-        return sorted(children, key=lambda child: child["position"])
-
-    def get_position(self, obj):
-        return obj.get_position()
+        return sorted(children, key=lambda child: child["order"])

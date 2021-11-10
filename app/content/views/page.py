@@ -24,6 +24,9 @@ class PageViewSet(viewsets.ModelViewSet):
     filter_backends = (filters.SearchFilter,)
     lookup_url_kwarg = "path"
     lookup_value_regex = ".*"
+    ordering = [
+        "-order",
+    ]
 
     def is_search(self):
         return self.request.query_params.get("search")

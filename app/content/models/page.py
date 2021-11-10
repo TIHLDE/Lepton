@@ -4,13 +4,18 @@ from django.db import models
 from django.utils.text import slugify
 
 from mptt.models import MPTTModel, TreeForeignKey
+from ordered_model.models import OrderedModel, OrderedModelManager
 
 from app.common.enums import AdminGroup
 from app.common.permissions import BasePermissionModel
 from app.util.models import BaseModel, OptionalImage
 
 
-class Page(MPTTModel, OptionalImage, BaseModel, BasePermissionModel):
+class PageManager(OrderedModelManager):
+    pass
+
+
+class Page(MPTTModel, OptionalImage, BaseModel, BasePermissionModel, OrderedModel):
 
     write_access = AdminGroup.admin()
 
@@ -21,13 +26,12 @@ class Page(MPTTModel, OptionalImage, BaseModel, BasePermissionModel):
     title = models.CharField(max_length=50, unique=False)
     slug = models.SlugField(max_length=50, unique=False)
     content = models.TextField(blank=True)
-    position = models.PositiveIntegerField(default=1)
+    objects = PageManager()
 
-    class Meta:
+    class Meta(OrderedModel.Meta):
         unique_together = ("parent", "slug")
         verbose_name = "Page"
         verbose_name_plural = "Pages"
-        ordering = ["position"]
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.title)
@@ -53,21 +57,6 @@ class Page(MPTTModel, OptionalImage, BaseModel, BasePermissionModel):
         for member in family:
             path += f"{member.slug}/"
         return path
-
-    def get_position(self):
-        Page.objects.filter(page_id=self.page_id).update(position=self.position)
-
-        siblings = Page.objects.filter(parent=self.parent).exclude(page_id=self.page_id)
-        for count, page in enumerate(siblings, 1):
-
-            Page.objects.filter(page_id=page.page_id).update(position=count)
-
-        pages = siblings.filter(position__gte=self.position)
-        for count, page in enumerate(pages, self.position + 1):
-
-            Page.objects.filter(page_id=page.page_id).update(position=count)
-
-        return self.position
 
     def __str__(self):
         return f"{self.page_id} {self.title}"
