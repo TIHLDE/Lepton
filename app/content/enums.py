@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class UserClass(models.IntegerChoices):
     FIRST = 1
     SECOND = 2

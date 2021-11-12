@@ -5,9 +5,9 @@ from django_filters.rest_framework import (
     MultipleChoiceFilter,
 )
 
-from app.common.filters import NumberInFilter
 from app.career.enums import JobPostType
 from app.career.models.job_post import JobPost
+from app.common.filters import NumberInFilter
 from app.util.utils import yesterday
 
 
