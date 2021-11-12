@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from app.common.serializers import BaseModelSerializer
-from app.content.models.job_post import JobPost
+from app.career.models.job_post import JobPost
 
 
 class JobPostSerializer(BaseModelSerializer):
@@ -10,4 +10,4 @@ class JobPostSerializer(BaseModelSerializer):
 
     class Meta:
         model = JobPost
-        fields = "__all__"  # bad form
+        fields = "__all__"

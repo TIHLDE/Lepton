@@ -6,8 +6,8 @@ from django_filters.rest_framework import (
 )
 
 from app.common.filters import NumberInFilter
-from app.content.enums import JobPostType
-from app.content.models.job_post import JobPost
+from app.career.enums import JobPostType
+from app.career.models.job_post import JobPost
 from app.util.utils import yesterday
 
 

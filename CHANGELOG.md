@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+- ⚡ **Jobbannonser**. Flyttet jobbannonser til en annen app for å skille logikk i større grad.
 - ✨ **Prioriteringer** En innstilling på arrangementer som gjør at kun prioriterte studenter kan melde seg på.
 - 🦟 **Svar på spørreskjemaer**. Fikset en bug der svar på spørreskjema ikke ble registrert.
 

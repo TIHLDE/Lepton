@@ -6,7 +6,6 @@ from app.content.serializers.event import (
     EventListSerializer,
     EventSerializer,
 )
-from app.content.serializers.job_post import JobPostSerializer
 from app.content.serializers.news import NewsSerializer
 from app.content.serializers.notification import (
     NotificationSerializer,
