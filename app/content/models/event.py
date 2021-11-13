@@ -63,6 +63,7 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
     registration_priorities = models.ManyToManyField(
         Priority, blank=True, default=None, related_name="priorities"
     )
+    only_allow_prioritized = models.BooleanField(default=False)
 
     """ Schedular fields """
     end_date_schedular_id = models.CharField(max_length=100, blank=True, null=True)
