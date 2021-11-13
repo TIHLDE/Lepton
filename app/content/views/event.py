@@ -146,7 +146,7 @@ class EventViewSet(viewsets.ModelViewSet, ActionMixin):
             return Response(
                 {"detail": "Fant ikke arrangementet"}, status=status.HTTP_404_NOT_FOUND
             )
-    
+
     @action(detail=False, methods=["get"], url_path="admin")
     def get_events_where_is_admin(self, request, *args, **kwargs):
         events = self.queryset.none()
@@ -155,11 +155,13 @@ class EventViewSet(viewsets.ModelViewSet, ActionMixin):
         elif self.request.user.is_HS_or_Index_member:
             events = self.queryset
         else:
-          allowed_organizers = Group.objects.filter(
-              memberships__in=self.request.user.memberships_with_events_access
-          )
-          if allowed_organizers.count() > 0:
-              events = self.queryset.filter(Q(organizer__in=allowed_organizers) | Q(organizer=None))
+            allowed_organizers = Group.objects.filter(
+                memberships__in=self.request.user.memberships_with_events_access
+            )
+            if allowed_organizers.count() > 0:
+                events = self.queryset.filter(
+                    Q(organizer__in=allowed_organizers) | Q(organizer=None)
+                )
         return self.paginate_response(
             data=events, serializer=EventListSerializer, context={"request": request}
         )

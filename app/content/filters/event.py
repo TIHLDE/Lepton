@@ -1,8 +1,6 @@
-from django.db.models import Q
 from django_filters.rest_framework import BooleanFilter, FilterSet
 
 from app.content.models import Event
-from app.group.models import Group
 from app.util.utils import midday, now, yesterday
 
 
