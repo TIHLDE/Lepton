@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action
@@ -5,6 +6,7 @@ from rest_framework.response import Response
 
 from sentry_sdk import capture_exception
 
+from app.common.mixins import ActionMixin
 from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission
 from app.content.filters import EventFilter
@@ -14,12 +16,13 @@ from app.content.serializers import (
     EventListSerializer,
     EventSerializer,
 )
+from app.group.models.group import Group
 from app.util.mail_creator import MailCreator
 from app.util.notifier import Notify
 from app.util.utils import midday, now, yesterday
 
 
-class EventViewSet(viewsets.ModelViewSet):
+class EventViewSet(viewsets.ModelViewSet, ActionMixin):
     serializer_class = EventSerializer
     permission_classes = [BasicViewPermission]
     queryset = Event.objects.filter(start_date__gte=yesterday()).order_by("start_date")
@@ -143,3 +146,20 @@ class EventViewSet(viewsets.ModelViewSet):
             return Response(
                 {"detail": "Fant ikke arrangementet"}, status=status.HTTP_404_NOT_FOUND
             )
+    
+    @action(detail=False, methods=["get"], url_path="admin")
+    def get_events_where_is_admin(self, request, *args, **kwargs):
+        events = self.queryset.none()
+        if not self.request.user:
+            events = self.queryset.none()
+        elif self.request.user.is_HS_or_Index_member:
+            events = self.queryset
+        else:
+          allowed_organizers = Group.objects.filter(
+              memberships__in=self.request.user.memberships_with_events_access
+          )
+          if allowed_organizers.count() > 0:
+              events = self.queryset.filter(Q(organizer__in=allowed_organizers) | Q(organizer=None))
+        return self.paginate_response(
+            data=events, serializer=EventListSerializer, context={"request": request}
+        )
