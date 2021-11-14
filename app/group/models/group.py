@@ -16,6 +16,7 @@ class Group(OptionalImage, BaseModel, BasePermissionModel):
     slug = models.SlugField(max_length=50, primary_key=True)
     description = models.TextField(max_length=1000, null=True, blank=True)
     contact_email = models.EmailField(max_length=200, null=True, blank=True)
+    fineInfo = models.TextField(default="", blank=True)
     type = EnumChoiceField(GroupType, default=GroupType.OTHER)
 
     class meta:
