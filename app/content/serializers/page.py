@@ -26,14 +26,13 @@ class PageSerializer(BaseModelSerializer, OrderedModelSerializerMixin):
         )
 
     def get_children(self, obj):
-        children = [PageListSerializer(page).data for page in obj.get_children()]
-        return sorted(children, key=lambda child: child["order"])
+        return [PageListSerializer(page).data for page in obj.get_children()]
 
     def get_path(self, obj):
         return obj.get_path()
 
 
-class PageListSerializer(BaseModelSerializer, OrderedModelSerializerMixin):
+class PageListSerializer(BaseModelSerializer):
     path = SerializerMethodField()
 
     class Meta:
@@ -44,7 +43,7 @@ class PageListSerializer(BaseModelSerializer, OrderedModelSerializerMixin):
         return obj.get_path()
 
 
-class PageTreeSerializer(serializers.ModelSerializer, OrderedModelSerializerMixin):
+class PageTreeSerializer(serializers.ModelSerializer):
     children = SerializerMethodField()
 
     class Meta:
@@ -52,5 +51,4 @@ class PageTreeSerializer(serializers.ModelSerializer, OrderedModelSerializerMixi
         fields = ["slug", "title", "order", "children"]
 
     def get_children(self, obj):
-        children = [PageTreeSerializer(page).data for page in obj.get_children()]
-        return sorted(children, key=lambda child: child["order"])
+        return [PageTreeSerializer(page).data for page in obj.get_children()]

@@ -11,14 +11,9 @@ from app.common.permissions import BasePermissionModel
 from app.util.models import BaseModel, OptionalImage
 
 
-class PageManager(OrderedModelManager):
-    pass
-
-
 class Page(MPTTModel, OptionalImage, BaseModel, BasePermissionModel, OrderedModel):
 
     write_access = AdminGroup.admin()
-
     parent = TreeForeignKey(
         "self", null=True, blank=True, on_delete=models.CASCADE, related_name="children"
     )
@@ -26,7 +21,8 @@ class Page(MPTTModel, OptionalImage, BaseModel, BasePermissionModel, OrderedMode
     title = models.CharField(max_length=50, unique=False)
     slug = models.SlugField(max_length=50, unique=False)
     content = models.TextField(blank=True)
-    objects = PageManager()
+    objects = OrderedModelManager()
+    order_with_respect_to = "parent"
 
     class Meta(OrderedModel.Meta):
         unique_together = ("parent", "slug")
@@ -60,3 +56,6 @@ class Page(MPTTModel, OptionalImage, BaseModel, BasePermissionModel, OrderedMode
 
     def __str__(self):
         return f"{self.page_id} {self.title}"
+
+    def get_children(self):
+        return super().get_children().order_by("order")
