@@ -7,7 +7,7 @@ from app.content.factories.news_factory import NewsFactory
 from app.content.factories.user_factory import UserFactory
 from app.util.test_utils import get_api_client
 
-API_NEWS_BASE_URL = "/api/v1/news/"
+API_NEWS_BASE_URL = "/news/"
 
 
 def _get_news_url():
