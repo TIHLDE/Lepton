@@ -14,6 +14,7 @@
 
 ## Neste versjon
 - ✨ **Sider**. Lagt til plassering og rekkefølge på sider.
+- ✨ **Gruppeskjemaer** kan nå bli opprettet av alle medlemmer av gruppen.
 
 ## Versjon 1.2.0 (16.11.2021)
 - ⚡ **Grupper** har nå bilder.
@@ -25,6 +26,7 @@
 - ⚡ **Epost**. Støtter flere epost-leverandører gjennom mer universell formatering.
 - ✨ **Prioriteringer** En innstilling på arrangementer som gjør at kun prioriterte studenter kan melde seg på.
 - 🦟 **Svar på spørreskjemaer**. Fikset en bug der svar på spørreskjema ikke ble registrert.
+
 ## Versjon 1.1.4 (01.11.2021)
 - 🦟 **Arrangement**. Fikset bug der admins ikke kunne melde påmeldte som ankommet hvis noen var på ventelisten.
 
