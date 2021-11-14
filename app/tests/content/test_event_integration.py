@@ -383,7 +383,7 @@ def test_retrieve_events_where_is_admin_only_includes_events_where_is_admin(
         membership_type=membership_type,
     )
 
-    url = f"{API_EVENTS_BASE_URL}/admin/"
+    url = f"{API_EVENTS_BASE_URL}admin/"
     response = client.get(url)
 
     assert int(response.json().get("count")) == expected_events_amount
