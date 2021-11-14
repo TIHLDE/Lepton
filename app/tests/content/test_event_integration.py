@@ -11,7 +11,7 @@ from app.forms.enums import EventFormType
 from app.forms.tests.form_factories import EventFormFactory
 from app.util.test_utils import get_api_client
 
-API_EVENTS_BASE_URL = "/api/v1/events/"
+API_EVENTS_BASE_URL = "/events/"
 
 
 def get_events_url_detail(event=None):
