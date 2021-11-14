@@ -16,7 +16,7 @@ from app.forms.tests.form_factories import EventFormFactory, SubmissionFactory
 from app.util.test_utils import get_api_client
 from app.util.utils import now
 
-API_EVENT_BASE_URL = "/api/v1/events/"
+API_EVENT_BASE_URL = "/events/"
 
 
 def _get_registration_url(event):
