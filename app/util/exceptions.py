@@ -12,11 +12,11 @@ logger = logging.getLogger(__name__)
 def exception_handler(exc, context):
     response = drf_exception_handler(exc, context)
 
-    # if not response and isinstance(exc, IntegrityError):
-    #     response = Response(
-    #         {"detail": "Some values are supposed to be unique but are not."},
-    #         status=status.HTTP_409_CONFLICT,
-    #     )
+    if not response and isinstance(exc, IntegrityError) and not settings.DEBUG:
+        response = Response(
+            {"detail": "Some values are supposed to be unique but are not."},
+            status=status.HTTP_409_CONFLICT,
+        )
 
     if response:
         log_api_error(response, exc)

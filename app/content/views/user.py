@@ -32,6 +32,7 @@ from app.content.serializers.strike import UserInfoStrikeSerializer
 from app.forms.serializers import FormPolymorphicSerializer
 from app.group.models import Group, Membership
 from app.group.serializers import DefaultGroupSerializer
+from app.group.serializers.fine import FineSerializer
 from app.util.mail_creator import MailCreator
 from app.util.notifier import Notify
 from app.util.utils import CaseInsensitiveBooleanQueryParam
@@ -177,6 +178,20 @@ class UserViewSet(viewsets.ModelViewSet, ActionMixin):
             forms = request.user.get_unanswered_evaluations()
 
         return self.paginate_response(data=forms, serializer=FormPolymorphicSerializer)
+
+    @action(detail=False, methods=["get"], url_path="me/fines")
+    def get_user_fines(self, request, *args, **kwargs):
+        fines = request.user.fines
+
+        approved = request.query_params.get("payed", None)
+        payed = request.query_params.get("approved", None)
+
+        if approved:
+            fines = fines.filter(approved=True)
+        if payed:
+            fines = fines.filter(payed=True)
+
+        return self.paginate_response(data=fines, serializer=FineSerializer)
 
     @action(
         detail=False,

@@ -9,7 +9,5 @@ class LawSerializer(BaseModelSerializer):
     class Meta:
         model = Law
         fields = ("id", "group", "description", "paragraph", "amount")
-        
-        read_only_fields = (
-            "group",
-        )
+
+        read_only_fields = ("group",)

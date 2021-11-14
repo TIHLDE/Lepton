@@ -18,7 +18,7 @@ pytestmark = pytest.mark.django_db
 
 
 def _get_forms_url():
-    return "/api/v1/forms/"
+    return "/forms/"
 
 
 def _get_form_detail_url(form):

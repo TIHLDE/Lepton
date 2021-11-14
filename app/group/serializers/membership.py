@@ -31,7 +31,9 @@ class MembershipSerializer(BaseModelSerializer):
         )
 
     def get_fines(self, obj):
-        return MembershipFineSerializer(obj.user.fines(group=obj.group)).data
+        return MembershipFineSerializer(
+            obj.user.fines.filter(group=obj.group), many=True
+        ).data
 
 
 class MembershipLeaderSerializer(BaseModelSerializer):

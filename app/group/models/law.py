@@ -13,7 +13,7 @@ class Law(BaseModel, BasePermissionModel):
     )
     group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name="laws")
     description = models.TextField(default="", blank=True)
-    paragraph = models.TextField(default="", blank=True)
+    paragraph = models.CharField(default="", blank=True, max_length=10)
     amount = models.IntegerField(default=1)
 
     class meta:
