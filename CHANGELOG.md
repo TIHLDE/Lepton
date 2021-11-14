@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+- ⚡ **Grupper** har nå bilder.
 - ⚡ **Arrangement**. Om en usvart evaluering er over 30 dager gammel, vil den ikke hindre deg i å melde deg på et arrangement.
 - ⚡ **Epost**. Støtter flere epost-leverandører gjennom mer universell formatering.
 - ✨ **Prioriteringer** En innstilling på arrangementer som gjør at kun prioriterte studenter kan melde seg på.
