@@ -116,7 +116,11 @@ class Registration(BaseModel, BasePermissionModel):
             self.create()
         self.send_notification_and_mail()
 
-        if self.event.is_full and not self.is_on_wait and self in self.event.get_waiting_list():
+        if (
+            self.event.is_full
+            and not self.is_on_wait
+            and self in self.event.get_waiting_list()
+        ):
             raise EventIsFullError
 
         return super(Registration, self).save(*args, **kwargs)
@@ -255,6 +259,14 @@ class Registration(BaseModel, BasePermissionModel):
         if not self.check_answered_submission():
             raise ValidationError(
                 "Du må svare på spørreskjemaet før du kan melde deg på arrangementet"
+            )
+        if (
+            self.event.registration_priorities
+            and self.event.only_allow_prioritized
+            and not self.is_prioritized
+        ):
+            raise ValidationError(
+                "Dette arrangementet er kun åpent for de prioriterte gruppene"
             )
 
     def validate_start_and_end_registration_time(self):
