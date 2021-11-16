@@ -11,6 +11,7 @@ class ShortLink(BaseModel, BasePermissionModel):
     name = models.CharField(max_length=50, primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="short_links")
     url = models.URLField(max_length=600)
+    read_access = [Groups.TIHLDE]
 
     class Meta:
         verbose_name = "Short link"

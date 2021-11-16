@@ -28,7 +28,7 @@ def test_list_as_anonymous_user_fails(default_client):
     url = _get_short_link_url()
     response = default_client.get(url)
 
-    assert response.status_code == status.HTTP_404_NOT_FOUND
+    assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
 @pytest.mark.django_db
@@ -49,7 +49,7 @@ def test_retrieve_as_anonymous_user(default_client, short_link):
     url = _get_short_link_url(short_link)
     response = default_client.get(url)
 
-    assert response.status_code == status.HTTP_200_OK
+    assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
 @pytest.mark.django_db
