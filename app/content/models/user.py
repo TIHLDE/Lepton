@@ -57,7 +57,7 @@ STUDY = (
     (3, "DigInc"),
     (4, "DigSam"),
     (5, "Drift"),
-    (6, "Info")
+    (6, "Info"),
 )
 
 GENDER = (
