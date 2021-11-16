@@ -7,12 +7,12 @@ from app.content.serializers.user import (
 )
 from app.group.models import Membership, MembershipHistory
 from app.group.serializers.fine import MembershipFineSerializer
-from app.group.serializers.group import DefaultGroupSerializer
+from app.group.serializers.group import GroupSerializer
 
 
 class MembershipSerializer(BaseModelSerializer):
     user = DefaultUserSerializer(read_only=True)
-    group = DefaultGroupSerializer(read_only=True)
+    group = GroupSerializer(read_only=True)
     fines = serializers.SerializerMethodField()
 
     class Meta:
@@ -38,8 +38,8 @@ class MembershipSerializer(BaseModelSerializer):
 
 class MembershipLeaderSerializer(BaseModelSerializer):
     user = UserListSerializer(read_only=True)
-    group = DefaultGroupSerializer(read_only=True)
     fines = serializers.SerializerMethodField()
+    group = GroupSerializer(read_only=True)
 
     class Meta:
         model = Membership

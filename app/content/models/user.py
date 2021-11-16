@@ -8,11 +8,12 @@ from django.contrib.auth.models import (
     PermissionsMixin,
 )
 from django.db import models
+from django.db.models import Q
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 
-from app.common.enums import AdminGroup, Groups, MembershipType
+from app.common.enums import AdminGroup, Groups, GroupType, MembershipType
 from app.common.permissions import check_has_access
 from app.util.models import BaseModel, OptionalImage
 from app.util.utils import disable_for_loaddata, now
@@ -92,6 +93,26 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
     @property
     def is_TIHLDE_member(self):
         return self.memberships.filter(group__slug=Groups.TIHLDE).exists()
+
+    @property
+    def is_HS_or_Index_member(self):
+        return self.memberships.filter(
+            group__slug__in=[AdminGroup.HS, AdminGroup.INDEX]
+        ).exists()
+
+    @property
+    def memberships_with_events_access(self):
+        return self.memberships.filter(
+            (
+                Q(membership_type=MembershipType.LEADER)
+                & (
+                    Q(group__type=GroupType.COMMITTEE)
+                    | Q(group__type=GroupType.INTERESTGROUP)
+                )
+            )
+            | Q(group__type=GroupType.SUBGROUP)
+            | Q(group__type=GroupType.BOARD)
+        )
 
     def has_perm(self, perm, obj=None):
         return self.is_superuser
