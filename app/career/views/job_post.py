@@ -2,11 +2,11 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status, viewsets
 from rest_framework.response import Response
 
+from app.career.filters.job_post import JobPostFilter
+from app.career.models.job_post import JobPost
+from app.career.serializers.job_post import JobPostSerializer
 from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission
-from app.content.filters import JobPostFilter
-from app.content.models import JobPost
-from app.content.serializers import JobPostSerializer
 from app.util.utils import yesterday
 
 

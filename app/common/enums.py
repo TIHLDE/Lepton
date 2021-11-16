@@ -18,6 +18,7 @@ class UserStudy(ChoiceEnum):
     DIGINC = "Digital infrastruktur og cybersikkerhet"
     DIGSAM = "Digital samhandling"
     DRIFT = "Drift"
+    INFO = "Informasjonsbehandling"
 
 
 class AdminGroup(ChoiceEnum):
