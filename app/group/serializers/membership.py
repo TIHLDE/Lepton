@@ -4,12 +4,12 @@ from app.content.serializers.user import (
     UserListSerializer,
 )
 from app.group.models import Membership, MembershipHistory
-from app.group.serializers.group import DefaultGroupSerializer
+from app.group.serializers.group import GroupSerializer
 
 
 class MembershipSerializer(BaseModelSerializer):
     user = DefaultUserSerializer(read_only=True)
-    group = DefaultGroupSerializer(read_only=True)
+    group = GroupSerializer(read_only=True)
 
     class Meta:
         model = Membership
@@ -28,7 +28,7 @@ class MembershipSerializer(BaseModelSerializer):
 
 class MembershipLeaderSerializer(BaseModelSerializer):
     user = UserListSerializer(read_only=True)
-    group = DefaultGroupSerializer(read_only=True)
+    group = GroupSerializer(read_only=True)
 
     class Meta:
         model = Membership

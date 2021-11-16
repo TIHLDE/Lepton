@@ -14,11 +14,11 @@ pytestmark = pytest.mark.django_db
 
 
 def _get_submission_url(form):
-    return f"/api/v1/forms/{form.id}/submission/"
+    return f"/forms/{form.id}/submission/"
 
 
 def _get_submission_detail_url(form, submission):
-    return f"/api/v1/forms/{form.id}/submission/{submission.id}/"
+    return f"/forms/{form.id}/submission/{submission.id}/"
 
 
 def _create_submission_data(field, **kwargs):
