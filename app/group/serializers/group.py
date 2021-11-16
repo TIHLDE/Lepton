@@ -24,6 +24,8 @@ class GroupSerializer(BaseModelSerializer):
             "type",
             "permissions",
             "leader",
+            "image",
+            "image_alt",
         )
 
     def get_leader(self, obj):
