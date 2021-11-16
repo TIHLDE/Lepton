@@ -6,7 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('content', '0031_event_only_allow_prioritized'),
+        ('content', '0032_event_organizer'),
     ]
 
     operations = [
