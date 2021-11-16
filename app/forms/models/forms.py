@@ -1,6 +1,6 @@
 import uuid
 
-from django.db import models
+from django.db import models, transaction
 
 from enumchoicefield import EnumChoiceField
 from ordered_model.models import OrderedModel
@@ -136,6 +136,16 @@ class Submission(BaseModel, BasePermissionModel):
 
     def __str__(self):
         return f"{self.user.user_id}'s submission to {self.form}"
+
+    @transaction.atomic
+    def save(self, *args, **kwargs):
+        if isinstance(self.form, EventForm):
+            user_has_registration = not self.form.event.registrations.filter(
+                user=self.user
+            ).exists()
+            if user_has_registration:
+                Submission.objects.filter(user=self.user, form=self.form).delete()
+        super().save(*args, **kwargs)
 
     @classmethod
     def has_write_permission(cls, request):
