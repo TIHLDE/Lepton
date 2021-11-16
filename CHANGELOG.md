@@ -13,7 +13,8 @@
 ---
 
 ## Neste versjon
-- ⚡ **Jobbannonser**. Flyttet jobbannonser til en annen app for å skille logikk i større grad.
+## Versjon 1.1.5 (14.11.2021)
+- ⚡ **Arrangement**. Om en usvart evaluering er over 30 dager gammel, vil den ikke hindre deg i å melde deg på et arrangement.
 - ⚡ **Epost**. Støtter flere epost-leverandører gjennom mer universell formatering.
 - ✨ **Prioriteringer** En innstilling på arrangementer som gjør at kun prioriterte studenter kan melde seg på.
 - 🦟 **Svar på spørreskjemaer**. Fikset en bug der svar på spørreskjema ikke ble registrert.

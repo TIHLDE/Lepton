@@ -4,7 +4,7 @@ import pytest
 
 from app.util.test_utils import get_api_client
 
-NOTIFICATION_URL = "/api/v1/notification/"
+NOTIFICATION_URL = "/notification/"
 
 
 def _get_notification_url(notification=None):
