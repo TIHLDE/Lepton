@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from django.conf import settings
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import (
@@ -14,7 +16,7 @@ from rest_framework.authtoken.models import Token
 from app.common.enums import AdminGroup, Groups, GroupType, MembershipType
 from app.common.permissions import check_has_access
 from app.util.models import BaseModel, OptionalImage
-from app.util.utils import disable_for_loaddata
+from app.util.utils import disable_for_loaddata, now
 
 
 class UserManager(BaseUserManager):
@@ -137,11 +139,15 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
         return self.get_unanswered_evaluations().filter(event=event).exists()
 
     def get_unanswered_evaluations(self):
+
         from app.forms.models.forms import EventForm, EventFormType
 
+        date_30_days_ago = now() - timedelta(days=30)
         registrations = self.registrations.filter(has_attended=True)
         return EventForm.objects.filter(
-            event__registrations__in=registrations, type=EventFormType.EVALUATION
+            event__registrations__in=registrations,
+            type=EventFormType.EVALUATION,
+            event__end_date__gte=date_30_days_ago,
         ).exclude(submissions__user=self)
 
     @classmethod

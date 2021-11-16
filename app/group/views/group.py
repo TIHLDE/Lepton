@@ -79,7 +79,7 @@ class GroupViewSet(viewsets.ModelViewSet, ActionMixin):
     def get_group_history(self, request, *args, **kwargs):
         group = self.get_object()
         self.pagination_class = BasePagination
-        membership_history = group.membership_histories.order_by("end_date")
+        membership_history = group.membership_histories.order_by("-end_date")
         return self.paginate_response(
             data=membership_history, serializer=MembershipHistorySerializer
         )

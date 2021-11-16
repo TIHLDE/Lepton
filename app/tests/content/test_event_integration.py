@@ -18,7 +18,7 @@ from app.util.test_utils import (
     get_group_type_from_group_name,
 )
 
-API_EVENTS_BASE_URL = "/api/v1/events/"
+API_EVENTS_BASE_URL = "/events/"
 
 
 def get_events_url_detail(event=None):

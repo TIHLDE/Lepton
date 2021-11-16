@@ -35,7 +35,7 @@ def _get_invalid_refund_form_data():
     return {"token_id": "test_token_id", "charge_id": "fake_charge_id"}
 
 
-refund_form_url = "/api/v1/refund-form/"
+refund_form_url = "/refund-form/"
 
 
 @pytest.mark.django_db
