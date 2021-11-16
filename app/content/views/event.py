@@ -149,18 +149,28 @@ class EventViewSet(viewsets.ModelViewSet, ActionMixin):
 
     @action(detail=False, methods=["get"], url_path="admin")
     def get_events_where_is_admin(self, request, *args, **kwargs):
-        events = self.queryset.none()
         if not self.request.user:
-            events = self.queryset.none()
-        elif self.request.user.is_HS_or_Index_member:
+            return Response(
+                {"detail": "Du har ikke tilgang til å opprette/redigere arrangementer"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        if self.request.user.is_HS_or_Index_member:
             events = self.queryset
         else:
             allowed_organizers = Group.objects.filter(
                 memberships__in=self.request.user.memberships_with_events_access
             )
-            if allowed_organizers.count() > 0:
+            if allowed_organizers.exists():
                 events = self.queryset.filter(
                     Q(organizer__in=allowed_organizers) | Q(organizer=None)
+                )
+            else:
+                return Response(
+                    {
+                        "detail": "Du har ikke tilgang til å opprette/redigere arrangementer"
+                    },
+                    status=status.HTTP_403_FORBIDDEN,
                 )
         return self.paginate_response(
             data=events, serializer=EventListSerializer, context={"request": request}

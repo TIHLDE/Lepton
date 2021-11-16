@@ -386,7 +386,10 @@ def test_retrieve_events_where_is_admin_only_includes_events_where_is_admin(
     url = f"{API_EVENTS_BASE_URL}admin/"
     response = client.get(url)
 
-    assert int(response.json().get("count")) == expected_events_amount
+    if expected_events_amount > 0:
+        assert int(response.json().get("count")) == expected_events_amount
+    else:
+        assert response.status_code == 403
 
 
 @pytest.mark.django_db
