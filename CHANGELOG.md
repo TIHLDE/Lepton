@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+## Versjon 1.1.6 (16.11.2021)
 - ✨ **Brukere**. Studenter kan nå registrere kontoer med Informasjonsbehandling som studieprogram.
 - ✨ **Arrangementer**. Endret tilgangshåndtering til arrangementer ved å knytte dem til grupper. Dermed kan også ledere av komitéer og interessegrupper opprette arrangementer.
 
