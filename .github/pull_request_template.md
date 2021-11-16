@@ -10,8 +10,9 @@ Please check if your PR fulfills the following requirements:
 - [ ] CHANGELOG.md has been updated. [Guide](https://tihlde.slab.com/posts/changelog-z8hybjom)
 - [ ] Tests for the changes have been added (for bug fixes / features)
 - [ ] Docs have been reviewed and added / updated if needed (for bug fixes / features)
+- [ ] The fixtures have been updated if needed (for migrations)
 - [ ] Pull request title follows [conventional commits](https://github.com/commitizen/conventional-commit-types/blob/v3.0.0/index.json) (`type(scope): description`)
-- [ ] Build (`make PR`) was run locally without failures
+- [ ] Format and lint (`make format` and `make flake8`) was run locally without failures
 
 
 ## Further comments
