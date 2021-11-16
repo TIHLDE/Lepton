@@ -73,7 +73,9 @@ class MembershipViewSet(viewsets.ModelViewSet):
             user = get_object_or_404(User, user_id=request.data["user"]["user_id"])
             group = get_object_or_404(Group, slug=kwargs["slug"])
             membership = Membership.objects.create(user=user, group=group)
-            serializer = MembershipSerializer(membership, data=request.data)
+            serializer = MembershipSerializer(
+                membership, data=request.data, context={"request": request}
+            )
             serializer.is_valid(raise_exception=True)
             title = f"Du er nå med i gruppen {membership.group.name}"
             description = f"Du har blitt lagt til som medlem i gruppen {membership.group.name}. Gratulerer så mye og lykke til!"
