@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from app.common.serializers import BaseModelSerializer
-from app.content.models import UserBadge
+from app.content.models import User, UserBadge
 
 
 class UserBadgeSerializer(BaseModelSerializer):
@@ -31,3 +31,39 @@ class UserBadgeSerializer(BaseModelSerializer):
             "image": badge.image,
             "image_alt": badge.image_alt,
         }
+
+class LeaderboardSerializer(BaseModelSerializer):
+    user = serializers.SerializerMethodField()
+    badges = serializers.SerializerMethodField()
+    number_of_badges = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = (
+            "user",
+            "badges",
+            "number_of_badges",
+        )
+
+    def get_user(self, obj):
+        """ Gets the necessary info from user """
+        return {
+            "user_id": obj.user_id,
+            "first_name": obj.first_name,
+            "last_name": obj.last_name,
+            "user_class": obj.user_class,
+            "user_study": obj.user_study,
+        }
+
+    def get_badges(self, obj):
+        """ Gets the necessary info from badge """
+        badges = list()
+        user_badges = UserBadge.objects.filter(user=obj)
+
+        for user_badge in user_badges:
+            badges.append(UserBadgeSerializer.get_badge(self, user_badge))
+
+        return badges
+
+    def get_number_of_badges(self, obj):
+        return len(self.get_badges(obj))
