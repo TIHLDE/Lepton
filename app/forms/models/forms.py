@@ -55,29 +55,39 @@ class Form(PolymorphicModel, BasePermissionModel):
 
     @classmethod
     def has_statistics_permission(cls, request):
-        return check_has_access(cls.write_access, request)
+        return True
+
+    def has_object_statistics_permission(self, request):
+        return check_has_access(self.write_access, request)
 
     @classmethod
     def has_list_permission(cls, request):
-        return check_has_access(cls.write_access, request)
+        if not request.user:
+            return False
+        return request.user.memberships_with_events_access.exists()
 
     @classmethod
     def has_write_permission(cls, request):
         if not request.user:
             return False
+        return bool(request.user)
+
+    @classmethod
+    def has_create_permission(cls, request):
+        if not request.user:
+            return False
+        if request.data.get("resource_type", "") == "EventForm":
+            event = Event.objects.get(id=request.data.get("event"))
+            return event.has_object_write_permission(request)
         return check_has_access(cls.write_access, request)
 
     def has_object_write_permission(self, request):
-        if isinstance(self, EventForm) and self.type == EventFormType.EVALUATION:
-            return (
-                self.event.get_queue()
-                .filter(user=request.user, has_attended=True)
-                .exists()
-            ) or check_has_access(self.write_access, request)
-        return True
+        return check_has_access(self.write_access, request)
 
     def has_object_read_permission(self, request):
-        return self.has_object_write_permission(request)
+        if not request.user:
+            return False
+        return True
 
 
 class EventForm(Form):
@@ -89,6 +99,25 @@ class EventForm(Form):
         unique_together = ("event", "type")
         verbose_name = "Event form"
         verbose_name_plural = "Event forms"
+
+    def has_event_permission(self, request):
+        if request.user is None:
+            return False
+
+        return self.event.has_object_write_permission(request)
+
+    def has_object_statistics_permission(self, request):
+        return self.has_event_permission(request)
+
+    def has_object_write_permission(self, request):
+        return self.has_event_permission(request)
+
+    def has_object_read_permission(self, request):
+        if self.type == EventFormType.EVALUATION:
+            return self.event.user_has_attended_event(
+                request.user
+            ) or self.has_event_permission(request)
+        return True
 
 
 class Field(OrderedModel):

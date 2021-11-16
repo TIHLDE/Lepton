@@ -13,6 +13,8 @@
 ---
 
 ## Neste versjon
+- ✨ **Arrangementer**. Endret tilgangshåndtering til arrangementer ved å knytte dem til grupper. Dermed kan også ledere av komitéer og interessegrupper opprette arrangementer.
+
 ## Versjon 1.1.5 (14.11.2021)
 - ⚡ **Arrangement**. Om en usvart evaluering er over 30 dager gammel, vil den ikke hindre deg i å melde deg på et arrangement.
 - ⚡ **Epost**. Støtter flere epost-leverandører gjennom mer universell formatering.
