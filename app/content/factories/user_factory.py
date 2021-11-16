@@ -8,7 +8,7 @@ class UserFactory(DjangoModelFactory):
     class Meta:
         model = User
 
-    user_id = factory.Sequence(lambda n: f"User {n}")
+    user_id = factory.Sequence(lambda n: f"User_{n}")
     first_name = factory.Faker("first_name")
     last_name = factory.Faker("last_name")
 
