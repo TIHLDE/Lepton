@@ -6,7 +6,7 @@ from app.common.enums import AdminGroup, MembershipType
 from app.group.factories.membership_factory import MembershipFactory
 from app.util.test_utils import get_api_client
 
-GROUP_URL = "/api/v1/group"
+GROUP_URL = "/group"
 
 
 def _get_membership_url(membership=None, group=None):
