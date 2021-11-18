@@ -7,14 +7,15 @@ from app.content.views import (
     CheatsheetViewSet,
     EventViewSet,
     JobPostViewSet,
+    LeaderboardBadgesViewSet,
+    LeaderboardViewSet,
     NewsViewSet,
     NotificationViewSet,
     PageViewSet,
     RegistrationViewSet,
     ShortLinkViewSet,
     StrikeViewSet,
-    UserBadgeViewSet, 
-    LeaderboardViewSet,
+    UserBadgeViewSet,
     UserViewSet,
     WarningViewSet,
     accept_form,
@@ -40,8 +41,9 @@ router.register(
     CheatsheetViewSet,
     basename="cheatsheet_list",
 )
+router.register("badge/leaderboard", LeaderboardViewSet, basename="leaderboard")
+router.register("badge/leaderboard", LeaderboardBadgesViewSet, basename="badges")
 router.register("badge", UserBadgeViewSet, basename="badge")
-router.register("leaderboard", LeaderboardViewSet, basename="leaderboard")
 router.register("page", PageViewSet)
 router.register("strikes", StrikeViewSet, basename="strikes")
 

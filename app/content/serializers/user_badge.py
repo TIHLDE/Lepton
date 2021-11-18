@@ -32,16 +32,15 @@ class UserBadgeSerializer(BaseModelSerializer):
             "image_alt": badge.image_alt,
         }
 
+
 class LeaderboardSerializer(BaseModelSerializer):
     user = serializers.SerializerMethodField()
-    badges = serializers.SerializerMethodField()
     number_of_badges = serializers.SerializerMethodField()
 
     class Meta:
         model = User
         fields = (
             "user",
-            "badges",
             "number_of_badges",
         )
 
@@ -55,15 +54,5 @@ class LeaderboardSerializer(BaseModelSerializer):
             "user_study": obj.user_study,
         }
 
-    def get_badges(self, obj):
-        """ Gets the necessary info from badge """
-        badges = list()
-        user_badges = UserBadge.objects.filter(user=obj)
-
-        for user_badge in user_badges:
-            badges.append(UserBadgeSerializer.get_badge(self, user_badge))
-
-        return badges
-
     def get_number_of_badges(self, obj):
-        return len(self.get_badges(obj))
+        return len(UserBadge.objects.filter(user=obj))

@@ -4,7 +4,7 @@ from app.content.views.event import EventViewSet
 from app.content.views.job_post import JobPostViewSet
 from app.content.views.user import UserViewSet
 from app.content.views.user_badge import UserBadgeViewSet
-from app.content.views.leaderboard import LeaderboardViewSet
+from app.content.views.leaderboard import LeaderboardViewSet, LeaderboardBadgesViewSet
 from app.content.views.registration import RegistrationViewSet
 from app.content.views.accept_form import accept_form
 from app.content.views.notification import NotificationViewSet
