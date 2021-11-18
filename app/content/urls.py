@@ -6,7 +6,6 @@ from app.content.views import (
     CategoryViewSet,
     CheatsheetViewSet,
     EventViewSet,
-    JobPostViewSet,
     LeaderboardBadgesViewSet,
     LeaderboardViewSet,
     NewsViewSet,
