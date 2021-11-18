@@ -30,7 +30,6 @@ router.register("events", EventViewSet, basename="event")
 router.register("warning", WarningViewSet, basename="warning")
 router.register("category", CategoryViewSet)
 router.register("short-link", ShortLinkViewSet, basename="short-link")
-router.register("jobpost", JobPostViewSet, basename="jobpost")
 router.register("user", UserViewSet, basename="user")
 router.register(
     r"events/(?P<event_id>\d+)/users", RegistrationViewSet, basename="registration"

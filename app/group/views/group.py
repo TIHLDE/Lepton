@@ -7,7 +7,7 @@ from app.common.mixins import ActionMixin
 from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission, is_admin_user
 from app.group.models import Group
-from app.group.serializers import DefaultGroupSerializer, GroupSerializer
+from app.group.serializers import GroupSerializer
 from app.group.serializers.membership import MembershipHistorySerializer
 
 
@@ -23,11 +23,6 @@ class GroupViewSet(viewsets.ModelViewSet, ActionMixin):
         if is_admin_user(self.request):
             return self.queryset
         return self.queryset.filter(type__in=GroupType.public_groups())
-
-    def get_serializer_class(self):
-        if hasattr(self, "action") and self.action == "list":
-            return DefaultGroupSerializer
-        return super().get_serializer_class()
 
     def retrieve(self, request, slug):
         """Returns a spesific group by slug"""

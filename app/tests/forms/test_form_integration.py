@@ -3,15 +3,8 @@ from rest_framework import status
 import pytest
 
 from app.common.enums import AdminGroup
-from app.content.factories import EventFactory, RegistrationFactory
-from app.content.serializers import EventListSerializer
-from app.forms.enums import EventFormType
 from app.forms.models.forms import Field
-from app.forms.tests.form_factories import (
-    EventFormFactory,
-    FieldFactory,
-    FormFactory,
-)
+from app.forms.tests.form_factories import FieldFactory, FormFactory
 from app.util.test_utils import get_api_client
 
 pytestmark = pytest.mark.django_db
@@ -57,15 +50,6 @@ def _get_form_template_post_data():
     }
 
 
-def _get_event_form_post_data(form, event):
-    return {
-        "resource_type": "EventForm",
-        "title": form.title,
-        "event": event.pk,
-        "fields": [],
-    }
-
-
 def _get_form_update_data(form):
     return {
         "resource_type": "Form",
@@ -87,40 +71,6 @@ def test_create_template_form(admin_user):
     response = client.get(_get_forms_url() + str(form.get("id")) + "/").json()
 
     assert response == form
-
-
-def test_list_forms_data(admin_user):
-    """Should return the correct fields about the forms."""
-    form = EventFormFactory()
-    field = form.fields.first()
-    option = field.options.first()
-
-    client = get_api_client(user=admin_user)
-    url = _get_forms_url() + "?all"
-    response = client.get(url)
-    response = response.json()
-
-    assert response[0] == {
-        "id": str(form.id),
-        "resource_type": "EventForm",
-        "title": form.title,
-        "event": EventListSerializer(form.event).data,
-        "type": form.type.name,
-        "viewer_has_answered": False,
-        "fields": [
-            {
-                "id": str(field.id),
-                "title": field.title,
-                "options": [
-                    {"id": str(option.id), "title": option.title, "order": option.order}
-                ],
-                "type": field.type.name,
-                "required": field.required,
-                "order": field.order,
-            }
-        ],
-        "template": False,
-    }
 
 
 def test_list_form_templates_data(admin_user):
@@ -181,13 +131,13 @@ def test_list_forms_as_member_is_not_permitted(member):
         (AdminGroup.INDEX, status.HTTP_200_OK),
         (AdminGroup.NOK, status.HTTP_200_OK),
         (AdminGroup.SOSIALEN, status.HTTP_200_OK),
-        (AdminGroup.PROMO, status.HTTP_403_FORBIDDEN),
+        (AdminGroup.PROMO, status.HTTP_200_OK),
     ],
 )
-def test_list_forms_as_member_of_nok_hs_or_index(
+def test_list_forms_as_member_of_board_or_sub_group(
     member, group_name, expected_status_code
 ):
-    """A user in NOK, HS or Index should be able to list forms."""
+    """A member of the board or a subgroup should be able to list forms."""
     client = get_api_client(user=member, group_name=group_name)
     url = _get_forms_url()
     response = client.get(url)
@@ -210,40 +160,6 @@ def test_retrieve_form_as_member(member, form):
 
     assert response.status_code == status.HTTP_200_OK
     assert response.json()
-
-
-def test_retrieve_evaluation_event_form_as_member_when_has_attended_event(member):
-    """
-    A member should be able to retrieve an event form of type evaluation if
-    they has attended the event.
-    """
-    event = EventFactory(limit=1)
-    registration = RegistrationFactory(
-        user=member, event=event, is_on_wait=False, has_attended=True
-    )
-    form = EventFormFactory(event=registration.event, type=EventFormType.EVALUATION)
-
-    client = get_api_client(user=member)
-    url = _get_form_detail_url(form)
-    response = client.get(url)
-
-    assert response.status_code == status.HTTP_200_OK
-    assert response.json()
-
-
-def test_retrieve_evaluation_event_form_as_member_when_has_not_attended_event(member):
-    """A member should not be able to retrieve an event evaluation form if they have not attended the event."""
-    event = EventFactory(limit=1)
-    registration = RegistrationFactory(
-        user=member, event=event, is_on_wait=False, has_attended=False
-    )
-    form = EventFormFactory(event=registration.event, type=EventFormType.EVALUATION)
-
-    client = get_api_client(user=member)
-    url = _get_form_detail_url(form)
-    response = client.get(url)
-
-    assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
 def test_retrieve_form_as_member_returns_form(member, form):
@@ -300,30 +216,6 @@ def test_create_forms_as_admin_is_permitted(form, member, group_name):
     response = client.post(url, _get_form_post_data(form))
 
     assert response.status_code == status.HTTP_201_CREATED
-
-
-def test_create_event_form_as_admin(admin_user):
-    """An admin should be able to create an event form."""
-    form = FormFactory.build()
-    event = EventFactory()
-
-    client = get_api_client(user=admin_user)
-    url = _get_forms_url()
-    response = client.post(url, _get_event_form_post_data(form, event))
-
-    assert response.status_code == status.HTTP_201_CREATED
-
-
-def test_create_event_form_as_admin_adds_the_form_to_the_event(admin_user, event):
-    """The form created should be connected to the event."""
-    form = FormFactory.build()
-
-    client = get_api_client(user=admin_user)
-    url = _get_forms_url()
-    data = _get_event_form_post_data(form, event)
-    client.post(url, data)
-
-    assert event.forms.filter(title=form.title).exists()
 
 
 def test_update_form_as_anonymous_is_not_permitted(form, default_client):
@@ -505,8 +397,7 @@ def test_update_options_when_id_is_passed_in_options_request_data_updates_the_op
     }
     client = get_api_client(user=admin_user)
     url = _get_form_detail_url(form)
-    response = client.put(url, data)
-    print(response)
+    client.put(url, data)
 
     option.refresh_from_db()
 

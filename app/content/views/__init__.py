@@ -1,7 +1,6 @@
 from app.content.views.category import CategoryViewSet
 from app.content.views.cheatsheet import CheatsheetViewSet
 from app.content.views.event import EventViewSet
-from app.content.views.job_post import JobPostViewSet
 from app.content.views.user import UserViewSet
 from app.content.views.user_badge import UserBadgeViewSet
 from app.content.views.leaderboard import LeaderboardViewSet, LeaderboardBadgesViewSet
