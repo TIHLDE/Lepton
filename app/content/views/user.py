@@ -31,7 +31,7 @@ from app.content.serializers import (
 from app.content.serializers.strike import UserInfoStrikeSerializer
 from app.forms.serializers import FormPolymorphicSerializer
 from app.group.models import Group, Membership
-from app.group.serializers import DefaultGroupSerializer
+from app.group.serializers import GroupSerializer
 from app.util.mail_creator import MailCreator
 from app.util.notifier import Notify
 from app.util.utils import CaseInsensitiveBooleanQueryParam
@@ -131,9 +131,7 @@ class UserViewSet(viewsets.ModelViewSet, ActionMixin):
             for membership in memberships
             if membership.group.type in GroupType.public_groups()
         ]
-        serializer = DefaultGroupSerializer(
-            groups, many=True, context={"request": request}
-        )
+        serializer = GroupSerializer(groups, many=True, context={"request": request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=["get"], url_path="me/badge")
@@ -145,14 +143,18 @@ class UserViewSet(viewsets.ModelViewSet, ActionMixin):
     @action(detail=False, methods=["get"], url_path="me/strikes")
     def get_user_strikes(self, request, *args, **kwargs):
         strikes = request.user.strikes.active()
-        serializer = UserInfoStrikeSerializer(instance=strikes, many=True)
+        serializer = UserInfoStrikeSerializer(
+            instance=strikes, many=True, context={"request": request}
+        )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=["get"], url_path="strikes")
     def get_user_detail_strikes(self, request, *args, **kwargs):
         user = self.get_object()
         strikes = user.strikes.active()
-        serializer = UserInfoStrikeSerializer(instance=strikes, many=True)
+        serializer = UserInfoStrikeSerializer(
+            instance=strikes, many=True, context={"request": request}
+        )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=["get"], url_path="me/events")
@@ -163,8 +165,9 @@ class UserViewSet(viewsets.ModelViewSet, ActionMixin):
             for registration in registrations
             if not registration.event.expired
         ]
-
-        return self.paginate_response(data=events, serializer=EventListSerializer)
+        return self.paginate_response(
+            data=events, serializer=EventListSerializer, context={"request": request}
+        )
 
     @action(detail=False, methods=["get"], url_path="me/forms")
     def get_user_forms(self, request, *args, **kwargs):
@@ -176,7 +179,11 @@ class UserViewSet(viewsets.ModelViewSet, ActionMixin):
         if filter_unanswered:
             forms = request.user.get_unanswered_evaluations()
 
-        return self.paginate_response(data=forms, serializer=FormPolymorphicSerializer)
+        return self.paginate_response(
+            data=forms,
+            serializer=FormPolymorphicSerializer,
+            context={"request": request},
+        )
 
     @action(
         detail=False,

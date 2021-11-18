@@ -1,8 +1,9 @@
 from django.db import models
 
+from app.career.enums import JobPostType
 from app.common.enums import AdminGroup
 from app.common.permissions import BasePermissionModel
-from app.content.enums import JobPostType, UserClass
+from app.content.enums import UserClass
 from app.util.models import BaseModel, OptionalImage
 from app.util.utils import yesterday
 
