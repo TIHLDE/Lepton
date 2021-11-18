@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('content', '0031_event_only_allow_prioritized'),
+        ('content', '0034_add_info_user_study'),
     ]
 
     operations = [
