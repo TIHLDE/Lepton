@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+## Versjon 1.2.1 (18.11.2021)
 
 ## Versjon 1.2.0 (16.11.2021)
 - ⚡ **Grupper** har nå bilder.
