@@ -1,4 +1,5 @@
 from app.content.models.badge import Badge
+from app.content.models.badge_category import BadgeCategory
 from app.content.models.category import Category
 from app.content.models.cheatsheet import Cheatsheet
 from app.content.models.event import Event

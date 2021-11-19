@@ -1,4 +1,4 @@
-from app.content.serializers.badge import BadgeSerializer
+from app.content.serializers.badge import BadgeSerializer, LeaderboardSerializer
 from app.content.serializers.category import CategorySerializer
 from app.content.serializers.cheatsheet import CheatsheetSerializer
 from app.content.serializers.event import (
@@ -25,6 +25,7 @@ from app.content.serializers.strike import (
     UserInfoStrikeSerializer,
 )
 from app.content.serializers.user import (
+    DefaultUserSerializer,
     UserAdminSerializer,
     UserCreateSerializer,
     UserInAnswerSerializer,

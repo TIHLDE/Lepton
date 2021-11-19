@@ -1,7 +1,8 @@
 from rest_framework import serializers
 
 from app.common.serializers import BaseModelSerializer
-from app.content.models import User, UserBadge
+from app.content.models import UserBadge
+from app.content.serializers.user import DefaultUserSerializer
 
 
 class UserBadgeSerializer(BaseModelSerializer):
@@ -33,26 +34,14 @@ class UserBadgeSerializer(BaseModelSerializer):
         }
 
 
-class LeaderboardSerializer(BaseModelSerializer):
+class UserBadgeLeaderboardSerializer(BaseModelSerializer):
     user = serializers.SerializerMethodField()
-    number_of_badges = serializers.SerializerMethodField()
 
     class Meta:
-        model = User
-        fields = (
-            "user",
-            "number_of_badges",
-        )
+        model = UserBadge
+        fields = ("user", "created_at")
 
     def get_user(self, obj):
-        """ Gets the necessary info from user """
-        return {
-            "user_id": obj.user_id,
-            "first_name": obj.first_name,
-            "last_name": obj.last_name,
-            "user_class": obj.user_class,
-            "user_study": obj.user_study,
-        }
-
-    def get_number_of_badges(self, obj):
-        return len(UserBadge.objects.filter(user=obj))
+        return DefaultUserSerializer(
+            obj.user
+        ).data  # TODO Tror dette er feil metode men klarte ikke å løse det på en annen måte

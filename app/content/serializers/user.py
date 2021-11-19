@@ -14,13 +14,16 @@ class DefaultUserSerializer(serializers.ModelSerializer):
             "user_id",
             "first_name",
             "last_name",
+            "user_class",
+            "user_study",
             "image",
         )
         read_only_fields = (
             "user_id",
             "first_name",
             "last_name",
-            "image",
+            "user_class",
+            "user_study" "image",
         )
 
 

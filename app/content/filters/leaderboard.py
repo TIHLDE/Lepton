@@ -9,4 +9,5 @@ class LeaderBoardFilter(FilterSet):
         fields = [
             "user_class",
             "user_study",
+            "user_badges__badge__badge_category",
         ]

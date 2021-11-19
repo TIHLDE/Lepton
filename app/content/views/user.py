@@ -11,12 +11,7 @@ from sentry_sdk import capture_exception
 from app.common.enums import Groups, GroupType
 from app.common.mixins import ActionMixin
 from app.common.pagination import BasePagination
-from app.common.permissions import (
-    BasicViewPermission,
-    IsDev,
-    IsHS,
-    is_admin_user,
-)
+from app.common.permissions import IsDev, IsHS, is_admin_user
 from app.content.filters import UserFilter
 from app.content.models import User
 from app.content.serializers import (
@@ -41,7 +36,7 @@ class UserViewSet(viewsets.ModelViewSet, ActionMixin):
     """ API endpoint to display one user """
 
     serializer_class = UserSerializer
-    permission_classes = [BasicViewPermission]
+    # permission_classes = [BasicViewPermission]
     queryset = User.objects.all()
     pagination_class = BasePagination
 
@@ -134,9 +129,13 @@ class UserViewSet(viewsets.ModelViewSet, ActionMixin):
         serializer = GroupSerializer(groups, many=True, context={"request": request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @action(detail=False, methods=["get"], url_path="me/badge")
-    def get_user_badges(self, request, *args, **kwargs):
-        user_badges = request.user.user_badges.order_by("-created_at")
+    @action(detail=True, methods=["get"], url_path="badges")
+    def get_user_detail_badges(self, request, *args, **kwargs):
+        if kwargs["pk"] == "me":
+            user = request.user
+        else:
+            user = self.get_object()
+        user_badges = user.user_badges.order_by("-created_at")
         badges = [user_badge.badge for user_badge in user_badges]
         return self.paginate_response(data=badges, serializer=BadgeSerializer)
 
