@@ -153,7 +153,7 @@ class GroupForm(Form):
     @classmethod
     def has_write_permission(cls, request):
         group_slug = request.data.get("group")
-        group = Group.objects.get(slug=group_slug)
+        group = Group.objects.filter(slug=group_slug).first()
 
         return request.user.is_member_of(group) or check_has_access(
             cls.write_access, request
