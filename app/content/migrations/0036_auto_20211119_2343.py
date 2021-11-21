@@ -8,7 +8,7 @@ import uuid
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('content', '0034_add_info_user_study'),
+        ('content', '0035_auto_20211114_1351'),
     ]
 
     operations = [
