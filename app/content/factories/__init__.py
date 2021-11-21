@@ -11,3 +11,8 @@ from app.content.factories.notification_factory import NotificationFactory
 from app.content.factories.page_factory import PageFactory
 from app.content.factories.page_factory import ParentPageFactory
 from app.content.factories.short_link_factory import ShortLinkFactory
+from app.content.factories.badge_factory import (
+    BadgeCategoryFactory,
+    BadgeFactory,
+    UserBadgeFactory,
+)

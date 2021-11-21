@@ -1,4 +1,8 @@
-from app.content.serializers.badge import BadgeSerializer, LeaderboardSerializer
+from app.content.serializers.badge import (
+    BadgeSerializer,
+    LeaderboardSerializer,
+    LeaderboardForBadgeSerializer,
+)
 from app.content.serializers.category import CategorySerializer
 from app.content.serializers.cheatsheet import CheatsheetSerializer
 from app.content.serializers.event import (

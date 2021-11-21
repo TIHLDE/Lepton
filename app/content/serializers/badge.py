@@ -49,9 +49,21 @@ class LeaderboardSerializer(BaseModelSerializer):
         )
 
     def get_user(self, obj):
-        return DefaultUserSerializer(
-            obj
-        ).data  # TODO Tror dette er feil metode men klarte ikke å løse det på en annen måte
+        return DefaultUserSerializer(obj).data
 
     def get_number_of_badges(self, obj):
         return UserBadge.objects.filter(user=obj).count()
+
+
+class LeaderboardForBadgeSerializer(BaseModelSerializer):
+    user = serializers.SerializerMethodField()
+
+    class Meta:
+        model = UserBadge
+        fields = (
+            "user",
+            "created_at",
+        )
+
+    def get_user(self, obj):
+        return DefaultUserSerializer(obj.user).data

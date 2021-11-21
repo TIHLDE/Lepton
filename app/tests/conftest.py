@@ -6,6 +6,7 @@ import pytest
 from app.career.factories import WeeklyBusinessFactory
 from app.common.enums import AdminGroup, Groups, MembershipType
 from app.content.factories import (
+    BadgeFactory,
     CheatsheetFactory,
     EventFactory,
     NewsFactory,
@@ -14,6 +15,7 @@ from app.content.factories import (
     ParentPageFactory,
     RegistrationFactory,
     ShortLinkFactory,
+    UserBadgeFactory,
     UserFactory,
 )
 from app.forms.tests.form_factories import FormFactory, SubmissionFactory
@@ -121,6 +123,16 @@ def page():
 @pytest.fixture()
 def parent_page():
     return ParentPageFactory()
+
+
+@pytest.fixture()
+def badge():
+    return BadgeFactory()
+
+
+@pytest.fixture()
+def user_badge():
+    return UserBadgeFactory()
 
 
 @pytest.fixture()

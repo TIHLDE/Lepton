@@ -26,7 +26,7 @@ class Badge(BaseModel, OptionalImage):
         return f"{self.title} - {self.description}"
 
     @property
-    def active(self):  # TODO kan sikkert ryddes opp i
+    def active(self):
         if self.active_from is None and self.active_to is None:
             return True
         if self.active_from is None:

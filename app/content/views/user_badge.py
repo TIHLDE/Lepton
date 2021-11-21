@@ -29,14 +29,19 @@ class UserBadgeViewSet(viewsets.ModelViewSet):
                 )
 
             serializer = UserBadgeSerializer(data=request.data)
-            if serializer.is_valid() and badge.active:
+            if not badge.active:
+                return Response(
+                    {"detail": "Badgen er ikke aktiv"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            if serializer.is_valid():
                 UserBadge(user=user, badge=badge).save()
                 return Response(
                     {"detail": "Badge fullført!"}, status=status.HTTP_200_OK
                 )
             else:
                 return Response(
-                    {"detail": "Badgen kunne ikke ble opprettet"},
+                    {"detail": "Badgen kunne ikke bli opprettet"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
@@ -54,6 +59,6 @@ class UserBadgeViewSet(viewsets.ModelViewSet):
         except Exception as badge_create_fail:
             capture_exception(badge_create_fail)
             return Response(
-                {"detail": "Badgen kunne ikke ble opprettet"},
+                {"detail": "Badgen kunne ikke bli opprettet"},
                 status=status.HTTP_404_NOT_FOUND,
             )
