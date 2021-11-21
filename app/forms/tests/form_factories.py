@@ -4,6 +4,7 @@ from factory.django import DjangoModelFactory
 from app.content.factories.event_factory import EventFactory
 from app.content.factories.user_factory import UserFactory
 from app.forms import models
+from app.group.factories import GroupFactory
 
 
 class FormFactory(DjangoModelFactory):
@@ -21,6 +22,13 @@ class EventFormFactory(FormFactory):
         model = models.EventForm
 
     event = factory.SubFactory(EventFactory)
+
+
+class GroupFormFactory(FormFactory):
+    class Meta:
+        model = models.GroupForm
+
+    group = factory.SubFactory(GroupFactory)
 
 
 class FieldFactory(DjangoModelFactory):

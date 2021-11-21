@@ -6,11 +6,12 @@ from enumchoicefield import EnumChoiceField
 from ordered_model.models import OrderedModel
 from polymorphic.models import PolymorphicModel
 
-from app.common.enums import AdminGroup
+from app.common.enums import AdminGroup, Groups
 from app.common.permissions import BasePermissionModel, check_has_access
 from app.content.models.event import Event
 from app.content.models.user import User
 from app.forms.enums import EventFormType, FormFieldType
+from app.group.models import Group
 from app.util.models import BaseModel
 
 
@@ -64,21 +65,40 @@ class Form(PolymorphicModel, BasePermissionModel):
     def has_list_permission(cls, request):
         if not request.user:
             return False
+        if cls.is_group_form(request):
+            return GroupForm.has_list_permission(request)
         return request.user.memberships_with_events_access.exists()
+
+    @classmethod
+    def is_group_form(cls, request):
+        """
+        DRY Rest Permissions cannot handle polymorphic models
+        which requires a manual workaround for the type of form.
+        """
+        return request.data.get("resource_type") == "GroupForm"
 
     @classmethod
     def has_write_permission(cls, request):
         if not request.user:
             return False
+
+        if cls.is_group_form(request):
+            return GroupForm.has_write_permission(request)
+
         return bool(request.user)
 
     @classmethod
     def has_create_permission(cls, request):
         if not request.user:
             return False
+
         if request.data.get("resource_type", "") == "EventForm":
             event = Event.objects.get(id=request.data.get("event"))
             return event.has_object_write_permission(request)
+
+        if cls.is_group_form(request):
+            return GroupForm.has_write_permission(request)
+
         return check_has_access(cls.write_access, request)
 
     def has_object_write_permission(self, request):
@@ -118,6 +138,32 @@ class EventForm(Form):
                 request.user
             ) or self.has_event_permission(request)
         return True
+
+
+class GroupForm(Form):
+
+    read_access = [Groups.TIHLDE]
+
+    group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name="forms")
+
+    class Meta:
+        verbose_name = "Group form"
+        verbose_name_plural = "Group forms"
+
+    @classmethod
+    def has_write_permission(cls, request):
+        group_slug = request.data.get("group")
+        group = Group.objects.filter(slug=group_slug).first()
+
+        return request.user.is_member_of(group) or check_has_access(
+            cls.write_access, request
+        )
+
+    @classmethod
+    def has_list_permission(cls, request):
+        if not request.user:
+            return False
+        return check_has_access(cls.read_access, request)
 
 
 class Field(OrderedModel):
