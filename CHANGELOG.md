@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+- ✨ **Påmeldinger**. Brukere kan abonnere på sine påmeldinger til arrangementer gjennom kalenderen sin.
 - ✨ **Sider**. Lagt til plassering og rekkefølge på sider.
 - ✨ **Gruppeskjemaer** kan nå bli opprettet av alle medlemmer av gruppen.
 

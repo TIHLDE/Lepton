@@ -13,6 +13,7 @@ from app.content.views import (
     ShortLinkViewSet,
     StrikeViewSet,
     UserBadgeViewSet,
+    UserCalendarEvents,
     UserViewSet,
     WarningViewSet,
     accept_form,
@@ -45,4 +46,5 @@ urlpatterns = [
     url(r"", include(router.urls)),
     path("accept-form/", accept_form),
     path("upload/", upload),
+    url(r"user/(?P<user_id>[^/.]+)/events.ics", UserCalendarEvents()),
 ]
