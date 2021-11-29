@@ -7,7 +7,7 @@ from app.group.factories import GroupFactory
 
 pytestmark = pytest.mark.django_db
 
-FORMS_URL = "/api/v1/forms/"
+FORMS_URL = "/forms/"
 
 
 def _get_form_post_data(group):
