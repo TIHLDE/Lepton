@@ -7,6 +7,8 @@ from app.common.mixins import OrderedModelSerializerMixin
 from app.common.serializers import BaseModelSerializer
 from app.content.serializers import EventListSerializer
 from app.forms.models import EventForm, Field, Form, Option
+from app.forms.models.forms import GroupForm
+from app.group.serializers import GroupSerializer
 
 
 class OptionSerializer(BaseModelSerializer):
@@ -141,6 +143,16 @@ class EventFormSerializer(AnswerableFormSerializer):
         return super(EventFormSerializer, self).to_representation(instance)
 
 
+class GroupFormSerializer(AnswerableFormSerializer):
+    class Meta:
+        model = GroupForm
+        fields = AnswerableFormSerializer.Meta.fields + ("group",)
+
+    def to_representation(self, instance):
+        self.fields["group"] = GroupSerializer(read_only=True)
+        return super().to_representation(instance)
+
+
 class FormInSubmissionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Form
@@ -162,6 +174,7 @@ class FormPolymorphicSerializer(PolymorphicSerializer, serializers.ModelSerializ
     model_serializer_mapping = {
         Form: AnswerableFormSerializer,
         EventForm: EventFormSerializer,
+        GroupForm: GroupFormSerializer,
     }
 
     class Meta:
