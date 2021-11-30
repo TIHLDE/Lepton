@@ -10,7 +10,7 @@ from app.forms.tests.form_factories import EventFormFactory
 
 pytestmark = pytest.mark.django_db
 
-API_USER_BASE_URL = "/user/"
+API_USER_BASE_URL = "/users/"
 
 
 def _get_user_forms_url():

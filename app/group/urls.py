@@ -5,12 +5,12 @@ from app.group.views import GroupViewSet, MembershipViewSet
 from app.group.views.group_form import GroupFormViewSet
 
 router = routers.DefaultRouter()
-router.register("group", GroupViewSet, basename="group")
+router.register("groups", GroupViewSet, basename="group")
 router.register(
-    r"group/(?P<slug>[^\.]+)/membership", MembershipViewSet, basename="membership"
+    r"groups/(?P<slug>[^\.]+)/memberships", MembershipViewSet, basename="membership"
 )
 router.register(
-    r"group/(?P<slug>[^\.]+)/forms", GroupFormViewSet, basename="group_forms",
+    r"groups/(?P<slug>[^\.]+)/forms", GroupFormViewSet, basename="group_forms",
 )
 
 # Register group viewpoints here

@@ -75,7 +75,7 @@ class GroupViewSet(viewsets.ModelViewSet, ActionMixin):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-    @action(detail=True, methods=["get"], url_path="membership-history")
+    @action(detail=True, methods=["get"], url_path="membership-histories")
     def get_group_history(self, request, *args, **kwargs):
         group = self.get_object()
         self.pagination_class = BasePagination

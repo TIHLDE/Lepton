@@ -6,11 +6,11 @@ from app.common.enums import AdminGroup, MembershipType
 from app.group.factories.membership_factory import MembershipFactory
 from app.util.test_utils import get_api_client
 
-GROUP_URL = "/group"
+GROUP_URL = "/groups"
 
 
 def _get_membership_url(membership=None, group=None):
-    return f"{GROUP_URL}/{group.slug if group else membership.group.slug}/membership/"
+    return f"{GROUP_URL}/{group.slug if group else membership.group.slug}/memberships/"
 
 
 def _get_membership_url_detail(membership):
