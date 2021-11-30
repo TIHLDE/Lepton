@@ -49,5 +49,5 @@ urlpatterns = [
     path("", include("app.payment.urls")),
     path("auth/", include("app.authentication.urls")),
     path("forms/", include("app.forms.urls")),
-    path("gallery/", include("app.gallery.urls")),
+    path("galleries/", include("app.gallery.urls")),
 ]

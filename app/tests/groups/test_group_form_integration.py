@@ -9,7 +9,7 @@ from app.group.factories import GroupFactory
 pytestmark = pytest.mark.django_db
 
 
-GROUP_URL = "/group"
+GROUP_URL = "/groups"
 
 
 def _get_group_form_url(group=None):
