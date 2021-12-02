@@ -18,6 +18,7 @@ class BasePermissionModel(models.Model):
     @classmethod
     def has_read_permission(cls, request):
         if not len(cls.read_access):
+            print(len(cls.read_access))
             return True
         return check_has_access(cls.read_access, request)
 

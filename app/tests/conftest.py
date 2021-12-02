@@ -1,5 +1,6 @@
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIRequestFactory
+from app.group.factories.fine_factory import FineFactory
 
 import pytest
 
@@ -146,3 +147,8 @@ def notification():
 @pytest.fixture()
 def weekly_business():
     return WeeklyBusinessFactory()
+
+
+@pytest.fixture()
+def fine():
+    return FineFactory()

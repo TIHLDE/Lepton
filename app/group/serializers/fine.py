@@ -5,7 +5,7 @@ from app.content.models.user import User
 from app.content.serializers.user import DefaultUserSerializer
 from app.group.models.fine import Fine
 from app.group.models.group import Group
-from app.group.serializers.group import DefaultGroupSerializer
+from app.group.serializers.group import GroupSerializer
 
 
 class FineListSerializer(serializers.ListSerializer):
@@ -23,7 +23,7 @@ class FineListSerializer(serializers.ListSerializer):
 
 class FineSerializer(BaseModelSerializer):
     user = DefaultUserSerializer(read_only=True)
-    group = DefaultGroupSerializer(read_only=True)
+    group = GroupSerializer(read_only=True)
 
     class Meta:
         model = Fine
@@ -34,6 +34,9 @@ class FineSerializer(BaseModelSerializer):
             "user",
             "group",
         )
+        
+    
+    
 
     def create(self, validated_data):
         group = Group.objects.get(slug=self.context["group_slug"])

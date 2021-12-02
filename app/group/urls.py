@@ -11,7 +11,7 @@ router.register(
     r"group/(?P<slug>[^\.]+)/membership", MembershipViewSet, basename="membership"
 )
 router.register(r"group/(?P<slug>[^\.]+)/law", LawViewSet, basename="law")
-router.register(r"group/(?P<slug>[^\.]+)/fine", FineViewSet, basename="fine")
+router.register(r"group/(?P<slug>[^\.]+)/fines", FineViewSet, basename="fine")
 
 
 # Register group viewpoints here

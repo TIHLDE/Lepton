@@ -43,6 +43,11 @@ class Group(OptionalImage, BaseModel, BasePermissionModel):
         ).is_leader()
 
     @classmethod
+    def get_group_from_permission_context(cls, request):
+        group_slug = request.parser_context["kwargs"]["slug"]
+        return cls.objects.get(slug=group_slug)
+
+    @classmethod
     def has_write_permission(cls, request):
         from app.group.models import Membership
 

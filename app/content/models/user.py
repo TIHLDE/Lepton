@@ -132,6 +132,9 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
 
         return Form.objects.filter(submissions__user=self)
 
+    def is_member_of(self, group):
+        return self.memberships.filter(group=group).exists()
+
     def has_unanswered_evaluations(self):
         return self.get_unanswered_evaluations().exists()
 

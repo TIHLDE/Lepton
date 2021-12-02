@@ -18,6 +18,7 @@ class Law(BaseModel, BasePermissionModel):
 
     class meta:
         verbose_name_plural = "Laws"
+        ordering = ("paragraph",)
 
     def __str__(self):
         return f"§ {self.paragraph} - {self.description} - {self.amount} enhet"
