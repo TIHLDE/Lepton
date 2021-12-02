@@ -1,30 +1,46 @@
-
-
 from rest_framework import status
-import factory
 
-from app.common.enums import AdminGroup
-from app.tests.groups.test_group_intergration import GROUP_URL
-from app.util.test_utils import add_user_to_group_with_name, get_api_client
+import factory
 import pytest
 
+from app.common.enums import AdminGroup, GroupType, MembershipType
+from app.group.factories.fine_factory import FineFactory
+from app.group.factories.group_factory import GroupFactory
+from app.group.factories.membership_factory import MembershipFactory
+from app.group.models import group
+from app.tests.groups.test_group_intergration import GROUP_URL
+from app.util.test_utils import add_user_to_group_with_name, get_api_client
 
 GROUP_URL = "/group/"
 
+
 def _get_fine_url(group, fine=None):
-    return f"{GROUP_URL}{group.slug}/fines/{fine.id}" if (fine) else f"{GROUP_URL}{group.slug}/fines/"
+    return (
+        f"{GROUP_URL}{group.slug}/fines/{fine.id}/"
+        if (fine)
+        else f"{GROUP_URL}{group.slug}/fines/"
+    )
 
 
 def _get_fine_data(user, approved=False, payed=False, description=None):
-    return  {
+    return {
+        "created_by": user.user_id,
         "amount": 1,
         "approved": approved,
         "payed": payed,
         "description": "Test" if not description else description,
-        "user": [
-            user.user_id
-        ]
-}
+        "user": [user.user_id],
+    }
+
+
+def _get_fine_data_update_data(fine):
+    return {
+        "amount": 1,
+        "approved": fine.approved,
+        "payed": fine.payed,
+        "description": fine.description,
+    }
+
 
 @pytest.mark.django_db
 def test_list_as_anonymous_user(group, default_client):
@@ -34,8 +50,8 @@ def test_list_as_anonymous_user(group, default_client):
     response = default_client.get(url)
 
     assert response.status_code == status.HTTP_403_FORBIDDEN
-    
-    
+
+
 @pytest.mark.django_db
 def test_retrieve_as_user(group, user):
     """Tests if an non member user can't retrieve fines for a group"""
@@ -44,8 +60,6 @@ def test_retrieve_as_user(group, user):
     response = client.get(url)
 
     assert response.status_code == status.HTTP_403_FORBIDDEN
-    
-
 
 
 @pytest.mark.django_db
@@ -59,11 +73,7 @@ def test_retrieve_as_user(group, user):
         ("Non_admin_group", status.HTTP_403_FORBIDDEN),
     ],
 )
-def test_create_as_group_user(
-    group, user, group_name, expected_status_code
-):
-    """Tests if diffierent groups ability to update a group"""
-
+def test_create_as_group_user(group, user, group_name, expected_status_code):
     client = get_api_client(user=user, group_name=group_name)
     url = _get_fine_url(group)
     data = _get_fine_data(user=user)
@@ -71,10 +81,10 @@ def test_create_as_group_user(
     group.refresh_from_db()
 
     assert response.status_code == expected_status_code
-    
+
+
 @pytest.mark.django_db
 def test_create_as_group_member(user):
-    """Tests if diffierent groups ability to update a group"""
     group = add_user_to_group_with_name(user, group_name="name")
     client = get_api_client(user=user)
     url = _get_fine_url(group)
@@ -83,5 +93,62 @@ def test_create_as_group_member(user):
     group.refresh_from_db()
 
     assert response.status_code == status.HTTP_200_OK
-    
-    
+
+
+@pytest.mark.django_db
+def test_update_as_fines_admin(user):
+    group = GroupFactory(fines_admin=user)
+    MembershipFactory(user=user, group=group)
+    fine = FineFactory(payed=False, group=group)
+    client = get_api_client(user=user)
+    url = _get_fine_url(group, fine)
+    data = _get_fine_data_update_data(fine)
+    data["payed"] = True
+    response = client.put(url, data=data)
+    assert fine.payed == False
+    fine.refresh_from_db()
+    assert response.status_code == status.HTTP_200_OK
+    assert fine.payed == True
+
+
+@pytest.mark.django_db
+def test_update_as_leader(user):
+    group = GroupFactory()
+    MembershipFactory(user=user, group=group, membership_type=MembershipType.LEADER)
+    fine = FineFactory(payed=False, group=group)
+    client = get_api_client(user=user)
+    url = _get_fine_url(group, fine)
+    data = _get_fine_data_update_data(fine)
+    data["payed"] = True
+    response = client.put(url, data=data)
+    assert fine.payed == False
+    fine.refresh_from_db()
+    assert response.status_code == status.HTTP_200_OK
+    assert fine.payed == True
+
+
+@pytest.mark.django_db
+def test_update_as_member_not_allowed(user):
+    group = GroupFactory()
+    MembershipFactory(user=user, group=group)
+    fine = FineFactory(payed=False, group=group)
+    client = get_api_client(user=user)
+    url = _get_fine_url(group, fine)
+    data = _get_fine_data_update_data(fine)
+    data["payed"] = True
+    response = client.put(url, data=data)
+    fine.refresh_from_db()
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+@pytest.mark.django_db
+def test_update_as_user_not_allowed(user):
+    group = GroupFactory()
+    fine = FineFactory(payed=False, group=group)
+    client = get_api_client(user=user)
+    url = _get_fine_url(group, fine)
+    data = _get_fine_data_update_data(fine)
+    data["payed"] = True
+    response = client.put(url, data=data)
+    fine.refresh_from_db()
+    assert response.status_code == status.HTTP_403_FORBIDDEN

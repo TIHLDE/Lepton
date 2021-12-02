@@ -58,7 +58,8 @@ class GroupViewSet(viewsets.ModelViewSet, ActionMixin):
         """Creates a group if it does not exist"""
         try:
             slug = request.data["slug"]
-            group = Group.objects.get_or_create(slug=slug)
+            user_id = request.data.get("fines_admin", None)
+            group = Group.objects.get_or_create(slug=slug, fines_admin__user_id=user_id)
             serializer = GroupSerializer(
                 group[0], data=request.data, context={"request": request}
             )

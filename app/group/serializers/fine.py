@@ -21,22 +21,19 @@ class FineListSerializer(serializers.ListSerializer):
         return Fine.objects.bulk_create(fines)
 
 
-class FineSerializer(BaseModelSerializer):
+class FineCreateSerializer(BaseModelSerializer):
     user = DefaultUserSerializer(read_only=True)
     group = GroupSerializer(read_only=True)
 
     class Meta:
         model = Fine
         list_serializer_class = FineListSerializer
-        fields = ("id", "user", "group", "amount", "approved", "payed", "description")
+        fields = ("id", "user", "group", "amount", "description")
 
         read_only_fields = (
             "user",
             "group",
         )
-        
-    
-    
 
     def create(self, validated_data):
         group = Group.objects.get(slug=self.context["group_slug"])
@@ -45,6 +42,26 @@ class FineSerializer(BaseModelSerializer):
         return Fine.objects.create(
             group=group, created_by=created_by, user=user, **validated_data
         )
+
+
+class FineSerializer(BaseModelSerializer):
+    user = DefaultUserSerializer(read_only=True)
+    group = GroupSerializer(read_only=True)
+
+    class Meta:
+        model = Fine
+        fields = (
+            "id",
+            "user",
+            "group",
+            "amount",
+            "approved",
+            "payed",
+            "description",
+            "created_by",
+        )
+
+        read_only_fields = ("user", "group", "created_by")
 
 
 class MembershipFineSerializer(BaseModelSerializer):

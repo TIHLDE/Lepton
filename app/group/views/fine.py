@@ -1,13 +1,10 @@
 from rest_framework import status, viewsets
-from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 
 from app.common.permissions import BasicViewPermission
-from app.content.models.user import User
 from app.group.filters.fine import FineFilter
 from app.group.models.fine import Fine
-from app.group.models.group import Group
-from app.group.serializers.fine import FineSerializer
+from app.group.serializers.fine import FineCreateSerializer, FineSerializer
 
 
 class FineViewSet(viewsets.ModelViewSet):
@@ -17,16 +14,19 @@ class FineViewSet(viewsets.ModelViewSet):
     filterset_class = FineFilter
 
     def get_queryset(self):
-        return self.queryset.filter(group__slug=self.kwargs["slug"])
+        return self.queryset.filter(
+            group__slug=self.kwargs["slug"], group__fines_activated=True
+        )
 
     def create(self, request, *args, **kwargs):
         context = {
             "group_slug": kwargs["slug"],
             "created_by": request.id,
             "user_ids": request.data["user"],
+            "request": request,
         }
 
-        serializer = FineSerializer(
+        serializer = FineCreateSerializer(
             many=True, partial=True, data=[request.data], context=context
         )
 

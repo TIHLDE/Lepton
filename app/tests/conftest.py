@@ -1,6 +1,5 @@
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIRequestFactory
-from app.group.factories.fine_factory import FineFactory
 
 import pytest
 
@@ -19,6 +18,7 @@ from app.content.factories import (
 )
 from app.forms.tests.form_factories import FormFactory, SubmissionFactory
 from app.group.factories import GroupFactory, MembershipFactory
+from app.group.factories.fine_factory import FineFactory
 from app.util.test_utils import add_user_to_group_with_name, get_api_client
 
 

@@ -5,6 +5,7 @@ from enumchoicefield import EnumChoiceField
 
 from app.common.enums import AdminGroup, GroupType
 from app.common.permissions import BasePermissionModel, set_user_id
+from app.content.models.user import User
 from app.util.models import BaseModel, OptionalImage
 
 
@@ -18,6 +19,14 @@ class Group(OptionalImage, BaseModel, BasePermissionModel):
     contact_email = models.EmailField(max_length=200, null=True, blank=True)
     fineInfo = models.TextField(default="", blank=True)
     type = EnumChoiceField(GroupType, default=GroupType.OTHER)
+    fines_activated = models.BooleanField(default=True)
+    fines_admin = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="fine_master_groups",
+        null=True,
+        default=None,
+    )
 
     class meta:
         verbose_name_plural = "Groups"
@@ -38,9 +47,19 @@ class Group(OptionalImage, BaseModel, BasePermissionModel):
             set_user_id(request)
         group_slug = request.parser_context["kwargs"]["slug"]
         group = cls.objects.get(slug=group_slug)
-        return group.memberships.get(
+        membership = group.memberships.filter(
             group__slug=group_slug, user__user_id=request.id
-        ).is_leader()
+        )
+        return len(membership) and membership.first().is_leader()
+
+    @classmethod
+    def check_user_is_fine_master(cls, request):
+        group = cls.get_group_from_permission_context(request)
+        return (
+            group.fines_admin
+            and request.user
+            and request.user == group.fines_admin.user_id
+        )
 
     @classmethod
     def get_group_from_permission_context(cls, request):
