@@ -26,10 +26,10 @@ class GroupSerializer(BaseModelSerializer):
             "leader",
             "fines_admin",
             "fines_activated",
+            "fine_info",
             "image",
             "image_alt",
         )
-        read_only_fields = ("fines_admin",)
 
     def get_leader(self, obj):
         try:

@@ -28,7 +28,7 @@ class FineCreateSerializer(BaseModelSerializer):
     class Meta:
         model = Fine
         list_serializer_class = FineListSerializer
-        fields = ("id", "user", "group", "amount", "description")
+        fields = ("id", "user", "group", "amount", "description", "created_at")
 
         read_only_fields = (
             "user",
@@ -46,22 +46,21 @@ class FineCreateSerializer(BaseModelSerializer):
 
 class FineSerializer(BaseModelSerializer):
     user = DefaultUserSerializer(read_only=True)
-    group = GroupSerializer(read_only=True)
 
     class Meta:
         model = Fine
         fields = (
             "id",
             "user",
-            "group",
             "amount",
             "approved",
             "payed",
             "description",
             "created_by",
+            "created_at",
         )
 
-        read_only_fields = ("user", "group", "created_by")
+        read_only_fields = ("user", "created_by")
 
 
 class MembershipFineSerializer(BaseModelSerializer):

@@ -46,7 +46,7 @@ def test_retrieve_as_user(group, member):
     url = _get_law_url(group)
     response = client.get(url)
 
-    assert response.status_code == status.HTTP_200_OK
+    assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
 @pytest.mark.django_db

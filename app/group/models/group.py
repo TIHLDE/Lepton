@@ -17,7 +17,7 @@ class Group(OptionalImage, BaseModel, BasePermissionModel):
     slug = models.SlugField(max_length=50, primary_key=True)
     description = models.TextField(max_length=1000, null=True, blank=True)
     contact_email = models.EmailField(max_length=200, null=True, blank=True)
-    fineInfo = models.TextField(default="", blank=True)
+    fine_info = models.TextField(default="", blank=True)
     type = EnumChoiceField(GroupType, default=GroupType.OTHER)
     fines_activated = models.BooleanField(default=False)
     fines_admin = models.ForeignKey(
@@ -50,7 +50,6 @@ class Group(OptionalImage, BaseModel, BasePermissionModel):
         membership = group.memberships.filter(
             group__slug=group_slug, user__user_id=request.id
         )
-        print(len(membership) == 1 and membership[0].is_leader())
         return len(membership) == 1 and membership[0].is_leader()
 
     @classmethod
