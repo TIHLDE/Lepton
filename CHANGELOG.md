@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+- ✨ **Bøter**. Grupper kan nå dele ut bøter til medlemmene sine.
 ## Versjon 1.2.1 (30.11.2021)
 - ✨ **Påmeldinger**. Brukere kan abonnere på sine påmeldinger til arrangementer gjennom kalenderen sin.
 - ✨ **Sider**. Lagt til plassering og rekkefølge på sider.
