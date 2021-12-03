@@ -1,14 +1,11 @@
 from rest_framework import status
 
-import factory
 import pytest
 
-from app.common.enums import AdminGroup, GroupType, MembershipType
+from app.common.enums import AdminGroup, MembershipType
 from app.group.factories.fine_factory import FineFactory
 from app.group.factories.group_factory import GroupFactory
 from app.group.factories.membership_factory import MembershipFactory
-from app.group.models import group
-from app.tests.groups.test_group_intergration import GROUP_URL
 from app.util.test_utils import add_user_to_group_with_name, get_api_client
 
 GROUP_URL = "/group/"
@@ -44,8 +41,6 @@ def _get_fine_data_update_data(fine):
 
 @pytest.mark.django_db
 def test_list_as_anonymous_user(group, default_client):
-    """Tests if an anonymous user can list fines for a group"""
-
     url = _get_fine_url(group)
     response = default_client.get(url)
 
@@ -53,13 +48,12 @@ def test_list_as_anonymous_user(group, default_client):
 
 
 @pytest.mark.django_db
-def test_retrieve_as_user(group, user):
-    """Tests if an non member user can't retrieve fines for a group"""
-    client = get_api_client(user=user)
+def test_retrieve_as_user(group, member):
+    client = get_api_client(user=member)
     url = _get_fine_url(group)
     response = client.get(url)
 
-    assert response.status_code == status.HTTP_403_FORBIDDEN
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db
@@ -105,10 +99,10 @@ def test_update_as_fines_admin(user):
     data = _get_fine_data_update_data(fine)
     data["payed"] = True
     response = client.put(url, data=data)
-    assert fine.payed == False
+    assert not fine.payed
     fine.refresh_from_db()
     assert response.status_code == status.HTTP_200_OK
-    assert fine.payed == True
+    assert fine.payed
 
 
 @pytest.mark.django_db
@@ -121,15 +115,14 @@ def test_update_as_leader(user):
     data = _get_fine_data_update_data(fine)
     data["payed"] = True
     response = client.put(url, data=data)
-    assert fine.payed == False
+    assert not fine.payed
     fine.refresh_from_db()
     assert response.status_code == status.HTTP_200_OK
-    assert fine.payed == True
+    assert fine.payed
 
 
 @pytest.mark.django_db
-def test_update_as_member_not_allowed(user):
-    group = GroupFactory()
+def test_update_as_member(user, group):
     MembershipFactory(user=user, group=group)
     fine = FineFactory(payed=False, group=group)
     client = get_api_client(user=user)
@@ -142,13 +135,44 @@ def test_update_as_member_not_allowed(user):
 
 
 @pytest.mark.django_db
-def test_update_as_user_not_allowed(user):
-    group = GroupFactory()
+def test_update_as_user(member, group):
     fine = FineFactory(payed=False, group=group)
-    client = get_api_client(user=user)
+    client = get_api_client(user=member)
     url = _get_fine_url(group, fine)
     data = _get_fine_data_update_data(fine)
     data["payed"] = True
     response = client.put(url, data=data)
     fine.refresh_from_db()
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+@pytest.mark.django_db
+def test_delete_as_group_leader(user, group):
+    MembershipFactory(user=user, group=group, membership_type=MembershipType.LEADER)
+    fine = FineFactory(group=group)
+    client = get_api_client(user=user)
+    url = _get_fine_url(group, fine)
+    response = client.delete(url)
+    assert response.status_code == status.HTTP_200_OK
+
+
+@pytest.mark.django_db
+def test_delete_as_group_fines_admin(user):
+    group = GroupFactory(fines_admin=user)
+    MembershipFactory(user=user, group=group)
+    fine = FineFactory(group=group)
+    client = get_api_client(user=user)
+    url = _get_fine_url(group, fine)
+    response = client.delete(url)
+    assert response.status_code == status.HTTP_200_OK
+
+
+@pytest.mark.django_db
+def test_delete_as_member(user):
+    group = GroupFactory()
+    MembershipFactory(user=user, group=group)
+    fine = FineFactory(group=group)
+    client = get_api_client(user=user)
+    url = _get_fine_url(group, fine)
+    response = client.delete(url)
     assert response.status_code == status.HTTP_403_FORBIDDEN

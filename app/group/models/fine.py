@@ -40,7 +40,7 @@ class Fine(BaseModel, BasePermissionModel):
     @classmethod
     def has_read_permission(cls, request):
         return request.user and (
-            check_has_access(cls.write_access, request)
+            check_has_access(cls.read_access, request)
             or request.user.is_member_of(
                 Group.get_group_from_permission_context(request)
             )
@@ -52,16 +52,19 @@ class Fine(BaseModel, BasePermissionModel):
 
     @classmethod
     def has_update_permission(cls, request):
-        return (
-            request.user
-            and Group.check_user_is_fine_master(request)
+
+        return request.user and (
+            Group.check_user_is_fine_master(request)
             or check_has_access(cls.write_access, request)
             or Group.check_request_user_is_leader(request)
         )
 
     @classmethod
-    def has_destory_permission(cls, request):
+    def has_destroy_permission(cls, request):
         return cls.has_update_permission(request)
 
     def has_object_update_permission(self, request):
         return self.has_update_permission(request)
+
+    def has_object_destroy_permission(self, request):
+        return self.has_destroy_permission(request)

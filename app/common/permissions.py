@@ -59,9 +59,9 @@ def check_has_access(groups_with_access, request):
             for group_name in groups_with_access:
                 if str(membership.group_id).lower() == str(group_name).lower():
                     return True
-        return False
     except AttributeError:
         return False
+    return False
 
 
 def set_user_id(request):

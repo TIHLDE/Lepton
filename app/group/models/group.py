@@ -50,7 +50,7 @@ class Group(OptionalImage, BaseModel, BasePermissionModel):
         membership = group.memberships.filter(
             group__slug=group_slug, user__user_id=request.id
         )
-        return len(membership) and membership.first().is_leader()
+        return len(membership) == 1 and membership[0].is_leader()
 
     @classmethod
     def check_user_is_fine_master(cls, request):
@@ -58,7 +58,7 @@ class Group(OptionalImage, BaseModel, BasePermissionModel):
         return (
             group.fines_admin
             and request.user
-            and request.user == group.fines_admin.user_id
+            and request.user.user_id == group.fines_admin.user_id
         )
 
     @classmethod

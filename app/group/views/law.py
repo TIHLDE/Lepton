@@ -27,3 +27,7 @@ class LawViewSet(viewsets.ModelViewSet):
         return Response(
             {"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST,
         )
+
+    def destroy(self, request, *args, **kwargs):
+        super().destroy(request, *args, **kwargs)
+        return Response({"detail": ("Loven ble slettet")}, status=status.HTTP_200_OK)

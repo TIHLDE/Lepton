@@ -10,7 +10,7 @@ router.register("group", GroupViewSet, basename="group")
 router.register(
     r"group/(?P<slug>[^\.]+)/membership", MembershipViewSet, basename="membership"
 )
-router.register(r"group/(?P<slug>[^\.]+)/law", LawViewSet, basename="law")
+router.register(r"group/(?P<slug>[^\.]+)/laws", LawViewSet, basename="law")
 router.register(r"group/(?P<slug>[^\.]+)/fines", FineViewSet, basename="fine")
 
 
