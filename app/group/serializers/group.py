@@ -26,6 +26,8 @@ class GroupSerializer(BaseModelSerializer):
             "leader",
             "fines_admin",
             "fines_activated",
+            "image",
+            "image_alt",
         )
         read_only_fields = ("fines_admin",)
 

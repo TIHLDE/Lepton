@@ -57,6 +57,7 @@ STUDY = (
     (3, "DigInc"),
     (4, "DigSam"),
     (5, "Drift"),
+    (6, "Info"),
 )
 
 GENDER = (
@@ -152,6 +153,9 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
             type=EventFormType.EVALUATION,
             event__end_date__gte=date_30_days_ago,
         ).exclude(submissions__user=self)
+
+    def is_member_of(self, group):
+        return self.memberships.filter(group=group).exists()
 
     @classmethod
     def has_retrieve_permission(cls, request):

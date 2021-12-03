@@ -13,6 +13,14 @@
 ---
 
 ## Neste versjon
+## Versjon 1.2.1 (30.11.2021)
+- ✨ **Påmeldinger**. Brukere kan abonnere på sine påmeldinger til arrangementer gjennom kalenderen sin.
+- ✨ **Sider**. Lagt til plassering og rekkefølge på sider.
+- ✨ **Gruppeskjemaer** kan nå bli opprettet av alle medlemmer av gruppen.
+
+## Versjon 1.2.0 (16.11.2021)
+- ⚡ **Grupper** har nå bilder.
+- ✨ **Brukere**. Studenter kan nå registrere kontoer med Informasjonsbehandling som studieprogram.
 - ✨ **Arrangementer**. Endret tilgangshåndtering til arrangementer ved å knytte dem til grupper. Dermed kan også ledere av komitéer og interessegrupper opprette arrangementer.
 
 ## Versjon 1.1.5 (14.11.2021)
