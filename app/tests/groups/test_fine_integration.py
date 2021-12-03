@@ -11,6 +11,19 @@ from app.util.test_utils import add_user_to_group_with_name, get_api_client
 GROUP_URL = "/groups/"
 
 
+@pytest.fixture
+def group_fines_admin(user):
+    group = GroupFactory(fines_admin=user)
+    return user, group
+
+
+@pytest.fixture
+def group_leader(user):
+    group = GroupFactory()
+    MembershipFactory(user=user, group=group, membership_type=MembershipType.LEADER)
+    return user, group
+
+
 def _get_fine_url(group, fine=None):
     return (
         f"{GROUP_URL}{group.slug}/fines/{fine.id}/"
@@ -53,7 +66,7 @@ def test_retrieve_as_user(group, member):
     url = _get_fine_url(group)
     response = client.get(url)
 
-    assert response.status_code == status.HTTP_200_OK
+    assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
 @pytest.mark.django_db
@@ -90,9 +103,8 @@ def test_create_as_group_member(user):
 
 
 @pytest.mark.django_db
-def test_update_as_fines_admin(user):
-    group = GroupFactory(fines_admin=user)
-    MembershipFactory(user=user, group=group)
+def test_update_as_fines_admin(group_fines_admin):
+    user, group = group_fines_admin
     fine = FineFactory(payed=False, group=group)
     client = get_api_client(user=user)
     url = _get_fine_url(group, fine)
@@ -106,9 +118,8 @@ def test_update_as_fines_admin(user):
 
 
 @pytest.mark.django_db
-def test_update_as_leader(user):
-    group = GroupFactory()
-    MembershipFactory(user=user, group=group, membership_type=MembershipType.LEADER)
+def test_update_as_leader(group_leader):
+    user, group = group_leader
     fine = FineFactory(payed=False, group=group)
     client = get_api_client(user=user)
     url = _get_fine_url(group, fine)
@@ -123,7 +134,7 @@ def test_update_as_leader(user):
 
 @pytest.mark.django_db
 def test_update_as_member(user, group):
-    MembershipFactory(user=user, group=group)
+    MembershipFactory(user=user, group=group, membership_type=MembershipType.MEMBER)
     fine = FineFactory(payed=False, group=group)
     client = get_api_client(user=user)
     url = _get_fine_url(group, fine)
@@ -147,8 +158,8 @@ def test_update_as_user(member, group):
 
 
 @pytest.mark.django_db
-def test_delete_as_group_leader(user, group):
-    MembershipFactory(user=user, group=group, membership_type=MembershipType.LEADER)
+def test_delete_as_group_leader(group_leader):
+    user, group = group_leader
     fine = FineFactory(group=group)
     client = get_api_client(user=user)
     url = _get_fine_url(group, fine)
@@ -157,9 +168,8 @@ def test_delete_as_group_leader(user, group):
 
 
 @pytest.mark.django_db
-def test_delete_as_group_fines_admin(user):
-    group = GroupFactory(fines_admin=user)
-    MembershipFactory(user=user, group=group)
+def test_delete_as_group_fines_admin(group_fines_admin):
+    user, group = group_fines_admin
     fine = FineFactory(group=group)
     client = get_api_client(user=user)
     url = _get_fine_url(group, fine)
@@ -170,7 +180,7 @@ def test_delete_as_group_fines_admin(user):
 @pytest.mark.django_db
 def test_delete_as_member(user):
     group = GroupFactory()
-    MembershipFactory(user=user, group=group)
+    MembershipFactory(user=user, group=group, membership_type=MembershipType.MEMBER)
     fine = FineFactory(group=group)
     client = get_api_client(user=user)
     url = _get_fine_url(group, fine)

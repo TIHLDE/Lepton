@@ -37,9 +37,11 @@ class Law(BaseModel, BasePermissionModel):
 
     @classmethod
     def has_write_permission(cls, request):
-        return check_has_access(
-            cls.write_access, request
-        ) or Group.check_request_user_is_leader(request)
+        return (
+            check_has_access(cls.write_access, request)
+            or Group.check_request_user_is_leader(request)
+            or Group.check_user_is_fine_master(request)
+        )
 
     def has_object_write_permission(self, request):
         return self.has_write_permission(request)

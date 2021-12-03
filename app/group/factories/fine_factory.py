@@ -7,7 +7,7 @@ from app.group.models import Fine
 
 
 class FineFactory(DjangoModelFactory):
-    """Factory that creates a generic group"""
+    """Factory that creates a generic Fine"""
 
     class Meta:
         model = Fine

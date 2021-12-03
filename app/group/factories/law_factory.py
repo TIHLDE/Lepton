@@ -6,7 +6,7 @@ from app.group.models.law import Law
 
 
 class LawFactory(DjangoModelFactory):
-    """Factory that creates a generic group"""
+    """Factory that creates a generic Law"""
 
     class Meta:
         model = Law

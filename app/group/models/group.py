@@ -19,7 +19,7 @@ class Group(OptionalImage, BaseModel, BasePermissionModel):
     contact_email = models.EmailField(max_length=200, null=True, blank=True)
     fineInfo = models.TextField(default="", blank=True)
     type = EnumChoiceField(GroupType, default=GroupType.OTHER)
-    fines_activated = models.BooleanField(default=True)
+    fines_activated = models.BooleanField(default=False)
     fines_admin = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -50,6 +50,7 @@ class Group(OptionalImage, BaseModel, BasePermissionModel):
         membership = group.memberships.filter(
             group__slug=group_slug, user__user_id=request.id
         )
+        print(len(membership) == 1 and membership[0].is_leader())
         return len(membership) == 1 and membership[0].is_leader()
 
     @classmethod
