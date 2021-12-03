@@ -3,8 +3,8 @@ from rest_framework import routers
 
 from app.group.views import GroupViewSet, MembershipViewSet
 from app.group.views.fine import FineViewSet
-from app.group.views.law import LawViewSet
 from app.group.views.group_form import GroupFormViewSet
+from app.group.views.law import LawViewSet
 
 router = routers.DefaultRouter()
 router.register("groups", GroupViewSet, basename="group")

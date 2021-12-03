@@ -48,7 +48,9 @@ class Fine(BaseModel, BasePermissionModel):
 
     @classmethod
     def has_create_permission(cls, request):
-        return cls.has_read_permission(request)
+        return check_has_access(cls.write_access, request) or request.user.is_member_of(
+            Group.get_group_from_permission_context(request)
+        )
 
     @classmethod
     def has_update_permission(cls, request):
