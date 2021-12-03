@@ -13,7 +13,7 @@ from app.util.test_utils import add_user_to_group_with_name, get_api_client
 
 faker = Faker()
 
-GROUP_URL = "/group/"
+GROUP_URL = "/groups/"
 
 
 def _get_law_url(group, law=None):

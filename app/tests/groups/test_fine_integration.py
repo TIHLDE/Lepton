@@ -8,7 +8,7 @@ from app.group.factories.group_factory import GroupFactory
 from app.group.factories.membership_factory import MembershipFactory
 from app.util.test_utils import add_user_to_group_with_name, get_api_client
 
-GROUP_URL = "/group/"
+GROUP_URL = "/groups/"
 
 
 def _get_fine_url(group, fine=None):
