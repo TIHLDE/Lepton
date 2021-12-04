@@ -188,17 +188,17 @@ class UserViewSet(viewsets.ModelViewSet, ActionMixin):
         )
 
     def get_fine_filter_kwargs(self, request, kwarg, not_kwarg, field_name):
-        kwarg = request.query_params.get(kwarg, None)
-        not_kwarg = request.query_params.get(not_kwarg, None)
+        kwarg_param = request.query_params.get(kwarg, None)
+        not_kwarg_param = request.query_params.get(not_kwarg, None)
+        print(not_kwarg_param)
         kwargs = {}
-        if kwarg:
+        if kwarg_param is not None:
             kwargs[field_name] = True
 
-        if not_kwarg and not kwarg:
-
+        if not_kwarg_param is not None and not kwarg_param:
             kwargs[field_name] = False
 
-        if not_kwarg and kwarg:
+        if not_kwarg_param is not None and kwarg_param is not None:
             return {}
         return kwargs
 
@@ -214,9 +214,8 @@ class UserViewSet(viewsets.ModelViewSet, ActionMixin):
     @action(detail=False, methods=["get"], url_path="me/fines")
     def get_user_fines(self, request, *args, **kwargs):
         filters = self.get_fine_filter(request)
-        fines = Fine.objects.filter(
-            user__user_id=request.user.user_id, **filters
-        ).order_by("created_at")
+        print(filters)
+        fines = Fine.objects.filter(user__user_id=request.user.user_id, **filters)
         return self.paginate_response(data=fines, serializer=UserFineSerializer)
 
     @action(
