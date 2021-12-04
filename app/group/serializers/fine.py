@@ -5,7 +5,7 @@ from app.content.models.user import User
 from app.content.serializers.user import DefaultUserSerializer
 from app.group.models.fine import Fine
 from app.group.models.group import Group
-from app.group.serializers.group import GroupSerializer
+from app.group.serializers.group import DefaultGroupSerializer, GroupSerializer
 
 
 class FineListSerializer(serializers.ListSerializer):
@@ -63,7 +63,18 @@ class FineSerializer(BaseModelSerializer):
         read_only_fields = ("user", "created_by")
 
 
-class MembershipFineSerializer(BaseModelSerializer):
+class UserFineSerializer(BaseModelSerializer):
+    group = DefaultGroupSerializer(read_only=True)
+
     class Meta:
         model = Fine
-        fields = ("id", "amount", "approved", "payed", "description")
+        fields = (
+            "id",
+            "amount",
+            "approved",
+            "payed",
+            "description",
+            "created_by",
+            "created_at",
+            "group",
+        )

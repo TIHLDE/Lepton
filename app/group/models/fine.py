@@ -28,6 +28,10 @@ class Fine(BaseModel, BasePermissionModel):
     description = models.TextField(default="", blank=True)
     reason = models.TextField(default="", blank=True)
 
+    class meta:
+        verbose_name_plural = "Fines"
+        ordering = ("created_at",)
+
     def clean(self):
         if not self.user.is_member_of(self.group):
             ValidationError("Du er ikke medlem av denne gruppen")

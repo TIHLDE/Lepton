@@ -39,3 +39,17 @@ class GroupSerializer(BaseModelSerializer):
             return DefaultUserSerializer(leader.user).data
         except Membership.DoesNotExist:
             return None
+
+
+class DefaultGroupSerializer(BaseModelSerializer):
+    class Meta:
+        model = Group
+        fields = (
+            "name",
+            "slug",
+            "description",
+            "contact_email",
+            "type",
+            "image",
+            "image_alt",
+        )
