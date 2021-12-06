@@ -2,6 +2,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 
+from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission
 from app.group.models.group import Group
 from app.group.models.law import Law
@@ -13,6 +14,7 @@ class LawViewSet(viewsets.ModelViewSet):
     serializer_class = LawSerializer
     permission_classes = [BasicViewPermission]
     queryset = Law.objects.all()
+    pagination_class = BasePagination
 
     def get_queryset(self):
         return self.queryset.filter(group__slug=self.kwargs["slug"])

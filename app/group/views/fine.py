@@ -1,6 +1,7 @@
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 
+from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission
 from app.group.filters.fine import FineFilter
 from app.group.mixins import APIFineErrorsMixin
@@ -13,6 +14,7 @@ class FineViewSet(viewsets.ModelViewSet, APIFineErrorsMixin):
     permission_classes = [BasicViewPermission]
     queryset = Fine.objects.all()
     filterset_class = FineFilter
+    pagination_class = BasePagination
 
     def get_queryset(self):
         return self.queryset.filter(
