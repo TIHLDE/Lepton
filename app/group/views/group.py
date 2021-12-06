@@ -48,6 +48,9 @@ class GroupViewSet(viewsets.ModelViewSet, ActionMixin):
             if serializer.is_valid():
                 serializer.save()
                 return Response(data=serializer.data, status=status.HTTP_200_OK)
+            return Response(
+                {"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST,
+            )
         except Group.DoesNotExist:
             return Response(
                 {"detail": ("Gruppen eksisterer ikke")},
@@ -58,8 +61,7 @@ class GroupViewSet(viewsets.ModelViewSet, ActionMixin):
         """Creates a group if it does not exist"""
         try:
             slug = request.data["slug"]
-            user_id = request.data.get("fines_admin", None)
-            group = Group.objects.get_or_create(slug=slug, fines_admin__user_id=user_id)
+            group = Group.objects.get_or_create(slug=slug)
             serializer = GroupSerializer(
                 group[0], data=request.data, context={"request": request}
             )

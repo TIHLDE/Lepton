@@ -3,6 +3,7 @@ from rest_framework import status
 import pytest
 
 from app.common.enums import AdminGroup, MembershipType
+from app.content.factories.user_factory import UserFactory
 from app.group.factories.fine_factory import FineFactory
 from app.group.factories.group_factory import GroupFactory
 from app.group.factories.membership_factory import MembershipFactory
@@ -14,6 +15,14 @@ GROUP_URL = "/groups/"
 @pytest.fixture
 def group_fines_admin(user):
     group = GroupFactory(fines_admin=user)
+    MembershipFactory(user=user, group=group)
+    return user, group
+
+
+@pytest.fixture
+def user_in_group(user, group):
+    group = GroupFactory()
+    MembershipFactory(user=user, group=group)
     return user, group
 
 
@@ -80,10 +89,12 @@ def test_retrieve_as_user(group, member):
         ("Non_admin_group", status.HTTP_403_FORBIDDEN),
     ],
 )
-def test_create_as_group_user(group, user, group_name, expected_status_code):
+def test_create_as_group_user(user_in_group, group_name, expected_status_code):
+    user = UserFactory()
+    fine_user, group = user_in_group
     client = get_api_client(user=user, group_name=group_name)
     url = _get_fine_url(group)
-    data = _get_fine_data(user=user)
+    data = _get_fine_data(user=fine_user)
     response = client.post(url, data=data)
     group.refresh_from_db()
 
@@ -105,7 +116,7 @@ def test_create_as_group_member(user):
 @pytest.mark.django_db
 def test_update_as_fines_admin(group_fines_admin):
     user, group = group_fines_admin
-    fine = FineFactory(payed=False, group=group)
+    fine = FineFactory(payed=False, group=group, user=user)
     client = get_api_client(user=user)
     url = _get_fine_url(group, fine)
     data = _get_fine_data_update_data(fine)
@@ -120,7 +131,7 @@ def test_update_as_fines_admin(group_fines_admin):
 @pytest.mark.django_db
 def test_update_as_leader(group_leader):
     user, group = group_leader
-    fine = FineFactory(payed=False, group=group)
+    fine = FineFactory(payed=False, group=group, user=user)
     client = get_api_client(user=user)
     url = _get_fine_url(group, fine)
     data = _get_fine_data_update_data(fine)
@@ -135,7 +146,7 @@ def test_update_as_leader(group_leader):
 @pytest.mark.django_db
 def test_update_as_member(user, group):
     MembershipFactory(user=user, group=group, membership_type=MembershipType.MEMBER)
-    fine = FineFactory(payed=False, group=group)
+    fine = FineFactory(payed=False, group=group, user=user)
     client = get_api_client(user=user)
     url = _get_fine_url(group, fine)
     data = _get_fine_data_update_data(fine)
@@ -146,21 +157,21 @@ def test_update_as_member(user, group):
 
 
 @pytest.mark.django_db
-def test_update_as_user(member, group):
-    fine = FineFactory(payed=False, group=group)
+def test_update_as_user(member, group, user_in_group):
+    fine_user, group = user_in_group
+    fine = FineFactory(payed=False, group=group, user=fine_user)
     client = get_api_client(user=member)
     url = _get_fine_url(group, fine)
     data = _get_fine_data_update_data(fine)
     data["payed"] = True
     response = client.put(url, data=data)
-    fine.refresh_from_db()
     assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
 @pytest.mark.django_db
 def test_delete_as_group_leader(group_leader):
     user, group = group_leader
-    fine = FineFactory(group=group)
+    fine = FineFactory(group=group, user=user)
     client = get_api_client(user=user)
     url = _get_fine_url(group, fine)
     response = client.delete(url)
@@ -170,7 +181,7 @@ def test_delete_as_group_leader(group_leader):
 @pytest.mark.django_db
 def test_delete_as_group_fines_admin(group_fines_admin):
     user, group = group_fines_admin
-    fine = FineFactory(group=group)
+    fine = FineFactory(group=group, user=user)
     client = get_api_client(user=user)
     url = _get_fine_url(group, fine)
     response = client.delete(url)
@@ -181,7 +192,7 @@ def test_delete_as_group_fines_admin(group_fines_admin):
 def test_delete_as_member(user):
     group = GroupFactory()
     MembershipFactory(user=user, group=group, membership_type=MembershipType.MEMBER)
-    fine = FineFactory(group=group)
+    fine = FineFactory(group=group, user=user)
     client = get_api_client(user=user)
     url = _get_fine_url(group, fine)
     response = client.delete(url)

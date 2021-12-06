@@ -1,11 +1,11 @@
 import uuid
 
-from django.core.exceptions import ValidationError
 from django.db import models
 
 from app.common.enums import AdminGroup
 from app.common.permissions import BasePermissionModel, check_has_access
 from app.content.models.user import User
+from app.group.exceptions import UserIsNotInGroup
 from app.group.models.group import Group
 from app.util.models import BaseModel
 
@@ -32,9 +32,14 @@ class Fine(BaseModel, BasePermissionModel):
         verbose_name_plural = "Fines"
         ordering = ("created_at",)
 
+    def __str__(self):
+        return f"{self.group.name} {self.description} {self.user.user_id} {self.amount}"
+
     def clean(self):
         if not self.user.is_member_of(self.group):
-            ValidationError("Du er ikke medlem av denne gruppen")
+            raise UserIsNotInGroup(
+                f"{self.user.first_name} {self.user.last_name} er ikke medlem i gruppen"
+            )
 
     def save(self, *args, **kwargs):
         self.full_clean()
@@ -42,6 +47,8 @@ class Fine(BaseModel, BasePermissionModel):
 
     @classmethod
     def has_read_permission(cls, request):
+        if not Group.check_context(request):
+            return check_has_access(cls.access, request)
         return request.user and (
             check_has_access(cls.access, request)
             or request.user.is_member_of(
@@ -51,13 +58,19 @@ class Fine(BaseModel, BasePermissionModel):
 
     @classmethod
     def has_create_permission(cls, request):
+        print(
+            request.user.is_member_of(Group.get_group_from_permission_context(request))
+        )
+        if not Group.check_context(request):
+            return check_has_access(cls.access, request)
         return check_has_access(cls.access, request) or request.user.is_member_of(
             Group.get_group_from_permission_context(request)
         )
 
     @classmethod
     def has_update_permission(cls, request):
-
+        if not Group.check_context(request):
+            return check_has_access(cls.access, request)
         return request.user and (
             Group.check_user_is_fine_master(request)
             or check_has_access(cls.access, request)

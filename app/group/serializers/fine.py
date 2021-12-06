@@ -1,25 +1,29 @@
+from django.db.transaction import atomic
 from rest_framework import serializers
-from rest_framework.exceptions import ValidationError
 
 from app.common.serializers import BaseModelSerializer
 from app.content.models.user import User
 from app.content.serializers.user import DefaultUserSerializer
 from app.group.models.fine import Fine
 from app.group.models.group import Group
-from app.group.serializers.group import DefaultGroupSerializer, GroupSerializer
+from app.group.serializers.group import GroupSerializer
 
 
 class FineListSerializer(serializers.ListSerializer):
+    @atomic
     def create(self, validated_data):
         validated_data = validated_data[0]
         group = Group.objects.get(slug=self.context["group_slug"])
         users = User.objects.filter(user_id__in=self.context["user_ids"])
         created_by = User.objects.get(user_id=self.context["created_by"])
+
         fines = [
-            Fine(group=group, created_by=created_by, user=user, **validated_data)
+            Fine.objects.create(
+                group=group, created_by=created_by, user=user, **validated_data
+            )
             for user in users
         ]
-        return Fine.objects.bulk_create(fines)
+        return fines
 
 
 class FineCreateSerializer(BaseModelSerializer):
@@ -40,14 +44,9 @@ class FineCreateSerializer(BaseModelSerializer):
         group = Group.objects.get(slug=self.context["group_slug"])
         user = User.objects.get(user_id=self.context["user_id"])
         created_by = User.objects.get(user_id=self.context["created_by"])
-        try:
-            fines = Fine.objects.create(
-                group=group, created_by=created_by, user=user, **validated_data
-            )
-            print("dskldslkdslklkds")
-        except ValidationError:
-            print("fdfdfdfd")
-        return fines
+        return Fine.objects.create(
+            group=group, created_by=created_by, user=user, **validated_data
+        )
 
 
 class FineSerializer(BaseModelSerializer):
@@ -67,20 +66,3 @@ class FineSerializer(BaseModelSerializer):
         )
 
         read_only_fields = ("user", "created_by")
-
-
-class UserFineSerializer(BaseModelSerializer):
-    group = DefaultGroupSerializer(read_only=True)
-
-    class Meta:
-        model = Fine
-        fields = (
-            "id",
-            "amount",
-            "approved",
-            "payed",
-            "description",
-            "created_by",
-            "created_at",
-            "group",
-        )

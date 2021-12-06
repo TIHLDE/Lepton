@@ -42,6 +42,10 @@ class Group(OptionalImage, BaseModel, BasePermissionModel):
         super().save(*args, **kwargs)
 
     @classmethod
+    def check_context(cls, request):
+        return request.parser_context.get("kwargs", {}).get("slug", None) is not None
+
+    @classmethod
     def check_request_user_is_leader(cls, request):
         if request.id is None:
             set_user_id(request)

@@ -23,10 +23,12 @@ class Law(BaseModel, BasePermissionModel):
         ordering = ("paragraph",)
 
     def __str__(self):
-        return f"§ {self.paragraph} - {self.description} - {self.amount} enhet"
+        return f"{self.group.name} § {self.paragraph} - {self.description} - {self.amount} enhet"
 
     @classmethod
     def has_read_permission(cls, request):
+        if not Group.check_context(request):
+            return check_has_access(cls.access, request)
         return (
             check_has_access(cls.access, request)
             or Group.check_request_user_is_leader(request)

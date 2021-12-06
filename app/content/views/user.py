@@ -31,12 +31,10 @@ from app.content.serializers import (
 from app.content.serializers.strike import UserInfoStrikeSerializer
 from app.forms.serializers import FormPolymorphicSerializer
 from app.group.models import Group, Membership
-from app.group.models.fine import Fine
 from app.group.serializers import GroupSerializer
-from app.group.serializers.fine import UserFineSerializer
 from app.util.mail_creator import MailCreator
 from app.util.notifier import Notify
-from app.util.utils import CaseInsensitiveBooleanQueryParam, get_apposing_filter_kwargs
+from app.util.utils import CaseInsensitiveBooleanQueryParam
 
 
 class UserViewSet(viewsets.ModelViewSet, ActionMixin):
@@ -186,21 +184,6 @@ class UserViewSet(viewsets.ModelViewSet, ActionMixin):
             serializer=FormPolymorphicSerializer,
             context={"request": request},
         )
-
-    def get_fine_filter(self, request):
-
-        return {
-            **get_apposing_filter_kwargs(
-                request, "approved", "not_approved", "approved"
-            ),
-            **get_apposing_filter_kwargs(request, "payed", "not_payed", "payed"),
-        }
-
-    @action(detail=False, methods=["get"], url_path="me/fines")
-    def get_user_fines(self, request, *args, **kwargs):
-        filters = self.get_fine_filter(request)
-        fines = Fine.objects.filter(user__user_id=request.user.user_id, **filters)
-        return self.paginate_response(data=fines, serializer=UserFineSerializer)
 
     @action(
         detail=False,

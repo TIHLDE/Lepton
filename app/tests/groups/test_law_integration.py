@@ -26,8 +26,8 @@ def _get_law_url(group, law=None):
 
 def _get_law_data():
     return {
-        "description": faker.text(),
-        "paragraph": faker.word(),
+        "description": "very long disc",
+        "paragraph": "testing",
         "amount": random.randint(1, 50),
     }
 

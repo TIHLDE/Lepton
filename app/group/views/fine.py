@@ -3,11 +3,12 @@ from rest_framework.response import Response
 
 from app.common.permissions import BasicViewPermission
 from app.group.filters.fine import FineFilter
+from app.group.mixins import APIFineErrorsMixin
 from app.group.models.fine import Fine
 from app.group.serializers.fine import FineCreateSerializer, FineSerializer
 
 
-class FineViewSet(viewsets.ModelViewSet):
+class FineViewSet(viewsets.ModelViewSet, APIFineErrorsMixin):
     serializer_class = FineSerializer
     permission_classes = [BasicViewPermission]
     queryset = Fine.objects.all()
@@ -30,7 +31,7 @@ class FineViewSet(viewsets.ModelViewSet):
             many=True, partial=True, data=[request.data], context=context
         )
 
-        if serializer.is_valid(raise_exception=True):
+        if serializer.is_valid():
             serializer.save()
             return Response(data=serializer.data, status=status.HTTP_200_OK)
         return Response(
