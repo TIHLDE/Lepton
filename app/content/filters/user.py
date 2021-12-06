@@ -1,4 +1,4 @@
-from django_filters.rest_framework import BooleanFilter, ChoiceFilter, FilterSet
+from django_filters.rest_framework import BooleanFilter, ChoiceFilter, FilterSet, CharFilter
 
 from app.common.enums import Groups
 from app.content.models import User
@@ -17,10 +17,16 @@ class UserFilter(FilterSet):
     has_active_strikes = BooleanFilter(
         method="filter_has_active_strikes", label="List of Users with strikes"
     )
+    in_group = CharFilter(
+        method="filter_is_in_group", label="Only list users in group"
+    )
 
     class Meta:
         model: User
-        fields = ["user_class", "user_study", "is_TIHLDE_member"]
+        fields = ["user_class", "user_study", "has_active_strikes", "is_TIHLDE_member", "in_group"]
+
+    def filter_is_in_group(self, queryset, name, value):
+        return queryset.filter(memberships__group__slug=value)
 
     def filter_is_TIHLDE_member(self, queryset, name, value):
         if value is False:
