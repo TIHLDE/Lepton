@@ -38,7 +38,7 @@ class Fine(BaseModel, BasePermissionModel):
 
     def save(self, *args, **kwargs):
         self.full_clean()
-        return super(Fine, self).save(*args, **kwargs)
+        return super().save(*args, **kwargs)
 
     @classmethod
     def has_read_permission(cls, request):

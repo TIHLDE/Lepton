@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 
 from app.common.serializers import BaseModelSerializer
 from app.content.models.user import User
@@ -39,9 +40,14 @@ class FineCreateSerializer(BaseModelSerializer):
         group = Group.objects.get(slug=self.context["group_slug"])
         user = User.objects.get(user_id=self.context["user_id"])
         created_by = User.objects.get(user_id=self.context["created_by"])
-        return Fine.objects.create(
-            group=group, created_by=created_by, user=user, **validated_data
-        )
+        try:
+            fines = Fine.objects.create(
+                group=group, created_by=created_by, user=user, **validated_data
+            )
+            print("dskldslkdslklkds")
+        except ValidationError:
+            print("fdfdfdfd")
+        return fines
 
 
 class FineSerializer(BaseModelSerializer):

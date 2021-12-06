@@ -36,7 +36,7 @@ from app.group.serializers import GroupSerializer
 from app.group.serializers.fine import UserFineSerializer
 from app.util.mail_creator import MailCreator
 from app.util.notifier import Notify
-from app.util.utils import CaseInsensitiveBooleanQueryParam
+from app.util.utils import CaseInsensitiveBooleanQueryParam, get_apposing_filter_kwargs
 
 
 class UserViewSet(viewsets.ModelViewSet, ActionMixin):
@@ -190,10 +190,10 @@ class UserViewSet(viewsets.ModelViewSet, ActionMixin):
     def get_fine_filter(self, request):
 
         return {
-            **self.get_apposing_filter_kwargs(
+            **get_apposing_filter_kwargs(
                 request, "approved", "not_approved", "approved"
             ),
-            **self.get_apposing_filter_kwargs(request, "payed", "not_payed", "payed"),
+            **get_apposing_filter_kwargs(request, "payed", "not_payed", "payed"),
         }
 
     @action(detail=False, methods=["get"], url_path="me/fines")

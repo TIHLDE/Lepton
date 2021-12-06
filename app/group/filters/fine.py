@@ -5,7 +5,6 @@ from app.group.models import Fine
 
 
 class FineFilter(FilterSet):
-    """ Filters Membership by membership_type """
 
     approved = BooleanFilter(
         method="filter_approved", label="Filter only approved fines"
