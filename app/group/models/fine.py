@@ -28,7 +28,7 @@ class Fine(BaseModel, BasePermissionModel):
     description = models.TextField(default="", blank=True)
     reason = models.TextField(default="", blank=True)
 
-    class meta:
+    class Meta:
         verbose_name_plural = "Fines"
         ordering = ("created_at",)
 

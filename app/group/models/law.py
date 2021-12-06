@@ -18,12 +18,12 @@ class Law(BaseModel, BasePermissionModel):
     paragraph = models.CharField(default="", blank=True, max_length=100)
     amount = models.IntegerField(default=1)
 
-    class meta:
+    class Meta:
         verbose_name_plural = "Laws"
         ordering = ("paragraph",)
 
     def __str__(self):
-        return f"{self.group.name} § {self.paragraph} - {self.description} - {self.amount} enhet"
+        return f"{self.group.name} §{self.paragraph} - {self.description} - {self.amount} enhet"
 
     @classmethod
     def has_read_permission(cls, request):
