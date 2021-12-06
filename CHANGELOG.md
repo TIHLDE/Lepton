@@ -14,6 +14,8 @@
 
 ## Neste versjon
 - ✨ **Ledertavle**. Laget en ledertavle rangert på antall badges en bruker har og en for når brukere fikk en spesifikk badge.
+- ✨ **Sider**. Lagt til plassering og rekkefølge på sider.
+- ✨ **Gruppeskjemaer** kan nå bli opprettet av alle medlemmer av gruppen.
 
 ## Versjon 1.2.0 (16.11.2021)
 - ⚡ **Grupper** har nå bilder.
