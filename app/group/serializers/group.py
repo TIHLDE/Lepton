@@ -42,22 +42,21 @@ class GroupSerializer(BaseModelSerializer):
         except Membership.DoesNotExist:
             return None
 
-    def update(self, instance, validated_data):
-        fines_admin = self.context["request"].data.get("fines_admin", None)
-        if not fines_admin:
-            instance.fines_admin = None
+    def get_fine_admin_user(self):
+        fines_admin_id = self.context["request"].data.get("fines_admin", None)
+        if not fines_admin_id:
+            fines_admin = None
         else:
-            instance.fines_admin = User.objects.get(user_id=fines_admin)
+            fines_admin = User.objects.get(user_id=fines_admin_id)
+        return fines_admin
+
+    def update(self, instance, validated_data):
+        instance.fines_admin = self.get_fine_admin_user()
         return super().update(instance, validated_data)
 
     def create(self, validated_data):
-        fines_admin = self.context["request"].data.get("fines_admin", None)
-        if not fines_admin:
-            fines_admin = None
-        else:
-            fines_admin = User.objects.get(user_id=fines_admin)
-
-        return Group(fines_admin=fines_admin, **validated_data)
+        fines_admin = self.get_fine_admin_user()
+        return Group.objects.create(fines_admin=fines_admin, **validated_data)
 
 
 class DefaultGroupSerializer(BaseModelSerializer):
