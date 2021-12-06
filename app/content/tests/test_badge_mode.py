@@ -70,3 +70,23 @@ def test_badge_active_when_active_from_now_to_minute_later():
     badge = BadgeFactory(active_from=now(), active_to=now() + timedelta(minutes=1))
 
     assert badge.active
+
+
+@pytest.mark.django_db
+def test_if_badge_with_active_to_set_to_later_is_not_public():
+    """When badge has only active_to set and badge is active,
+        it is not public"""
+
+    badge = BadgeFactory(active_to=now() + timedelta(minutes=1))
+
+    assert not badge.is_public
+
+
+@pytest.mark.django_db
+def test_if_badge_with_active_from_set_to_later_is_not_public():
+    """When badge has only active_from set and badge is not active,
+        it is not public"""
+
+    badge = BadgeFactory(active_from=now() + timedelta(minutes=1))
+
+    assert not badge.is_public

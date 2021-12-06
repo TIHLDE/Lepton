@@ -136,7 +136,9 @@ class UserViewSet(viewsets.ModelViewSet, ActionMixin):
         else:
             user = self.get_object()
         user_badges = user.user_badges.order_by("-created_at")
-        badges = [user_badge.badge for user_badge in user_badges]
+        badges = [
+            user_badge.badge for user_badge in user_badges if user_badge.badge.is_public
+        ]
         return self.paginate_response(data=badges, serializer=BadgeSerializer)
 
     @action(detail=False, methods=["get"], url_path="me/strikes")

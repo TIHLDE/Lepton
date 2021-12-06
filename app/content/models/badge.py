@@ -27,10 +27,17 @@ class Badge(BaseModel, OptionalImage):
 
     @property
     def active(self):
+        _now = now()
         if self.active_from is None and self.active_to is None:
             return True
         if self.active_from is None:
-            return now() <= self.active_to
+            return _now <= self.active_to
         if self.active_to is None:
-            return now() >= self.active_from
-        return now() >= self.active_from and now() <= self.active_to
+            return _now >= self.active_from
+        return _now >= self.active_from and _now <= self.active_to
+
+    @property
+    def is_public(self):
+        if self.active_to is None:
+            return self.active
+        return self.active_to <= now()

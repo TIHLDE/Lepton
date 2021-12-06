@@ -13,7 +13,7 @@
 ---
 
 ## Neste versjon
-- ✨ **Ledertavle**. Laget en ledertavle rangert på antall badges en bruker har.
+- ✨ **Ledertavle**. Laget en ledertavle rangert på antall badges en bruker har og en for når brukere fikk en spesifikk badge.
 
 ## Versjon 1.2.0 (16.11.2021)
 - ⚡ **Grupper** har nå bilder.

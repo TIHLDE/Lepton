@@ -1,5 +1,3 @@
-import uuid
-
 import factory
 from factory.django import DjangoModelFactory
 
@@ -20,7 +18,6 @@ class BadgeFactory(DjangoModelFactory):
     class Meta:
         model = Badge
 
-    id = uuid.uuid4()
     title = factory.Sequence(lambda n: f"Category{n}")
     badge_category = factory.SubFactory(BadgeCategoryFactory)
 
