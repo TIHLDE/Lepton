@@ -187,7 +187,6 @@ class UserViewSet(viewsets.ModelViewSet, ActionMixin):
             context={"request": request},
         )
 
-
     def get_fine_filter(self, request):
 
         return {
@@ -200,7 +199,6 @@ class UserViewSet(viewsets.ModelViewSet, ActionMixin):
     @action(detail=False, methods=["get"], url_path="me/fines")
     def get_user_fines(self, request, *args, **kwargs):
         filters = self.get_fine_filter(request)
-        print(filters)
         fines = Fine.objects.filter(user__user_id=request.user.user_id, **filters)
         return self.paginate_response(data=fines, serializer=UserFineSerializer)
 
