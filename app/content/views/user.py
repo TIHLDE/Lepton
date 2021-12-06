@@ -187,28 +187,14 @@ class UserViewSet(viewsets.ModelViewSet, ActionMixin):
             context={"request": request},
         )
 
-    def get_fine_filter_kwargs(self, request, kwarg, not_kwarg, field_name):
-        kwarg_param = request.query_params.get(kwarg, None)
-        not_kwarg_param = request.query_params.get(not_kwarg, None)
-        print(not_kwarg_param)
-        kwargs = {}
-        if kwarg_param is not None:
-            kwargs[field_name] = True
-
-        if not_kwarg_param is not None and not kwarg_param:
-            kwargs[field_name] = False
-
-        if not_kwarg_param is not None and kwarg_param is not None:
-            return {}
-        return kwargs
 
     def get_fine_filter(self, request):
 
         return {
-            **self.get_fine_filter_kwargs(
+            **self.get_apposing_filter_kwargs(
                 request, "approved", "not_approved", "approved"
             ),
-            **self.get_fine_filter_kwargs(request, "payed", "not_payed", "payed"),
+            **self.get_apposing_filter_kwargs(request, "payed", "not_payed", "payed"),
         }
 
     @action(detail=False, methods=["get"], url_path="me/fines")
