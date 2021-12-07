@@ -58,9 +58,6 @@ class Fine(BaseModel, BasePermissionModel):
 
     @classmethod
     def has_create_permission(cls, request):
-        print(
-            request.user.is_member_of(Group.get_group_from_permission_context(request))
-        )
         if not Group.check_context(request):
             return check_has_access(cls.access, request)
         return check_has_access(cls.access, request) or request.user.is_member_of(
