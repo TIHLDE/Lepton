@@ -51,6 +51,7 @@ class FineCreateSerializer(BaseModelSerializer):
 
 class FineSerializer(BaseModelSerializer):
     user = DefaultUserSerializer(read_only=True)
+    created_by = DefaultUserSerializer(read_only=True)
 
     class Meta:
         model = Fine
@@ -61,6 +62,7 @@ class FineSerializer(BaseModelSerializer):
             "approved",
             "payed",
             "description",
+            "reason",
             "created_by",
             "created_at",
         )

@@ -1,5 +1,4 @@
-import re
-from warnings import filters
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 
@@ -21,6 +20,7 @@ class FineViewSet(viewsets.ModelViewSet, APIFineErrorsMixin):
     serializer_class = FineSerializer
     permission_classes = [BasicViewPermission]
     queryset = Fine.objects.all()
+    filter_backends = [DjangoFilterBackend]
     filterset_class = FineFilter
     pagination_class = BasePagination
 

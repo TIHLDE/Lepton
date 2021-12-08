@@ -19,7 +19,7 @@ class Fine(BaseModel, BasePermissionModel):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="fines")
     created_by = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="fines_created", default=None
+        User, on_delete=models.CASCADE, related_name="fines_created"
     )
     group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name="fines")
     amount = models.IntegerField(default=1)
@@ -30,7 +30,7 @@ class Fine(BaseModel, BasePermissionModel):
 
     class Meta:
         verbose_name_plural = "Fines"
-        ordering = ("created_at",)
+        ordering = ("-created_at",)
 
     def __str__(self):
         return f"{self.group.name} {self.description} {self.user.user_id} {self.amount}"
@@ -58,9 +58,6 @@ class Fine(BaseModel, BasePermissionModel):
 
     @classmethod
     def has_create_permission(cls, request):
-        print(
-            request.user.is_member_of(Group.get_group_from_permission_context(request))
-        )
         if not Group.check_context(request):
             return check_has_access(cls.access, request)
         return check_has_access(cls.access, request) or request.user.is_member_of(
