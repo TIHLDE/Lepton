@@ -77,22 +77,3 @@ def chunk_list(lst, n):
     lst = list(lst)
     for i in range(0, len(lst), n):
         yield lst[i : i + n]
-
-
-def get_apposing_filters_params(request, param, not_param, filter_name):
-    param_filter = request.query_params.get(param, None)
-    param_not_filter = request.query_params.get(not_param, None)
-    
-    kwargs = {}
-    
-    if param_filter is not None:
-        kwargs[filter_name] = True
-        
-    if not param_filter and param_not_filter is not None:
-        kwargs[filter_name] = False
-    
-    if param_not_filter is not None and param_filter is not None:
-        return {}
-    
-    return kwargs
-    

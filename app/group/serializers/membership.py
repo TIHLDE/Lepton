@@ -68,6 +68,3 @@ class MembershipHistorySerializer(BaseModelSerializer):
             "end_date",
         )
         read_only_fields = fields
-        
-        
-        

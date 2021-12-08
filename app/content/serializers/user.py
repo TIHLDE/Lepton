@@ -1,8 +1,6 @@
 from django.contrib.auth.hashers import make_password
-
 from django.core.exceptions import ValidationError
 from rest_framework import serializers
-from app.group.models.fine import Fine
 
 from dry_rest_permissions.generics import DRYGlobalPermissionsField
 
@@ -146,24 +144,15 @@ class UserInAnswerSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ["user_id", "email"]
-        
-        
+
+
 class UserFineSerializer(serializers.ModelSerializer):
     user = serializers.SerializerMethodField()
-    fines = serializers.SerializerMethodField()
+    fines_amount = serializers.IntegerField()
+
     class Meta:
         model = User
-        fields = ("user", "fines")
-    
-    
+        fields = ("user", "fines_amount")
+
     def get_user(self, obj):
         return DefaultUserSerializer(obj).data
-    
-    def get_fines(self, obj):
-       return  Fine.objects.filter(
-            user = obj,
-            group__slug = self.context["slug"],
-            **self.context["filters"]
-        ).count() 
-    
-        

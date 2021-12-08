@@ -25,8 +25,15 @@ class FineListSerializer(serializers.ListSerializer):
         ]
         return fines
 
+    @atomic
+    def update(self, instance, validated_data):
+        validated_data = self.context["data"]
+        instance.update(**validated_data)
 
-class FineCreateSerializer(BaseModelSerializer):
+        return instance
+
+
+class FineUpdateCreateSerializer(BaseModelSerializer):
     user = DefaultUserSerializer(read_only=True)
     group = GroupSerializer(read_only=True)
 
@@ -68,3 +75,22 @@ class FineSerializer(BaseModelSerializer):
         )
 
         read_only_fields = ("user", "created_by")
+
+
+class FineNoUserSerializer(BaseModelSerializer):
+    created_by = DefaultUserSerializer(read_only=True)
+
+    class Meta:
+        model = Fine
+        fields = (
+            "id",
+            "amount",
+            "approved",
+            "payed",
+            "description",
+            "reason",
+            "created_by",
+            "created_at",
+        )
+
+        read_only_fields = ("created_by",)
