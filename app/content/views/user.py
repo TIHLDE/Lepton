@@ -168,6 +168,8 @@ class UserViewSet(viewsets.ModelViewSet, ActionMixin):
         return self.paginate_response(
             data=events, serializer=EventListSerializer, context={"request": request}
         )
+        
+        
 
     @action(detail=False, methods=["get"], url_path="me/forms")
     def get_user_forms(self, request, *args, **kwargs):
