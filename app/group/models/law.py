@@ -29,10 +29,8 @@ class Law(BaseModel, BasePermissionModel):
     def has_read_permission(cls, request):
         if not Group.check_context(request):
             return check_has_access(cls.access, request)
-        return (
-            check_has_access(cls.access, request)
-            or Group.check_request_user_is_leader(request)
-            or Group.check_user_is_fine_master(request)
+        return check_has_access(cls.access, request) or request.user.is_member_of(
+            Group.get_group_from_permission_context(request)
         )
 
     @classmethod

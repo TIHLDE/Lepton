@@ -165,9 +165,7 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
     @classmethod
     def has_list_permission(cls, request):
         try:
-            return check_has_access(cls.has_access, request) or len(
-                request.user.memberships.filter(membership_type=MembershipType.LEADER)
-            )
+            return request.user.is_TIHLDE_member
         except AttributeError:
             return check_has_access(cls.has_access, request)
 
