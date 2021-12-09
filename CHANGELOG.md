@@ -13,7 +13,7 @@
 ---
 
 ## Neste versjon
-- ✨ **Bøter**. Grupper kan nå dele ut bøter til medlemmene sine.
+- ✨ **Botsystem**. Grupper kan nå ha et botsystem og lovverk. Det er kun åpent for medlemmene og medlemmer kan gi bøter til hverandre.
 ## Versjon 1.2.1 (30.11.2021)
 - ✨ **Påmeldinger**. Brukere kan abonnere på sine påmeldinger til arrangementer gjennom kalenderen sin.
 - ✨ **Sider**. Lagt til plassering og rekkefølge på sider.

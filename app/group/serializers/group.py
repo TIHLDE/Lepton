@@ -55,7 +55,7 @@ class GroupSerializer(BaseModelSerializer):
     def get_viewer_is_member(self, obj):
         request = self.context.get("request", None)
         if request and request.user:
-            return obj.memberships.filter(user=request.user).exists()
+            return request.user.is_member_of(obj)
         return False
 
     def update(self, instance, validated_data):

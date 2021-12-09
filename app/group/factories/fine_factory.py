@@ -15,6 +15,7 @@ class FineFactory(DjangoModelFactory):
     user = factory.SubFactory(UserFactory)
     created_by = factory.SubFactory(UserFactory)
     group = factory.SubFactory(GroupFactory)
-    description = factory.Faker("sentence", nb_words=100, variable_nb_words=True)
+    reason = factory.Faker("sentence", nb_words=100, variable_nb_words=True)
+    description = factory.Faker("word")
     payed = False
     approved = False

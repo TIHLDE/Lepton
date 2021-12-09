@@ -10,7 +10,6 @@ from app.common.mixins import ActionMixin
 from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission
 from app.content.models.user import User
-from app.content.serializers.user import UserFineSerializer
 from app.group.filters.fine import FineFilter
 from app.group.mixins import APIFineErrorsMixin
 from app.group.models.fine import Fine
@@ -18,6 +17,7 @@ from app.group.serializers.fine import (
     FineNoUserSerializer,
     FineSerializer,
     FineUpdateCreateSerializer,
+    UserFineSerializer,
 )
 
 
@@ -59,12 +59,14 @@ class FineViewSet(viewsets.ModelViewSet, APIFineErrorsMixin, ActionMixin):
 
     @action(detail=False, methods=["get"], url_path=r"users/(?P<user_id>[^/.]+)")
     def get_user_fines(self, request, *args, **kwargs):
+        """ Get the fines of a specific user in a group """
 
         fines = self.get_queryset().filter(user__user_id=kwargs["user_id"])
         return self.paginate_response(data=fines, serializer=FineNoUserSerializer)
 
     @action(detail=False, methods=["get"], url_path="users")
     def get_fine_users(self, request, *args, **kwargs):
+        """ Get the users in a group which has fines and how many """
         users = self.get_fine_filter_query()
         return self.paginate_response(data=users, serializer=UserFineSerializer)
 
@@ -87,6 +89,7 @@ class FineViewSet(viewsets.ModelViewSet, APIFineErrorsMixin, ActionMixin):
 
     @action(detail=False, methods=["put"], url_path="batch-update")
     def batch_update_fines(self, request, *args, **kwargs):
+        """ Update a batch of fines at once """
         assert request.data["data"]
         fines = self.get_queryset().filter(id__in=request.data["fine_ids"])
         serializer = FineUpdateCreateSerializer(
@@ -106,7 +109,7 @@ class FineViewSet(viewsets.ModelViewSet, APIFineErrorsMixin, ActionMixin):
 
     @action(detail=False, methods=["put"], url_path=r"batch-update/(?P<user_id>[^/.]+)")
     def batch_update_user_fines(self, request, *args, **kwargs):
-
+        """ Update all the fines of a user in a specific group """
         fines = self.get_queryset().filter(user__user_id=kwargs["user_id"])
         serializer = FineUpdateCreateSerializer(
             instance=fines,

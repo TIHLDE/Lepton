@@ -25,7 +25,7 @@ class Fine(BaseModel, BasePermissionModel):
     amount = models.IntegerField(default=1)
     approved = models.BooleanField(default=False)
     payed = models.BooleanField(default=False)
-    description = models.TextField(default="", blank=True)
+    description = models.CharField(default="", blank=True, max_length=100)
     reason = models.TextField(default="", blank=True)
 
     class Meta:
