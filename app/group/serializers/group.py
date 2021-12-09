@@ -11,6 +11,7 @@ from app.group.models import Group, Membership
 
 class GroupSerializer(BaseModelSerializer):
 
+    viewer_is_member = serializers.SerializerMethodField()
     leader = serializers.SerializerMethodField()
     permissions = DRYPermissionsField(actions=["write", "read"], object_only=True)
     fines_admin = DefaultUserSerializer(read_only=True)
@@ -31,6 +32,7 @@ class GroupSerializer(BaseModelSerializer):
             "fine_info",
             "image",
             "image_alt",
+            "viewer_is_member",
         )
 
     def get_leader(self, obj):
@@ -50,6 +52,12 @@ class GroupSerializer(BaseModelSerializer):
             fines_admin = User.objects.get(user_id=fines_admin_id)
         return fines_admin
 
+    def get_viewer_is_member(self, obj):
+        request = self.context.get("request", None)
+        if request and request.user:
+            return obj.memberships.filter(user=request.user).exists()
+        return False
+
     def update(self, instance, validated_data):
         instance.fines_admin = self.get_fine_admin_user()
         return super().update(instance, validated_data)
@@ -57,17 +65,3 @@ class GroupSerializer(BaseModelSerializer):
     def create(self, validated_data):
         fines_admin = self.get_fine_admin_user()
         return Group.objects.create(fines_admin=fines_admin, **validated_data)
-
-
-class DefaultGroupSerializer(BaseModelSerializer):
-    class Meta:
-        model = Group
-        fields = (
-            "name",
-            "slug",
-            "description",
-            "contact_email",
-            "type",
-            "image",
-            "image_alt",
-        )
