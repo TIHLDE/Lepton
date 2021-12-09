@@ -3,15 +3,12 @@ import random
 from rest_framework import status
 
 import pytest
-from faker import Faker
 
 from app.common.enums import AdminGroup, MembershipType
 from app.group.factories.group_factory import GroupFactory
 from app.group.factories.law_factory import LawFactory
 from app.group.factories.membership_factory import MembershipFactory
 from app.util.test_utils import add_user_to_group_with_name, get_api_client
-
-faker = Faker()
 
 GROUP_URL = "/groups/"
 
