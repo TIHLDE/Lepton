@@ -164,10 +164,11 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
 
     @classmethod
     def has_list_permission(cls, request):
-        try:
-            return request.user.is_TIHLDE_member
-        except AttributeError:
-            return check_has_access(cls.has_access, request)
+        return (
+            request.user
+            and request.user.is_TIHLDE_member
+            or check_has_access(cls.has_access, request)
+        )
 
     @staticmethod
     def has_read_permission(request):
