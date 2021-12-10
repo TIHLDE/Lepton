@@ -5,6 +5,7 @@ from enumchoicefield import EnumChoiceField
 
 from app.common.enums import AdminGroup, GroupType
 from app.common.permissions import BasePermissionModel, set_user_id
+from app.content.models.user import User
 from app.util.models import BaseModel, OptionalImage
 
 
@@ -16,7 +17,16 @@ class Group(OptionalImage, BaseModel, BasePermissionModel):
     slug = models.SlugField(max_length=50, primary_key=True)
     description = models.TextField(max_length=1000, null=True, blank=True)
     contact_email = models.EmailField(max_length=200, null=True, blank=True)
+    fine_info = models.TextField(default="", blank=True)
     type = EnumChoiceField(GroupType, default=GroupType.OTHER)
+    fines_activated = models.BooleanField(default=False)
+    fines_admin = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="fine_master_groups",
+        null=True,
+        default=None,
+    )
 
     class Meta:
         verbose_name_plural = "Groups"
@@ -32,14 +42,33 @@ class Group(OptionalImage, BaseModel, BasePermissionModel):
         super().save(*args, **kwargs)
 
     @classmethod
+    def check_context(cls, request):
+        return request.parser_context.get("kwargs", {}).get("slug", None) is not None
+
+    @classmethod
     def check_request_user_is_leader(cls, request):
         if request.id is None:
             set_user_id(request)
         group_slug = request.parser_context["kwargs"]["slug"]
         group = cls.objects.get(slug=group_slug)
-        return group.memberships.get(
+        membership = group.memberships.filter(
             group__slug=group_slug, user__user_id=request.id
-        ).is_leader()
+        )
+        return len(membership) == 1 and membership[0].is_leader()
+
+    @classmethod
+    def check_user_is_fine_master(cls, request):
+        group = cls.get_group_from_permission_context(request)
+        return (
+            group.fines_admin
+            and request.user
+            and request.user.user_id == group.fines_admin.user_id
+        )
+
+    @classmethod
+    def get_group_from_permission_context(cls, request):
+        group_slug = request.parser_context["kwargs"]["slug"]
+        return cls.objects.get(slug=group_slug)
 
     @classmethod
     def has_write_permission(cls, request):

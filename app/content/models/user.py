@@ -133,6 +133,9 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
 
         return Form.objects.filter(submissions__user=self)
 
+    def is_member_of(self, group):
+        return self.memberships.filter(group=group).exists()
+
     def has_unanswered_evaluations(self):
         return self.get_unanswered_evaluations().exists()
 
@@ -151,9 +154,6 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
             event__end_date__gte=date_30_days_ago,
         ).exclude(submissions__user=self)
 
-    def is_member_of(self, group):
-        return self.memberships.filter(group=group).exists()
-
     @classmethod
     def has_retrieve_permission(cls, request):
         if request.user:
@@ -164,12 +164,11 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
 
     @classmethod
     def has_list_permission(cls, request):
-        try:
-            return check_has_access(cls.has_access, request) or len(
-                request.user.memberships.filter(membership_type=MembershipType.LEADER)
-            )
-        except AttributeError:
-            return check_has_access(cls.has_access, request)
+        return (
+            request.user
+            and request.user.is_TIHLDE_member
+            or check_has_access(cls.has_access, request)
+        )
 
     @staticmethod
     def has_read_permission(request):

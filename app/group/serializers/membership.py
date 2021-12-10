@@ -50,7 +50,8 @@ class UpdateMembershipSerializer(MembershipSerializer):
         fields = MembershipSerializer.Meta.fields
 
         read_only_fields = (
-            "created_at" "user",
+            "created_at",
+            "user",
             "group",
         )
 

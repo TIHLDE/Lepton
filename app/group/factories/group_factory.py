@@ -18,3 +18,4 @@ class GroupFactory(DjangoModelFactory):
         lambda o, n: f"{o.slug}@{n}.example.com"
     )
     type = GroupType.SUBGROUP
+    fines_activated = True

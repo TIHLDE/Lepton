@@ -48,6 +48,9 @@ class GroupViewSet(viewsets.ModelViewSet, ActionMixin):
             if serializer.is_valid():
                 serializer.save()
                 return Response(data=serializer.data, status=status.HTTP_200_OK)
+            return Response(
+                {"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST,
+            )
         except Group.DoesNotExist:
             return Response(
                 {"detail": ("Gruppen eksisterer ikke")},

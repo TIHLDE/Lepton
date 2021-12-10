@@ -21,6 +21,7 @@ from app.content.filters import UserFilter
 from app.content.models import User
 from app.content.serializers import (
     BadgeSerializer,
+    DefaultUserSerializer,
     EventListSerializer,
     UserAdminSerializer,
     UserCreateSerializer,
@@ -51,7 +52,9 @@ class UserViewSet(viewsets.ModelViewSet, ActionMixin):
 
     def get_serializer_class(self):
         if hasattr(self, "action") and self.action == "list":
-            return UserListSerializer
+            if is_admin_user(self.request):
+                return UserListSerializer
+            return DefaultUserSerializer
         return super().get_serializer_class()
 
     def retrieve(self, request, *args, **kwargs):
