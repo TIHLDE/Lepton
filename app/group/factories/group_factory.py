@@ -2,6 +2,7 @@ import factory
 from factory.django import DjangoModelFactory
 
 from app.common.enums import GroupType
+from app.content.factories.user_factory import UserFactory
 from app.group.models import Group
 
 
@@ -19,3 +20,4 @@ class GroupFactory(DjangoModelFactory):
     )
     type = GroupType.SUBGROUP
     fines_activated = True
+    fines_admin = factory.SubFactory(UserFactory)

@@ -40,9 +40,22 @@ class Fine(BaseModel, BasePermissionModel):
             raise UserIsNotInGroup(
                 f"{self.user.first_name} {self.user.last_name} er ikke medlem i gruppen"
             )
+        if not self.id:
+            self.notify_user()
+
+    def notify_user(self):
+        from app.util.notifier import Notify
+
+        Notify(
+            [self.user], f"Du har fått en bot i gruppen {self.group.name}"
+        ).send_notification(
+            description=f'{self.created_by.first_name} {self.created_by.last_name} har gitt deg {self.amount} bøter for å ha brutt paragraf "{self.description}" i gruppen {self.group.name}',
+            link=f"/grupper/{self.group.slug}/boter/",
+        )
 
     def save(self, *args, **kwargs):
         self.full_clean()
+
         return super().save(*args, **kwargs)
 
     @classmethod
