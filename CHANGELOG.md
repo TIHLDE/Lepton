@@ -13,6 +13,8 @@
 ---
 
 ## Neste versjon
+- ✨ **Botsystem**. Medlemmer får nå et varsl når de får en ny bot.
+- ✨ **Botsjef**. Nye botsjefer får nå informasjon om sin nye roller på varsel og epost.
 - ✨ **Botsystem**. Grupper kan nå ha et botsystem og lovverk. Det er kun åpent for medlemmene og medlemmer kan gi bøter til hverandre.
 ## Versjon 1.2.1 (30.11.2021)
 - ✨ **Påmeldinger**. Brukere kan abonnere på sine påmeldinger til arrangementer gjennom kalenderen sin.

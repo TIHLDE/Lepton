@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 from django.utils.text import slugify
 
@@ -34,16 +35,53 @@ class Group(OptionalImage, BaseModel, BasePermissionModel):
     def __str__(self):
         return f"{self.name}"
 
+    def notify_fines_admin(self):
+        from app.util.mail_creator import MailCreator
+        from app.util.notifier import Notify
+
+        description = [
+            f"Hei! Lederen av {self.name} har gjort deg til botsjef i gruppen. I botsystemet i gruppen kan alle medlemmer melde inn bøter på en eller flere andre medlemmer. Gruppen kan selv velge hvor mye en bot er verdt og hvordan bøter skal godkjennes og betales.",
+            "Som botsjef kan du, sammen med leder av gruppen, redigere lovverket og bøter (godkjenne, markere som betalt, endre antall og slette). Medlemmene kan ikke opprette bøter før det er minst én lov i lovverket. Du og alle medlemmene kan se en oversikt over alle bøter, samt filtrere på om boten er godkjent, betalt og per medlem.",
+            "Lykke til!",
+        ]
+        Notify(
+            [self.fines_admin], f"Du har blitt botsjef for gruppen {self.name}"
+        ).send_email(
+            MailCreator(f"Du har blitt botsjef for gruppen {self.name}")
+            .add_paragraph(description[0])
+            .add_paragraph(description[1])
+            .add_paragraph(description[2])
+            .add_button("Gå til gruppesiden", self.website_url)
+            .generate_string()
+        ).send_notification(
+            description=" \n".join(description), link=f"/grupper/{self.slug}/boter/",
+        )
+
+    def check_fine_admin(self):
+        return (
+            self.fines_admin is not None
+            and not Group.objects.filter(
+                slug=self.slug, fines_admin=self.fines_admin
+            ).exists()
+        )
+
     def save(self, *args, **kwargs):
+        if self.check_fine_admin():
+            self.notify_fines_admin()
         if self.slug == "":
             self.slug = slugify(self.name)
         else:
             self.slug = slugify(self.slug)
+
         super().save(*args, **kwargs)
 
     @classmethod
     def check_context(cls, request):
         return request.parser_context.get("kwargs", {}).get("slug", None) is not None
+
+    @property
+    def website_url(self):
+        return f"{settings.WEBSITE_URL}/grupper/{self.slug}/"
 
     @classmethod
     def check_request_user_is_leader(cls, request):

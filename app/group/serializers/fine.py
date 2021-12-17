@@ -40,7 +40,15 @@ class FineUpdateCreateSerializer(BaseModelSerializer):
     class Meta:
         model = Fine
         list_serializer_class = FineListSerializer
-        fields = ("id", "user", "group", "amount", "description", "created_at")
+        fields = (
+            "id",
+            "user",
+            "group",
+            "amount",
+            "description",
+            "created_at",
+            "reason",
+        )
 
         read_only_fields = (
             "user",
