@@ -13,9 +13,11 @@ from app.content.models.user import User
 from app.group.filters.fine import FineFilter
 from app.group.mixins import APIFineErrorsMixin
 from app.group.models.fine import Fine
+from app.group.models.group import Group
 from app.group.serializers.fine import (
     FineNoUserSerializer,
     FineSerializer,
+    FineStatisticsSerializer,
     FineUpdateCreateSerializer,
     UserFineSerializer,
 )
@@ -125,3 +127,8 @@ class FineViewSet(viewsets.ModelViewSet, APIFineErrorsMixin, ActionMixin):
         return Response(
             {"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST,
         )
+
+    @action(detail=False, methods=["get"], url_path="statistics")
+    def get_group_fine_statistics(self, request, *args, **kwargs):
+        group = Group.objects.get(slug=kwargs["slug"])
+        return Response(FineStatisticsSerializer(group).data, status=status.HTTP_200_OK)

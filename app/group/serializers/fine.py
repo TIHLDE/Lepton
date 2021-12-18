@@ -1,3 +1,4 @@
+from django.db.models.aggregates import Sum
 from django.db.transaction import atomic
 from rest_framework import serializers
 
@@ -114,3 +115,28 @@ class UserFineSerializer(serializers.ModelSerializer):
 
     def get_user(self, obj):
         return DefaultUserSerializer(obj).data
+
+
+class FineStatisticsSerializer(BaseModelSerializer):
+
+    payed = serializers.SerializerMethodField()
+    approved_and_not_payed = serializers.SerializerMethodField()
+    not_approved = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Group
+
+        fields = ("payed", "approved_and_not_payed", "not_approved")
+
+    def get_sum(self, obj, *args, **kwargs):
+        sum = obj.fines.filter(*args, **kwargs).aggregate(sum=Sum("amount"))["sum"]
+        return sum if sum else 0
+
+    def get_payed(self, obj):
+        return self.get_sum(obj, payed=True)
+
+    def get_approved_and_not_payed(self, obj):
+        return self.get_sum(obj, payed=False, approved=True)
+
+    def get_not_approved(self, obj):
+        return self.get_sum(obj, approved=False)
