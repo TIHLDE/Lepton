@@ -101,15 +101,15 @@ def test_member_can_add_submission_with_answer_text(
     assert response.status_code == status.HTTP_201_CREATED
 
 
-def test_member_cannot_add_several_submissions(member_client, form, submission, answer):
-    submission = SubmissionFactory(form=form)
-    answer = AnswerFactory(submission=submission, field=form.fields.first())
+def test_member_cannot_add_several_submissions(member_client, answer):
+    # submission = SubmissionFactory(form=form)
+    # answer = AnswerFactory(submission=submission, field=form.fields.first())
     url = _get_submission_url(answer.submission.form)
     first_submission_data = _create_submission_data_with_text_answer(
-        form.fields.first(), "This is the first time I love this!"
+        answer.submission.form.fields.first(), "This is the first time I love this!"
     )
     second_submission_data = _create_submission_data_with_text_answer(
-        form.fields.first(), "This is the second time I love this!"
+        answer.submission.form.fields.first(), "This is the second time I love this!"
     )
 
     member_client.post(url, first_submission_data)

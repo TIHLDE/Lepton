@@ -2,8 +2,9 @@ from rest_framework import status
 
 import pytest
 
-from app.common.enums import AdminGroup
-from app.group.factories import GroupFactory
+from app.common.enums import AdminGroup, MembershipType
+from app.group.factories import GroupFactory, MembershipFactory
+from app.util.test_utils import add_user_to_group_with_name
 
 pytestmark = pytest.mark.django_db
 
@@ -27,15 +28,23 @@ def _get_form_post_data(group):
 
 
 @pytest.mark.parametrize("group_name", [e.name for e in AdminGroup] + ["ikke-admin"])
-def test_that_creating_group_form_as_member_of_group_creates_the_form(
+def test_that_creating_group_form_as_leader_of_group_creates_the_form(
     api_client, user, group_name
 ):
+    """Leaders of groups should be able to create group-forms"""
     group = GroupFactory.build(slug=group_name)
+    add_user_to_group_with_name(user=user, group_name=group_name, membership_type=MembershipType.LEADER)
 
-    client = api_client(user=user, group_name=group.slug)
+    client = api_client(user=user)
     data = _get_form_post_data(group)
 
-    client.post(FORMS_URL, data)
+    response = client.post(FORMS_URL, data)
+
+    expected_group_slug = group.slug.lower()
+    actual_group_slug = response.json().get("group").get("slug")
+
+    assert expected_group_slug == actual_group_slug
+    assert response.status_code == status.HTTP_201_CREATED
 
     group.refresh_from_db()
 
@@ -45,37 +54,35 @@ def test_that_creating_group_form_as_member_of_group_creates_the_form(
     assert actual_group_form.first().title == data.get("title")
 
 
-@pytest.mark.parametrize(
-    "group_name", [e.name.lower() for e in AdminGroup] + ["ikke-admin"]
-)
-def test_that_creating_group_form_as_member_of_group_returns_the_created_form(
+@pytest.mark.parametrize("group_name", [AdminGroup.INDEX.name, AdminGroup.HS.name])
+def test_that_creating_group_form_as_member_of_admin_group_creates_the_form(
     api_client, user, group_name
 ):
+    """Members of admin-groups should be able to create group-forms"""
     group = GroupFactory.build(slug=group_name)
+    add_user_to_group_with_name(user=user, group_name=group_name, membership_type=MembershipType.MEMBER)
 
-    client = api_client(user=user, group_name=group.slug)
-    data = _get_form_post_data(group)
-
-    response = client.post(FORMS_URL, data)
-
-    expected_group_slug = group.slug
-    actual_group_slug = response.json().get("group").get("slug")
-
-    assert expected_group_slug == actual_group_slug
-
-
-@pytest.mark.parametrize("group_name", [e.name for e in AdminGroup] + ["ikke-admin"])
-def test_that_creating_group_form_as_member_of_group_returns_http_201(
-    api_client, user, group_name
-):
-    group = GroupFactory.build(slug=group_name)
-
-    client = api_client(user=user, group_name=group.slug)
+    client = api_client(user=user)
     data = _get_form_post_data(group)
 
     response = client.post(FORMS_URL, data)
 
     assert response.status_code == status.HTTP_201_CREATED
+
+@pytest.mark.parametrize("group_name", [AdminGroup.NOK.name, AdminGroup.SOSIALEN.name, "ikke-admin"])
+def test_that_creating_group_form_as_member_of_group_does_not_create_the_form(
+    api_client, user, group_name
+):
+    """Members of groups should not be able to create group-forms"""
+    group = GroupFactory.build(slug=group_name)
+    add_user_to_group_with_name(user=user, group_name=group_name, membership_type=MembershipType.MEMBER)
+
+    client = api_client(user=user)
+    data = _get_form_post_data(group)
+
+    response = client.post(FORMS_URL, data)
+
+    assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
 @pytest.mark.parametrize(
