@@ -246,11 +246,13 @@ class Submission(BaseModel, BasePermissionModel):
                     raise IntegrityError("Du kan ikke endre innsendt spørreskjema etter påmelding")
                 else:
                     Submission.objects.filter(user=self.user, form=self.form).delete()
-            if isinstance(self.form, GroupForm):
+            elif isinstance(self.form, GroupForm):
                 print("is GroupForm")
                 # TODO: Add can_submit_multiple to GroupForm-model
                 if not self.form.can_submit_multiple:
-                    raise IntegrityError("Dette spørreskjemaet tillater kun én innsending")
+                    raise IntegrityError("Spørreskjemaet tillater kun én innsending")
+            else:
+                raise IntegrityError("Spørreskjemaet tillater kun én innsending")
           
         super().save(*args, **kwargs)
 
