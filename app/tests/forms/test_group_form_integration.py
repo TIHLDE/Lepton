@@ -33,7 +33,9 @@ def test_that_creating_group_form_as_leader_of_group_creates_the_form(
 ):
     """Leaders of groups should be able to create group-forms"""
     group = GroupFactory.build(slug=group_name)
-    add_user_to_group_with_name(user=user, group_name=group_name, membership_type=MembershipType.LEADER)
+    add_user_to_group_with_name(
+        user=user, group_name=group_name, membership_type=MembershipType.LEADER
+    )
 
     client = api_client(user=user)
     data = _get_form_post_data(group)
@@ -60,7 +62,9 @@ def test_that_creating_group_form_as_member_of_admin_group_creates_the_form(
 ):
     """Members of admin-groups should be able to create group-forms"""
     group = GroupFactory.build(slug=group_name)
-    add_user_to_group_with_name(user=user, group_name=group_name, membership_type=MembershipType.MEMBER)
+    add_user_to_group_with_name(
+        user=user, group_name=group_name, membership_type=MembershipType.MEMBER
+    )
 
     client = api_client(user=user)
     data = _get_form_post_data(group)
@@ -69,13 +73,18 @@ def test_that_creating_group_form_as_member_of_admin_group_creates_the_form(
 
     assert response.status_code == status.HTTP_201_CREATED
 
-@pytest.mark.parametrize("group_name", [AdminGroup.NOK.name, AdminGroup.SOSIALEN.name, "ikke-admin"])
+
+@pytest.mark.parametrize(
+    "group_name", [AdminGroup.NOK.name, AdminGroup.SOSIALEN.name, "ikke-admin"]
+)
 def test_that_creating_group_form_as_member_of_group_does_not_create_the_form(
     api_client, user, group_name
 ):
     """Members of groups should not be able to create group-forms"""
     group = GroupFactory.build(slug=group_name)
-    add_user_to_group_with_name(user=user, group_name=group_name, membership_type=MembershipType.MEMBER)
+    add_user_to_group_with_name(
+        user=user, group_name=group_name, membership_type=MembershipType.MEMBER
+    )
 
     client = api_client(user=user)
     data = _get_form_post_data(group)

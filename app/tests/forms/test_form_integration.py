@@ -206,9 +206,7 @@ def test_create_forms_as_member_is_not_permitted(form, member):
     assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
-@pytest.mark.parametrize(
-    "group_name", [AdminGroup.HS, AdminGroup.INDEX]
-)
+@pytest.mark.parametrize("group_name", [AdminGroup.HS, AdminGroup.INDEX])
 def test_create_forms_as_admin_is_permitted(form, member, group_name):
     """An admin should be able to create forms."""
     client = get_api_client(user=member, group_name=group_name)

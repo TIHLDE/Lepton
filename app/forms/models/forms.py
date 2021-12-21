@@ -1,6 +1,6 @@
 import uuid
 
-from django.db import models, transaction, IntegrityError
+from django.db import IntegrityError, models, transaction
 
 from enumchoicefield import EnumChoiceField
 from ordered_model.models import OrderedModel
@@ -42,7 +42,7 @@ class Form(PolymorphicModel, BasePermissionModel):
 
             if options:
                 field.add_options(options)
-    
+
     @classmethod
     def is_event_form(cls, request):
         return request.data.get("resource_type") == "EventForm"
@@ -155,6 +155,9 @@ class GroupForm(Form):
     read_access = [Groups.TIHLDE]
 
     group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name="forms")
+    can_submit_multiple = models.BooleanField(default=True)
+    is_open_for_submissions = models.BooleanField(default=False)
+    only_for_group_members = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = "Group form"
@@ -177,15 +180,19 @@ class GroupForm(Form):
 
     def has_object_statistics_permission(self, request):
         return self.has_object_write_permission(request)
-    
+
     def has_object_read_permission(self, request):
-        # TODO: Restrict if only for group-members or draft/not public
-        return True
-  
+        return (
+            self.is_open_for_submissions
+            or (self.only_for_group_members and request.user.is_member_of(self.group))
+            or self.has_object_write_permission(request)
+        )
+
     def has_object_write_permission(self, request):
         return request.user.is_leader_of(self.group) or check_has_access(
             self.write_access, request
         )
+
 
 class Field(OrderedModel):
 
@@ -233,7 +240,9 @@ class Submission(BaseModel, BasePermissionModel):
     @transaction.atomic
     def save(self, *args, **kwargs):
         print("save start")
-        existing_same_user_and_form = Submission.objects.filter(user=self.user, form=self.form)
+        existing_same_user_and_form = Submission.objects.filter(
+            user=self.user, form=self.form
+        )
         print(existing_same_user_and_form.exists())
         if existing_same_user_and_form.exists():
             if isinstance(self.form, EventForm):
@@ -243,17 +252,18 @@ class Submission(BaseModel, BasePermissionModel):
                 ).exists()
                 print(user_has_registration)
                 if user_has_registration:
-                    raise IntegrityError("Du kan ikke endre innsendt spørreskjema etter påmelding")
+                    raise IntegrityError(
+                        "Du kan ikke endre innsendt spørreskjema etter påmelding"
+                    )
                 else:
                     Submission.objects.filter(user=self.user, form=self.form).delete()
             elif isinstance(self.form, GroupForm):
                 print("is GroupForm")
-                # TODO: Add can_submit_multiple to GroupForm-model
                 if not self.form.can_submit_multiple:
                     raise IntegrityError("Spørreskjemaet tillater kun én innsending")
             else:
                 raise IntegrityError("Spørreskjemaet tillater kun én innsending")
-          
+
         super().save(*args, **kwargs)
 
     @classmethod
@@ -284,8 +294,10 @@ class Submission(BaseModel, BasePermissionModel):
 
         if not form:
             return False
-        
-        return cls._is_own_permission(request) or form.has_object_write_permission(request)
+
+        return cls._is_own_permission(request) or form.has_object_write_permission(
+            request
+        )
 
     @classmethod
     def _is_own_permission(cls, request):
@@ -309,6 +321,7 @@ class Submission(BaseModel, BasePermissionModel):
         return self._is_own_permission(request) or check_has_access(
             self.read_access, request
         )
+
 
 class Answer(BaseModel):
 

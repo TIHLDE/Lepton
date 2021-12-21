@@ -13,4 +13,5 @@ class GroupFormViewSet(mixins.ListModelMixin, GenericViewSet):
     queryset = GroupForm.objects.all()
 
     def get_queryset(self):
+        # TODO: Limit listed forms based on "is_open_for_submissions" and "only_for_group_members"
         return self.queryset.filter(group=self.kwargs.get("slug"))

@@ -137,7 +137,9 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
         return self.memberships.filter(group=group).exists()
 
     def is_leader_of(self, group):
-        return self.memberships.filter(group=group, membership_type=MembershipType.LEADER).exists()
+        return self.memberships.filter(
+            group=group, membership_type=MembershipType.LEADER
+        ).exists()
 
     def has_unanswered_evaluations(self):
         return self.get_unanswered_evaluations().exists()
