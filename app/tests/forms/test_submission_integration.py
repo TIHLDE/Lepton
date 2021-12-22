@@ -230,7 +230,7 @@ def test_create_group_form_submission_when_can_submit_multiple(
     "client, is_open_for_submissions, status_code",
     [
         (pytest.lazy_fixture("member_client"), True, status.HTTP_201_CREATED),
-        (pytest.lazy_fixture("member_client"), False, status.HTTP_400_BAD_REQUEST),
+        (pytest.lazy_fixture("member_client"), False, status.HTTP_403_FORBIDDEN),
         (pytest.lazy_fixture("default_client"), True, status.HTTP_403_FORBIDDEN),
         (pytest.lazy_fixture("default_client"), False, status.HTTP_403_FORBIDDEN),
     ],
@@ -251,7 +251,7 @@ def test_create_group_form_submission_when_is_open_for_submissions(
     [
         (True, True, status.HTTP_201_CREATED),
         (True, False, status.HTTP_201_CREATED),
-        (False, True, status.HTTP_400_BAD_REQUEST),
+        (False, True, status.HTTP_403_FORBIDDEN),
         (False, False, status.HTTP_201_CREATED),
     ],
 )

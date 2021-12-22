@@ -65,8 +65,12 @@ class FormSerializer(BaseModelSerializer):
 
     @atomic
     def update(self, instance, validated_data):
-        validated_fields = validated_data.pop("fields")
+        validated_fields = validated_data.pop("fields", None)
         super().update(instance, validated_data)
+
+        # Must explicitly check if is None, because "[]" evaluates to falsy but should be looped
+        if validated_fields is None:
+            return instance
 
         field_ids_to_keep = list()
 

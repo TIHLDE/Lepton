@@ -3,13 +3,14 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from app.common.permissions import BasicViewPermission
+from app.forms.mixins import APIFormErrorsMixin
 from app.forms.models import Form
 from app.forms.serializers import FormPolymorphicSerializer
 from app.forms.serializers.forms import FormSerializer
 from app.forms.serializers.statistics import FormStatisticsSerializer
 
 
-class FormViewSet(viewsets.ModelViewSet):
+class FormViewSet(APIFormErrorsMixin, viewsets.ModelViewSet):
     serializer_class = FormPolymorphicSerializer
     queryset = Form.objects.all()
     permission_classes = [BasicViewPermission]

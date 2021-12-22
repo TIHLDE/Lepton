@@ -1,7 +1,6 @@
 import uuid
 
-from django.core.exceptions import ValidationError
-from django.db import IntegrityError, models, transaction
+from django.db import models, transaction
 
 from enumchoicefield import EnumChoiceField
 from ordered_model.models import OrderedModel
@@ -12,6 +11,11 @@ from app.common.permissions import BasePermissionModel, check_has_access
 from app.content.models.event import Event
 from app.content.models.user import User
 from app.forms.enums import EventFormType, FormFieldType
+from app.forms.exceptions import (
+    DuplicateSubmission,
+    FormNotOpenForSubmission,
+    GroupFormOnlyForMembers,
+)
 from app.group.models import Group
 from app.util.models import BaseModel
 
@@ -26,6 +30,7 @@ class Form(PolymorphicModel, BasePermissionModel):
     viewer_has_answered = None
 
     class Meta:
+        ordering = ("title",)
         verbose_name = "Form"
         verbose_name_plural = "Forms"
 
@@ -243,6 +248,9 @@ class Submission(BaseModel, BasePermissionModel):
     @transaction.atomic
     def save(self, *args, **kwargs):
         self.full_clean()
+        super().save(*args, **kwargs)
+
+    def clean(self):
         existing_same_user_and_form = Submission.objects.filter(
             user=self.user, form=self.form
         )
@@ -252,27 +260,27 @@ class Submission(BaseModel, BasePermissionModel):
                     user=self.user
                 ).exists()
                 if user_has_registration:
-                    raise IntegrityError(
+                    raise DuplicateSubmission(
                         "Du kan ikke endre innsendt spørreskjema etter påmelding"
                     )
                 else:
                     Submission.objects.filter(user=self.user, form=self.form).delete()
             elif isinstance(self.form, GroupForm):
                 if not self.form.can_submit_multiple:
-                    raise IntegrityError("Spørreskjemaet tillater kun én innsending")
+                    raise DuplicateSubmission(
+                        "Spørreskjemaet tillater kun én innsending"
+                    )
             else:
-                raise IntegrityError("Spørreskjemaet tillater kun én innsending")
-
-        super().save(*args, **kwargs)
-
-    def clean(self):
+                raise DuplicateSubmission("Spørreskjemaet tillater kun én innsending")
         if isinstance(self.form, GroupForm):
             if not self.form.is_open_for_submissions:
-                raise ValidationError("Spørreskjemaet er ikke åpent for innsending")
+                raise FormNotOpenForSubmission(
+                    "Spørreskjemaet er ikke åpent for innsending"
+                )
             if self.form.only_for_group_members and not self.user.is_member_of(
                 self.form.group
             ):
-                raise ValidationError(
+                raise GroupFormOnlyForMembers(
                     "Spørreskjemaet er kun åpent for medlemmer av gruppen"
                 )
 

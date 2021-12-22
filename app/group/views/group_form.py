@@ -3,12 +3,13 @@ from rest_framework import mixins
 from rest_framework.viewsets import GenericViewSet
 
 from app.common.permissions import BasicViewPermission, is_admin_user
+from app.forms.mixins import APIFormErrorsMixin
 from app.forms.models.forms import GroupForm
 from app.forms.serializers.forms import GroupFormSerializer
 from app.group.models.group import Group
 
 
-class GroupFormViewSet(mixins.ListModelMixin, GenericViewSet):
+class GroupFormViewSet(APIFormErrorsMixin, mixins.ListModelMixin, GenericViewSet):
 
     serializer_class = GroupFormSerializer
     permission_classes = [BasicViewPermission]
