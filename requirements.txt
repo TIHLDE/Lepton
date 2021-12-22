@@ -16,13 +16,13 @@ django-ical == 1.8.0
 
 # Django
 # ------------------------------------------------------------------------------
-Django~=3.2.8
+Django==3.2.10
 django-enumchoicefield
 django-filter
 django-ordered-model~=3.4
 
 # Django REST Framework
-django-rest-framework
+djangorestframework==3.13.1
 django-cors-headers
 django-rest-auth
 
