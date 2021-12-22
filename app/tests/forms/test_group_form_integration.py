@@ -3,12 +3,21 @@ from rest_framework import status
 import pytest
 
 from app.common.enums import AdminGroup, MembershipType
+from app.forms.tests.form_factories import GroupFormFactory
 from app.group.factories import GroupFactory, MembershipFactory
 from app.util.test_utils import add_user_to_group_with_name
 
 pytestmark = pytest.mark.django_db
 
 FORMS_URL = "/forms/"
+
+
+def _get_group_form_detail_url(form):
+    return f"{FORMS_URL}{form.id}/"
+
+
+def _get_group_forms_url(group):
+    return f"/groups/{group.slug}/forms/"
 
 
 def _get_form_post_data(group):
@@ -109,3 +118,87 @@ def test_that_non_group_members_can_create_group_form_for_that_group(
     response = client.post(FORMS_URL, data)
 
     assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+@pytest.mark.parametrize(
+    "membership_type, expected_amount",
+    [(MembershipType.LEADER, 4), (MembershipType.MEMBER, 2), (None, 1),],
+)
+def test_retrieve_list_of_group_forms_only_returns_where_is_admin_or_can_answer(
+    api_client, member, group, membership_type, expected_amount
+):
+    """
+    Leaders of group should get all forms,
+    members should get all which is open for submissions
+    and others should only get those who is open for submissions and not only for group members
+    """
+    GroupFormFactory(
+        group=group, only_for_group_members=True, is_open_for_submissions=True
+    )
+    GroupFormFactory(
+        group=group, only_for_group_members=True, is_open_for_submissions=False
+    )
+    GroupFormFactory(
+        group=group, only_for_group_members=False, is_open_for_submissions=True
+    )
+    GroupFormFactory(
+        group=group, only_for_group_members=False, is_open_for_submissions=False
+    )
+
+    if membership_type:
+        MembershipFactory(user=member, group=group, membership_type=membership_type)
+
+    url = _get_group_forms_url(group)
+
+    client = api_client(user=member)
+    response = client.get(url)
+
+    assert len(response.json()) == expected_amount
+
+
+@pytest.mark.parametrize(
+    "membership_type, only_for_group_members, is_open_for_submissions, status_code",
+    [
+        (MembershipType.LEADER, True, True, status.HTTP_200_OK),
+        (MembershipType.LEADER, True, False, status.HTTP_200_OK),
+        (MembershipType.LEADER, False, True, status.HTTP_200_OK),
+        (MembershipType.LEADER, False, False, status.HTTP_200_OK),
+        (MembershipType.MEMBER, True, True, status.HTTP_200_OK),
+        (MembershipType.MEMBER, True, False, status.HTTP_403_FORBIDDEN),
+        (MembershipType.MEMBER, False, True, status.HTTP_200_OK),
+        (MembershipType.MEMBER, False, False, status.HTTP_403_FORBIDDEN),
+        (None, True, True, status.HTTP_403_FORBIDDEN),
+        (None, True, False, status.HTTP_403_FORBIDDEN),
+        (None, False, True, status.HTTP_200_OK),
+        (None, False, False, status.HTTP_403_FORBIDDEN),
+    ],
+)
+def test_retrieve_specific_group_form(
+    api_client,
+    member,
+    group,
+    membership_type,
+    only_for_group_members,
+    is_open_for_submissions,
+    status_code,
+):
+    """
+    Leaders of group should get all forms,
+    members should get if it's open for submissions
+    and others should only get if it's open for submissions and not only for group members
+    """
+    group_form = GroupFormFactory(
+        group=group,
+        only_for_group_members=only_for_group_members,
+        is_open_for_submissions=is_open_for_submissions,
+    )
+
+    if membership_type:
+        MembershipFactory(user=member, group=group, membership_type=membership_type)
+
+    url = _get_group_form_detail_url(group_form)
+
+    client = api_client(user=member)
+    response = client.get(url)
+
+    assert response.status_code == status_code

@@ -1,5 +1,6 @@
 import uuid
 
+from django.core.exceptions import ValidationError
 from django.db import IntegrityError, models, transaction
 
 from enumchoicefield import EnumChoiceField
@@ -182,11 +183,13 @@ class GroupForm(Form):
         return self.has_object_write_permission(request)
 
     def has_object_read_permission(self, request):
-        return (
-            self.is_open_for_submissions
-            or (self.only_for_group_members and request.user.is_member_of(self.group))
-            or self.has_object_write_permission(request)
-        )
+        if self.has_object_write_permission(request):
+            return True
+        if not self.is_open_for_submissions:
+            return False
+        if self.only_for_group_members:
+            return request.user.is_member_of(self.group)
+        return True
 
     def has_object_write_permission(self, request):
         return request.user.is_leader_of(self.group) or check_has_access(
@@ -239,18 +242,15 @@ class Submission(BaseModel, BasePermissionModel):
 
     @transaction.atomic
     def save(self, *args, **kwargs):
-        print("save start")
+        self.full_clean()
         existing_same_user_and_form = Submission.objects.filter(
             user=self.user, form=self.form
         )
-        print(existing_same_user_and_form.exists())
         if existing_same_user_and_form.exists():
             if isinstance(self.form, EventForm):
-                print("is EventForm")
                 user_has_registration = self.form.event.registrations.filter(
                     user=self.user
                 ).exists()
-                print(user_has_registration)
                 if user_has_registration:
                     raise IntegrityError(
                         "Du kan ikke endre innsendt spørreskjema etter påmelding"
@@ -258,13 +258,23 @@ class Submission(BaseModel, BasePermissionModel):
                 else:
                     Submission.objects.filter(user=self.user, form=self.form).delete()
             elif isinstance(self.form, GroupForm):
-                print("is GroupForm")
                 if not self.form.can_submit_multiple:
                     raise IntegrityError("Spørreskjemaet tillater kun én innsending")
             else:
                 raise IntegrityError("Spørreskjemaet tillater kun én innsending")
 
         super().save(*args, **kwargs)
+
+    def clean(self):
+        if isinstance(self.form, GroupForm):
+            if not self.form.is_open_for_submissions:
+                raise ValidationError("Spørreskjemaet er ikke åpent for innsending")
+            if self.form.only_for_group_members and not self.user.is_member_of(
+                self.form.group
+            ):
+                raise ValidationError(
+                    "Spørreskjemaet er kun åpent for medlemmer av gruppen"
+                )
 
     @classmethod
     def _get_form_from_request(cls, request):

@@ -146,7 +146,12 @@ class EventFormSerializer(AnswerableFormSerializer):
 class GroupFormSerializer(AnswerableFormSerializer):
     class Meta:
         model = GroupForm
-        fields = AnswerableFormSerializer.Meta.fields + ("group",)
+        fields = AnswerableFormSerializer.Meta.fields + (
+            "group",
+            "can_submit_multiple",
+            "is_open_for_submissions",
+            "only_for_group_members",
+        )
 
     def to_representation(self, instance):
         self.fields["group"] = GroupSerializer(read_only=True)

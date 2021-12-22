@@ -12,9 +12,10 @@ from app.forms.csv_writer import SubmissionsCsvWriter
 from app.forms.enums import EventFormType
 from app.forms.models.forms import EventForm, Form, Submission
 from app.forms.serializers.submission import SubmissionSerializer
+from app.util.mixins import APIErrorsMixin
 
 
-class SubmissionViewSet(viewsets.ModelViewSet):
+class SubmissionViewSet(APIErrorsMixin, viewsets.ModelViewSet):
     serializer_class = SubmissionSerializer
     queryset = Submission.objects.all()
     permission_classes = [BasicViewPermission]
