@@ -130,9 +130,6 @@ class EventForm(Form):
 
     @classmethod
     def has_create_permission(cls, request):
-        if not request.user:
-            return False
-
         event = Event.objects.get(id=request.data.get("event"))
         return event.has_object_write_permission(request)
 
@@ -251,38 +248,50 @@ class Submission(BaseModel, BasePermissionModel):
         super().save(*args, **kwargs)
 
     def clean(self):
+        self.check_multiple_submissions()
+        if isinstance(self.form, GroupForm):
+            self.check_group_form_open_for_submissions()
+            self.check_group_form_only_for_members()
+
+    def check_multiple_submissions(self):
         existing_same_user_and_form = Submission.objects.filter(
             user=self.user, form=self.form
         )
         if existing_same_user_and_form.exists():
             if isinstance(self.form, EventForm):
-                user_has_registration = self.form.event.registrations.filter(
-                    user=self.user
-                ).exists()
-                if user_has_registration:
-                    raise DuplicateSubmission(
-                        "Du kan ikke endre innsendt spørreskjema etter påmelding"
-                    )
-                else:
-                    Submission.objects.filter(user=self.user, form=self.form).delete()
+                self.check_event_form_has_registration()
+                Submission.objects.filter(user=self.user, form=self.form).delete()
             elif isinstance(self.form, GroupForm):
-                if not self.form.can_submit_multiple:
-                    raise DuplicateSubmission(
-                        "Spørreskjemaet tillater kun én innsending"
-                    )
+                self.check_group_form_can_submit_multiple()
             else:
                 raise DuplicateSubmission("Spørreskjemaet tillater kun én innsending")
-        if isinstance(self.form, GroupForm):
-            if not self.form.is_open_for_submissions:
-                raise FormNotOpenForSubmission(
-                    "Spørreskjemaet er ikke åpent for innsending"
-                )
-            if self.form.only_for_group_members and not self.user.is_member_of(
-                self.form.group
-            ):
-                raise GroupFormOnlyForMembers(
-                    "Spørreskjemaet er kun åpent for medlemmer av gruppen"
-                )
+
+    def check_event_form_has_registration(self):
+        user_has_registration = self.form.event.registrations.filter(
+            user=self.user
+        ).exists()
+        if user_has_registration:
+            raise DuplicateSubmission(
+                "Du kan ikke endre innsendt spørreskjema etter påmelding"
+            )
+
+    def check_group_form_can_submit_multiple(self):
+        if not self.form.can_submit_multiple:
+            raise DuplicateSubmission("Spørreskjemaet tillater kun én innsending")
+
+    def check_group_form_open_for_submissions(self):
+        if not self.form.is_open_for_submissions:
+            raise FormNotOpenForSubmission(
+                "Spørreskjemaet er ikke åpent for innsending"
+            )
+
+    def check_group_form_only_for_members(self):
+        if self.form.only_for_group_members and not self.user.is_member_of(
+            self.form.group
+        ):
+            raise GroupFormOnlyForMembers(
+                "Spørreskjemaet er kun åpent for medlemmer av gruppen"
+            )
 
     @classmethod
     def _get_form_from_request(cls, request):
