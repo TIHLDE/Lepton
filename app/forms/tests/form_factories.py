@@ -29,6 +29,9 @@ class GroupFormFactory(FormFactory):
         model = models.GroupForm
 
     group = factory.SubFactory(GroupFactory)
+    can_submit_multiple = True
+    is_open_for_submissions = True
+    only_for_group_members = False
 
 
 class FieldFactory(DjangoModelFactory):
