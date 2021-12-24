@@ -135,10 +135,7 @@ class EventForm(Form):
     @classmethod
     def has_create_permission(cls, request):
         event = Event.objects.get(id=request.data.get("event"))
-        return (
-            event.has_object_write_permission(request)
-            or request.user.memberships_with_events_access.exists()
-        )
+        return event.has_object_write_permission(request)
 
     def has_event_permission(self, request):
         if request.user is None:
