@@ -22,7 +22,7 @@ fresh: ## Perform a fresh build, install and start the server
 	docker-compose build
 	make makemigrations
 	make migrate
-	# make loaddata
+	make loaddata
 	make start
 
 
