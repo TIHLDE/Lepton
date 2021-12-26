@@ -1,85 +1,99 @@
-help:
-	@echo 'start                  - start the server'
-	@echo 'restart                - rebuild and start the server'
-	@echo 'fresh                  - perform a fresh build, install and start the server'
-	@echo 'createsuperuser        - create a new django superuser'
-	@echo 'makemigrations         - create migration files'
-	@echo 'migrate                - run django migrations'
-	@echo 'dumpdata               - dump current data stored into ./app/fixture.json'
-	@echo 'loaddata               - load fixtures from ./app/fixture.json into the database'
-	@echo 'collectstatic          - collect static files to a single location to be served in production'
-	@echo 'test                   - run test suite'
-	@echo 'format                 - format code and imports'
-	@echo 'check                  - check formatting, imports and linting'
-	@echo 'black                  - format code only'
-	@echo 'isort                  - format imports only'
-	@echo 'flake8                 - check code style'
+.DEFAULT_GOAL := help
 
-## Start the webserver with docker on http://localhost:8000
-start:
+.PHONY: help
+help: ## This help.
+	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
+
+.PHONY: start
+start: ## Start the webserver with docker on http://localhost:8000
 	docker-compose up
 
-down:
+.PHONY: down
+down: ## Take down server
 	docker-compose down -v
 
-restart:
+.PHONY: restart
+restart: ## Rebuild and start the server
 	docker-compose build
-	docker-compose up
+	make start
 
-fresh:
+.PHONY: fresh
+fresh: ## Perform a fresh build, install and start the server
 	docker-compose build
 	make makemigrations
 	make migrate
-	make loaddata
-	docker-compose up
+	# make loaddata
+	make start
 
-createsuperuser: ##@Docker Create a superuser
+
+.PHONY: createsuperuser
+createsuperuser: ## Create a new django superuser
 	docker-compose run --rm web python manage.py createsuperuser
 
-makemigrations: ##@Docker Set up migration files
+
+.PHONY: makemigrations
+makemigrations: ## Create migration files
 	docker-compose run --rm web python manage.py makemigrations
 
-migrate: ##@Docker Perform migrations to database
+.PHONY: migrate
+migrate: ## Run django migrations
 	docker-compose run --rm web python manage.py migrate
 
-dumpdata:
+.PHONY: migrations
+migrations: ## Combine makemigrations and migrate
+	make makemigrations
+	make migrate
+
+.PHONY: dumpdata
+dumpdata: ## Dump current data stored into ./app/fixture.json
 	docker-compose run --rm web python manage.py dumpdata -e admin -e auth.Permission -e contenttypes --indent=4 > ./app/fixture.json
 
-loaddata:
+.PHONY: loaddata
+loaddata: ## Load fixtures from ./app/fixture.json into the database
 	docker-compose run --rm web python manage.py loaddata ./app/fixture.json
 
-collectstatic:
+.PHONY: collectstatic
+collectstatic: ## Collect static files to a single location to be served in production
 	docker-compose run --rm web python manage.py collectstatic
 
-test:
+.PHONY: test
+test: ## Run test suite
 	docker-compose run --rm web pytest ${args}
 
-cov:
+.PHONY: cov
+cov: ## Check test coverage
 	docker-compose run --rm web pytest --cov-config=.coveragerc --cov=app
 
-format:
+.PHONY: format
+format: ## Format code and imports
 	make black
 	make isort
 
-check:
+.PHONY: check
+check: ## Check formatting, imports and linting
 	make black args="--check"
 	make isort args="--check-only"
 	make flake8
 
-black:
+.PHONY: black
+black: ## Format code only
 	docker-compose run --rm web black app/ ${args} --exclude migrations
 
-isort:
+.PHONY: isort
+isort: ## Format imports only
 	docker-compose run --rm web isort . ${args}
 
-flake8:
+.PHONY: flake8
+flake8: ## Fheck code style
 	docker-compose run --rm web flake8 app
 
-PR:
+.PHONY: pr
+pr: ## Pull Request format and checks
 	make format
 	git add .
 	make check
 	make test
 
+.PHONY: shell
 shell: ## Open an interactive Django shell
 	docker-compose run --rm web python manage.py shell
