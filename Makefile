@@ -40,7 +40,7 @@ migrate: ## Run django migrations
 	docker-compose run --rm web python manage.py migrate
 
 .PHONY: migrations
-migrations: ## Combine makemigrations and migrate
+migrations: ## Create migration-files and migrate immediately
 	make makemigrations
 	make migrate
 
