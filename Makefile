@@ -37,7 +37,7 @@ makemigrations: ## Create migration files
 
 .PHONY: migrate
 migrate: ## Run django migrations
-	docker-compose run --rm web python manage.py migrate
+	docker-compose run --rm web python manage.py migrate ${args}
 
 .PHONY: migrations
 migrations: ## Create migration-files and migrate immediately
