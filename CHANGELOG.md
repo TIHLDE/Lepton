@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+## Versjon 2021.12.30
 - ✨ **Gruppeskjemaer**. Admin/leder av gruppe kan styre om det tillates flere besvarelser, om skjemaet er åpent og begrense svar til kun gruppens medlemmer.
 - ✨ **Botsystem**. Medlemmer får nå et varsl når de får en ny bot.
 - ✨ **Botsjef**. Nye botsjefer får nå informasjon om sin nye roller på varsel og epost.
