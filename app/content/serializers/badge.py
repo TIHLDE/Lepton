@@ -29,14 +29,6 @@ class BadgeSerializer(BaseModelSerializer):
         return badge_completion_count / total_user_count * 100
 
 
-class BaseLeaderBoardSerializer(serializers.ModelSerializer):
-    number_of_badges = serializers.SerializerMethodField()
-
-    class Meta:
-        model = User
-        fields = ("number_of_badges",)
-
-
 class LeaderboardSerializer(BaseModelSerializer):
     number_of_badges = serializers.SerializerMethodField()
     user = serializers.SerializerMethodField()

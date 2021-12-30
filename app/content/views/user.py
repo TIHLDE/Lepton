@@ -11,7 +11,12 @@ from sentry_sdk import capture_exception
 from app.common.enums import Groups, GroupType
 from app.common.mixins import ActionMixin
 from app.common.pagination import BasePagination
-from app.common.permissions import IsDev, IsHS, is_admin_user
+from app.common.permissions import (
+    BasicViewPermission,
+    IsDev,
+    IsHS,
+    is_admin_user,
+)
 from app.content.filters import UserFilter
 from app.content.models import User
 from app.content.serializers import (
@@ -36,7 +41,7 @@ class UserViewSet(viewsets.ModelViewSet, ActionMixin):
     """ API endpoint to display one user """
 
     serializer_class = UserSerializer
-    # permission_classes = [BasicViewPermission]
+    permission_classes = [BasicViewPermission]
     queryset = User.objects.all()
     pagination_class = BasePagination
 
