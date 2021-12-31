@@ -1,16 +1,12 @@
-from datetime import timedelta
-
 from rest_framework import status
 
 import pytest
 
-from app.content.factories.badge_factory import BadgeFactory, UserBadgeFactory
 from app.content.factories.registration_factory import RegistrationFactory
 from app.content.factories.strike_factory import StrikeFactory
 from app.content.factories.user_factory import UserFactory
 from app.forms.enums import EventFormType
 from app.forms.tests.form_factories import EventFormFactory
-from app.util.utils import now
 
 pytestmark = pytest.mark.django_db
 
@@ -124,18 +120,3 @@ def test_filter_only_users_with_active_strikes(
         if actual_user_id == expected_user_id:
             found = True
     assert found
-
-
-@pytest.mark.django_db
-def test_only_public_badges_are_shown(member, default_client):
-    badge0 = BadgeFactory(title="public", active_to=now() - timedelta(1))
-    UserBadgeFactory(user=member, badge=badge0)
-
-    badge1 = BadgeFactory(title="not_public", active_to=now() + timedelta(1))
-    UserBadgeFactory(user=member, badge=badge1)
-
-    url = f"{API_USER_BASE_URL}{member.user_id}/badges/"
-    response = default_client.get(url).json()
-
-    assert response["results"][0]["title"] == "public"
-    assert len(response["results"]) == 1

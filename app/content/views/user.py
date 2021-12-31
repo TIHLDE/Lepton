@@ -18,7 +18,7 @@ from app.common.permissions import (
     is_admin_user,
 )
 from app.content.filters import UserFilter
-from app.content.models import User
+from app.content.models import User, UserBadge
 from app.content.serializers import (
     BadgeSerializer,
     EventListSerializer,
@@ -142,7 +142,12 @@ class UserViewSet(viewsets.ModelViewSet, ActionMixin):
             user = self.get_object()
         user_badges = user.user_badges.order_by("-created_at")
         badges = [
-            user_badge.badge for user_badge in user_badges if user_badge.badge.is_public
+            user_badge.badge
+            for user_badge in user_badges
+            if user_badge.badge.is_public
+            or UserBadge.objects.filter(
+                user=request.user, badge=user_badge.badge
+            ).exists()
         ]
         return self.paginate_response(data=badges, serializer=BadgeSerializer)
 
