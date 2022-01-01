@@ -28,14 +28,10 @@ class BasePermissionModel(models.Model):
         return check_has_access(cls.write_access, request)
 
     def has_object_write_permission(self, request):
-        if not len(self.write_access):
-            return True
-        return check_has_access(self.write_access, request)
+        return self.has_write_permission(request)
 
     def has_object_read_permission(self, request):
-        if not len(self.read_access):
-            return True
-        return check_has_access(self.read_access, request)
+        return self.has_read_permission(request)
 
 
 class BasicViewPermission(DRYPermissions):
@@ -62,9 +58,9 @@ def check_has_access(groups_with_access, request):
             for group_name in groups_with_access:
                 if str(membership.group_id).lower() == str(group_name).lower():
                     return True
-        return False
     except AttributeError:
         return False
+    return False
 
 
 def set_user_id(request):

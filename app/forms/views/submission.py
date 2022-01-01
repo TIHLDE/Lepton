@@ -10,11 +10,12 @@ from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission
 from app.forms.csv_writer import SubmissionsCsvWriter
 from app.forms.enums import EventFormType
+from app.forms.mixins import APIFormErrorsMixin
 from app.forms.models.forms import EventForm, Form, Submission
 from app.forms.serializers.submission import SubmissionSerializer
 
 
-class SubmissionViewSet(viewsets.ModelViewSet):
+class SubmissionViewSet(APIFormErrorsMixin, viewsets.ModelViewSet):
     serializer_class = SubmissionSerializer
     queryset = Submission.objects.all()
     permission_classes = [BasicViewPermission]

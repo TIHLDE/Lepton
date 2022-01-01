@@ -2,13 +2,17 @@ from rest_framework import status
 
 import pytest
 
+from app.common.enums import MembershipType
 from app.content.factories import RegistrationFactory
 from app.forms.enums import EventFormType
 from app.forms.tests.form_factories import (
     AnswerFactory,
     EventFormFactory,
+    GroupFormFactory,
     SubmissionFactory,
 )
+from app.group.factories import MembershipFactory
+from app.util.test_utils import get_api_client
 
 pytestmark = pytest.mark.django_db
 
@@ -48,6 +52,11 @@ def _create_submission_data_with_text_answer(field, answer_text):
 @pytest.fixture()
 def event_form():
     return EventFormFactory()
+
+
+@pytest.fixture()
+def group_form():
+    return GroupFormFactory()
 
 
 @pytest.fixture()
@@ -101,15 +110,15 @@ def test_member_can_add_submission_with_answer_text(
     assert response.status_code == status.HTTP_201_CREATED
 
 
-def test_member_cannot_add_several_submissions(member_client, form, submission, answer):
+def test_member_cannot_add_several_submissions(member_client, form):
     submission = SubmissionFactory(form=form)
     answer = AnswerFactory(submission=submission, field=form.fields.first())
     url = _get_submission_url(answer.submission.form)
     first_submission_data = _create_submission_data_with_text_answer(
-        form.fields.first(), "This is the first time I love this!"
+        answer.submission.form.fields.first(), "This is the first time I love this!"
     )
     second_submission_data = _create_submission_data_with_text_answer(
-        form.fields.first(), "This is the second time I love this!"
+        answer.submission.form.fields.first(), "This is the second time I love this!"
     )
 
     member_client.post(url, first_submission_data)
@@ -182,3 +191,83 @@ def test_submission_detail_illegal_methods_are_forbidden(
     response = member_client.generic(method, url)
 
     assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+@pytest.mark.parametrize(
+    "client, status_code",
+    [
+        (pytest.lazy_fixture("member_client"), status.HTTP_201_CREATED),
+        (pytest.lazy_fixture("default_client"), status.HTTP_403_FORBIDDEN),
+    ],
+)
+def test_create_group_form_submission(client, status_code, group_form):
+    url = _get_submission_url(group_form)
+
+    response = client.post(url, data=_create_submission_data(group_form.fields.first()))
+
+    assert response.status_code == status_code
+
+
+@pytest.mark.parametrize(
+    "can_submit_multiple, status_code",
+    [(True, status.HTTP_201_CREATED), (False, status.HTTP_409_CONFLICT),],
+)
+def test_create_group_form_submission_when_can_submit_multiple(
+    member_client, can_submit_multiple, status_code
+):
+    group_form = GroupFormFactory(can_submit_multiple=can_submit_multiple)
+    url = _get_submission_url(group_form)
+
+    member_client.post(url, data=_create_submission_data(group_form.fields.first()))
+    response = member_client.post(
+        url, data=_create_submission_data(group_form.fields.first())
+    )
+
+    assert response.status_code == status_code
+
+
+@pytest.mark.parametrize(
+    "client, is_open_for_submissions, status_code",
+    [
+        (pytest.lazy_fixture("member_client"), True, status.HTTP_201_CREATED),
+        (pytest.lazy_fixture("member_client"), False, status.HTTP_403_FORBIDDEN),
+        (pytest.lazy_fixture("default_client"), True, status.HTTP_403_FORBIDDEN),
+        (pytest.lazy_fixture("default_client"), False, status.HTTP_403_FORBIDDEN),
+    ],
+)
+def test_create_group_form_submission_when_is_open_for_submissions(
+    client, is_open_for_submissions, status_code
+):
+    group_form = GroupFormFactory(is_open_for_submissions=is_open_for_submissions)
+    url = _get_submission_url(group_form)
+
+    response = client.post(url, data=_create_submission_data(group_form.fields.first()))
+
+    assert response.status_code == status_code
+
+
+@pytest.mark.parametrize(
+    "is_member_of_group, only_for_group_members, status_code",
+    [
+        (True, True, status.HTTP_201_CREATED),
+        (True, False, status.HTTP_201_CREATED),
+        (False, True, status.HTTP_403_FORBIDDEN),
+        (False, False, status.HTTP_201_CREATED),
+    ],
+)
+def test_create_group_form_submission_when_only_for_group_members(
+    member, group, is_member_of_group, only_for_group_members, status_code
+):
+    group_form = GroupFormFactory(
+        group=group, only_for_group_members=only_for_group_members
+    )
+    if is_member_of_group:
+        MembershipFactory(
+            user=member, group=group, membership_type=MembershipType.MEMBER
+        )
+    url = _get_submission_url(group_form)
+
+    client = get_api_client(user=member)
+    response = client.post(url, data=_create_submission_data(group_form.fields.first()))
+
+    assert response.status_code == status_code
