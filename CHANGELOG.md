@@ -13,10 +13,14 @@
 ---
 
 ## Neste versjon
+
+
+## Versjon 2022.01.01
 - ✨ **Gruppeskjemaer**. Admin/leder av gruppe kan styre om det tillates flere besvarelser, om skjemaet er åpent og begrense svar til kun gruppens medlemmer.
 - ✨ **Botsystem**. Medlemmer får nå et varsl når de får en ny bot.
 - ✨ **Botsjef**. Nye botsjefer får nå informasjon om sin nye roller på varsel og epost.
 - ✨ **Botsystem**. Grupper kan nå ha et botsystem og lovverk. Det er kun åpent for medlemmene og medlemmer kan gi bøter til hverandre.
+
 ## Versjon 2021.11.30
 - ✨ **Påmeldinger**. Brukere kan abonnere på sine påmeldinger til arrangementer gjennom kalenderen sin.
 - ✨ **Sider**. Lagt til plassering og rekkefølge på sider.
