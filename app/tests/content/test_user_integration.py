@@ -10,7 +10,7 @@ from app.forms.tests.form_factories import EventFormFactory
 
 pytestmark = pytest.mark.django_db
 
-API_USER_BASE_URL = "/user/"
+API_USER_BASE_URL = "/users/"
 
 
 def _get_user_forms_url():
@@ -120,3 +120,40 @@ def test_filter_only_users_with_active_strikes(
         if actual_user_id == expected_user_id:
             found = True
     assert found
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    ("url", "status_code"),
+    [
+        ("me/", status.HTTP_200_OK),
+        ("me/groups/", status.HTTP_200_OK),
+        ("me/badges/", status.HTTP_200_OK),
+        ("me/events/", status.HTTP_200_OK),
+        ("me/forms/", status.HTTP_200_OK),
+        ("me/strikes/", status.HTTP_200_OK),
+    ],
+)
+def test_user_actions(url, status_code, user, api_client):
+
+    url = f"{API_USER_BASE_URL}{url}"
+    client = api_client(user=user)
+
+    response = client.get(url)
+    assert response.status_code == status_code
+
+
+def test_user_detail_strikes_as_admin(admin_user, api_client):
+    url = f"{API_USER_BASE_URL}{admin_user.user_id}/strikes/"
+    client = api_client(user=admin_user)
+
+    response = client.get(url)
+    assert response.status_code == status.HTTP_200_OK
+
+
+def test_user_detail_strikes_as_user(user, api_client):
+    url = f"{API_USER_BASE_URL}{user.user_id}/strikes/"
+    client = api_client(user=user)
+
+    response = client.get(url)
+    assert response.status_code == status.HTTP_403_FORBIDDEN

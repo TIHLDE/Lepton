@@ -20,6 +20,7 @@ from app.content.factories import (
 )
 from app.forms.tests.form_factories import FormFactory, SubmissionFactory
 from app.group.factories import GroupFactory, MembershipFactory
+from app.group.factories.fine_factory import FineFactory
 from app.util.test_utils import add_user_to_group_with_name, get_api_client
 
 
@@ -158,3 +159,8 @@ def notification():
 @pytest.fixture()
 def weekly_business():
     return WeeklyBusinessFactory()
+
+
+@pytest.fixture()
+def fine():
+    return FineFactory()

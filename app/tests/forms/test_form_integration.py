@@ -129,9 +129,9 @@ def test_list_forms_as_member_is_not_permitted(member):
     [
         (AdminGroup.HS, status.HTTP_200_OK),
         (AdminGroup.INDEX, status.HTTP_200_OK),
-        (AdminGroup.NOK, status.HTTP_200_OK),
-        (AdminGroup.SOSIALEN, status.HTTP_200_OK),
-        (AdminGroup.PROMO, status.HTTP_200_OK),
+        (AdminGroup.NOK, status.HTTP_403_FORBIDDEN),
+        (AdminGroup.SOSIALEN, status.HTTP_403_FORBIDDEN),
+        (AdminGroup.PROMO, status.HTTP_403_FORBIDDEN),
     ],
 )
 def test_list_forms_as_member_of_board_or_sub_group(
@@ -206,9 +206,7 @@ def test_create_forms_as_member_is_not_permitted(form, member):
     assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
-@pytest.mark.parametrize(
-    "group_name", [AdminGroup.HS, AdminGroup.INDEX, AdminGroup.NOK]
-)
+@pytest.mark.parametrize("group_name", [AdminGroup.HS, AdminGroup.INDEX])
 def test_create_forms_as_admin_is_permitted(form, member, group_name):
     """An admin should be able to create forms."""
     client = get_api_client(user=member, group_name=group_name)
@@ -240,13 +238,13 @@ def test_update_form_as_member_is_not_permitted(member, form):
     [
         (AdminGroup.HS, status.HTTP_200_OK),
         (AdminGroup.INDEX, status.HTTP_200_OK),
-        (AdminGroup.NOK, status.HTTP_200_OK),
-        (AdminGroup.SOSIALEN, status.HTTP_200_OK),
+        (AdminGroup.NOK, status.HTTP_403_FORBIDDEN),
+        (AdminGroup.SOSIALEN, status.HTTP_403_FORBIDDEN),
         (AdminGroup.PROMO, status.HTTP_403_FORBIDDEN),
     ],
 )
 def test_admin_update_form_permissions(form, member, group_name, expected_status_code):
-    """HS, Index, NoK and Sosialen is allowed to update form, while Promo is not."""
+    """HS and Index are allowed to update form, while NoK, Sosialen and Promo are not."""
     client = get_api_client(user=member, group_name=group_name)
     url = _get_form_detail_url(form)
     response = client.put(url, _get_form_update_data(form))
@@ -452,17 +450,17 @@ def test_delete_form_as_member_is_not_permitted(member, form):
 @pytest.mark.parametrize(
     ("group_name", "expected_status_code"),
     [
-        (AdminGroup.SOSIALEN, status.HTTP_200_OK),
-        (AdminGroup.PROMO, status.HTTP_403_FORBIDDEN),
         (AdminGroup.HS, status.HTTP_200_OK),
         (AdminGroup.INDEX, status.HTTP_200_OK),
-        (AdminGroup.NOK, status.HTTP_200_OK),
+        (AdminGroup.SOSIALEN, status.HTTP_403_FORBIDDEN),
+        (AdminGroup.PROMO, status.HTTP_403_FORBIDDEN),
+        (AdminGroup.NOK, status.HTTP_403_FORBIDDEN),
     ],
 )
 def test_delete_form_as_member_of_admin_group(
     member, group_name, expected_status_code, form
 ):
-    """Only admins in HS, Index and Nok should be allowed to delete forms."""
+    """Only admins in HS and Index should be allowed to delete forms."""
     client = get_api_client(user=member, group_name=group_name)
     url = _get_form_detail_url(form)
     response = client.delete(url)

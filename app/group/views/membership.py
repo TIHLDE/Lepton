@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
@@ -56,7 +57,7 @@ class MembershipViewSet(viewsets.ModelViewSet):
                     MailCreator(title)
                     .add_paragraph(f"Hei {membership.user.first_name}!")
                     .add_paragraph(description)
-                    .add_button("Se gruppen", f"/grupper/{membership.group.slug}/")
+                    .add_button("Se gruppen", membership.group.website_url,)
                     .generate_string()
                 ).send_notification(
                     description=description, link=f"/grupper/{membership.group.slug}/",
@@ -83,7 +84,10 @@ class MembershipViewSet(viewsets.ModelViewSet):
                 MailCreator(title)
                 .add_paragraph(f"Hei {membership.user.first_name}!")
                 .add_paragraph(description)
-                .add_button("Se gruppen", f"/grupper/{membership.group.slug}/")
+                .add_button(
+                    "Se gruppen",
+                    f"{settings.WEBSITE_URL}/grupper/{membership.group.slug}/",
+                )
                 .generate_string()
             ).send_notification(
                 description=description, link=f"/grupper/{membership.group.slug}/",

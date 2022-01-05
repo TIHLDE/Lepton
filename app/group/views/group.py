@@ -48,6 +48,9 @@ class GroupViewSet(viewsets.ModelViewSet, ActionMixin):
             if serializer.is_valid():
                 serializer.save()
                 return Response(data=serializer.data, status=status.HTTP_200_OK)
+            return Response(
+                {"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST,
+            )
         except Group.DoesNotExist:
             return Response(
                 {"detail": ("Gruppen eksisterer ikke")},
@@ -75,7 +78,7 @@ class GroupViewSet(viewsets.ModelViewSet, ActionMixin):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-    @action(detail=True, methods=["get"], url_path="membership-history")
+    @action(detail=True, methods=["get"], url_path="membership-histories")
     def get_group_history(self, request, *args, **kwargs):
         group = self.get_object()
         self.pagination_class = BasePagination

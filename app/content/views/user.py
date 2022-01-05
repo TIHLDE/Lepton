@@ -21,6 +21,7 @@ from app.content.filters import UserFilter
 from app.content.models import User, UserBadge
 from app.content.serializers import (
     BadgeSerializer,
+    DefaultUserSerializer,
     EventListSerializer,
     UserAdminSerializer,
     UserCreateSerializer,
@@ -51,7 +52,9 @@ class UserViewSet(viewsets.ModelViewSet, ActionMixin):
 
     def get_serializer_class(self):
         if hasattr(self, "action") and self.action == "list":
-            return UserListSerializer
+            if is_admin_user(self.request):
+                return UserListSerializer
+            return DefaultUserSerializer
         return super().get_serializer_class()
 
     def retrieve(self, request, *args, **kwargs):
@@ -123,7 +126,7 @@ class UserViewSet(viewsets.ModelViewSet, ActionMixin):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-    @action(detail=False, methods=["get"], url_path="me/group")
+    @action(detail=False, methods=["get"], url_path="me/groups")
     def get_user_memberships(self, request, *args, **kwargs):
         memberships = request.user.memberships.all()
         groups = [

@@ -8,6 +8,7 @@ from app.content.views.badge import (
     LeaderboardViewSet,
     LeaderboardForBadgeViewSet,
 )
+from app.content.views.user_calendar_events import UserCalendarEvents
 from app.content.views.registration import RegistrationViewSet
 from app.content.views.accept_form import accept_form
 from app.content.views.notification import NotificationViewSet
