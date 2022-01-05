@@ -10,7 +10,7 @@ from app.content.factories.user_factory import UserFactory
 from app.util import now
 from app.util.test_utils import get_api_client
 
-API_WEEKLY_BUSINESS_BASE_URL = "/api/v1/weekly-business/"
+API_WEEKLY_BUSINESS_BASE_URL = "/weekly-businesses/"
 
 
 def _get_weekly_business_url():

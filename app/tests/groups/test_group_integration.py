@@ -5,7 +5,7 @@ import pytest
 from app.common.enums import AdminGroup
 from app.util.test_utils import get_api_client
 
-GROUP_URL = "/api/v1/group/"
+GROUP_URL = "/groups/"
 
 
 def _get_group_url(group=None):

@@ -27,13 +27,19 @@ class FormChildAdmin(PolymorphicChildModelAdmin):
     """ Base admin class for all child models """
 
     base_model = models.Form
+    inlines = (FieldInline,)
+    display_child_model_admin_in_overview = True
+    show_in_index = display_child_model_admin_in_overview
 
 
 @admin.register(models.EventForm)
 class EventFormAdmin(FormChildAdmin):
     base_model = models.EventForm
-    show_in_index = True  # makes child model admin visible in main admin site
-    inlines = (FieldInline,)
+
+
+@admin.register(models.GroupForm)
+class GroupFormAdmin(FormChildAdmin):
+    base_model = models.GroupForm
 
 
 @admin.register(models.Form)

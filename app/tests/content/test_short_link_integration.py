@@ -4,7 +4,7 @@ import pytest
 
 from app.util.test_utils import get_api_client
 
-SHORT_LINK_URL = "/api/v1/short-link/"
+SHORT_LINK_URL = "/short-links/"
 
 
 def _get_short_link_url(short_link=None):

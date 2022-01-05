@@ -26,16 +26,6 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, viewsets.ModelViewSet):
         event_id = self.kwargs.get("event_id", None)
         return Registration.objects.filter(event__pk=event_id).prefetch_related("user")
 
-    def retrieve(self, request, *args, **kwargs):
-        """Return own registration for members and any registration for admins."""
-        if self._non_admin_tries_to_access_another_registration():
-            raise PermissionDenied("Du har ikke tilgang til denne påmeldingen")
-
-        return super().retrieve(request, *args, **kwargs)
-
-    def _non_admin_tries_to_access_another_registration(self):
-        return self._is_not_own_registration() and not is_admin_user(self.request)
-
     def _is_own_registration(self):
         user_id = self.kwargs.get("user_id", None)
         return self.request.id == user_id

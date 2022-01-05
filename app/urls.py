@@ -38,18 +38,16 @@ schema_view = get_schema_view(
 urlpatterns = [
     path("flower/", flower_admin_site.urls),
     path(
-        "api/",
-        schema_view.with_ui("swagger", cache_timeout=0),
-        name="schema-swagger-ui",
+        "", schema_view.with_ui("swagger", cache_timeout=0), name="schema-swagger-ui",
     ),
-    path("api/admin/", admin.site.urls),
-    path("api/", include("rest_framework.urls")),
+    path("admin/", admin.site.urls),
+    path("", include("rest_framework.urls")),
     # Our endpoints
-    path("api/v1/", include("app.career.urls")),
-    path("api/v1/", include("app.content.urls")),
-    path("api/v1/", include("app.group.urls")),
-    path("api/v1/", include("app.payment.urls")),
-    path("api/v1/auth/", include("app.authentication.urls")),
-    path("api/v1/forms/", include("app.forms.urls")),
-    path("api/v1/gallery/", include("app.gallery.urls")),
+    path("", include("app.career.urls")),
+    path("", include("app.content.urls")),
+    path("", include("app.group.urls")),
+    path("", include("app.payment.urls")),
+    path("auth/", include("app.authentication.urls")),
+    path("forms/", include("app.forms.urls")),
+    path("galleries/", include("app.gallery.urls")),
 ]

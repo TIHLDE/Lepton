@@ -6,7 +6,7 @@ from app.common.enums import AdminGroup
 from app.content.factories.page_factory import PageFactory
 from app.util.test_utils import get_api_client
 
-PAGE_URL = "/api/v1/page/"
+PAGE_URL = "/pages/"
 
 
 def _get_page_url(page=None):

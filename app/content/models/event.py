@@ -5,18 +5,25 @@ from django.db import models
 from django.db.models import signals
 
 from app.common.enums import AdminGroup
-from app.common.permissions import BasePermissionModel
+from app.common.permissions import (
+    BasePermissionModel,
+    check_has_access,
+    set_user_id,
+)
+from app.content.models import Category
+from app.content.models.prioritiy import Priority
+from app.content.models.user import User
+from app.content.signals import send_event_reminders
 from app.forms.enums import EventFormType
+from app.group.models.group import Group
 from app.util.models import BaseModel, OptionalImage
 from app.util.utils import now, yesterday
 
-from ..signals import send_event_reminders
-from .category import Category
-from .prioritiy import Priority
-from .user import User
-
 
 class Event(BaseModel, OptionalImage, BasePermissionModel):
+
+    write_access = AdminGroup.admin()
+
     title = models.CharField(max_length=200)
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
@@ -24,6 +31,14 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
     description = models.TextField(default="", blank=True)
     category = models.ForeignKey(
         Category, blank=True, null=True, default=None, on_delete=models.SET_NULL
+    )
+    organizer = models.ForeignKey(
+        Group,
+        blank=True,
+        null=True,
+        default=None,
+        on_delete=models.SET_NULL,
+        related_name="events",
     )
 
     """ Strike fields """
@@ -48,14 +63,13 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
     registration_priorities = models.ManyToManyField(
         Priority, blank=True, default=None, related_name="priorities"
     )
+    only_allow_prioritized = models.BooleanField(default=False)
 
     """ Schedular fields """
     end_date_schedular_id = models.CharField(max_length=100, blank=True, null=True)
     sign_off_deadline_schedular_id = models.CharField(
         max_length=100, blank=True, null=True
     )
-
-    write_access = AdminGroup.all()
 
     def __str__(self):
         return f"{self.title} - starting {self.start_date} at {self.location}"
@@ -85,6 +99,9 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
     def get_waiting_list(self):
         """ Number of users on the waiting list """
         return self.registrations.filter(is_on_wait=True)
+
+    def user_has_attended_event(self, user):
+        return self.get_queue().filter(user=user, has_attended=True).exists()
 
     @property
     def is_past_sign_off_deadline(self):
@@ -117,6 +134,56 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
     @property
     def survey(self):
         return self.forms.filter(type=EventFormType.SURVEY).first()
+
+    def check_request_user_has_access_through_organizer(self, user, organizer):
+        return user.memberships_with_events_access.filter(group=organizer).exists()
+
+    def has_object_write_permission(self, request):
+        if request.id is None:
+            set_user_id(request)
+
+        if request.user is None:
+            return False
+
+        has_access_to_new_organizer = (
+            self.check_request_user_has_access_through_organizer(
+                request.user, request.data["organizer"]
+            )
+            if request.data.get("organizer", None)
+            and request.data["organizer"] != self.organizer
+            else True
+        )
+
+        has_access_to_current_and_new_organizer = (
+            (
+                self.check_request_user_has_access_through_organizer(
+                    request.user, self.organizer
+                )
+                and has_access_to_new_organizer
+            )
+            if self.organizer
+            else request.user.memberships_with_events_access.exists()
+        )
+
+        return (
+            check_has_access(self.write_access, request)
+            or has_access_to_current_and_new_organizer
+        )
+
+    @classmethod
+    def has_write_permission(cls, request):
+        if request.user is None:
+            return False
+        return (
+            (
+                check_has_access(cls.write_access, request)
+                or cls.check_request_user_has_access_through_organizer(
+                    cls, request.user, request.data["organizer"]
+                )
+            )
+            if request.data.get("organizer", None)
+            else request.user.memberships_with_events_access.exists()
+        )
 
     def clean(self):
         self.validate_start_end_registration_times()
