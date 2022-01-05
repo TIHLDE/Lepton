@@ -36,7 +36,6 @@ from app.content.serializers.user import (
     UserListSerializer,
     UserMemberSerializer,
     UserSerializer,
-    DefaultUserSerializer,
 )
 from app.content.serializers.user_badge import UserBadgeSerializer
 from app.content.serializers.warning import WarningSerializer
