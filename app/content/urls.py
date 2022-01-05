@@ -49,7 +49,7 @@ router.register(
 )
 router.register("badges", BadgeViewSet, basename="badge")
 router.register(r"badges/(?P<id>[^\.]+)/users", UserBadgeViewSet, basename="user-badge")
-router.register("page", PageViewSet)
+router.register("pages", PageViewSet)
 router.register("strikes", StrikeViewSet, basename="strikes")
 
 urlpatterns = [
