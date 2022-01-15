@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+## Versjon 2022.01.15
 - ⚡ **Botsystem**. Lovverket er bedre sortert ved at paragraf-nummer nå lagres separat.
 
 ## Versjon 2022.01.01
