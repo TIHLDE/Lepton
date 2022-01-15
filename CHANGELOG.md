@@ -13,7 +13,8 @@
 ---
 
 ## Neste versjon
-
+## Versjon 2022.01.15
+- ⚡ **Botsystem**. Lovverket er bedre sortert ved at paragraf-nummer nå lagres separat.
 
 ## Versjon 2022.01.01
 - ✨ **Gruppeskjemaer**. Admin/leder av gruppe kan styre om det tillates flere besvarelser, om skjemaet er åpent og begrense svar til kun gruppens medlemmer.
