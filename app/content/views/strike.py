@@ -37,11 +37,10 @@ class StrikeViewSet(viewsets.ModelViewSet):
             request.data["description"] = get_strike_description(enum)
             request.data["strike_size"] = get_strike_strike_size(enum)
 
-        serializer = StrikeSerializer(data=request.data)
+        serializer = StrikeSerializer(data=request.data, context={"request": request})
         serializer.is_valid(raise_exception=True)
 
         user = get_object_or_404(User, user_id=request.data["user_id"])
-
         if "event_id" in request.data:
             event = get_object_or_404(Event, id=request.data["event_id"])
             serializer.save(user=user, event=event, creator=request.user)
