@@ -25,7 +25,7 @@ from app.util.utils import midday, now, yesterday
 class EventViewSet(viewsets.ModelViewSet, ActionMixin):
     serializer_class = EventSerializer
     permission_classes = [BasicViewPermission]
-    queryset = Event.objects.filter(start_date__gte=yesterday()).order_by("start_date")
+    queryset = Event.objects.all()
     pagination_class = BasePagination
 
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
@@ -39,7 +39,7 @@ class EventViewSet(viewsets.ModelViewSet, ActionMixin):
         """
 
         if self.kwargs or "expired" in self.request.query_params:
-            queryset = Event.objects.all()
+            queryset = self.filter_queryset(self.queryset)
         else:
             midday_yesterday = midday(yesterday())
             midday_today = midday(now())
@@ -156,13 +156,13 @@ class EventViewSet(viewsets.ModelViewSet, ActionMixin):
             )
 
         if self.request.user.is_HS_or_Index_member:
-            events = self.queryset
+            events = self.get_queryset()
         else:
             allowed_organizers = Group.objects.filter(
                 memberships__in=self.request.user.memberships_with_events_access
             )
             if allowed_organizers.exists():
-                events = self.queryset.filter(
+                events = self.get_queryset().filter(
                     Q(organizer__in=allowed_organizers) | Q(organizer=None)
                 )
             else:
