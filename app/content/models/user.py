@@ -8,11 +8,12 @@ from django.contrib.auth.models import (
     PermissionsMixin,
 )
 from django.db import models
+from django.db.models import Q
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 
-from app.common.enums import AdminGroup, Groups, MembershipType
+from app.common.enums import AdminGroup, Groups, GroupType, MembershipType
 from app.common.permissions import check_has_access
 from app.util.models import BaseModel, OptionalImage
 from app.util.utils import disable_for_loaddata, now
@@ -56,6 +57,7 @@ STUDY = (
     (3, "DigInc"),
     (4, "DigSam"),
     (5, "Drift"),
+    (6, "Info"),
 )
 
 GENDER = (
@@ -93,6 +95,26 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
     def is_TIHLDE_member(self):
         return self.memberships.filter(group__slug=Groups.TIHLDE).exists()
 
+    @property
+    def is_HS_or_Index_member(self):
+        return self.memberships.filter(
+            group__slug__in=[AdminGroup.HS, AdminGroup.INDEX]
+        ).exists()
+
+    @property
+    def memberships_with_events_access(self):
+        return self.memberships.filter(
+            (
+                Q(membership_type=MembershipType.LEADER)
+                & (
+                    Q(group__type=GroupType.COMMITTEE)
+                    | Q(group__type=GroupType.INTERESTGROUP)
+                )
+            )
+            | Q(group__type=GroupType.SUBGROUP)
+            | Q(group__type=GroupType.BOARD)
+        )
+
     def has_perm(self, perm, obj=None):
         return self.is_superuser
 
@@ -110,6 +132,14 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
         from app.forms.models.forms import Form
 
         return Form.objects.filter(submissions__user=self)
+
+    def is_member_of(self, group):
+        return self.memberships.filter(group=group).exists()
+
+    def is_leader_of(self, group):
+        return self.memberships.filter(
+            group=group, membership_type=MembershipType.LEADER
+        ).exists()
 
     def has_unanswered_evaluations(self):
         return self.get_unanswered_evaluations().exists()
@@ -139,12 +169,11 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
 
     @classmethod
     def has_list_permission(cls, request):
-        try:
-            return check_has_access(cls.has_access, request) or len(
-                request.user.memberships.filter(membership_type=MembershipType.LEADER)
-            )
-        except AttributeError:
-            return check_has_access(cls.has_access, request)
+        return (
+            request.user
+            and request.user.is_TIHLDE_member
+            or check_has_access(cls.has_access, request)
+        )
 
     @staticmethod
     def has_read_permission(request):

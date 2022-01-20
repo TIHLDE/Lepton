@@ -23,7 +23,7 @@ jobs:
 
       - name: Iterate CHANGELOG
         run: |
-          python .github/scripts/changeloger.py
+          python .github/scripts/changelogger.py
         
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3

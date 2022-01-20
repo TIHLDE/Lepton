@@ -18,6 +18,7 @@ from app.content.factories import (
 )
 from app.forms.tests.form_factories import FormFactory, SubmissionFactory
 from app.group.factories import GroupFactory, MembershipFactory
+from app.group.factories.fine_factory import FineFactory
 from app.util.test_utils import add_user_to_group_with_name, get_api_client
 
 
@@ -69,7 +70,9 @@ def admin_user():
 
 @pytest.fixture()
 def member():
-    return add_user_to_group_with_name(UserFactory(), Groups.TIHLDE)
+    user = UserFactory()
+    add_user_to_group_with_name(user, Groups.TIHLDE)
+    return user
 
 
 @pytest.fixture()
@@ -145,3 +148,8 @@ def notification():
 @pytest.fixture()
 def weekly_business():
     return WeeklyBusinessFactory()
+
+
+@pytest.fixture()
+def fine():
+    return FineFactory()

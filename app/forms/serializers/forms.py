@@ -7,6 +7,8 @@ from app.common.mixins import OrderedModelSerializerMixin
 from app.common.serializers import BaseModelSerializer
 from app.content.serializers import EventListSerializer
 from app.forms.models import EventForm, Field, Form, Option
+from app.forms.models.forms import GroupForm
+from app.group.serializers import GroupSerializer
 
 
 class OptionSerializer(BaseModelSerializer):
@@ -63,8 +65,12 @@ class FormSerializer(BaseModelSerializer):
 
     @atomic
     def update(self, instance, validated_data):
-        validated_fields = validated_data.pop("fields")
+        validated_fields = validated_data.pop("fields", None)
         super().update(instance, validated_data)
+
+        # Must explicitly check if is None, because "[]" evaluates to falsy but should be looped
+        if validated_fields is None:
+            return instance
 
         field_ids_to_keep = list()
 
@@ -141,6 +147,21 @@ class EventFormSerializer(AnswerableFormSerializer):
         return super(EventFormSerializer, self).to_representation(instance)
 
 
+class GroupFormSerializer(AnswerableFormSerializer):
+    class Meta:
+        model = GroupForm
+        fields = AnswerableFormSerializer.Meta.fields + (
+            "group",
+            "can_submit_multiple",
+            "is_open_for_submissions",
+            "only_for_group_members",
+        )
+
+    def to_representation(self, instance):
+        self.fields["group"] = GroupSerializer(read_only=True)
+        return super().to_representation(instance)
+
+
 class FormInSubmissionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Form
@@ -162,6 +183,7 @@ class FormPolymorphicSerializer(PolymorphicSerializer, serializers.ModelSerializ
     model_serializer_mapping = {
         Form: AnswerableFormSerializer,
         EventForm: EventFormSerializer,
+        GroupForm: GroupFormSerializer,
     }
 
     class Meta:

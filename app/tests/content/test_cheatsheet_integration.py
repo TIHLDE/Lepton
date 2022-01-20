@@ -5,7 +5,7 @@ import pytest
 from app.common.enums import AdminGroup, UserClass, UserStudy
 from app.util.test_utils import get_api_client
 
-API_CHEATSHEET_BASE_URL = "/cheatsheet/"
+API_CHEATSHEET_BASE_URL = "/cheatsheets/"
 
 
 def get_study(study):

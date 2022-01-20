@@ -5,13 +5,14 @@ from django.db import models
 from django.db.models import Q
 
 from app.common.enums import AdminGroup, Groups, StrikeEnum
-from app.common.permissions import BasePermissionModel, check_has_access
+from app.common.permissions import BasePermissionModel
 from app.content.exceptions import (
     EventIsFullError,
     EventSignOffDeadlineHasPassed,
     StrikeError,
     UnansweredFormError,
 )
+from app.content.models.event import Event
 from app.content.models.strike import create_strike
 from app.forms.enums import EventFormType
 from app.util import EnumUtils, now
@@ -51,30 +52,34 @@ class Registration(BaseModel, BasePermissionModel):
 
     @classmethod
     def has_retrieve_permission(cls, request):
-        return check_has_access(cls.has_retrieve_access, request,)
+        return True
 
     @classmethod
     def has_list_permission(cls, request):
-        return check_has_access(cls.has_access, request,)
+        return cls.has_event_permission(cls, request)
 
-    @staticmethod
-    def has_write_permission(request):
-       return request.user and bool(request.user.is_TIHLDE_member)
+    @classmethod
+    def has_write_permission(cls, request):
+       return bool(request.user) and bool(request.user.is_TIHLDE_member)
 
-    @staticmethod
-    def has_create_permission(request):
-        return request.id is not None
+    def has_event_permission(self, request):
+        if request.user is None:
+            return False
+
+        event = Event.objects.get(id=request.parser_context["kwargs"]["event_id"])
+        return event.has_object_write_permission(request)
+
+    def is_own_registration(self, request):
+        return self.user.user_id == request.id
 
     def has_object_update_permission(self, request):
-        return check_has_access(self.has_access, request,)
+        return self.has_event_permission(request)
 
     def has_object_destroy_permission(self, request):
-        if self.user.user_id == request.id:
-            return True
-        return check_has_access(self.has_access, request,)
+        return self.is_own_registration(request) or self.has_event_permission(request)
 
     def has_object_retrieve_permission(self, request):
-        return self.has_object_destroy_permission(request)
+        return self.is_own_registration(request) or self.has_event_permission(request)
 
     def __str__(self):
         return (

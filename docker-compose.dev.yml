@@ -12,7 +12,7 @@ services:
     image: leptondevregistry.azurecr.io/lepton:latest
     container_name: celery
     entrypoint: []
-    command: celery -A app worker -E -l info --without-heartbeat --without-gossip --without-mingle
+    command: celery -A app worker -E -l info
   flower:
     image: leptondevregistry.azurecr.io/lepton:latest
     container_name: flower

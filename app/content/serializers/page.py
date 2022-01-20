@@ -1,11 +1,12 @@
 from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
 
+from app.common.mixins import OrderedModelSerializerMixin
 from app.common.serializers import BaseModelSerializer
 from app.content.models import Page
 
 
-class PageSerializer(BaseModelSerializer):
+class PageSerializer(BaseModelSerializer, OrderedModelSerializerMixin):
     children = SerializerMethodField()
     path = SerializerMethodField()
 
@@ -21,6 +22,7 @@ class PageSerializer(BaseModelSerializer):
             "updated_at",
             "image",
             "image_alt",
+            "order",
         )
 
     def get_children(self, obj):
@@ -35,11 +37,7 @@ class PageListSerializer(BaseModelSerializer):
 
     class Meta:
         model = Page
-        fields = (
-            "slug",
-            "title",
-            "path",
-        )
+        fields = ("slug", "title", "path", "order")
 
     def get_path(self, obj):
         return obj.get_path()
@@ -50,7 +48,7 @@ class PageTreeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Page
-        fields = ["slug", "title", "children"]
+        fields = ["slug", "title", "order", "children"]
 
     def get_children(self, obj):
         return [PageTreeSerializer(page).data for page in obj.get_children()]
