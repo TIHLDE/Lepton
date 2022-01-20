@@ -748,50 +748,50 @@ def test_delete_own_registration_as_member_when_no_users_on_wait_are_in_a_priori
 
 
 @pytest.mark.django_db
-def test_that_users_cannot_register_when_has_unanswered_evaluations(api_client, user):
+def test_that_users_cannot_register_when_has_unanswered_evaluations(api_client, member):
     evaluation = EventFormFactory(type=EventFormType.EVALUATION)
-    RegistrationFactory(event=evaluation.event, user=user, has_attended=True)
+    RegistrationFactory(event=evaluation.event, user=member, has_attended=True)
 
     next_event = EventFactory()
 
-    data = _get_registration_post_data(user, next_event)
+    data = _get_registration_post_data(member, next_event)
     url = _get_registration_url(event=next_event)
-    response = api_client(user=user).post(url, data=data)
+    response = api_client(user=member).post(url, data=data)
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
-    assert not next_event.registrations.filter(user=user).exists()
+    assert not next_event.registrations.filter(user=member).exists()
 
 
 @pytest.mark.django_db
 def test_that_users_can_register_when_has_unanswered_evaluation_over_20_days(
-    api_client, user
+    api_client, member
 ):
     date_30_days_ago = now() - timedelta(days=30)
     event = EventFactory(end_date=date_30_days_ago)
     evaluation = EventFormFactory(type=EventFormType.EVALUATION, event=event)
-    RegistrationFactory(event=evaluation.event, user=user, has_attended=True)
+    RegistrationFactory(event=evaluation.event, user=member, has_attended=True)
 
     next_event = EventFactory()
 
-    data = _get_registration_post_data(user, next_event)
+    data = _get_registration_post_data(member, next_event)
     url = _get_registration_url(event=next_event)
-    response = api_client(user=user).post(url, data=data)
+    response = api_client(user=member).post(url, data=data)
 
     assert response.status_code == status.HTTP_201_CREATED
-    assert next_event.registrations.filter(user=user).exists()
+    assert next_event.registrations.filter(user=member).exists()
 
 
 @pytest.mark.django_db
-def test_that_users_can_register_when_has_no_unanswered_evaluations(api_client, user):
+def test_that_users_can_register_when_has_no_unanswered_evaluations(api_client, member):
     evaluation = EventFormFactory(type=EventFormType.EVALUATION)
-    RegistrationFactory(event=evaluation.event, user=user, has_attended=True)
-    SubmissionFactory(form=evaluation, user=user)
+    RegistrationFactory(event=evaluation.event, user=member, has_attended=True)
+    SubmissionFactory(form=evaluation, user=member)
 
     next_event = EventFactory()
 
-    data = _get_registration_post_data(user, next_event)
+    data = _get_registration_post_data(member, next_event)
     url = _get_registration_url(event=next_event)
-    response = api_client(user=user).post(url, data=data)
+    response = api_client(user=member).post(url, data=data)
 
     assert response.status_code == status.HTTP_201_CREATED
-    assert next_event.registrations.filter(user=user).exists()
+    assert next_event.registrations.filter(user=member).exists()
