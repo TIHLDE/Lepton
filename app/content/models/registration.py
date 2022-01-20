@@ -59,10 +59,7 @@ class Registration(BaseModel, BasePermissionModel):
 
     @staticmethod
     def has_write_permission(request):
-        if request is None or request.user is None:
-            return False
-
-        return bool(request.user.is_TIHLDE_member)
+       return request.user and bool(request.user.is_TIHLDE_member)
 
     @staticmethod
     def has_create_permission(request):
