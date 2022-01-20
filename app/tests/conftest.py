@@ -52,7 +52,9 @@ def api_client():
 
 @pytest.fixture()
 def user():
-    return UserFactory()
+    user = UserFactory()
+    add_user_to_group_with_name(user, Groups.TIHLDE)
+    return user 
 
 
 @pytest.fixture

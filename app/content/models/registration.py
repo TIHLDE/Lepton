@@ -60,6 +60,8 @@ class Registration(BaseModel, BasePermissionModel):
 
     @classmethod
     def has_write_permission(cls, request):
+        print("H::elllo!!")
+        print(bool(request.user) and bool(request.user.is_TIHLDE_member))
         return bool(request.user) and bool(request.user.is_TIHLDE_member)
 
     def has_event_permission(self, request):
