@@ -125,6 +125,12 @@ class UserViewSet(viewsets.ModelViewSet, ActionMixin):
                 {"detail": "Kunne ikke finne brukeren"},
                 status=status.HTTP_404_NOT_FOUND,
             )
+    def destroy(self, request, pk, *args, **kwargs):
+        super().destroy(request, args, kwargs)
+        return Response(
+                {"detail": "Brukeren har bltt slettet"},
+                status=status.HTTP_200_OK,
+            )
 
     @action(detail=False, methods=["get"], url_path="me/groups")
     def get_user_memberships(self, request, *args, **kwargs):

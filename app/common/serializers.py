@@ -35,6 +35,17 @@ class LoggerSerializer(serializers.ModelSerializer):
 
         return instance
 
+    def delete(self, instance, validated_data):
+        user = self._get_user()
+        instance = super().update(instance, validated_data)
+
+        if instance.pk:
+            _log_action(
+                instance=instance, user=user, action="Deleted", action_flag=CHANGE
+            )
+
+        return instance
+
 
 def _log_action(instance, user, action, action_flag):
     message = (
