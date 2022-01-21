@@ -13,6 +13,8 @@
 ---
 
 ## Neste versjon
+- ⚡ **Brukere**. Lagt til at superadmins kan nå slette brukere
+- 🦟 **Arrangementer**. Fikset en bug hvor man ikke kunne hente ut tidligere Arrangementer
 ## Versjon 2022.01.15
 - ⚡ **Botsystem**. Lovverket er bedre sortert ved at paragraf-nummer nå lagres separat.
 
