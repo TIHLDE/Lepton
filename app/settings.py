@@ -86,8 +86,9 @@ INSTALLED_APPS = [
     "dry_rest_permissions",
     "polymorphic",
     # Our apps
-    "app.content",
     "app.common",
+    "app.communication",
+    "app.content",
     "app.group",
     "app.authentication",
     "app.util",
