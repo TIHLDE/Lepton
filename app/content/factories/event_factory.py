@@ -1,6 +1,5 @@
 from datetime import timedelta
 
-from django.db.models import signals
 from django.utils import timezone
 
 import factory
@@ -23,6 +22,5 @@ class EventWithSignalsFactory(DjangoModelFactory):
     sign_off_deadline = timezone.now() + timedelta(days=8)
 
 
-@factory.django.mute_signals(signals.post_save)
 class EventFactory(EventWithSignalsFactory):
     pass
