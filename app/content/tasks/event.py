@@ -5,7 +5,7 @@ from sentry_sdk import capture_exception
 
 from app.content.models.strike import create_strike
 from app.util.mail_creator import MailCreator
-from app.util.notifier import Notify
+from app.communication.notifier import Notify
 from app.util.utils import datetime_format
 
 
@@ -32,7 +32,6 @@ def event_sign_off_deadline_schedular(*args, **kwargs):
             .add_paragraph(description_not_on_wait)
             .add_event_button(event.id)
             .generate_string(),
-            send_async=False,
         ).send_notification(
             description=description_not_on_wait, link=event.website_url
         )
@@ -49,7 +48,6 @@ def event_sign_off_deadline_schedular(*args, **kwargs):
             .add_paragraph(description_on_wait)
             .add_event_button(event.id)
             .generate_string(),
-            send_async=False,
         ).send_notification(
             description=description_on_wait, link=event.website_url
         )
@@ -90,7 +88,6 @@ def event_end_schedular(*args, **kwargs):
                     f"{settings.WEBSITE_URL}{event.evaluation.website_url}",
                 )
                 .generate_string(),
-                send_async=False,
             ).send_notification(
                 description=" \n".join(description), link=event.evaluation.website_url
             )

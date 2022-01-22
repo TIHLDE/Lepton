@@ -17,7 +17,7 @@ from app.group.serializers.membership import (
     UpdateMembershipSerializer,
 )
 from app.util.mail_creator import MailCreator
-from app.util.notifier import Notify
+from app.communication.notifier import Notify
 
 
 class MembershipViewSet(viewsets.ModelViewSet):

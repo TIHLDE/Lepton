@@ -34,7 +34,7 @@ from app.forms.serializers import FormPolymorphicSerializer
 from app.group.models import Group, Membership
 from app.group.serializers import GroupSerializer
 from app.util.mail_creator import MailCreator
-from app.util.notifier import Notify
+from app.communication.notifier import Notify
 from app.util.utils import CaseInsensitiveBooleanQueryParam
 
 

@@ -17,6 +17,7 @@ class Mail(BaseModel):
     )
 
     eta = models.DateTimeField(default=default_time)
+    subject = models.CharField(max_length=200)
     body = models.TextField(default="")
     users = models.ManyToManyField(User, blank=True)
     sent = models.BooleanField(default=False)
@@ -27,4 +28,4 @@ class Mail(BaseModel):
         ordering = ["-eta"]
 
     def __str__(self):
-        return f"Mail to {self.users.all()[0] if self.users.count() == 1 else f'{self.users.count()} users'}, {'sent' if self.sent else 'eta'} {self.eta}"
+        return f"\"{self.subject}\", {self.users.all()[0] if self.users.count() == 1 else f'{self.users.count()} users'}, {'sent' if self.sent else 'eta'} {self.eta}"

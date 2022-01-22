@@ -3,6 +3,7 @@ from __future__ import absolute_import, unicode_literals
 import os
 
 from celery import Celery
+from celery.schedules import crontab
 from django.conf import settings
 
 from app.util.tasks import BaseTask
@@ -22,16 +23,17 @@ app.config_from_object("django.conf:settings", namespace="CELERY")
 app.autodiscover_tasks()
 
 schedule = {
-    'run-every-60-seconds': {
-        'task': 'app.celery.debug_task',
-        'schedule': 60.0
+    'send_due_mails': {
+        'task': 'app.communication.tasks.send_due_mails',
+        # Every minute
+        'schedule': crontab()
     },
 }
 
 app.conf.update(
     beat_schedule=schedule,
     task_serializer="json",
-    accept_content=["json"],  # Ignore other content
+    accept_content=["json"],
     result_serializer="json",
     timezone=settings.TIME_ZONE,
     enable_utc=True
@@ -42,4 +44,4 @@ app.conf.update(
 def debug_task(self, *args, **kwargs):
     from app.util.utils import now
 
-    self.logger.info(f"Test {now()}")
+    self.logger.info(f"Debug, time: {now()}")

@@ -18,7 +18,7 @@ from app.content.serializers import (
 )
 from app.group.models.group import Group
 from app.util.mail_creator import MailCreator
-from app.util.notifier import Notify
+from app.communication.notifier import Notify
 from app.util.utils import midday, now, yesterday
 
 

@@ -87,7 +87,7 @@ class Strike(BaseModel, BasePermissionModel):
     def save(self, *args, **kwargs):
         if self.created_at is None:
             from app.util.mail_creator import MailCreator
-            from app.util.notifier import Notify
+            from app.communication.notifier import Notify
 
             strike_info = "Prikken varer i 20 dager. Ta kontakt med arrangøren om du er uenig. Konsekvenser kan sees i arrangementsreglene. Du kan finne dine aktive prikker og mer info om dem i profilen."
 
