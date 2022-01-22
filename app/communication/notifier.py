@@ -30,8 +30,7 @@ class Notify:
         if len(self.users) > 0:
             mail = Mail.objects.create(subject=subject, body=html)
 
-            for user in self.users:
-                mail.users.add(user)
+            mail.users.add(*self.users)
 
         return self
 

@@ -2,7 +2,6 @@ from datetime import timedelta
 
 from django.utils import timezone
 
-import factory
 import pytest
 
 from app.common.enums import AdminGroup, GroupType, MembershipType

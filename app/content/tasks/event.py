@@ -1,4 +1,5 @@
 from datetime import timedelta
+
 from django.conf import settings
 
 from sentry_sdk import capture_exception
@@ -8,7 +9,7 @@ from app.communication.notifier import Notify
 from app.content.models.strike import create_strike
 from app.util.mail_creator import MailCreator
 from app.util.tasks import BaseTask
-from app.util.utils import datetime_format, now, midnight
+from app.util.utils import datetime_format, midnight, now
 
 
 @app.task(bind=True, base=BaseTask)
@@ -16,26 +17,39 @@ def run_sign_off_deadline_reminder(self, *args, **kwargs):
     from app.content.models.event import Event
 
     try:
-        events = Event.objects.filter(runned_sign_off_deadline_reminder=False, sign_up=True, closed=False, sign_off_deadline__lt=midnight(now() + timedelta(days=2)))
+        events = Event.objects.filter(
+            runned_sign_off_deadline_reminder=False,
+            sign_up=True,
+            closed=False,
+            sign_off_deadline__lt=midnight(now() + timedelta(days=2)),
+        )
 
         for event in events:
             __sign_off_deadline_reminder(event)
 
-        self.logger.info(f"Runned \"run_sign_off_deadline_reminder\" for {events.count()} events")
+        self.logger.info(
+            f'Runned "run_sign_off_deadline_reminder" for {events.count()} events'
+        )
     except Exception as e:
         capture_exception(e)
+
 
 @app.task(bind=True, base=BaseTask)
 def run_post_event_actions(self, *args, **kwargs):
     from app.content.models.event import Event
 
     try:
-        events = Event.objects.filter(runned_post_event_actions=False, sign_up=True, closed=False, end_date__lt=midnight(now()))
+        events = Event.objects.filter(
+            runned_post_event_actions=False,
+            sign_up=True,
+            closed=False,
+            end_date__lt=midnight(now()),
+        )
 
         for event in events:
             __post_event_actions(event)
 
-        self.logger.info(f"Runned \"run_post_event_actions\" for {events.count()} events")
+        self.logger.info(f'Runned "run_post_event_actions" for {events.count()} events')
     except Exception as e:
         capture_exception(e)
 
@@ -80,7 +94,7 @@ def __sign_off_deadline_reminder(event, *args, **kwargs):
         )
 
     event.runned_sign_off_deadline_reminder = True
-    event.save(update_fields=['runned_sign_off_deadline_reminder'])
+    event.save(update_fields=["runned_sign_off_deadline_reminder"])
 
 
 def __post_event_actions(event, *args, **kwargs):
@@ -117,4 +131,4 @@ def __post_event_actions(event, *args, **kwargs):
         )
 
     event.runned_post_event_actions = True
-    event.save(update_fields=['runned_post_event_actions'])
+    event.save(update_fields=["runned_post_event_actions"])

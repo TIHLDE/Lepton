@@ -2,9 +2,10 @@ from __future__ import absolute_import, unicode_literals
 
 import os
 
+from django.conf import settings
+
 from celery import Celery
 from celery.schedules import crontab
-from django.conf import settings
 
 from app.util.tasks import BaseTask
 
@@ -23,20 +24,20 @@ app.config_from_object("django.conf:settings", namespace="CELERY")
 app.autodiscover_tasks()
 
 schedule = {
-    'send_due_mails': {
-        'task': 'app.communication.tasks.send_due_mails',
+    "send_due_mails": {
+        "task": "app.communication.tasks.send_due_mails",
         # Every minute
-        'schedule': crontab()
+        "schedule": crontab(),
     },
-    'run_post_event_actions': {
-        'task': 'app.content.tasks.event.run_post_event_actions',
+    "run_post_event_actions": {
+        "task": "app.content.tasks.event.run_post_event_actions",
         # Every 15 minute between 12:00 and 13:00 every day to allow multiple attempts
-        'schedule': crontab(minute='*/15', hour='12')
+        "schedule": crontab(minute="*/15", hour="12"),
     },
-    'run_sign_off_deadline_reminder': {
-        'task': 'app.content.tasks.event.run_sign_off_deadline_reminder',
+    "run_sign_off_deadline_reminder": {
+        "task": "app.content.tasks.event.run_sign_off_deadline_reminder",
         # Every 15 minute between 12:00 and 13:00 every day to allow multiple attempts
-        'schedule': crontab(minute='*/15', hour='12')
+        "schedule": crontab(minute="*/15", hour="12"),
     },
 }
 
@@ -46,7 +47,7 @@ app.conf.update(
     accept_content=["json"],
     result_serializer="json",
     timezone=settings.TIME_ZONE,
-    enable_utc=True
+    enable_utc=True,
 )
 
 

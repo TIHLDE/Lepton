@@ -17,6 +17,7 @@ from app.common.permissions import (
     IsHS,
     is_admin_user,
 )
+from app.communication.notifier import Notify
 from app.content.filters import UserFilter
 from app.content.models import User
 from app.content.serializers import (
@@ -34,7 +35,6 @@ from app.forms.serializers import FormPolymorphicSerializer
 from app.group.models import Group, Membership
 from app.group.serializers import GroupSerializer
 from app.util.mail_creator import MailCreator
-from app.communication.notifier import Notify
 from app.util.utils import CaseInsensitiveBooleanQueryParam
 
 

@@ -7,8 +7,8 @@ from rest_framework.response import Response
 
 from sentry_sdk import capture_exception
 
-from app.util.mail_creator import MailCreator
 from app.communication.notifier import send_html_email
+from app.util.mail_creator import MailCreator
 
 
 @csrf_exempt
@@ -31,7 +31,7 @@ def accept_form(request):
             .generate_string(),
             subject=title,
         )
-        
+
         if is_success:
             return Response(
                 {"detail": "Vi har mottatt din forespørsel"}, status=status.HTTP_200_OK
