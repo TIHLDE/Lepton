@@ -1,53 +1,89 @@
+from datetime import timedelta
 from django.conf import settings
 
+from sentry_sdk import capture_exception
+
+from app.celery import app
+from app.communication.notifier import Notify
 from app.content.models.strike import create_strike
 from app.util.mail_creator import MailCreator
-from app.communication.notifier import Notify
-from app.util.utils import datetime_format
+from app.util.tasks import BaseTask
+from app.util.utils import datetime_format, now, midnight
 
 
-def sign_off_deadline_reminder(event, *args, **kwargs):
+@app.task(bind=True, base=BaseTask)
+def run_sign_off_deadline_reminder(self, *args, **kwargs):
+    from app.content.models.event import Event
+
+    try:
+        events = Event.objects.filter(runned_sign_off_deadline_reminder=False, sign_up=True, closed=False, sign_off_deadline__lt=midnight(now() + timedelta(days=2)))
+
+        for event in events:
+            __sign_off_deadline_reminder(event)
+
+        self.logger.info(f"Runned \"run_sign_off_deadline_reminder\" for {events.count()} events")
+    except Exception as e:
+        capture_exception(e)
+
+@app.task(bind=True, base=BaseTask)
+def run_post_event_actions(self, *args, **kwargs):
+    from app.content.models.event import Event
+
+    try:
+        events = Event.objects.filter(runned_post_event_actions=False, sign_up=True, closed=False, end_date__lt=midnight(now()))
+
+        for event in events:
+            __post_event_actions(event)
+
+        self.logger.info(f"Runned \"run_post_event_actions\" for {events.count()} events")
+    except Exception as e:
+        capture_exception(e)
+
+
+def __sign_off_deadline_reminder(event, *args, **kwargs):
     from app.content.models import User
 
     users_not_on_wait = User.objects.filter(
         registrations__event=event, registrations__is_on_wait=False
     )
-    description_not_on_wait = f"Dette er en påminnelse om at avmeldingsfristen for {event.title} er imorgen. Dersom du ikke kan møte ber vi deg om å melde deg av arrangementet slik at andre kan få plassen din."
-    if event.can_cause_strikes:
-        description_not_on_wait += " Du kan melde deg av etter avmeldingsfristen og helt frem til 2 timer før arrangementsstart, men du vil da få 1 prikk. Dersom du ikke møter opp vil du få 2 prikker."
-    Notify(
-        users_not_on_wait, f"Påminnelse om avmeldingsfrist for {event.title}"
-    ).send_email(
-        MailCreator("Påminnelse om avmeldingsfrist")
-        .add_paragraph("Hei!")
-        .add_paragraph(description_not_on_wait)
-        .add_event_button(event.id)
-        .generate_string(),
-    ).send_notification(
-        description=description_not_on_wait, link=event.website_url
-    )
+    if users_not_on_wait.exists():
+        description_not_on_wait = f"Dette er en påminnelse om at avmeldingsfristen for {event.title} er imorgen. Dersom du ikke kan møte ber vi deg om å melde deg av arrangementet slik at andre kan få plassen din."
+        if event.can_cause_strikes:
+            description_not_on_wait += " Du kan melde deg av etter avmeldingsfristen og helt frem til 2 timer før arrangementsstart, men du vil da få 1 prikk. Dersom du ikke møter opp vil du få 2 prikker."
+        Notify(
+            users_not_on_wait, f"Påminnelse om avmeldingsfrist for {event.title}"
+        ).send_email(
+            MailCreator("Påminnelse om avmeldingsfrist")
+            .add_paragraph("Hei!")
+            .add_paragraph(description_not_on_wait)
+            .add_event_button(event.id)
+            .generate_string(),
+        ).send_notification(
+            description=description_not_on_wait, link=event.website_url
+        )
 
     users_on_wait = User.objects.filter(
         registrations__event=event, registrations__is_on_wait=True
     )
-    description_on_wait = f"Dette er en påminnelse om at avmeldingsfristen for {event.title} er imorgen. Det forventes at du som står på venteliste kan møte opp dersom det blir en ledig plass. Dette gjelder helt frem til 2 timer før arrangementets starttid. Det er ditt ansvar å melde deg av ventelisten, hvis det ikke passer allikevel."
-    Notify(
-        users_on_wait, f"Påminnelse om avmeldingsfrist for {event.title}"
-    ).send_email(
-        MailCreator("Påminnelse om avmeldingsfrist")
-        .add_paragraph("Hei!")
-        .add_paragraph(description_on_wait)
-        .add_event_button(event.id)
-        .generate_string(),
-    ).send_notification(
-        description=description_on_wait, link=event.website_url
-    )
+    if users_on_wait.exists():
+        description_on_wait = f"Dette er en påminnelse om at avmeldingsfristen for {event.title} er imorgen. Det forventes at du som står på venteliste kan møte opp dersom det blir en ledig plass. Dette gjelder helt frem til 2 timer før arrangementets starttid. Det er ditt ansvar å melde deg av ventelisten, hvis det ikke passer allikevel."
+        Notify(
+            users_on_wait, f"Påminnelse om avmeldingsfrist for {event.title}"
+        ).send_email(
+            MailCreator("Påminnelse om avmeldingsfrist")
+            .add_paragraph("Hei!")
+            .add_paragraph(description_on_wait)
+            .add_event_button(event.id)
+            .generate_string(),
+        ).send_notification(
+            description=description_on_wait, link=event.website_url
+        )
 
     event.runned_sign_off_deadline_reminder = True
     event.save(update_fields=['runned_sign_off_deadline_reminder'])
 
 
-def post_event_actions(event, *args, **kwargs):
+def __post_event_actions(event, *args, **kwargs):
     from app.content.models import User
 
     if event.can_cause_strikes:

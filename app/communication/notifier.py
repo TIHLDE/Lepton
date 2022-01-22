@@ -27,10 +27,11 @@ class Notify:
         if subject is None:
             subject = self.title
 
-        mail = Mail.objects.create(subject=subject, body=html)
+        if len(self.users) > 0:
+            mail = Mail.objects.create(subject=subject, body=html)
 
-        for user in self.users:
-            mail.users.add(user)
+            for user in self.users:
+                mail.users.add(user)
 
         return self
 

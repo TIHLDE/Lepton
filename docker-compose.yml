@@ -12,6 +12,7 @@ services:
       - MYSQL_USER=dev
       - MYSQL_PASSWORD=password
       - MYSQL_DATABASE=nettside-dev
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
 
   phpmyadmin:
     depends_on:

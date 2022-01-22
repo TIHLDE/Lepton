@@ -8,7 +8,7 @@ from factory.django import DjangoModelFactory
 from app.content.models.event import Event
 
 
-class EventWithSignalsFactory(DjangoModelFactory):
+class EventFactory(DjangoModelFactory):
     class Meta:
         model = Event
 
@@ -20,7 +20,3 @@ class EventWithSignalsFactory(DjangoModelFactory):
     start_registration_at = timezone.now() - timedelta(days=1)
     end_registration_at = timezone.now() + timedelta(days=9)
     sign_off_deadline = timezone.now() + timedelta(days=8)
-
-
-class EventFactory(EventWithSignalsFactory):
-    pass

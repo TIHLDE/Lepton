@@ -29,13 +29,13 @@ schedule = {
         'schedule': crontab()
     },
     'run_post_event_actions': {
-        'task': 'app.content.tasks.run_post_event_actions',
-        # Every 15 minute between 12:00 and 13:00 every day to allow multiple tries
+        'task': 'app.content.tasks.event.run_post_event_actions',
+        # Every 15 minute between 12:00 and 13:00 every day to allow multiple attempts
         'schedule': crontab(minute='*/15', hour='12')
     },
     'run_sign_off_deadline_reminder': {
-        'task': 'app.content.tasks.run_sign_off_deadline_reminder',
-        # Every 15 minute between 12:00 and 13:00 every day to allow multiple tries
+        'task': 'app.content.tasks.event.run_sign_off_deadline_reminder',
+        # Every 15 minute between 12:00 and 13:00 every day to allow multiple attempts
         'schedule': crontab(minute='*/15', hour='12')
     },
 }

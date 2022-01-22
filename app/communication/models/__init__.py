@@ -1,0 +1,1 @@
+from app.communication.models.mail import Mail
