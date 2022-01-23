@@ -106,8 +106,8 @@ def test_post_event_actions_is_called_when_not_runned_and_time_due(
 
 @pytest.mark.django_db
 @patch("app.content.tasks.event.__post_event_actions")
-def test_post_event_actions_is_called_when_time_not_due(mock_post_event_actions):
-    """Event post event actions should be runned when the event ended today or has not ended yet"""
+def test_post_event_actions_is_not_called_when_time_not_due(mock_post_event_actions):
+    """Event post event actions should not be runned when the event ended today or has not ended yet"""
     EventFactory(end_date=now())
     EventFactory(end_date=now() + timedelta(days=1))
 
@@ -118,8 +118,8 @@ def test_post_event_actions_is_called_when_time_not_due(mock_post_event_actions)
 
 @pytest.mark.django_db
 @patch("app.content.tasks.event.__post_event_actions")
-def test_post_event_actions_is_called_when_already_runned(mock_post_event_actions):
-    """Event post event actions should be runned when they have already runned"""
+def test_post_event_actions_is_not_called_when_already_runned(mock_post_event_actions):
+    """Event post event actions should not be runned when they have already runned"""
     EventFactory(end_date=now() - timedelta(days=1), runned_post_event_actions=True)
 
     run_post_event_actions()
@@ -129,8 +129,8 @@ def test_post_event_actions_is_called_when_already_runned(mock_post_event_action
 
 @pytest.mark.django_db
 @patch("app.content.tasks.event.__post_event_actions")
-def test_post_event_actions_is_called_when_event_closed(mock_post_event_actions):
-    """Event post event actions should be runned when the event is closed"""
+def test_post_event_actions_is_not_called_when_event_closed(mock_post_event_actions):
+    """Event post event actions should not be runned when the event is closed"""
     EventFactory(end_date=now() - timedelta(days=1), closed=True)
 
     run_post_event_actions()
@@ -140,8 +140,8 @@ def test_post_event_actions_is_called_when_event_closed(mock_post_event_actions)
 
 @pytest.mark.django_db
 @patch("app.content.tasks.event.__post_event_actions")
-def test_post_event_actions_is_called_when_not_sign_up(mock_post_event_actions):
-    """Event post event actions should be runned when event.sign_up is false"""
+def test_post_event_actions_is_not_called_when_not_sign_up(mock_post_event_actions):
+    """Event post event actions should not be runned when event.sign_up is false"""
     EventFactory(end_date=now() - timedelta(days=1), sign_up=False)
 
     run_post_event_actions()

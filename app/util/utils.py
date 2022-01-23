@@ -35,7 +35,7 @@ def midday(date_time):
 
 
 def midnight(date_time):
-    return date_time.replace(hour=12, minute=0, second=0)
+    return date_time.replace(hour=0, minute=0, second=0)
 
 
 def week_nr(date):
