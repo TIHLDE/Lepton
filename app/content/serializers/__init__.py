@@ -34,4 +34,3 @@ from app.content.serializers.user import (
     DefaultUserSerializer,
 )
 from app.content.serializers.user_badge import UserBadgeSerializer
-from app.content.serializers.warning import WarningSerializer

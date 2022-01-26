@@ -7,7 +7,7 @@ from app.util.models import BaseModel
 
 class Warning(BaseModel, BasePermissionModel):
 
-    write_access = [AdminGroup.HS, AdminGroup.INDEX, AdminGroup.NOK]
+    write_access = [AdminGroup.HS, AdminGroup.INDEX]
     text = models.CharField(max_length=400, null=True)
     TYPES = (
         (0, "Error"),

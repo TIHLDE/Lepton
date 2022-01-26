@@ -15,7 +15,6 @@ from app.content.views import (
     UserBadgeViewSet,
     UserCalendarEvents,
     UserViewSet,
-    WarningViewSet,
     accept_form,
     upload,
 )
@@ -25,7 +24,6 @@ router = routers.DefaultRouter()
 # Register content viewpoints here
 router.register("news", NewsViewSet)
 router.register("events", EventViewSet, basename="event")
-router.register("warnings", WarningViewSet, basename="warning")
 router.register("categories", CategoryViewSet)
 router.register("short-links", ShortLinkViewSet, basename="short-link")
 router.register("users", UserViewSet, basename="user")

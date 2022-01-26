@@ -1,6 +1,7 @@
 from django.contrib import admin
 
 from app.communication.models.mail import Mail
+from app.communication.models.warning import Warning
 
 
 class MailAdmin(admin.ModelAdmin):
@@ -12,3 +13,4 @@ class MailAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Mail, MailAdmin)
+admin.site.register(Warning)

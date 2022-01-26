@@ -7,7 +7,6 @@ from app.content.views.user_calendar_events import UserCalendarEvents
 from app.content.views.registration import RegistrationViewSet
 from app.content.views.accept_form import accept_form
 from app.content.views.notification import NotificationViewSet
-from app.content.views.warning import WarningViewSet
 from app.content.views.news import NewsViewSet
 from app.content.views.page import PageViewSet
 from app.content.views.short_link import ShortLinkViewSet
