@@ -1,8 +1,8 @@
 import factory
 from factory.django import DjangoModelFactory
 
-from app.content.factories.user_factory import UserFactory
 from app.communication.models.notification import Notification
+from app.content.factories.user_factory import UserFactory
 
 
 class NotificationFactory(DjangoModelFactory):

@@ -1,7 +1,7 @@
 from django.db import models
 
-from app.util.models import BaseModel
 from app.content.models.user import User
+from app.util.models import BaseModel
 
 
 class Notification(BaseModel):
