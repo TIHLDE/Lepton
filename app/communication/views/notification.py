@@ -4,8 +4,8 @@ from rest_framework.response import Response
 
 from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission
-from app.content.models import Notification
-from app.content.serializers import (
+from app.communication.models import Notification
+from app.communication.serializers import (
     NotificationSerializer,
     UpdateNotificationSerializer,
 )

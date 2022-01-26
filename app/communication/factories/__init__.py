@@ -1,1 +1,2 @@
 from app.communication.factories.mail_factory import MailFactory
+from app.communication.factories.notification_factory import NotificationFactory

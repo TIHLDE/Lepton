@@ -7,7 +7,6 @@ from app.content.views import (
     CheatsheetViewSet,
     EventViewSet,
     NewsViewSet,
-    NotificationViewSet,
     PageViewSet,
     RegistrationViewSet,
     ShortLinkViewSet,
@@ -30,7 +29,6 @@ router.register("users", UserViewSet, basename="user")
 router.register(
     r"events/(?P<event_id>\d+)/users", RegistrationViewSet, basename="registration"
 )
-router.register("notifications", NotificationViewSet, basename="notification")
 router.register(
     r"cheatsheets/(?P<study>[^\.]+)/(?P<grade>[^\.]+)/files",
     CheatsheetViewSet,

@@ -1,10 +1,11 @@
 from django.db import models
 
 from app.util.models import BaseModel
+from app.content.models.user import User
 
 
 class Notification(BaseModel):
-    user = models.ForeignKey("content.User", on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=150)
     description = models.TextField(default="", blank=True)
     link = models.CharField(max_length=150, blank=True, null=True)
