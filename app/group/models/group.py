@@ -27,7 +27,7 @@ class Group(OptionalImage, BaseModel, BasePermissionModel):
         through_fields=("group", "user"),
         blank=True,
         default=None,
-        verbose_name="group members",
+        verbose_name="Group members",
     )
     fines_admin = models.ForeignKey(
         User,
