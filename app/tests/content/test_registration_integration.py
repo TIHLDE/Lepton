@@ -748,7 +748,9 @@ def test_delete_own_registration_as_member_when_no_users_on_wait_are_in_a_priori
 
 
 @pytest.mark.django_db
-def test_that_users_cannot_register_when_has_unanswered_evaluations(api_client, member):
+def test_that_members_cannot_register_when_has_unanswered_evaluations(
+    api_client, member
+):
     evaluation = EventFormFactory(type=EventFormType.EVALUATION)
     RegistrationFactory(event=evaluation.event, user=member, has_attended=True)
 
@@ -763,7 +765,7 @@ def test_that_users_cannot_register_when_has_unanswered_evaluations(api_client, 
 
 
 @pytest.mark.django_db
-def test_that_users_can_register_when_has_unanswered_evaluation_over_20_days(
+def test_that_member_can_register_when_has_unanswered_evaluation_over_20_days(
     api_client, member
 ):
     date_30_days_ago = now() - timedelta(days=30)
@@ -782,7 +784,9 @@ def test_that_users_can_register_when_has_unanswered_evaluation_over_20_days(
 
 
 @pytest.mark.django_db
-def test_that_users_can_register_when_has_no_unanswered_evaluations(api_client, member):
+def test_that_member_can_register_when_has_no_unanswered_evaluations(
+    api_client, member
+):
     evaluation = EventFormFactory(type=EventFormType.EVALUATION)
     RegistrationFactory(event=evaluation.event, user=member, has_attended=True)
     SubmissionFactory(form=evaluation, user=member)
