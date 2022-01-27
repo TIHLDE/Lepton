@@ -6,6 +6,7 @@ from django.db.models import Q
 
 from app.common.enums import AdminGroup, Groups, StrikeEnum
 from app.common.permissions import BasePermissionModel
+from app.communication.notifier import Notify
 from app.content.exceptions import (
     EventIsFullError,
     EventSignOffDeadlineHasPassed,
@@ -18,7 +19,6 @@ from app.forms.enums import EventFormType
 from app.util import EnumUtils, now
 from app.util.mail_creator import MailCreator
 from app.util.models import BaseModel
-from app.util.notifier import Notify
 from app.util.utils import datetime_format
 
 

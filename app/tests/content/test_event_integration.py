@@ -1,9 +1,7 @@
 from datetime import timedelta
 
-from django.db.models import signals
 from django.utils import timezone
 
-import factory
 import pytest
 
 from app.common.enums import AdminGroup, GroupType, MembershipType
@@ -196,7 +194,6 @@ def test_update_as_user(event, user):
 
 @pytest.mark.django_db
 @permission_params
-@factory.django.mute_signals(signals.post_save)
 def test_update_event_as_admin(permission_test_util):
     """
     HS and Index members should be able to update all events.
@@ -249,7 +246,6 @@ def test_create_as_user(user):
 
 @pytest.mark.django_db
 @permission_params
-@factory.django.mute_signals(signals.post_save)
 def test_create_event_as_admin(permission_test_util):
     """
     HS and Index members should be able to create events no matter which organizer is selected.
@@ -291,7 +287,6 @@ def test_delete_as_user(user, event):
 
 @pytest.mark.django_db
 @permission_params
-@factory.django.mute_signals(signals.post_save)
 def test_delete_event_as_admin(permission_test_util):
     """
     HS and Index members should be able to delete events no matter which organizer is selected.
