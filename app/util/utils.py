@@ -31,7 +31,11 @@ def datetime_format(date_time):
 
 
 def midday(date_time):
-    return date_time.replace(hour=12, minute=00, second=00)
+    return date_time.replace(hour=12, minute=0, second=0)
+
+
+def midnight(date_time):
+    return date_time.replace(hour=0, minute=0, second=0)
 
 
 def week_nr(date):
