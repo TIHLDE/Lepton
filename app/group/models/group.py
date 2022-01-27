@@ -27,7 +27,17 @@ class Group(OptionalImage, BaseModel, BasePermissionModel):
         through_fields=("group", "user"),
         blank=True,
         default=None,
+        related_name="group_members",
         verbose_name="Group members",
+    )
+    members_history = models.ManyToManyField(
+        User,
+        through="MembershipHistory",
+        through_fields=("group", "user"),
+        blank=True,
+        default=None,
+        related_name="group_members_history",
+        verbose_name="Group membership history",
     )
     fines_admin = models.ForeignKey(
         User,
