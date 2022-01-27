@@ -14,6 +14,7 @@
 
 ## Neste versjon
 - ✨ **Ledertavle**. Laget en ledertavle rangert på antall badges en bruker har og en for når brukere fikk en spesifikk badge.
+- ⚡ **Arrangement**. Mulighet til å se om et arrangement er lukket fra en liste med arrangementer
 ## Versjon 2022.01.15
 - ⚡ **Botsystem**. Lovverket er bedre sortert ved at paragraf-nummer nå lagres separat.
 - ⚡ **Epost**. Utsending av eposter er forhåpentligvis mye mer stabilt og loggbart nå.
