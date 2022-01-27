@@ -2,7 +2,6 @@ import tempfile
 import zipfile
 
 from django.contrib.admin.models import LogEntry
-from django.core import serializers
 from rest_framework.renderers import JSONRenderer
 
 from sentry_sdk import capture_exception
@@ -41,9 +40,7 @@ def export_user_data(request, user):
 
         data["bruker"] = UserSerializer(user, context={"request": request}).data
 
-        data["aktivitet"] = serializers.serialize(
-            "json", LogEntry.objects.filter(user=user)
-        )
+        data["aktivitet"] = LogEntry.objects.filter(user=user).values()
 
         notifications = NotificationSerializer(
             # Todo: refactor to use `user.notifications`
@@ -104,7 +101,7 @@ def export_user_data(request, user):
             tmp.seek(0)
 
             is_success = send_html_email(
-                ["olafrosendahl@gmail.com"],
+                [user.email],
                 MailCreator("Din data")
                 .add_paragraph("Her er din data")
                 .generate_string(),
