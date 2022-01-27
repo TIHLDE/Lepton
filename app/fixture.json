@@ -510,8 +510,6 @@
         "start_registration_at": "2020-06-28T10:00:00Z",
         "end_registration_at": "2029-07-05T10:00:00Z",
         "sign_off_deadline": "2029-07-04T10:00:00Z",
-        "end_date_schedular_id": null,
-        "sign_off_deadline_schedular_id": null,
         "registration_priorities": [
             7,
             2,
@@ -545,8 +543,6 @@
         "start_registration_at": "2028-06-02T10:00:00Z",
         "end_registration_at": "2028-06-09T10:00:00Z",
         "sign_off_deadline": "2028-06-08T10:00:00Z",
-        "end_date_schedular_id": null,
-        "sign_off_deadline_schedular_id": null,
         "registration_priorities": [
             7,
             1,
@@ -585,8 +581,6 @@
         "start_registration_at": "2020-05-10T10:00:00Z",
         "end_registration_at": "2021-01-17T11:00:00Z",
         "sign_off_deadline": "2021-02-16T11:00:00Z",
-        "end_date_schedular_id": null,
-        "sign_off_deadline_schedular_id": null,
         "registration_priorities": [
             7,
             1,
@@ -625,8 +619,6 @@
         "start_registration_at": "2020-04-16T10:00:00Z",
         "end_registration_at": "2030-04-23T10:00:00Z",
         "sign_off_deadline": "2030-04-22T10:00:00Z",
-        "end_date_schedular_id": null,
-        "sign_off_deadline_schedular_id": null,
         "registration_priorities": []
     }
 },
@@ -650,8 +642,6 @@
         "start_registration_at": "2025-03-15T11:00:00Z",
         "end_registration_at": "2025-03-22T11:00:00Z",
         "sign_off_deadline": "2025-03-21T11:00:00Z",
-        "end_date_schedular_id": null,
-        "sign_off_deadline_schedular_id": null,
         "registration_priorities": []
     }
 },

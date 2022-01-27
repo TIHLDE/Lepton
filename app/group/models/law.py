@@ -15,7 +15,8 @@ class Law(BaseModel, BasePermissionModel):
     )
     group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name="laws")
     description = models.TextField(default="", blank=True)
-    paragraph = models.CharField(default="", blank=True, max_length=100)
+    paragraph = models.DecimalField(max_digits=4, decimal_places=2, default=1.0)
+    title = models.CharField(max_length=100)
     amount = models.IntegerField(default=1)
 
     class Meta:
@@ -23,7 +24,7 @@ class Law(BaseModel, BasePermissionModel):
         ordering = ("paragraph",)
 
     def __str__(self):
-        return f"{self.group.name} §{self.paragraph} - {self.description} - {self.amount} enhet"
+        return f"{self.group.name} §{self.paragraph} {self.title} - {self.description} - {self.amount} enhet"
 
     @classmethod
     def has_read_permission(cls, request):

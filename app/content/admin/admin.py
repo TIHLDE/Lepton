@@ -55,6 +55,7 @@ class RegistrationAdmin(admin.ModelAdmin):
         "user__first_name",
         "user__last_name",
     )
+    readonly_fields = ("created_at", "updated_at")
     # Enables checks bypassing from the 'Action' dropdown in Registration overview
     actions = [
         admin_delete_registration,

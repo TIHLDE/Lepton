@@ -14,6 +14,10 @@
 
 ## Neste versjon
 - ✨ **Ledertavle**. Laget en ledertavle rangert på antall badges en bruker har og en for når brukere fikk en spesifikk badge.
+## Versjon 2022.01.15
+- ⚡ **Botsystem**. Lovverket er bedre sortert ved at paragraf-nummer nå lagres separat.
+- ⚡ **Epost**. Utsending av eposter er forhåpentligvis mye mer stabilt og loggbart nå.
+- ⚡ **Celery**. Periodiske oppgaver kjøres med cronjobs istedenfor planlagte tasks for bedre stabilitet.
 
 ## Versjon 2022.01.01
 - ✨ **Gruppeskjemaer**. Admin/leder av gruppe kan styre om det tillates flere besvarelser, om skjemaet er åpent og begrense svar til kun gruppens medlemmer.

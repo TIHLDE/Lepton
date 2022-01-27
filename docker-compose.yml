@@ -12,6 +12,7 @@ services:
       - MYSQL_USER=dev
       - MYSQL_PASSWORD=password
       - MYSQL_DATABASE=nettside-dev
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
 
   phpmyadmin:
     depends_on:
@@ -47,7 +48,7 @@ services:
     image: celery
     container_name: celery
     entrypoint: []
-    command: celery -A app worker -E -l info --without-heartbeat --without-gossip --without-mingle
+    command: celery --app app worker --task-events --beat --loglevel info
     ports: []
 
   flower:
@@ -55,7 +56,7 @@ services:
     image: flower
     container_name: flower
     entrypoint: []
-    command: celery -A app flower --url_prefix=flower/admin
+    command: celery --app app flower --url_prefix=flower/admin
     ports:
       - "5555:5555"
     depends_on:
