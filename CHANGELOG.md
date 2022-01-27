@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+- ✨ **GDPR**. Muliggjort eksportering av alle brukers data. Blir sendt som zip-fil til brukers mail på forepørsel.
 ## Versjon 2022.01.15
 - ⚡ **Botsystem**. Lovverket er bedre sortert ved at paragraf-nummer nå lagres separat.
 - ⚡ **Epost**. Utsending av eposter er forhåpentligvis mye mer stabilt og loggbart nå.
