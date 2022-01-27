@@ -1,29 +1,17 @@
 import uuid
 
 from django.db import models
-from django.db.models import Case, Q, When, functions
 
 from app.content.models.badge_category import BadgeCategory
 from app.util.models import BaseModel, OptionalImage
 from app.util.utils import now
 
 
-class BadgeQueryset(models.QuerySet):
-    def public(self):
-        now = functions.Now()
-        return Badge.objects.annotate(
-            public_date=Case(
-                When(Q(active_to=None) & Q(active_from=None), then=now),
-                When(active_to=None, then="active_from"),
-                default="active_to",
-            )
-        ).filter(public_date__lte=now)
-
-
 class Badge(BaseModel, OptionalImage):
     id = models.UUIDField(
         auto_created=True, primary_key=True, default=uuid.uuid4, serialize=False,
     )
+    flag = models.CharField(max_length=50, blank=True)
     title = models.CharField(max_length=200)
     description = models.CharField(max_length=200)
     badge_category = models.ForeignKey(
@@ -32,13 +20,16 @@ class Badge(BaseModel, OptionalImage):
     active_from = models.DateTimeField(blank=True, null=True)
     active_to = models.DateTimeField(blank=True, null=True)
 
-    objects = BadgeQueryset.as_manager()
-
     class Meta:
         verbose_name_plural = "Badges"
 
     def __str__(self):
         return f"{self.title} - {self.description}"
+
+    def save(self, *args, **kwargs):
+        if len(self.flag) == 0:
+            self.flag = str(self.id)
+        super().save(*args, **kwargs)
 
     @property
     def active(self):

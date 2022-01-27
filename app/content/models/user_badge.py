@@ -13,6 +13,7 @@ class UserBadge(BaseModel, BasePermissionModel):
     badge = models.ForeignKey(Badge, on_delete=models.CASCADE)
 
     class Meta:
+        unique_together = ("user", "badge")
         verbose_name = "User badge"
         verbose_name_plural = "User badges"
 

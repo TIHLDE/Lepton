@@ -1,6 +1,5 @@
 import logging
 
-from django.conf import settings
 from django.db.utils import IntegrityError
 from rest_framework import status
 from rest_framework.response import Response
@@ -12,7 +11,7 @@ logger = logging.getLogger(__name__)
 def exception_handler(exc, context):
     response = drf_exception_handler(exc, context)
 
-    if not response and isinstance(exc, IntegrityError) and not settings.DEBUG:
+    if not response and isinstance(exc, IntegrityError):
         response = Response(
             {"detail": "Some values are supposed to be unique but are not."},
             status=status.HTTP_409_CONFLICT,
@@ -23,7 +22,7 @@ def exception_handler(exc, context):
     else:
         logger.error(f"Unhandled request exception: {exc}")
 
-    if not settings.DEBUG and not response:
+    if not response:
         response = Response(
             {"detail": "Noe gikk alvorlig galt da vi behandlet forespørselen din"},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,

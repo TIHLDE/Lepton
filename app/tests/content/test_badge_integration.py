@@ -1,11 +1,9 @@
-import uuid
 from datetime import timedelta
 
 from rest_framework import status
 
 import pytest
 
-from app.common.enums import AdminGroup, Groups
 from app.content.factories.badge_factory import BadgeFactory
 from app.util.test_utils import get_api_client
 from app.util.utils import now
@@ -21,12 +19,12 @@ def _get_badge_specific_leaderboard_url(badge):
     return f"{API_BADGE_BASE_URL}{badge.id}/leaderboard/"
 
 
-def _get_user_badge_url(badge):
-    return f"{API_BADGE_BASE_URL}{badge.id}/users/"
+def _get_user_badge_url():
+    return f"/users/me{API_BADGE_BASE_URL}"
 
 
-def _get_user_data(user):
-    return {"user": {"user_id": user.user_id}}
+def _get_badge_flag(badge):
+    return {"flag": badge.flag}
 
 
 @pytest.mark.django_db
@@ -50,47 +48,33 @@ def test_get_badge_spesific_leaderboard_as_anonymous_user(default_client, badge)
 
 
 @pytest.mark.django_db
-def test_post_request_for_user_badges_as_anonymous_user(default_client, badge):
+def test_get_request_for_user_badges_as_anonymous_user(default_client):
     """An anonymous user should not be able to do a post request for a user badge"""
 
-    url = _get_user_badge_url(badge)
+    url = _get_user_badge_url()
     response = default_client.get(url)
 
     assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
 @pytest.mark.django_db
-@pytest.mark.parametrize(
-    ("group_name", "expected_status_code"),
-    [
-        (AdminGroup.HS, status.HTTP_403_FORBIDDEN),
-        (AdminGroup.INDEX, status.HTTP_405_METHOD_NOT_ALLOWED),
-        (AdminGroup.NOK, status.HTTP_403_FORBIDDEN),
-        (AdminGroup.SOSIALEN, status.HTTP_403_FORBIDDEN),
-        (AdminGroup.PROMO, status.HTTP_403_FORBIDDEN),
-        (Groups.TIHLDE, status.HTTP_403_FORBIDDEN),
-    ],
-)
-def test_get_request_for_user_badges_as_different_groups(
-    user, badge, group_name, expected_status_code
-):
-    """Only Index has read access, but get request is not an allowed method for user badges
-    and access is checked before valid method is checked"""
+def test_get_request_for_user_badges_as_member(member):
+    """Get request is not an allowed method for user badges"""
 
-    url = _get_user_badge_url(badge)
-    client = get_api_client(user=user, group_name=group_name)
+    url = _get_user_badge_url()
+    client = get_api_client(user=member)
     response = client.get(url)
 
-    assert response.status_code == expected_status_code
+    assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
 
 
 @pytest.mark.django_db
 def test_create_user_badge_as_member(member, badge):
     """All members should be able to create a user badge"""
 
-    url = _get_user_badge_url(badge)
+    url = _get_user_badge_url()
     client = get_api_client(user=member)
-    data = _get_user_data(member)
+    data = _get_badge_flag(badge)
     response = client.post(url, data)
 
     assert response.status_code == status.HTTP_200_OK
@@ -100,43 +84,29 @@ def test_create_user_badge_as_member(member, badge):
 def test_create_user_badge_for_already_existing_user_badges(member, badge):
     """User badges that already exist can not be created and returns a 400 Bad Request with detail"""
 
-    url = _get_user_badge_url(badge)
+    url = _get_user_badge_url()
     client = get_api_client(user=member)
-    data = _get_user_data(member)
+    data = _get_badge_flag(badge)
     client.post(url, data)
     response = client.post(url, data)
     detail = response.json().get("detail")
 
-    assert response.status_code == status.HTTP_400_BAD_REQUEST
-    assert detail == "Denne badgen er allerede fullført"
-
-
-@pytest.mark.django_db
-def test_create_user_badge_for_non_existent_user(member, badge):
-    """User has to exist for a User Badge to be created. Therefore the view returns a 404 with detail"""
-
-    url = _get_user_badge_url(badge)
-    client = get_api_client(user=member)
-    data = {"user": {"user_id": "non_existent_user_id"}}
-    response = client.post(url, data)
-    detail = response.json().get("detail")
-
-    assert response.status_code == status.HTTP_404_NOT_FOUND
-    assert detail == "Kunne ikke finne brukeren"
+    assert response.status_code == status.HTTP_409_CONFLICT
+    assert detail == "Some values are supposed to be unique but are not."
 
 
 @pytest.mark.django_db
 def test_create_user_badge_for_non_existent_badge(member):
     """Badge has to exist for a User Badge to be created. Therefore the view returns a 404 with detail"""
 
-    url = f"{API_BADGE_BASE_URL}{uuid.uuid4}/users/"
+    url = _get_user_badge_url()
     client = get_api_client(user=member)
-    data = _get_user_data(member)
+    data = {"flag": "flag_unlike_anything_else"}
     response = client.post(url, data)
     detail = response.json().get("detail")
 
     assert response.status_code == status.HTTP_404_NOT_FOUND
-    assert detail == "Badgen kunne ikke bli opprettet"
+    assert detail == "Ikke funnet."
 
 
 @pytest.mark.django_db
@@ -192,9 +162,9 @@ def test_create_user_badge_for_different_active_dates(
        If active_to/from is None, it is treated as infinitly far in the past for active_from and in the future for active_to."""
 
     badge = BadgeFactory(active_to=active_to, active_from=active_from)
-    url = _get_user_badge_url(badge)
+    url = _get_user_badge_url()
     client = get_api_client(user=member)
-    data = _get_user_data(member)
+    data = _get_badge_flag(badge)
 
     response = client.post(url, data)
     detail = response.json().get("detail")

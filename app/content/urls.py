@@ -15,7 +15,6 @@ from app.content.views import (
     RegistrationViewSet,
     ShortLinkViewSet,
     StrikeViewSet,
-    UserBadgeViewSet,
     UserCalendarEvents,
     UserViewSet,
     WarningViewSet,
@@ -48,7 +47,6 @@ router.register(
     basename="leaderboard-badge",
 )
 router.register("badges", BadgeViewSet, basename="badge")
-router.register(r"badges/(?P<id>[^\.]+)/users", UserBadgeViewSet, basename="user-badge")
 router.register("pages", PageViewSet)
 router.register("strikes", StrikeViewSet, basename="strikes")
 

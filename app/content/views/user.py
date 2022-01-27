@@ -15,15 +15,17 @@ from app.common.permissions import (
     BasicViewPermission,
     IsDev,
     IsHS,
+    IsMember,
     is_admin_user,
 )
 from app.content.filters import UserFilter
-from app.content.models import User, UserBadge
+from app.content.models import Badge, User, UserBadge
 from app.content.serializers import (
     BadgeSerializer,
     DefaultUserSerializer,
     EventListSerializer,
     UserAdminSerializer,
+    UserBadgeSerializer,
     UserCreateSerializer,
     UserListSerializer,
     UserMemberSerializer,
@@ -137,12 +139,31 @@ class UserViewSet(viewsets.ModelViewSet, ActionMixin):
         serializer = GroupSerializer(groups, many=True, context={"request": request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @action(detail=True, methods=["get"], url_path="badges")
+    def post_user_badges(self, request, *args, **kwargs):
+
+        user = self.request.user
+        badge = get_object_or_404(Badge, flag=request.data.get("flag"))
+
+        if not badge.active:
+            return Response(
+                {"detail": "Badgen er ikke aktiv"}, status=status.HTTP_400_BAD_REQUEST,
+            )
+        serializer = UserBadgeSerializer(data=request.data)
+        if serializer.is_valid():
+            UserBadge(user=user, badge=badge).save()
+            return Response({"detail": "Badge fullført!"}, status=status.HTTP_200_OK)
+        else:
+            return Response(
+                {"detail": "Badgen kunne ikke bli opprettet"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
     def get_user_detail_badges(self, request, *args, **kwargs):
         if kwargs["pk"] == "me":
             user = request.user
         else:
             user = self.get_object()
+
         user_badges = user.user_badges.order_by("-created_at")
         badges = [
             user_badge.badge
@@ -152,7 +173,16 @@ class UserViewSet(viewsets.ModelViewSet, ActionMixin):
                 user=request.user, badge=user_badge.badge
             ).exists()
         ]
+
         return self.paginate_response(data=badges, serializer=BadgeSerializer)
+
+    @action(detail=True, methods=["get","post"], url_path="badges", permission_classes=[IsMember])
+    def get_or_post_detail_user_badges(self, request, *args, **kwargs):
+        if request.method == "GET":
+            return self.get_user_detail_badges(request, *args, **kwargs)
+        elif request.method == "POST":
+            return self.post_user_badges(request, *args, **kwargs)
+
 
     @action(detail=False, methods=["get"], url_path="me/strikes")
     def get_user_strikes(self, request, *args, **kwargs):

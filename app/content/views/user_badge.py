@@ -13,14 +13,12 @@ class UserBadgeViewSet(viewsets.ModelViewSet):
     serializer_class = UserBadgeSerializer
     permission_classes = [BasicViewPermission]
     queryset = UserBadge.objects.all()
-    http_method_names = [
-        "post",
-    ]
+    http_method_names = ["post"]
 
     def create(self, request, *args, **kwargs):
         try:
-            user = User.objects.get(user_id=request.data.get("user").get("user_id"))
-            badge = Badge.objects.get(id=kwargs["id"])
+            user = User.objects.get(user_id=kwargs["pk"])
+            badge = Badge.objects.get(flag=request.data.get("flag"))
 
             if UserBadge.objects.filter(user=user, badge=badge).exists():
                 return Response(
@@ -28,12 +26,12 @@ class UserBadgeViewSet(viewsets.ModelViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            serializer = UserBadgeSerializer(data=request.data)
             if not badge.active:
                 return Response(
                     {"detail": "Badgen er ikke aktiv"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
+            serializer = UserBadgeSerializer(data=request.data)
             if serializer.is_valid():
                 UserBadge(user=user, badge=badge).save()
                 return Response(
