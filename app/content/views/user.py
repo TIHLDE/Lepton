@@ -176,13 +176,17 @@ class UserViewSet(viewsets.ModelViewSet, ActionMixin):
 
         return self.paginate_response(data=badges, serializer=BadgeSerializer)
 
-    @action(detail=True, methods=["get","post"], url_path="badges", permission_classes=[IsMember])
+    @action(
+        detail=True,
+        methods=["get", "post"],
+        url_path="badges",
+        permission_classes=[IsMember],
+    )
     def get_or_post_detail_user_badges(self, request, *args, **kwargs):
         if request.method == "GET":
             return self.get_user_detail_badges(request, *args, **kwargs)
         elif request.method == "POST":
             return self.post_user_badges(request, *args, **kwargs)
-
 
     @action(detail=False, methods=["get"], url_path="me/strikes")
     def get_user_strikes(self, request, *args, **kwargs):

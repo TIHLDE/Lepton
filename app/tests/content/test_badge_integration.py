@@ -49,7 +49,7 @@ def test_get_badge_spesific_leaderboard_as_anonymous_user(default_client, badge)
 
 @pytest.mark.django_db
 def test_get_request_for_user_badges_as_anonymous_user(default_client):
-    """An anonymous user should not be able to do a post request for a user badge"""
+    """An anonymous user should not be able to do a get request for a user badge"""
 
     url = _get_user_badge_url()
     response = default_client.get(url)
@@ -58,19 +58,8 @@ def test_get_request_for_user_badges_as_anonymous_user(default_client):
 
 
 @pytest.mark.django_db
-def test_get_request_for_user_badges_as_member(member):
-    """Get request is not an allowed method for user badges"""
-
-    url = _get_user_badge_url()
-    client = get_api_client(user=member)
-    response = client.get(url)
-
-    assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
-
-
-@pytest.mark.django_db
 def test_create_user_badge_as_member(member, badge):
-    """All members should be able to create a user badge"""
+    """All members should be able to create a user badge for themselves"""
 
     url = _get_user_badge_url()
     client = get_api_client(user=member)
@@ -82,7 +71,7 @@ def test_create_user_badge_as_member(member, badge):
 
 @pytest.mark.django_db
 def test_create_user_badge_for_already_existing_user_badges(member, badge):
-    """User badges that already exist can not be created and returns a 400 Bad Request with detail"""
+    """User badges that already exist can not be created and throws 409 unique-together exception"""
 
     url = _get_user_badge_url()
     client = get_api_client(user=member)
@@ -97,16 +86,14 @@ def test_create_user_badge_for_already_existing_user_badges(member, badge):
 
 @pytest.mark.django_db
 def test_create_user_badge_for_non_existent_badge(member):
-    """Badge has to exist for a User Badge to be created. Therefore the view returns a 404 with detail"""
+    """Badge has to exist for a User Badge to be created. Therefore the view returns a 404"""
 
     url = _get_user_badge_url()
     client = get_api_client(user=member)
     data = {"flag": "flag_unlike_anything_else"}
     response = client.post(url, data)
-    detail = response.json().get("detail")
 
     assert response.status_code == status.HTTP_404_NOT_FOUND
-    assert detail == "Ikke funnet."
 
 
 @pytest.mark.django_db
