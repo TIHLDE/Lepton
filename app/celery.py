@@ -2,7 +2,12 @@ from __future__ import absolute_import, unicode_literals
 
 import os
 
+from django.conf import settings
+
 from celery import Celery
+from celery.schedules import crontab
+
+from app.util.tasks import BaseTask
 
 # set the default Django settings module for the 'celery' program.
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "app.settings")
@@ -18,15 +23,40 @@ app.config_from_object("django.conf:settings", namespace="CELERY")
 # Load task modules from all registered Django app configs.
 app.autodiscover_tasks()
 
+schedule = {
+    "send_due_mails": {
+        "task": "app.communication.tasks.send_due_mails",
+        # Every minute
+        "schedule": crontab(),
+    },
+    "run_post_event_actions": {
+        "task": "app.content.tasks.event.run_post_event_actions",
+        # Every 15 minute between 12:00 and 13:00 every day to allow multiple attempts
+        "schedule": crontab(minute="*/15", hour="12"),
+    },
+    "run_sign_off_deadline_reminder": {
+        "task": "app.content.tasks.event.run_sign_off_deadline_reminder",
+        # Every 15 minute between 12:00 and 13:00 every day to allow multiple attempts
+        "schedule": crontab(minute="*/15", hour="12"),
+    },
+    "delete_log_entries": {
+        "task": "app.common.tasks.delete_log_entries",
+        "schedule": crontab(hour="12", minute="0"),
+    },
+}
+
 app.conf.update(
+    beat_schedule=schedule,
     task_serializer="json",
-    accept_content=["json"],  # Ignore other content
+    accept_content=["json"],
     result_serializer="json",
-    timezone="Europe/Oslo",
+    timezone=settings.TIME_ZONE,
     enable_utc=True,
 )
 
 
-@app.task(bind=True)
-def debug_task(self):
-    print("Request: {0!r}".format(self.request))
+@app.task(bind=True, base=BaseTask)
+def debug_task(self, *args, **kwargs):
+    from app.util.utils import now
+
+    self.logger.info(f"Debug, time: {now()}")

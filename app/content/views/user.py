@@ -17,6 +17,7 @@ from app.common.permissions import (
     IsHS,
     is_admin_user,
 )
+from app.communication.notifier import Notify
 from app.content.filters import UserFilter
 from app.content.models import User
 from app.content.serializers import (
@@ -34,7 +35,6 @@ from app.forms.serializers import FormPolymorphicSerializer
 from app.group.models import Group, Membership
 from app.group.serializers import GroupSerializer
 from app.util.mail_creator import MailCreator
-from app.util.notifier import Notify
 from app.util.utils import CaseInsensitiveBooleanQueryParam
 
 
@@ -125,12 +125,12 @@ class UserViewSet(viewsets.ModelViewSet, ActionMixin):
                 {"detail": "Kunne ikke finne brukeren"},
                 status=status.HTTP_404_NOT_FOUND,
             )
+
     def destroy(self, request, pk, *args, **kwargs):
         super().destroy(request, args, kwargs)
         return Response(
-                {"detail": "Brukeren har bltt slettet"},
-                status=status.HTTP_200_OK,
-            )
+            {"detail": "Brukeren har bltt slettet"}, status=status.HTTP_200_OK,
+        )
 
     @action(detail=False, methods=["get"], url_path="me/groups")
     def get_user_memberships(self, request, *args, **kwargs):

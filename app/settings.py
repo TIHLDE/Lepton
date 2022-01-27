@@ -86,8 +86,9 @@ INSTALLED_APPS = [
     "dry_rest_permissions",
     "polymorphic",
     # Our apps
-    "app.content",
     "app.common",
+    "app.communication",
+    "app.content",
     "app.group",
     "app.authentication",
     "app.util",
@@ -252,3 +253,5 @@ LOGGING = {
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 CELERY_BROKER_URL = os.environ.get("CELERY_URL")
+if DEBUG:
+    CELERY_TASK_ALWAYS_EAGER = True
