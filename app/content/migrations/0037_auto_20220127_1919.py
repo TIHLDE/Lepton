@@ -8,7 +8,7 @@ import uuid
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('content', '0035_auto_20211114_1351'),
+        ('content', '0036_events_add_cronjob_fields'),
     ]
 
     operations = [
