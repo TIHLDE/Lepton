@@ -15,7 +15,6 @@
 ## Neste versjon
 - ⚡ **Pålogging** kan nå gjøres av brukere som ikke er godkjent, men har begrenset tilgang.
 
-## Versjon 1.1.5 (14.11.2021)
 ## Versjon 2022.01.15
 - ⚡ **Botsystem**. Lovverket er bedre sortert ved at paragraf-nummer nå lagres separat.
 
