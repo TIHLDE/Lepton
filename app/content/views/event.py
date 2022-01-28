@@ -9,6 +9,7 @@ from sentry_sdk import capture_exception
 from app.common.mixins import ActionMixin
 from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission
+from app.communication.notifier import Notify
 from app.content.filters import EventFilter
 from app.content.models import Event, User
 from app.content.serializers import (
@@ -18,7 +19,6 @@ from app.content.serializers import (
 )
 from app.group.models.group import Group
 from app.util.mail_creator import MailCreator
-from app.util.notifier import Notify
 from app.util.utils import midday, now, yesterday
 
 

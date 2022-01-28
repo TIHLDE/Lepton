@@ -2,7 +2,6 @@ from datetime import timedelta
 
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import signals
 
 from app.common.enums import AdminGroup
 from app.common.permissions import (
@@ -13,7 +12,6 @@ from app.common.permissions import (
 from app.content.models import Category
 from app.content.models.prioritiy import Priority
 from app.content.models.user import User
-from app.content.signals import send_event_reminders
 from app.forms.enums import EventFormType
 from app.group.models.group import Group
 from app.util.models import BaseModel, OptionalImage
@@ -65,11 +63,9 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
     )
     only_allow_prioritized = models.BooleanField(default=False)
 
-    """ Schedular fields """
-    end_date_schedular_id = models.CharField(max_length=100, blank=True, null=True)
-    sign_off_deadline_schedular_id = models.CharField(
-        max_length=100, blank=True, null=True
-    )
+    """ Cronjob fields """
+    runned_post_event_actions = models.BooleanField(default=False)
+    runned_sign_off_deadline_reminder = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.title} - starting {self.start_date} at {self.location}"
@@ -264,6 +260,3 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
             raise ValidationError(
                 "End date for event cannot be before the event start_date."
             )
-
-
-signals.post_save.connect(receiver=send_event_reminders, sender=Event)

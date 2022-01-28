@@ -101,6 +101,7 @@ class EventListSerializer(serializers.ModelSerializer):
             "category",
             "expired",
             "organizer",
+            "closed",
             "image",
             "image_alt",
             "updated_at",
