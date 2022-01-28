@@ -15,6 +15,7 @@ from app.content.exceptions import (
 )
 from app.content.models.event import Event
 from app.content.models.strike import create_strike
+from app.content.models.user import User
 from app.forms.enums import EventFormType
 from app.util import EnumUtils, now
 from app.util.mail_creator import MailCreator
@@ -34,10 +35,10 @@ class Registration(BaseModel, BasePermissionModel):
 
     registration_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(
-        "content.User", on_delete=models.CASCADE, related_name="registrations"
+        User, on_delete=models.CASCADE, related_name="registrations"
     )
     event = models.ForeignKey(
-        "content.Event", on_delete=models.CASCADE, related_name="registrations"
+        Event, on_delete=models.CASCADE, related_name="registrations"
     )
 
     is_on_wait = models.BooleanField(default=False, verbose_name="waiting list")
