@@ -19,15 +19,20 @@ class UpdateContentType(migrations.RunPython):
     Found at: https://stackoverflow.com/a/61837871
     """
 
-    def _update_contenttype_func(self, old_app: str, old_model: str, new_app: str, new_model: str):
+    def _update_contenttype_func(
+        self, old_app: str, old_model: str, new_app: str, new_model: str
+    ):
         def func(apps, schema_editor):
-            ContentType.objects \
-                .filter(app_label=old_app, model=old_model) \
-                .update(app_label=new_app, model=new_model)
+            ContentType.objects.filter(app_label=old_app, model=old_model).update(
+                app_label=new_app, model=new_model
+            )
             ContentType.objects.clear_cache()
+
         return func
 
-    def __init__(self, app: str, model: str, new_app: str = None, new_model: str = None):
+    def __init__(
+        self, app: str, model: str, new_app: str = None, new_model: str = None
+    ):
         if new_app is None:
             new_app = app
         if new_model is None:
@@ -46,5 +51,7 @@ class UpdateContentType(migrations.RunPython):
         )
 
     def describe(self):
-        return (f"Update ContentType {self.app}.{self.model}"
-                f" to {self.new_app}.{self.new_model}")
+        return (
+            f"Update ContentType {self.app}.{self.model}"
+            f" to {self.new_app}.{self.new_model}"
+        )

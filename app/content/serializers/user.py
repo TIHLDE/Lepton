@@ -4,7 +4,6 @@ from rest_framework import serializers
 
 from dry_rest_permissions.generics import DRYGlobalPermissionsField
 
-from app.communication.models import Notification
 from app.content.models import User
 
 
