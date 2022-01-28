@@ -102,10 +102,18 @@ def export_user_data(request, user):
 
             is_success = send_html_email(
                 [user.email],
-                MailCreator("Din data")
-                .add_paragraph("Her er din data")
+                MailCreator("Dataeksport")
+                .add_paragraph(
+                    "Vi har samlet alle dataene som er knyttet til din bruker på TIHLDE.org og samlet dem i den vedlagte zip-filen. Dataene ligger kategorisert i hver sin JSON-fil."
+                )
+                .add_paragraph(
+                    "Om noe av innholdet er uklart eller du ønsker med informasjon kan du ta kontakt med Index, kontaktinfo finner du på nettsiden."
+                )
+                .add_paragraph(
+                    "Hvis du ønsker å slette din profil og alle dine brukerdata så kan du gjøre det i profilen din på nettsiden."
+                )
                 .generate_string(),
-                "Din data",
+                "Dataeksport",
                 [("data.zip", tmp.read(), "application/x-zip-compressed",)],
             )
 
