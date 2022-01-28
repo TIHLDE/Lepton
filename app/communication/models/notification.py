@@ -5,7 +5,9 @@ from app.util.models import BaseModel
 
 
 class Notification(BaseModel):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="notifications"
+    )
     title = models.CharField(max_length=150)
     description = models.TextField(default="", blank=True)
     link = models.CharField(max_length=150, blank=True, null=True)

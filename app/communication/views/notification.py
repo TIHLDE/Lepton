@@ -14,15 +14,12 @@ from app.communication.serializers import (
 class NotificationViewSet(viewsets.ModelViewSet):
     """ Get the notifications """
 
-    queryset = Notification.objects.all().order_by("-created_at")
     serializer_class = NotificationSerializer
     permission_classes = [BasicViewPermission]
     pagination_class = BasePagination
 
     def get_queryset(self):
-        if hasattr(self, "action") and self.action == "list":
-            return self.queryset.filter(user=self.request.user)
-        return self.queryset
+        return self.request.user.notifications.all().order_by("-created_at")
 
     def update(self, request, pk):
         notification = get_object_or_404(Notification, id=pk)

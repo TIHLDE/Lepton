@@ -53,7 +53,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     def get_unread_notifications(self, obj):
         """ Counts all unread notifications and returns the count """
-        return Notification.objects.filter(user=obj, read=False).count()
+        return obj.notifications.filter(read=False).count()
 
     def get_unanswered_evaluations_count(self, obj):
         return obj.get_unanswered_evaluations().count()
