@@ -162,48 +162,18 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
         ).exclude(submissions__user=self)
 
     @classmethod
-    def has_retrieve_permission(cls, request):
-        if request.user:
-            return request.id == request._user.user_id or check_has_access(
-                cls.read_access, request,
-            )
+    def has_read_permission(cls, request):
         return check_has_access(cls.read_access, request,)
 
     @classmethod
-    def has_list_permission(cls, request):
-        return (
-            request.user
-            and request.user.is_TIHLDE_member
-            or check_has_access(cls.write_access, request)
-        )
-
-    @staticmethod
-    def has_read_permission(request):
-        return User.has_list_permission(request) or User.has_retrieve_permission(
-            request
-        )
-
-    @classmethod
     def has_write_permission(cls, request):
-        return check_has_access(cls.write_access, request,)
-
-    @classmethod
-    def has_update_permission(cls, request):
-        try:
-            if request.user:
-                return request.user.user_id == request.parser_context["kwargs"][
-                    "pk"
-                ] or check_has_access(cls.write_access, request,)
-        except (AssertionError, KeyError):
-            return check_has_access(cls.write_access, request,)
+        return bool(request.user)
 
     @classmethod
     def has_create_permission(cls, request):
         return True
 
     def has_object_write_permission(self, request):
-        if request.method == "DELETE":
-            return check_has_access(self.write_access, request,)
         return self == request.user or check_has_access(self.write_access, request,)
 
     def has_object_retrieve_permission(self, request):

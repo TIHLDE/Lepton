@@ -59,28 +59,17 @@ class UserViewSet(viewsets.ModelViewSet, ActionMixin):
         return super().get_serializer_class()
 
     def retrieve(self, request, pk, *args, **kwargs):
-        try:
-            user = request.user
-            if pk != "me":
-                user = self.get_object()
+        user = request.user
+        if pk != "me":
+            user = get_object_or_404(User, user_id=pk)
 
-            self.check_object_permissions(self.request, user)
+        self.check_object_permissions(self.request, user)
 
-            serializer = DefaultUserSerializer(
-                user, context={"request": self.request}
-            )
-            if is_admin_user(self.request) or pk == "me":
-                serializer = UserSerializer(
-                    user, context={"request": self.request}
-                )
+        serializer = DefaultUserSerializer(user)
+        if is_admin_user(self.request) or pk == "me":
+            serializer = UserSerializer(user, context={"request": self.request})
 
-            return Response(serializer.data)
-        except User.DoesNotExist as user_not_exist:
-            capture_exception(user_not_exist)
-            return Response(
-                {"detail": "Kunne ikke finne brukeren"},
-                status=status.HTTP_404_NOT_FOUND,
-            )
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def create(self, request, *args, **kwargs):
         serializer = UserCreateSerializer(data=self.request.data)
@@ -95,45 +84,42 @@ class UserViewSet(viewsets.ModelViewSet, ActionMixin):
 
     def update(self, request, pk, *args, **kwargs):
         """ Updates fields passed in request """
-        try:
-            user = get_object_or_404(User, user_id=pk)
-            self.check_object_permissions(self.request, user)
-            if is_admin_user(request):
-                serializer = UserAdminSerializer(
-                    user, context={"request": request}, many=False, data=request.data,
-                )
-            else:
-                if self.request.id == pk:
-                    serializer = UserMemberSerializer(
-                        user,
-                        context={"request": request},
-                        many=False,
-                        data=request.data,
-                    )
-                else:
-                    return Response(
-                        {"detail": ("Du har ikke tillatelse til å oppdatere brukeren")},
-                        status=status.HTTP_400_BAD_REQUEST,
-                    )
-            if serializer.is_valid():
-                serializer.save()
+        user = get_object_or_404(User, user_id=pk)
+        self.check_object_permissions(self.request, user)
+        if is_admin_user(request):
+            serializer = UserAdminSerializer(
+                user, context={"request": request}, data=request.data,
+            )
+        else:
+            if self.request.id == pk:
                 serializer = UserMemberSerializer(
-                    User.objects.get(user_id=pk),
-                    context={"request": request},
-                    many=False,
+                    user, context={"request": request}, data=request.data,
                 )
-                return Response(serializer.data, status=status.HTTP_200_OK)
             else:
                 return Response(
-                    {"detail": ("Kunne ikke oppdatere brukeren")},
-                    status=status.HTTP_400_BAD_REQUEST,
+                    {"detail": "Du har ikke tillatelse til å oppdatere brukeren"},
+                    status=status.HTTP_403_FORBIDDEN,
                 )
-        except ObjectDoesNotExist as object_not_exist:
-            capture_exception(object_not_exist)
+        if serializer.is_valid():
+            serializer.save()
+            user = get_object_or_404(User, user_id=pk)
+            serializer = UserSerializer(user, context={"request": request},)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
             return Response(
-                {"detail": "Kunne ikke finne brukeren"},
-                status=status.HTTP_404_NOT_FOUND,
+                {"detail": "Kunne ikke oppdatere brukeren"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
+
+    def destroy(self, request, pk, *args, **kwargs):
+        user = request.user
+        if pk != "me":
+            user = get_object_or_404(User, user_id=pk)
+        self.check_object_permissions(self.request, user)
+        user.delete()
+        return Response(
+            {"detail": "Brukeren har bltt slettet"}, status=status.HTTP_200_OK,
+        )
 
     @action(detail=True, methods=["get"], url_path="groups")
     def get_user_memberships(self, request, pk, *args, **kwargs):
@@ -141,7 +127,7 @@ class UserViewSet(viewsets.ModelViewSet, ActionMixin):
         if pk != "me":
             user = get_object_or_404(User, user_id=pk)
         self.check_object_permissions(self.request, user)
-        
+
         memberships = user.memberships.all()
         groups = [
             membership.group
@@ -157,7 +143,7 @@ class UserViewSet(viewsets.ModelViewSet, ActionMixin):
         if pk != "me":
             user = get_object_or_404(User, user_id=pk)
         self.check_object_permissions(self.request, user)
-        
+
         user_badges = user.user_badges.order_by("-created_at")
         badges = [user_badge.badge for user_badge in user_badges]
         return self.paginate_response(data=badges, serializer=BadgeSerializer)

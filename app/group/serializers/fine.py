@@ -106,15 +106,12 @@ class FineNoUserSerializer(BaseModelSerializer):
 
 
 class UserFineSerializer(serializers.ModelSerializer):
-    user = serializers.SerializerMethodField()
+    user = DefaultUserSerializer(read_only=True)
     fines_amount = serializers.IntegerField()
 
     class Meta:
         model = User
         fields = ("user", "fines_amount")
-
-    def get_user(self, obj):
-        return DefaultUserSerializer(obj).data
 
 
 class FineStatisticsSerializer(BaseModelSerializer):

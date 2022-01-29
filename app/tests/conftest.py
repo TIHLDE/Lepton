@@ -61,10 +61,9 @@ def token(user):
 
 
 @pytest.fixture()
-def admin_user():
-    user = UserFactory()
-    add_user_to_group_with_name(user, AdminGroup.HS)
-    return user
+def admin_user(member):
+    add_user_to_group_with_name(member, AdminGroup.HS)
+    return member
 
 
 @pytest.fixture()
