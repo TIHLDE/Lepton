@@ -100,7 +100,7 @@ def export_user_data(request, user):
                 [user.email],
                 MailCreator("Dataeksport")
                 .add_paragraph(
-                    "Vi har samlet alle dataene som er knyttet til din bruker og samlet dem i den vedlagte zip-filen. Dataene ligger kategorisert i hver sin JSON-fil."
+                    "Vi har samlet alle dataene som er knyttet til din bruker i den vedlagte zip-filen. Dataene ligger kategorisert i hver sin JSON-fil."
                 )
                 .add_paragraph(
                     "Om noe av innholdet er uklart eller du ønsker mer informasjon kan du ta kontakt med Index. Kontaktinfo finner du på nettsiden."
