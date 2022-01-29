@@ -68,7 +68,9 @@ GENDER = (
 
 
 class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
-    has_access = [AdminGroup.HS, AdminGroup.INDEX]
+    write_access = [AdminGroup.HS, AdminGroup.INDEX]
+    read_access = [Groups.TIHLDE]
+
     user_id = models.CharField(max_length=15, primary_key=True)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
@@ -163,16 +165,16 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
     def has_retrieve_permission(cls, request):
         if request.user:
             return request.id == request._user.user_id or check_has_access(
-                cls.has_access, request,
+                cls.read_access, request,
             )
-        return check_has_access(cls.has_access, request,)
+        return check_has_access(cls.read_access, request,)
 
     @classmethod
     def has_list_permission(cls, request):
         return (
             request.user
             and request.user.is_TIHLDE_member
-            or check_has_access(cls.has_access, request)
+            or check_has_access(cls.write_access, request)
         )
 
     @staticmethod
@@ -183,7 +185,7 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
 
     @classmethod
     def has_write_permission(cls, request):
-        return check_has_access(cls.has_access, request,)
+        return check_has_access(cls.write_access, request,)
 
     @classmethod
     def has_update_permission(cls, request):
@@ -191,9 +193,9 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
             if request.user:
                 return request.user.user_id == request.parser_context["kwargs"][
                     "pk"
-                ] or check_has_access(cls.has_access, request,)
+                ] or check_has_access(cls.write_access, request,)
         except (AssertionError, KeyError):
-            return check_has_access(cls.has_access, request,)
+            return check_has_access(cls.write_access, request,)
 
     @classmethod
     def has_create_permission(cls, request):
@@ -201,11 +203,14 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
 
     def has_object_write_permission(self, request):
         if request.method == "DELETE":
-            return check_has_access(self.has_access, request,)
-        return self == request.user or check_has_access(self.has_access, request,)
+            return check_has_access(self.write_access, request,)
+        return self == request.user or check_has_access(self.write_access, request,)
 
     def has_object_retrieve_permission(self, request):
-        return self == request.user or check_has_access(self.has_access, request,)
+        return self == request.user or check_has_access(self.read_access, request,)
+
+    def has_object_read_permission(self, request):
+        return self.has_object_retrieve_permission(request)
 
     def has_object_get_user_detail_strikes_permission(self, request):
         return check_has_access(

@@ -58,19 +58,27 @@ class UserViewSet(viewsets.ModelViewSet, ActionMixin):
             return DefaultUserSerializer
         return super().get_serializer_class()
 
-    def retrieve(self, request, *args, **kwargs):
+    def retrieve(self, request, pk, *args, **kwargs):
         try:
             user = request.user
+            if pk != "me":
+                user = self.get_object()
+
             self.check_object_permissions(self.request, user)
-            serializer = UserSerializer(
-                user, context={"request": self.request}, many=False
+
+            serializer = DefaultUserSerializer(
+                user, context={"request": self.request}
             )
+            if is_admin_user(self.request) or pk == "me":
+                serializer = UserSerializer(
+                    user, context={"request": self.request}
+                )
 
             return Response(serializer.data)
         except User.DoesNotExist as user_not_exist:
             capture_exception(user_not_exist)
             return Response(
-                {"detail": ("Kunne ikke finne brukeren")},
+                {"detail": "Kunne ikke finne brukeren"},
                 status=status.HTTP_404_NOT_FOUND,
             )
 
@@ -127,9 +135,14 @@ class UserViewSet(viewsets.ModelViewSet, ActionMixin):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-    @action(detail=False, methods=["get"], url_path="me/groups")
-    def get_user_memberships(self, request, *args, **kwargs):
-        memberships = request.user.memberships.all()
+    @action(detail=True, methods=["get"], url_path="groups")
+    def get_user_memberships(self, request, pk, *args, **kwargs):
+        user = request.user
+        if pk != "me":
+            user = get_object_or_404(User, user_id=pk)
+        self.check_object_permissions(self.request, user)
+        
+        memberships = user.memberships.all()
         groups = [
             membership.group
             for membership in memberships
@@ -138,9 +151,14 @@ class UserViewSet(viewsets.ModelViewSet, ActionMixin):
         serializer = GroupSerializer(groups, many=True, context={"request": request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @action(detail=False, methods=["get"], url_path="me/badges")
-    def get_user_badges(self, request, *args, **kwargs):
-        user_badges = request.user.user_badges.order_by("-created_at")
+    @action(detail=True, methods=["get"], url_path="badges")
+    def get_user_badges(self, request, pk, *args, **kwargs):
+        user = request.user
+        if pk != "me":
+            user = get_object_or_404(User, user_id=pk)
+        self.check_object_permissions(self.request, user)
+        
+        user_badges = user.user_badges.order_by("-created_at")
         badges = [user_badge.badge for user_badge in user_badges]
         return self.paginate_response(data=badges, serializer=BadgeSerializer)
 
