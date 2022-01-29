@@ -1,12 +1,9 @@
 from django.conf import settings
-from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
-
-from sentry_sdk import capture_exception
 
 from app.common.enums import Groups, GroupType
 from app.common.mixins import ActionMixin

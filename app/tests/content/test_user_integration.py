@@ -12,6 +12,7 @@ pytestmark = pytest.mark.django_db
 
 API_USER_BASE_URL = "/users/"
 
+
 def _get_user_detail_url(user):
     return f"{API_USER_BASE_URL}{user.user_id}/"
 
@@ -24,7 +25,7 @@ def _get_user_post_data():
         "user_class": 2,
         "user_study": 2,
         "user_id": "olanord",
-        "password": "SuperSecurePassword"
+        "password": "SuperSecurePassword",
     }
 
 
@@ -77,7 +78,7 @@ def test_list_user_forms_returns_all_answered_forms(api_client, member, form):
 
 
 def test_list_user_forms_returns_status_200_ok(api_client, form, member):
-    submission = SubmissionFactory(form=form, user=member)
+    SubmissionFactory(form=form, user=member)
     client = api_client(user=member)
     response = client.get(_get_user_forms_url())
 
@@ -174,16 +175,18 @@ def test_user_actions_self(url, status_code, member, api_client):
 @pytest.mark.parametrize(
     ("url", "status_code"),
     [
-        (f"/", status.HTTP_200_OK),
-        (f"/groups/", status.HTTP_200_OK),
-        (f"/badges/", status.HTTP_200_OK),
-        (f"/events/", status.HTTP_404_NOT_FOUND),
-        (f"/forms/", status.HTTP_404_NOT_FOUND),
-        (f"/strikes/", status.HTTP_200_OK),
-        (f"/data/", status.HTTP_404_NOT_FOUND),
+        ("/", status.HTTP_200_OK),
+        ("/groups/", status.HTTP_200_OK),
+        ("/badges/", status.HTTP_200_OK),
+        ("/events/", status.HTTP_404_NOT_FOUND),
+        ("/forms/", status.HTTP_404_NOT_FOUND),
+        ("/strikes/", status.HTTP_200_OK),
+        ("/data/", status.HTTP_404_NOT_FOUND),
     ],
 )
-def test_user_actions_get_user_as_admin_user(url, status_code, user, admin_user, api_client):
+def test_user_actions_get_user_as_admin_user(
+    url, status_code, user, admin_user, api_client
+):
     url = f"{API_USER_BASE_URL}{user.user_id}{url}"
     client = api_client(user=admin_user)
 
@@ -194,13 +197,13 @@ def test_user_actions_get_user_as_admin_user(url, status_code, user, admin_user,
 @pytest.mark.parametrize(
     ("url", "status_code"),
     [
-        (f"/", status.HTTP_200_OK),
-        (f"/groups/", status.HTTP_200_OK),
-        (f"/badges/", status.HTTP_200_OK),
-        (f"/events/", status.HTTP_404_NOT_FOUND),
-        (f"/forms/", status.HTTP_404_NOT_FOUND),
-        (f"/strikes/", status.HTTP_403_FORBIDDEN),
-        (f"/data/", status.HTTP_404_NOT_FOUND),
+        ("/", status.HTTP_200_OK),
+        ("/groups/", status.HTTP_200_OK),
+        ("/badges/", status.HTTP_200_OK),
+        ("/events/", status.HTTP_404_NOT_FOUND),
+        ("/forms/", status.HTTP_404_NOT_FOUND),
+        ("/strikes/", status.HTTP_403_FORBIDDEN),
+        ("/data/", status.HTTP_404_NOT_FOUND),
     ],
 )
 def test_user_actions_get_user_as_member(url, status_code, user, member, api_client):
@@ -214,12 +217,14 @@ def test_user_actions_get_user_as_member(url, status_code, user, member, api_cli
 @pytest.mark.parametrize(
     ("url", "status_code"),
     [
-        (f"/", status.HTTP_403_FORBIDDEN),
-        (f"/groups/", status.HTTP_403_FORBIDDEN),
-        (f"/badges/", status.HTTP_403_FORBIDDEN),
+        ("/", status.HTTP_403_FORBIDDEN),
+        ("/groups/", status.HTTP_403_FORBIDDEN),
+        ("/badges/", status.HTTP_403_FORBIDDEN),
     ],
 )
-def test_user_actions_get_user_as_not_member(url, status_code, user, member, api_client):
+def test_user_actions_get_user_as_not_member(
+    url, status_code, user, member, api_client
+):
     url = f"{API_USER_BASE_URL}{member.user_id}{url}"
     client = api_client(user=user)
 
@@ -329,7 +334,7 @@ def test_update_other_user_as_admin_user(admin_user, user, api_client):
 
     assert user.allergy == data["allergy"]
     assert user.email == data["email"]
-    assert user.first_name== data["first_name"]
+    assert user.first_name == data["first_name"]
     assert user.last_name == data["last_name"]
     assert user.user_study == data["user_study"]
     assert user.user_class == data["user_class"]

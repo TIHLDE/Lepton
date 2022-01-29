@@ -1,5 +1,3 @@
-from rest_framework import serializers
-
 from app.common.serializers import BaseModelSerializer
 from app.content.models import UserBadge
 from app.content.serializers import BadgeSerializer, DefaultUserSerializer
