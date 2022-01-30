@@ -62,7 +62,7 @@ test: ## Run test suite
 
 .PHONY: cov
 cov: ## Check test coverage
-	docker-compose run --rm web pytest --cov-config=.coveragerc --cov=app
+	make test args="--cov-report term-missing:skip-covered --cov-report html --cov-report xml --cov=app"
 
 .PHONY: format
 format: ## Format code and imports
