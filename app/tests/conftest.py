@@ -6,6 +6,7 @@ import pytest
 from app.career.factories import WeeklyBusinessFactory
 from app.common.enums import AdminGroup, Groups, MembershipType
 from app.content.factories import (
+    BannerFactory,
     CheatsheetFactory,
     EventFactory,
     NewsFactory,
@@ -152,3 +153,8 @@ def weekly_business():
 @pytest.fixture()
 def fine():
     return FineFactory()
+
+
+@pytest.fixture()
+def banner():
+    return BannerFactory()

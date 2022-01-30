@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+- ✨ **Banner**. Hovedstyret kan gi ut informasjon til brukere via bannere.
 - ✨ **GDPR**. Muliggjort eksportering av alle brukers data. Blir sendt som zip-fil til brukers mail på forepørsel.
 - ⚡ **Arrangement**. Mulighet til å se om et arrangement er lukket fra en liste med arrangementer
 

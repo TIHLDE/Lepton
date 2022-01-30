@@ -3,6 +3,7 @@ from django.urls import path
 from rest_framework import routers
 
 from app.content.views import (
+    BannerViewSet,
     CategoryViewSet,
     CheatsheetViewSet,
     EventViewSet,
@@ -41,6 +42,7 @@ router.register(
 router.register("badges", UserBadgeViewSet, basename="badge")
 router.register("pages", PageViewSet)
 router.register("strikes", StrikeViewSet, basename="strikes")
+router.register("banners", BannerViewSet, basename="banner")
 
 urlpatterns = [
     url(r"", include(router.urls)),
