@@ -43,6 +43,8 @@ class FieldSerializer(BaseModelSerializer):
 
 class FormSerializer(BaseModelSerializer):
     fields = FieldSerializer(many=True, required=False, allow_null=True)
+    resource_type = serializers.SerializerMethodField()
+    viewer_has_answered = serializers.SerializerMethodField()
 
     class Meta:
         model = Form
@@ -51,7 +53,18 @@ class FormSerializer(BaseModelSerializer):
             "title",
             "fields",
             "template",
+            "resource_type",
+            "viewer_has_answered",
         )
+
+    def get_resource_type(self, instance):
+        return instance._meta.object_name
+
+    def get_viewer_has_answered(self, obj):
+        request = self.context.get("request", None)
+        if request and request.user:
+            return obj.submissions.filter(user=request.user).exists()
+        return False
 
     @atomic
     def create(self, validated_data):
@@ -123,34 +136,20 @@ class FormSerializer(BaseModelSerializer):
         )
 
 
-class AnswerableFormSerializer(FormSerializer):
-    viewer_has_answered = serializers.SerializerMethodField()
-
-    class Meta:
-        model = Form
-        fields = FormSerializer.Meta.fields + ("viewer_has_answered",)
-
-    def get_viewer_has_answered(self, obj):
-        request = self.context.get("request", None)
-        if request and request.user:
-            return obj.submissions.filter(user=request.user).exists()
-        return False
-
-
-class EventFormSerializer(AnswerableFormSerializer):
+class EventFormSerializer(FormSerializer):
     class Meta:
         model = EventForm
-        fields = AnswerableFormSerializer.Meta.fields + ("event", "type",)
+        fields = FormSerializer.Meta.fields + ("event", "type",)
 
     def to_representation(self, instance):
         self.fields["event"] = EventListSerializer(read_only=True)
         return super(EventFormSerializer, self).to_representation(instance)
 
 
-class GroupFormSerializer(AnswerableFormSerializer):
+class GroupFormSerializer(FormSerializer):
     class Meta:
         model = GroupForm
-        fields = AnswerableFormSerializer.Meta.fields + (
+        fields = FormSerializer.Meta.fields + (
             "group",
             "can_submit_multiple",
             "is_open_for_submissions",
@@ -181,11 +180,11 @@ class FormPolymorphicSerializer(PolymorphicSerializer, serializers.ModelSerializ
     resource_type_field_name = "resource_type"
 
     model_serializer_mapping = {
-        Form: AnswerableFormSerializer,
+        Form: FormSerializer,
         EventForm: EventFormSerializer,
         GroupForm: GroupFormSerializer,
     }
 
     class Meta:
         model = Form
-        fields = ("resource_type",) + AnswerableFormSerializer.Meta.fields
+        fields = ("resource_type",) + FormSerializer.Meta.fields
