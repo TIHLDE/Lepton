@@ -46,7 +46,7 @@ class UserViewSet(viewsets.ModelViewSet, ActionMixin):
 
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_class = UserFilter
-    search_fields = ["user_id", "first_name", "last_name"]
+    search_fields = ["user_id", "first_name", "last_name", "email"]
 
     def get_serializer_class(self):
         if hasattr(self, "action") and self.action == "list":
@@ -56,14 +56,12 @@ class UserViewSet(viewsets.ModelViewSet, ActionMixin):
         return super().get_serializer_class()
 
     def retrieve(self, request, pk, *args, **kwargs):
-        user = request.user
-        if pk != "me":
-            user = get_object_or_404(User, user_id=pk)
+        user = self._get_user(request, pk)
 
         self.check_object_permissions(self.request, user)
 
         serializer = DefaultUserSerializer(user)
-        if is_admin_user(self.request) or pk == "me":
+        if is_admin_user(self.request) or user == request.user:
             serializer = UserSerializer(user, context={"request": self.request})
 
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -81,7 +79,7 @@ class UserViewSet(viewsets.ModelViewSet, ActionMixin):
 
     def update(self, request, pk, *args, **kwargs):
         """ Updates fields passed in request """
-        user = get_object_or_404(User, user_id=pk)
+        user = self._get_user(request, pk)
         self.check_object_permissions(self.request, user)
         if is_admin_user(request):
             serializer = UserAdminSerializer(
@@ -109,20 +107,21 @@ class UserViewSet(viewsets.ModelViewSet, ActionMixin):
             )
 
     def destroy(self, request, pk, *args, **kwargs):
-        user = request.user
-        if pk != "me":
-            user = get_object_or_404(User, user_id=pk)
+        user = self._get_user(request, pk)
         self.check_object_permissions(self.request, user)
         user.delete()
         return Response(
             {"detail": "Brukeren har bltt slettet"}, status=status.HTTP_200_OK,
         )
 
+    def _get_user(self, request, pk):
+        if pk == "me":
+            return request.user
+        return get_object_or_404(User, user_id=pk)
+
     @action(detail=True, methods=["get"], url_path="groups")
     def get_user_memberships(self, request, pk, *args, **kwargs):
-        user = request.user
-        if pk != "me":
-            user = get_object_or_404(User, user_id=pk)
+        user = self._get_user(request, pk)
         self.check_object_permissions(self.request, user)
 
         memberships = user.memberships.all()
@@ -136,9 +135,7 @@ class UserViewSet(viewsets.ModelViewSet, ActionMixin):
 
     @action(detail=True, methods=["get"], url_path="badges")
     def get_user_badges(self, request, pk, *args, **kwargs):
-        user = request.user
-        if pk != "me":
-            user = get_object_or_404(User, user_id=pk)
+        user = self._get_user(request, pk)
         self.check_object_permissions(self.request, user)
 
         user_badges = user.user_badges.order_by("-created_at")
