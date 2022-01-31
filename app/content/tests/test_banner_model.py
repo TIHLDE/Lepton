@@ -1,33 +1,31 @@
-from datetime import datetime
-from unittest import mock
+from datetime import timedelta
 
 import pytest
 
 from app.content.factories.banner_factory import BannerFactory
+from app.util.utils import now
 
 
 @pytest.mark.django_db
-@mock.patch("app.content.models.banner.now")
 @pytest.mark.parametrize(
-    "visible_until, now, expected_value",
+    "visible_from, visible_until, expected_value",
     [
-        (None, datetime(2022, 1, 1, 0), False),
-        (None, datetime(2022, 1, 1, 1), True),
-        (None, datetime(2022, 1, 1, 2), True),
-        (datetime(2022, 1, 1, 3), datetime(2022, 1, 1, 0), False),
-        (datetime(2022, 1, 1, 3), datetime(2022, 1, 1, 1), True),
-        (datetime(2022, 1, 1, 3), datetime(2022, 1, 1, 2), True),
-        (datetime(2022, 1, 1, 3), datetime(2022, 1, 1, 3), True),
-        (datetime(2022, 1, 1, 3), datetime(2022, 1, 1, 4), False),
+        (now() - timedelta(hours=1), None, True),
+        (now(), None, True),
+        (now() + timedelta(hours=1), None, False),
+        (now() + timedelta(hours=1), now() + timedelta(hours=2), False),
+        (now(), now() + timedelta(2), True),
+        (now() - timedelta(hours=1), now() + timedelta(hours=1), True),
+        (now() - timedelta(hours=2), now() - timedelta(hours=1), False),
+        (now() - timedelta(hours=1), now() - timedelta(hours=2), False),
     ],
 )
-def test_banner_is_visible(mock_now, visible_until, now, expected_value):
+def test_banner_is_visible_with_different_dates(
+    visible_from, visible_until, expected_value
+):
     "Banner is be visible when visible_from is passed and visible_until is not passed or None"
-    banner = BannerFactory(
-        visible_from=datetime(2022, 1, 1, 1), visible_until=visible_until
-    )
+    banner = BannerFactory(visible_from=visible_from, visible_until=visible_until)
 
-    mock_now.return_value = now
     is_visible = banner.is_visible
 
     assert is_visible == expected_value

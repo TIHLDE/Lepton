@@ -12,10 +12,6 @@ def _get_banner_url():
     return f"{API_BANNER_URL}"
 
 
-def _get_single_banner_url(banner):
-    return f"{API_BANNER_URL}{banner.id}/"
-
-
 def test_get_banner_as_anonymus_user(default_client):
     "An anonymus user is not able to list banners"
     url = _get_banner_url()
@@ -37,9 +33,10 @@ def test_get_banner_as_anonymus_user(default_client):
         (None, status.HTTP_403_FORBIDDEN),
     ],
 )
-def test_get_banner_as_different_members_in_groups(
+def test_get_banner_as_members_in_different_groups(
     member, group_name, expected_status_code
 ):
+    "Only HS and Index should have permission"
     url = _get_banner_url()
     client = get_api_client(user=member, group_name=group_name)
 
