@@ -1,4 +1,5 @@
 from django.db.models import Q
+from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action
@@ -8,7 +9,7 @@ from sentry_sdk import capture_exception
 
 from app.common.mixins import ActionMixin
 from app.common.pagination import BasePagination
-from app.common.permissions import BasicViewPermission
+from app.common.permissions import BasicViewPermission, IsMember
 from app.communication.notifier import Notify
 from app.content.filters import EventFilter
 from app.content.models import Event, User
@@ -16,6 +17,7 @@ from app.content.serializers import (
     EventCreateAndUpdateSerializer,
     EventListSerializer,
     EventSerializer,
+    PublicRegistrationSerializer,
 )
 from app.group.models.group import Group
 from app.util.mail_creator import MailCreator
@@ -113,9 +115,24 @@ class EventViewSet(viewsets.ModelViewSet, ActionMixin):
         )
 
     @action(
+        detail=True,
+        methods=["get"],
+        url_path="public_registrations",
+        permission_classes=(IsMember,),
+    )
+    def get_public_event_registrations(self, request, pk, *args, **kwargs):
+        event = get_object_or_404(Event, id=pk)
+        registrations = event.get_queue()
+        return self.paginate_response(
+            data=registrations,
+            serializer=PublicRegistrationSerializer,
+            context={"request": request},
+        )
+
+    @action(
         detail=True, methods=["post"], url_path="notify",
     )
-    def notifyRegisteredUsers(self, request, *args, **kwargs):
+    def notify_registered_users(self, request, *args, **kwargs):
         try:
             title = request.data["title"]
             message = request.data["message"]

@@ -43,6 +43,7 @@ class UserSerializer(serializers.ModelSerializer):
             "user_study",
             "allergy",
             "tool",
+            "public_event_registrations",
             "unread_notifications",
             "unanswered_evaluations_count",
             "permissions",
@@ -82,24 +83,12 @@ class UserMemberSerializer(UserSerializer):
 
     class Meta(UserSerializer.Meta):
         fields = UserSerializer.Meta.fields
-        read_only_fields = (
-            "user_id",
+        read_only_fields = UserSerializer.Meta.read_only_fields + (
             "first_name",
             "last_name",
             "email",
             "user_class",
             "user_study",
-        )
-
-
-class UserAdminSerializer(serializers.ModelSerializer):
-    """Serializer for admin update to prevent them from updating extra_kwargs fields"""
-
-    class Meta(UserListSerializer.Meta):
-        fields = UserListSerializer.Meta.fields
-        read_only_fields = (
-            "user_id",
-            "strikes",
         )
 
 
@@ -138,9 +127,3 @@ class UserCreateSerializer(serializers.ModelSerializer):
                 "Vi kan ikke sende epost til @ntnu.no-adresser, bruk @stud.ntnu.no-adressen istedenfor."
             )
         return data
-
-
-class UserInAnswerSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ["user_id", "email"]

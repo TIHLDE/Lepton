@@ -82,6 +82,8 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
     user_study = models.IntegerField(default=1, choices=STUDY, null=True, blank=True)
     allergy = models.CharField(max_length=250, blank=True)
 
+    public_event_registrations = models.BooleanField(default=True)
+
     tool = models.CharField(max_length=100, blank=True)
 
     USERNAME_FIELD = "user_id"

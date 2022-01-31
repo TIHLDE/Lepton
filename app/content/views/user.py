@@ -24,7 +24,6 @@ from app.content.serializers import (
     BadgeSerializer,
     DefaultUserSerializer,
     EventListSerializer,
-    UserAdminSerializer,
     UserCreateSerializer,
     UserListSerializer,
     UserMemberSerializer,
@@ -91,7 +90,7 @@ class UserViewSet(viewsets.ModelViewSet, ActionMixin):
             user = get_object_or_404(User, user_id=pk)
             self.check_object_permissions(self.request, user)
             if is_admin_user(request):
-                serializer = UserAdminSerializer(
+                serializer = UserSerializer(
                     user, context={"request": request}, many=False, data=request.data,
                 )
             else:
