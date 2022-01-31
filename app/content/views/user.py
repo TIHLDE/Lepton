@@ -34,6 +34,7 @@ from app.content.serializers.strike import UserInfoStrikeSerializer
 from app.forms.serializers import FormPolymorphicSerializer
 from app.group.models import Group, Membership
 from app.group.serializers import GroupSerializer
+from app.util.export_user_data import export_user_data
 from app.util.mail_creator import MailCreator
 from app.util.utils import CaseInsensitiveBooleanQueryParam
 
@@ -250,4 +251,21 @@ class UserViewSet(viewsets.ModelViewSet, ActionMixin):
         return Response(
             {"detail": "Brukeren ble avslått og har blitt informert på epost"},
             status=status.HTTP_200_OK,
+        )
+
+    @action(detail=False, methods=["get"], url_path="me/data")
+    def export_user_data(self, request, *args, **kwargs):
+        export_successfull = export_user_data(request, request.user)
+
+        if export_successfull:
+            return Response(
+                {
+                    "detail": "Vi har sendt en epost til din registrerte epost-adresse med dine data vedlagt"
+                },
+                status=status.HTTP_200_OK,
+            )
+
+        return Response(
+            {"detail": "Noe gikk galt, prøv igjen senere eller kontakt Index"},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )

@@ -132,6 +132,7 @@ def test_filter_only_users_with_active_strikes(
         ("me/events/", status.HTTP_200_OK),
         ("me/forms/", status.HTTP_200_OK),
         ("me/strikes/", status.HTTP_200_OK),
+        ("me/data/", status.HTTP_200_OK),
     ],
 )
 def test_user_actions(url, status_code, user, api_client):

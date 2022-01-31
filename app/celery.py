@@ -40,7 +40,7 @@ schedule = {
         "schedule": crontab(minute="*/15", hour="12"),
     },
     "delete_log_entries": {
-        "task": "app.common.tasks.delete_log_entries",
+        "task": "app.common.tasks.delete_old_log_entries",
         "schedule": crontab(hour="12", minute="0"),
     },
 }
