@@ -14,7 +14,8 @@
 
 ## Neste versjon
 - ⚡ **Brukere**. Lagt til at superadmins kan nå slette brukere
-- 🦟 **Arrangementer**. Fikset en bug hvor man ikke kunne hente ut tidligere Arrangementer
+
+## Versjon 2022.01.31
 - ✨ **GDPR**. Muliggjort eksportering av alle brukers data. Blir sendt som zip-fil til brukers mail på forepørsel.
 - ⚡ **Arrangement**. Mulighet til å se om et arrangement er lukket fra en liste med arrangementer
 
