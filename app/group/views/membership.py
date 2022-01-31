@@ -8,6 +8,7 @@ from rest_framework.response import Response
 from app.common.enums import MembershipType
 from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission, IsLeader, is_admin_user
+from app.communication.notifier import Notify
 from app.content.models import User
 from app.group.filters.membership import MembershipFilter
 from app.group.models import Group, Membership
@@ -17,7 +18,6 @@ from app.group.serializers.membership import (
     UpdateMembershipSerializer,
 )
 from app.util.mail_creator import MailCreator
-from app.util.notifier import Notify
 
 
 class MembershipViewSet(viewsets.ModelViewSet):

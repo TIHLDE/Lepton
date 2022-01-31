@@ -6,6 +6,7 @@ from django.db.models import Q
 
 from app.common.enums import AdminGroup, Groups, StrikeEnum
 from app.common.permissions import BasePermissionModel
+from app.communication.notifier import Notify
 from app.content.exceptions import (
     EventIsFullError,
     EventSignOffDeadlineHasPassed,
@@ -14,11 +15,11 @@ from app.content.exceptions import (
 )
 from app.content.models.event import Event
 from app.content.models.strike import create_strike
+from app.content.models.user import User
 from app.forms.enums import EventFormType
 from app.util import EnumUtils, now
 from app.util.mail_creator import MailCreator
 from app.util.models import BaseModel
-from app.util.notifier import Notify
 from app.util.utils import datetime_format
 
 
@@ -34,10 +35,10 @@ class Registration(BaseModel, BasePermissionModel):
 
     registration_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(
-        "content.User", on_delete=models.CASCADE, related_name="registrations"
+        User, on_delete=models.CASCADE, related_name="registrations"
     )
     event = models.ForeignKey(
-        "content.Event", on_delete=models.CASCADE, related_name="registrations"
+        Event, on_delete=models.CASCADE, related_name="registrations"
     )
 
     is_on_wait = models.BooleanField(default=False, verbose_name="waiting list")

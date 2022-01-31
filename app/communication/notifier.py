@@ -1,14 +1,10 @@
 import os
 
-from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.utils.html import strip_tags
 
-from celery import shared_task
 from sentry_sdk import capture_exception
 
-from app.common.enums import EnvironmentOptions
-from app.content.models.notification import Notification
 from app.util.utils import chunk_list
 
 
@@ -21,17 +17,20 @@ class Notify:
         self.users = users
         self.title = title
 
-    def send_email(self, html, subject=None, send_async=True):
+    def send_email(self, html, subject=None):
         """
         html: str -> The email HTML to be sent to the users\n
         subject: str -> Subject of email, defaults to given title\n
-        send_async: bool -> Should the email be sent asynchronous
         """
+        from app.communication.models.mail import Mail
+
         if subject is None:
             subject = self.title
 
-        emails = (user.email for user in self.users)
-        send_html_email(emails, html, subject, send_async)
+        if len(self.users) > 0:
+            mail = Mail.objects.create(subject=subject, body=html)
+
+            mail.users.add(*self.users)
 
         return self
 
@@ -41,6 +40,8 @@ class Notify:
         description: str -> Description in notification, defaults to blank string
         link: str -> Link in notification, optional
         """
+        from app.content.models.notification import Notification
+
         if title is None:
             title = self.title
         if description is None:
@@ -59,38 +60,35 @@ class Notify:
         return self
 
 
-def send_html_email(to_mails, html, subject, send_async=True):
+def send_html_email(to_mails, html, subject, attachments=None):
     """
     to_mails: str -> Email-addresses of receivers\n
     html: str -> The email HTML to be sent to the receivers\n
     subject: str -> Subject of email\n
-    send_async: bool -> Should the email be sent asynchronous
+
+    returns: bool -> If the mails where sent successfully
     """
 
     MAX_EMAILS_PER_SENDING = 100
 
-    if (
-        settings.ENVIRONMENT == EnvironmentOptions.PRODUCTION
-        or settings.ENVIRONMENT == EnvironmentOptions.DEVELOPMENT
-    ) and send_async:
-        for mails in chunk_list(to_mails, MAX_EMAILS_PER_SENDING):
-            __send_email.apply_async((mails, html, subject))
-    else:
-        for mails in chunk_list(to_mails, MAX_EMAILS_PER_SENDING):
-            __send_email(mails, html, subject)
+    is_success = True
+    for mails in chunk_list(to_mails, MAX_EMAILS_PER_SENDING):
+        try:
+            text_content = strip_tags(html)
+            email_sender = os.environ.get("EMAIL_USER")
+            msg = EmailMultiAlternatives(
+                subject,
+                text_content,
+                f"TIHLDE <{email_sender}>",
+                bcc=mails,
+                attachments=attachments,
+            )
+            msg.attach_alternative(html, "text/html")
+            result = msg.send()
+            if result == 0:
+                is_success = False
+        except Exception as send_mail_fail:
+            capture_exception(send_mail_fail)
+            is_success = False
 
-
-@shared_task
-def __send_email(to_mails, html, subject):
-    try:
-        text_content = strip_tags(html)
-        email_sender = os.environ.get("EMAIL_USER")
-        msg = EmailMultiAlternatives(
-            subject, text_content, f"TIHLDE <{email_sender}>", bcc=to_mails
-        )
-        msg.attach_alternative(html, "text/html")
-        msg.send()
-        return True
-    except Exception as send_html_email_fail:
-        capture_exception(send_html_email_fail)
-        return False
+    return is_success

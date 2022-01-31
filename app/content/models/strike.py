@@ -7,6 +7,7 @@ from django.db.models.aggregates import Sum
 
 from app.common.enums import AdminGroup
 from app.common.permissions import BasePermissionModel, check_has_access
+from app.content.models import Event
 from app.util.models import BaseModel
 from app.util.utils import getTimezone, now
 
@@ -60,11 +61,7 @@ class Strike(BaseModel, BasePermissionModel):
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="strikes"
     )
     event = models.ForeignKey(
-        "content.Event",
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
-        related_name="strikes",
+        Event, on_delete=models.SET_NULL, blank=True, null=True, related_name="strikes",
     )
     creator = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -86,8 +83,8 @@ class Strike(BaseModel, BasePermissionModel):
 
     def save(self, *args, **kwargs):
         if self.created_at is None:
+            from app.communication.notifier import Notify
             from app.util.mail_creator import MailCreator
-            from app.util.notifier import Notify
 
             strike_info = "Prikken varer i 20 dager. Ta kontakt med arrangøren om du er uenig. Konsekvenser kan sees i arrangementsreglene. Du kan finne dine aktive prikker og mer info om dem i profilen."
 
