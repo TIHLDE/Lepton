@@ -14,6 +14,8 @@
 
 ## Neste versjon
 - ✨ **Arrangementer**. Deltagerlister er offentlig tilgjengelig, men brukere kan reservere seg gjennom en innstilling i profilen sin.
+- ⚡ **Brukere**. Lagt til at superadmins kan nå slette brukere
+- ⚡ **Spørreskjemaer**. Liste med maler av spørreskjemaer viser nå type spørreskjema og om bruker har svart.
 
 ## Versjon 2022.01.31
 - ✨ **GDPR**. Muliggjort eksportering av alle brukers data. Blir sendt som zip-fil til brukers mail på forepørsel.
