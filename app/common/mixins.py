@@ -64,14 +64,15 @@ class LoggingMethodMixin:
                 changes = self._changed_fields(instance, validated_data)
                 message += changes if len(changes) else "No changes"
 
-            LogEntry.objects.log_action(
-                user_id=self.request.user.user_id,
-                content_type_id=ContentType.objects.get_for_model(instance).pk,
-                object_id=instance.pk,
-                object_repr=str(instance),
-                action_flag=operation,
-                change_message=message,
-            )
+            if self.request.user:
+                LogEntry.objects.log_action(
+                    user_id=self.request.user.user_id,
+                    content_type_id=ContentType.objects.get_for_model(instance).pk,
+                    object_id=instance.pk,
+                    object_repr=str(instance),
+                    action_flag=operation,
+                    change_message=message,
+                )
 
     def _log_on_create(self, serializer):
         """Log the up-to-date serializer.data."""
