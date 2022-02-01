@@ -118,7 +118,6 @@ class LogEntryAdmin(admin.ModelAdmin):
         "content_type",
         "object_link",
         "action_flag",
-        "change_message",
     ]
 
     def has_add_permission(self, request):

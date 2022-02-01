@@ -34,19 +34,36 @@ class LoggingMethodMixin:
     attributes.
     """
 
-    def log(self, operation, instance):
+    def _changed_fields(self, instance, validated_data):
+        changes = ""
+        for field, value in validated_data.items():
+            if not isinstance(value, dict):
+                old_val = getattr(instance, field, None)
+                if value != old_val:
+                    changes += f'\nField: "{field}":\n - Previous: "{old_val}"\n - Now: "{value}"'
+        return changes
+
+    def log(self, operation, instance, validated_data=None):
         if operation == ADDITION:
             action_message = "Created"
         if operation == CHANGE:
             action_message = "Updated"
         if operation == DELETION:
             action_message = "Deleted"
-        
-        instances = instance if isinstance(instance, list) or isinstance(instance, QuerySet) else [instance]
+
+        instances = (
+            instance
+            if isinstance(instance, list) or isinstance(instance, QuerySet)
+            else [instance]
+        )
         for instance in instances:
-            message = (
-                f'{action_message} {force_str(instance._meta.verbose_name)}s "{force_str(instance)}s".',
-            )
+            message = f'{action_message} {force_str(instance._meta.verbose_name)}: "{force_str(instance)}".'
+
+            if operation == CHANGE and validated_data:
+                message = "Changes:\n"
+                changes = self._changed_fields(instance, validated_data)
+                message += changes if len(changes) else "No changes"
+
             LogEntry.objects.log_action(
                 user_id=self.request.user.user_id,
                 content_type_id=ContentType.objects.get_for_model(instance).pk,
@@ -62,7 +79,11 @@ class LoggingMethodMixin:
 
     def _log_on_update(self, serializer):
         """Log data from the updated serializer instance."""
-        self.log(operation=CHANGE, instance=serializer.instance)
+        self.log(
+            operation=CHANGE,
+            instance=serializer.instance,
+            validated_data=serializer.validated_data,
+        )
 
     def _log_on_destroy(self, instance):
         """Log data from the instance before it gets deleted."""
@@ -90,8 +111,8 @@ class LoggingViewSetMixin(LoggingMethodMixin):
 
     def perform_update(self, serializer, *args, **kwargs):
         """Update the instance and log the updated data."""
-        instance = serializer.save(*args, **kwargs)
         self._log_on_update(serializer)
+        instance = serializer.save(*args, **kwargs)
         return instance
 
     def perform_destroy(self, instance):
