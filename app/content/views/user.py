@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, status, viewsets
+from rest_framework import filters, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
@@ -14,6 +14,7 @@ from app.common.permissions import (
     IsHS,
     is_admin_user,
 )
+from app.common.viewsets import BaseViewSet
 from app.communication.notifier import Notify
 from app.content.filters import UserFilter
 from app.content.models import User
@@ -36,7 +37,7 @@ from app.util.mail_creator import MailCreator
 from app.util.utils import CaseInsensitiveBooleanQueryParam
 
 
-class UserViewSet(viewsets.ModelViewSet, ActionMixin):
+class UserViewSet(BaseViewSet, ActionMixin):
     """ API endpoint to display one user """
 
     serializer_class = UserSerializer
@@ -70,7 +71,7 @@ class UserViewSet(viewsets.ModelViewSet, ActionMixin):
         serializer = UserCreateSerializer(data=self.request.data)
 
         if serializer.is_valid():
-            serializer.save()
+            super().perform_create(serializer)
             return Response({"detail": serializer.data}, status=status.HTTP_201_CREATED)
 
         return Response(
@@ -97,6 +98,7 @@ class UserViewSet(viewsets.ModelViewSet, ActionMixin):
                 )
         if serializer.is_valid():
             serializer.save()
+            super().perform_update(serializer)
             user = get_object_or_404(User, user_id=pk)
             serializer = UserSerializer(user, context={"request": request},)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -110,6 +112,7 @@ class UserViewSet(viewsets.ModelViewSet, ActionMixin):
         user = self._get_user(request, pk)
         self.check_object_permissions(self.request, user)
         user.delete()
+        self._log_on_destroy(user)
         return Response(
             {"detail": "Brukeren har bltt slettet"}, status=status.HTTP_200_OK,
         )

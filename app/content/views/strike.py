@@ -1,10 +1,11 @@
 from django.shortcuts import get_object_or_404
-from rest_framework import status, viewsets
+from rest_framework import status
 from rest_framework.response import Response
 
 from app.common.enums import StrikeEnum
 from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission
+from app.common.viewsets import BaseViewSet
 from app.content.models import (
     Event,
     Strike,
@@ -15,7 +16,7 @@ from app.content.models import (
 from app.content.serializers import StrikeSerializer
 
 
-class StrikeViewSet(viewsets.ModelViewSet):
+class StrikeViewSet(BaseViewSet):
     serializer_class = StrikeSerializer
     queryset = Strike.objects.active()
     permission_classes = [BasicViewPermission]
@@ -43,9 +44,11 @@ class StrikeViewSet(viewsets.ModelViewSet):
         user = get_object_or_404(User, user_id=request.data["user_id"])
         if "event_id" in request.data:
             event = get_object_or_404(Event, id=request.data["event_id"])
-            serializer.save(user=user, event=event, creator=request.user)
+            super().perform_create(
+                serializer, user=user, event=event, creator=request.user
+            )
         else:
-            serializer.save(user=user, creator=request.user)
+            super().perform_create(serializer, user=user, creator=request.user)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def destroy(self, request, *args, **kwargs):
