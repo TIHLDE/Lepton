@@ -107,7 +107,7 @@ class StrikesOverviewAdmin(UserAdmin):
 @admin.register(LogEntry)
 class LogEntryAdmin(admin.ModelAdmin):
     actions = None
-    
+
     date_hierarchy = "action_time"
 
     list_filter = ["user", "content_type", "action_flag"]
@@ -129,7 +129,7 @@ class LogEntryAdmin(admin.ModelAdmin):
         return False
 
     def has_delete_permission(self, request, obj=None):
-        if f"admin/logentry" in request.path:
+        if "admin/logentry" in request.path:
             return False
         return True
 
