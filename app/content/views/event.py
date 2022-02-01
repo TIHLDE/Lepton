@@ -1,6 +1,6 @@
 from django.db.models import Q
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, status, viewsets
+from rest_framework import filters, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
@@ -9,6 +9,7 @@ from sentry_sdk import capture_exception
 from app.common.mixins import ActionMixin
 from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission
+from app.common.viewsets import BaseViewSet
 from app.communication.notifier import Notify
 from app.content.filters import EventFilter
 from app.content.models import Event, User
@@ -22,7 +23,7 @@ from app.util.mail_creator import MailCreator
 from app.util.utils import midday, now, yesterday
 
 
-class EventViewSet(viewsets.ModelViewSet, ActionMixin):
+class EventViewSet(BaseViewSet, ActionMixin):
     serializer_class = EventSerializer
     permission_classes = [BasicViewPermission]
     queryset = Event.objects.all()
@@ -77,7 +78,7 @@ class EventViewSet(viewsets.ModelViewSet, ActionMixin):
             )
 
             if serializer.is_valid():
-                event = serializer.save()
+                event = super().perform_update(serializer)
                 serializer = EventSerializer(event, context={"request": request})
                 return Response(serializer.data, status=status.HTTP_200_OK)
             else:
@@ -98,7 +99,7 @@ class EventViewSet(viewsets.ModelViewSet, ActionMixin):
         )
 
         if serializer.is_valid():
-            event = serializer.save()
+            event = super().perform_create(serializer)
             serializer = EventSerializer(event, context={"request": request})
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 

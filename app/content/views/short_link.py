@@ -1,15 +1,16 @@
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.shortcuts import get_object_or_404
-from rest_framework import status, viewsets
+from rest_framework import status
 from rest_framework.response import Response
 
 from app.common.permissions import BasicViewPermission
+from app.common.viewsets import BaseViewSet
 from app.content.models import ShortLink, User
 from app.content.serializers import ShortLinkSerializer
 
 
-class ShortLinkViewSet(viewsets.ModelViewSet):
+class ShortLinkViewSet(BaseViewSet):
     serializer_class = ShortLinkSerializer
     queryset = ShortLink.objects.all()
     permission_classes = [BasicViewPermission]
@@ -28,7 +29,7 @@ class ShortLinkViewSet(viewsets.ModelViewSet):
         )
         if serializer.is_valid():
             try:
-                serializer.save(user=user)
+                super().perform_create(serializer, user=user)
                 return Response(serializer.data, status=status.HTTP_200_OK)
             except IntegrityError:
                 return Response(
