@@ -315,7 +315,7 @@
     }
 },
 {
-    "model": "content.notification",
+    "model": "communication.notification",
     "pk": 1,
     "fields": {
         "created_at": "2021-03-08T19:51:56.552Z",
@@ -327,7 +327,7 @@
     }
 },
 {
-    "model": "content.notification",
+    "model": "communication.notification",
     "pk": 2,
     "fields": {
         "created_at": "2021-03-20T12:23:12.092Z",

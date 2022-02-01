@@ -7,9 +7,8 @@ from rest_framework.renderers import JSONRenderer
 from sentry_sdk import capture_exception
 
 from app.communication.notifier import send_html_email
-from app.content.models import Notification
+from app.communication.serializers import NotificationSerializer
 from app.content.serializers import (
-    NotificationSerializer,
     RegistrationSerializer,
     ShortLinkSerializer,
     StrikeSerializer,
@@ -43,10 +42,7 @@ def export_user_data(request, user):
         data["aktivitet"] = LogEntry.objects.filter(user=user).values()
 
         notifications = NotificationSerializer(
-            # Todo: refactor to use `user.notifications`
-            Notification.objects.filter(user=user),
-            many=True,
-            context={"request": request},
+            user.notifications, many=True, context={"request": request}
         )
         data["varsler"] = notifications.data
 
@@ -104,10 +100,10 @@ def export_user_data(request, user):
                 [user.email],
                 MailCreator("Dataeksport")
                 .add_paragraph(
-                    "Vi har samlet alle dataene som er knyttet til din bruker på TIHLDE.org og samlet dem i den vedlagte zip-filen. Dataene ligger kategorisert i hver sin JSON-fil."
+                    "Vi har samlet alle dataene som er knyttet til din bruker i den vedlagte zip-filen. Dataene ligger kategorisert i hver sin JSON-fil."
                 )
                 .add_paragraph(
-                    "Om noe av innholdet er uklart eller du ønsker med informasjon kan du ta kontakt med Index, kontaktinfo finner du på nettsiden."
+                    "Om noe av innholdet er uklart eller du ønsker mer informasjon kan du ta kontakt med Index. Kontaktinfo finner du på nettsiden."
                 )
                 .add_paragraph(
                     "Hvis du ønsker å slette din profil og alle dine brukerdata så kan du gjøre det i profilen din på nettsiden."
