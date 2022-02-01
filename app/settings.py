@@ -252,3 +252,5 @@ LOGGING = {
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 CELERY_BROKER_URL = os.environ.get("CELERY_URL")
+if ENVIRONMENT == EnvironmentOptions.LOCAL:
+    CELERY_TASK_ALWAYS_EAGER = True
