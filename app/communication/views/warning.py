@@ -2,8 +2,8 @@ from django.core.cache import cache
 
 from app.common.permissions import BasicViewPermission
 from app.common.viewsets import BaseViewSet
-from app.content.models import Warning
-from app.content.serializers import WarningSerializer
+from app.communication.models import Warning
+from app.communication.serializers import WarningSerializer
 
 
 class WarningViewSet(BaseViewSet):

@@ -1,5 +1,5 @@
 from app.common.serializers import BaseModelSerializer
-from app.content.models import Notification
+from app.communication.models import Notification
 
 
 class NotificationSerializer(BaseModelSerializer):
