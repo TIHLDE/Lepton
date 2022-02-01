@@ -40,7 +40,7 @@ class Notify:
         description: str -> Description in notification, defaults to blank string
         link: str -> Link in notification, optional
         """
-        from app.content.models.notification import Notification
+        from app.communication.models.notification import Notification
 
         if title is None:
             title = self.title
