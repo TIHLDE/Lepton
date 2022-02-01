@@ -60,7 +60,7 @@ def test_retrieve_notification_as_user(notification, user):
     url = _get_notification_url(notification)
     response = client.get(url)
 
-    assert response.status_code == status.HTTP_403_FORBIDDEN
+    assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
 @pytest.mark.django_db
