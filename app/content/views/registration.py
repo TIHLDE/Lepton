@@ -10,7 +10,7 @@ from app.content.models import Event, Registration
 from app.content.serializers import RegistrationSerializer
 
 
-class RegistrationViewSet(BaseViewSet, APIRegistrationErrorsMixin):
+class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
 
     serializer_class = RegistrationSerializer
     permission_classes = [BasicViewPermission]

@@ -24,7 +24,7 @@ from app.group.serializers.fine import (
 )
 
 
-class FineViewSet(BaseViewSet, APIFineErrorsMixin, ActionMixin):
+class FineViewSet(APIFineErrorsMixin, BaseViewSet, ActionMixin):
     serializer_class = FineSerializer
     permission_classes = [BasicViewPermission]
     queryset = Fine.objects.all()
@@ -102,7 +102,7 @@ class FineViewSet(BaseViewSet, APIFineErrorsMixin, ActionMixin):
             many=True,
         )
         if serializer.is_valid():
-            serializer.save()
+            super().perform_update(serializer)
             return Response(
                 {"detail": "Alle bøtene ble oppdatert"}, status=status.HTTP_200_OK
             )
@@ -121,7 +121,7 @@ class FineViewSet(BaseViewSet, APIFineErrorsMixin, ActionMixin):
             many=True,
         )
         if serializer.is_valid():
-            serializer.save()
+            super().perform_update(serializer)
             return Response(
                 {"detail": "Alle bøtene ble oppdatert"}, status=status.HTTP_200_OK
             )
