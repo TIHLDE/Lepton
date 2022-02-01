@@ -1,16 +1,17 @@
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
-from rest_framework import status, viewsets
+from rest_framework import status
 from rest_framework.response import Response
 
 from app.career.models import WeeklyBusiness
 from app.career.serializers import WeeklyBusinessSerializer
 from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission
+from app.common.viewsets import BaseViewSet
 from app.util import now, week_nr
 
 
-class WeeklyBusinessViewSet(viewsets.ModelViewSet):
+class WeeklyBusinessViewSet(BaseViewSet):
 
     queryset = WeeklyBusiness.objects.none()
     serializer_class = WeeklyBusinessSerializer
@@ -50,7 +51,7 @@ class WeeklyBusinessViewSet(viewsets.ModelViewSet):
             )
 
             if serializer.is_valid():
-                serializer.save()
+                super().perform_create(serializer)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
 
             return Response(
@@ -72,7 +73,7 @@ class WeeklyBusinessViewSet(viewsets.ModelViewSet):
         )
         try:
             if serializer.is_valid():
-                serializer.save()
+                super().perform_update(serializer)
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(
                 {"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST

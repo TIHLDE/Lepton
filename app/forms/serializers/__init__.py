@@ -3,7 +3,6 @@ from app.forms.serializers.forms import (
     FormInSubmissionSerializer,
     FormPolymorphicSerializer,
     FormSerializer,
-    AnswerableFormSerializer,
     EventFormSerializer,
     OptionSerializer,
 )

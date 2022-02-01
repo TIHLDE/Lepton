@@ -1,9 +1,10 @@
 from django.shortcuts import get_object_or_404
-from rest_framework import status, viewsets
+from rest_framework import status
 from rest_framework.response import Response
 
 from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission
+from app.common.viewsets import BaseViewSet
 from app.communication.models import Notification
 from app.communication.serializers import (
     NotificationSerializer,
@@ -11,7 +12,7 @@ from app.communication.serializers import (
 )
 
 
-class NotificationViewSet(viewsets.ModelViewSet):
+class NotificationViewSet(BaseViewSet):
     """ Get the notifications """
 
     serializer_class = NotificationSerializer
@@ -28,7 +29,7 @@ class NotificationViewSet(viewsets.ModelViewSet):
             notification, data=request.data, context={"request": request}
         )
         if serializer.is_valid():
-            notification = serializer.save()
+            notification = super().perform_update(serializer)
             serializer = NotificationSerializer(notification)
             return Response(serializer.data, status=status.HTTP_200_OK,)
         return Response(
