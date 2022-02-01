@@ -1,9 +1,10 @@
 import logging
 
-from rest_framework import status, viewsets
+from rest_framework import status
 from rest_framework.response import Response
 
 from app.common.permissions import IsMember
+from app.common.viewsets import BaseViewSet
 from app.payment.util.refund_form_mail import (
     UnsupportedFileException,
     create_pdf,
@@ -13,7 +14,7 @@ from app.payment.util.refund_form_mail import (
 )
 
 
-class RefundFormViewSet(viewsets.ModelViewSet):
+class RefundFormViewSet(BaseViewSet):
     permission_classes = (IsMember,)
     queryset = None
 

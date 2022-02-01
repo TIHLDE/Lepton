@@ -2,7 +2,7 @@ from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, status, viewsets
+from rest_framework import filters, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
@@ -17,6 +17,7 @@ from app.common.permissions import (
     IsHS,
     is_admin_user,
 )
+from app.common.viewsets import BaseViewSet
 from app.communication.notifier import Notify
 from app.content.filters import UserFilter
 from app.content.models import User
@@ -39,7 +40,7 @@ from app.util.mail_creator import MailCreator
 from app.util.utils import CaseInsensitiveBooleanQueryParam
 
 
-class UserViewSet(viewsets.ModelViewSet, ActionMixin):
+class UserViewSet(BaseViewSet, ActionMixin):
     """ API endpoint to display one user """
 
     serializer_class = UserSerializer
@@ -78,7 +79,7 @@ class UserViewSet(viewsets.ModelViewSet, ActionMixin):
         serializer = UserCreateSerializer(data=self.request.data)
 
         if serializer.is_valid():
-            serializer.save()
+            super().perform_create(serializer)
             return Response({"detail": serializer.data}, status=status.HTTP_201_CREATED)
 
         return Response(
@@ -108,7 +109,7 @@ class UserViewSet(viewsets.ModelViewSet, ActionMixin):
                         status=status.HTTP_400_BAD_REQUEST,
                     )
             if serializer.is_valid():
-                serializer.save()
+                super().perform_update(serializer)
                 serializer = UserMemberSerializer(
                     User.objects.get(user_id=pk),
                     context={"request": request},
