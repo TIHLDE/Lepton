@@ -15,31 +15,31 @@ class DefaultUserSerializer(serializers.ModelSerializer):
             "first_name",
             "last_name",
             "image",
+            "email",
+            "gender",
+            "user_class",
+            "user_study",
         )
         read_only_fields = (
             "user_id",
             "first_name",
             "last_name",
             "image",
+            "email",
+            "gender",
+            "user_class",
+            "user_study",
         )
 
 
-class UserSerializer(serializers.ModelSerializer):
+class UserSerializer(DefaultUserSerializer):
     unread_notifications = serializers.SerializerMethodField()
     unanswered_evaluations_count = serializers.SerializerMethodField()
 
     class Meta:
         model = User
-        fields = (
-            "user_id",
-            "first_name",
-            "last_name",
-            "image",
-            "email",
+        fields = DefaultUserSerializer.Meta.fields + (
             "cell",
-            "gender",
-            "user_class",
-            "user_study",
             "allergy",
             "tool",
             "public_event_registrations",

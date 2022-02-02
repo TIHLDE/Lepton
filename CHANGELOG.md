@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+- ✨ **Offentlige profiler**. Alle innloggede TIHLDE-medlemmer kan nå se andre brukere og deres badges og medlemskap.
 - ✨ **Arrangementer**. Deltagerlister er offentlig tilgjengelig, men brukere kan reservere seg gjennom en innstilling i profilen sin.
 - ⚡ **Brukere**. Lagt til at superadmins kan nå slette brukere
 - ⚡ **Spørreskjemaer**. Liste med maler av spørreskjemaer viser nå type spørreskjema og om bruker har svart.
