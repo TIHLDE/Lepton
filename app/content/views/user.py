@@ -137,7 +137,9 @@ class UserViewSet(BaseViewSet, ActionMixin):
 
     @action(detail=False, methods=["get"], url_path="me/permissions")
     def get_user_permissions(self, request, *args, **kwargs):
-        serializer = UserPermissionsSerializer(request.user, context={"request": request})
+        serializer = UserPermissionsSerializer(
+            request.user, context={"request": request}
+        )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=["get"], url_path="me/groups")

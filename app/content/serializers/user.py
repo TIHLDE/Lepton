@@ -143,6 +143,7 @@ class UserInAnswerSerializer(serializers.ModelSerializer):
         model = User
         fields = ["user_id", "email"]
 
+
 class UserPermissionsSerializer(serializers.ModelSerializer):
     permissions = DRYGlobalPermissionsField(actions=["write", "read", "destroy"])
 
