@@ -1,4 +1,4 @@
-from rest_framework import status, viewsets
+from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
@@ -8,6 +8,7 @@ from rest_framework_csv.renderers import CSVRenderer
 
 from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission
+from app.common.viewsets import BaseViewSet
 from app.forms.csv_writer import SubmissionsCsvWriter
 from app.forms.enums import EventFormType
 from app.forms.mixins import APIFormErrorsMixin
@@ -15,7 +16,7 @@ from app.forms.models.forms import EventForm, Form, Submission
 from app.forms.serializers.submission import SubmissionSerializer
 
 
-class SubmissionViewSet(APIFormErrorsMixin, viewsets.ModelViewSet):
+class SubmissionViewSet(APIFormErrorsMixin, BaseViewSet):
     serializer_class = SubmissionSerializer
     queryset = Submission.objects.all()
     permission_classes = [BasicViewPermission]

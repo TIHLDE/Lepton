@@ -1,5 +1,5 @@
 from django.core.exceptions import MultipleObjectsReturned
-from rest_framework import filters, status, viewsets
+from rest_framework import filters, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
@@ -7,6 +7,7 @@ from sentry_sdk import capture_exception
 
 from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission
+from app.common.viewsets import BaseViewSet
 from app.content.models import Page
 from app.content.serializers import (
     PageListSerializer,
@@ -15,7 +16,7 @@ from app.content.serializers import (
 )
 
 
-class PageViewSet(viewsets.ModelViewSet):
+class PageViewSet(BaseViewSet):
     queryset = Page.objects.all()
     serializer_class = PageSerializer
     permission_classes = [BasicViewPermission]
@@ -87,7 +88,7 @@ class PageViewSet(viewsets.ModelViewSet):
                 page, data=request.data, context={"request": request}
             )
             if serializer.is_valid():
-                serializer.save()
+                super().perform_create(serializer)
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(
                 {
@@ -118,7 +119,7 @@ class PageViewSet(viewsets.ModelViewSet):
                 page, data=request.data, context={"request": request}
             )
             if serializer.is_valid():
-                serializer.save()
+                super().perform_update(serializer)
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(
                 {"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST
@@ -153,7 +154,7 @@ class PageViewSet(viewsets.ModelViewSet):
                     },
                     status=status.HTTP_403_FORBIDDEN,
                 )
-            self.perform_destroy(page)
+            super().perform_destroy(page)
             return Response({"detail": "Siden ble slettet"}, status=status.HTTP_200_OK,)
         except Page.DoesNotExist:
             return Response(
