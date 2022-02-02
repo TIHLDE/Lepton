@@ -26,7 +26,6 @@ class DefaultUserSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     unread_notifications = serializers.SerializerMethodField()
-    permissions = DRYGlobalPermissionsField(actions=["write", "read", "destroy"])
     unanswered_evaluations_count = serializers.SerializerMethodField()
 
     class Meta:
@@ -46,7 +45,6 @@ class UserSerializer(serializers.ModelSerializer):
             "public_event_registrations",
             "unread_notifications",
             "unanswered_evaluations_count",
-            "permissions",
             "number_of_strikes",
         )
         read_only_fields = ("user_id",)
@@ -127,3 +125,11 @@ class UserCreateSerializer(serializers.ModelSerializer):
                 "Vi kan ikke sende epost til @ntnu.no-adresser, bruk @stud.ntnu.no-adressen istedenfor."
             )
         return data
+
+
+class UserPermissionsSerializer(serializers.ModelSerializer):
+    permissions = DRYGlobalPermissionsField(actions=["write", "read", "destroy"])
+
+    class Meta:
+        model = User
+        fields = ("permissions",)
