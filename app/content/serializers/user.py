@@ -26,7 +26,6 @@ class DefaultUserSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     unread_notifications = serializers.SerializerMethodField()
-    permissions = DRYGlobalPermissionsField(actions=["write", "read", "destroy"])
     unanswered_evaluations_count = serializers.SerializerMethodField()
 
     class Meta:
@@ -45,7 +44,6 @@ class UserSerializer(serializers.ModelSerializer):
             "tool",
             "unread_notifications",
             "unanswered_evaluations_count",
-            "permissions",
             "number_of_strikes",
         )
         read_only_fields = ("user_id",)
@@ -144,3 +142,11 @@ class UserInAnswerSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ["user_id", "email"]
+
+
+class UserPermissionsSerializer(serializers.ModelSerializer):
+    permissions = DRYGlobalPermissionsField(actions=["write", "read", "destroy"])
+
+    class Meta:
+        model = User
+        fields = ("permissions",)

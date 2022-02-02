@@ -16,7 +16,7 @@ class LawViewSet(BaseViewSet):
     queryset = Law.objects.all()
 
     def get_queryset(self):
-        return self.queryset.filter(group__slug=self.kwargs["slug"])
+        return super().get_queryset().filter(group__slug=self.kwargs["slug"])
 
     def create(self, request, *args, **kwargs):
         group = get_object_or_404(Group, slug=kwargs["slug"])
