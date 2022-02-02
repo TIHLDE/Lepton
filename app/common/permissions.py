@@ -5,7 +5,10 @@ from rest_framework.permissions import BasePermission
 
 from dry_rest_permissions.generics import DRYPermissions
 
+from sentry_sdk import capture_exception
+
 from app.common.enums import AdminGroup
+
 
 
 class BasePermissionModel(models.Model):
@@ -48,18 +51,10 @@ def check_has_access(groups_with_access, request):
     user = request.user
 
     try:
-        CACHE_USER_MEMBERSHIPS_SECONDS = 600
-        CACHE_KEY = f"user__{str(user.user_id)}__memberships"
-        all_memberships = cache.get(CACHE_KEY)
-        if all_memberships is None:
-            all_memberships = user.memberships.all()
-            cache.set(CACHE_KEY, all_memberships, CACHE_USER_MEMBERSHIPS_SECONDS)
-        for membership in all_memberships:
-            for group_name in groups_with_access:
-                if str(membership.group_id).lower() == str(group_name).lower():
-                    return True
-    except AttributeError:
-        return False
+        groups = map(str, groups_with_access)
+        return user.memberships.filter(group__slug__iregex=r'(' + '|'.join(groups) + ')').exists()
+    except Exception as e:
+        capture_exception(e)
     return False
 
 
@@ -71,16 +66,10 @@ def set_user_id(request):
     if token is None:
         return None
 
-    CACHE_KEY = f"get_user_from_token_{str(token)}"
-    CACHE_TOKEN_SECONDS = 60 * 60
-
-    user = cache.get(CACHE_KEY)
-    if user is None:
-        try:
-            user = Token.objects.get(key=token).user
-            cache.set(CACHE_KEY, user, CACHE_TOKEN_SECONDS)
-        except Token.DoesNotExist:
-            return
+    try:
+        user = Token.objects.get(key=token).user
+    except Token.DoesNotExist:
+        return
 
     request.id = user.user_id
     request.user = user

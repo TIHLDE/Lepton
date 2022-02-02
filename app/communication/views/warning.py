@@ -17,6 +17,6 @@ class WarningViewSet(BaseViewSet):
         CACHE_WARNINGS_SECONDS = 60 * 10
         queryset = cache.get(CACHE_KEY)
         if queryset is None:
-            queryset = self.queryset
+            queryset = super().get_queryset()
             cache.set(CACHE_KEY, queryset, CACHE_WARNINGS_SECONDS)
         return queryset

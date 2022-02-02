@@ -34,7 +34,7 @@ class SubmissionViewSet(APIFormErrorsMixin, BaseViewSet):
 
     def get_queryset(self):
         form_id = self.kwargs.get("form_id")
-        queryset = self.queryset.filter(form__id=form_id).prefetch_related(
+        queryset = super().get_queryset().filter(form__id=form_id).prefetch_related(
             "user", "answers"
         )
         if hasattr(self, "action") and self.action in ["list", "download"]:
