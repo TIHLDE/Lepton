@@ -17,10 +17,9 @@ class ShortLinkViewSet(BaseViewSet):
 
     def get_queryset(self):
         if hasattr(self, "action") and self.action == "retrieve":
-            return self.queryset
-        else:
-            user = get_object_or_404(User, user_id=self.request.id)
-            return self.queryset.filter(user=user)
+            return super().get_queryset()
+        user = get_object_or_404(User, user_id=self.request.id)
+        return super().get_queryset().filter(user=user)
 
     def create(self, request):
         user = get_object_or_404(User, user_id=request.id)

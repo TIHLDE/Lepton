@@ -26,6 +26,7 @@ from app.content.serializers import (
     UserCreateSerializer,
     UserListSerializer,
     UserMemberSerializer,
+    UserPermissionsSerializer,
     UserSerializer,
 )
 from app.content.serializers.strike import UserInfoStrikeSerializer
@@ -120,6 +121,13 @@ class UserViewSet(BaseViewSet, ActionMixin):
         if pk == "me":
             return request.user
         return get_object_or_404(User, user_id=pk)
+
+    @action(detail=False, methods=["get"], url_path="me/permissions")
+    def get_user_permissions(self, request, *args, **kwargs):
+        serializer = UserPermissionsSerializer(
+            request.user, context={"request": request}
+        )
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=["get"], url_path="groups")
     def get_user_memberships(self, request, pk, *args, **kwargs):

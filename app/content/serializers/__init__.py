@@ -28,5 +28,6 @@ from app.content.serializers.user import (
     UserMemberSerializer,
     UserSerializer,
     DefaultUserSerializer,
+    UserPermissionsSerializer,
 )
 from app.content.serializers.user_badge import UserBadgeSerializer
