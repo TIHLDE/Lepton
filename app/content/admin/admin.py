@@ -15,7 +15,6 @@ admin.site.register(models.Badge)
 admin.site.register(models.UserBadge)
 admin.site.register(models.Page)
 admin.site.register(models.ShortLink)
-admin.site.register(models.Banner)
 
 
 @admin.register(models.Strike)

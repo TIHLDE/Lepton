@@ -3,7 +3,7 @@ from django.utils import timezone
 import factory
 from factory.django import DjangoModelFactory
 
-from app.content.models.banner import Banner
+from app.communication.models.banner import Banner
 
 
 class BannerFactory(DjangoModelFactory):

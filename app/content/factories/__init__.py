@@ -7,4 +7,3 @@ from app.content.factories.news_factory import NewsFactory
 from app.content.factories.page_factory import PageFactory
 from app.content.factories.page_factory import ParentPageFactory
 from app.content.factories.short_link_factory import ShortLinkFactory
-from app.content.factories.banner_factory import BannerFactory

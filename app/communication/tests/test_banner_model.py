@@ -2,7 +2,7 @@ from datetime import timedelta
 
 import pytest
 
-from app.content.factories.banner_factory import BannerFactory
+from app.communication.factories.banner_factory import BannerFactory
 from app.util.utils import now
 
 
