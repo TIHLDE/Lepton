@@ -22,7 +22,6 @@ from app.content.serializers import (
     BadgeSerializer,
     DefaultUserSerializer,
     EventListSerializer,
-    UserAdminSerializer,
     UserCreateSerializer,
     UserListSerializer,
     UserMemberSerializer,
@@ -98,7 +97,6 @@ class UserViewSet(BaseViewSet, ActionMixin):
                     status=status.HTTP_403_FORBIDDEN,
                 )
         if serializer.is_valid():
-            serializer.save()
             super().perform_update(serializer)
             user = get_object_or_404(User, user_id=pk)
             serializer = UserSerializer(user, context={"request": request},)
