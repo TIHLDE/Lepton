@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+- ✨ **Arrangementer**. Deltagerlister er offentlig tilgjengelig, men brukere kan reservere seg gjennom en innstilling i profilen sin.
 - ⚡ **Brukere**. Lagt til at superadmins kan nå slette brukere
 - ⚡ **Spørreskjemaer**. Liste med maler av spørreskjemaer viser nå type spørreskjema og om bruker har svart.
 - ⚡ **Brukere**. Flyttet brukers tilganger til et eget endepunkt for å kunne hente ut brukere raskere.
