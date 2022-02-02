@@ -83,7 +83,7 @@ class UserViewSet(BaseViewSet, ActionMixin):
         user = self._get_user(request, pk)
         self.check_object_permissions(self.request, user)
         if is_admin_user(request):
-            serializer = UserAdminSerializer(
+            serializer = UserSerializer(
                 user, context={"request": request}, data=request.data,
             )
         else:
