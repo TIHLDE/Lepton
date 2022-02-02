@@ -32,8 +32,8 @@ class FormViewSet(APIFormErrorsMixin, BaseViewSet):
 
     def get_queryset(self):
         if self.is_template_list_request():
-            return self.queryset.filter(template=True)
-        return self.queryset
+            return super().get_queryset().filter(template=True)
+        return super().get_queryset()
 
     def get_serializer_class(self):
         if self.is_template_list_request():
