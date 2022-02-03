@@ -41,9 +41,10 @@ class Group(OptionalImage, BaseModel, BasePermissionModel):
     )
     fines_admin = models.ForeignKey(
         User,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         related_name="fine_master_groups",
         null=True,
+        blank=True,
         default=None,
     )
 

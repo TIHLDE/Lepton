@@ -248,6 +248,7 @@
         "user_class": 2,
         "user_study": 2,
         "allergy": "",
+        "public_event_registrations": true,
         "tool": "",
         "is_staff": false,
         "is_active": true,
@@ -274,6 +275,7 @@
         "user_class": 3,
         "user_study": 1,
         "allergy": "Gode karakterer",
+        "public_event_registrations": true,
         "tool": "Parentes",
         "is_staff": true,
         "is_active": true,
@@ -302,6 +304,7 @@
         "user_class": 1,
         "user_study": 1,
         "allergy": "",
+        "public_event_registrations": true,
         "tool": "",
         "is_staff": false,
         "is_active": true,
@@ -312,7 +315,7 @@
     }
 },
 {
-    "model": "content.notification",
+    "model": "communication.notification",
     "pk": 1,
     "fields": {
         "created_at": "2021-03-08T19:51:56.552Z",
@@ -324,7 +327,7 @@
     }
 },
 {
-    "model": "content.notification",
+    "model": "communication.notification",
     "pk": 2,
     "fields": {
         "created_at": "2021-03-20T12:23:12.092Z",

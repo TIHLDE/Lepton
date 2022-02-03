@@ -8,10 +8,8 @@ from app.content import models
 
 admin.site.register(models.Event)
 admin.site.register(models.News)
-admin.site.register(models.Warning)
 admin.site.register(models.Category)
 admin.site.register(models.Priority)
-admin.site.register(models.Notification)
 admin.site.register(models.Cheatsheet)
 admin.site.register(models.Badge)
 admin.site.register(models.UserBadge)
@@ -106,6 +104,8 @@ class StrikesOverviewAdmin(UserAdmin):
 
 @admin.register(LogEntry)
 class LogEntryAdmin(admin.ModelAdmin):
+    actions = None
+
     date_hierarchy = "action_time"
 
     list_filter = ["user", "content_type", "action_flag"]
@@ -127,7 +127,9 @@ class LogEntryAdmin(admin.ModelAdmin):
         return False
 
     def has_delete_permission(self, request, obj=None):
-        return False
+        if "admin/logentry" in request.path:
+            return False
+        return True
 
     def has_view_permission(self, request, obj=None):
         return request.user.is_superuser

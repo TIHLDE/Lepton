@@ -1,9 +1,12 @@
 from django.conf import settings
+from django.http.response import JsonResponse
+from django.shortcuts import get_object_or_404
+from rest_framework import status
 
 from django_ical.views import ICalFeed
 from icalendar import vCalAddress, vText
 
-from app.content.models import Registration
+from app.content.models import User
 
 
 class UserCalendarEvents(ICalFeed):
@@ -14,11 +17,19 @@ class UserCalendarEvents(ICalFeed):
     file_name = "events.ics"
 
     def __call__(self, request, *args, **kwargs):
-        self.user_id = kwargs.get("user_id", None)
+        user_id = kwargs.get("user_id", None)
+        self.user = get_object_or_404(User, user_id=user_id)
+        if not self.user.public_event_registrations:
+            return JsonResponse(
+                {
+                    "detail": "Denne brukeren har skrudd av offentlig deling av påmeldinger til arrangementer. Du kan derfor ikke hente ut brukerens arrangementer som .ics-fil"
+                },
+                status=status.HTTP_403_FORBIDDEN,
+            )
         return super(UserCalendarEvents, self).__call__(request, *args, **kwargs)
 
     def items(self):
-        return Registration.objects.filter(user__pk=self.user_id)
+        return self.user.registrations.all()
 
     def item_guid(self, item):
         return f"{item.event.id}@{settings.WEBSITE_URL}"

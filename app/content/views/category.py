@@ -1,11 +1,10 @@
-from rest_framework import viewsets
-
 from app.common.permissions import BasicViewPermission
+from app.common.viewsets import BaseViewSet
 from app.content.models import Category
 from app.content.serializers import CategorySerializer
 
 
-class CategoryViewSet(viewsets.ModelViewSet):
+class CategoryViewSet(BaseViewSet):
 
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
