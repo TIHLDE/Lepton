@@ -13,6 +13,8 @@
 ---
 
 ## Neste versjon
+- ✨ **Usending av gavekort** for arrangementer kan nå gjøres via epost.
+
 ## Versjon 2022.02.06
 - ⚡ **Registreringer**. La til filtrering på registreringer til arrangementer.
 

@@ -3,6 +3,7 @@ from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status
 from rest_framework.decorators import action
+from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
 
 from sentry_sdk import capture_exception
@@ -11,7 +12,12 @@ from app.common.mixins import ActionMixin
 from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission, IsMember
 from app.common.viewsets import BaseViewSet
+from app.communication.events import (
+    EventGiftCardAmountMismatchError,
+    send_gift_cards_by_email,
+)
 from app.communication.notifier import Notify
+from app.constants import MAIL_INDEX
 from app.content.filters import EventFilter
 from app.content.models import Event, User
 from app.content.serializers import (
@@ -124,7 +130,7 @@ class EventViewSet(BaseViewSet, ActionMixin):
     )
     def get_public_event_registrations(self, request, pk, *args, **kwargs):
         event = get_object_or_404(Event, id=pk)
-        registrations = event.get_queue()
+        registrations = event.get_participants()
         return self.paginate_response(
             data=registrations,
             serializer=PublicRegistrationSerializer,
@@ -141,7 +147,7 @@ class EventViewSet(BaseViewSet, ActionMixin):
             event = self.get_object()
             self.check_object_permissions(self.request, event)
 
-            users = User.objects.filter(registrations__in=event.get_queue())
+            users = User.objects.filter(registrations__in=event.get_participants())
             Notify(users, title).send_email(
                 MailCreator(title)
                 .add_paragraph(f"Arrangøren av {event.title} har en melding til deg:")
@@ -200,3 +206,35 @@ class EventViewSet(BaseViewSet, ActionMixin):
         event = self.get_object()
         serializer = EventStatisticsSerializer(event, context={"request": request})
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(
+        detail=True,
+        methods=["post"],
+        url_path="mail-gift-cards",
+        parser_classes=(MultiPartParser, FormParser,),
+    )
+    def mail_gift_cards(self, request, *args, **kwargs):
+
+        event = self.get_object()
+        dispatcher = request.user
+        files = request.FILES.getlist("files")
+
+        try:
+            send_gift_cards_by_email(event, files, dispatcher)
+            return Response(
+                {
+                    "detail": "Gavekortene er sendt! Se separat epost for en mer utfyllende oversikt."
+                },
+                status=status.HTTP_200_OK,
+            )
+        except EventGiftCardAmountMismatchError as e:
+            return Response({"detail": e.message}, status=status.HTTP_400_BAD_REQUEST)
+        except ValueError as e:
+            capture_exception(e)
+            return Response(
+                {
+                    "detail": f"Noe gikk galt da vi prøvde å sende ut gavekortene. Gi det et nytt forsøk senere eller "
+                    f"kontakt Index på {MAIL_INDEX} eller slack."
+                },
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
