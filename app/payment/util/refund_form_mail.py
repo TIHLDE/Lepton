@@ -2,7 +2,6 @@ import base64
 import functools
 import io
 import operator
-import os
 import tempfile
 from datetime import datetime
 
@@ -12,6 +11,8 @@ import pillow_heif
 from fpdf import FPDF
 from pdf2image import convert_from_path
 from PIL import Image
+
+from app.constants import MAIL_ECONOMY
 
 
 class UnsupportedFileException(Exception):
@@ -27,8 +28,6 @@ field_title_map = {
     "occasion": "Anledning/arrangement:",
     "comment": "Kommentar:",
 }
-
-mailto = "okonomi@tihlde.org" if os.environ.get("PROD") else "test@tihlde.org"
 
 
 def data_is_valid(data):
@@ -181,7 +180,7 @@ def format_mail(data):
     text += f'Beløp: {data["amount"]}\n'
     text += f'Anledning/arrangement: {data["occasion"]}\n'
     text += f'Kommentar: {data["comment"]}\n\n'
-    text += "Refusjonsskjema er generert og vedlagt. Ved spørsmål ta kontakt med okonomi@tihlde.org!"
+    text += f"Refusjonsskjema er generert og vedlagt. Ved spørsmål ta kontakt med {MAIL_ECONOMY}!"
     return text
 
 
@@ -190,7 +189,7 @@ def send_refund_mail(data, file):
         f'Refusjonsskjema - {data["name"]}',
         format_mail(data),
         data["mailfrom"],
-        [mailto, data["mailfrom"]],
+        [MAIL_ECONOMY, data["mailfrom"]],
     )
     msg = EmailMultiAlternatives(subject, text, from_email, to)
     msg.attach(f'{data["date"]}_Attachment_{data["name"]}.pdf', file, "application/pdf")

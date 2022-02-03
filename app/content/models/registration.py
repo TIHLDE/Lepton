@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q
 
-from app.common.enums import AdminGroup, Groups, StrikeEnum
+from app.common.enums import StrikeEnum
 from app.common.permissions import BasePermissionModel
 from app.communication.notifier import Notify
 from app.content.exceptions import (
@@ -15,6 +15,7 @@ from app.content.exceptions import (
 )
 from app.content.models.event import Event
 from app.content.models.strike import create_strike
+from app.content.models.user import User
 from app.forms.enums import EventFormType
 from app.util import EnumUtils, now
 from app.util.mail_creator import MailCreator
@@ -23,21 +24,13 @@ from app.util.utils import datetime_format
 
 
 class Registration(BaseModel, BasePermissionModel):
-    has_access = [AdminGroup.HS, AdminGroup.INDEX, AdminGroup.NOK, AdminGroup.SOSIALEN]
-    has_retrieve_access = [
-        AdminGroup.HS,
-        AdminGroup.INDEX,
-        AdminGroup.NOK,
-        AdminGroup.SOSIALEN,
-        Groups.TIHLDE,
-    ]
 
     registration_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(
-        "content.User", on_delete=models.CASCADE, related_name="registrations"
+        User, on_delete=models.CASCADE, related_name="registrations"
     )
     event = models.ForeignKey(
-        "content.Event", on_delete=models.CASCADE, related_name="registrations"
+        Event, on_delete=models.CASCADE, related_name="registrations"
     )
 
     is_on_wait = models.BooleanField(default=False, verbose_name="waiting list")
@@ -285,13 +278,6 @@ class Registration(BaseModel, BasePermissionModel):
     def check_registration_has_ended(self):
         if self.event.end_registration_at < now():
             raise ValidationError("Påmeldingsfristen har passert")
-
-    def get_waiting_number(self):
-        if self.is_on_wait:
-            for waiting in self.event.get_waiting_list():
-                if self == waiting:
-                    return list(self.event.get_waiting_list()).index(self) + 1
-        return None
 
     def get_submissions(self, type=None):
         from app.forms.models import EventForm, Submission

@@ -1,5 +1,5 @@
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, status, viewsets
+from rest_framework import filters, status
 from rest_framework.response import Response
 
 from sentry_sdk import capture_exception
@@ -7,12 +7,13 @@ from sentry_sdk import capture_exception
 from app.common.enums import UserClass, UserStudy
 from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission, is_admin_user
+from app.common.viewsets import BaseViewSet
 from app.content.filters import CheatsheetFilter
 from app.content.models import Cheatsheet
 from app.content.serializers import CheatsheetSerializer
 
 
-class CheatsheetViewSet(viewsets.ModelViewSet):
+class CheatsheetViewSet(BaseViewSet):
     serializer_class = CheatsheetSerializer
     permission_classes = [BasicViewPermission]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
@@ -61,7 +62,7 @@ class CheatsheetViewSet(viewsets.ModelViewSet):
                 data=self.request.data, context={"request": request}
             )
             if serializer.is_valid():
-                serializer.save()
+                super().perform_create(serializer)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(
                 {"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST
@@ -80,7 +81,7 @@ class CheatsheetViewSet(viewsets.ModelViewSet):
                     cheatsheet, data=request.data, context={"request": request}
                 )
                 if serializer.is_valid():
-                    serializer.save()
+                    super().perform_update(serializer)
                     return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(
                 {"detail": "Du har ikke tillatelse til å oppdatere oppskriften"},
@@ -96,9 +97,8 @@ class CheatsheetViewSet(viewsets.ModelViewSet):
     def destroy(self, request, *args, **kwargs):
         """Deletes a cheatsheet retrieved by UserClass and UserStudy"""
         try:
-            cheatsheet = self.get_object()
             if is_admin_user(request):
-                super().destroy(cheatsheet)
+                super().destroy(request, *args, **kwargs)
                 return Response(
                     {"detail": "Oppskriften har blitt slettet"},
                     status=status.HTTP_200_OK,

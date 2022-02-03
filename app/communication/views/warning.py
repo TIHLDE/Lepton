@@ -1,12 +1,12 @@
 from django.core.cache import cache
-from rest_framework import viewsets
 
 from app.common.permissions import BasicViewPermission
-from app.content.models import Warning
-from app.content.serializers import WarningSerializer
+from app.common.viewsets import BaseViewSet
+from app.communication.models import Warning
+from app.communication.serializers import WarningSerializer
 
 
-class WarningViewSet(viewsets.ModelViewSet):
+class WarningViewSet(BaseViewSet):
 
     queryset = Warning.objects.all()
     serializer_class = WarningSerializer
@@ -17,6 +17,6 @@ class WarningViewSet(viewsets.ModelViewSet):
         CACHE_WARNINGS_SECONDS = 60 * 10
         queryset = cache.get(CACHE_KEY)
         if queryset is None:
-            queryset = self.queryset
+            queryset = super().get_queryset()
             cache.set(CACHE_KEY, queryset, CACHE_WARNINGS_SECONDS)
         return queryset

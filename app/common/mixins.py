@@ -1,3 +1,7 @@
+from django.contrib.admin.models import ADDITION, CHANGE, DELETION, LogEntry
+from django.contrib.contenttypes.models import ContentType
+from django.db.models.query import QuerySet
+from django.utils.encoding import force_str
 from rest_framework import serializers
 
 
@@ -20,3 +24,99 @@ class OrderedModelSerializerMixin:
         new_order = data.get("order")
         if new_order and getattr(instance, "order") != new_order:
             instance.to(new_order)
+
+
+class LoggingMethodMixin:
+    """
+    Adds methods that log changes made to users' data.
+    To use this, subclass it and ModelViewSet, and override _get_logging_user(). Ensure
+    that the viewset you're mixing this into has `self.model` and `self.serializer_class`
+    attributes.
+    """
+
+    def _changed_fields(self, instance, validated_data):
+        changes = ""
+        for field, value in validated_data.items():
+            if not isinstance(value, dict):
+                old_val = getattr(instance, field, None)
+                if value != old_val:
+                    changes += f'\nField: "{field}":\n - Previous: "{old_val}"\n - Now: "{value}"'
+        return changes
+
+    def log(self, operation, instance, validated_data=None):
+        if operation == ADDITION:
+            action_message = "Created"
+        if operation == CHANGE:
+            action_message = "Updated"
+        if operation == DELETION:
+            action_message = "Deleted"
+
+        instances = (
+            instance
+            if isinstance(instance, list) or isinstance(instance, QuerySet)
+            else [instance]
+        )
+        for instance in instances:
+            message = f'{action_message} {force_str(instance._meta.verbose_name)}: "{force_str(instance)}".'
+
+            if operation == CHANGE and validated_data:
+                message = "Changes:\n"
+                changes = self._changed_fields(instance, validated_data)
+                message += changes if len(changes) else "No changes"
+
+            if self.request.user:
+                LogEntry.objects.log_action(
+                    user_id=self.request.user.user_id,
+                    content_type_id=ContentType.objects.get_for_model(instance).pk,
+                    object_id=instance.pk,
+                    object_repr=str(instance),
+                    action_flag=operation,
+                    change_message=message,
+                )
+
+    def _log_on_create(self, serializer):
+        """Log the up-to-date serializer.data."""
+        self.log(operation=ADDITION, instance=serializer.instance)
+
+    def _log_on_update(self, serializer):
+        """Log data from the updated serializer instance."""
+        self.log(
+            operation=CHANGE,
+            instance=serializer.instance,
+            validated_data=serializer.validated_data,
+        )
+
+    def _log_on_destroy(self, instance):
+        """Log data from the instance before it gets deleted."""
+        self.log(operation=DELETION, instance=instance)
+
+
+class LoggingViewSetMixin(LoggingMethodMixin):
+    """
+    A viewset that logs changes made to users' data.
+    To use this, subclass it and ModelViewSet, and override _get_logging_user(). Ensure
+    that the viewset you're mixing this into has `self.model` and `self.serializer_class`
+    attributes.
+    If you modify any of the following methods, be sure to call super() or the
+    corresponding _log_on_X method:
+    - perform_create
+    - perform_update
+    - perform_destroy
+    """
+
+    def perform_create(self, serializer, *args, **kwargs):
+        """Create an object and log its data."""
+        instance = serializer.save(*args, **kwargs)
+        self._log_on_create(serializer)
+        return instance
+
+    def perform_update(self, serializer, *args, **kwargs):
+        """Update the instance and log the updated data."""
+        self._log_on_update(serializer)
+        instance = serializer.save(*args, **kwargs)
+        return instance
+
+    def perform_destroy(self, instance):
+        """Delete the instance and log the deletion."""
+        self._log_on_destroy(instance)
+        instance.delete()

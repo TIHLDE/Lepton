@@ -7,7 +7,6 @@ from app.content.views import (
     CheatsheetViewSet,
     EventViewSet,
     NewsViewSet,
-    NotificationViewSet,
     PageViewSet,
     RegistrationViewSet,
     ShortLinkViewSet,
@@ -15,7 +14,6 @@ from app.content.views import (
     UserBadgeViewSet,
     UserCalendarEvents,
     UserViewSet,
-    WarningViewSet,
     accept_form,
     upload,
 )
@@ -25,14 +23,12 @@ router = routers.DefaultRouter()
 # Register content viewpoints here
 router.register("news", NewsViewSet)
 router.register("events", EventViewSet, basename="event")
-router.register("warnings", WarningViewSet, basename="warning")
 router.register("categories", CategoryViewSet)
 router.register("short-links", ShortLinkViewSet, basename="short-link")
 router.register("users", UserViewSet, basename="user")
 router.register(
     r"events/(?P<event_id>\d+)/users", RegistrationViewSet, basename="registration"
 )
-router.register("notifications", NotificationViewSet, basename="notification")
 router.register(
     r"cheatsheets/(?P<study>[^\.]+)/(?P<grade>[^\.]+)/files",
     CheatsheetViewSet,

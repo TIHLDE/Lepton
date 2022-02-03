@@ -40,7 +40,7 @@ class Notify:
         description: str -> Description in notification, defaults to blank string
         link: str -> Link in notification, optional
         """
-        from app.content.models.notification import Notification
+        from app.communication.models.notification import Notification
 
         if title is None:
             title = self.title
@@ -60,7 +60,7 @@ class Notify:
         return self
 
 
-def send_html_email(to_mails, html, subject):
+def send_html_email(to_mails, html, subject, attachments=None):
     """
     to_mails: str -> Email-addresses of receivers\n
     html: str -> The email HTML to be sent to the receivers\n
@@ -77,7 +77,11 @@ def send_html_email(to_mails, html, subject):
             text_content = strip_tags(html)
             email_sender = os.environ.get("EMAIL_USER")
             msg = EmailMultiAlternatives(
-                subject, text_content, f"TIHLDE <{email_sender}>", bcc=mails
+                subject,
+                text_content,
+                f"TIHLDE <{email_sender}>",
+                bcc=mails,
+                attachments=attachments,
             )
             msg.attach_alternative(html, "text/html")
             result = msg.send()
