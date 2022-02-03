@@ -39,6 +39,10 @@ schedule = {
         # Every 15 minute between 12:00 and 13:00 every day to allow multiple attempts
         "schedule": crontab(minute="*/15", hour="12"),
     },
+    "delete_log_entries": {
+        "task": "app.common.tasks.delete_old_log_entries",
+        "schedule": crontab(hour="12", minute="0"),
+    },
 }
 
 app.conf.update(

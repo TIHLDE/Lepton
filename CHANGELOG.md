@@ -13,6 +13,16 @@
 ---
 
 ## Neste versjon
+## Versjon 2022.02.03
+- ⚡ **Spørreskjema**. Mulig å bruke 400 karakterer i spørreskjema felter.
+- ✨ **Offentlige profiler**. Alle innloggede TIHLDE-medlemmer kan nå se andre brukere og deres badges og medlemskap.
+- ✨ **Arrangementer**. Deltagerlister er offentlig tilgjengelig, men brukere kan reservere seg gjennom en innstilling i profilen sin.
+- ⚡ **Brukere**. Lagt til at superadmins kan nå slette brukere
+- ⚡ **Spørreskjemaer**. Liste med maler av spørreskjemaer viser nå type spørreskjema og om bruker har svart.
+- ⚡ **Brukere**. Flyttet brukers tilganger til et eget endepunkt for å kunne hente ut brukere raskere.
+- 🦟 **Cache**. Fikset bug der endringer i databasen ikke blir gjenspeilet i api'et.
+- ⚡ **NoK-interesse**. Interesse for kun annonser går rett til egen epost-adresse.
+
 ## Versjon 2022.01.31
 - ✨ **GDPR**. Muliggjort eksportering av alle brukers data. Blir sendt som zip-fil til brukers mail på forepørsel.
 - ⚡ **Arrangement**. Mulighet til å se om et arrangement er lukket fra en liste med arrangementer

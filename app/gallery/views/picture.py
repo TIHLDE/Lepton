@@ -1,13 +1,14 @@
-from rest_framework import status, viewsets
+from rest_framework import status
 from rest_framework.response import Response
 
 from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission
+from app.common.viewsets import BaseViewSet
 from app.gallery.models.picture import Picture
 from app.gallery.serializers.picture import PictureSerializer
 
 
-class PictureViewSet(viewsets.ModelViewSet):
+class PictureViewSet(BaseViewSet):
     serializer_class = PictureSerializer
     queryset = Picture.objects.all()
     permission_classes = [BasicViewPermission]
@@ -25,7 +26,7 @@ class PictureViewSet(viewsets.ModelViewSet):
             data=request.data, partial=True, many=True, context={"slug": album_id}
         )
         if serializer.is_valid():
-            serializer.save()
+            super().perform_create(serializer)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(
