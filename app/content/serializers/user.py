@@ -38,15 +38,7 @@ class UserSerializer(DefaultUserSerializer):
 
     class Meta:
         model = User
-        fields = (
-            "user_id",
-            "first_name",
-            "last_name",
-            "image",
-            "email",
-            "gender",
-            "user_class",
-            "user_study",
+        fields = DefaultUserSerializer.Meta.fields + (
             "allergy",
             "tool",
             "public_event_registrations",
