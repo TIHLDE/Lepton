@@ -23,7 +23,8 @@ class DefaultUserSerializer(serializers.ModelSerializer):
             "first_name",
             "last_name",
             "user_class",
-            "user_study" "image",
+            "user_study",
+            "image",
         )
 
 

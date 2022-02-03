@@ -2,7 +2,7 @@ from datetime import timedelta
 
 import pytest
 
-from app.content.factories.badge_factory import BadgeFactory
+from app.badge.factories import BadgeFactory
 from app.util.utils import now
 
 
@@ -45,7 +45,7 @@ def test_badge_is_active_with_different_active_dates(
         (now() - timedelta(2), now() - timedelta(1), True),
         (now() - timedelta(1), now() - timedelta(2), True),
         (now() - timedelta(1), now() + timedelta(1), False),
-        (now(), now() + timedelta(minutes=1), False),
+        (now(), now() + timedelta(hours=1), False),
         (now(), None, True),
         (None, now() + timedelta(1), False),
         (None, None, True),

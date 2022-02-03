@@ -5,13 +5,15 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import exception_handler as drf_exception_handler
 
+from app import settings
+
 logger = logging.getLogger(__name__)
 
 
 def exception_handler(exc, context):
     response = drf_exception_handler(exc, context)
 
-    if not response and isinstance(exc, IntegrityError):
+    if not response and isinstance(exc, IntegrityError) and not settings.DEBUG:
         response = Response(
             {"detail": "Some values are supposed to be unique but are not."},
             status=status.HTTP_409_CONFLICT,
@@ -22,7 +24,7 @@ def exception_handler(exc, context):
     else:
         logger.error(f"Unhandled request exception: {exc}")
 
-    if not response:
+    if not settings.DEBUG and not response:
         response = Response(
             {"detail": "Noe gikk alvorlig galt da vi behandlet forespørselen din"},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,

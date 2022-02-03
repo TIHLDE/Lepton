@@ -8,6 +8,8 @@ from rest_framework.response import Response
 
 from sentry_sdk import capture_exception
 
+from app.badge.models import Badge, UserBadge
+from app.badge.serializers import BadgeSerializer, UserBadgeSerializer
 from app.common.enums import Groups, GroupType
 from app.common.mixins import ActionMixin
 from app.common.pagination import BasePagination
@@ -19,13 +21,11 @@ from app.common.permissions import (
     is_admin_user,
 )
 from app.content.filters import UserFilter
-from app.content.models import Badge, User, UserBadge
+from app.content.models import User
 from app.content.serializers import (
-    BadgeSerializer,
     DefaultUserSerializer,
     EventListSerializer,
     UserAdminSerializer,
-    UserBadgeSerializer,
     UserCreateSerializer,
     UserListSerializer,
     UserMemberSerializer,
@@ -148,9 +148,12 @@ class UserViewSet(viewsets.ModelViewSet, ActionMixin):
             return Response(
                 {"detail": "Badgen er ikke aktiv"}, status=status.HTTP_400_BAD_REQUEST,
             )
-        serializer = UserBadgeSerializer(data=request.data)
+        user_badge = UserBadge(user=user, badge=badge)
+        serializer = UserBadgeSerializer(
+            user_badge, data=request.data, context={"request": request}
+        )
         if serializer.is_valid():
-            UserBadge(user=user, badge=badge).save()
+            serializer.save()
             return Response({"detail": "Badge fullført!"}, status=status.HTTP_200_OK)
         else:
             return Response(

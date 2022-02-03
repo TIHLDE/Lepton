@@ -1,7 +1,7 @@
 from django_filters.rest_framework.filterset import FilterSet
 
-from app.content.models.user import User
-from app.content.models.user_badge import UserBadge
+from app.badge.models import UserBadge
+from app.content.models import User
 
 
 class UserWithBadgesFilter(FilterSet):

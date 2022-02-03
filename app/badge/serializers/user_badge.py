@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
+from app.badge.models import UserBadge
 from app.common.serializers import BaseModelSerializer
-from app.content.models import UserBadge
 
 
 class UserBadgeSerializer(BaseModelSerializer):

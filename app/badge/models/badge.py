@@ -2,7 +2,7 @@ import uuid
 
 from django.db import models
 
-from app.content.models.badge_category import BadgeCategory
+from app.badge.models.badge_category import BadgeCategory
 from app.util.models import BaseModel, OptionalImage
 from app.util.utils import now
 
@@ -11,7 +11,7 @@ class Badge(BaseModel, OptionalImage):
     id = models.UUIDField(
         auto_created=True, primary_key=True, default=uuid.uuid4, serialize=False,
     )
-    flag = models.CharField(max_length=50, blank=True)
+    flag = models.UUIDField(auto_created=True, default=uuid.uuid4, serialize=False,)
     title = models.CharField(max_length=200)
     description = models.CharField(max_length=200)
     badge_category = models.ForeignKey(
@@ -26,11 +26,6 @@ class Badge(BaseModel, OptionalImage):
     def __str__(self):
         return f"{self.title} - {self.description}"
 
-    def save(self, *args, **kwargs):
-        if len(self.flag) == 0:
-            self.flag = str(self.id)
-        super().save(*args, **kwargs)
-
     @property
     def active(self):
         _now = now()
@@ -44,6 +39,7 @@ class Badge(BaseModel, OptionalImage):
 
     @property
     def is_public(self):
+        # return not self.active_to or self.active_to <= now()
         if self.active_to is None:
             return self.active
         return self.active_to <= now()

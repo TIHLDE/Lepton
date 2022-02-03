@@ -1,8 +1,3 @@
-from app.content.serializers.badge import (
-    BadgeSerializer,
-    LeaderboardSerializer,
-    LeaderboardForBadgeSerializer,
-)
 from app.content.serializers.category import CategorySerializer
 from app.content.serializers.cheatsheet import CheatsheetSerializer
 from app.content.serializers.event import (
@@ -37,5 +32,4 @@ from app.content.serializers.user import (
     UserMemberSerializer,
     UserSerializer,
 )
-from app.content.serializers.user_badge import UserBadgeSerializer
 from app.content.serializers.warning import WarningSerializer

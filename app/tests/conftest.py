@@ -3,10 +3,10 @@ from rest_framework.test import APIRequestFactory
 
 import pytest
 
+from app.badge.factories import BadgeFactory, UserBadgeFactory
 from app.career.factories import WeeklyBusinessFactory
 from app.common.enums import AdminGroup, Groups, MembershipType
 from app.content.factories import (
-    BadgeFactory,
     CheatsheetFactory,
     EventFactory,
     NewsFactory,
@@ -15,7 +15,6 @@ from app.content.factories import (
     ParentPageFactory,
     RegistrationFactory,
     ShortLinkFactory,
-    UserBadgeFactory,
     UserFactory,
 )
 from app.forms.tests.form_factories import FormFactory, SubmissionFactory

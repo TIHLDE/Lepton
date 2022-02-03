@@ -3,12 +3,9 @@ from django.urls import path
 from rest_framework import routers
 
 from app.content.views import (
-    BadgeViewSet,
     CategoryViewSet,
     CheatsheetViewSet,
     EventViewSet,
-    LeaderboardForBadgeViewSet,
-    LeaderboardViewSet,
     NewsViewSet,
     NotificationViewSet,
     PageViewSet,
@@ -40,13 +37,6 @@ router.register(
     CheatsheetViewSet,
     basename="cheatsheet_list",
 )
-router.register("badges/leaderboard", LeaderboardViewSet, basename="leaderboard")
-router.register(
-    r"badges/(?P<id>[^\.]+)/leaderboard",
-    LeaderboardForBadgeViewSet,
-    basename="leaderboard-badge",
-)
-router.register("badges", BadgeViewSet, basename="badge")
 router.register("pages", PageViewSet)
 router.register("strikes", StrikeViewSet, basename="strikes")
 
