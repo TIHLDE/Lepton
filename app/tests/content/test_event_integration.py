@@ -1,13 +1,12 @@
 from datetime import timedelta
 
-from django.db.models import signals
 from django.utils import timezone
+from rest_framework import status
 
-import factory
 import pytest
 
 from app.common.enums import AdminGroup, GroupType, MembershipType
-from app.content.factories import EventFactory
+from app.content.factories import EventFactory, RegistrationFactory, UserFactory
 from app.forms.enums import EventFormType
 from app.forms.tests.form_factories import EventFormFactory
 from app.group.factories import GroupFactory
@@ -196,7 +195,6 @@ def test_update_as_user(event, user):
 
 @pytest.mark.django_db
 @permission_params
-@factory.django.mute_signals(signals.post_save)
 def test_update_event_as_admin(permission_test_util):
     """
     HS and Index members should be able to update all events.
@@ -249,7 +247,6 @@ def test_create_as_user(user):
 
 @pytest.mark.django_db
 @permission_params
-@factory.django.mute_signals(signals.post_save)
 def test_create_event_as_admin(permission_test_util):
     """
     HS and Index members should be able to create events no matter which organizer is selected.
@@ -291,7 +288,6 @@ def test_delete_as_user(user, event):
 
 @pytest.mark.django_db
 @permission_params
-@factory.django.mute_signals(signals.post_save)
 def test_delete_event_as_admin(permission_test_util):
     """
     HS and Index members should be able to delete events no matter which organizer is selected.
@@ -414,3 +410,55 @@ def test_retrieve_event_includes_form_survey(default_client, event):
     response = default_client.get(url)
 
     assert response.json().get("survey") == str(survey.id)
+
+
+@pytest.mark.django_db
+def test_list_public_registrations_anonymizes_correctly(member, api_client, event):
+    """Should list user_info=None if user.public_event_registrations=False."""
+    user1 = UserFactory(public_event_registrations=True)
+    user2 = UserFactory(public_event_registrations=False)
+
+    RegistrationFactory(event=event, user=user1)
+    RegistrationFactory(event=event, user=user2)
+
+    url = f"{get_events_url_detail(event)}public_registrations/"
+    client = api_client(user=member)
+    response = client.get(url)
+    results = response.json().get("results")
+
+    assert len(results) == 2
+    assert results[0]["user_info"]["user_id"] == user1.user_id
+    assert results[1]["user_info"] is None
+
+
+@pytest.mark.django_db
+def test_list_public_registrations_only_lists_not_on_wait(member, api_client):
+    """Should only list registrations which is not on waitlist"""
+    event = EventFactory(limit=1)
+    user1 = UserFactory()
+    user2 = UserFactory()
+    RegistrationFactory(event=event, user=user1)
+    RegistrationFactory(event=event, user=user2)
+
+    url = f"{get_events_url_detail(event)}public_registrations/"
+    client = api_client(user=member)
+    response = client.get(url)
+    results = response.json().get("results")
+
+    assert len(results) == 1
+
+
+@pytest.mark.django_db
+def test_anonymous_list_public_registrations(api_client, event):
+    """Anonymous users should not be able to list public registrations."""
+    user1 = UserFactory(public_event_registrations=True)
+    user2 = UserFactory(public_event_registrations=False)
+
+    RegistrationFactory(event=event, user=user1)
+    RegistrationFactory(event=event, user=user2)
+
+    url = f"{get_events_url_detail(event)}public_registrations/"
+    client = api_client()
+    response = client.get(url)
+
+    assert response.status_code == status.HTTP_403_FORBIDDEN

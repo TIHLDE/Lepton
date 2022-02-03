@@ -13,5 +13,6 @@ class LawFactory(DjangoModelFactory):
 
     group = factory.SubFactory(GroupFactory)
     description = factory.Faker("sentence", nb_words=100, variable_nb_words=True)
-    paragraph = factory.Faker("word")
+    paragraph = 1
+    title = factory.Faker("word")
     amount = 1

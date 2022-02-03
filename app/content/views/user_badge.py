@@ -1,15 +1,15 @@
-from rest_framework import status, viewsets
+from rest_framework import status
 from rest_framework.response import Response
 
 from sentry_sdk import capture_exception
 
 from app.common.permissions import BasicViewPermission
+from app.common.viewsets import BaseViewSet
+from app.content.models import Badge, User, UserBadge
+from app.content.serializers import UserBadgeSerializer
 
-from ..models import Badge, User, UserBadge
-from ..serializers import UserBadgeSerializer
 
-
-class UserBadgeViewSet(viewsets.ModelViewSet):
+class UserBadgeViewSet(BaseViewSet):
     serializer_class = UserBadgeSerializer
     permission_classes = [BasicViewPermission]
     queryset = UserBadge.objects.all()
@@ -28,7 +28,7 @@ class UserBadgeViewSet(viewsets.ModelViewSet):
 
             serializer = UserBadgeSerializer(data=request.data)
             if serializer.is_valid():
-                UserBadge(user=user, badge=badge).save()
+                super().perform_create(serializer, user=user, badge=badge)
                 return Response(
                     {"detail": "Badge fullført!"}, status=status.HTTP_200_OK
                 )

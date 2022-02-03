@@ -86,8 +86,9 @@ INSTALLED_APPS = [
     "dry_rest_permissions",
     "polymorphic",
     # Our apps
-    "app.content",
     "app.common",
+    "app.communication",
+    "app.content",
     "app.group",
     "app.authentication",
     "app.util",
@@ -224,7 +225,6 @@ EMAIL_USE_TLS = True
 
 EMAIL_HOST_USER = os.environ.get("EMAIL_USER") or "75ecff025dcb39"
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_PASSWORD") or "8b1a00e838d6b7"
-EMAIL_RECEIVER = os.environ.get("EMAIL_RECEIVER")
 
 LOGGING = {
     "version": 1,
@@ -252,3 +252,5 @@ LOGGING = {
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 CELERY_BROKER_URL = os.environ.get("CELERY_URL")
+if ENVIRONMENT == EnvironmentOptions.LOCAL:
+    CELERY_TASK_ALWAYS_EAGER = True

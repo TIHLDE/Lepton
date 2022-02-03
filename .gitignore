@@ -23,3 +23,5 @@ mysite.log
 
 # Coverage
 .coverage
+
+celerybeat-schedule

@@ -248,6 +248,7 @@
         "user_class": 2,
         "user_study": 2,
         "allergy": "",
+        "public_event_registrations": true,
         "tool": "",
         "is_staff": false,
         "is_active": true,
@@ -274,6 +275,7 @@
         "user_class": 3,
         "user_study": 1,
         "allergy": "Gode karakterer",
+        "public_event_registrations": true,
         "tool": "Parentes",
         "is_staff": true,
         "is_active": true,
@@ -302,6 +304,7 @@
         "user_class": 1,
         "user_study": 1,
         "allergy": "",
+        "public_event_registrations": true,
         "tool": "",
         "is_staff": false,
         "is_active": true,
@@ -312,7 +315,7 @@
     }
 },
 {
-    "model": "content.notification",
+    "model": "communication.notification",
     "pk": 1,
     "fields": {
         "created_at": "2021-03-08T19:51:56.552Z",
@@ -324,7 +327,7 @@
     }
 },
 {
-    "model": "content.notification",
+    "model": "communication.notification",
     "pk": 2,
     "fields": {
         "created_at": "2021-03-20T12:23:12.092Z",
@@ -509,8 +512,6 @@
         "start_registration_at": "2020-06-28T10:00:00Z",
         "end_registration_at": "2029-07-05T10:00:00Z",
         "sign_off_deadline": "2029-07-04T10:00:00Z",
-        "end_date_schedular_id": null,
-        "sign_off_deadline_schedular_id": null,
         "registration_priorities": [
             7,
             2,
@@ -544,8 +545,6 @@
         "start_registration_at": "2028-06-02T10:00:00Z",
         "end_registration_at": "2028-06-09T10:00:00Z",
         "sign_off_deadline": "2028-06-08T10:00:00Z",
-        "end_date_schedular_id": null,
-        "sign_off_deadline_schedular_id": null,
         "registration_priorities": [
             7,
             1,
@@ -584,8 +583,6 @@
         "start_registration_at": "2020-05-10T10:00:00Z",
         "end_registration_at": "2021-01-17T11:00:00Z",
         "sign_off_deadline": "2021-02-16T11:00:00Z",
-        "end_date_schedular_id": null,
-        "sign_off_deadline_schedular_id": null,
         "registration_priorities": [
             7,
             1,
@@ -624,8 +621,6 @@
         "start_registration_at": "2020-04-16T10:00:00Z",
         "end_registration_at": "2030-04-23T10:00:00Z",
         "sign_off_deadline": "2030-04-22T10:00:00Z",
-        "end_date_schedular_id": null,
-        "sign_off_deadline_schedular_id": null,
         "registration_priorities": []
     }
 },
@@ -649,8 +644,6 @@
         "start_registration_at": "2025-03-15T11:00:00Z",
         "end_registration_at": "2025-03-22T11:00:00Z",
         "sign_off_deadline": "2025-03-21T11:00:00Z",
-        "end_date_schedular_id": null,
-        "sign_off_deadline_schedular_id": null,
         "registration_priorities": []
     }
 },

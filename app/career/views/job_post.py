@@ -1,5 +1,5 @@
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, status, viewsets
+from rest_framework import filters, status
 from rest_framework.response import Response
 
 from app.career.filters.job_post import JobPostFilter
@@ -7,10 +7,11 @@ from app.career.models.job_post import JobPost
 from app.career.serializers.job_post import JobPostSerializer
 from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission
+from app.common.viewsets import BaseViewSet
 from app.util.utils import yesterday
 
 
-class JobPostViewSet(viewsets.ModelViewSet):
+class JobPostViewSet(BaseViewSet):
     """
         Display all not expired jobposts and filter them by title and expired
         Excludes expired jobposts by default: to include expired in search results, add '&expired=true'

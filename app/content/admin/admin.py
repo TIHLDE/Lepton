@@ -8,10 +8,8 @@ from app.content import models
 
 admin.site.register(models.Event)
 admin.site.register(models.News)
-admin.site.register(models.Warning)
 admin.site.register(models.Category)
 admin.site.register(models.Priority)
-admin.site.register(models.Notification)
 admin.site.register(models.Cheatsheet)
 admin.site.register(models.Badge)
 admin.site.register(models.UserBadge)
@@ -54,6 +52,7 @@ class RegistrationAdmin(admin.ModelAdmin):
         "user__first_name",
         "user__last_name",
     )
+    readonly_fields = ("created_at", "updated_at")
     # Enables checks bypassing from the 'Action' dropdown in Registration overview
     actions = [
         admin_delete_registration,
@@ -105,6 +104,8 @@ class StrikesOverviewAdmin(UserAdmin):
 
 @admin.register(LogEntry)
 class LogEntryAdmin(admin.ModelAdmin):
+    actions = None
+
     date_hierarchy = "action_time"
 
     list_filter = ["user", "content_type", "action_flag"]
@@ -126,7 +127,9 @@ class LogEntryAdmin(admin.ModelAdmin):
         return False
 
     def has_delete_permission(self, request, obj=None):
-        return False
+        if "admin/logentry" in request.path:
+            return False
+        return True
 
     def has_view_permission(self, request, obj=None):
         return request.user.is_superuser
