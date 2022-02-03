@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+## Versjon 2022.02.03
 - ⚡ **Spørreskjema**. Mulig å bruke 400 karakterer i spørreskjema felter.
 - ✨ **Offentlige profiler**. Alle innloggede TIHLDE-medlemmer kan nå se andre brukere og deres badges og medlemskap.
 - ✨ **Arrangementer**. Deltagerlister er offentlig tilgjengelig, men brukere kan reservere seg gjennom en innstilling i profilen sin.
