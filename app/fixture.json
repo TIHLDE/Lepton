@@ -709,6 +709,16 @@
         "updated_at": "2021-03-06T20:21:13.811Z",
         "image": "https://i.postimg.cc/nr9xt4hh/Skjermbilde-2021-01-31-kl-19-31-24.png",
         "image_alt": "TIHLDE",
+        "creator": {
+            "image": "https://i.pinimg.com/custom_covers/222x/85498161615209203_1636332751.jpg",
+            "image_alt": "Profilbilde",
+            "first_name": "Martin",
+            "last_name": "Fredrik",
+            "email": "Fredrik@martin.no",
+            "gender":2,
+            "user_class":3,
+            "user_study": 1
+        },
         "title": "Join TIHLDE",
         "header": "Livet blir bedre når du joiner TIHLDE",
         "body": "## Hva skjer?\n\n-  **Bedre feilhåndtering**. Feilmeldinger som mottas fra backend håndteres bedre og mer sikkert.\n-  **Oppdatert kokeboka**. Endret til bruk av react query istedenfor selvlaget hook.\n-  **Oppdatert arrangementer**. Bedre caching med React Query og finere innlastning.\n- Liste\n- Listen 1\n- Hmm\n\nTIHLDE Drift 2.0 vil endre fokus og satse på kunnskapsformidling. Istedenfor å tilby tjenester som konkurrerer mot profesjonelle aktører, vil TIHLDE Drift bli bedre på kompetanseoverføring i form av kurs/workshops. Internt i TIHLDE er det relativt lite kompetanseoverføring blant elever, spesielt med tanke på at TIHLDE representerer 3 bachelorer og 1 master. Ett mål TIHLDE Drift ønsker å oppnå med fokusskifte er å gjøre det enklere for elever å dele kunnskap på tvers av studieretningene.\n\n## Hvorfor skjer det?\n\nDet er vanskelig å tilby tjenester som andre profesjonelle aktører tilbyr. Som student kan man få mange forskjellige ressurser og tjenester gratis, kraftig rabattert eller veldig billig. Github har for eksempel [Developer Pack](https://education.github.com/pack), som inneholder mye snadder. Andre eksempler er [Gitlab Pages](https://education.github.com/pack), [Heroku](https://www.heroku.com/), [Vercel](https://vercel.com), [Microsoft Azure](https://azure.microsoft.com/nb-no/), [Google Cloud Platform](https://cloud.google.com/) og [Amazon Web Services](https://aws.amazon.com/). TIHLDE Drift ønsker å blir mer relevante for TIHLDE sine medlemmer og mener et fokusskifte med blanke ark må til.\n\n**Hvordan vil det skje?**\n\nI forbindelse med fokusskifte ønsker TIHLDE Drift å starte fra bunn. Det å starte fra bunn vil si TIHLDE Drift har som mål å slette alle serverne for så å installere de tjenestene som er med på å skape den fremtidige kunnskapsplattformen.\n\nVarsling, migrering, avvikling og re-installering er en prosess som **vil ta tid**. Før TIHLDE Drift gjør noe som helst med serverne vil det skje en varslings fase. Hensikten med varsling er å informere de brukerne som fremdeles benytter tjenester som Colargol, SQL databasen, Fantorangen og virtuelle maskiner på Nerdvana slik at de kan ta backup. Etter varslings fasen vil TIHLDE Drift bistå med å migrere noen tjenester fra vårt system over til et annet system. De migreringen gjelder vil bli kontaktet av TIHLDE Drift. Når migreringen er over vil en avviklingsfase starte som vil si at TIHLDE Drift skrur av tjenester. Formålet med avvikling er å sørge for at alle får med seg nedstengingen og gjøre de tiltakene som er nødvendige. Dette kan for eksempel være å kontakte TIHLDE Drift eller å ta backup av sine filer. Når varsling, migrering og avvikling har blitt gjennomført vil alle serverne bli slettet slik at serverne er klare for et nytt kapittel.\n\n**Spørsmål? Klage?**\n\nHvis du har forslag, klager eller spørsmål er det bare å kontakte TIHLDE Drift på mail (drift@tihlde.org), TIHLDE Slack, TIHLDE Discord eller TIHLDE IRC."
@@ -722,6 +732,16 @@
         "updated_at": "2021-03-21T21:18:38.301Z",
         "image": "https://i.imgur.com/kCZMMWJ.png",
         "image_alt": null,
+        "creator": {
+            "image": null,
+            "image_alt": null,
+            "first_name": "Nok",
+            "last_name": "Nok",
+            "email": "nok@gmail.com",
+            "gender":1,
+            "user_class": 1,
+            "user_study": 1
+        },
         "title": "Kontoret åpner for utlån av brettspill!",
         "header": "Har du lyst å spille et av våre spill i komfor av dine egne fire vegger?",
         "body": "Kontoret åpner nå for at man som medlem av TIHLDE kan låne våre brettspill. Du låner et spill ved å skrive ditt eget navn, spillets navn samt dato på listen som henger til venstre for døra.\r\n\r\nLov å låne spill opptil 7 dager!\r\n___\r\nxoxo Kontkom"
@@ -735,6 +755,7 @@
         "updated_at": "2021-03-21T21:19:06.595Z",
         "image": "https://i.ibb.co/J54WWDc/unnamed-1.jpg",
         "image_alt": null,
+        "creator": null,
         "title": "Oppdatert prikksystem",
         "header": "Gjelder kun på arrangementer i regi av Næringsliv og Kurs",
         "body": "Skulle det være spørsmål etter at dette er lest, ta gjerne kontakt med Næringsliv og Kurs på bedpres@tihlde.org. Dersom man mener man har fått en urettferdig prikk eller at det har skjedd en feil, ta kontakt.\r\nDet kan gis tilleggsregler til spesifikke arrangement, og da vil dette opplyses om i arrangementsteksten.\r\n\r\n## **Hva gir prikker**\r\n- Å melde seg av et arrangement etter avmeldingsfristen gir én prikk\r\n- Om man ikke møter opp på et arrangement hvor man er påmeldt gir det to prikker\r\n- Dersom man er påmeldt og møter opp etter arrangementets starttidspunkt, får man én prikk\r\n- Dersom deltakeren oppfører seg upassende og ikke retter seg etter advarsler fra arrangementsansvarlig kan arrangerende komité gi opp til tre prikker\r\n- Flyttes du opp fra venteliste gjelder samme regler som ellers, du må derfor melde deg av ventelisten dersom du ikke har mulighet til å møte opp.\r\n\r\n## **Konsekvenser av prikker**\r\n- Tre prikker eller flere prikker innebærer at du må blir nedprioritert på arrangementene ut semesteret.\r\n\r\n## **Ventelisteregler**\r\nDeltakere som står på venteliste er forventet at kan møte opp dersom det blir en ledig plass. Dette gjelder helt frem til 2 timer før arrangementets starttid. Det er deltakerens ansvar å melde seg av ventelisten, hvis det ikke passer allikevel.\r\n\r\n## **Retningslinjer for oppførsel**\r\nNår bedrifter velger å holde arrangementer med TIHLDE, så gjør de det for å komme i kontakt med våre studenter. Under arrangementet ønsker bedriftene å vise at de er en aktuell arbeidsplass, og på samme måte må vi vise at vi er en aktuell målgruppe for rekruttering. **Gode holdninger** og **interesserte studenter** gir bedriften et bedre inntrykk av besøket. Følgelig vil bedriftene være mer interesserte i å komme tilbake til TIHLDE for å profilere seg overfor oss.\r\n- Hvis det er bespisning under arrangement bør en oppføre seg som om man selv dro ut for å spise. Dette innebærer å vise **god folkeskikk**, og å oppføre seg som “folk flest”.\r\n- Hvis noen oppfører seg upassende på et arrangement vil vi, i den grad det er mulig, henvende oss til vedkommende og konfrontere dem med det vi mener er dårlig oppførsel, enten under eller i etterkant av arrangementet.\r\n\r\nOppførsel som oppleves av arrangør som uakseptabel vil kunne få konsekvenser. Arrangør har rett til å vurdere og utøve sanksjoner dersom det vurderes som nødvendig eller hensiktsmessig. Om ikke man retter seg etter saklige pålegg fra representant på gjeldende arrangement vil også konsekvenser bli vurdert."
@@ -748,6 +769,7 @@
         "updated_at": "2021-03-21T21:19:40.559Z",
         "image": "https://p0.pikrepo.com/preview/2/479/gold-trophy-with-confetti.jpg",
         "image_alt": null,
+        "creator": null,
         "title": "Kåringer - Julebord 2023",
         "header": "Nå har avstemmingen startet",
         "body": "#### I år som i fjor kjører vi på med kåringer på julebordet!! \r\n\r\nHer kan du stemme frem årets frivillig, ildsjel, gledesspreder og mye mer. \r\n\r\nStem frem din favoritt! Kanskje er det akkurat den du stemmer på som får tildelt en av de gjeve titlene i år."
