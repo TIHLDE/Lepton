@@ -24,7 +24,8 @@ def _get_law_url(group, law=None):
 def _get_law_data():
     return {
         "description": "very long disc",
-        "paragraph": "testing",
+        "paragraph": "1.2",
+        "title": "testing",
         "amount": random.randint(1, 50),
     }
 

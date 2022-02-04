@@ -12,12 +12,12 @@ services:
     image: leptonregistry.azurecr.io/lepton:latest
     container_name: celery
     entrypoint: []
-    command: celery -A app worker -E -l info --without-heartbeat --without-gossip --without-mingle
+    command: celery --app app worker --task-events --beat --loglevel info
   flower:
     image: leptonregistry.azurecr.io/lepton:latest
     container_name: flower
     entrypoint: []
-    command: celery -A app flower --url_prefix=flower/admin
+    command: celery --app app flower --url_prefix=flower/admin
     ports:
       - 5555:5555
     depends_on:

@@ -44,6 +44,7 @@ urlpatterns = [
     path("", include("rest_framework.urls")),
     # Our endpoints
     path("", include("app.career.urls")),
+    path("", include("app.communication.urls")),
     path("", include("app.content.urls")),
     path("", include("app.group.urls")),
     path("", include("app.payment.urls")),

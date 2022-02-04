@@ -6,7 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('content', '0035_add_order_to_page'),
+        ('content', '0037_auto_20220127_1919'),
     ]
 
     operations = [
