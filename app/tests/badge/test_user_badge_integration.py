@@ -12,40 +12,12 @@ from app.util.utils import now
 API_BADGE_BASE_URL = "/badges/"
 
 
-def _get_badge_leaderboard_url():
-    return f"{API_BADGE_BASE_URL}leaderboard/"
-
-
-def _get_badge_specific_leaderboard_url(badge):
-    return f"{API_BADGE_BASE_URL}{badge.id}/leaderboard/"
-
-
 def _get_user_badges_url():
     return f"/users/me{API_BADGE_BASE_URL}"
 
 
 def _get_badge_flag(badge):
     return {"flag": badge.flag}
-
-
-@pytest.mark.django_db
-def test_get_badge_leaderboard_as_anonymous_user(default_client):
-    """An anonymous user should not be able to see the leaderboard"""
-
-    url = _get_badge_leaderboard_url()
-    response = default_client.get(url)
-
-    assert response.status_code == status.HTTP_403_FORBIDDEN
-
-
-@pytest.mark.django_db
-def test_get_badge_spesific_leaderboard_as_anonymous_user(default_client, badge):
-    """An anonymous user should not be able to see badge-specific leaderboard"""
-
-    url = _get_badge_specific_leaderboard_url(badge)
-    response = default_client.get(url)
-
-    assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
 @pytest.mark.django_db

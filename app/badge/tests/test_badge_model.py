@@ -16,7 +16,7 @@ from app.util.utils import now
         (now() - timedelta(2), now() - timedelta(1), False),
         (now() - timedelta(1), now() - timedelta(2), False),
         (now() - timedelta(1), now() + timedelta(1), True),
-        (now(), now() + timedelta(minutes=1), True),
+        (now(), now() + timedelta(hours=1), True),
         (now(), None, True),
         (None, now() + timedelta(1), True),
         (None, None, True),
