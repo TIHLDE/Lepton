@@ -27,7 +27,9 @@ router.register("categories", CategoryViewSet)
 router.register("short-links", ShortLinkViewSet, basename="short-link")
 router.register("users", UserViewSet, basename="user")
 router.register(
-    r"events/(?P<event_id>\d+)/users", RegistrationViewSet, basename="registration"
+    r"events/(?P<event_id>\d+)/registrations",
+    RegistrationViewSet,
+    basename="registration",
 )
 router.register(
     r"cheatsheets/(?P<study>[^\.]+)/(?P<grade>[^\.]+)/files",

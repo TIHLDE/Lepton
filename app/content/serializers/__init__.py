@@ -5,6 +5,7 @@ from app.content.serializers.event import (
     EventCreateAndUpdateSerializer,
     EventListSerializer,
     EventSerializer,
+    EventStatisticsSerializer,
 )
 from app.content.serializers.news import NewsSerializer
 from app.content.serializers.page import (

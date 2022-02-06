@@ -13,6 +13,8 @@
 ---
 
 ## Neste versjon
+- ⚡ **Registreringer**. La til filtrering på registreringer til arrangementer.
+
 ## Versjon 2022.02.03
 - ⚡ **Spørreskjema**. Mulig å bruke 400 karakterer i spørreskjema felter.
 - ✨ **Offentlige profiler**. Alle innloggede TIHLDE-medlemmer kan nå se andre brukere og deres badges og medlemskap.

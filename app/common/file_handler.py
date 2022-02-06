@@ -39,5 +39,5 @@ def replace_file(instance, validated_data):
 
     assert hasattr(instance, "image") and "image" in validated_data
     if instance.image != validated_data["image"] and not settings.DEBUG:
-        if settings.BLOB_STORAGE_NAME in instance.image:
+        if settings.AZURE_BLOB_STORAGE_NAME in instance.image:
             AzureFileHandler(url=instance.image).deleteBlob()
