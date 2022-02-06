@@ -76,7 +76,6 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
     last_name = models.CharField(max_length=50)
 
     email = models.EmailField(max_length=254)
-    cell = models.CharField(max_length=8, blank=True)
 
     gender = models.IntegerField(default=2, choices=GENDER, null=True, blank=True)
 

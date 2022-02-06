@@ -40,7 +40,6 @@ class UserSerializer(DefaultUserSerializer):
     class Meta:
         model = User
         fields = DefaultUserSerializer.Meta.fields + (
-            "cell",
             "allergy",
             "tool",
             "public_event_registrations",
@@ -67,7 +66,6 @@ class UserListSerializer(UserSerializer):
             "last_name",
             "image",
             "email",
-            "cell",
             "gender",
             "user_class",
             "user_study",
