@@ -4,3 +4,12 @@ from app.group.serializers.membership import (
     UpdateMembershipSerializer,
     MembershipHistorySerializer,
 )
+from app.group.serializers.fine import (
+    FineListSerializer,
+    FineNoUserSerializer,
+    FineSerializer,
+    FineStatisticsSerializer,
+    FineUpdateCreateSerializer,
+    UserFineSerializer,
+)
+from app.group.serializers.law import LawSerializer

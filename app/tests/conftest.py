@@ -6,11 +6,11 @@ import pytest
 from app.badge.factories import BadgeFactory, UserBadgeFactory
 from app.career.factories import WeeklyBusinessFactory
 from app.common.enums import AdminGroup, Groups, MembershipType
+from app.communication.factories import NotificationFactory
 from app.content.factories import (
     CheatsheetFactory,
     EventFactory,
     NewsFactory,
-    NotificationFactory,
     PageFactory,
     ParentPageFactory,
     RegistrationFactory,
@@ -62,10 +62,9 @@ def token(user):
 
 
 @pytest.fixture()
-def admin_user():
-    user = UserFactory()
-    add_user_to_group_with_name(user, AdminGroup.HS)
-    return user
+def admin_user(member):
+    add_user_to_group_with_name(member, AdminGroup.HS)
+    return member
 
 
 @pytest.fixture()

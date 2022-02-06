@@ -6,17 +6,16 @@ from app.content.serializers.event import (
     EventSerializer,
 )
 from app.content.serializers.news import NewsSerializer
-from app.content.serializers.notification import (
-    NotificationSerializer,
-    UpdateNotificationSerializer,
-)
 from app.content.serializers.page import (
     PageSerializer,
     PageTreeSerializer,
     PageListSerializer,
 )
 from app.content.serializers.priority import PrioritySerializer
-from app.content.serializers.registration import RegistrationSerializer
+from app.content.serializers.registration import (
+    PublicRegistrationSerializer,
+    RegistrationSerializer,
+)
 from app.content.serializers.short_link import ShortLinkSerializer
 from app.content.serializers.strike import (
     BaseStrikeSerializer,
@@ -24,12 +23,10 @@ from app.content.serializers.strike import (
     UserInfoStrikeSerializer,
 )
 from app.content.serializers.user import (
-    DefaultUserSerializer,
-    UserAdminSerializer,
     UserCreateSerializer,
-    UserInAnswerSerializer,
     UserListSerializer,
     UserMemberSerializer,
     UserSerializer,
+    DefaultUserSerializer,
+    UserPermissionsSerializer,
 )
-from app.content.serializers.warning import WarningSerializer
