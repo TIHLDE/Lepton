@@ -18,6 +18,7 @@ from app.content.serializers import (
     EventCreateAndUpdateSerializer,
     EventListSerializer,
     EventSerializer,
+    EventStatisticsSerializer,
     PublicRegistrationSerializer,
 )
 from app.group.models.group import Group
@@ -193,3 +194,9 @@ class EventViewSet(BaseViewSet, ActionMixin):
         return self.paginate_response(
             data=events, serializer=EventListSerializer, context={"request": request}
         )
+
+    @action(detail=True, methods=["get"], url_path="statistics")
+    def statistics(self, request, *args, **kwargs):
+        event = self.get_object()
+        serializer = EventStatisticsSerializer(event, context={"request": request})
+        return Response(serializer.data, status=status.HTTP_200_OK)
