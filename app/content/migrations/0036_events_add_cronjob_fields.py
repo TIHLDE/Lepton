@@ -14,7 +14,7 @@ def set_runned_booleans(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('content', '0035_add_order_to_page'),
+        ('content', '0035_auto_20211114_1351'),
     ]
 
     operations = [
