@@ -1,0 +1,1 @@
+from app.badge.views.user_badge import UserBadgeViewSet

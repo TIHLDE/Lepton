@@ -5,6 +5,7 @@ from rest_framework import filters, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
+from app.badge.serializers import BadgeSerializer
 from app.common.enums import Groups, GroupType
 from app.common.mixins import ActionMixin
 from app.common.pagination import BasePagination
@@ -19,7 +20,6 @@ from app.communication.notifier import Notify
 from app.content.filters import UserFilter
 from app.content.models import User
 from app.content.serializers import (
-    BadgeSerializer,
     DefaultUserSerializer,
     EventListSerializer,
     UserCreateSerializer,
