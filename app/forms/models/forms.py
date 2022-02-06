@@ -23,7 +23,7 @@ from app.util.models import BaseModel
 class Form(PolymorphicModel, BasePermissionModel):
     write_access = AdminGroup.admin()
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    title = models.CharField(max_length=200)
+    title = models.CharField(max_length=400)
     template = models.BooleanField(default=False)
 
     # TODO: https://github.com/TIHLDE/Lepton/issues/286
@@ -206,7 +206,7 @@ class GroupForm(Form):
 class Field(OrderedModel):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    title = models.CharField(max_length=200)
+    title = models.CharField(max_length=400)
     form = models.ForeignKey(Form, on_delete=models.CASCADE, related_name="fields")
     type = EnumChoiceField(FormFieldType, default=FormFieldType.TEXT_ANSWER)
     required = models.BooleanField(default=False)
@@ -226,7 +226,7 @@ class Field(OrderedModel):
 class Option(OrderedModel):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    title = models.CharField(max_length=200, default="")
+    title = models.CharField(max_length=400, default="")
     field = models.ForeignKey(Field, on_delete=models.CASCADE, related_name="options")
     order_with_respect_to = "field"
 
