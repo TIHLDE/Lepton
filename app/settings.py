@@ -50,6 +50,8 @@ WEBSITE_URL = (
     else "https://localhost:3000"
 )
 
+AZURE_BLOB_STORAGE_NAME = "tihldestorage.blob.core.windows.net"
+
 # Application definition
 sentry_sdk.init(
     dsn=os.environ.get("SENTRY_DSN"),

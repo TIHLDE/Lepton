@@ -14,6 +14,7 @@
 
 ## Neste versjon
 - ✨ **Ledertavle**. Laget en ledertavle rangert på antall badges en bruker har og en for når brukere fikk en spesifikk badge.
+- ⚡ **Registreringer**. La til filtrering på registreringer til arrangementer.
 
 ## Versjon 2022.02.03
 - ⚡ **Spørreskjema**. Mulig å bruke 400 karakterer i spørreskjema felter.
