@@ -1,8 +1,6 @@
 from app.badge.models import UserBadge
 from app.badge.serializers import BadgeSerializer
 from app.common.serializers import BaseModelSerializer
-from app.badge.models import UserBadge
-from app.badge.serializers import BadgeSerializer
 from app.content.serializers import DefaultUserSerializer
 
 

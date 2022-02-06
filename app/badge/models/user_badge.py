@@ -3,13 +3,14 @@ from django.db import models
 from app.badge.models import Badge
 from app.common.enums import AdminGroup, Groups
 from app.common.permissions import BasePermissionModel
+from app.content.models.user import User
 from app.util.models import BaseModel
 
 
 class UserBadge(BaseModel, BasePermissionModel):
     write_access = [AdminGroup.INDEX]
     read_access = [AdminGroup.INDEX]
-    user = models.ForeignKey("content.user", on_delete=models.CASCADE, related_name="user_badges")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_badges")
     badge = models.ForeignKey(Badge, on_delete=models.CASCADE)
 
     class Meta:

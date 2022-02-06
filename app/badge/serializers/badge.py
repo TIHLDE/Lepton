@@ -2,7 +2,6 @@ from rest_framework import serializers
 
 from app.badge.models import Badge, UserBadge
 from app.common.serializers import BaseModelSerializer
-from app.badge.models import Badge, UserBadge
 from app.content.models import User
 
 
