@@ -134,6 +134,9 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
     def check_request_user_has_access_through_organizer(self, user, organizer):
         return user.memberships_with_events_access.filter(group=organizer).exists()
 
+    def has_object_statistics_permission(self, request):
+        return self.has_object_write_permission(request)
+
     def has_object_write_permission(self, request):
         if request.id is None:
             set_user_id(request)
