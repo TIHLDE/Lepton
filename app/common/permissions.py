@@ -49,9 +49,12 @@ def check_has_access(groups_with_access, request):
 
     try:
         groups = map(str, groups_with_access)
-        return user and user.memberships.filter(
-            group__slug__iregex=r"(" + "|".join(groups) + ")"
-        ).exists()
+        return (
+            user
+            and user.memberships.filter(
+                group__slug__iregex=r"(" + "|".join(groups) + ")"
+            ).exists()
+        )
     except Exception as e:
         capture_exception(e)
     return False
