@@ -6,7 +6,7 @@ class FileHandler(ABC):
     SIZE_10_MB = 10000000
 
     @abstractmethod
-    def __init__(self, blob):
+    def __init__(self, blob=None):
         self.blob = blob
 
     @abstractmethod
@@ -30,3 +30,14 @@ class FileHandler(ABC):
     @abstractmethod
     def uploadBlob(self):
         pass
+
+
+def replace_file(instance, validated_data):
+    from django.conf import settings
+
+    from app.common.azure_file_handler import AzureFileHandler
+
+    assert hasattr(instance, "image") and "image" in validated_data
+    if instance.image != validated_data["image"] and not settings.DEBUG:
+        if settings.BLOB_STORAGE_NAME in instance.image:
+            AzureFileHandler(url=instance.image).deleteBlob()
