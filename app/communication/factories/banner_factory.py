@@ -13,3 +13,4 @@ class BannerFactory(DjangoModelFactory):
     title = factory.Sequence(lambda n: f"Banner {n}")
     description = factory.Faker("sentence", nb_words=5)
     visible_from = timezone.now()
+    visible_until = timezone.now() + timezone.timedelta(days=1)

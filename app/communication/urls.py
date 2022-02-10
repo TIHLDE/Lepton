@@ -1,7 +1,11 @@
 from django.conf.urls import include, url
 from rest_framework import routers
 
-from app.communication.views import NotificationViewSet, WarningViewSet, BannerViewSet
+from app.communication.views import (
+    BannerViewSet,
+    NotificationViewSet,
+    WarningViewSet,
+)
 
 router = routers.DefaultRouter()
 

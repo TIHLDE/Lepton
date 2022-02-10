@@ -10,14 +10,10 @@ from app.util.utils import now
 @pytest.mark.parametrize(
     "visible_from, visible_until, expected_value",
     [
-        (now() - timedelta(hours=1), None, True),
-        (now(), None, True),
-        (now() + timedelta(hours=1), None, False),
         (now() + timedelta(hours=1), now() + timedelta(hours=2), False),
         (now(), now() + timedelta(2), True),
         (now() - timedelta(hours=1), now() + timedelta(hours=1), True),
         (now() - timedelta(hours=2), now() - timedelta(hours=1), False),
-        (now() - timedelta(hours=1), now() - timedelta(hours=2), False),
     ],
 )
 def test_banner_is_visible_with_different_dates(

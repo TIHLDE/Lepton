@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from app.communication.models import Mail, Notification, Warning, Banner
+from app.communication.models import Banner, Mail, Notification, Warning
 
 
 class MailAdmin(admin.ModelAdmin):
