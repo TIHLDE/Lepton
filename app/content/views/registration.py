@@ -1,10 +1,13 @@
-from rest_framework import status
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters, status
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 
+from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission, is_admin_user
 from app.common.viewsets import BaseViewSet
 from app.content.exceptions import APIUserAlreadyAttendedEvent
+from app.content.filters.registration import RegistrationFilter
 from app.content.mixins import APIRegistrationErrorsMixin
 from app.content.models import Event, Registration
 from app.content.serializers import RegistrationSerializer
@@ -15,6 +18,10 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
     serializer_class = RegistrationSerializer
     permission_classes = [BasicViewPermission]
     lookup_field = "user_id"
+    pagination_class = BasePagination
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filterset_class = RegistrationFilter
+    search_fields = ["user__first_name", "user__last_name"]
 
     def get_queryset(self):
         event_id = self.kwargs.get("event_id", None)

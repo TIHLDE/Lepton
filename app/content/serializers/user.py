@@ -4,10 +4,11 @@ from rest_framework import serializers
 
 from dry_rest_permissions.generics import DRYGlobalPermissionsField
 
+from app.common.serializers import BaseModelSerializer
 from app.content.models import User
 
 
-class DefaultUserSerializer(serializers.ModelSerializer):
+class DefaultUserSerializer(BaseModelSerializer):
     class Meta:
         model = User
         fields = (
@@ -39,7 +40,6 @@ class UserSerializer(DefaultUserSerializer):
     class Meta:
         model = User
         fields = DefaultUserSerializer.Meta.fields + (
-            "cell",
             "allergy",
             "tool",
             "public_event_registrations",
@@ -66,7 +66,6 @@ class UserListSerializer(UserSerializer):
             "last_name",
             "image",
             "email",
-            "cell",
             "gender",
             "user_class",
             "user_study",
