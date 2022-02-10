@@ -1,6 +1,6 @@
 from django_filters.rest_framework import (
     BooleanFilter,
-    DateFromToRangeFilter,
+    DateTimeFilter,
     FilterSet,
 )
 
@@ -12,14 +12,15 @@ class EventFilter(FilterSet):
     """ Filters events by category and expired. Works with search query """
 
     expired = BooleanFilter(method="filter_expired", label="Newest")
-    start_date = DateFromToRangeFilter()
+    end_range = DateTimeFilter(field_name="start_date", lookup_expr="lte")
+    start_range = DateTimeFilter(field_name="end_date", lookup_expr="gte")
     open_for_sign_up = BooleanFilter(
         method="open_for_sign_up", label="Filter events that are open for sign up",
     )
 
     class Meta:
         model = Event
-        fields = ["category", "expired", "organizer", "start_date"]
+        fields = ["category", "expired", "organizer", "end_range", "start_range"]
 
     def filter_expired(self, queryset, name, value):
         midday_yesterday = midday(yesterday())
