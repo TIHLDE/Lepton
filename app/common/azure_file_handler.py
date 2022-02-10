@@ -29,8 +29,9 @@ class AzureFileHandler(FileHandler):
         container = self.get_or_create_container(containerName)
 
         blob_name = f"{uuid.uuid4()}{self.getBlobName()}"
-        content_settings = (
-            ContentSettings(self.blob.content_type) if self.blob.content_type else None
+        content_settings = ContentSettings(
+            content_type=self.blob.content_type if self.blob.content_type else None,
+            cache_control="public,max-age=2592000",
         )
 
         blob_client = container.get_blob_client(blob_name)
