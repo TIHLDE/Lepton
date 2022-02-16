@@ -68,7 +68,7 @@ GENDER = (
 
 
 class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
-    write_access = [AdminGroup.HS, AdminGroup.INDEX]
+    write_access = AdminGroup.admin()
     read_access = [Groups.TIHLDE]
 
     user_id = models.CharField(max_length=15, primary_key=True)
@@ -168,7 +168,12 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
 
     @classmethod
     def has_write_permission(cls, request):
-        return bool(request.user)
+        user_id = request.parser_context.get("kwargs", {}).get("pk", None)
+        if user_id == "me":
+            return bool(request.user)
+        if user_id:
+            return request.user.user_id == user_id or check_has_access(cls.write_access, request,)
+        return check_has_access(cls.write_access, request,)
 
     @classmethod
     def has_create_permission(cls, request):
