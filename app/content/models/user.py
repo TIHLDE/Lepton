@@ -172,7 +172,9 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
         if user_id == "me":
             return bool(request.user)
         if user_id:
-            return request.user.user_id == user_id or check_has_access(cls.write_access, request,)
+            return request.user.user_id == user_id or check_has_access(
+                cls.write_access, request,
+            )
         return check_has_access(cls.write_access, request,)
 
     @classmethod
