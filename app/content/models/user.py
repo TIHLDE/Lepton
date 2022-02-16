@@ -168,6 +168,8 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
 
     @classmethod
     def has_write_permission(cls, request):
+        if not request.user:
+            return False
         user_id = request.parser_context.get("kwargs", {}).get("pk", None)
         if user_id == "me":
             return bool(request.user)
