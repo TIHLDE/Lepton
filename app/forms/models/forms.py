@@ -243,7 +243,6 @@ class Submission(BaseModel, BasePermissionModel):
     form = models.ForeignKey(Form, on_delete=models.CASCADE, related_name="submissions")
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="submissions")
 
-
     def __str__(self):
         return f"{self.user.user_id}'s submission to {self.form}"
 
@@ -255,7 +254,7 @@ class Submission(BaseModel, BasePermissionModel):
             self.email_receiver_on_submit,
             MailCreator(f"Noen har svart på {self.form.title}")
             .add_paragraph(
-                f"{self.user.first_name} {self.user.last_name} har svart på spørreskjema {self.form.title}"
+                f"{self.user.first_name} {self.user.last_name} har svart på spørreskjemaet {self.form.title}"
             )
             .generate_string(),
             "Nytt spørreskjema svar",
