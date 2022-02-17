@@ -14,6 +14,7 @@
 
 ## Neste versjon
 - 🦟 **Brukere**. Brukere som ikke er admin får ikke lenger se brukeradmin på nettsiden. De hadde aldri tilgang til å endre dem.
+- 🦟 **Spørreskjema**. Lagt til mulighet for å velge en email som skal varsles når nye svar blir sendt inn
 
 ## Versjon 2022.02.06
 - ⚡ **Registreringer**. La til filtrering på registreringer til arrangementer.
