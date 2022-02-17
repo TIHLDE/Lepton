@@ -1,15 +1,20 @@
-from rest_framework import mixins, viewsets, status
+from rest_framework import mixins, viewsets
 from rest_framework.decorators import action
-from rest_framework.response import Response
 
 from app.badge.models import Badge, BadgeCategory
-from app.badge.serializers import BadgeSerializer, BadgeCategorySerializer
+from app.badge.serializers import BadgeCategorySerializer, BadgeSerializer
+from app.common.mixins import ActionMixin, LoggingViewSetMixin
 from app.common.pagination import BasePagination
-from app.common.mixins import LoggingViewSetMixin, ActionMixin
 
 
-class BadgeViewSet(LoggingViewSetMixin, mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet, ActionMixin):
-    queryset = Badge.objects.all()
+class BadgeViewSet(
+    LoggingViewSetMixin,
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    viewsets.GenericViewSet,
+    ActionMixin,
+):
+    queryset = Badge.objects.public()
     serializer_class = BadgeSerializer
     pagination_class = BasePagination
 

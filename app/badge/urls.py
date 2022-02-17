@@ -3,6 +3,7 @@ from django.urls import path
 from rest_framework import routers
 
 from app.badge.views import (
+    BadgeCategoryViewSet,
     BadgeViewSet,
     LeaderboardForBadgeViewSet,
     LeaderboardViewSet,
@@ -16,7 +17,8 @@ router.register(
     LeaderboardForBadgeViewSet,
     basename="leaderboard-badge",
 )
-router.register("", BadgeViewSet, basename="badge")
+# router.register("", BadgeViewSet, basename="badge")
+router.register("categories", BadgeCategoryViewSet, basename="categories")
 
 urlpatterns = [
     path("", include(router.urls)),

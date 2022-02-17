@@ -2,10 +2,11 @@ import uuid
 
 from django.db import models
 
+from app.common.permissions import BasePermissionModel
 from app.util.models import BaseModel, OptionalImage
 
 
-class BadgeCategory(BaseModel, OptionalImage):
+class BadgeCategory(BaseModel, OptionalImage, BasePermissionModel):
     id = models.UUIDField(
         auto_created=True, primary_key=True, default=uuid.uuid4, serialize=False,
     )
