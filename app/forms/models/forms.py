@@ -252,7 +252,7 @@ class Submission(BaseModel, BasePermissionModel):
         from app.util.mail_creator import MailCreator
 
         send_html_email(
-            self.email_receiver_on_submit,
+            [self.email_receiver_on_submit],
             MailCreator(f"Noen har svart på {self.form.title}")
             .add_paragraph(
                 f"{self.user.first_name} {self.user.last_name} har svart på spørreskjemaet {self.form.title}"
