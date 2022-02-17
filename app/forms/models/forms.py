@@ -1,5 +1,6 @@
 import uuid
 
+from django.conf import settings
 from django.db import models, transaction
 
 from enumchoicefield import EnumChoiceField
@@ -255,6 +256,9 @@ class Submission(BaseModel, BasePermissionModel):
             MailCreator(f"Noen har svart på {self.form.title}")
             .add_paragraph(
                 f"{self.user.first_name} {self.user.last_name} har svart på spørreskjemaet {self.form.title}"
+            )
+            .add_button(
+                "Åpne spørreskjemaet", f"{settings.WEBSITE_URL}{self.form.website_url}",
             )
             .generate_string(),
             "Nytt spørreskjema svar",
