@@ -16,8 +16,8 @@ class BadgeSerializer(BaseModelSerializer):
             "description",
             "total_completion_percentage",
             "badge_category",
-            "active_from",
-            "active_to",
+            "is_active",
+            "is_public",
             "image",
             "image_alt",
         ]

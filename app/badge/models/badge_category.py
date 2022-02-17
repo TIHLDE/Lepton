@@ -15,6 +15,7 @@ class BadgeCategory(BaseModel, OptionalImage, BasePermissionModel):
 
     class Meta:
         verbose_name_plural = "Badge Categories"
+        ordering = ("created_at",)
 
     def __str__(self):
         return self.name

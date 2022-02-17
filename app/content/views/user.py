@@ -147,7 +147,7 @@ class UserViewSet(BaseViewSet, ActionMixin):
         user = self.request.user
         badge = get_object_or_404(Badge, flag=request.data.get("flag"))
 
-        if not badge.active:
+        if not badge.is_active:
             return Response(
                 {"detail": "Badgen er ikke aktiv"}, status=status.HTTP_400_BAD_REQUEST,
             )
@@ -156,7 +156,7 @@ class UserViewSet(BaseViewSet, ActionMixin):
             user_badge, data=request.data, context={"request": request}
         )
         if serializer.is_valid():
-            serializer.save()
+            super().perform_create(serializer)
             return Response({"detail": "Badge fullført!"}, status=status.HTTP_200_OK)
         else:
             return Response(

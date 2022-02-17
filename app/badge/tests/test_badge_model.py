@@ -32,7 +32,7 @@ def test_badge_is_active_with_different_active_dates(
 
     badge = BadgeFactory(active_to=active_to, active_from=active_from)
 
-    assert badge.active is expected_result
+    assert badge.is_active is expected_result
 
 
 @pytest.mark.django_db

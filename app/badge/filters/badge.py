@@ -1,6 +1,7 @@
 from django_filters.rest_framework.filterset import FilterSet
 
 from app.badge.models import UserBadge
+from app.badge.models.badge import Badge
 from app.content.models import User
 
 
@@ -20,4 +21,12 @@ class UserWithSpecificBadgeFilter(FilterSet):
         fields = [
             "user__user_class",
             "user__user_study",
+        ]
+
+
+class BadgeFilter(FilterSet):
+    class Meta:
+        model = Badge
+        fields = [
+            "badge_category",
         ]
