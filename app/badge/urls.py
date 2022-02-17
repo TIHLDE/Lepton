@@ -17,8 +17,8 @@ router.register(
     LeaderboardForBadgeViewSet,
     basename="leaderboard-badge",
 )
-# router.register("", BadgeViewSet, basename="badge")
 router.register("categories", BadgeCategoryViewSet, basename="categories")
+router.register("", BadgeViewSet, basename="badge")
 
 urlpatterns = [
     path("", include(router.urls)),

@@ -1,16 +1,18 @@
+from rest_framework import mixins, viewsets
+
 from app.badge.models import Badge, BadgeCategory
 from app.badge.serializers import BadgeCategorySerializer, BadgeSerializer
 from app.common.mixins import ActionMixin
 from app.common.pagination import BasePagination
 from app.common.permissions import IsMember, is_admin_user
-from app.common.viewsets import BaseViewSet
 
 
-class BadgeCategoryViewSet(BaseViewSet, ActionMixin):
+class BadgeCategoryViewSet(
+    viewsets.GenericViewSet, ActionMixin, mixins.ListModelMixin, mixins.CreateModelMixin
+):
     queryset = BadgeCategory.objects.all()
     serializer_class = BadgeCategorySerializer
     permission_classes = [IsMember]
-    http_method_names = ["get", "post"]
     pagination_class = BasePagination
 
     def retrieve(self, request, *args, **kwargs):
