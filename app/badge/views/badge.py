@@ -21,7 +21,6 @@ class BadgeViewSet(
     serializer_class = BadgeSerializer
     pagination_class = BasePagination
     permission_classes = [IsMember]
-
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_class = BadgeFilter
     search_fields = [

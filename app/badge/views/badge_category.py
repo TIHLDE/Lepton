@@ -1,4 +1,4 @@
-from rest_framework import mixins, viewsets, filters
+from rest_framework import filters, mixins, viewsets
 
 from app.badge.models import BadgeCategory
 from app.badge.serializers import BadgeCategorySerializer
