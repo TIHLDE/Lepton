@@ -1,5 +1,6 @@
 import uuid
 
+from django.conf import settings
 from django.db import models, transaction
 
 from enumchoicefield import EnumChoiceField
@@ -160,7 +161,7 @@ class EventForm(Form):
 class GroupForm(Form):
 
     read_access = [Groups.TIHLDE]
-
+    email_receiver_on_submit = models.EmailField(max_length=200, null=True, blank=True)
     group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name="forms")
     can_submit_multiple = models.BooleanField(default=True)
     is_open_for_submissions = models.BooleanField(default=False)
@@ -246,9 +247,28 @@ class Submission(BaseModel, BasePermissionModel):
     def __str__(self):
         return f"{self.user.user_id}'s submission to {self.form}"
 
+    def send_email(self):
+        from app.communication.notifier import send_html_email
+        from app.util.mail_creator import MailCreator
+
+        send_html_email(
+            [self.email_receiver_on_submit],
+            MailCreator(f"Noen har svart på {self.form.title}")
+            .add_paragraph(
+                f"{self.user.first_name} {self.user.last_name} har svart på spørreskjemaet {self.form.title}"
+            )
+            .add_button(
+                "Åpne spørreskjema", f"{settings.WEBSITE_URL}{self.form.website_url}",
+            )
+            .generate_string(),
+            "Nytt spørreskjema svar",
+        )
+
     @transaction.atomic
     def save(self, *args, **kwargs):
         self.full_clean()
+        if isinstance(self.form, GroupForm) and self.form.email_receiver_on_submit:
+            self.send_email()
         super().save(*args, **kwargs)
 
     def clean(self):
