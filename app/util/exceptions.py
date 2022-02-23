@@ -1,11 +1,10 @@
 import logging
 
+from django.conf import settings
 from django.db.utils import IntegrityError
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import exception_handler as drf_exception_handler
-
-from app import settings
 
 logger = logging.getLogger(__name__)
 

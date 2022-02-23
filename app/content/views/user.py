@@ -175,9 +175,7 @@ class UserViewSet(BaseViewSet, ActionMixin):
             user_badge.badge
             for user_badge in user_badges
             if user_badge.badge.is_public
-            or UserBadge.objects.filter(
-                user=request.user, badge=user_badge.badge
-            ).exists()
+            or request.user.user_badges.filter(badge=user_badge.badge).exists()
         ]
 
         return self.paginate_response(data=badges, serializer=BadgeSerializer)

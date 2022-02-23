@@ -15,7 +15,8 @@ class EventFilter(FilterSet):
     end_range = DateTimeFilter(field_name="start_date", lookup_expr="lte")
     start_range = DateTimeFilter(field_name="end_date", lookup_expr="gte")
     open_for_sign_up = BooleanFilter(
-        method="filter_open_for_sign_up", label="Filter events that are open for sign up",
+        method="filter_open_for_sign_up",
+        label="Filter events that are open for sign up",
     )
 
     class Meta:
