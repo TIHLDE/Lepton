@@ -7,7 +7,7 @@ from app.content.serializers.user import DefaultUserSerializer
 
 
 class LeaderboardSerializer(BaseModelSerializer):
-    number_of_badges = serializers.SerializerMethodField()
+    number_of_badges = serializers.IntegerField()
     user = serializers.SerializerMethodField()
 
     class Meta:
@@ -19,9 +19,6 @@ class LeaderboardSerializer(BaseModelSerializer):
 
     def get_user(self, obj):
         return DefaultUserSerializer(obj).data
-
-    def get_number_of_badges(self, obj):
-        return obj.user_badges.count()
 
 
 class LeaderboardForBadgeSerializer(BaseModelSerializer):

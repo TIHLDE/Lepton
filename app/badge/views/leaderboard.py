@@ -1,4 +1,4 @@
-from django.db.models import Count
+from django.db.models import Count, Q
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, mixins
 from rest_framework.viewsets import GenericViewSet
@@ -30,15 +30,22 @@ class LeaderboardViewSet(mixins.ListModelMixin, GenericViewSet):
     ]
 
     def get_queryset(self):
+        number_of_badges = Count("user_badges")
+        category = self.request.query_params.get("category", None)
+        if category:
+            number_of_badges = Count(
+                "user_badges", filter=Q(user_badges__badge__badge_category=category)
+            )
+
         return (
-            User.objects.annotate(number_of_badges=Count("user_badges"))
+            User.objects.annotate(number_of_badges=number_of_badges)
             .filter(number_of_badges__gt=0)
             .order_by("-number_of_badges", "first_name")
         )
 
 
 class LeaderboardForBadgeViewSet(mixins.ListModelMixin, GenericViewSet):
-    queryset = UserBadge.objects.all().order_by("created_at")
+    queryset = UserBadge.objects.select_related("user").order_by("created_at")
     serializer_class = LeaderboardForBadgeSerializer
     permission_classes = [IsMember]
     pagination_class = BasePagination
