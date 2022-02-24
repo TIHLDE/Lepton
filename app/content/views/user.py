@@ -5,6 +5,8 @@ from rest_framework import filters, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
+from app.badge.models import Badge, UserBadge
+from app.badge.serializers import BadgeSerializer, UserBadgeSerializer
 from app.common.enums import Groups, GroupType
 from app.common.mixins import ActionMixin
 from app.common.pagination import BasePagination
@@ -19,7 +21,6 @@ from app.communication.notifier import Notify
 from app.content.filters import UserFilter
 from app.content.models import User
 from app.content.serializers import (
-    BadgeSerializer,
     DefaultUserSerializer,
     EventListSerializer,
     UserCreateSerializer,
@@ -141,14 +142,48 @@ class UserViewSet(BaseViewSet, ActionMixin):
         serializer = GroupSerializer(groups, many=True, context={"request": request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @action(detail=True, methods=["get"], url_path="badges")
-    def get_user_badges(self, request, pk, *args, **kwargs):
-        user = self._get_user(request, pk)
-        self.check_object_permissions(self.request, user)
+    def post_user_badges(self, request, *args, **kwargs):
 
+        user = self.request.user
+        badge = get_object_or_404(Badge, flag=request.data.get("flag"))
+
+        if not badge.is_active:
+            return Response(
+                {"detail": "Badgen er ikke aktiv"}, status=status.HTTP_400_BAD_REQUEST,
+            )
+        user_badge = UserBadge(user=user, badge=badge)
+        serializer = UserBadgeSerializer(
+            user_badge, data=request.data, context={"request": request}
+        )
+        if serializer.is_valid():
+            super().perform_create(serializer)
+            return Response({"detail": "Badge fullført!"}, status=status.HTTP_200_OK)
+        else:
+            return Response(
+                {"detail": "Badgen kunne ikke bli opprettet"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    def get_user_detail_badges(self, request, *args, **kwargs):
+        user = self._get_user(request, kwargs["pk"])
         user_badges = user.user_badges.order_by("-created_at")
-        badges = [user_badge.badge for user_badge in user_badges]
+        badges = [
+            user_badge.badge
+            for user_badge in user_badges
+            if user_badge.badge.is_public
+            or request.user.user_badges.filter(badge=user_badge.badge).exists()
+        ]
+
         return self.paginate_response(data=badges, serializer=BadgeSerializer)
+
+    @action(
+        detail=True, methods=["get", "post"], url_path="badges",
+    )
+    def get_or_post_detail_user_badges(self, request, *args, **kwargs):
+        if request.method == "GET":
+            return self.get_user_detail_badges(request, *args, **kwargs)
+        elif request.method == "POST":
+            return self.post_user_badges(request, *args, **kwargs)
 
     @action(detail=False, methods=["get"], url_path="me/strikes")
     def get_user_strikes(self, request, *args, **kwargs):

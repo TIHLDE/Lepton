@@ -11,7 +11,6 @@ from app.content.views import (
     RegistrationViewSet,
     ShortLinkViewSet,
     StrikeViewSet,
-    UserBadgeViewSet,
     UserCalendarEvents,
     UserViewSet,
     accept_form,
@@ -36,7 +35,6 @@ router.register(
     CheatsheetViewSet,
     basename="cheatsheet_list",
 )
-router.register("badges", UserBadgeViewSet, basename="badge")
 router.register("pages", PageViewSet)
 router.register("strikes", StrikeViewSet, basename="strikes")
 

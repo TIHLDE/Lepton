@@ -1,8 +1,9 @@
 from django.db import models
 
+from app.badge.models import Badge
 from app.common.enums import AdminGroup, Groups
 from app.common.permissions import BasePermissionModel
-from app.content.models import Badge, User
+from app.content.models.user import User
 from app.util.models import BaseModel
 
 
@@ -13,6 +14,7 @@ class UserBadge(BaseModel, BasePermissionModel):
     badge = models.ForeignKey(Badge, on_delete=models.CASCADE)
 
     class Meta:
+        unique_together = ("user", "badge")
         verbose_name = "User badge"
         verbose_name_plural = "User badges"
 

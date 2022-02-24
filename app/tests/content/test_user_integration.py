@@ -2,7 +2,7 @@ from rest_framework import status
 
 import pytest
 
-from app.content.factories import RegistrationFactory
+from app.content.factories.registration_factory import RegistrationFactory
 from app.content.factories.strike_factory import StrikeFactory
 from app.content.factories.user_factory import UserFactory
 from app.forms.enums import EventFormType

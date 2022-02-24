@@ -11,8 +11,6 @@ admin.site.register(models.News)
 admin.site.register(models.Category)
 admin.site.register(models.Priority)
 admin.site.register(models.Cheatsheet)
-admin.site.register(models.Badge)
-admin.site.register(models.UserBadge)
 admin.site.register(models.Page)
 admin.site.register(models.ShortLink)
 
