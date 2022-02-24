@@ -16,7 +16,7 @@ django-ical == 1.8.0
 
 # Django
 # ------------------------------------------------------------------------------
-Django==3.2.10
+Django==3.2.12
 django-enumchoicefield
 django-filter
 django-ordered-model~=3.4

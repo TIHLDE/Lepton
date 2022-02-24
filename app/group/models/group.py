@@ -21,11 +21,30 @@ class Group(OptionalImage, BaseModel, BasePermissionModel):
     fine_info = models.TextField(default="", blank=True)
     type = EnumChoiceField(GroupType, default=GroupType.OTHER)
     fines_activated = models.BooleanField(default=False)
+    members = models.ManyToManyField(
+        User,
+        through="Membership",
+        through_fields=("group", "user"),
+        blank=True,
+        default=None,
+        related_name="group_members",
+        verbose_name="Group members",
+    )
+    members_history = models.ManyToManyField(
+        User,
+        through="MembershipHistory",
+        through_fields=("group", "user"),
+        blank=True,
+        default=None,
+        related_name="group_members_history",
+        verbose_name="Group membership history",
+    )
     fines_admin = models.ForeignKey(
         User,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         related_name="fine_master_groups",
         null=True,
+        blank=True,
         default=None,
     )
 
@@ -36,8 +55,8 @@ class Group(OptionalImage, BaseModel, BasePermissionModel):
         return f"{self.name}"
 
     def notify_fines_admin(self):
+        from app.communication.notifier import Notify
         from app.util.mail_creator import MailCreator
-        from app.util.notifier import Notify
 
         description = [
             f"Hei! Lederen av {self.name} har gjort deg til botsjef i gruppen. I botsystemet i gruppen kan alle medlemmer melde inn bøter på en eller flere andre medlemmer. Gruppen kan selv velge hvor mye en bot er verdt og hvordan bøter skal godkjennes og betales.",

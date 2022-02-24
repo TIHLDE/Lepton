@@ -2,12 +2,14 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import status, viewsets
+from rest_framework import status
 from rest_framework.response import Response
 
 from app.common.enums import MembershipType
 from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission, IsLeader, is_admin_user
+from app.common.viewsets import BaseViewSet
+from app.communication.notifier import Notify
 from app.content.models import User
 from app.group.filters.membership import MembershipFilter
 from app.group.models import Group, Membership
@@ -17,10 +19,9 @@ from app.group.serializers.membership import (
     UpdateMembershipSerializer,
 )
 from app.util.mail_creator import MailCreator
-from app.util.notifier import Notify
 
 
-class MembershipViewSet(viewsets.ModelViewSet):
+class MembershipViewSet(BaseViewSet):
 
     serializer_class = MembershipSerializer
     queryset = Membership.objects.all()
@@ -31,7 +32,7 @@ class MembershipViewSet(viewsets.ModelViewSet):
     lookup_field = "user_id"
 
     def get_queryset(self):
-        return self.queryset.filter(group__slug=self.kwargs["slug"])
+        return super().get_queryset().filter(group__slug=self.kwargs["slug"])
 
     def get_serializer_class(self):
         if is_admin_user(self.request):
@@ -78,6 +79,7 @@ class MembershipViewSet(viewsets.ModelViewSet):
                 membership, data=request.data, context={"request": request}
             )
             serializer.is_valid(raise_exception=True)
+            self._log_on_create(serializer)
             title = f"Du er nå med i gruppen {membership.group.name}"
             description = f"Du har blitt lagt til som medlem i gruppen {membership.group.name}. Gratulerer så mye og lykke til!"
             Notify([membership.user], title).send_email(

@@ -6,11 +6,42 @@ from app.content.factories import RegistrationFactory
 from app.content.factories.strike_factory import StrikeFactory
 from app.content.factories.user_factory import UserFactory
 from app.forms.enums import EventFormType
-from app.forms.tests.form_factories import EventFormFactory
+from app.forms.tests.form_factories import EventFormFactory, SubmissionFactory
 
 pytestmark = pytest.mark.django_db
 
 API_USER_BASE_URL = "/users/"
+
+
+def _get_user_detail_url(user):
+    return f"{API_USER_BASE_URL}{user.user_id}/"
+
+
+def _get_user_post_data():
+    return {
+        "email": "ola@nordmann.org",
+        "first_name": "Ola",
+        "last_name": "Nordmann",
+        "user_class": 2,
+        "user_study": 2,
+        "user_id": "olanord",
+        "password": "SuperSecurePassword",
+    }
+
+
+def _get_user_put_data():
+    return {
+        "allergy": "Abakus",
+        "cell": "98765432",
+        "email": "ola@nordmann.org",
+        "first_name": "Ola",
+        "gender": 1,
+        "image": None,
+        "last_name": "Nordmann",
+        "tool": "Keyboard",
+        "user_class": 2,
+        "user_study": 2,
+    }
 
 
 def _get_user_forms_url():
@@ -30,11 +61,11 @@ def user_with_strike():
     return user
 
 
-def test_list_user_forms_returns_all_answered_forms(api_client, submission):
-    user = submission.user
+def test_list_user_forms_returns_all_answered_forms(api_client, member, form):
+    submission = SubmissionFactory(form=form, user=member)
 
     url = _get_user_forms_url()
-    client = api_client(user=user)
+    client = api_client(user=member)
     response = client.get(url).json()
     results = response.get("results")
 
@@ -46,24 +77,23 @@ def test_list_user_forms_returns_all_answered_forms(api_client, submission):
     assert actual_form_id == expected_form_id
 
 
-def test_list_user_forms_returns_status_200_ok(api_client, submission):
-    user = submission.user
-    client = api_client(user=user)
+def test_list_user_forms_returns_status_200_ok(api_client, form, member):
+    SubmissionFactory(form=form, user=member)
+    client = api_client(user=member)
     response = client.get(_get_user_forms_url())
 
     assert response.status_code == status.HTTP_200_OK
 
 
 def test_list_user_forms_filter_on_unanswered_returns_all_unanswered_forms(
-    api_client, submission
+    api_client, member
 ):
     """Should return all unanswered evaluations for attended events."""
-    user = submission.user
     unanswered_form = EventFormFactory(type=EventFormType.EVALUATION)
-    RegistrationFactory(user=user, event=unanswered_form.event, has_attended=True)
+    RegistrationFactory(user=member, event=unanswered_form.event, has_attended=True)
 
     url = f"{_get_user_forms_url()}?unanswered=true"
-    client = api_client(user=user)
+    client = api_client(user=member)
     response = client.get(url).json()
     results = response.get("results")
 
@@ -76,16 +106,16 @@ def test_list_user_forms_filter_on_unanswered_returns_all_unanswered_forms(
 
 
 def test_list_user_forms_filter_on_answered_returns_all_answered_forms(
-    api_client, submission
+    api_client, member, form
 ):
     """Should return all answered evaluations for attended events."""
-    user = submission.user
+    submission = SubmissionFactory(form=form, user=member)
 
     unanswered_form = EventFormFactory(type=EventFormType.EVALUATION)
-    RegistrationFactory(user=user, event=unanswered_form.event, has_attended=True)
+    RegistrationFactory(user=member, event=unanswered_form.event, has_attended=True)
 
     url = f"{_get_user_forms_url()}?unanswered=false"
-    client = api_client(user=user)
+    client = api_client(user=member)
     response = client.get(url).json()
     results = response.get("results")
 
@@ -102,7 +132,6 @@ def user_and_filter_value(request, user, user_with_strike):
     return [(user, "false"), (user_with_strike, "true"),][request.param]
 
 
-@pytest.mark.django_db
 @pytest.mark.parametrize("user_and_filter_value", [0, 1], indirect=True)
 def test_filter_only_users_with_active_strikes(
     api_client, admin_user, user_and_filter_value
@@ -122,21 +151,81 @@ def test_filter_only_users_with_active_strikes(
     assert found
 
 
-@pytest.mark.django_db
 @pytest.mark.parametrize(
     ("url", "status_code"),
     [
-        ("me/", status.HTTP_200_OK),
-        ("me/groups/", status.HTTP_200_OK),
-        ("me/badges/", status.HTTP_200_OK),
-        ("me/events/", status.HTTP_200_OK),
-        ("me/forms/", status.HTTP_200_OK),
-        ("me/strikes/", status.HTTP_200_OK),
+        ("/", status.HTTP_200_OK),
+        ("/groups/", status.HTTP_200_OK),
+        ("/badges/", status.HTTP_200_OK),
+        ("/events/", status.HTTP_200_OK),
+        ("/forms/", status.HTTP_200_OK),
+        ("/strikes/", status.HTTP_200_OK),
+        ("/data/", status.HTTP_200_OK),
     ],
 )
-def test_user_actions(url, status_code, user, api_client):
+def test_user_actions_self(url, status_code, member, api_client):
 
-    url = f"{API_USER_BASE_URL}{url}"
+    url = f"{API_USER_BASE_URL}me{url}"
+    client = api_client(user=member)
+
+    response = client.get(url)
+    assert response.status_code == status_code
+
+
+@pytest.mark.parametrize(
+    ("url", "status_code"),
+    [
+        ("/", status.HTTP_200_OK),
+        ("/groups/", status.HTTP_200_OK),
+        ("/badges/", status.HTTP_200_OK),
+        ("/events/", status.HTTP_404_NOT_FOUND),
+        ("/forms/", status.HTTP_404_NOT_FOUND),
+        ("/strikes/", status.HTTP_200_OK),
+        ("/data/", status.HTTP_404_NOT_FOUND),
+    ],
+)
+def test_user_actions_get_user_as_admin_user(
+    url, status_code, user, admin_user, api_client
+):
+    url = f"{API_USER_BASE_URL}{user.user_id}{url}"
+    client = api_client(user=admin_user)
+
+    response = client.get(url)
+    assert response.status_code == status_code
+
+
+@pytest.mark.parametrize(
+    ("url", "status_code"),
+    [
+        ("/", status.HTTP_200_OK),
+        ("/groups/", status.HTTP_200_OK),
+        ("/badges/", status.HTTP_200_OK),
+        ("/events/", status.HTTP_404_NOT_FOUND),
+        ("/forms/", status.HTTP_404_NOT_FOUND),
+        ("/strikes/", status.HTTP_403_FORBIDDEN),
+        ("/data/", status.HTTP_404_NOT_FOUND),
+    ],
+)
+def test_user_actions_get_user_as_member(url, status_code, user, member, api_client):
+    url = f"{API_USER_BASE_URL}{user.user_id}{url}"
+    client = api_client(user=member)
+
+    response = client.get(url)
+    assert response.status_code == status_code
+
+
+@pytest.mark.parametrize(
+    ("url", "status_code"),
+    [
+        ("/", status.HTTP_403_FORBIDDEN),
+        ("/groups/", status.HTTP_403_FORBIDDEN),
+        ("/badges/", status.HTTP_403_FORBIDDEN),
+    ],
+)
+def test_user_actions_get_user_as_not_member(
+    url, status_code, user, member, api_client
+):
+    url = f"{API_USER_BASE_URL}{member.user_id}{url}"
     client = api_client(user=user)
 
     response = client.get(url)
@@ -157,3 +246,150 @@ def test_user_detail_strikes_as_user(user, api_client):
 
     response = client.get(url)
     assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+def test_list_as_anonymous_user(user, api_client):
+    """An anonymous user should not be able to list all users."""
+    UserFactory()
+    client = api_client(user=user)
+    response = client.get(API_USER_BASE_URL)
+
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+def test_list_as_member(member, api_client):
+    """A member should be able to list all users."""
+    UserFactory()
+    client = api_client(user=member)
+    response = client.get(API_USER_BASE_URL)
+
+    assert response.status_code == status.HTTP_200_OK
+    assert response.json()["count"] == 2
+
+
+def test_list_as_member_of_admin_group(admin_user, api_client):
+    """An admin should be able to list all users."""
+    UserFactory()
+    client = api_client(user=admin_user)
+    response = client.get(API_USER_BASE_URL)
+
+    assert response.status_code == status.HTTP_200_OK
+    assert response.json()["count"] == 2
+
+
+def test_update_user_as_anonymous(default_client, user):
+    """An anonymous user should not be able to update a user."""
+    data = _get_user_put_data()
+    url = _get_user_detail_url(user)
+    response = default_client.put(url, data)
+
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+def test_update_self_as_member(member, api_client):
+    """
+    A member should be able to update self.
+    Members should not be able to update email, names, class or study
+    """
+    client = api_client(user=member)
+    data = _get_user_put_data()
+    url = _get_user_detail_url(member)
+    response = client.put(url, data)
+
+    member.refresh_from_db()
+
+    assert response.status_code == status.HTTP_200_OK
+
+    assert member.allergy == data["allergy"]
+    assert member.email != data["email"]
+    assert member.first_name != data["first_name"]
+    assert member.last_name != data["last_name"]
+    assert member.user_study != data["user_study"]
+    assert member.user_class != data["user_class"]
+
+
+def test_update_other_user_as_member(member, user, api_client):
+    """A member should not be able to update other users."""
+    client = api_client(user=member)
+    data = _get_user_put_data()
+    url = _get_user_detail_url(user)
+    response = client.put(url, data)
+
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+def test_update_other_user_as_admin_user(admin_user, user, api_client):
+    """
+    A admin user should be able to update other users.
+    Admins should be able to update all fields.
+    """
+    client = api_client(user=admin_user)
+    data = _get_user_put_data()
+    url = _get_user_detail_url(user)
+    response = client.put(url, data)
+
+    user.refresh_from_db()
+
+    assert response.status_code == status.HTTP_200_OK
+
+    assert user.allergy == data["allergy"]
+    assert user.email == data["email"]
+    assert user.first_name == data["first_name"]
+    assert user.last_name == data["last_name"]
+    assert user.user_study == data["user_study"]
+    assert user.user_class == data["user_class"]
+
+
+def test_create_as_anonymous(default_client):
+    """An anonymous user should be able to create a new user."""
+    data = _get_user_post_data()
+    response = default_client.post(API_USER_BASE_URL, data)
+
+    assert response.status_code == status.HTTP_201_CREATED
+
+
+def test_create_duplicate_user(default_client):
+    """
+    An anonymous user should not be able to create a new user
+    if a user with same user_id already exists.
+    """
+    data = _get_user_post_data()
+    UserFactory(user_id=data["user_id"])
+    response = default_client.post(API_USER_BASE_URL, data)
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
+def test_destroy_user_as_anonymous(default_client, user):
+    """An anonymous user should not be able to destroy a user."""
+    url = _get_user_detail_url(user)
+    response = default_client.delete(url)
+
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+def test_destroy_self_as_member(member, api_client):
+    """A member should be able to destroy self."""
+    client = api_client(user=member)
+    url = _get_user_detail_url(member)
+    response = client.delete(url)
+
+    assert response.status_code == status.HTTP_200_OK
+
+
+def test_destroy_other_user_as_member(member, user, api_client):
+    """A member should not be able to destroy other users."""
+    client = api_client(user=member)
+    url = _get_user_detail_url(user)
+    response = client.delete(url)
+
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+def test_destroy_other_user_as_admin_user(admin_user, user, api_client):
+    """An admin user should be able to destroy other users."""
+    client = api_client(user=admin_user)
+    url = _get_user_detail_url(user)
+    response = client.delete(url)
+
+    assert response.status_code == status.HTTP_200_OK

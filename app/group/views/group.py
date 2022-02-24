@@ -1,4 +1,4 @@
-from rest_framework import status, viewsets
+from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
@@ -6,12 +6,13 @@ from app.common.enums import GroupType
 from app.common.mixins import ActionMixin
 from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission, is_admin_user
+from app.common.viewsets import BaseViewSet
 from app.group.models import Group
 from app.group.serializers import GroupSerializer
 from app.group.serializers.membership import MembershipHistorySerializer
 
 
-class GroupViewSet(viewsets.ModelViewSet, ActionMixin):
+class GroupViewSet(BaseViewSet, ActionMixin):
     """API endpoint for Groups"""
 
     serializer_class = GroupSerializer
@@ -21,8 +22,8 @@ class GroupViewSet(viewsets.ModelViewSet, ActionMixin):
 
     def get_queryset(self):
         if is_admin_user(self.request):
-            return self.queryset
-        return self.queryset.filter(type__in=GroupType.public_groups())
+            return super().get_queryset()
+        return super().get_queryset().filter(type__in=GroupType.public_groups())
 
     def retrieve(self, request, slug):
         """Returns a spesific group by slug"""
@@ -46,7 +47,7 @@ class GroupViewSet(viewsets.ModelViewSet, ActionMixin):
                 group, data=request.data, partial=True, context={"request": request}
             )
             if serializer.is_valid():
-                serializer.save()
+                super().perform_update(serializer)
                 return Response(data=serializer.data, status=status.HTTP_200_OK)
             return Response(
                 {"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST,
@@ -66,7 +67,7 @@ class GroupViewSet(viewsets.ModelViewSet, ActionMixin):
                 group[0], data=request.data, context={"request": request}
             )
             if serializer.is_valid():
-                serializer.save()
+                super().perform_create(serializer)
                 return Response(data=serializer.data, status=status.HTTP_200_OK)
             else:
                 return Response(

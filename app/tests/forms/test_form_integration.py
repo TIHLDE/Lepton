@@ -104,6 +104,8 @@ def test_list_form_templates_data(admin_user):
             }
         ],
         "template": True,
+        "resource_type": form._meta.object_name,
+        "viewer_has_answered": False,
     }
 
 

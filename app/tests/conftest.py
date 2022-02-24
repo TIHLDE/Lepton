@@ -5,11 +5,11 @@ import pytest
 
 from app.career.factories import WeeklyBusinessFactory
 from app.common.enums import AdminGroup, Groups, MembershipType
+from app.communication.factories import NotificationFactory
 from app.content.factories import (
     CheatsheetFactory,
     EventFactory,
     NewsFactory,
-    NotificationFactory,
     PageFactory,
     ParentPageFactory,
     RegistrationFactory,

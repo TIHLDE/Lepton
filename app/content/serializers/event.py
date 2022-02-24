@@ -5,6 +5,7 @@ from sentry_sdk import capture_exception
 
 from app.common.serializers import BaseModelSerializer
 from app.content.models import Event, Priority
+from app.content.models.user import CLASS, STUDY
 from app.content.serializers.priority import PrioritySerializer
 from app.group.serializers.group import GroupSerializer
 from app.util import EnumUtils
@@ -101,6 +102,7 @@ class EventListSerializer(serializers.ModelSerializer):
             "category",
             "expired",
             "organizer",
+            "closed",
             "image",
             "image_alt",
             "updated_at",
@@ -170,3 +172,45 @@ class EventCreateAndUpdateSerializer(BaseModelSerializer):
         )
 
         return registration_priority
+
+
+class EventStatisticsSerializer(BaseModelSerializer):
+
+    has_attended_count = serializers.SerializerMethodField()
+    classes = serializers.SerializerMethodField()
+    studies = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Event
+        fields = (
+            "has_attended_count",
+            "list_count",
+            "waiting_list_count",
+            "classes",
+            "studies",
+        )
+
+    def get_has_attended_count(self, obj, *args, **kwargs):
+        return obj.registrations.filter(is_on_wait=False, has_attended=True).count()
+
+    def get_classes(self, obj, *args, **kwargs):
+        return map(
+            lambda cls: {
+                "user_class": cls[0],
+                "amount": obj.registrations.filter(
+                    user__user_class=cls[0], is_on_wait=False
+                ).count(),
+            },
+            CLASS,
+        )
+
+    def get_studies(self, obj, *args, **kwargs):
+        return map(
+            lambda study: {
+                "user_study": study[0],
+                "amount": obj.registrations.filter(
+                    user__user_study=study[0], is_on_wait=False
+                ).count(),
+            },
+            STUDY,
+        )

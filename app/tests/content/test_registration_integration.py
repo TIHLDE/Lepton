@@ -27,7 +27,7 @@ API_EVENT_BASE_URL = "/events/"
 
 
 def _get_registration_url(event):
-    return f"{API_EVENT_BASE_URL}{event.pk}/users/"
+    return f"{API_EVENT_BASE_URL}{event.pk}/registrations/"
 
 
 def _get_registration_detail_url(registration):
@@ -141,7 +141,7 @@ def test_list_as_member_in_organizer(permission_test_util):
     assert response.status_code == expected_status_code
     if expected_status_code == 200:
         assert len(response.json()) > 0
-        assert response.json()[0]["user_info"]
+        assert response.json()["results"][0]["user_info"]
 
 
 @pytest.mark.django_db

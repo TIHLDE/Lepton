@@ -4,31 +4,11 @@ from rest_framework import serializers
 
 from dry_rest_permissions.generics import DRYGlobalPermissionsField
 
-from app.content.models import Notification, User
+from app.common.serializers import BaseModelSerializer
+from app.content.models import User
 
 
-class DefaultUserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = (
-            "user_id",
-            "first_name",
-            "last_name",
-            "image",
-        )
-        read_only_fields = (
-            "user_id",
-            "first_name",
-            "last_name",
-            "image",
-        )
-
-
-class UserSerializer(serializers.ModelSerializer):
-    unread_notifications = serializers.SerializerMethodField()
-    permissions = DRYGlobalPermissionsField(actions=["write", "read", "destroy"])
-    unanswered_evaluations_count = serializers.SerializerMethodField()
-
+class DefaultUserSerializer(BaseModelSerializer):
     class Meta:
         model = User
         fields = (
@@ -37,22 +17,41 @@ class UserSerializer(serializers.ModelSerializer):
             "last_name",
             "image",
             "email",
-            "cell",
             "gender",
             "user_class",
             "user_study",
+        )
+        read_only_fields = (
+            "user_id",
+            "first_name",
+            "last_name",
+            "image",
+            "email",
+            "gender",
+            "user_class",
+            "user_study",
+        )
+
+
+class UserSerializer(DefaultUserSerializer):
+    unread_notifications = serializers.SerializerMethodField()
+    unanswered_evaluations_count = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = DefaultUserSerializer.Meta.fields + (
             "allergy",
             "tool",
+            "public_event_registrations",
             "unread_notifications",
             "unanswered_evaluations_count",
-            "permissions",
             "number_of_strikes",
         )
         read_only_fields = ("user_id",)
 
     def get_unread_notifications(self, obj):
         """ Counts all unread notifications and returns the count """
-        return Notification.objects.filter(user=obj, read=False).count()
+        return obj.notifications.filter(read=False).count()
 
     def get_unanswered_evaluations_count(self, obj):
         return obj.get_unanswered_evaluations().count()
@@ -67,7 +66,6 @@ class UserListSerializer(UserSerializer):
             "last_name",
             "image",
             "email",
-            "cell",
             "gender",
             "user_class",
             "user_study",
@@ -82,24 +80,12 @@ class UserMemberSerializer(UserSerializer):
 
     class Meta(UserSerializer.Meta):
         fields = UserSerializer.Meta.fields
-        read_only_fields = (
-            "user_id",
+        read_only_fields = UserSerializer.Meta.read_only_fields + (
             "first_name",
             "last_name",
             "email",
             "user_class",
             "user_study",
-        )
-
-
-class UserAdminSerializer(serializers.ModelSerializer):
-    """Serializer for admin update to prevent them from updating extra_kwargs fields"""
-
-    class Meta(UserListSerializer.Meta):
-        fields = UserListSerializer.Meta.fields
-        read_only_fields = (
-            "user_id",
-            "strikes",
         )
 
 
@@ -140,7 +126,9 @@ class UserCreateSerializer(serializers.ModelSerializer):
         return data
 
 
-class UserInAnswerSerializer(serializers.ModelSerializer):
+class UserPermissionsSerializer(serializers.ModelSerializer):
+    permissions = DRYGlobalPermissionsField(actions=["write", "read", "destroy"])
+
     class Meta:
         model = User
-        fields = ["user_id", "email"]
+        fields = ("permissions",)

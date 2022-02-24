@@ -15,8 +15,31 @@
 ## Neste versjon
 - ⚡ **Pålogging** kan nå gjøres av brukere som ikke er godkjent, men har begrenset tilgang.
 
+## Versjon 2022.02.17
+- 🦟 **Brukere**. Brukere som ikke er admin får ikke lenger se brukeradmin på nettsiden. De hadde aldri tilgang til å endre dem.
+- 🦟 **Spørreskjema**. Lagt til mulighet for å velge en email som skal varsles når nye svar blir sendt inn
+
+## Versjon 2022.02.06
+- ⚡ **Registreringer**. La til filtrering på registreringer til arrangementer.
+
+## Versjon 2022.02.03
+- ⚡ **Spørreskjema**. Mulig å bruke 400 karakterer i spørreskjema felter.
+- ✨ **Offentlige profiler**. Alle innloggede TIHLDE-medlemmer kan nå se andre brukere og deres badges og medlemskap.
+- ✨ **Arrangementer**. Deltagerlister er offentlig tilgjengelig, men brukere kan reservere seg gjennom en innstilling i profilen sin.
+- ⚡ **Brukere**. Lagt til at superadmins kan nå slette brukere
+- ⚡ **Spørreskjemaer**. Liste med maler av spørreskjemaer viser nå type spørreskjema og om bruker har svart.
+- ⚡ **Brukere**. Flyttet brukers tilganger til et eget endepunkt for å kunne hente ut brukere raskere.
+- 🦟 **Cache**. Fikset bug der endringer i databasen ikke blir gjenspeilet i api'et.
+- ⚡ **NoK-interesse**. Interesse for kun annonser går rett til egen epost-adresse.
+
+## Versjon 2022.01.31
+- ✨ **GDPR**. Muliggjort eksportering av alle brukers data. Blir sendt som zip-fil til brukers mail på forepørsel.
+- ⚡ **Arrangement**. Mulighet til å se om et arrangement er lukket fra en liste med arrangementer
+
 ## Versjon 2022.01.15
 - ⚡ **Botsystem**. Lovverket er bedre sortert ved at paragraf-nummer nå lagres separat.
+- ⚡ **Epost**. Utsending av eposter er forhåpentligvis mye mer stabilt og loggbart nå.
+- ⚡ **Celery**. Periodiske oppgaver kjøres med cronjobs istedenfor planlagte tasks for bedre stabilitet.
 
 ## Versjon 2022.01.01
 - ✨ **Gruppeskjemaer**. Admin/leder av gruppe kan styre om det tillates flere besvarelser, om skjemaet er åpent og begrense svar til kun gruppens medlemmer.

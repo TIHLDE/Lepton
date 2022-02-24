@@ -44,7 +44,7 @@ class Fine(BaseModel, BasePermissionModel):
             self.notify_user()
 
     def notify_user(self):
-        from app.util.notifier import Notify
+        from app.communication.notifier import Notify
 
         Notify(
             [self.user], f"Du har fått en bot i gruppen {self.group.name}"

@@ -1,19 +1,27 @@
-from rest_framework import status, viewsets
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters, status
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 
+from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission, is_admin_user
+from app.common.viewsets import BaseViewSet
 from app.content.exceptions import APIUserAlreadyAttendedEvent
+from app.content.filters.registration import RegistrationFilter
 from app.content.mixins import APIRegistrationErrorsMixin
 from app.content.models import Event, Registration
 from app.content.serializers import RegistrationSerializer
 
 
-class RegistrationViewSet(APIRegistrationErrorsMixin, viewsets.ModelViewSet):
+class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
 
     serializer_class = RegistrationSerializer
     permission_classes = [BasicViewPermission]
     lookup_field = "user_id"
+    pagination_class = BasePagination
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filterset_class = RegistrationFilter
+    search_fields = ["user__first_name", "user__last_name"]
 
     def get_queryset(self):
         event_id = self.kwargs.get("event_id", None)
@@ -34,11 +42,9 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, viewsets.ModelViewSet):
         event_id = self.kwargs.get("event_id", None)
         event = Event.objects.get(pk=event_id)
 
-        current_user = request.user
-
-        registration = Registration.objects.get_or_create(
-            user=current_user, event=event, allow_photo=request.data["allow_photo"]
-        )[0]
+        registration = super().perform_create(
+            serializer, event=event, user=request.user
+        )
         registration_serializer = RegistrationSerializer(
             registration, context={"user": registration.user}
         )
@@ -73,12 +79,14 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, viewsets.ModelViewSet):
         return self._unregister(registration)
 
     def _unregister(self, registration):
+        self._log_on_destroy(registration)
         registration.delete()
         return Response(
             {"detail": "Du har blitt meldt av arrangementet"}, status=status.HTTP_200_OK
         )
 
     def _admin_unregister(self, registration):
+        self._log_on_destroy(registration)
         registration.admin_unregister()
         return Response(
             {"detail": "Brukeren har blitt meldt av arrangement"},
