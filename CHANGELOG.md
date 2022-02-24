@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+## Versjon 2022.02.24
 - ✨ **Ledertavle**. Laget en ledertavle rangert på antall badges en bruker har og en for når brukere fikk en spesifikk badge.
 
 ## Versjon 2022.02.17
