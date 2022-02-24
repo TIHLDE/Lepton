@@ -11,7 +11,7 @@ class Badge(BaseModel, OptionalImage):
     id = models.UUIDField(
         auto_created=True, primary_key=True, default=uuid.uuid4, serialize=False,
     )
-    flag = models.UUIDField(auto_created=True, default=uuid.uuid4, serialize=False,)
+    flag = models.UUIDField(auto_created=True, default=uuid.uuid4, serialize=False, unique=True,)
     title = models.CharField(max_length=200)
     description = models.CharField(max_length=200)
     badge_category = models.ForeignKey(
