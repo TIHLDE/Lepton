@@ -9,5 +9,5 @@ class BadgeFactory(DjangoModelFactory):
     class Meta:
         model = Badge
 
-    title = factory.Sequence(lambda n: f"Category{n}")
+    title = factory.Sequence(lambda n: f"Badge{n}")
     badge_category = factory.SubFactory(BadgeCategoryFactory)

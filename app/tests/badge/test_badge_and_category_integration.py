@@ -20,7 +20,7 @@ def _get_badge_categories_url():
 
 @pytest.mark.django_db
 def test_get_badges_as_anonymus_user(default_client):
-    """Anonymus user can not get a badges"""
+    """Anonymus user can not get badges"""
 
     url = _get_badges_url()
 
@@ -31,7 +31,7 @@ def test_get_badges_as_anonymus_user(default_client):
 
 @pytest.mark.django_db
 def test_get_badges_as_member(member_client):
-    """Member can get a badges"""
+    """Member can get badges"""
 
     url = _get_badges_url()
 
@@ -42,7 +42,7 @@ def test_get_badges_as_member(member_client):
 
 @pytest.mark.django_db
 def test_get_badge_categories_as_anonymus_user(default_client):
-    """Anonymus user can not get a badge categories"""
+    """Anonymus user can not get badge categories"""
 
     url = _get_badge_categories_url()
 
@@ -53,7 +53,7 @@ def test_get_badge_categories_as_anonymus_user(default_client):
 
 @pytest.mark.django_db
 def test_get_badge_categories_as_member(member_client):
-    """Member can get a badge categories"""
+    """Member can get badge categories"""
 
     url = _get_badge_categories_url()
 
@@ -64,7 +64,8 @@ def test_get_badge_categories_as_member(member_client):
 
 @pytest.mark.django_db
 def test_no_badges_are_shown_when_none_are_public(api_client, admin_user):
-    """Not even admin can list non public badges"""
+    """Not even admin can list non public badges.
+       Therefore only one badge is displayed"""
 
     BadgeFactory(active_to=now() + timedelta(days=1))
     BadgeFactory(active_from=now() + timedelta(days=1))

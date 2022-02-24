@@ -24,7 +24,10 @@ class Badge(BaseModel, OptionalImage):
         verbose_name_plural = "Badges"
 
     def __str__(self):
-        return f"{self.title} - {self.description}"
+        badge_str = f"{self.title} - {self.description}"
+        if self.badge_category:
+            badge_str += f" - {self.badge_category}"
+        return badge_str
 
     @property
     def is_active(self):
