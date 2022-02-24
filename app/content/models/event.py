@@ -10,7 +10,7 @@ from app.common.permissions import (
     set_user_id,
 )
 from app.content.models import Category
-from app.content.models.prioritiy import Priority
+from app.content.models.priority import Priority
 from app.content.models.user import User
 from app.forms.enums import EventFormType
 from app.group.models.group import Group

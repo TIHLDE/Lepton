@@ -3,6 +3,7 @@ from rest_framework.test import APIRequestFactory
 
 import pytest
 
+from app.badge.factories import BadgeFactory, UserBadgeFactory
 from app.career.factories import WeeklyBusinessFactory
 from app.common.enums import AdminGroup, Groups, MembershipType
 from app.communication.factories import NotificationFactory
@@ -121,6 +122,16 @@ def page():
 @pytest.fixture()
 def parent_page():
     return ParentPageFactory()
+
+
+@pytest.fixture()
+def badge():
+    return BadgeFactory()
+
+
+@pytest.fixture()
+def user_badge():
+    return UserBadgeFactory()
 
 
 @pytest.fixture()
