@@ -165,11 +165,7 @@ class UserViewSet(BaseViewSet, ActionMixin):
             )
 
     def get_user_detail_badges(self, request, *args, **kwargs):
-        if kwargs["pk"] == "me":
-            user = request.user
-        else:
-            user = self.get_object()
-
+        user = self._get_user(request, kwargs["pk"])
         user_badges = user.user_badges.order_by("-created_at")
         badges = [
             user_badge.badge
