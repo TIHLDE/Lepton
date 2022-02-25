@@ -84,15 +84,17 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
     @property
     def list_count(self):
         """ Number of users registered to attend the event """
-        return self.get_queue().count()
+        return self.get_participants().count()
 
     @property
     def waiting_list_count(self):
         """ Number of users on the waiting list """
         return self.get_waiting_list().count()
 
-    def get_queue(self):
-        """ Number of users registered to attend the event """
+    def get_has_attended(self):
+        return self.get_participants().filter(has_attended=True)
+
+    def get_participants(self):
         return self.registrations.filter(is_on_wait=False)
 
     def get_waiting_list(self):
@@ -100,7 +102,7 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
         return self.registrations.filter(is_on_wait=True)
 
     def user_has_attended_event(self, user):
-        return self.get_queue().filter(user=user, has_attended=True).exists()
+        return self.get_participants().filter(user=user, has_attended=True).exists()
 
     @property
     def is_past_sign_off_deadline(self):
@@ -121,7 +123,7 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
 
     @property
     def is_full(self):
-        return self.has_limit() and self.get_queue().count() >= self.limit
+        return self.has_limit() and self.get_participants().count() >= self.limit
 
     def has_priorities(self):
         return self.registration_priorities.all().exists()

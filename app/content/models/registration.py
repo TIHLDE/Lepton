@@ -214,7 +214,7 @@ class Registration(BaseModel, BasePermissionModel):
 
     def swap_users(self):
         """ Swaps a user with a spot with a prioritized user, if such user exists """
-        for registration in self.event.get_queue().order_by("-created_at"):
+        for registration in self.event.get_participants().order_by("-created_at"):
             if not registration.is_prioritized:
                 return self.swap_places_with(registration)
 
