@@ -35,7 +35,7 @@ from app.util.utils import midday, now, yesterday
 class EventViewSet(BaseViewSet, ActionMixin):
     serializer_class = EventSerializer
     permission_classes = [BasicViewPermission]
-    queryset = Event.objects.all()
+    queryset = Event.objects.select_related("organizer")
     pagination_class = BasePagination
 
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
@@ -48,15 +48,14 @@ class EventViewSet(BaseViewSet, ActionMixin):
             Filter expired events based on url query parameter.
         """
 
-        if self.kwargs or "expired" in self.request.query_params:
-            queryset = self.filter_queryset(self.queryset)
-        else:
-            midday_yesterday = midday(yesterday())
-            midday_today = midday(now())
-            time = midday_today if midday_today < now() else midday_yesterday
-            queryset = Event.objects.filter(end_date__gte=time)
+        midday_yesterday = midday(yesterday())
+        midday_today = midday(now())
+        time = midday_today if midday_today < now() else midday_yesterday
+        queryset = Event.objects.filter(end_date__gte=time)
 
-        return queryset.select_related("category").order_by("start_date")
+        queryset = self.filter_queryset(queryset)
+
+        return queryset
 
     def get_serializer_class(self):
         if hasattr(self, "action") and self.action == "list":

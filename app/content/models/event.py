@@ -67,6 +67,9 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
     runned_post_event_actions = models.BooleanField(default=False)
     runned_sign_off_deadline_reminder = models.BooleanField(default=False)
 
+    class Meta:
+        ordering = ("start_date",)
+
     def __str__(self):
         return f"{self.title} - starting {self.start_date} at {self.location}"
 
