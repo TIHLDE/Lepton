@@ -154,6 +154,7 @@ class GroupFormSerializer(FormSerializer):
             "can_submit_multiple",
             "is_open_for_submissions",
             "only_for_group_members",
+            "email_receiver_on_submit",
         )
 
     def to_representation(self, instance):

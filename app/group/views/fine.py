@@ -27,7 +27,7 @@ from app.group.serializers.fine import (
 class FineViewSet(APIFineErrorsMixin, BaseViewSet, ActionMixin):
     serializer_class = FineSerializer
     permission_classes = [BasicViewPermission]
-    queryset = Fine.objects.all()
+    queryset = Fine.objects.select_related("created_by", "user",)
     filter_backends = [DjangoFilterBackend]
     filterset_class = FineFilter
     pagination_class = BasePagination
@@ -64,7 +64,11 @@ class FineViewSet(APIFineErrorsMixin, BaseViewSet, ActionMixin):
     def get_user_fines(self, request, *args, **kwargs):
         """ Get the fines of a specific user in a group """
 
-        fines = self.get_queryset().filter(user__user_id=kwargs["user_id"])
+        fines = (
+            self.get_queryset()
+            .select_related("created_by")
+            .filter(user__user_id=kwargs["user_id"])
+        )
         return self.paginate_response(data=fines, serializer=FineNoUserSerializer)
 
     @action(detail=False, methods=["get"], url_path="users")
