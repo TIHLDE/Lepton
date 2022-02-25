@@ -42,7 +42,7 @@ drf-yasg
 # Code quality
 # ------------------------------------------------------------------------------
 pylint
-black == 19.10b0
+black == 22.1.0
 isort
 flake8
 flake8-django
