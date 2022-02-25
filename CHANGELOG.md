@@ -13,6 +13,9 @@
 ---
 
 ## Neste versjon
+- ⚡ **Arrangementer**. Arrangementer i brukes profil er nå sortert på tid.
+- 🦟 **Spørreskjema**. Medlemmer av NoK, Sosialen og andre grupper kan nå laste ned CSV med svar på spørreskjema, samt opprette nye maler.
+
 ## Versjon 2022.02.24
 - ✨ **Ledertavle**. Laget en ledertavle rangert på antall badges en bruker har og en for når brukere fikk en spesifikk badge.
 

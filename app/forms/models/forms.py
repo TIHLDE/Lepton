@@ -22,7 +22,7 @@ from app.util.models import BaseModel
 
 
 class Form(PolymorphicModel, BasePermissionModel):
-    write_access = AdminGroup.admin()
+    write_access = AdminGroup.all()
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=400)
     template = models.BooleanField(default=False)
@@ -372,6 +372,10 @@ class Submission(BaseModel, BasePermissionModel):
         return self._is_own_permission(request) or check_has_access(
             self.read_access, request
         )
+
+    @classmethod
+    def has_download_permission(cls, request):
+        return cls.has_list_permission(request)
 
 
 class Answer(BaseModel):

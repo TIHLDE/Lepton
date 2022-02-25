@@ -38,7 +38,8 @@ class SubmissionViewSet(APIFormErrorsMixin, BaseViewSet):
             super()
             .get_queryset()
             .filter(form__id=form_id)
-            .prefetch_related("user", "answers")
+            .select_related("user")
+            .prefetch_related("answers")
         )
         if hasattr(self, "action") and self.action in ["list", "download"]:
             form = get_object_or_404(Form, id=form_id)
