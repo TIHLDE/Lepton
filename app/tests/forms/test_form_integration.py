@@ -131,9 +131,9 @@ def test_list_forms_as_member_is_not_permitted(member):
     [
         (AdminGroup.HS, status.HTTP_200_OK),
         (AdminGroup.INDEX, status.HTTP_200_OK),
-        (AdminGroup.NOK, status.HTTP_200_OK),
-        (AdminGroup.SOSIALEN, status.HTTP_200_OK),
-        (AdminGroup.PROMO, status.HTTP_200_OK),
+        (AdminGroup.NOK, status.HTTP_403_FORBIDDEN),
+        (AdminGroup.SOSIALEN, status.HTTP_403_FORBIDDEN),
+        (AdminGroup.PROMO, status.HTTP_403_FORBIDDEN),
     ],
 )
 def test_list_forms_as_member_of_board_or_sub_group(
@@ -240,9 +240,9 @@ def test_update_form_as_member_is_not_permitted(member, form):
     [
         (AdminGroup.HS, status.HTTP_200_OK),
         (AdminGroup.INDEX, status.HTTP_200_OK),
-        (AdminGroup.NOK, status.HTTP_200_OK),
-        (AdminGroup.SOSIALEN, status.HTTP_200_OK),
-        (AdminGroup.PROMO, status.HTTP_200_OK),
+        (AdminGroup.NOK, status.HTTP_403_FORBIDDEN),
+        (AdminGroup.SOSIALEN, status.HTTP_403_FORBIDDEN),
+        (AdminGroup.PROMO, status.HTTP_403_FORBIDDEN),
     ],
 )
 def test_admin_update_form_permissions(form, member, group_name, expected_status_code):
@@ -454,9 +454,9 @@ def test_delete_form_as_member_is_not_permitted(member, form):
     [
         (AdminGroup.HS, status.HTTP_200_OK),
         (AdminGroup.INDEX, status.HTTP_200_OK),
-        (AdminGroup.SOSIALEN, status.HTTP_200_OK),
-        (AdminGroup.PROMO, status.HTTP_200_OK),
-        (AdminGroup.NOK, status.HTTP_200_OK),
+        (AdminGroup.SOSIALEN, status.HTTP_403_FORBIDDEN),
+        (AdminGroup.PROMO, status.HTTP_403_FORBIDDEN),
+        (AdminGroup.NOK, status.HTTP_403_FORBIDDEN),
     ],
 )
 def test_delete_form_as_member_of_admin_group(

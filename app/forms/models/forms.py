@@ -22,7 +22,7 @@ from app.util.models import BaseModel
 
 
 class Form(PolymorphicModel, BasePermissionModel):
-    write_access = AdminGroup.all()
+    write_access = AdminGroup.admin()
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=400)
     template = models.BooleanField(default=False)
