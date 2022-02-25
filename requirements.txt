@@ -6,7 +6,7 @@ mysqlclient == 2.0.3
 sentry-sdk
 celery == 5.2.2
 azure-storage-blob == 12.8.0
-python-dotenv ~= 0.17
+python-dotenv ~= 0.19
 gunicorn == 20.1.0
 uvicorn == 0.15.0
 whitenoise == 5.3.0
