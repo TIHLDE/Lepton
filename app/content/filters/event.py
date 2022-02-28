@@ -29,7 +29,7 @@ class EventFilter(FilterSet):
         time = midday_today if midday_today < now() else midday_yesterday
         if value:
             return queryset.filter(end_date__lt=time).order_by("-start_date")
-        return queryset.filter(end_date__gte=time).order_by("start_date")
+        return queryset.filter(end_date__gte=time)
 
     def filter_open_for_sign_up(self, queryset, name, value):
         if value:

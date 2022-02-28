@@ -373,6 +373,10 @@ class Submission(BaseModel, BasePermissionModel):
             self.read_access, request
         )
 
+    @classmethod
+    def has_download_permission(cls, request):
+        return cls.has_list_permission(request)
+
 
 class Answer(BaseModel):
 

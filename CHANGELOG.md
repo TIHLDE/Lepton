@@ -13,6 +13,11 @@
 ---
 
 ## Neste versjon
+## Versjon 2022.02.28
+- ✨ **Usending av gavekort** for arrangementer kan nå gjøres via epost.
+- ⚡ **Arrangementer**. Arrangementer i brukes profil er nå sortert på tid.
+- 🦟 **Spørreskjema**. Medlemmer av NoK, Sosialen og andre grupper kan nå laste ned CSV med svar på spørreskjema.
+
 ## Versjon 2022.02.24
 - ✨ **Ledertavle**. Laget en ledertavle rangert på antall badges en bruker har og en for når brukere fikk en spesifikk badge.
 
