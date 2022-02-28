@@ -87,7 +87,6 @@ def _send_results_to_dispatcher(results, dispatcher):
             f"Her er oversikten over utsendte gavekort (totalt {len(results)}):\n"
         )
         .add_paragraph("Navn - Gavekort/fil - Status")
-        .add_paragraph()
         .add_paragraph(results_formatted)
         .generate_string()
     )
