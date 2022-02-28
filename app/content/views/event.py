@@ -43,21 +43,22 @@ class EventViewSet(BaseViewSet, ActionMixin):
     search_fields = ["title"]
 
     def get_queryset(self):
-        """
-            Return all non-expired events by default.
-            Filter expired events based on url query parameter.
-        """
+        """Return all non-expired events by default if not filtering on start or end-date"""
 
         midday_yesterday = midday(yesterday())
         midday_today = midday(now())
         time = midday_today if midday_today < now() else midday_yesterday
-        if "expired" in self.request.query_params:
-            expired = (
-                self.request.query_params.get("expired", "false").lower() == "true"
-            )
-            if expired:
-                return self.queryset.filter(end_date__lt=time).order_by("-start_date")
-        return self.queryset
+
+        if (
+            "end_range" in self.request.query_params
+            or "start_range" in self.request.query_params
+        ):
+            return self.queryset
+
+        expired = self.request.query_params.get("expired", "false").lower() == "true"
+        if expired:
+            return self.queryset.filter(end_date__lt=time).order_by("-start_date")
+        return self.queryset.filter(end_date__gte=time)
 
     def get_serializer_class(self):
         if hasattr(self, "action") and self.action == "list":
@@ -218,13 +219,13 @@ class EventViewSet(BaseViewSet, ActionMixin):
 
         event = self.get_object()
         dispatcher = request.user
-        files = request.FILES.getlist("files")
+        files = request.FILES.getlist("file")
 
         try:
             send_gift_cards_by_email(event, files, dispatcher)
             return Response(
                 {
-                    "detail": "Gavekortene er sendt! Se separat epost for en mer utfyllende oversikt."
+                    "detail": "Gavekortene er sendt! Vi vil sende deg en mer utfyllende oversikt til din epost."
                 },
                 status=status.HTTP_200_OK,
             )
