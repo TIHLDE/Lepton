@@ -48,17 +48,15 @@ class EventViewSet(BaseViewSet, ActionMixin):
             Filter expired events based on url query parameter.
         """
 
+        midday_yesterday = midday(yesterday())
+        midday_today = midday(now())
+        time = midday_today if midday_today < now() else midday_yesterday
         if "expired" in self.request.query_params:
             expired = (
                 self.request.query_params.get("expired", "false").lower() == "true"
             )
-            midday_yesterday = midday(yesterday())
-            midday_today = midday(now())
-            time = midday_today if midday_today < now() else midday_yesterday
             if expired:
                 return self.queryset.filter(end_date__lt=time).order_by("-start_date")
-            return self.queryset.filter(end_date__gte=time)
-
         return self.queryset
 
     def get_serializer_class(self):
