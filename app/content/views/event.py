@@ -45,16 +45,19 @@ class EventViewSet(BaseViewSet, ActionMixin):
     def get_queryset(self):
         """Return all non-expired events by default if not filtering on start or end-date"""
 
+        if hasattr(self, "action") and self.action == "list":
+            return self._list_queryset()
+        return super().get_queryset()
+
+    def _list_queryset(self):
         midday_yesterday = midday(yesterday())
         midday_today = midday(now())
         time = midday_today if midday_today < now() else midday_yesterday
-
         if (
             "end_range" in self.request.query_params
             or "start_range" in self.request.query_params
         ):
             return self.queryset
-
         expired = self.request.query_params.get("expired", "false").lower() == "true"
         if expired:
             return self.queryset.filter(end_date__lt=time).order_by("-start_date")
