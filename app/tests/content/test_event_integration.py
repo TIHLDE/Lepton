@@ -11,6 +11,7 @@ from app.forms.enums import EventFormType
 from app.forms.tests.form_factories import EventFormFactory
 from app.group.factories import GroupFactory
 from app.group.models import Group
+from app.util import now
 from app.util.test_utils import (
     add_user_to_group_with_name,
     get_api_client,
@@ -462,3 +463,14 @@ def test_anonymous_list_public_registrations(api_client, event):
     response = client.get(url)
 
     assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+@pytest.mark.django_db
+def test_retrieve_expired_event_as_admin(api_client, admin_user):
+    two_days_ago = now() - timedelta(days=1)
+    event = EventFactory(end_date=two_days_ago)
+
+    client = api_client(user=admin_user)
+    url = get_events_url_detail(event)
+    response = client.get(url)
+    assert response.status_code == status.HTTP_200_OK
