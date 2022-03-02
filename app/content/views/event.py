@@ -43,9 +43,10 @@ class EventViewSet(BaseViewSet, ActionMixin):
     search_fields = ["title"]
 
     def get_queryset(self):
-        """Return all non-expired events by default if not filtering on start or end-date"""
-
-        if hasattr(self, "action") and self.action == "list":
+        if hasattr(self, "action") and self.action in [
+            "list",
+            "get_events_where_is_admin",
+        ]:
             return self._list_queryset()
         return super().get_queryset()
 
