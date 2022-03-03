@@ -54,7 +54,7 @@ class UserSerializer(DefaultUserSerializer):
         read_only_fields = ("user_id",)
 
     def get_unread_notifications(self, obj):
-        """ Counts all unread notifications and returns the count """
+        """Counts all unread notifications and returns the count"""
         return obj.notifications.filter(read=False).count()
 
     def get_unanswered_evaluations_count(self, obj):
@@ -94,7 +94,7 @@ class UserMemberSerializer(UserSerializer):
 
 
 class UserCreateSerializer(serializers.ModelSerializer):
-    """Serializer for creating user """
+    """Serializer for creating user"""
 
     class Meta:
         model = User

@@ -83,12 +83,12 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
 
     @property
     def list_count(self):
-        """ Number of users registered to attend the event """
+        """Number of users registered to attend the event"""
         return self.get_participants().count()
 
     @property
     def waiting_list_count(self):
-        """ Number of users on the waiting list """
+        """Number of users on the waiting list"""
         return self.get_waiting_list().count()
 
     def get_has_attended(self):
@@ -98,7 +98,7 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
         return self.registrations.filter(is_on_wait=False)
 
     def get_waiting_list(self):
-        """ Number of users on the waiting list """
+        """Number of users on the waiting list"""
         return self.registrations.filter(is_on_wait=True)
 
     def user_has_attended_event(self, user):

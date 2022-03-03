@@ -111,7 +111,9 @@ def test_swap_users_when_event_is_full(
 
 @pytest.mark.django_db
 def test_bump_user_when_event_is_not_full(
-    event, user_not_in_priority_pool, user_in_priority_pool,
+    event,
+    user_not_in_priority_pool,
+    user_in_priority_pool,
 ):
     """
     Test that a non prioritized user is not swapped with
@@ -323,7 +325,8 @@ def test_registration_in_queue_is_deleted_if_no_priority_registration_in_waiting
 
 @pytest.mark.django_db
 def test_registration_in_queue_is_deleted_if_no_waiting_list(
-    event_with_registrations_and_priority, registration_in_priority_pool,
+    event_with_registrations_and_priority,
+    registration_in_priority_pool,
 ):
     """Test that if there is no waiting list, a user is still able to unregister from  an event"""
     registration_in_priority_pool.delete()

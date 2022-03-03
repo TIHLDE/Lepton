@@ -87,7 +87,11 @@ def test_update_as_user(group, user):
     ],
 )
 def test_update_as_group_user(
-    group, user, group_name, expected_status_code, new_description,
+    group,
+    user,
+    group_name,
+    expected_status_code,
+    new_description,
 ):
     """Tests if diffierent groups ability to update a group"""
     expected_description = new_description if new_description else group.description

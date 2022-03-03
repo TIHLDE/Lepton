@@ -65,7 +65,7 @@ def test_get_badge_categories_as_member(member_client):
 @pytest.mark.django_db
 def test_no_badges_are_shown_when_none_are_public(api_client, admin_user):
     """Not even admin can list non public badges.
-       Therefore only one badge is displayed"""
+    Therefore only one badge is displayed"""
 
     BadgeFactory(active_to=now() + timedelta(days=1))
     BadgeFactory(active_from=now() + timedelta(days=1))

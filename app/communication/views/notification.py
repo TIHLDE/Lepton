@@ -13,7 +13,7 @@ from app.communication.serializers import (
 
 
 class NotificationViewSet(BaseViewSet):
-    """ Get the notifications """
+    """Get the notifications"""
 
     serializer_class = NotificationSerializer
     permission_classes = [BasicViewPermission]
@@ -31,7 +31,10 @@ class NotificationViewSet(BaseViewSet):
         if serializer.is_valid():
             notification = super().perform_update(serializer)
             serializer = NotificationSerializer(notification)
-            return Response(serializer.data, status=status.HTTP_200_OK,)
+            return Response(
+                serializer.data,
+                status=status.HTTP_200_OK,
+            )
         return Response(
             {"detail": ("Kunne ikke oppdatere varslet")},
             status=status.HTTP_403_FORBIDDEN,

@@ -121,7 +121,8 @@ def permission_test_util(
     organizer = None
     if event_current_organizer == "same":
         organizer = Group.objects.get_or_create(
-            type=user_organizer_type, name=user_member_of_organizer,
+            type=user_organizer_type,
+            name=user_member_of_organizer,
         )[0]
     elif event_current_organizer == "other":
         organizer = GroupFactory()
@@ -131,7 +132,8 @@ def permission_test_util(
     new_organizer = None
     if event_new_organizer == "same":
         new_organizer = Group.objects.get_or_create(
-            type=user_organizer_type, name=user_member_of_organizer,
+            type=user_organizer_type,
+            name=user_member_of_organizer,
         )[0]
         new_organizer = new_organizer.slug
     elif event_new_organizer == "other":
@@ -256,7 +258,15 @@ def test_create_event_as_admin(permission_test_util):
     update events where event.organizer is their group or None.
     """
 
-    (user, _, new_organizer, _, expected_status_code, _, _,) = permission_test_util
+    (
+        user,
+        _,
+        new_organizer,
+        _,
+        expected_status_code,
+        _,
+        _,
+    ) = permission_test_util
 
     client = get_api_client(user=user)
     data = get_event_data(organizer=new_organizer)
@@ -476,7 +486,13 @@ def test_retrieve_expired_event_as_admin(api_client, admin_user):
     assert response.status_code == status.HTTP_200_OK
 
 
-@pytest.mark.parametrize(("expired", "expected_count"), [[True, 1], [False, 2],])
+@pytest.mark.parametrize(
+    ("expired", "expected_count"),
+    [
+        [True, 1],
+        [False, 2],
+    ],
+)
 @pytest.mark.django_db
 def test_expired_filter_list(api_client, admin_user, expired, expected_count):
     two_days_ago = now() - timedelta(days=1)

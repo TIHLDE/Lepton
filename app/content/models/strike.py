@@ -52,7 +52,10 @@ class Strike(BaseModel, BasePermissionModel):
     read_access = write_access
 
     id = models.UUIDField(
-        auto_created=True, primary_key=True, default=uuid.uuid4, serialize=False,
+        auto_created=True,
+        primary_key=True,
+        default=uuid.uuid4,
+        serialize=False,
     )
     description = models.CharField(max_length=200)
     strike_size = models.IntegerField(default=1)
@@ -61,7 +64,11 @@ class Strike(BaseModel, BasePermissionModel):
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="strikes"
     )
     event = models.ForeignKey(
-        Event, on_delete=models.SET_NULL, blank=True, null=True, related_name="strikes",
+        Event,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name="strikes",
     )
     creator = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -94,7 +101,9 @@ class Strike(BaseModel, BasePermissionModel):
                 .add_paragraph(self.description)
                 .add_paragraph(strike_info)
                 .generate_string()
-            ).send_notification(description=f"{self.description}\n{strike_info}",)
+            ).send_notification(
+                description=f"{self.description}\n{strike_info}",
+            )
         super(Strike, self).save(*args, **kwargs)
 
     @property

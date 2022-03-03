@@ -658,7 +658,11 @@ def test_delete_as_member_when_sign_off_deadline_has_passed_and_on_wait(member):
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
-    "organizer_name", [AdminGroup.PROMO, AdminGroup.NOK,],
+    "organizer_name",
+    [
+        AdminGroup.PROMO,
+        AdminGroup.NOK,
+    ],
 )
 def test_delete_another_registration_as_member_in_nok_or_promo(
     member, organizer_name, user

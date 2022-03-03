@@ -91,9 +91,9 @@ def test_on_delete_membership_history_is_created(membership):
 
 @pytest.mark.django_db
 def test_on_swap_creates_hs_membership_with_no_leader(hs):
-    """"
-        Tests that if you promote as user to leader of a subgroup with no leader,
-        the user is automaticly added to the HS group
+    """ "
+    Tests that if you promote as user to leader of a subgroup with no leader,
+    the user is automaticly added to the HS group
     """
     group = GroupFactory(type=GroupType.SUBGROUP)
     membership = MembershipFactory(membership_type=MembershipType.MEMBER, group=group)
