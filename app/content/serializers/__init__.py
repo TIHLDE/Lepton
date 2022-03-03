@@ -1,10 +1,10 @@
-from app.content.serializers.badge import BadgeSerializer
 from app.content.serializers.category import CategorySerializer
 from app.content.serializers.cheatsheet import CheatsheetSerializer
 from app.content.serializers.event import (
     EventCreateAndUpdateSerializer,
     EventListSerializer,
     EventSerializer,
+    EventStatisticsSerializer,
 )
 from app.content.serializers.news import NewsSerializer
 from app.content.serializers.page import (
@@ -31,4 +31,3 @@ from app.content.serializers.user import (
     DefaultUserSerializer,
     UserPermissionsSerializer,
 )
-from app.content.serializers.user_badge import UserBadgeSerializer

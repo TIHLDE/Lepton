@@ -1,5 +1,10 @@
 from rest_framework import serializers
 
+from app.common.file_handler import replace_file
+
 
 class BaseModelSerializer(serializers.ModelSerializer):
-    pass
+    def update(self, instance, validated_data):
+        if hasattr(instance, "image") and "image" in validated_data:
+            replace_file(instance, validated_data)
+        return super().update(instance, validated_data)

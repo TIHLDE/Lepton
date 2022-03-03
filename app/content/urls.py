@@ -11,7 +11,6 @@ from app.content.views import (
     RegistrationViewSet,
     ShortLinkViewSet,
     StrikeViewSet,
-    UserBadgeViewSet,
     UserCalendarEvents,
     UserViewSet,
     accept_form,
@@ -27,14 +26,15 @@ router.register("categories", CategoryViewSet)
 router.register("short-links", ShortLinkViewSet, basename="short-link")
 router.register("users", UserViewSet, basename="user")
 router.register(
-    r"events/(?P<event_id>\d+)/users", RegistrationViewSet, basename="registration"
+    r"events/(?P<event_id>\d+)/registrations",
+    RegistrationViewSet,
+    basename="registration",
 )
 router.register(
     r"cheatsheets/(?P<study>[^\.]+)/(?P<grade>[^\.]+)/files",
     CheatsheetViewSet,
     basename="cheatsheet_list",
 )
-router.register("badges", UserBadgeViewSet, basename="badge")
 router.register("pages", PageViewSet)
 router.register("strikes", StrikeViewSet, basename="strikes")
 

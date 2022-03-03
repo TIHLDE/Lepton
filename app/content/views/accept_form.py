@@ -33,7 +33,7 @@ def accept_form(request):
                 f"Kontaktperson: {body['info']['kontaktperson']}, epost: {body['info']['epost']}"
             )
             .add_paragraph(f"Valgt semester: {', '.join(times)}")
-            .add_paragraph(f"Valgt arrangement: {', '.join()}")
+            .add_paragraph(f"Valgt arrangement: {', '.join(types)}")
             .add_paragraph(f"Kommentar: {body['comment']}")
             .generate_string(),
             subject=title,

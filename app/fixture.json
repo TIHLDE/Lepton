@@ -166,7 +166,7 @@
     }
 },
 {
-    "model": "content.badge",
+    "model": "badge.badge",
     "pk": "8149b976-c5c9-428b-bbf5-ee891e57774a",
     "fields": {
         "created_at": "2020-10-01T18:32:35.298Z",
@@ -174,9 +174,10 @@
         "image": "https://www.jocooks.com/wp-content/uploads/2014/09/beer-can-chicken-1-7.jpg",
         "image_alt": "Det er påske :)",
         "title": "Påske",
-        "description": "Beskrivelse"
+        "description": "Beskrivelse",
+        "flag": "9ec9969e-3732-4dd6-a378-2dc0aedbd92e"
     }
-},
+},  
 {
     "model": "content.category",
     "pk": 1,
@@ -776,7 +777,7 @@
     }
 },
 {
-    "model": "content.userbadge",
+    "model": "badge.userbadge",
     "pk": 1,
     "fields": {
         "created_at": "2020-10-01T18:53:48.435Z",
