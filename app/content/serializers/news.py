@@ -6,6 +6,7 @@ from ..models import News
 
 class NewsSerializer(BaseModelSerializer):
     creator = DefaultUserSerializer(read_only=True)
+
     class Meta:
         model = News
         fields = (

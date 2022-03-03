@@ -6,7 +6,7 @@ from app.group.models import Membership
 
 
 class MembershipFilter(FilterSet):
-    """ Filters Membership by membership_type """
+    """Filters Membership by membership_type"""
 
     onlyMembers = BooleanFilter(
         method="filter_membership_type", label="Filter only members"

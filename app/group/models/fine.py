@@ -14,7 +14,10 @@ class Fine(BaseModel, BasePermissionModel):
 
     access = AdminGroup.admin()
     id = models.UUIDField(
-        auto_created=True, primary_key=True, default=uuid.uuid4, serialize=False,
+        auto_created=True,
+        primary_key=True,
+        default=uuid.uuid4,
+        serialize=False,
     )
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="fines")

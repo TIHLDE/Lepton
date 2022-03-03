@@ -9,7 +9,7 @@ from app.common.permissions import IsMember
 @api_view(["POST"])
 @permission_classes([IsMember])
 def upload(request):
-    """ Method for uploading files til Azure Blob Storage, only allowed for members """
+    """Method for uploading files til Azure Blob Storage, only allowed for members"""
     try:
         has_multiple_files = len(request.FILES) > 1
         if has_multiple_files:
@@ -28,9 +28,13 @@ def upload(request):
         key = list(request.FILES.keys())[0]
         blob = request.FILES[key]
         url = AzureFileHandler(blob).uploadBlob()
-        return Response({"url": url}, status=status.HTTP_200_OK,)
+        return Response(
+            {"url": url},
+            status=status.HTTP_200_OK,
+        )
 
     except ValueError as value_error:
         return Response(
-            {"detail": str(value_error)}, status=status.HTTP_400_BAD_REQUEST,
+            {"detail": str(value_error)},
+            status=status.HTTP_400_BAD_REQUEST,
         )

@@ -110,7 +110,13 @@ def export_user_data(request, user):
                 )
                 .generate_string(),
                 "Dataeksport",
-                [("data.zip", tmp.read(), "application/x-zip-compressed",)],
+                [
+                    (
+                        "data.zip",
+                        tmp.read(),
+                        "application/x-zip-compressed",
+                    )
+                ],
             )
 
         return is_success

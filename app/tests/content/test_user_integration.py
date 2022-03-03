@@ -129,7 +129,10 @@ def test_list_user_forms_filter_on_answered_returns_all_answered_forms(
 
 @pytest.fixture
 def user_and_filter_value(request, user, user_with_strike):
-    return [(user, "false"), (user_with_strike, "true"),][request.param]
+    return [
+        (user, "false"),
+        (user_with_strike, "true"),
+    ][request.param]
 
 
 @pytest.mark.parametrize("user_and_filter_value", [0, 1], indirect=True)

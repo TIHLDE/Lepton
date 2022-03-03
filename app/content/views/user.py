@@ -39,7 +39,7 @@ from app.util.utils import CaseInsensitiveBooleanQueryParam
 
 
 class UserViewSet(BaseViewSet, ActionMixin):
-    """ API endpoint to display one user """
+    """API endpoint to display one user"""
 
     serializer_class = UserSerializer
     permission_classes = [BasicViewPermission]
@@ -80,17 +80,21 @@ class UserViewSet(BaseViewSet, ActionMixin):
         )
 
     def update(self, request, pk, *args, **kwargs):
-        """ Updates fields passed in request """
+        """Updates fields passed in request"""
         user = self._get_user(request, pk)
         self.check_object_permissions(self.request, user)
         if is_admin_user(request):
             serializer = UserSerializer(
-                user, context={"request": request}, data=request.data,
+                user,
+                context={"request": request},
+                data=request.data,
             )
         else:
             if self.request.id == pk:
                 serializer = UserMemberSerializer(
-                    user, context={"request": request}, data=request.data,
+                    user,
+                    context={"request": request},
+                    data=request.data,
                 )
             else:
                 return Response(
@@ -100,7 +104,10 @@ class UserViewSet(BaseViewSet, ActionMixin):
         if serializer.is_valid():
             super().perform_update(serializer)
             user = get_object_or_404(User, user_id=pk)
-            serializer = UserSerializer(user, context={"request": request},)
+            serializer = UserSerializer(
+                user,
+                context={"request": request},
+            )
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(
@@ -113,7 +120,8 @@ class UserViewSet(BaseViewSet, ActionMixin):
         self.check_object_permissions(self.request, user)
         super().destroy(request, pk=user.user_id, *args, **kwargs)
         return Response(
-            {"detail": "Brukeren har bltt slettet"}, status=status.HTTP_200_OK,
+            {"detail": "Brukeren har bltt slettet"},
+            status=status.HTTP_200_OK,
         )
 
     def _get_user(self, request, pk):
@@ -149,7 +157,8 @@ class UserViewSet(BaseViewSet, ActionMixin):
 
         if not badge.is_active:
             return Response(
-                {"detail": "Badgen er ikke aktiv"}, status=status.HTTP_400_BAD_REQUEST,
+                {"detail": "Badgen er ikke aktiv"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
         user_badge = UserBadge(user=user, badge=badge)
         serializer = UserBadgeSerializer(
@@ -177,7 +186,9 @@ class UserViewSet(BaseViewSet, ActionMixin):
         return self.paginate_response(data=badges, serializer=BadgeSerializer)
 
     @action(
-        detail=True, methods=["get", "post"], url_path="badges",
+        detail=True,
+        methods=["get", "post"],
+        url_path="badges",
     )
     def get_or_post_detail_user_badges(self, request, *args, **kwargs):
         if request.method == "GET":

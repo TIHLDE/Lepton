@@ -10,7 +10,7 @@ from app.content.models import User
 
 
 class UserCalendarEvents(ICalFeed):
-    """ API endpoint to get a ICalendar with an user's events """
+    """API endpoint to get a ICalendar with an user's events"""
 
     product_id = f"-//{settings.WEBSITE_URL}//UserEvents"
     timezone = f"{settings.TIME_ZONE}"

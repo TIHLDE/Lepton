@@ -11,7 +11,10 @@ from app.util.models import BaseModel
 class Law(BaseModel, BasePermissionModel):
     access = AdminGroup.admin()
     id = models.UUIDField(
-        auto_created=True, primary_key=True, default=uuid.uuid4, serialize=False,
+        auto_created=True,
+        primary_key=True,
+        default=uuid.uuid4,
+        serialize=False,
     )
     group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name="laws")
     description = models.TextField(default="", blank=True)

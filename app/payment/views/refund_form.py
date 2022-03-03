@@ -52,5 +52,6 @@ class RefundFormViewSet(BaseViewSet):
         except Exception as e:
             logging.exception(e)
             return Response(
-                {"details": "Noe uventet skjedde"}, status=status.HTTP_400_BAD_REQUEST,
+                {"details": "Noe uventet skjedde"},
+                status=status.HTTP_400_BAD_REQUEST,
             )

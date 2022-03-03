@@ -23,19 +23,27 @@ class UserManager(BaseUserManager):
     use_in_migrations = True
 
     def create_user(self, user_id, password):
-        user = self.model(user_id=user_id,)
+        user = self.model(
+            user_id=user_id,
+        )
         user.set_password(make_password(password))
         user.save(using=self._db)
         return user
 
     def create_staffuser(self, user_id, password):
-        user = self.create_user(user_id=user_id, password=password,)
+        user = self.create_user(
+            user_id=user_id,
+            password=password,
+        )
         user.staff = True
         user.save(using=self._db)
         return user
 
     def create_superuser(self, user_id, password):
-        user = self.create_user(user_id=user_id, password=password,)
+        user = self.create_user(
+            user_id=user_id,
+            password=password,
+        )
         user.staff = True
         user.admin = True
         user.save(using=self._db)
@@ -164,7 +172,10 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
 
     @classmethod
     def has_read_permission(cls, request):
-        return check_has_access(cls.read_access, request,)
+        return check_has_access(
+            cls.read_access,
+            request,
+        )
 
     @classmethod
     def has_write_permission(cls, request):
@@ -175,19 +186,29 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
             return bool(request.user)
         if user_id:
             return request.user.user_id == user_id or check_has_access(
-                cls.write_access, request,
+                cls.write_access,
+                request,
             )
-        return check_has_access(cls.write_access, request,)
+        return check_has_access(
+            cls.write_access,
+            request,
+        )
 
     @classmethod
     def has_create_permission(cls, request):
         return True
 
     def has_object_write_permission(self, request):
-        return self == request.user or check_has_access(self.write_access, request,)
+        return self == request.user or check_has_access(
+            self.write_access,
+            request,
+        )
 
     def has_object_retrieve_permission(self, request):
-        return self == request.user or check_has_access(self.read_access, request,)
+        return self == request.user or check_has_access(
+            self.read_access,
+            request,
+        )
 
     def has_object_read_permission(self, request):
         return self.has_object_retrieve_permission(request)

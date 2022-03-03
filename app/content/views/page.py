@@ -155,7 +155,10 @@ class PageViewSet(BaseViewSet):
                     status=status.HTTP_403_FORBIDDEN,
                 )
             super().perform_destroy(page)
-            return Response({"detail": "Siden ble slettet"}, status=status.HTTP_200_OK,)
+            return Response(
+                {"detail": "Siden ble slettet"},
+                status=status.HTTP_200_OK,
+            )
         except Page.DoesNotExist:
             return Response(
                 {"detail": "Fant ikke siden"}, status=status.HTTP_404_NOT_FOUND

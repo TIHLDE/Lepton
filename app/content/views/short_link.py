@@ -37,8 +37,14 @@ class ShortLinkViewSet(BaseViewSet):
                 )
             except ValidationError:
                 pass
-        return Response({"detail": serializer.errors}, status=status.HTTP_409_CONFLICT,)
+        return Response(
+            {"detail": serializer.errors},
+            status=status.HTTP_409_CONFLICT,
+        )
 
     def destroy(self, request, *args, **kwargs):
         super().destroy(request, *args, **kwargs)
-        return Response({"detail": "Linken ble slettet"}, status=status.HTTP_200_OK,)
+        return Response(
+            {"detail": "Linken ble slettet"},
+            status=status.HTTP_200_OK,
+        )

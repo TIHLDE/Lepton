@@ -69,5 +69,5 @@ class SubmissionViewSet(APIFormErrorsMixin, BaseViewSet):
 
     @action(detail=False, methods=["get"], url_path="download")
     def download(self, request, *args, **kwargs):
-        """To return the response as csv, include header 'Accept: text/csv. """
+        """To return the response as csv, include header 'Accept: text/csv."""
         return SubmissionsCsvWriter(self.get_queryset()).write_csv()
