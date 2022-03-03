@@ -27,7 +27,11 @@ class MailCreator:
         link: str -> Link directed to on button click
         """
         self.content.append(
-            {"type": "button", "text": text, "link": link,}
+            {
+                "type": "button",
+                "text": text,
+                "link": link,
+            }
         )
         return self
 
@@ -47,5 +51,8 @@ class MailCreator:
         """
         return render_to_string(
             "mail_creator.html",
-            context={"content": self.content, "title": self.title,},
+            context={
+                "content": self.content,
+                "title": self.title,
+            },
         )

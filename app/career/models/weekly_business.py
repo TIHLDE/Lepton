@@ -12,7 +12,10 @@ class WeeklyBusiness(BaseModel, OptionalImage, BasePermissionModel):
     write_access = [AdminGroup.HS, AdminGroup.INDEX, AdminGroup.NOK]
 
     id = models.UUIDField(
-        auto_created=True, primary_key=True, default=uuid.uuid4, serialize=False,
+        auto_created=True,
+        primary_key=True,
+        default=uuid.uuid4,
+        serialize=False,
     )
 
     business_name = models.CharField(max_length=200)

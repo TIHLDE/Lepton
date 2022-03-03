@@ -32,7 +32,10 @@ def _validate_participants_and_files_counts(event, files):
 def _map_participants_to_attachments(event, files):
     participant_emails = event.get_has_attended().values_list("user__email", flat=True)
     email_recipients_with_attachments = list(
-        map(lambda m: EmailMessage(m[0], m[1]), zip(participant_emails, files),)
+        map(
+            lambda m: EmailMessage(m[0], m[1]),
+            zip(participant_emails, files),
+        )
     )
     return email_recipients_with_attachments
 

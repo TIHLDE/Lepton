@@ -73,7 +73,8 @@ class Group(OptionalImage, BaseModel, BasePermissionModel):
             .add_button("Gå til gruppesiden", self.website_url)
             .generate_string()
         ).send_notification(
-            description=" \n".join(description), link=f"/grupper/{self.slug}/boter/",
+            description=" \n".join(description),
+            link=f"/grupper/{self.slug}/boter/",
         )
 
     def check_fine_admin(self):

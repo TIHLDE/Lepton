@@ -258,7 +258,8 @@ class Submission(BaseModel, BasePermissionModel):
                 f"{self.user.first_name} {self.user.last_name} har svart på spørreskjemaet {self.form.title}"
             )
             .add_button(
-                "Åpne spørreskjema", f"{settings.WEBSITE_URL}{self.form.website_url}",
+                "Åpne spørreskjema",
+                f"{settings.WEBSITE_URL}{self.form.website_url}",
             )
             .generate_string(),
             "Nytt spørreskjema svar",

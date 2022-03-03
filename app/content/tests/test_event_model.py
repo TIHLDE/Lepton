@@ -47,7 +47,11 @@ def test_expired_when_event_has_expired(event):
 @pytest.mark.django_db
 @pytest.mark.parametrize(
     "users_not_on_wait, users_on_wait, expected_list_count",
-    [(0, 0, 0), (5, 0, 5), (1, 4, 1),],
+    [
+        (0, 0, 0),
+        (5, 0, 5),
+        (1, 4, 1),
+    ],
 )
 def test_list_count(event, users_not_on_wait, users_on_wait, expected_list_count):
     """Should return the number of registered users who are to attend."""
@@ -61,7 +65,11 @@ def test_list_count(event, users_not_on_wait, users_on_wait, expected_list_count
 @pytest.mark.django_db
 @pytest.mark.parametrize(
     "users_not_on_wait, users_on_wait, expected_waiting_list_count",
-    [(0, 0, 0), (5, 0, 0), (1, 4, 4),],
+    [
+        (0, 0, 0),
+        (5, 0, 0),
+        (1, 4, 4),
+    ],
 )
 def test_waiting_list_count(
     event, users_not_on_wait, users_on_wait, expected_waiting_list_count
@@ -107,7 +115,7 @@ def test_has_waiting_list_when_event_has_users_on_wait(event):
 @pytest.mark.django_db
 def test_has_waiting_list_when_event_is_not_full(event):
     """
-        Test that an event does not have a waiting list when there are available spots and no users on wait.
+    Test that an event does not have a waiting list when there are available spots and no users on wait.
     """
     event.limit = 100
     RegistrationFactory.create_batch(1, event=event)
@@ -130,7 +138,7 @@ def test_has_limit(event, limit, has_limit):
 )
 def test_is_full(event, limit, number_of_attendees, is_full):
     """
-        Should return True if number of registered users is greater than limit, else False.
+    Should return True if number of registered users is greater than limit, else False.
     """
     event.limit = limit
     RegistrationFactory.create_batch(number_of_attendees, event=event)

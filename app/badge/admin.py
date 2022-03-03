@@ -18,7 +18,6 @@ class UserBadgeAdmin(admin.ModelAdmin):
         "user__user_study",
         "user__user_class",
         "user__is_staff",
-        "user__is_active",
         "badge__badge_category",
     )
 

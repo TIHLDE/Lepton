@@ -30,11 +30,13 @@ class LeaderboardViewSet(mixins.ListModelMixin, GenericViewSet):
     ]
 
     def get_queryset(self):
-        number_of_badges = Count("user_badges")
+        number_of_badges = Count("user_badges", distinct=True)
         category = self.request.query_params.get("category", None)
         if category:
             number_of_badges = Count(
-                "user_badges", filter=Q(user_badges__badge__badge_category=category)
+                "user_badges",
+                filter=Q(user_badges__badge__badge_category=category),
+                distinct=True,
             )
 
         return (

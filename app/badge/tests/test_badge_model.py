@@ -26,9 +26,9 @@ def test_badge_is_active_with_different_active_dates(
     active_from, active_to, expected_result
 ):
     """Tests several arguments for active_from and active_to dates and checks whether badge is active
-       or not depending on the arguments above. Badge is not active if active_from is later than now
-       or active_to is earlier than now. If active_to/from is None, it is treated as infinitly far in
-       the past for active_from and in the future for active_to."""
+    or not depending on the arguments above. Badge is not active if active_from is later than now
+    or active_to is earlier than now. If active_to/from is None, it is treated as infinitly far in
+    the past for active_from and in the future for active_to."""
 
     badge = BadgeFactory(active_to=active_to, active_from=active_from)
 
@@ -55,9 +55,9 @@ def test_badge_is_public_with_different_active_dates(
     active_from, active_to, expected_result
 ):
     """Tests several arguments for active_from and active_to dates and checks whether badge is public
-       or not depending on the arguments above. Badge is public if active_to is passed or if active_to
-       is None and badge is active. If active_to/from is None, they are treated as infinitly far in
-       the past for active_from and in the future for active_to."""
+    or not depending on the arguments above. Badge is public if active_to is passed or if active_to
+    is None and badge is active. If active_to/from is None, they are treated as infinitly far in
+    the past for active_from and in the future for active_to."""
 
     badge = BadgeFactory(active_to=active_to, active_from=active_from)
 

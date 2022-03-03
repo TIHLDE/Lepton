@@ -122,7 +122,11 @@ def test_that_non_group_members_can_create_group_form_for_that_group(
 
 @pytest.mark.parametrize(
     "membership_type, expected_amount",
-    [(MembershipType.LEADER, 4), (MembershipType.MEMBER, 2), (None, 1),],
+    [
+        (MembershipType.LEADER, 4),
+        (MembershipType.MEMBER, 2),
+        (None, 1),
+    ],
 )
 def test_retrieve_list_of_group_forms_only_returns_where_is_admin_or_can_answer(
     api_client, member, group, membership_type, expected_amount

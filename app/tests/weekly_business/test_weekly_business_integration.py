@@ -92,7 +92,8 @@ def test_retrieve_as_member(member, weekly_business):
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
-    "group_name", list(AdminGroup),
+    "group_name",
+    list(AdminGroup),
 )
 def test_retrieve_as_member_of_admin_group(member, weekly_business, group_name):
     """A member of an admin group should be able to retrieve weekly_business."""
@@ -131,7 +132,8 @@ def test_list_as_member(member):
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
-    "group_name", list(AdminGroup),
+    "group_name",
+    list(AdminGroup),
 )
 def test_list_as_member_of_admin_group(member, group_name):
     """A member of an admin group should be able to list all weekly_business."""

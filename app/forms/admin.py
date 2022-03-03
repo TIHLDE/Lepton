@@ -24,7 +24,7 @@ class FieldInline(admin.TabularInline):
 
 
 class FormChildAdmin(PolymorphicChildModelAdmin):
-    """ Base admin class for all child models """
+    """Base admin class for all child models"""
 
     base_model = models.Form
     inlines = (FieldInline,)
@@ -44,7 +44,7 @@ class GroupFormAdmin(FormChildAdmin):
 
 @admin.register(models.Form)
 class FormAdmin(PolymorphicParentModelAdmin):
-    """ The parent model admin """
+    """The parent model admin"""
 
     base_model = models.Form
     child_models = (models.EventForm, models.Form)

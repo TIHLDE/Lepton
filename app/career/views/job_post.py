@@ -13,8 +13,8 @@ from app.util.utils import yesterday
 
 class JobPostViewSet(BaseViewSet):
     """
-        Display all not expired jobposts and filter them by title and expired
-        Excludes expired jobposts by default: to include expired in search results, add '&expired=true'
+    Display all not expired jobposts and filter them by title and expired
+    Excludes expired jobposts by default: to include expired in search results, add '&expired=true'
     """
 
     serializer_class = JobPostSerializer
@@ -31,7 +31,7 @@ class JobPostViewSet(BaseViewSet):
         return JobPost.objects.filter(deadline__gte=yesterday()).order_by("deadline")
 
     def destroy(self, request, *args, **kwargs):
-        """ Delete the jobpost """
+        """Delete the jobpost"""
         super().destroy(request, *args, **kwargs)
         return Response(
             {"detail": "Jobbannonsen ble slettet"}, status=status.HTTP_200_OK

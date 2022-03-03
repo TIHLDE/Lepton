@@ -56,7 +56,7 @@ class CheatsheetViewSet(BaseViewSet):
             )
 
     def create(self, request, *args, **kwargs):
-        """Creates a new cheatsheet """
+        """Creates a new cheatsheet"""
         if is_admin_user(request):
             serializer = CheatsheetSerializer(
                 data=self.request.data, context={"request": request}
