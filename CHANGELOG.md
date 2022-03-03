@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+- 🦟 **Badge**. Fikset en bug som forårsaket at badges ble kvadrert under kategorier.
 - ⚡ **Album**. Håndterer nå alt av opplastning slik at frontend kun må sende inn filene som skal inn i albumet.
 
 ## Versjon 2022.03.01
