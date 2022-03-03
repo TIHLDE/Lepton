@@ -1,22 +1,31 @@
 from django.db.models import Q
+from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status
 from rest_framework.decorators import action
+from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
 
 from sentry_sdk import capture_exception
 
 from app.common.mixins import ActionMixin
 from app.common.pagination import BasePagination
-from app.common.permissions import BasicViewPermission
+from app.common.permissions import BasicViewPermission, IsMember
 from app.common.viewsets import BaseViewSet
+from app.communication.events import (
+    EventGiftCardAmountMismatchError,
+    send_gift_cards_by_email,
+)
 from app.communication.notifier import Notify
+from app.constants import MAIL_INDEX
 from app.content.filters import EventFilter
 from app.content.models import Event, User
 from app.content.serializers import (
     EventCreateAndUpdateSerializer,
     EventListSerializer,
     EventSerializer,
+    EventStatisticsSerializer,
+    PublicRegistrationSerializer,
 )
 from app.group.models.group import Group
 from app.util.mail_creator import MailCreator
@@ -26,7 +35,7 @@ from app.util.utils import midday, now, yesterday
 class EventViewSet(BaseViewSet, ActionMixin):
     serializer_class = EventSerializer
     permission_classes = [BasicViewPermission]
-    queryset = Event.objects.all()
+    queryset = Event.objects.select_related("organizer")
     pagination_class = BasePagination
 
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
@@ -34,20 +43,26 @@ class EventViewSet(BaseViewSet, ActionMixin):
     search_fields = ["title"]
 
     def get_queryset(self):
-        """
-            Return all non-expired events by default.
-            Filter expired events based on url query parameter.
-        """
+        if hasattr(self, "action") and self.action in [
+            "list",
+            "get_events_where_is_admin",
+        ]:
+            return self._list_queryset()
+        return super().get_queryset()
 
-        if self.kwargs or "expired" in self.request.query_params:
-            queryset = self.filter_queryset(self.queryset)
-        else:
-            midday_yesterday = midday(yesterday())
-            midday_today = midday(now())
-            time = midday_today if midday_today < now() else midday_yesterday
-            queryset = Event.objects.filter(end_date__gte=time)
-
-        return queryset.select_related("category").order_by("start_date")
+    def _list_queryset(self):
+        midday_yesterday = midday(yesterday())
+        midday_today = midday(now())
+        time = midday_today if midday_today < now() else midday_yesterday
+        if (
+            "end_range" in self.request.query_params
+            or "start_range" in self.request.query_params
+        ):
+            return self.queryset
+        expired = self.request.query_params.get("expired", "false").lower() == "true"
+        if expired:
+            return self.queryset.filter(end_date__lt=time).order_by("-start_date")
+        return self.queryset.filter(end_date__gte=time)
 
     def get_serializer_class(self):
         if hasattr(self, "action") and self.action == "list":
@@ -114,16 +129,31 @@ class EventViewSet(BaseViewSet, ActionMixin):
         )
 
     @action(
+        detail=True,
+        methods=["get"],
+        url_path="public_registrations",
+        permission_classes=(IsMember,),
+    )
+    def get_public_event_registrations(self, request, pk, *args, **kwargs):
+        event = get_object_or_404(Event, id=pk)
+        registrations = event.get_participants()
+        return self.paginate_response(
+            data=registrations,
+            serializer=PublicRegistrationSerializer,
+            context={"request": request},
+        )
+
+    @action(
         detail=True, methods=["post"], url_path="notify",
     )
-    def notifyRegisteredUsers(self, request, *args, **kwargs):
+    def notify_registered_users(self, request, *args, **kwargs):
         try:
             title = request.data["title"]
             message = request.data["message"]
             event = self.get_object()
             self.check_object_permissions(self.request, event)
 
-            users = User.objects.filter(registrations__in=event.get_queue())
+            users = User.objects.filter(registrations__in=event.get_participants())
             Notify(users, title).send_email(
                 MailCreator(title)
                 .add_paragraph(f"Arrangøren av {event.title} har en melding til deg:")
@@ -176,3 +206,41 @@ class EventViewSet(BaseViewSet, ActionMixin):
         return self.paginate_response(
             data=events, serializer=EventListSerializer, context={"request": request}
         )
+
+    @action(detail=True, methods=["get"], url_path="statistics")
+    def statistics(self, request, *args, **kwargs):
+        event = self.get_object()
+        serializer = EventStatisticsSerializer(event, context={"request": request})
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(
+        detail=True,
+        methods=["post"],
+        url_path="mail-gift-cards",
+        parser_classes=(MultiPartParser, FormParser,),
+    )
+    def mail_gift_cards(self, request, *args, **kwargs):
+
+        event = self.get_object()
+        dispatcher = request.user
+        files = request.FILES.getlist("file")
+
+        try:
+            send_gift_cards_by_email(event, files, dispatcher)
+            return Response(
+                {
+                    "detail": "Gavekortene er sendt! Vi vil sende deg en mer utfyllende oversikt til din epost."
+                },
+                status=status.HTTP_200_OK,
+            )
+        except EventGiftCardAmountMismatchError as e:
+            return Response({"detail": e.message}, status=status.HTTP_400_BAD_REQUEST)
+        except ValueError as e:
+            capture_exception(e)
+            return Response(
+                {
+                    "detail": f"Noe gikk galt da vi prøvde å sende ut gavekortene. Gi det et nytt forsøk senere eller "
+                    f"kontakt Index på {MAIL_INDEX} eller slack."
+                },
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )

@@ -32,7 +32,7 @@ class MembershipViewSet(BaseViewSet):
     lookup_field = "user_id"
 
     def get_queryset(self):
-        return self.queryset.filter(group__slug=self.kwargs["slug"])
+        return super().get_queryset().filter(group__slug=self.kwargs["slug"])
 
     def get_serializer_class(self):
         if is_admin_user(self.request):

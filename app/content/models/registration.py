@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q
 
-from app.common.enums import AdminGroup, Groups, StrikeEnum
+from app.common.enums import StrikeEnum
 from app.common.permissions import BasePermissionModel
 from app.communication.notifier import Notify
 from app.content.exceptions import (
@@ -24,14 +24,6 @@ from app.util.utils import datetime_format
 
 
 class Registration(BaseModel, BasePermissionModel):
-    has_access = [AdminGroup.HS, AdminGroup.INDEX, AdminGroup.NOK, AdminGroup.SOSIALEN]
-    has_retrieve_access = [
-        AdminGroup.HS,
-        AdminGroup.INDEX,
-        AdminGroup.NOK,
-        AdminGroup.SOSIALEN,
-        Groups.TIHLDE,
-    ]
 
     registration_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(
@@ -222,7 +214,7 @@ class Registration(BaseModel, BasePermissionModel):
 
     def swap_users(self):
         """ Swaps a user with a spot with a prioritized user, if such user exists """
-        for registration in self.event.get_queue().order_by("-created_at"):
+        for registration in self.event.get_participants().order_by("-created_at"):
             if not registration.is_prioritized:
                 return self.swap_places_with(registration)
 
@@ -286,13 +278,6 @@ class Registration(BaseModel, BasePermissionModel):
     def check_registration_has_ended(self):
         if self.event.end_registration_at < now():
             raise ValidationError("Påmeldingsfristen har passert")
-
-    def get_waiting_number(self):
-        if self.is_on_wait:
-            for waiting in self.event.get_waiting_list():
-                if self == waiting:
-                    return list(self.event.get_waiting_list()).index(self) + 1
-        return None
 
     def get_submissions(self, type=None):
         from app.forms.models import EventForm, Submission

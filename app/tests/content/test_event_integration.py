@@ -1,15 +1,17 @@
 from datetime import timedelta
 
 from django.utils import timezone
+from rest_framework import status
 
 import pytest
 
 from app.common.enums import AdminGroup, GroupType, MembershipType
-from app.content.factories import EventFactory
+from app.content.factories import EventFactory, RegistrationFactory, UserFactory
 from app.forms.enums import EventFormType
 from app.forms.tests.form_factories import EventFormFactory
 from app.group.factories import GroupFactory
 from app.group.models import Group
+from app.util import now
 from app.util.test_utils import (
     add_user_to_group_with_name,
     get_api_client,
@@ -409,3 +411,83 @@ def test_retrieve_event_includes_form_survey(default_client, event):
     response = default_client.get(url)
 
     assert response.json().get("survey") == str(survey.id)
+
+
+@pytest.mark.django_db
+def test_list_public_registrations_anonymizes_correctly(member, api_client, event):
+    """Should list user_info=None if user.public_event_registrations=False."""
+    user1 = UserFactory(public_event_registrations=True)
+    user2 = UserFactory(public_event_registrations=False)
+
+    RegistrationFactory(event=event, user=user1)
+    RegistrationFactory(event=event, user=user2)
+
+    url = f"{get_events_url_detail(event)}public_registrations/"
+    client = api_client(user=member)
+    response = client.get(url)
+    results = response.json().get("results")
+
+    assert len(results) == 2
+    assert results[0]["user_info"]["user_id"] == user1.user_id
+    assert results[1]["user_info"] is None
+
+
+@pytest.mark.django_db
+def test_list_public_registrations_only_lists_not_on_wait(member, api_client):
+    """Should only list registrations which is not on waitlist"""
+    event = EventFactory(limit=1)
+    user1 = UserFactory()
+    user2 = UserFactory()
+    RegistrationFactory(event=event, user=user1)
+    RegistrationFactory(event=event, user=user2)
+
+    url = f"{get_events_url_detail(event)}public_registrations/"
+    client = api_client(user=member)
+    response = client.get(url)
+    results = response.json().get("results")
+
+    assert len(results) == 1
+
+
+@pytest.mark.django_db
+def test_anonymous_list_public_registrations(api_client, event):
+    """Anonymous users should not be able to list public registrations."""
+    user1 = UserFactory(public_event_registrations=True)
+    user2 = UserFactory(public_event_registrations=False)
+
+    RegistrationFactory(event=event, user=user1)
+    RegistrationFactory(event=event, user=user2)
+
+    url = f"{get_events_url_detail(event)}public_registrations/"
+    client = api_client()
+    response = client.get(url)
+
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+@pytest.mark.django_db
+def test_retrieve_expired_event_as_admin(api_client, admin_user):
+    two_days_ago = now() - timedelta(days=1)
+    event = EventFactory(end_date=two_days_ago)
+
+    client = api_client(user=admin_user)
+    url = get_events_url_detail(event)
+    response = client.get(url)
+    assert response.status_code == status.HTTP_200_OK
+
+
+@pytest.mark.parametrize(("expired", "expected_count"), [[True, 1], [False, 2],])
+@pytest.mark.django_db
+def test_expired_filter_list(api_client, admin_user, expired, expected_count):
+    two_days_ago = now() - timedelta(days=1)
+    tomorrow = now() + timedelta(days=1)
+    EventFactory(end_date=two_days_ago)
+    EventFactory.create_batch(2, end_date=tomorrow)
+
+    client = api_client(user=admin_user)
+    url = f"{API_EVENTS_BASE_URL}admin/?expired={expired}"
+    response = client.get(url)
+
+    actual_count = response.json().get("count")
+
+    assert actual_count == expected_count

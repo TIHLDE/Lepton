@@ -1,10 +1,10 @@
-from app.content.serializers.badge import BadgeSerializer
 from app.content.serializers.category import CategorySerializer
 from app.content.serializers.cheatsheet import CheatsheetSerializer
 from app.content.serializers.event import (
     EventCreateAndUpdateSerializer,
     EventListSerializer,
     EventSerializer,
+    EventStatisticsSerializer,
 )
 from app.content.serializers.news import NewsSerializer
 from app.content.serializers.page import (
@@ -13,7 +13,10 @@ from app.content.serializers.page import (
     PageListSerializer,
 )
 from app.content.serializers.priority import PrioritySerializer
-from app.content.serializers.registration import RegistrationSerializer
+from app.content.serializers.registration import (
+    PublicRegistrationSerializer,
+    RegistrationSerializer,
+)
 from app.content.serializers.short_link import ShortLinkSerializer
 from app.content.serializers.strike import (
     BaseStrikeSerializer,
@@ -21,12 +24,10 @@ from app.content.serializers.strike import (
     UserInfoStrikeSerializer,
 )
 from app.content.serializers.user import (
-    UserAdminSerializer,
     UserCreateSerializer,
-    UserInAnswerSerializer,
     UserListSerializer,
     UserMemberSerializer,
     UserSerializer,
     DefaultUserSerializer,
+    UserPermissionsSerializer,
 )
-from app.content.serializers.user_badge import UserBadgeSerializer

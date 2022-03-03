@@ -1,5 +1,6 @@
 import uuid
 
+from django.conf import settings
 from django.db import models, transaction
 
 from enumchoicefield import EnumChoiceField
@@ -23,7 +24,7 @@ from app.util.models import BaseModel
 class Form(PolymorphicModel, BasePermissionModel):
     write_access = AdminGroup.admin()
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    title = models.CharField(max_length=200)
+    title = models.CharField(max_length=400)
     template = models.BooleanField(default=False)
 
     # TODO: https://github.com/TIHLDE/Lepton/issues/286
@@ -160,7 +161,7 @@ class EventForm(Form):
 class GroupForm(Form):
 
     read_access = [Groups.TIHLDE]
-
+    email_receiver_on_submit = models.EmailField(max_length=200, null=True, blank=True)
     group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name="forms")
     can_submit_multiple = models.BooleanField(default=True)
     is_open_for_submissions = models.BooleanField(default=False)
@@ -206,7 +207,7 @@ class GroupForm(Form):
 class Field(OrderedModel):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    title = models.CharField(max_length=200)
+    title = models.CharField(max_length=400)
     form = models.ForeignKey(Form, on_delete=models.CASCADE, related_name="fields")
     type = EnumChoiceField(FormFieldType, default=FormFieldType.TEXT_ANSWER)
     required = models.BooleanField(default=False)
@@ -226,7 +227,7 @@ class Field(OrderedModel):
 class Option(OrderedModel):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    title = models.CharField(max_length=200, default="")
+    title = models.CharField(max_length=400, default="")
     field = models.ForeignKey(Field, on_delete=models.CASCADE, related_name="options")
     order_with_respect_to = "field"
 
@@ -246,9 +247,28 @@ class Submission(BaseModel, BasePermissionModel):
     def __str__(self):
         return f"{self.user.user_id}'s submission to {self.form}"
 
+    def send_email(self):
+        from app.communication.notifier import send_html_email
+        from app.util.mail_creator import MailCreator
+
+        send_html_email(
+            [self.email_receiver_on_submit],
+            MailCreator(f"Noen har svart på {self.form.title}")
+            .add_paragraph(
+                f"{self.user.first_name} {self.user.last_name} har svart på spørreskjemaet {self.form.title}"
+            )
+            .add_button(
+                "Åpne spørreskjema", f"{settings.WEBSITE_URL}{self.form.website_url}",
+            )
+            .generate_string(),
+            "Nytt spørreskjema svar",
+        )
+
     @transaction.atomic
     def save(self, *args, **kwargs):
         self.full_clean()
+        if isinstance(self.form, GroupForm) and self.form.email_receiver_on_submit:
+            self.send_email()
         super().save(*args, **kwargs)
 
     def clean(self):
@@ -352,6 +372,10 @@ class Submission(BaseModel, BasePermissionModel):
         return self._is_own_permission(request) or check_has_access(
             self.read_access, request
         )
+
+    @classmethod
+    def has_download_permission(cls, request):
+        return cls.has_list_permission(request)
 
 
 class Answer(BaseModel):

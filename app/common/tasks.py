@@ -10,5 +10,5 @@ def delete_old_log_entries(self, *args, **kwargs):
 
     from app.util.utils import now
 
-    LogEntry.objects.filter(created_at_lte=now() - timedelta(days=30)).delete()
+    LogEntry.objects.filter(action_time__lte=now() - timedelta(days=30)).delete()
     self.logger.info("Log entries older than 30 days have been deleted")

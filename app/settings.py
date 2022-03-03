@@ -50,6 +50,8 @@ WEBSITE_URL = (
     else "https://localhost:3000"
 )
 
+AZURE_BLOB_STORAGE_NAME = "tihldestorage.blob.core.windows.net"
+
 # Application definition
 sentry_sdk.init(
     dsn=os.environ.get("SENTRY_DSN"),
@@ -96,6 +98,7 @@ INSTALLED_APPS = [
     "app.forms",
     "app.payment",
     "app.gallery",
+    "app.badge",
 ]
 
 # Django rest framework
@@ -225,7 +228,6 @@ EMAIL_USE_TLS = True
 
 EMAIL_HOST_USER = os.environ.get("EMAIL_USER") or "75ecff025dcb39"
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_PASSWORD") or "8b1a00e838d6b7"
-EMAIL_RECEIVER = os.environ.get("EMAIL_RECEIVER")
 
 LOGGING = {
     "version": 1,

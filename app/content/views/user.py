@@ -1,13 +1,12 @@
 from django.conf import settings
-from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from sentry_sdk import capture_exception
-
+from app.badge.models import Badge, UserBadge
+from app.badge.serializers import BadgeSerializer, UserBadgeSerializer
 from app.common.enums import Groups, GroupType
 from app.common.mixins import ActionMixin
 from app.common.pagination import BasePagination
@@ -22,13 +21,12 @@ from app.communication.notifier import Notify
 from app.content.filters import UserFilter
 from app.content.models import User
 from app.content.serializers import (
-    BadgeSerializer,
     DefaultUserSerializer,
     EventListSerializer,
-    UserAdminSerializer,
     UserCreateSerializer,
     UserListSerializer,
     UserMemberSerializer,
+    UserPermissionsSerializer,
     UserSerializer,
 )
 from app.content.serializers.strike import UserInfoStrikeSerializer
@@ -50,7 +48,7 @@ class UserViewSet(BaseViewSet, ActionMixin):
 
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_class = UserFilter
-    search_fields = ["user_id", "first_name", "last_name"]
+    search_fields = ["user_id", "first_name", "last_name", "email"]
 
     def get_serializer_class(self):
         if hasattr(self, "action") and self.action == "list":
@@ -59,21 +57,16 @@ class UserViewSet(BaseViewSet, ActionMixin):
             return DefaultUserSerializer
         return super().get_serializer_class()
 
-    def retrieve(self, request, *args, **kwargs):
-        try:
-            user = request.user
-            self.check_object_permissions(self.request, user)
-            serializer = UserSerializer(
-                user, context={"request": self.request}, many=False
-            )
+    def retrieve(self, request, pk, *args, **kwargs):
+        user = self._get_user(request, pk)
 
-            return Response(serializer.data)
-        except User.DoesNotExist as user_not_exist:
-            capture_exception(user_not_exist)
-            return Response(
-                {"detail": ("Kunne ikke finne brukeren")},
-                status=status.HTTP_404_NOT_FOUND,
-            )
+        self.check_object_permissions(self.request, user)
+
+        serializer = DefaultUserSerializer(user)
+        if is_admin_user(self.request) or user == request.user:
+            serializer = UserSerializer(user, context={"request": self.request})
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def create(self, request, *args, **kwargs):
         serializer = UserCreateSerializer(data=self.request.data)
@@ -88,55 +81,59 @@ class UserViewSet(BaseViewSet, ActionMixin):
 
     def update(self, request, pk, *args, **kwargs):
         """ Updates fields passed in request """
-        try:
-            user = get_object_or_404(User, user_id=pk)
-            self.check_object_permissions(self.request, user)
-            if is_admin_user(request):
-                serializer = UserAdminSerializer(
-                    user, context={"request": request}, many=False, data=request.data,
-                )
-            else:
-                if self.request.id == pk:
-                    serializer = UserMemberSerializer(
-                        user,
-                        context={"request": request},
-                        many=False,
-                        data=request.data,
-                    )
-                else:
-                    return Response(
-                        {"detail": ("Du har ikke tillatelse til å oppdatere brukeren")},
-                        status=status.HTTP_400_BAD_REQUEST,
-                    )
-            if serializer.is_valid():
-                super().perform_update(serializer)
+        user = self._get_user(request, pk)
+        self.check_object_permissions(self.request, user)
+        if is_admin_user(request):
+            serializer = UserSerializer(
+                user, context={"request": request}, data=request.data,
+            )
+        else:
+            if self.request.id == pk:
                 serializer = UserMemberSerializer(
-                    User.objects.get(user_id=pk),
-                    context={"request": request},
-                    many=False,
+                    user, context={"request": request}, data=request.data,
                 )
-                return Response(serializer.data, status=status.HTTP_200_OK)
             else:
                 return Response(
-                    {"detail": ("Kunne ikke oppdatere brukeren")},
-                    status=status.HTTP_400_BAD_REQUEST,
+                    {"detail": "Du har ikke tillatelse til å oppdatere brukeren"},
+                    status=status.HTTP_403_FORBIDDEN,
                 )
-        except ObjectDoesNotExist as object_not_exist:
-            capture_exception(object_not_exist)
+        if serializer.is_valid():
+            super().perform_update(serializer)
+            user = get_object_or_404(User, user_id=pk)
+            serializer = UserSerializer(user, context={"request": request},)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
             return Response(
-                {"detail": "Kunne ikke finne brukeren"},
-                status=status.HTTP_404_NOT_FOUND,
+                {"detail": "Kunne ikke oppdatere brukeren"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
     def destroy(self, request, pk, *args, **kwargs):
-        super().destroy(request, args, kwargs)
+        user = self._get_user(request, pk)
+        self.check_object_permissions(self.request, user)
+        super().destroy(request, pk=user.user_id, *args, **kwargs)
         return Response(
             {"detail": "Brukeren har bltt slettet"}, status=status.HTTP_200_OK,
         )
 
-    @action(detail=False, methods=["get"], url_path="me/groups")
-    def get_user_memberships(self, request, *args, **kwargs):
-        memberships = request.user.memberships.all()
+    def _get_user(self, request, pk):
+        if pk == "me":
+            return request.user
+        return get_object_or_404(User, user_id=pk)
+
+    @action(detail=False, methods=["get"], url_path="me/permissions")
+    def get_user_permissions(self, request, *args, **kwargs):
+        serializer = UserPermissionsSerializer(
+            request.user, context={"request": request}
+        )
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=["get"], url_path="groups")
+    def get_user_memberships(self, request, pk, *args, **kwargs):
+        user = self._get_user(request, pk)
+        self.check_object_permissions(self.request, user)
+
+        memberships = user.memberships.all()
         groups = [
             membership.group
             for membership in memberships
@@ -145,11 +142,48 @@ class UserViewSet(BaseViewSet, ActionMixin):
         serializer = GroupSerializer(groups, many=True, context={"request": request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @action(detail=False, methods=["get"], url_path="me/badges")
-    def get_user_badges(self, request, *args, **kwargs):
-        user_badges = request.user.user_badges.order_by("-created_at")
-        badges = [user_badge.badge for user_badge in user_badges]
+    def post_user_badges(self, request, *args, **kwargs):
+
+        user = self.request.user
+        badge = get_object_or_404(Badge, flag=request.data.get("flag"))
+
+        if not badge.is_active:
+            return Response(
+                {"detail": "Badgen er ikke aktiv"}, status=status.HTTP_400_BAD_REQUEST,
+            )
+        user_badge = UserBadge(user=user, badge=badge)
+        serializer = UserBadgeSerializer(
+            user_badge, data=request.data, context={"request": request}
+        )
+        if serializer.is_valid():
+            super().perform_create(serializer)
+            return Response({"detail": "Badge fullført!"}, status=status.HTTP_200_OK)
+        else:
+            return Response(
+                {"detail": "Badgen kunne ikke bli opprettet"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    def get_user_detail_badges(self, request, *args, **kwargs):
+        user = self._get_user(request, kwargs["pk"])
+        user_badges = user.user_badges.order_by("-created_at")
+        badges = [
+            user_badge.badge
+            for user_badge in user_badges
+            if user_badge.badge.is_public
+            or request.user.user_badges.filter(badge=user_badge.badge).exists()
+        ]
+
         return self.paginate_response(data=badges, serializer=BadgeSerializer)
+
+    @action(
+        detail=True, methods=["get", "post"], url_path="badges",
+    )
+    def get_or_post_detail_user_badges(self, request, *args, **kwargs):
+        if request.method == "GET":
+            return self.get_user_detail_badges(request, *args, **kwargs)
+        elif request.method == "POST":
+            return self.post_user_badges(request, *args, **kwargs)
 
     @action(detail=False, methods=["get"], url_path="me/strikes")
     def get_user_strikes(self, request, *args, **kwargs):

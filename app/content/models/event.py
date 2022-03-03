@@ -10,7 +10,7 @@ from app.common.permissions import (
     set_user_id,
 )
 from app.content.models import Category
-from app.content.models.prioritiy import Priority
+from app.content.models.priority import Priority
 from app.content.models.user import User
 from app.forms.enums import EventFormType
 from app.group.models.group import Group
@@ -67,6 +67,9 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
     runned_post_event_actions = models.BooleanField(default=False)
     runned_sign_off_deadline_reminder = models.BooleanField(default=False)
 
+    class Meta:
+        ordering = ("start_date",)
+
     def __str__(self):
         return f"{self.title} - starting {self.start_date} at {self.location}"
 
@@ -81,15 +84,17 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
     @property
     def list_count(self):
         """ Number of users registered to attend the event """
-        return self.get_queue().count()
+        return self.get_participants().count()
 
     @property
     def waiting_list_count(self):
         """ Number of users on the waiting list """
         return self.get_waiting_list().count()
 
-    def get_queue(self):
-        """ Number of users registered to attend the event """
+    def get_has_attended(self):
+        return self.get_participants().filter(has_attended=True)
+
+    def get_participants(self):
         return self.registrations.filter(is_on_wait=False)
 
     def get_waiting_list(self):
@@ -97,7 +102,7 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
         return self.registrations.filter(is_on_wait=True)
 
     def user_has_attended_event(self, user):
-        return self.get_queue().filter(user=user, has_attended=True).exists()
+        return self.get_participants().filter(user=user, has_attended=True).exists()
 
     @property
     def is_past_sign_off_deadline(self):
@@ -118,7 +123,7 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
 
     @property
     def is_full(self):
-        return self.has_limit() and self.get_queue().count() >= self.limit
+        return self.has_limit() and self.get_participants().count() >= self.limit
 
     def has_priorities(self):
         return self.registration_priorities.all().exists()
@@ -133,6 +138,9 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
 
     def check_request_user_has_access_through_organizer(self, user, organizer):
         return user.memberships_with_events_access.filter(group=organizer).exists()
+
+    def has_object_statistics_permission(self, request):
+        return self.has_object_write_permission(request)
 
     def has_object_write_permission(self, request):
         if request.id is None:

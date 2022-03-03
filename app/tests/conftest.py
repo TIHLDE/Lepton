@@ -3,6 +3,7 @@ from rest_framework.test import APIRequestFactory
 
 import pytest
 
+from app.badge.factories import BadgeFactory, UserBadgeFactory
 from app.career.factories import WeeklyBusinessFactory
 from app.common.enums import AdminGroup, Groups, MembershipType
 from app.communication.factories import BannerFactory, NotificationFactory
@@ -61,10 +62,9 @@ def token(user):
 
 
 @pytest.fixture()
-def admin_user():
-    user = UserFactory()
-    add_user_to_group_with_name(user, AdminGroup.HS)
-    return user
+def admin_user(member):
+    add_user_to_group_with_name(member, AdminGroup.HS)
+    return member
 
 
 @pytest.fixture()
@@ -122,6 +122,16 @@ def page():
 @pytest.fixture()
 def parent_page():
     return ParentPageFactory()
+
+
+@pytest.fixture()
+def badge():
+    return BadgeFactory()
+
+
+@pytest.fixture()
+def user_badge():
+    return UserBadgeFactory()
 
 
 @pytest.fixture()
