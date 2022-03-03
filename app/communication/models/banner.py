@@ -1,21 +1,12 @@
 import uuid
 
-from django.contrib.auth.models import BaseUserManager
 from django.db import models
-from django.db.models import Q
 from django.utils import timezone
 
 from app.common.enums import AdminGroup
 from app.common.permissions import BasePermissionModel
 from app.util.models import BaseModel, OptionalImage
 from app.util.utils import now
-
-
-class BannerManager(BaseUserManager):
-    def visible(self):
-        return Banner.objects.filter(
-            Q(visible_from__lte=now()) & Q(visible_until__gte=now())
-        )
 
 
 def tomorrow():
@@ -32,9 +23,7 @@ class Banner(BaseModel, OptionalImage, BasePermissionModel):
     description = models.TextField()
     visible_from = models.DateTimeField(default=timezone.now)
     visible_until = models.DateTimeField(default=tomorrow)
-    url = models.URLField(max_length=400, blank=True, null=True)
-
-    objects = BannerManager()
+    url = models.URLField(max_length=600, blank=True, null=True)
 
     def __str__(self):
         return f"{self.title} is {'' if self.is_visible else 'not'} visible"
