@@ -13,6 +13,8 @@
 ---
 
 ## Neste versjon
+- ⚡ **Album**. Håndterer nå alt av opplastning slik at frontend kun må sende inn filene som skal inn i albumet.
+
 ## Versjon 2022.03.01
 - 🦟 **Admins** for arrangementer kan nå se tidligere arrangementer igjen.
 ## Versjon 2022.02.28
