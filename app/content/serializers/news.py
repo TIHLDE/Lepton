@@ -1,7 +1,6 @@
 from app.common.serializers import BaseModelSerializer
+from app.content.models import News, User
 from app.content.serializers.user import DefaultUserSerializer
-
-from ..models import News
 
 
 class NewsSerializer(BaseModelSerializer):
@@ -20,3 +19,9 @@ class NewsSerializer(BaseModelSerializer):
             "creator",
             "body",
         )
+
+    def create(self, validated_data):
+        creator = self.context["request"].data.get("creator", None)
+        if creator:
+            creator = User.objects.get(user_id=creator)
+        return News.objects.create(creator=creator, **validated_data)

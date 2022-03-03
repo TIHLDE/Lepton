@@ -238,6 +238,18 @@ def test_create_as_member_of_admin_group(
 
 
 @pytest.mark.django_db
+def test_create_with_creator(news_post_data, member):
+    """When creating news, one should be able to set a creator"""
+    client = get_api_client(user=UserFactory(), group_name=AdminGroup.PROMO)
+    data = news_post_data
+    data["creator"] = member.user_id
+    response = client.post(_get_news_url(), data)
+
+    assert response.json()["creator"]["user_id"] == member.user_id
+    assert response.status_code == status.HTTP_201_CREATED
+
+
+@pytest.mark.django_db
 def test_destroy_when_not_found():
     """Should return a detail message in response."""
     client = get_api_client(user=UserFactory(), group_name=AdminGroup.INDEX)
