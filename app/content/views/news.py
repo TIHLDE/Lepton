@@ -19,8 +19,8 @@ class NewsViewSet(BaseViewSet):
         serializer = NewsSerializer(data=request.data, context={"request": request})
 
         if serializer.is_valid():
-            event = super().perform_create(serializer)
-            serializer = NewsSerializer(event, context={"request": request})
+            news = super().perform_create(serializer)
+            serializer = NewsSerializer(news, context={"request": request})
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(
