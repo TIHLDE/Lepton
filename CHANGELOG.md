@@ -16,6 +16,24 @@
 
 - ✨ **Nyheter**. Forfatteren av nyheter blir offentliggjort.
 
+## Versjon 2022.03.01
+- 🦟 **Admins** for arrangementer kan nå se tidligere arrangementer igjen.
+
+## Versjon 2022.02.28
+- ✨ **Usending av gavekort** for arrangementer kan nå gjøres via epost.
+- ⚡ **Arrangementer**. Arrangementer i brukes profil er nå sortert på tid.
+- 🦟 **Spørreskjema**. Medlemmer av NoK, Sosialen og andre grupper kan nå laste ned CSV med svar på spørreskjema.
+
+## Versjon 2022.02.24
+- ✨ **Ledertavle**. Laget en ledertavle rangert på antall badges en bruker har og en for når brukere fikk en spesifikk badge.
+
+## Versjon 2022.02.17
+- 🦟 **Brukere**. Brukere som ikke er admin får ikke lenger se brukeradmin på nettsiden. De hadde aldri tilgang til å endre dem.
+- 🦟 **Spørreskjema**. Lagt til mulighet for å velge en email som skal varsles når nye svar blir sendt inn
+
+## Versjon 2022.02.06
+- ⚡ **Registreringer**. La til filtrering på registreringer til arrangementer.
+
 ## Versjon 2022.02.03
 - ⚡ **Spørreskjema**. Mulig å bruke 400 karakterer i spørreskjema felter.
 - ✨ **Offentlige profiler**. Alle innloggede TIHLDE-medlemmer kan nå se andre brukere og deres badges og medlemskap.
