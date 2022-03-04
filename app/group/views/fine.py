@@ -27,7 +27,10 @@ from app.group.serializers.fine import (
 class FineViewSet(APIFineErrorsMixin, BaseViewSet, ActionMixin):
     serializer_class = FineSerializer
     permission_classes = [BasicViewPermission]
-    queryset = Fine.objects.all()
+    queryset = Fine.objects.select_related(
+        "created_by",
+        "user",
+    )
     filter_backends = [DjangoFilterBackend]
     filterset_class = FineFilter
     pagination_class = BasePagination
@@ -53,7 +56,8 @@ class FineViewSet(APIFineErrorsMixin, BaseViewSet, ActionMixin):
             super().perform_create(serializer)
             return Response(data=serializer.data, status=status.HTTP_200_OK)
         return Response(
-            {"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST,
+            {"detail": serializer.errors},
+            status=status.HTTP_400_BAD_REQUEST,
         )
 
     def destroy(self, request, *args, **kwargs):
@@ -62,14 +66,18 @@ class FineViewSet(APIFineErrorsMixin, BaseViewSet, ActionMixin):
 
     @action(detail=False, methods=["get"], url_path=r"users/(?P<user_id>[^/.]+)")
     def get_user_fines(self, request, *args, **kwargs):
-        """ Get the fines of a specific user in a group """
+        """Get the fines of a specific user in a group"""
 
-        fines = self.get_queryset().filter(user__user_id=kwargs["user_id"])
+        fines = (
+            self.get_queryset()
+            .select_related("created_by")
+            .filter(user__user_id=kwargs["user_id"])
+        )
         return self.paginate_response(data=fines, serializer=FineNoUserSerializer)
 
     @action(detail=False, methods=["get"], url_path="users")
     def get_fine_users(self, request, *args, **kwargs):
-        """ Get the users in a group which has fines and how many """
+        """Get the users in a group which has fines and how many"""
         users = self.get_fine_filter_query()
         return self.paginate_response(data=users, serializer=UserFineSerializer)
 
@@ -92,7 +100,7 @@ class FineViewSet(APIFineErrorsMixin, BaseViewSet, ActionMixin):
 
     @action(detail=False, methods=["put"], url_path="batch-update")
     def batch_update_fines(self, request, *args, **kwargs):
-        """ Update a batch of fines at once """
+        """Update a batch of fines at once"""
         assert request.data["data"]
         fines = self.get_queryset().filter(id__in=request.data["fine_ids"])
         serializer = FineUpdateCreateSerializer(
@@ -107,12 +115,13 @@ class FineViewSet(APIFineErrorsMixin, BaseViewSet, ActionMixin):
                 {"detail": "Alle bøtene ble oppdatert"}, status=status.HTTP_200_OK
             )
         return Response(
-            {"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST,
+            {"detail": serializer.errors},
+            status=status.HTTP_400_BAD_REQUEST,
         )
 
     @action(detail=False, methods=["put"], url_path=r"batch-update/(?P<user_id>[^/.]+)")
     def batch_update_user_fines(self, request, *args, **kwargs):
-        """ Update all the fines of a user in a specific group """
+        """Update all the fines of a user in a specific group"""
         fines = self.get_queryset().filter(user__user_id=kwargs["user_id"])
         serializer = FineUpdateCreateSerializer(
             instance=fines,
@@ -126,7 +135,8 @@ class FineViewSet(APIFineErrorsMixin, BaseViewSet, ActionMixin):
                 {"detail": "Alle bøtene ble oppdatert"}, status=status.HTTP_200_OK
             )
         return Response(
-            {"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST,
+            {"detail": serializer.errors},
+            status=status.HTTP_400_BAD_REQUEST,
         )
 
     @action(detail=False, methods=["get"], url_path="statistics")

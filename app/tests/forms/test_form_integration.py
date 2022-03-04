@@ -176,7 +176,8 @@ def test_retrieve_form_as_member_returns_form(member, form):
 
 
 @pytest.mark.parametrize(
-    "group_name", list(AdminGroup),
+    "group_name",
+    list(AdminGroup),
 )
 def test_retrieve_form_as_part_of_admin_group(member, group_name, form):
     """A member as a part of an admin group should be able to retrieve a form."""
@@ -246,7 +247,7 @@ def test_update_form_as_member_is_not_permitted(member, form):
     ],
 )
 def test_admin_update_form_permissions(form, member, group_name, expected_status_code):
-    """HS and Index is allowed to update form, while NoK, Sosialen and Promo is not."""
+    """HS and Index are allowed to update form, while NoK, Sosialen and Promo are not."""
     client = get_api_client(user=member, group_name=group_name)
     url = _get_form_detail_url(form)
     response = client.put(url, _get_form_update_data(form))
@@ -254,7 +255,7 @@ def test_admin_update_form_permissions(form, member, group_name, expected_status
     assert response.status_code == expected_status_code
 
 
-def test_update_form_whhen_invalid_returns_detail(admin_user, form):
+def test_update_form_when_invalid_returns_detail(admin_user, form):
     """Should return a detail message in the response."""
     client = get_api_client(user=admin_user)
     url = _get_form_detail_url(form)
@@ -359,7 +360,12 @@ def test_update_options_when_previous_option_is_not_included_in_request_removes_
     field = form.fields.first()
     data = {
         "resource_type": "Form",
-        "fields": [{"id": str(field.id), "options": [],}],
+        "fields": [
+            {
+                "id": str(field.id),
+                "options": [],
+            }
+        ],
     }
     client = get_api_client(user=admin_user)
     url = _get_form_detail_url(form)

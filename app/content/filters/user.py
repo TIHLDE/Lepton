@@ -12,7 +12,7 @@ from app.content.models.user import CLASS, STUDY
 
 
 class UserFilter(FilterSet):
-    """ Filters users """
+    """Filters users"""
 
     user_class = ChoiceFilter(choices=CLASS)
     user_study = ChoiceFilter(choices=STUDY)

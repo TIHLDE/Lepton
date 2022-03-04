@@ -6,13 +6,13 @@ from rest_framework.renderers import JSONRenderer
 
 from sentry_sdk import capture_exception
 
+from app.badge.serializers import UserBadgeSerializer
 from app.communication.notifier import send_html_email
 from app.communication.serializers import NotificationSerializer
 from app.content.serializers import (
     RegistrationSerializer,
     ShortLinkSerializer,
     StrikeSerializer,
-    UserBadgeSerializer,
     UserSerializer,
 )
 from app.forms.serializers import SubmissionGDPRSerializer
@@ -110,7 +110,13 @@ def export_user_data(request, user):
                 )
                 .generate_string(),
                 "Dataeksport",
-                [("data.zip", tmp.read(), "application/x-zip-compressed",)],
+                [
+                    (
+                        "data.zip",
+                        tmp.read(),
+                        "application/x-zip-compressed",
+                    )
+                ],
             )
 
         return is_success

@@ -25,7 +25,7 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
 
     def get_queryset(self):
         event_id = self.kwargs.get("event_id", None)
-        return Registration.objects.filter(event__pk=event_id).prefetch_related("user")
+        return Registration.objects.filter(event__pk=event_id).select_related("user")
 
     def _is_own_registration(self):
         user_id = self.kwargs.get("user_id", None)

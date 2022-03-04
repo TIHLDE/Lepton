@@ -10,10 +10,11 @@ MAIL_NOK_LEADER = (
     if os.environ.get("PROD")
     else "test+naeringslivminister@tihlde.org"
 )
+MAIL_NOK = "nok@tihlde.org" if os.environ.get("PROD") else "test+nok@tihlde.org"
 MAIL_NOK_ADS = (
     "stillingsannonser@tihlde.org"
     if os.environ.get("PROD")
     else "test+stillingsannonser@tihlde.org"
 )
 
-# TODO: Create api-urls as constants which then can be used in for example tests
+# TODO: Create api-urls as constants which then can be used in for example tests and urls.py files

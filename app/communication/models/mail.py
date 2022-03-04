@@ -8,7 +8,11 @@ from app.util.models import BaseModel
 
 
 class Mail(BaseModel):
-    id = models.UUIDField(auto_created=True, primary_key=True, default=uuid.uuid4,)
+    id = models.UUIDField(
+        auto_created=True,
+        primary_key=True,
+        default=uuid.uuid4,
+    )
 
     eta = models.DateTimeField(default=now)
     subject = models.CharField(max_length=200)

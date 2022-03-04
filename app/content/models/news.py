@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 
 from app.common.enums import AdminGroup
@@ -8,6 +9,13 @@ from app.util.models import BaseModel, OptionalImage
 class News(BaseModel, OptionalImage, BasePermissionModel):
     title = models.CharField(max_length=200)
     header = models.CharField(max_length=200)
+    creator = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name="created_news",
+    )
     body = models.TextField()
 
     write_access = AdminGroup.all()

@@ -139,7 +139,10 @@ class FormSerializer(BaseModelSerializer):
 class EventFormSerializer(FormSerializer):
     class Meta:
         model = EventForm
-        fields = FormSerializer.Meta.fields + ("event", "type",)
+        fields = FormSerializer.Meta.fields + (
+            "event",
+            "type",
+        )
 
     def to_representation(self, instance):
         self.fields["event"] = EventListSerializer(read_only=True)
@@ -154,6 +157,7 @@ class GroupFormSerializer(FormSerializer):
             "can_submit_multiple",
             "is_open_for_submissions",
             "only_for_group_members",
+            "email_receiver_on_submit",
         )
 
     def to_representation(self, instance):

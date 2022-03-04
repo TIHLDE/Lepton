@@ -98,7 +98,7 @@ def test_update_as_user(user, membership):
 def test_update_as_group_user(
     membership, user, group_name, expected_status_code, membership_type, group
 ):
-    """Tests if different groups ability to update a membership """
+    """Tests if different groups ability to update a membership"""
     expected_membership_type = (
         membership_type if membership_type else membership.membership_type
     )
@@ -125,7 +125,7 @@ def test_update_as_group_user(
     ],
 )
 def test_create_as_group_user(user, group_name, expected_status_code, group):
-    """Tests if different groups ability to create a membership """
+    """Tests if different groups ability to create a membership"""
 
     client = get_api_client(user=user, group_name=group_name)
     url = _get_membership_url(group=group)
@@ -137,7 +137,7 @@ def test_create_as_group_user(user, group_name, expected_status_code, group):
 
 @pytest.mark.django_db
 def test_create_member_membership(admin_user, group, membership_leader):
-    """Test if you can create a membership that has the membership type member """
+    """Test if you can create a membership that has the membership type member"""
 
     client = get_api_client(user=admin_user)
     url = _get_membership_url(membership_leader)

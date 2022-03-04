@@ -258,7 +258,8 @@ class Submission(BaseModel, BasePermissionModel):
                 f"{self.user.first_name} {self.user.last_name} har svart på spørreskjemaet {self.form.title}"
             )
             .add_button(
-                "Åpne spørreskjema", f"{settings.WEBSITE_URL}{self.form.website_url}",
+                "Åpne spørreskjema",
+                f"{settings.WEBSITE_URL}{self.form.website_url}",
             )
             .generate_string(),
             "Nytt spørreskjema svar",
@@ -372,6 +373,10 @@ class Submission(BaseModel, BasePermissionModel):
         return self._is_own_permission(request) or check_has_access(
             self.read_access, request
         )
+
+    @classmethod
+    def has_download_permission(cls, request):
+        return cls.has_list_permission(request)
 
 
 class Answer(BaseModel):

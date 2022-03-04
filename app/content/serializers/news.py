@@ -1,9 +1,11 @@
 from app.common.serializers import BaseModelSerializer
-
-from ..models import News
+from app.content.models import News, User
+from app.content.serializers.user import DefaultUserSerializer
 
 
 class NewsSerializer(BaseModelSerializer):
+    creator = DefaultUserSerializer(read_only=True)
+
     class Meta:
         model = News
         fields = (
@@ -14,5 +16,12 @@ class NewsSerializer(BaseModelSerializer):
             "image_alt",
             "title",
             "header",
+            "creator",
             "body",
         )
+
+    def create(self, validated_data):
+        creator = self.context["request"].data.get("creator", None)
+        if creator:
+            creator = User.objects.get(user_id=creator)
+        return News.objects.create(creator=creator, **validated_data)

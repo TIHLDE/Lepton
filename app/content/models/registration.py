@@ -192,7 +192,8 @@ class Registration(BaseModel, BasePermissionModel):
                 .add_event_button(self.event.pk)
                 .generate_string()
             ).send_notification(
-                description=" ".join(description), link=self.event.website_url,
+                description=" ".join(description),
+                link=self.event.website_url,
             )
 
     def should_swap_with_non_prioritized_user(self):
@@ -213,13 +214,13 @@ class Registration(BaseModel, BasePermissionModel):
         ).exists()
 
     def swap_users(self):
-        """ Swaps a user with a spot with a prioritized user, if such user exists """
-        for registration in self.event.get_queue().order_by("-created_at"):
+        """Swaps a user with a spot with a prioritized user, if such user exists"""
+        for registration in self.event.get_participants().order_by("-created_at"):
             if not registration.is_prioritized:
                 return self.swap_places_with(registration)
 
     def swap_places_with(self, other_registration):
-        """ Puts own self on the list and other_registration on wait """
+        """Puts own self on the list and other_registration on wait"""
         other_registration.is_on_wait = True
         other_registration.save()
         self.is_on_wait = False

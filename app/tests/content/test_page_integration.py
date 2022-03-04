@@ -91,7 +91,11 @@ def test_update_as_user(page, user):
     ],
 )
 def test_update_as_group_user(
-    page, user, group_name, expected_status_code, new_content,
+    page,
+    user,
+    group_name,
+    expected_status_code,
+    new_content,
 ):
     """Tests different groups ability to update a page"""
     expected_content = new_content if new_content else page.content
