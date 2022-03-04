@@ -27,7 +27,12 @@ def _get_submission_detail_url(form, submission):
 
 def _create_submission_data(field, **kwargs):
     return {
-        "answers": [{"field": {"id": str(field.id)}, **kwargs,}],
+        "answers": [
+            {
+                "field": {"id": str(field.id)},
+                **kwargs,
+            }
+        ],
     }
 
 
@@ -210,7 +215,10 @@ def test_create_group_form_submission(client, status_code, group_form):
 
 @pytest.mark.parametrize(
     "can_submit_multiple, status_code",
-    [(True, status.HTTP_201_CREATED), (False, status.HTTP_409_CONFLICT),],
+    [
+        (True, status.HTTP_201_CREATED),
+        (False, status.HTTP_409_CONFLICT),
+    ],
 )
 def test_create_group_form_submission_when_can_submit_multiple(
     member_client, can_submit_multiple, status_code

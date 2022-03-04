@@ -58,10 +58,14 @@ class MembershipViewSet(BaseViewSet):
                     MailCreator(title)
                     .add_paragraph(f"Hei {membership.user.first_name}!")
                     .add_paragraph(description)
-                    .add_button("Se gruppen", membership.group.website_url,)
+                    .add_button(
+                        "Se gruppen",
+                        membership.group.website_url,
+                    )
                     .generate_string()
                 ).send_notification(
-                    description=description, link=f"/grupper/{membership.group.slug}/",
+                    description=description,
+                    link=f"/grupper/{membership.group.slug}/",
                 )
             return super().update(request, *args, **kwargs)
         except Membership.DoesNotExist:
@@ -92,7 +96,8 @@ class MembershipViewSet(BaseViewSet):
                 )
                 .generate_string()
             ).send_notification(
-                description=description, link=f"/grupper/{membership.group.slug}/",
+                description=description,
+                link=f"/grupper/{membership.group.slug}/",
             )
             return Response(data=serializer.data, status=status.HTTP_200_OK)
         except Membership.DoesNotExist:
@@ -109,5 +114,6 @@ class MembershipViewSet(BaseViewSet):
     def destroy(self, request, *args, **kwargs):
         super().destroy(request, *args, **kwargs)
         return Response(
-            {"detail": "Medlemskapet ble slettet"}, status=status.HTTP_200_OK,
+            {"detail": "Medlemskapet ble slettet"},
+            status=status.HTTP_200_OK,
         )
