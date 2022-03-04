@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+## Versjon 2022.03.04
 - 🦟 **Badge**. Fikset en bug som forårsaket at badges ble kvadrert under kategorier.
 - ✨ **Nyheter**. Forfatteren av nyheter blir offentliggjort.
 - ⚡ **Album**. Håndterer nå alt av opplastning slik at frontend kun må sende inn filene som skal inn i albumet.
