@@ -151,9 +151,18 @@ class UserViewSet(BaseViewSet, ActionMixin):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post_user_badges(self, request, *args, **kwargs):
+        import uuid
 
         user = self.request.user
-        badge = get_object_or_404(Badge, flag=request.data.get("flag"))
+        try:
+            flag = uuid.UUID(request.data.get("flag"))
+        except ValueError:
+            return Response(
+                {"detail": "Ugyldig flagg"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        badge = get_object_or_404(Badge, flag=flag)
 
         if not badge.is_active:
             return Response(
