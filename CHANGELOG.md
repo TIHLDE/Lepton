@@ -13,6 +13,10 @@
 ---
 
 ## Neste versjon
+- 🦟 **Bilder**. Fikset feil som oppstod ved opplastning av profilbilde.
+- 🦟 **Badges**. Håndterer input av ugyldig badge.
+- ⚡ **Galleri**. Sender en respons ved sletting av galleri og bilder i galleri.
+
 ## Versjon 2022.03.04
 - 🦟 **Badge**. Fikset en bug som forårsaket at badges ble kvadrert under kategorier.
 - ✨ **Nyheter**. Forfatteren av nyheter blir offentliggjort.
