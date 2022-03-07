@@ -13,6 +13,8 @@
 ---
 
 ## Neste versjon
+- ✨ **Arrangementer**. Det er mulig å skru på påminnelser om at påmelding til arrangementer har åpnet.
+
 ## Versjon 2022.03.05
 - 🦟 **Bilder**. Fikset feil som oppstod ved opplastning av profilbilde.
 - 🦟 **Badges**. Håndterer input av ugyldig badge.

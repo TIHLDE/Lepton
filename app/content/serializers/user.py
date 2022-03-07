@@ -47,6 +47,7 @@ class UserSerializer(DefaultUserSerializer):
             "allergy",
             "tool",
             "public_event_registrations",
+            "sign_up_start_notifications",
             "unread_notifications",
             "unanswered_evaluations_count",
             "number_of_strikes",

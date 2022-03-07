@@ -54,6 +54,26 @@ def run_post_event_actions(self, *args, **kwargs):
         capture_exception(e)
 
 
+@app.task(bind=True, base=BaseTask)
+def run_sign_up_start_notifier(self, *args, **kwargs):
+    from app.content.models.event import Event
+
+    try:
+        events = Event.objects.filter(
+            runned_sign_up_start_notifier=False,
+            sign_up=True,
+            closed=False,
+            start_registration_at__lt=now(),
+        )
+
+        for event in events:
+            __sign_up_start_notifier(event)
+
+        self.logger.info(f'Runned "run_sign_up_start_notifier" for {events.count()} events')
+    except Exception as e:
+        capture_exception(e)
+
+
 def __sign_off_deadline_reminder(event, *args, **kwargs):
     from app.content.models import User
 
@@ -132,3 +152,28 @@ def __post_event_actions(event, *args, **kwargs):
 
     event.runned_post_event_actions = True
     event.save(update_fields=["runned_post_event_actions"])
+
+
+def __sign_up_start_notifier(event, *args, **kwargs):
+    from app.content.models import User
+
+    users = User.objects.filter(
+        sign_up_start_notifications=True
+    )
+    description = [
+        f"Påmeldingen for {event.title} har nå åpnet! Påmeldingen er åpen frem til {datetime_format(event.end_registration_at)}, men husk at det kan bli fullt før den tid.",
+        "PS: Om du ikke lenger ønsker å motta påminnelse om åpning av påmelding til arrangementer kan dette skrus av i profilen din.",
+    ]
+    Notify(users, f"Påmelding for {event.title} har åpnet").send_email(
+        MailCreator(f"Påmelding for {event.title} har åpnet")
+        .add_paragraph("Hei!")
+        .add_paragraph(description[0])
+        .add_paragraph(description[1])
+        .add_event_button(event.id)
+        .generate_string(),
+    ).send_notification(
+        description=" \n".join(description), link=event.website_url
+    )
+
+    event.runned_sign_up_start_notifier = True
+    event.save(update_fields=["runned_sign_up_start_notifier"])

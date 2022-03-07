@@ -92,6 +92,7 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
     allergy = models.CharField(max_length=250, blank=True)
 
     public_event_registrations = models.BooleanField(default=True)
+    sign_up_start_notifications = models.BooleanField(default=True)
 
     tool = models.CharField(max_length=100, blank=True)
 
