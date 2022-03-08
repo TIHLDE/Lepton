@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+## Versjon 2022.03.08
 ## Versjon 2022.03.05
 - 🦟 **Bilder**. Fikset feil som oppstod ved opplastning av profilbilde.
 - 🦟 **Badges**. Håndterer input av ugyldig badge.
