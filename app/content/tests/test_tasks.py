@@ -178,7 +178,9 @@ def test_sign_up_start_notifier_is_called_when_not_runned_and_time_due(
 
 @pytest.mark.django_db
 @patch("app.content.tasks.event.__sign_up_start_notifier")
-def test_sign_up_start_notifier_is_not_called_when_time_not_due(mock_sign_up_start_notifier):
+def test_sign_up_start_notifier_is_not_called_when_time_not_due(
+    mock_sign_up_start_notifier,
+):
     """Event sign up start notifier should not be runned when the event ended today or has not ended yet"""
     EventFactory(start_registration_at=now() + timedelta(minutes=1))
 
@@ -189,7 +191,9 @@ def test_sign_up_start_notifier_is_not_called_when_time_not_due(mock_sign_up_sta
 
 @pytest.mark.django_db
 @patch("app.content.tasks.event.__sign_up_start_notifier")
-def test_sign_up_start_notifier_is_not_called_when_already_runned(mock_sign_up_start_notifier):
+def test_sign_up_start_notifier_is_not_called_when_already_runned(
+    mock_sign_up_start_notifier,
+):
     """Event sign up start notifier should not be runned when they have already runned"""
     EventFactory(runned_sign_up_start_notifier=True)
 
@@ -200,7 +204,9 @@ def test_sign_up_start_notifier_is_not_called_when_already_runned(mock_sign_up_s
 
 @pytest.mark.django_db
 @patch("app.content.tasks.event.__sign_up_start_notifier")
-def test_sign_up_start_notifier_is_not_called_when_event_closed(mock_sign_up_start_notifier):
+def test_sign_up_start_notifier_is_not_called_when_event_closed(
+    mock_sign_up_start_notifier,
+):
     """Event sign up start notifier should not be runned when the event is closed"""
     EventFactory(closed=True)
 
@@ -211,7 +217,9 @@ def test_sign_up_start_notifier_is_not_called_when_event_closed(mock_sign_up_sta
 
 @pytest.mark.django_db
 @patch("app.content.tasks.event.__sign_up_start_notifier")
-def test_sign_up_start_notifier_is_not_called_when_not_sign_up(mock_sign_up_start_notifier):
+def test_sign_up_start_notifier_is_not_called_when_not_sign_up(
+    mock_sign_up_start_notifier,
+):
     """Event sign up start notifier should not be runned when event.sign_up is false"""
     EventFactory(sign_up=False)
 

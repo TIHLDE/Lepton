@@ -17,4 +17,7 @@ MAIL_NOK_ADS = (
     else "test+stillingsannonser@tihlde.org"
 )
 
+SLACK_EVENTS_NOK_CHANNEL_ID = "C01DCSJ8X2Q"
+SLACK_EVENTS_OTHER_CHANNEL_ID = "C01LFEFJFV3"
+
 # TODO: Create api-urls as constants which then can be used in for example tests and urls.py files

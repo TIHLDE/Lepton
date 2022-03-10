@@ -15,9 +15,4 @@ class Migration(migrations.Migration):
             name='runned_sign_up_start_notifier',
             field=models.BooleanField(default=False),
         ),
-        migrations.AddField(
-            model_name='user',
-            name='sign_up_start_notifications',
-            field=models.BooleanField(default=False),
-        ),
     ]

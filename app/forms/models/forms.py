@@ -253,13 +253,13 @@ class Submission(BaseModel, BasePermissionModel):
 
         send_html_email(
             [self.email_receiver_on_submit],
-            MailCreator(f"Noen har svart på {self.form.title}")
+            MailCreator(f'Noen har svart på "{self.form.title}"')
             .add_paragraph(
-                f"{self.user.first_name} {self.user.last_name} har svart på spørreskjemaet {self.form.title}"
+                f'{self.user.first_name} {self.user.last_name} har besvart spørreskjemaet "{self.form.title}"'
             )
             .add_button(
-                "Åpne spørreskjema",
-                f"{settings.WEBSITE_URL}{self.form.website_url}",
+                "Se spørreskjema",
+                f"{settings.WEBSITE_URL}{self.form.group.website_url}",
             )
             .generate_string(),
             "Nytt spørreskjema svar",
