@@ -14,8 +14,20 @@
 
 ## Neste versjon
 - ✨ **Banner**. Hovedstyret kan gi ut informasjon til brukere via bannere.
+
+## Versjon 2022.03.05
+- 🦟 **Bilder**. Fikset feil som oppstod ved opplastning av profilbilde.
+- 🦟 **Badges**. Håndterer input av ugyldig badge.
+- ⚡ **Galleri**. Sender en respons ved sletting av galleri og bilder i galleri.
+
+## Versjon 2022.03.04
+- 🦟 **Badge**. Fikset en bug som forårsaket at badges ble kvadrert under kategorier.
+- ✨ **Nyheter**. Forfatteren av nyheter blir offentliggjort.
+- ⚡ **Album**. Håndterer nå alt av opplastning slik at frontend kun må sende inn filene som skal inn i albumet.
+
 ## Versjon 2022.03.01
 - 🦟 **Admins** for arrangementer kan nå se tidligere arrangementer igjen.
+
 ## Versjon 2022.02.28
 - ✨ **Usending av gavekort** for arrangementer kan nå gjøres via epost.
 - ⚡ **Arrangementer**. Arrangementer i brukes profil er nå sortert på tid.

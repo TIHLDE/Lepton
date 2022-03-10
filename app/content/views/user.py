@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.db import IntegrityError
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status
@@ -151,9 +152,18 @@ class UserViewSet(BaseViewSet, ActionMixin):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post_user_badges(self, request, *args, **kwargs):
+        import uuid
 
         user = self.request.user
-        badge = get_object_or_404(Badge, flag=request.data.get("flag"))
+        try:
+            flag = uuid.UUID(request.data.get("flag"))
+        except ValueError:
+            return Response(
+                {"detail": "Ugyldig flagg"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        badge = get_object_or_404(Badge, flag=flag)
 
         if not badge.is_active:
             return Response(
@@ -165,8 +175,16 @@ class UserViewSet(BaseViewSet, ActionMixin):
             user_badge, data=request.data, context={"request": request}
         )
         if serializer.is_valid():
-            super().perform_create(serializer)
-            return Response({"detail": "Badge fullført!"}, status=status.HTTP_200_OK)
+            try:
+                super().perform_create(serializer)
+                return Response(
+                    {"detail": "Badge fullført!"}, status=status.HTTP_200_OK
+                )
+            except IntegrityError:
+                return Response(
+                    {"detail": "Du har allerede mottatt denne badgen"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
         else:
             return Response(
                 {"detail": "Badgen kunne ikke bli opprettet"},
