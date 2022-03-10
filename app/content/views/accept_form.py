@@ -13,7 +13,7 @@ from app.util.mail_creator import MailCreator
 @csrf_exempt
 @api_view(["POST"])
 def accept_form(request):
-    """ Method for accepting company interest forms from the company page """
+    """Method for accepting company interest forms from the company page"""
     try:
         body = request.data
         types = [i.lower() for i in body["type"]]

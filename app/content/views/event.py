@@ -80,7 +80,8 @@ class EventViewSet(BaseViewSet, ActionMixin):
         except Event.DoesNotExist as event_not_exist:
             capture_exception(event_not_exist)
             return Response(
-                {"detail": "Fant ikke arrangementet"}, status=status.HTTP_404_NOT_FOUND,
+                {"detail": "Fant ikke arrangementet"},
+                status=status.HTTP_404_NOT_FOUND,
             )
 
     def update(self, request, pk):
@@ -144,7 +145,9 @@ class EventViewSet(BaseViewSet, ActionMixin):
         )
 
     @action(
-        detail=True, methods=["post"], url_path="notify",
+        detail=True,
+        methods=["post"],
+        url_path="notify",
     )
     def notify_registered_users(self, request, *args, **kwargs):
         try:
@@ -217,7 +220,10 @@ class EventViewSet(BaseViewSet, ActionMixin):
         detail=True,
         methods=["post"],
         url_path="mail-gift-cards",
-        parser_classes=(MultiPartParser, FormParser,),
+        parser_classes=(
+            MultiPartParser,
+            FormParser,
+        ),
     )
     def mail_gift_cards(self, request, *args, **kwargs):
 

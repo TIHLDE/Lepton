@@ -1,7 +1,7 @@
+from django.db.models import Q
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from django.db.models import Q
 
 from app.common.mixins import ActionMixin
 from app.common.pagination import BasePagination
@@ -21,7 +21,7 @@ class BannerViewSet(BaseViewSet, ActionMixin):
     @action(
         detail=False,
         methods=["get"],
-        url_path="today",
+        url_path="visible",
         permission_classes=[BasicViewPermission],
     )
     def get_visible_banner(self, request):
@@ -30,10 +30,9 @@ class BannerViewSet(BaseViewSet, ActionMixin):
         )
         if not banner:
             return Response(
-                {"detail": "Ingen bannere i dag"}, status=status.HTTP_404_NOT_FOUND
+                {"detail": "Ingen bannere tilgjengelig nå"},
+                status=status.HTTP_404_NOT_FOUND,
             )
 
-        serializer = BannerSerializer(
-            banner.first(), context={"request": request}, many=True
-        )
+        serializer = BannerSerializer(banner, context={"request": request}, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

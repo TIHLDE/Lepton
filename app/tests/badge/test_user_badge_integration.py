@@ -58,12 +58,36 @@ def test_create_user_badge_for_non_existent_badge(member):
 @pytest.mark.parametrize(
     ("active_from", "active_to", "expected_status_code"),
     [
-        (now() + timedelta(1), None, status.HTTP_400_BAD_REQUEST,),
-        (None, now() - timedelta(1), status.HTTP_400_BAD_REQUEST,),
-        (now() + timedelta(1), now() + timedelta(2), status.HTTP_400_BAD_REQUEST,),
-        (now() - timedelta(2), now() - timedelta(1), status.HTTP_400_BAD_REQUEST,),
-        (now() - timedelta(1), now() - timedelta(2), status.HTTP_400_BAD_REQUEST,),
-        (now() - timedelta(1), now() + timedelta(1), status.HTTP_200_OK,),
+        (
+            now() + timedelta(1),
+            None,
+            status.HTTP_400_BAD_REQUEST,
+        ),
+        (
+            None,
+            now() - timedelta(1),
+            status.HTTP_400_BAD_REQUEST,
+        ),
+        (
+            now() + timedelta(1),
+            now() + timedelta(2),
+            status.HTTP_400_BAD_REQUEST,
+        ),
+        (
+            now() - timedelta(2),
+            now() - timedelta(1),
+            status.HTTP_400_BAD_REQUEST,
+        ),
+        (
+            now() - timedelta(1),
+            now() - timedelta(2),
+            status.HTTP_400_BAD_REQUEST,
+        ),
+        (
+            now() - timedelta(1),
+            now() + timedelta(1),
+            status.HTTP_200_OK,
+        ),
         (now(), None, status.HTTP_200_OK),
         (None, now() + timedelta(1), status.HTTP_200_OK),
         (None, None, status.HTTP_200_OK),
@@ -73,8 +97,8 @@ def test_create_user_badge_for_different_active_dates(
     member, active_from, active_to, expected_status_code
 ):
     """Tests several arguments for active_from and active_to dates and checks whether response is expected.
-       Badge is not active if active_from is later than now or active_to is earlier than now.
-       If active_to/from is None, it is treated as infinitly far in the past for active_from and in the future for active_to."""
+    Badge is not active if active_from is later than now or active_to is earlier than now.
+    If active_to/from is None, it is treated as infinitly far in the past for active_from and in the future for active_to."""
 
     badge = BadgeFactory(active_to=active_to, active_from=active_from)
     url = _get_user_badges_url()

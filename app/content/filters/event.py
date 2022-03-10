@@ -9,7 +9,7 @@ from app.util.utils import now
 
 
 class EventFilter(FilterSet):
-    """ Filters events by category and expired. Works with search query """
+    """Filters events by category and expired. Works with search query"""
 
     end_range = DateTimeFilter(field_name="start_date", lookup_expr="lte")
     start_range = DateTimeFilter(field_name="end_date", lookup_expr="gte")

@@ -1,6 +1,7 @@
 import uuid
 
 from django.db import models
+from django.db.models import Q
 from django.utils import timezone
 
 from app.common.enums import AdminGroup
@@ -17,7 +18,10 @@ class Banner(BaseModel, OptionalImage, BasePermissionModel):
     write_access = AdminGroup.admin()
 
     id = models.UUIDField(
-        auto_created=True, primary_key=True, default=uuid.uuid4, serialize=False,
+        auto_created=True,
+        primary_key=True,
+        default=uuid.uuid4,
+        serialize=False,
     )
     title = models.CharField(max_length=100)
     description = models.TextField()
@@ -29,8 +33,8 @@ class Banner(BaseModel, OptionalImage, BasePermissionModel):
         return f"{self.title} is {'' if self.is_visible else 'not'} visible"
 
     def save(self, *args, **kwargs):
-        if self.is_visible and not self.is_uniquely_visible:
-            raise ValueError("Finnes allerede et banner som er synlig")
+        if self.is_visible and self.is_uniquely_visible:
+            raise ValueError("Det finnes allerede et banner som er synlig")
         if self.visible_from > self.visible_until:
             raise ValueError("Datoer er satt feil")
         super().save(*args, **kwargs)
@@ -44,4 +48,10 @@ class Banner(BaseModel, OptionalImage, BasePermissionModel):
 
     @property
     def is_uniquely_visible(self):
-        return not Banner.objects.visible().exclude(id=self.id).exists()
+        return (
+            Banner.objects.filter(
+                Q(visible_from__lte=now()) & Q(visible_until__gte=now())
+            )
+            .exclude(id=self.id)
+            .exists()
+        )

@@ -176,7 +176,8 @@ def test_retrieve_form_as_member_returns_form(member, form):
 
 
 @pytest.mark.parametrize(
-    "group_name", list(AdminGroup),
+    "group_name",
+    list(AdminGroup),
 )
 def test_retrieve_form_as_part_of_admin_group(member, group_name, form):
     """A member as a part of an admin group should be able to retrieve a form."""
@@ -359,7 +360,12 @@ def test_update_options_when_previous_option_is_not_included_in_request_removes_
     field = form.fields.first()
     data = {
         "resource_type": "Form",
-        "fields": [{"id": str(field.id), "options": [],}],
+        "fields": [
+            {
+                "id": str(field.id),
+                "options": [],
+            }
+        ],
     }
     client = get_api_client(user=admin_user)
     url = _get_form_detail_url(form)

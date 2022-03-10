@@ -25,3 +25,24 @@ def test_banner_is_visible_with_different_dates(
     is_visible = banner.is_visible
 
     assert is_visible == expected_value
+
+
+@pytest.mark.django_db
+def test_two_banners_can_not_be_visible_simultaneously():
+    "A banner can not be visible in the same timeframe as another badge"
+    BannerFactory()
+
+    with pytest.raises(ValueError) as v_err:
+        BannerFactory()
+
+    assert "Det finnes allerede et banner som er synlig" == str(v_err.value)
+
+
+@pytest.mark.django_db
+def test_banner_valid_until_date_before_valid_from():
+    "A banner's valid until date can not be before valid until date"
+
+    with pytest.raises(ValueError) as v_err:
+        BannerFactory(visible_from=now() + timedelta(1), visible_until=now())
+
+    assert "Datoer er satt feil" == str(v_err.value)

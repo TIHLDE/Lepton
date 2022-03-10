@@ -78,7 +78,7 @@ def set_user_id(request):
 
 
 class IsLeader(BasePermission):
-    """ Checks if the user is a leader on a group """
+    """Checks if the user is a leader on a group"""
 
     message = "You are not the leader of this group"
 
@@ -94,7 +94,7 @@ class IsLeader(BasePermission):
 
 
 class IsMember(BasePermission):
-    """ Checks if the user is a member """
+    """Checks if the user is a member"""
 
     message = "You are not a member"
 
@@ -110,7 +110,7 @@ class IsMember(BasePermission):
 
 
 class IsDev(BasePermission):
-    """ Checks if the user is in Index """
+    """Checks if the user is in Index"""
 
     message = "You are not in Index"
 
@@ -123,7 +123,7 @@ class IsDev(BasePermission):
 
 
 class IsHS(BasePermission):
-    """ Checks if the user is in HS or Index """
+    """Checks if the user is in HS or Index"""
 
     message = "You are not in HS"
 

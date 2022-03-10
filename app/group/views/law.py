@@ -26,7 +26,8 @@ class LawViewSet(BaseViewSet):
             super().perform_create(serializer)
             return Response(data=serializer.data, status=status.HTTP_200_OK)
         return Response(
-            {"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST,
+            {"detail": serializer.errors},
+            status=status.HTTP_400_BAD_REQUEST,
         )
 
     def destroy(self, request, *args, **kwargs):
