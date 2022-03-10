@@ -66,7 +66,7 @@ def test_that_study_year_groups_are_created_with_correct_name_and_type(
         (2, "Digital forretningsutvikling"),
         (3, "Digital infrastruktur og cybersikkerhet"),
         (4, "Digital samhandling"),
-        (5, "Drift"),
+        (5, "Drift (studie)"),
         (6, "Informasjonsbehandling"),
     ],
 )
@@ -87,7 +87,7 @@ def test_that_users_are_migrated_to_correct_study_group(user_study, group_name):
         (2, "Digital forretningsutvikling"),
         (3, "Digital infrastruktur og cybersikkerhet"),
         (4, "Digital samhandling"),
-        (5, "Drift"),
+        (5, "Drift (studie)"),
         (6, "Informasjonsbehandling"),
     ],
 )
