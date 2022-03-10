@@ -1,0 +1,1 @@
+from app.emoji.serializers.custom_emoji import CustomEmojiSerializer
