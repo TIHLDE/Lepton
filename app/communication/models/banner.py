@@ -30,7 +30,7 @@ class Banner(BaseModel, OptionalImage, BasePermissionModel):
     url = models.URLField(max_length=600, blank=True, null=True)
 
     def __str__(self):
-        return f"{self.title} is {'' if self.is_visible else 'not'} visible"
+        return f"{self.title} {'- is visible' if self.is_visible else ''} - {self.description}"
 
     def save(self, *args, **kwargs):
         if self.is_visible and self.is_uniquely_visible:
