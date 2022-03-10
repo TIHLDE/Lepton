@@ -56,6 +56,7 @@ class GroupType(ChoiceEnum):
     SUBGROUP = "Undergruppe"
     COMMITTEE = "Komité"
     STUDYYEAR = "Studieår"
+    STUDY = "Studie"
     INTERESTGROUP = "Interesse Gruppe"
     OTHER = "Annet"
 
