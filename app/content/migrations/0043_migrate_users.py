@@ -13,7 +13,7 @@ STUDY_FULL = (
     (2, "Digital forretningsutvikling"),
     (3, "Digital infrastruktur og cybersikkerhet"),
     (4, "Digital samhandling"),
-    (5, "Drift"),
+    (5, "Drift (studie)"),
     (6, "Informasjonsbehandling"),
 )
 
