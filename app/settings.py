@@ -97,6 +97,7 @@ INSTALLED_APPS = [
     "app.forms",
     "app.gallery",
     "app.badge",
+    "app.emoji",
 ]
 
 # Django rest framework

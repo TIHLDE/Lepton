@@ -9,9 +9,11 @@ class CustomShortName(BaseModel):
     value = models.CharField(
         primary_key=True,
         max_length=32,
-        validators=RegexValidator(
-            regex="[a-z_]+",
-            message="Det er bare tillatt med små bokstaver og understrek.",
+        validators=(
+            RegexValidator(
+                regex="[a-z_]+",
+                message="Det er bare tillatt med små bokstaver og understrek.",
+            ),
         ),
     )
     emoji = models.ForeignKey(CustomEmoji, on_delete=models.CASCADE)

@@ -4,5 +4,5 @@ from app.emoji.serializers import CustomEmojiSerializer
 
 
 class CustomEmojiViewSet(BaseViewSet):
-    serializer = CustomEmojiSerializer
+    serializer_class = CustomEmojiSerializer
     permission_classes = [BasicViewPermission]
