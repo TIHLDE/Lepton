@@ -1,9 +1,12 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.response import Response
 
+from app.common.azure_file_handler import AzureFileHandler
 from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission
 from app.common.viewsets import BaseViewSet
+from app.gallery.models.album import Album
 from app.gallery.models.picture import Picture
 from app.gallery.serializers.picture import PictureSerializer
 
@@ -21,14 +24,42 @@ class PictureViewSet(BaseViewSet):
     def create(self, request, *args, **kwargs):
 
         album_id = self.kwargs.get("slug", None)
+        album = get_object_or_404(Album, slug=album_id)
 
-        serializer = PictureSerializer(
-            data=request.data, partial=True, many=True, context={"slug": album_id}
-        )
-        if serializer.is_valid():
-            super().perform_create(serializer)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        else:
+        files = request.FILES.getlist("file")
+        if len(files) < 1:
             return Response(
-                {"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST
+                {"detail": "Du må laste opp minst 1 bilde"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
+
+        errors = 0
+        for file in files:
+            try:
+                url = AzureFileHandler(file).uploadBlob()
+                Picture.objects.create(image=url, album=album)
+            except Exception:
+                errors += 1
+
+        if errors == 0:
+            return Response(
+                "Alle bildene ble lastet opp og lagt til i albumet",
+                status=status.HTTP_201_CREATED,
+            )
+        if errors == len(files):
+            return Response(
+                {"detail": "Noe gikk galt, ingen bilder ble lagt til i albumet"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        return Response(
+            {
+                "detail": f"Noe gikk galt, {errors} av {len(files)} bilder ble kunne ikke bli lagt til i albumet"
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    def destroy(self, request, *args, **kwargs):
+        super().destroy(request, *args, **kwargs)
+        return Response(
+            {"detail": "Bildet ble fjernet fra galleriet"}, status=status.HTTP_200_OK
+        )

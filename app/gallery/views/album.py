@@ -1,5 +1,6 @@
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters
+from rest_framework import filters, status
+from rest_framework.response import Response
 
 from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission
@@ -18,3 +19,7 @@ class AlbumViewSet(BaseViewSet):
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_class = AlbumFilter
     search_fields = ["title", "description"]
+
+    def destroy(self, request, *args, **kwargs):
+        super().destroy(request, *args, **kwargs)
+        return Response({"detail": "Galleriet ble slettet"}, status=status.HTTP_200_OK)

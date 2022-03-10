@@ -14,6 +14,7 @@ from app.content.views import (
     UserCalendarEvents,
     UserViewSet,
     accept_form,
+    gdpr,
     upload,
 )
 
@@ -42,5 +43,6 @@ urlpatterns = [
     url(r"", include(router.urls)),
     path("accept-form/", accept_form),
     path("upload/", upload),
+    path("gdpr/", gdpr),
     url(r"users/(?P<user_id>[^/.]+)/events.ics", UserCalendarEvents()),
 ]

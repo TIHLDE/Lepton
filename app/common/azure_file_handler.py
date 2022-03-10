@@ -29,8 +29,11 @@ class AzureFileHandler(FileHandler):
         return container
 
     def getContainerAndNameFromUrl(self):
+        import urllib.parse
+
+        url = urllib.parse.unquote(self.url)
         # fmt: off
-        return re.sub("\w+:\/{2}[\d\w-]+(\.[\d\w-]+)*/", "", self.url).split("/")  # noqa: W605
+        return re.sub("\w+:\/{2}[\d\w-]+(\.[\d\w-]+)*/", "", url).split("/")  # noqa: W605
         # fmt: on
 
     def uploadBlob(self):
