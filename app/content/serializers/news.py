@@ -25,11 +25,3 @@ class NewsSerializer(BaseModelSerializer):
         if creator:
             creator = User.objects.get(user_id=creator)
         return News.objects.create(creator=creator, **validated_data)
-
-    def update(self, instance, validated_data):
-        creator = self.context["request"].data.get("creator", None)
-        if creator:
-            creator = User.objects.get(user_id=creator)
-
-        instance.creator = creator
-        return super().update(instance, validated_data)
