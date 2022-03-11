@@ -247,19 +247,19 @@ class Submission(BaseModel, BasePermissionModel):
     def __str__(self):
         return f"{self.user.user_id}'s submission to {self.form}"
 
-    def send_email(self):
+    def send_group_form_submission_email(self):
         from app.communication.notifier import send_html_email
         from app.util.mail_creator import MailCreator
 
         send_html_email(
             [self.form.email_receiver_on_submit],
-            MailCreator(f"Noen har svart på {self.form.title}")
+            MailCreator(f'Noen har svart på "{self.form.title}"')
             .add_paragraph(
-                f"{self.user.first_name} {self.user.last_name} har svart på spørreskjemaet {self.form.title}"
+                f'{self.user.first_name} {self.user.last_name} har besvart spørreskjemaet "{self.form.title}"'
             )
             .add_button(
-                "Åpne spørreskjema",
-                f"{settings.WEBSITE_URL}{self.form.website_url}",
+                "Se spørreskjema",
+                f"{settings.WEBSITE_URL}{self.form.group.website_url}",
             )
             .generate_string(),
             "Nytt spørreskjema svar",
@@ -269,7 +269,7 @@ class Submission(BaseModel, BasePermissionModel):
     def save(self, *args, **kwargs):
         self.full_clean()
         if isinstance(self.form, GroupForm) and self.form.email_receiver_on_submit:
-            self.send_email()
+            self.send_group_form_submission_email()
         super().save(*args, **kwargs)
 
     def clean(self):

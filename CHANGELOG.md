@@ -13,6 +13,8 @@
 ---
 
 ## Neste versjon
+- ✨ **Arrangementer**. Varsel om at påmelding har åpnet sendes nå i Slack.
+
 ## Versjon 2022.03.05
 - 🦟 **Bilder**. Fikset feil som oppstod ved opplastning av profilbilde.
 - 🦟 **Badges**. Håndterer input av ugyldig badge.
