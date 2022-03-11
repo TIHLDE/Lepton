@@ -247,7 +247,7 @@ class Submission(BaseModel, BasePermissionModel):
     def __str__(self):
         return f"{self.user.user_id}'s submission to {self.form}"
 
-    def send_email(self):
+    def send_group_form_submission_email(self):
         from app.communication.notifier import send_html_email
         from app.util.mail_creator import MailCreator
 
@@ -269,7 +269,7 @@ class Submission(BaseModel, BasePermissionModel):
     def save(self, *args, **kwargs):
         self.full_clean()
         if isinstance(self.form, GroupForm) and self.form.email_receiver_on_submit:
-            self.send_email()
+            self.send_group_form_submission_email()
         super().save(*args, **kwargs)
 
     def clean(self):

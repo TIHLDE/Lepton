@@ -9,8 +9,8 @@ from app.common.enums import AdminGroup
 from app.communication.notifier import Notify
 from app.communication.slack import Slack
 from app.constants import (
-    SLACK_EVENTS_NOK_CHANNEL_ID,
-    SLACK_EVENTS_OTHER_CHANNEL_ID,
+    SLACK_ARRANGEMENTER_CHANNEL_ID,
+    SLACK_BEDPRES_OG_KURS_CHANNEL_ID,
 )
 from app.content.models.strike import create_strike
 from app.util.mail_creator import MailCreator
@@ -164,10 +164,10 @@ def __post_event_actions(event, *args, **kwargs):
 
 def __sign_up_start_notifier(event, *args, **kwargs):
     CHANNEL_ID = (
-        SLACK_EVENTS_NOK_CHANNEL_ID
+        SLACK_BEDPRES_OG_KURS_CHANNEL_ID
         if event.organizer
-        and str(event.organizer.slug).lower() == str(AdminGroup.PROMO).lower()
-        else SLACK_EVENTS_OTHER_CHANNEL_ID
+        and str(event.organizer.slug).lower() == str(AdminGroup.NOK).lower()
+        else SLACK_ARRANGEMENTER_CHANNEL_ID
     )
     slack = (
         Slack(
