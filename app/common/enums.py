@@ -1,6 +1,6 @@
 from enum import Enum
 
-from enumchoicefield import ChoiceEnum
+from app.common.enumchoicefield import ChoiceEnum
 
 
 class UserClass(ChoiceEnum):

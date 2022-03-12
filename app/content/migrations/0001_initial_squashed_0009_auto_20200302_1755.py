@@ -2,7 +2,7 @@
 
 import django.db.models.deletion
 import django.utils.timezone
-import enumchoicefield.fields
+import app.common.enumchoicefield.fields
 from django.conf import settings
 from django.db import migrations, models
 
@@ -376,7 +376,7 @@ class Migration(migrations.Migration):
                 ("priority_id", models.AutoField(primary_key=True, serialize=False)),
                 (
                     "user_class",
-                    enumchoicefield.fields.EnumChoiceField(
+                    app.common.enumchoicefield.fields.EnumChoiceField(
                         default=app.common.enums.UserClass(1),
                         enum_class=app.common.enums.UserClass,
                         max_length=6,
@@ -384,7 +384,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "user_study",
-                    enumchoicefield.fields.EnumChoiceField(
+                    app.common.enumchoicefield.fields.EnumChoiceField(
                         default=app.common.enums.UserStudy(1),
                         enum_class=app.common.enums.UserStudy,
                         max_length=7,

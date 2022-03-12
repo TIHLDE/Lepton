@@ -2,7 +2,7 @@
 
 import app.common.enums
 from django.db import migrations, models
-import enumchoicefield.fields
+import app.common.enumchoicefield.fields
 
 
 class Migration(migrations.Migration):
@@ -25,7 +25,7 @@ class Migration(migrations.Migration):
                 ('slug', models.SlugField(primary_key=True, serialize=False)),
                 ('description', models.TextField(blank=True, max_length=1000, null=True)),
                 ('contact_email', models.EmailField(blank=True, max_length=200, null=True)),
-                ('type', enumchoicefield.fields.EnumChoiceField(default=app.common.enums.GroupType(6), enum_class=app.common.enums.GroupType, max_length=9)),
+                ('type', app.common.enumchoicefield.fields.EnumChoiceField(default=app.common.enums.GroupType(6), enum_class=app.common.enums.GroupType, max_length=9)),
                 ('permissions', models.ManyToManyField(blank=True, related_name='groups_permissions', to='auth.Permission')),
             ],
             options={

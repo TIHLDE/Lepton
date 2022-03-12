@@ -18,23 +18,22 @@ slack-sdk == 3.15.2
 # Django
 # ------------------------------------------------------------------------------
 Django==4.0.3
-django-enumchoicefield
-django-filter
+django-filter == 21.1
 django-ordered-model~=3.5
 
 # Django REST Framework
 djangorestframework==3.13.1
 django-cors-headers
-django-rest-auth
+dj-rest-auth == 2.2.3
 
 #django dry rest permissions
-django-dry-rest-permissions
+django-dry-rest-permissions == 1.2.0
 
 # Django Polymorphic
 django-polymorphic ~= 3.1
-django-rest-polymorphic
+django-rest-polymorphic == 0.1.9
 
-django-mptt
+django-mptt == 0.13.4
 
 # Documentation
 # ------------------------------------------------------------------------------

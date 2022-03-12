@@ -3,7 +3,7 @@ import uuid
 from django.conf import settings
 from django.db import models, transaction
 
-from enumchoicefield import EnumChoiceField
+from app.common.enumchoicefield import EnumChoiceField
 from ordered_model.models import OrderedModel
 from polymorphic.models import PolymorphicModel
 

@@ -2,7 +2,7 @@
 
 import app.common.enums
 from django.db import migrations, models
-import enumchoicefield.fields
+import app.common.enumchoicefield.fields
 
 
 class Migration(migrations.Migration):
@@ -20,6 +20,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='cheatsheet',
             name='type',
-            field=enumchoicefield.fields.EnumChoiceField(default=app.common.enums.CheatsheetType(3), enum_class=app.common.enums.CheatsheetType, max_length=6),
+            field=app.common.enumchoicefield.fields.EnumChoiceField(default=app.common.enums.CheatsheetType(3), enum_class=app.common.enums.CheatsheetType, max_length=6),
         ),
     ]

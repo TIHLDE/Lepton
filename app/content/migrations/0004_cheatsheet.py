@@ -2,7 +2,7 @@
 
 import uuid
 
-import enumchoicefield.fields
+import app.common.enumchoicefield.fields
 from django.db import migrations, models
 
 import app.common.enums
@@ -34,7 +34,7 @@ class Migration(migrations.Migration):
                 ("creator", models.CharField(max_length=200)),
                 (
                     "grade",
-                    enumchoicefield.fields.EnumChoiceField(
+                    app.common.enumchoicefield.fields.EnumChoiceField(
                         default=app.common.enums.UserClass(1),
                         enum_class=app.common.enums.UserClass,
                         max_length=6,
@@ -42,7 +42,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "study",
-                    enumchoicefield.fields.EnumChoiceField(
+                    app.common.enumchoicefield.fields.EnumChoiceField(
                         default=app.common.enums.UserStudy(1),
                         enum_class=app.common.enums.UserStudy,
                         max_length=7,

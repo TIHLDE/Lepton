@@ -2,7 +2,7 @@ import uuid
 
 from django.db import models
 
-from enumchoicefield import EnumChoiceField
+from app.common.enumchoicefield import EnumChoiceField
 
 from app.common.enums import (
     AdminGroup,

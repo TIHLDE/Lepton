@@ -84,7 +84,7 @@ INSTALLED_APPS = [
     "django_filters",
     "drf_yasg",
     "rest_framework.authtoken",
-    "rest_auth",
+    "dj_rest_auth",
     "dry_rest_permissions",
     "polymorphic",
     # Our apps

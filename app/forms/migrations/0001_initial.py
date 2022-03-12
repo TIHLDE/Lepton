@@ -4,7 +4,7 @@ import app.forms.enums
 from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
-import enumchoicefield.fields
+import app.common.enumchoicefield.fields
 import uuid
 
 
@@ -24,7 +24,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
                 ('title', models.CharField(max_length=200)),
-                ('type', enumchoicefield.fields.EnumChoiceField(default=app.forms.enums.FormFieldType(1), enum_class=app.forms.enums.FormFieldType, max_length=15)),
+                ('type', app.common.enumchoicefield.fields.EnumChoiceField(default=app.forms.enums.FormFieldType(1), enum_class=app.forms.enums.FormFieldType, max_length=15)),
                 ('required', models.BooleanField(default=False)),
             ],
         ),
@@ -85,7 +85,7 @@ class Migration(migrations.Migration):
             name='EventForm',
             fields=[
                 ('form_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='forms.form')),
-                ('type', enumchoicefield.fields.EnumChoiceField(default=app.forms.enums.EventFormType(1), enum_class=app.forms.enums.EventFormType, max_length=10)),
+                ('type', app.common.enumchoicefield.fields.EnumChoiceField(default=app.forms.enums.EventFormType(1), enum_class=app.forms.enums.EventFormType, max_length=10)),
                 ('event', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='forms', to='content.event')),
             ],
             options={

@@ -2,7 +2,7 @@
 
 import app.common.enums
 from django.db import migrations
-import enumchoicefield.fields
+import app.common.enumchoicefield.fields
 
 
 class Migration(migrations.Migration):
@@ -19,6 +19,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='group',
             name='type',
-            field=enumchoicefield.fields.EnumChoiceField(default=app.common.enums.GroupType(7), enum_class=app.common.enums.GroupType, max_length=13),
+            field=app.common.enumchoicefield.fields.EnumChoiceField(default=app.common.enums.GroupType(7), enum_class=app.common.enums.GroupType, max_length=13),
         ),
     ]
