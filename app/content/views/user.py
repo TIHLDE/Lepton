@@ -119,7 +119,7 @@ class UserViewSet(BaseViewSet, ActionMixin):
     def destroy(self, request, pk, *args, **kwargs):
         user = self._get_user(request, pk)
         self.check_object_permissions(self.request, user)
-        super().destroy(request, pk=user.user_id, *args, **kwargs)
+        user.delete()
         return Response(
             {"detail": "Brukeren har bltt slettet"},
             status=status.HTTP_200_OK,
