@@ -56,7 +56,7 @@ coverage
 pdbpp
 pytest == 7.0.1
 pytest-cov == 2.10.0
-pytest-django == 3.8.0
+pytest-django == 4.5.2
 factory-boy == 3.2.1
 pytest-factoryboy == 2.1.0
 pytest-lazy-fixture==0.6.3
