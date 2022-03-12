@@ -96,7 +96,6 @@ INSTALLED_APPS = [
     "app.util",
     "app.career",
     "app.forms",
-    "app.payment",
     "app.gallery",
     "app.badge",
 ]
