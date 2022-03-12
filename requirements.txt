@@ -5,7 +5,7 @@ wheel
 mysqlclient == 2.0.3
 sentry-sdk
 celery == 5.2.2
-azure-storage-blob == 12.8.0
+azure-storage-blob == 12.10.0
 python-dotenv ~= 0.19
 gunicorn == 20.1.0
 uvicorn == 0.17.6
@@ -58,7 +58,7 @@ pytest == 7.0.1
 pytest-cov == 2.10.0
 pytest-django == 3.8.0
 factory-boy == 3.2.1
-pytest-factoryboy == 2.0.3
+pytest-factoryboy == 2.1.0
 pytest-lazy-fixture==0.6.3
 
 # PDF
