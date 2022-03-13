@@ -50,14 +50,3 @@ services:
     entrypoint: []
     command: celery --app app worker --task-events --beat --loglevel info
     ports: []
-
-  flower:
-    <<: *web
-    image: flower
-    container_name: flower
-    entrypoint: []
-    command: celery --app app flower --url_prefix=flower/admin
-    ports:
-      - "5555:5555"
-    depends_on:
-      - celery
