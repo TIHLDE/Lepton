@@ -13,3 +13,8 @@ services:
     container_name: celery
     entrypoint: []
     command: celery --app app worker --task-events --beat --loglevel info
+  rabbitmq:
+    image: rabbitmq:3.9.13
+    container_name: rabbitmq
+    ports:
+        - 5672:5672

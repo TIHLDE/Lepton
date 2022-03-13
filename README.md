@@ -74,9 +74,6 @@ EMAIL_PORT= PORT (normally 587)
 EMAIL_USER= EMAIL_USER
 EMAIL_PASSWORD= EMAIL_PASSWORD
 
-# Optional for connecting to celery broker
-CELERY_URL= CELERY_BROKER_URL
-
 # Optional for uploading files to Azure
 AZURE_STORAGE_CONNECTION_STRING= CONNECTION_STRING
 ```
