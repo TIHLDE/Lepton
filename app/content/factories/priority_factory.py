@@ -1,8 +1,7 @@
 from factory.django import DjangoModelFactory
 
 from app.common.enums import UserClass, UserStudy
-
-from ..models import Priority
+from app.content.models import Priority
 
 
 class PriorityFactory(DjangoModelFactory):
