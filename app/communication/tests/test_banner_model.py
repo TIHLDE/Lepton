@@ -2,6 +2,10 @@ from datetime import timedelta
 
 import pytest
 
+from app.communication.exceptions import (
+    AnotherVisibleBannerError,
+    DatesMixedError,
+)
 from app.communication.factories.banner_factory import BannerFactory
 from app.util.utils import now
 
@@ -32,17 +36,13 @@ def test_two_banners_can_not_be_visible_simultaneously():
     "A banner can not be visible in the same timeframe as another badge"
     BannerFactory()
 
-    with pytest.raises(ValueError) as v_err:
+    with pytest.raises(AnotherVisibleBannerError):
         BannerFactory()
-
-    assert "Det finnes allerede et banner som er synlig" == str(v_err.value)
 
 
 @pytest.mark.django_db
 def test_banner_valid_until_date_before_valid_from():
     "A banner's valid until date can not be before valid until date"
 
-    with pytest.raises(ValueError) as v_err:
+    with pytest.raises(DatesMixedError):
         BannerFactory(visible_from=now() + timedelta(1), visible_until=now())
-
-    assert "Datoer er satt feil" == str(v_err.value)

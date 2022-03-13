@@ -75,6 +75,5 @@ def test_no_badges_are_shown_when_none_are_public(api_client, admin_user):
 
     response = admin_client.get(url)
     results = response.json().get("results")
-    print(results)
 
     assert len(results) == 1

@@ -27,7 +27,14 @@ def run_migration():
 
 @pytest.mark.parametrize(
     ("user_class", "group_name"),
-    [(-1, "2018"), (1, "2021"), (2, "2020"), (3, "2019"), (4, "2018"), (5, "2017"),],
+    [
+        (-1, "2018"),
+        (1, "2021"),
+        (2, "2020"),
+        (3, "2019"),
+        (4, "2018"),
+        (5, "2017"),
+    ],
 )
 def test_that_users_are_migrated_to_correct_study_year_group(user_class, group_name):
     batch_size = 10
@@ -43,7 +50,14 @@ def test_that_users_are_migrated_to_correct_study_year_group(user_class, group_n
 
 @pytest.mark.parametrize(
     ("user_class", "group_name"),
-    [(-1, "2018"), (1, "2021"), (2, "2020"), (3, "2019"), (4, "2018"), (5, "2017"),],
+    [
+        (-1, "2018"),
+        (1, "2021"),
+        (2, "2020"),
+        (3, "2019"),
+        (4, "2018"),
+        (5, "2017"),
+    ],
 )
 def test_that_study_year_groups_are_created_with_correct_name_and_type(
     user_class, group_name
