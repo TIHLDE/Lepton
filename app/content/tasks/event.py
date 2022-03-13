@@ -5,7 +5,13 @@ from django.conf import settings
 from sentry_sdk import capture_exception
 
 from app.celery import app
+from app.common.enums import AdminGroup
 from app.communication.notifier import Notify
+from app.communication.slack import Slack
+from app.constants import (
+    SLACK_ARRANGEMENTER_CHANNEL_ID,
+    SLACK_BEDPRES_OG_KURS_CHANNEL_ID,
+)
 from app.content.models.strike import create_strike
 from app.util.mail_creator import MailCreator
 from app.util.tasks import BaseTask
@@ -50,6 +56,28 @@ def run_post_event_actions(self, *args, **kwargs):
             __post_event_actions(event)
 
         self.logger.info(f'Runned "run_post_event_actions" for {events.count()} events')
+    except Exception as e:
+        capture_exception(e)
+
+
+@app.task(bind=True, base=BaseTask)
+def run_sign_up_start_notifier(self, *args, **kwargs):
+    from app.content.models.event import Event
+
+    try:
+        events = Event.objects.filter(
+            runned_sign_up_start_notifier=False,
+            sign_up=True,
+            closed=False,
+            start_registration_at__lt=now(),
+        )
+
+        for event in events:
+            __sign_up_start_notifier(event)
+
+        self.logger.info(
+            f'Runned "run_sign_up_start_notifier" for {events.count()} events'
+        )
     except Exception as e:
         capture_exception(e)
 
@@ -132,3 +160,28 @@ def __post_event_actions(event, *args, **kwargs):
 
     event.runned_post_event_actions = True
     event.save(update_fields=["runned_post_event_actions"])
+
+
+def __sign_up_start_notifier(event, *args, **kwargs):
+    CHANNEL_ID = (
+        SLACK_BEDPRES_OG_KURS_CHANNEL_ID
+        if event.organizer
+        and str(event.organizer.slug).lower() == str(AdminGroup.NOK).lower()
+        else SLACK_ARRANGEMENTER_CHANNEL_ID
+    )
+    slack = (
+        Slack(
+            channel_id=CHANNEL_ID,
+            fallback_text=f'Påmelding til "{event.title}" har nå åpnet!',
+        )
+        .add_header(event.title)
+        .add_markdwn(
+            f'Påmelding til "{event.title}" har nå åpnet! 🏃 Arrangementet starter {datetime_format(event.start_date)} og har {event.limit} plasser. Påmeldingen er åpen frem til {datetime_format(event.end_registration_at)}, men husk at det kan bli fullt før det. ⏲️\n\n<{settings.WEBSITE_URL}{event.website_url}|*Se arrangementet her og meld deg på nå!*>'
+        )
+    )
+    if event.image:
+        slack.add_image(event.image, event.image_alt or event.title)
+    slack.send()
+
+    event.runned_sign_up_start_notifier = True
+    event.save(update_fields=["runned_sign_up_start_notifier"])

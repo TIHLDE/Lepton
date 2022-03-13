@@ -70,7 +70,9 @@ class Group(OptionalImage, BaseModel, BasePermissionModel):
             .add_paragraph(description[0])
             .add_paragraph(description[1])
             .add_paragraph(description[2])
-            .add_button("Gå til gruppesiden", self.website_url)
+            .add_button(
+                "Gå til gruppesiden", f"{settings.WEBSITE_URL}{self.website_url}"
+            )
             .generate_string()
         ).send_notification(
             description=" \n".join(description),
@@ -101,7 +103,7 @@ class Group(OptionalImage, BaseModel, BasePermissionModel):
 
     @property
     def website_url(self):
-        return f"{settings.WEBSITE_URL}/grupper/{self.slug}/"
+        return f"/grupper/{self.slug}/"
 
     @classmethod
     def check_request_user_is_leader(cls, request):

@@ -60,12 +60,12 @@ class MembershipViewSet(BaseViewSet):
                     .add_paragraph(description)
                     .add_button(
                         "Se gruppen",
-                        membership.group.website_url,
+                        f"{settings.WEBSITE_URL}{membership.group.website_url}",
                     )
                     .generate_string()
                 ).send_notification(
                     description=description,
-                    link=f"/grupper/{membership.group.slug}/",
+                    link=membership.group.website_url,
                 )
             return super().update(request, *args, **kwargs)
         except Membership.DoesNotExist:
@@ -92,7 +92,7 @@ class MembershipViewSet(BaseViewSet):
                 .add_paragraph(description)
                 .add_button(
                     "Se gruppen",
-                    f"{settings.WEBSITE_URL}/grupper/{membership.group.slug}/",
+                    f"{settings.WEBSITE_URL}{membership.group.website_url}/",
                 )
                 .generate_string()
             ).send_notification(

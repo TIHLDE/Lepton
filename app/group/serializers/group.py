@@ -9,12 +9,8 @@ from app.content.serializers.user import DefaultUserSerializer
 from app.group.models import Group, Membership
 
 
-class GroupSerializer(BaseModelSerializer):
-
+class SimpleGroupSerializer(BaseModelSerializer):
     viewer_is_member = serializers.SerializerMethodField()
-    leader = serializers.SerializerMethodField()
-    permissions = DRYPermissionsField(actions=["write", "read"], object_only=True)
-    fines_admin = DefaultUserSerializer(read_only=True)
 
     class Meta:
         model = Group
@@ -22,9 +18,30 @@ class GroupSerializer(BaseModelSerializer):
         fields = (
             "name",
             "slug",
+            "type",
+            "viewer_is_member",
+        )
+
+    def get_viewer_is_member(self, obj):
+        request = self.context.get("request", None)
+        if request and request.user:
+            return request.user.is_member_of(obj)
+        return False
+
+
+class GroupSerializer(SimpleGroupSerializer):
+
+    leader = serializers.SerializerMethodField()
+    permissions = DRYPermissionsField(actions=["write", "read"], object_only=True)
+    fines_admin = DefaultUserSerializer(read_only=True)
+
+    class Meta:
+        model = SimpleGroupSerializer.Meta.model
+
+        lookup_field = SimpleGroupSerializer.Meta.lookup_field
+        fields = SimpleGroupSerializer.Meta.fields + (
             "description",
             "contact_email",
-            "type",
             "permissions",
             "leader",
             "fines_admin",
@@ -32,7 +49,6 @@ class GroupSerializer(BaseModelSerializer):
             "fine_info",
             "image",
             "image_alt",
-            "viewer_is_member",
         )
 
     def get_leader(self, obj):
@@ -51,12 +67,6 @@ class GroupSerializer(BaseModelSerializer):
         else:
             fines_admin = User.objects.get(user_id=fines_admin_id)
         return fines_admin
-
-    def get_viewer_is_member(self, obj):
-        request = self.context.get("request", None)
-        if request and request.user:
-            return request.user.is_member_of(obj)
-        return False
 
     def update(self, instance, validated_data):
         instance.fines_admin = self.get_fine_admin_user()

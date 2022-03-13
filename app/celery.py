@@ -39,8 +39,14 @@ schedule = {
         # Every 15 minute between 12:00 and 13:00 every day to allow multiple attempts
         "schedule": crontab(minute="*/15", hour="12"),
     },
+    "run_sign_up_start_notifier": {
+        "task": "app.content.tasks.event.run_sign_up_start_notifier",
+        # Every 5th minute
+        "schedule": crontab(minute="*/5"),
+    },
     "delete_log_entries": {
         "task": "app.common.tasks.delete_old_log_entries",
+        # 12:00 every day
         "schedule": crontab(hour="12", minute="0"),
     },
 }

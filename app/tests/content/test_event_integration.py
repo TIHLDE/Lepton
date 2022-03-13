@@ -7,6 +7,7 @@ import pytest
 
 from app.common.enums import AdminGroup, GroupType, MembershipType
 from app.content.factories import EventFactory, RegistrationFactory, UserFactory
+from app.content.models import Event
 from app.forms.enums import EventFormType
 from app.forms.tests.form_factories import EventFormFactory
 from app.group.factories import GroupFactory
@@ -278,6 +279,65 @@ def test_create_event_as_admin(permission_test_util):
         if expected_status_code == 200
         else expected_status_code
     )
+
+
+@pytest.mark.django_db
+def test_create_event_with_group_priorities_returns_http_201(api_client, admin_user):
+    client = api_client(user=admin_user)
+    data = get_event_data()
+
+    groups = GroupFactory.create_batch(2)
+    groups = [group.slug for group in groups]
+    data["priority_pools"] = [{"groups": groups}]
+
+    response = client.post(API_EVENTS_BASE_URL, data)
+
+    assert response.status_code == 201
+
+
+@pytest.mark.django_db
+def test_create_event_with_group_priorities_creates_the_priority_pools(
+    api_client, admin_user
+):
+    client = api_client(user=admin_user)
+    data = get_event_data()
+
+    groups = GroupFactory.create_batch(2)
+    groups_data = [group.slug for group in groups]
+    data["priority_pools"] = [{"groups": groups_data}]
+
+    response = client.post(API_EVENTS_BASE_URL, data)
+
+    event_id = response.json().get("id")
+    event = Event.objects.get(id=event_id)
+
+    assert event.priority_pools.count() == 1
+    assert all(
+        actual == expected
+        for actual, expected in zip(event.priority_pools.first().groups.all(), groups)
+    )
+
+
+@pytest.mark.django_db
+def test_create_event_with_group_priorities_returns_priority_pools_in_response(
+    api_client, admin_user
+):
+    client = api_client(user=admin_user)
+    data = get_event_data()
+
+    batch_size = 2
+    groups = GroupFactory.create_batch(batch_size)
+    group_slugs = [group.slug for group in groups]
+    data["priority_pools"] = [{"groups": group_slugs}]
+
+    response = client.post(API_EVENTS_BASE_URL, data)
+
+    priority_pools = response.json().get("priority_pools")
+    actual_groups = priority_pools[0].get("groups")
+
+    assert len(priority_pools) == 1
+    assert len(actual_groups) == batch_size
+    assert all(group.get("slug") in group_slugs for group in actual_groups)
 
 
 @pytest.mark.django_db

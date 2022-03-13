@@ -75,10 +75,7 @@ class Registration(BaseModel, BasePermissionModel):
         return self.is_own_registration(request) or self.has_event_permission(request)
 
     def __str__(self):
-        return (
-            f"{self.user.email} - is to attend {self.event} and is "
-            f'{"on the waiting list" if self.is_on_wait else "on the list"}'
-        )
+        return f"{self.user.email} - {self.event.title} (on wait: {self.is_on_wait})"
 
     def delete_submission_if_exists(self):
         from app.forms.models.forms import EventForm, Submission
@@ -121,7 +118,7 @@ class Registration(BaseModel, BasePermissionModel):
         ):
             raise EventIsFullError
 
-        return super(Registration, self).save(*args, **kwargs)
+        return super().save(*args, **kwargs)
 
     def create(self):
         if self.event.enforces_previous_strikes:
@@ -208,10 +205,21 @@ class Registration(BaseModel, BasePermissionModel):
     def is_prioritized(self):
         if self.user.number_of_strikes >= 3:
             return False
+
         user_class, user_study = EnumUtils.get_user_enums(**self.user.__dict__)
-        return self.event.registration_priorities.filter(
-            user_class=user_class, user_study=user_study
-        ).exists()
+        user_query = Q(user_class=user_class, user_study=user_study)
+
+        user_groups = set(self.user.group_members.values_list("slug", flat=True))
+        pools = self.event.priority_pools.prefetch_related("groups").all()
+
+        for pool in pools:
+            pool_groups = set(pool.groups.values_list("slug", flat=True))
+            is_in_priority_pool = pool_groups.issubset(user_groups) and len(pool_groups)
+
+            if is_in_priority_pool:
+                return True
+
+        return self.event.registration_priorities.filter(user_query).exists()
 
     def swap_users(self):
         """Swaps a user with a spot with a prioritized user, if such user exists"""

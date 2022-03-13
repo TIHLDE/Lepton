@@ -4,9 +4,13 @@ from dry_rest_permissions.generics import DRYPermissionsField
 from sentry_sdk import capture_exception
 
 from app.common.serializers import BaseModelSerializer
-from app.content.models import Event, Priority
+from app.content.models import Event, Priority, PriorityPool
 from app.content.models.user import CLASS, STUDY
 from app.content.serializers.priority import PrioritySerializer
+from app.content.serializers.priority_pool import (
+    PriorityPoolCreateSerializer,
+    PriorityPoolSerializer,
+)
 from app.group.serializers.group import GroupSerializer
 from app.util import EnumUtils
 
@@ -14,6 +18,7 @@ from app.util import EnumUtils
 class EventSerializer(serializers.ModelSerializer):
     expired = serializers.BooleanField(read_only=True)
     registration_priorities = serializers.SerializerMethodField()
+    priority_pools = PriorityPoolSerializer(many=True, required=False)
     evaluation = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
     survey = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
     organizer = GroupSerializer(read_only=True)
@@ -49,6 +54,7 @@ class EventSerializer(serializers.ModelSerializer):
             "can_cause_strikes",
             "enforces_previous_strikes",
             "permissions",
+            "priority_pools",
         )
 
     def validate_limit(self, limit):
@@ -75,16 +81,13 @@ class EventSerializer(serializers.ModelSerializer):
         return limit
 
     def get_registration_priorities(self, obj):
-        try:
-            return [
-                {
-                    "user_class": registration_priority.user_class.value,
-                    "user_study": registration_priority.user_study.value,
-                }
-                for registration_priority in obj.registration_priorities.all()
-            ]
-        except Priority.DoesNotExist:
-            return None
+        return [
+            {
+                "user_class": registration_priority.user_class.value,
+                "user_study": registration_priority.user_study.value,
+            }
+            for registration_priority in obj.registration_priorities.all()
+        ]
 
 
 class EventListSerializer(serializers.ModelSerializer):
@@ -111,6 +114,7 @@ class EventListSerializer(serializers.ModelSerializer):
 
 class EventCreateAndUpdateSerializer(BaseModelSerializer):
     registration_priorities = PrioritySerializer(many=True, required=False)
+    priority_pools = PriorityPoolCreateSerializer(many=True, required=False)
 
     class Meta:
         model = Event
@@ -135,26 +139,44 @@ class EventCreateAndUpdateSerializer(BaseModelSerializer):
             "start_date",
             "start_registration_at",
             "title",
+            "priority_pools",
         )
 
     def create(self, validated_data):
-        registration_priorities_data = None
-        if "registration_priorities" in validated_data:
-            registration_priorities_data = validated_data.pop("registration_priorities")
+        registration_priorities_data = validated_data.pop(
+            "registration_priorities", None
+        )
+        priority_pools_data = validated_data.pop("priority_pools", [])
+
         event = super().create(validated_data)
+
         if registration_priorities_data:
             self.set_registration_priorities(event, registration_priorities_data)
+
+        self.set_priority_pools(event, priority_pools_data)
 
         return event
 
     def update(self, instance, validated_data):
-        registration_priorities_data = None
-        if "registration_priorities" in validated_data:
-            registration_priorities_data = validated_data.pop("registration_priorities")
+        registration_priorities_data = validated_data.pop(
+            "registration_priorities", None
+        )
+        priority_pools_data = validated_data.pop("priority_pools", None)
+
         event = super().update(instance, validated_data)
+
         if registration_priorities_data:
             self.set_registration_priorities(event, registration_priorities_data)
+
+        if priority_pools_data:
+            self.update_priority_pools(event, priority_pools_data)
+
+        event.save()
         return event
+
+    def update_priority_pools(self, event, priority_pools_data):
+        event.priority_pools.clear()
+        self.set_priority_pools(event, priority_pools_data)
 
     def set_registration_priorities(self, event, registration_priorities_data):
         event.registration_priorities.clear()
@@ -167,15 +189,21 @@ class EventCreateAndUpdateSerializer(BaseModelSerializer):
     @staticmethod
     def get_registration_priority_from_data(data):
         user_class, user_study = EnumUtils.get_user_enums(**data)
-        registration_priority, created = Priority.objects.get_or_create(
+        priority, _ = Priority.objects.get_or_create(
             user_class=user_class, user_study=user_study
         )
 
-        return registration_priority
+        return priority
+
+    @staticmethod
+    def set_priority_pools(event, priority_pool_data):
+        for priority_pool in priority_pool_data:
+            groups = priority_pool.get("groups")
+            priority_pool = PriorityPool.objects.create(event=event)
+            priority_pool.groups.add(*groups)
 
 
 class EventStatisticsSerializer(BaseModelSerializer):
-
     has_attended_count = serializers.SerializerMethodField()
     classes = serializers.SerializerMethodField()
     studies = serializers.SerializerMethodField()
