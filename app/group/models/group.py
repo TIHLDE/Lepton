@@ -4,7 +4,7 @@ from django.utils.text import slugify
 
 from enumchoicefield import EnumChoiceField
 
-from app.common.enums import AdminGroup, GroupType
+from app.common.enums import AdminGroup, GroupType, GroupTypeV2
 from app.common.permissions import BasePermissionModel, set_user_id
 from app.content.models.user import User
 from app.util.models import BaseModel, OptionalImage
@@ -20,6 +20,9 @@ class Group(OptionalImage, BaseModel, BasePermissionModel):
     contact_email = models.EmailField(max_length=200, null=True, blank=True)
     fine_info = models.TextField(default="", blank=True)
     type = EnumChoiceField(GroupType, default=GroupType.OTHER)
+    new_type = models.CharField(
+        max_length=30, choices=GroupTypeV2.choices, default=GroupTypeV2.OTHER
+    )
     fines_activated = models.BooleanField(default=False)
     members = models.ManyToManyField(
         User,

@@ -1,5 +1,7 @@
 from enum import Enum
 
+from django.db import models
+
 from enumchoicefield import ChoiceEnum
 
 
@@ -51,6 +53,21 @@ class AppModel(ChoiceEnum):
 
 
 class GroupType(ChoiceEnum):
+    TIHLDE = "TIHLDE"
+    BOARD = "Styre"
+    SUBGROUP = "Undergruppe"
+    COMMITTEE = "Komité"
+    STUDYYEAR = "Studieår"
+    STUDY = "Studie"
+    INTERESTGROUP = "Interesse Gruppe"
+    OTHER = "Annet"
+
+    @classmethod
+    def public_groups(cls):
+        return [cls.BOARD, cls.SUBGROUP, cls.COMMITTEE, cls.INTERESTGROUP]
+
+
+class GroupTypeV2(models.TextChoices):
     TIHLDE = "TIHLDE"
     BOARD = "Styre"
     SUBGROUP = "Undergruppe"
