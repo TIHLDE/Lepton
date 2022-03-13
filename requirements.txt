@@ -59,10 +59,5 @@ factory-boy == 3.2.1
 pytest-factoryboy == 2.1.0
 pytest-lazy-fixture==0.6.3
 
-# PDF
-fpdf==1.7.2
-pdf2image==1.16.0
-pillow-heif==0.1.2
-
 # CSV
 djangorestframework-csv==2.1.1
