@@ -13,12 +13,8 @@ services:
     container_name: celery
     entrypoint: []
     command: celery --app app worker --task-events --beat --loglevel info
-  flower:
-    image: leptondevregistry.azurecr.io/lepton:latest
-    container_name: flower
-    entrypoint: []
-    command: celery --app app flower --url_prefix=flower/admin
+  rabbitmq:
+    image: rabbitmq:3.9.13
+    container_name: rabbitmq
     ports:
-      - 5555:5555
-    depends_on:
-      - celery
+        - 5672:5672

@@ -66,6 +66,7 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
     """ Cronjob fields """
     runned_post_event_actions = models.BooleanField(default=False)
     runned_sign_off_deadline_reminder = models.BooleanField(default=False)
+    runned_sign_up_start_notifier = models.BooleanField(default=False)
 
     class Meta:
         ordering = ("start_date",)
