@@ -50,3 +50,12 @@ services:
     entrypoint: []
     command: celery --app app worker --task-events --beat --loglevel info
     ports: []
+
+  rabbitmq:
+    image: rabbitmq:3.9.13
+    container_name: rabbitmq
+    ports:
+        - 5672:5672
+    volumes:
+        - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
+        - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq

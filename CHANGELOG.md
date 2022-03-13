@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+- ⚡ **RabbitMQ**. Kjører nå RabbitMQ i Docker-Compose istedenfor i en egen instans.
 - ✨ **Arrangementer**. Varsel om at påmelding har åpnet sendes nå i Slack.
 - ✨ **Arrangementsprioriteringer** kan nå lages med grupper og ikke kun for klasser.
 
