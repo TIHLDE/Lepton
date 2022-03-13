@@ -16,4 +16,6 @@ class CustomShortName(BaseModel):
             ),
         ),
     )
-    emoji = models.ForeignKey(CustomEmoji, on_delete=models.CASCADE)
+    emoji = models.ForeignKey(
+        CustomEmoji, related_name="short_names", on_delete=models.CASCADE
+    )
