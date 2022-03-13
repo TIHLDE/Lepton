@@ -1,16 +1,30 @@
+from django.utils.text import slugify
 from rest_framework import status
 
 import pytest
 
+from app.common.enums import GroupType
 from app.content.factories.registration_factory import RegistrationFactory
 from app.content.factories.strike_factory import StrikeFactory
 from app.content.factories.user_factory import UserFactory
+from app.content.models import User
 from app.forms.enums import EventFormType
 from app.forms.tests.form_factories import EventFormFactory, SubmissionFactory
+from app.group.models import Group
 
 pytestmark = pytest.mark.django_db
 
 API_USER_BASE_URL = "/users/"
+
+
+@pytest.fixture
+def dataing():
+    return Group.objects.get(slug=slugify("Dataingeniør"), type=GroupType.STUDY)
+
+
+@pytest.fixture
+def group2019():
+    return Group.objects.get(slug="2019", type=GroupType.STUDYYEAR)
 
 
 def _get_user_detail_url(user):
@@ -26,6 +40,8 @@ def _get_user_post_data():
         "user_study": 2,
         "user_id": "olanord",
         "password": "SuperSecurePassword",
+        "study": slugify("Dataingeniør"),
+        "class": "2019",
     }
 
 
@@ -262,22 +278,18 @@ def test_list_as_anonymous_user(user, api_client):
 
 def test_list_as_member(member, api_client):
     """A member should be able to list all users."""
-    UserFactory()
     client = api_client(user=member)
     response = client.get(API_USER_BASE_URL)
 
     assert response.status_code == status.HTTP_200_OK
-    assert response.json()["count"] == 2
 
 
 def test_list_as_member_of_admin_group(admin_user, api_client):
     """An admin should be able to list all users."""
-    UserFactory()
     client = api_client(user=admin_user)
     response = client.get(API_USER_BASE_URL)
 
     assert response.status_code == status.HTTP_200_OK
-    assert response.json()["count"] == 2
 
 
 def test_update_user_as_anonymous(default_client, user):
@@ -347,6 +359,49 @@ def test_create_as_anonymous(default_client):
     """An anonymous user should be able to create a new user."""
     data = _get_user_post_data()
     response = default_client.post(API_USER_BASE_URL, data)
+
+    assert response.status_code == status.HTTP_201_CREATED
+
+
+def test_create_correctly_assigns_fields(api_client):
+    client = api_client()
+    data = _get_user_post_data()
+
+    client.post(API_USER_BASE_URL, data)
+
+    user = User.objects.get(user_id=data.get("user_id"))
+
+    assert user.email == data["email"]
+    assert user.first_name == data["first_name"]
+    assert user.last_name == data["last_name"]
+    assert user.user_study == data["user_study"]
+    assert user.user_class == data["user_class"]
+
+
+def test_create_adds_user_to_class_group(api_client, dataing, group2019):
+    data = _get_user_post_data()
+    response = api_client().post(API_USER_BASE_URL, data)
+
+    user_id = response.json().get("detail").get("user_id")
+
+    assert dataing.members.filter(user_id=user_id).exists()
+
+
+def test_create_adds_user_to_study_group(api_client, dataing, group2019):
+    data = _get_user_post_data()
+    response = api_client().post(API_USER_BASE_URL, data)
+
+    user_id = response.json().get("detail").get("user_id")
+
+    assert group2019.members.filter(user_id=user_id).exists()
+
+
+def test_that_user_can_be_created_without_any_groups(api_client):
+    data = _get_user_post_data()
+    data["study"] = None
+    data["class"] = None
+
+    response = api_client().post(API_USER_BASE_URL, data)
 
     assert response.status_code == status.HTTP_201_CREATED
 

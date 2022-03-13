@@ -14,7 +14,9 @@
 
 ## Neste versjon
 - 🦟 **Bruker**. Fikset bug som hindret brukere i å slette sin egen bruker.
+- ⚡ **RabbitMQ**. Kjører nå RabbitMQ i Docker-Compose istedenfor i en egen instans.
 - ✨ **Arrangementer**. Varsel om at påmelding har åpnet sendes nå i Slack.
+- ✨ **Arrangementsprioriteringer** kan nå lages med grupper og ikke kun for klasser.
 
 ## Versjon 2022.03.05
 - 🦟 **Bilder**. Fikset feil som oppstod ved opplastning av profilbilde.

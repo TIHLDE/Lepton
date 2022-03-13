@@ -96,7 +96,6 @@ INSTALLED_APPS = [
     "app.util",
     "app.career",
     "app.forms",
-    "app.payment",
     "app.gallery",
     "app.badge",
 ]
@@ -272,6 +271,6 @@ LOGGING = {
 
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
-CELERY_BROKER_URL = os.environ.get("CELERY_URL")
+CELERY_BROKER_URL = "amqp://guest:guest@rabbitmq:5672"
 if ENVIRONMENT == EnvironmentOptions.LOCAL:
     CELERY_TASK_ALWAYS_EAGER = True

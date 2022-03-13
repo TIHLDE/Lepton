@@ -21,8 +21,6 @@ from rest_framework import permissions
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 
-from app.flower import flower_admin_site
-
 schema_view = get_schema_view(
     openapi.Info(
         title="LEPTON API",
@@ -36,7 +34,6 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
-    path("flower/", flower_admin_site.urls),
     path(
         "",
         schema_view.with_ui("swagger", cache_timeout=0),
@@ -49,7 +46,6 @@ urlpatterns = [
     path("", include("app.communication.urls")),
     path("", include("app.content.urls")),
     path("", include("app.group.urls")),
-    path("", include("app.payment.urls")),
     path("auth/", include("app.authentication.urls")),
     path("badges/", include("app.badge.urls")),
     path("forms/", include("app.forms.urls")),
