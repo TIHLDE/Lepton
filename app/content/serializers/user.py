@@ -1,3 +1,4 @@
+from django.contrib.auth.hashers import make_password
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
@@ -125,6 +126,8 @@ class UserCreateSerializer(serializers.ModelSerializer):
         class_ = validated_data.pop("class", None)
 
         user = User.objects.create_user(**validated_data)
+        user.set_password(validated_data["password"])
+        user.save()
 
         if study and class_:
             self.add_user_to_class_and_study(user, study, class_)
