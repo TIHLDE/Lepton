@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+- 🦟 **Badge**. Fikset en at ikke godkjente brukere var med i beregning til andel ervervet.
 ## Versjon 2022.03.13
 - 🦟 **Bruker**. Fikset bug som hindret brukere i å slette sin egen bruker.
 - ⚡ **RabbitMQ**. Kjører nå RabbitMQ i Docker-Compose istedenfor i en egen instans.
