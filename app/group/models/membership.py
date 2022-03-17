@@ -70,6 +70,10 @@ class Membership(BaseModel, BasePermissionModel):
         ).is_leader()
 
     @classmethod
+    def has_read_permission(cls, request):
+        return request.user is not None
+
+    @classmethod
     def has_write_permission(cls, request):
         try:
             return cls._check_request_user_is_leader(
