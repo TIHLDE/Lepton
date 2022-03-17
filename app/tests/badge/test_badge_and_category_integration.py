@@ -1,10 +1,6 @@
 from datetime import timedelta
 
 from rest_framework import status
-from app.content.models.user import User
-from app.group.models.membership import Membership
-from app.tests.conftest import member_client
-from app.tests.content.test_user_integration import user_with_strike
 
 import pytest
 
