@@ -10,4 +10,3 @@ from app.content.views.page import PageViewSet
 from app.content.views.short_link import ShortLinkViewSet
 from app.content.views.upload import upload
 from app.content.views.strike import StrikeViewSet
-from app.content.views.gdpr import gdpr

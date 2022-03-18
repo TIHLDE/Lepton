@@ -9,6 +9,7 @@ from app.content.factories import (
     EventFactory,
     PriorityFactory,
     RegistrationFactory,
+    StrikeFactory,
     UserFactory,
 )
 from app.content.factories.priority_pool_factory import PriorityPoolFactory
@@ -568,3 +569,34 @@ def test_create_registration_on_priority_only_event_when_user_is_prioritized():
     event.save()
 
     RegistrationFactory(event=event, user=user_in_priority_pool)
+
+
+@pytest.mark.parametrize(
+    ("enable_strikes"),
+    [
+        (False),
+        (True),
+    ],
+)
+def test_strikes_has_no_effect_if_event_has_strikes_disabled(enable_strikes):
+    """
+    Tests if a user is prioritized even if they have 3 strikes, if the event
+    has enforces_previous_strikes set to false
+    """
+
+    user_in_priority_pool = UserFactory(
+        user_study=UserStudy.DATAING.value, user_class=UserClass.FIRST.value
+    )
+
+    StrikeFactory(user=user_in_priority_pool, strike_size=3)
+    event = EventFactory(
+        limit=1, only_allow_prioritized=True, enforces_previous_strikes=enable_strikes
+    )
+
+    priority = PriorityFactory(user_study=UserStudy.DATAING, user_class=UserClass.FIRST)
+    event.registration_priorities.add(priority)
+
+    event.save()
+    registration = RegistrationFactory.build(event=event, user=user_in_priority_pool)
+    is_prioritized = not enable_strikes
+    assert registration.is_prioritized == is_prioritized
