@@ -43,7 +43,7 @@ class PictureViewSet(BaseViewSet):
 
         if errors == 0:
             return Response(
-                "Alle bildene ble lastet opp og lagt til i albumet",
+                {"detail": "Alle bildene ble lastet opp og lagt til i albumet"},
                 status=status.HTTP_201_CREATED,
             )
         if errors == len(files):
