@@ -203,7 +203,7 @@ class Registration(BaseModel, BasePermissionModel):
 
     @property
     def is_prioritized(self):
-        if self.user.number_of_strikes >= 3:
+        if self.user.number_of_strikes >= 3 and self.event.enforces_previous_strikes:
             return False
 
         user_class, user_study = EnumUtils.get_user_enums(**self.user.__dict__)
