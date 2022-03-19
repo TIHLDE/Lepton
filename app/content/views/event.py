@@ -131,6 +131,25 @@ class EventViewSet(BaseViewSet, ActionMixin):
 
     @action(
         detail=True,
+        methods=["get", "put"],
+        url_path="interested",
+        permission_classes=(IsMember,),
+    )
+    def user_interested(self, request, pk, *args, **kwargs):
+        event = get_object_or_404(Event, id=pk)
+
+        if request.method == "PUT":
+            if request.data["is_interested"]:
+                event.interested_users.add(request.user)
+            else:
+                event.interested_users.remove(request.user)
+
+        return Response(
+            {"is_interested": event.interested_users.filter(user_id=request.user.user_id).exists()}, status=status.HTTP_200_OK
+        )
+
+    @action(
+        detail=True,
         methods=["get"],
         url_path="public_registrations",
         permission_classes=(IsMember,),

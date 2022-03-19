@@ -39,6 +39,8 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
         related_name="events",
     )
 
+    interested_users = models.ManyToManyField(User, related_name="interested_events")
+
     """ Strike fields """
     can_cause_strikes = models.BooleanField(default=True)
     enforces_previous_strikes = models.BooleanField(default=True)
