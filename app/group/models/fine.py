@@ -4,6 +4,7 @@ from django.db import models
 
 from app.common.enums import AdminGroup
 from app.common.permissions import BasePermissionModel, check_has_access
+from app.communication.enums import UserNotificationSettingType
 from app.content.models.user import User
 from app.group.exceptions import UserIsNotInGroup
 from app.group.models.group import Group
@@ -50,7 +51,9 @@ class Fine(BaseModel, BasePermissionModel):
         from app.communication.notifier import Notify
 
         Notify(
-            [self.user], f"Du har fått en bot i gruppen {self.group.name}"
+            [self.user],
+            f"Du har fått en bot i gruppen {self.group.name}",
+            UserNotificationSettingType.FINE,
         ).send_notification(
             description=f'{self.created_by.first_name} {self.created_by.last_name} har gitt deg {self.amount} bøter for å ha brutt paragraf "{self.description}" i gruppen {self.group.name}',
             link=f"/grupper/{self.group.slug}/boter/",

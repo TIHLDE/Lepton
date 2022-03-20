@@ -18,6 +18,7 @@ from app.common.permissions import (
     is_admin_user,
 )
 from app.common.viewsets import BaseViewSet
+from app.communication.enums import UserNotificationSettingType
 from app.communication.notifier import Notify
 from app.content.filters import UserFilter
 from app.content.models import User
@@ -139,21 +140,17 @@ class UserViewSet(BaseViewSet, ActionMixin):
 
         if not code:
             return Response(
-                {
-                    "detail": 'Du må sende med "code" fra Slack-autentisering'
-                },
+                {"detail": 'Du må sende med "code" fra Slack-autentisering'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         from app.communication.slack import get_slack_user_id
 
         user.slack_user_id = get_slack_user_id(code)
-        user.save(update_fields=['slack_user_id'])
-        
+        user.save(update_fields=["slack_user_id"])
+
         return Response(
-            {
-                "detail": "Vi koblet brukeren din på TIHLDE.org til din Slack-bruker"
-            },
+            {"detail": "Vi koblet brukeren din på TIHLDE.org til din Slack-bruker"},
             status=status.HTTP_200_OK,
         )
 
@@ -297,7 +294,9 @@ class UserViewSet(BaseViewSet, ActionMixin):
         user_id = request.data["user_id"]
         user = get_object_or_404(User, user_id=user_id)
         Membership.objects.get_or_create(user=user, group=TIHLDE)
-        Notify([user], "Brukeren din er godkjent").send_email(
+        Notify(
+            [user], "Brukeren din er godkjent", UserNotificationSettingType.OTHER
+        ).send_email(
             MailCreator("Brukeren din er godkjent")
             .add_paragraph(f"Hei {user.first_name}!")
             .add_paragraph(
@@ -328,7 +327,9 @@ class UserViewSet(BaseViewSet, ActionMixin):
         except KeyError:
             reason = "Begrunnelse er ikke oppgitt"
         user = get_object_or_404(User, user_id=user_id)
-        Notify([user], "Brukeren din ble ikke godkjent").send_email(
+        Notify(
+            [user], "Brukeren din ble ikke godkjent", UserNotificationSettingType.OTHER
+        ).send_email(
             MailCreator("Brukeren din ble ikke godkjent")
             .add_paragraph(f"Hei {user.first_name}!")
             .add_paragraph(

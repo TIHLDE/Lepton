@@ -12,6 +12,7 @@ from app.common.mixins import ActionMixin
 from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission, IsMember
 from app.common.viewsets import BaseViewSet
+from app.communication.enums import UserNotificationSettingType
 from app.communication.events import (
     EventGiftCardAmountMismatchError,
     send_gift_cards_by_email,
@@ -157,7 +158,7 @@ class EventViewSet(BaseViewSet, ActionMixin):
             self.check_object_permissions(self.request, event)
 
             users = User.objects.filter(registrations__in=event.get_participants())
-            Notify(users, title).send_email(
+            Notify(users, title, UserNotificationSettingType.OTHER).send_email(
                 MailCreator(title)
                 .add_paragraph(f"Arrangøren av {event.title} har en melding til deg:")
                 .add_paragraph(message)

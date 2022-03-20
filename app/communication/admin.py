@@ -1,6 +1,11 @@
 from django.contrib import admin
 
-from app.communication.models import Mail, Notification, UserNotificationSetting, Warning
+from app.communication.models import (
+    Mail,
+    Notification,
+    UserNotificationSetting,
+    Warning,
+)
 
 
 class MailAdmin(admin.ModelAdmin):
@@ -11,7 +16,17 @@ class MailAdmin(admin.ModelAdmin):
     )
 
 
+class UserNotificationSettingAdmin(admin.ModelAdmin):
+    list_filter = (
+        "email",
+        "website",
+        "slack",
+        "notification_type",
+        "user",
+    )
+
+
 admin.site.register(Mail, MailAdmin)
 admin.site.register(Notification)
-admin.site.register(UserNotificationSetting)
+admin.site.register(UserNotificationSetting, UserNotificationSettingAdmin)
 admin.site.register(Warning)

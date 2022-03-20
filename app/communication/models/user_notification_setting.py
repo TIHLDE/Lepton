@@ -1,6 +1,6 @@
 from django.db import models
-from app.communication.enums import UserNotificationSettingType
 
+from app.communication.enums import UserNotificationSettingType
 from app.content.models.user import User
 from app.util.models import BaseModel
 
@@ -9,7 +9,7 @@ class UserNotificationSetting(BaseModel):
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="user_notification_settings"
     )
-    type = models.CharField(
+    notification_type = models.CharField(
         max_length=30, choices=UserNotificationSettingType.choices
     )
 
@@ -18,13 +18,15 @@ class UserNotificationSetting(BaseModel):
     slack = models.BooleanField(default=True)
 
     class Meta:
-        unique_together = ("user", "type")
+        unique_together = ("user", "notification_type")
         verbose_name = "User notification setting"
         verbose_name_plural = "User notification settings"
-        ordering = ("type",)
+        ordering = ("notification_type",)
 
     def __str__(self):
-        return f"UserNotificationSetting for {self.user}, type: {self.type}"
+        return (
+            f"UserNotificationSetting for {self.user}, type: {self.notification_type}"
+        )
 
     @classmethod
     def has_read_permission(cls, request):

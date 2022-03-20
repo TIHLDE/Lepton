@@ -6,6 +6,7 @@ from sentry_sdk import capture_exception
 
 from app.celery import app
 from app.common.enums import AdminGroup
+from app.communication.enums import UserNotificationSettingType
 from app.communication.notifier import Notify
 from app.communication.slack import Slack
 from app.constants import (
@@ -93,7 +94,9 @@ def __sign_off_deadline_reminder(event, *args, **kwargs):
         if event.can_cause_strikes:
             description_not_on_wait += " Du kan melde deg av etter avmeldingsfristen og helt frem til 2 timer før arrangementsstart, men du vil da få 1 prikk. Dersom du ikke møter opp vil du få 2 prikker."
         Notify(
-            users_not_on_wait, f"Påminnelse om avmeldingsfrist for {event.title}"
+            users_not_on_wait,
+            f"Påminnelse om avmeldingsfrist for {event.title}",
+            UserNotificationSettingType.EVENT_SIGN_OFF_DEADLINE,
         ).send_email(
             MailCreator("Påminnelse om avmeldingsfrist")
             .add_paragraph("Hei!")
@@ -110,7 +113,9 @@ def __sign_off_deadline_reminder(event, *args, **kwargs):
     if users_on_wait.exists():
         description_on_wait = f"Dette er en påminnelse om at avmeldingsfristen for {event.title} er imorgen. Det forventes at du som står på venteliste kan møte opp dersom det blir en ledig plass. Dette gjelder helt frem til 2 timer før arrangementets starttid. Det er ditt ansvar å melde deg av ventelisten, hvis det ikke passer allikevel."
         Notify(
-            users_on_wait, f"Påminnelse om avmeldingsfrist for {event.title}"
+            users_on_wait,
+            f"Påminnelse om avmeldingsfrist for {event.title}",
+            UserNotificationSettingType.EVENT_SIGN_OFF_DEADLINE,
         ).send_email(
             MailCreator("Påminnelse om avmeldingsfrist")
             .add_paragraph("Hei!")
@@ -143,7 +148,11 @@ def __post_event_actions(event, *args, **kwargs):
             "Undersøkelsen tar ca 1 minutt å svare på, og er til stor hjelp for fremtidige arrangementer. Takk på forhånd!",
             "PS: Du kan ikke melde deg på flere arrangementer gjennom TIHLDE.org før du har svart på denne undersøkelsen. Du kan alltid finne alle dine ubesvarte spørreskjemaer i profilen din.",
         ]
-        Notify(users, f"Evaluering av {event.title}").send_email(
+        Notify(
+            users,
+            f"Evaluering av {event.title}",
+            UserNotificationSettingType.EVENT_EVALUATION,
+        ).send_email(
             MailCreator(f"Evaluering av {event.title}")
             .add_paragraph("Hei!")
             .add_paragraph(description[0])

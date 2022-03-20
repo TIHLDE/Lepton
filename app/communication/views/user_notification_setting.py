@@ -1,15 +1,18 @@
 from rest_framework import mixins, status
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
 from app.common.mixins import LoggingViewSetMixin
 from app.common.permissions import BasicViewPermission
-from app.common.viewsets import BaseViewSet
+from app.communication.enums import UserNotificationSettingType
 from app.communication.models import UserNotificationSetting
 from app.communication.serializers import UserNotificationSettingSerializer
 
 
-class UserNotificationSettingViewSet(LoggingViewSetMixin, mixins.CreateModelMixin, mixins.ListModelMixin, GenericViewSet):
+class UserNotificationSettingViewSet(
+    LoggingViewSetMixin, mixins.CreateModelMixin, mixins.ListModelMixin, GenericViewSet
+):
 
     queryset = UserNotificationSetting.objects.all()
     serializer_class = UserNotificationSettingSerializer
@@ -21,16 +24,34 @@ class UserNotificationSettingViewSet(LoggingViewSetMixin, mixins.CreateModelMixi
     def create(self, request, *args, **kwargs):
         user = request.user
         try:
-            user_notification_setting = UserNotificationSetting.objects.get(user=user, type=request.data['type'])
+            user_notification_setting = UserNotificationSetting.objects.get(
+                user=user, notification_type=request.data["notification_type"]
+            )
             for key, value in request.data.items():
                 setattr(user_notification_setting, key, value)
             user_notification_setting.full_clean()
             user_notification_setting.save()
         except UserNotificationSetting.DoesNotExist:
-            user_notification_setting = UserNotificationSetting(user=user, **request.data)
+            user_notification_setting = UserNotificationSetting(
+                user=user, **request.data
+            )
             user_notification_setting.full_clean()
             user_notification_setting.save()
         user_notification_setting_serializer = UserNotificationSettingSerializer(
             user_notification_setting
         )
-        return Response(user_notification_setting_serializer.data, status=status.HTTP_200_OK)
+        return Response(
+            user_notification_setting_serializer.data, status=status.HTTP_200_OK
+        )
+
+    @action(detail=False, methods=["get"], url_path="choices")
+    def choices(self, request, *args, **kwargs):
+        return Response(
+            list(
+                map(
+                    lambda choice: {"notification_type": choice[0], "label": choice[1]},
+                    UserNotificationSettingType.choices,
+                )
+            ),
+            status=status.HTTP_200_OK,
+        )

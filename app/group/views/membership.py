@@ -9,6 +9,7 @@ from app.common.enums import MembershipType
 from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission, IsLeader, is_admin_user
 from app.common.viewsets import BaseViewSet
+from app.communication.enums import UserNotificationSettingType
 from app.communication.notifier import Notify
 from app.content.models import User
 from app.group.filters.membership import MembershipFilter
@@ -54,7 +55,11 @@ class MembershipViewSet(BaseViewSet):
             ):
                 title = f"Du er nå leder i gruppen {membership.group.name}"
                 description = f"Du har blitt gjort til leder i gruppen {membership.group.name}. Gratulerer så mye og lykke til!"
-                Notify([membership.user], title).send_email(
+                Notify(
+                    [membership.user],
+                    title,
+                    UserNotificationSettingType.GROUP_MEMBERSHIP,
+                ).send_email(
                     MailCreator(title)
                     .add_paragraph(f"Hei {membership.user.first_name}!")
                     .add_paragraph(description)
@@ -86,7 +91,9 @@ class MembershipViewSet(BaseViewSet):
             self._log_on_create(serializer)
             title = f"Du er nå med i gruppen {membership.group.name}"
             description = f"Du har blitt lagt til som medlem i gruppen {membership.group.name}. Gratulerer så mye og lykke til!"
-            Notify([membership.user], title).send_email(
+            Notify(
+                [membership.user], title, UserNotificationSettingType.GROUP_MEMBERSHIP
+            ).send_email(
                 MailCreator(title)
                 .add_paragraph(f"Hei {membership.user.first_name}!")
                 .add_paragraph(description)

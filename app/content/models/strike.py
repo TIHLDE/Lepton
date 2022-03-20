@@ -7,6 +7,7 @@ from django.db.models.aggregates import Sum
 
 from app.common.enums import AdminGroup
 from app.common.permissions import BasePermissionModel, check_has_access
+from app.communication.enums import UserNotificationSettingType
 from app.content.models import Event
 from app.util.models import BaseModel
 from app.util.utils import getTimezone, now
@@ -95,7 +96,9 @@ class Strike(BaseModel, BasePermissionModel):
 
             strike_info = "Prikken varer i 20 dager. Ta kontakt med arrangøren om du er uenig. Konsekvenser kan sees i arrangementsreglene. Du kan finne dine aktive prikker og mer info om dem i profilen."
 
-            Notify([self.user], "Du har fått en prikk").send_email(
+            Notify(
+                [self.user], "Du har fått en prikk", UserNotificationSettingType.STRIKE
+            ).send_email(
                 MailCreator("Du har fått en prikk")
                 .add_paragraph(f"Hei {self.user.first_name}!")
                 .add_paragraph(self.description)

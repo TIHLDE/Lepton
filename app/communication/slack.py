@@ -79,7 +79,5 @@ def get_slack_user_id(code: str):
     )
 
     user_token = token_response.get("access_token")
-    user_info_response = WebClient(
-        token=user_token
-    ).openid_connect_userInfo()
+    user_info_response = WebClient(token=user_token).openid_connect_userInfo()
     return user_info_response.get("https://slack.com/user_id")

@@ -3,22 +3,29 @@ from typing import Optional
 
 from django.core.mail import EmailMultiAlternatives
 from django.utils.html import strip_tags
-from app.communication.slack import Slack
-from app.content.models.user import User
 
 from sentry_sdk import capture_exception
 
+from app.communication.enums import UserNotificationSettingType
+from app.communication.slack import Slack
+from app.content.models.user import User
 from app.util.utils import chunk_list
 
 
 class Notify:
-    def __init__(self, users: list[User], title: str):
+    def __init__(
+        self,
+        users: list[User],
+        title: str,
+        notificationType: UserNotificationSettingType,
+    ):
         """
         users -> The users to be notified\n
         title -> Title of the notification
         """
         self.users = users
         self.title = title
+        self.notificationType = notificationType
 
     def send_email(self, html: str, subject: Optional[str] = None):
         """
@@ -33,7 +40,11 @@ class Notify:
         if len(self.users) > 0:
             mail = Mail.objects.create(subject=subject, body=html)
 
-            mail.users.add(*self.users)
+            for user in self.users:
+                if not user.user_notification_settings.filter(
+                    notification_type=self.notificationType, email=False
+                ).exists():
+                    mail.users.add(user)
 
         return self
 
@@ -42,11 +53,19 @@ class Notify:
         slack -> A Slack-object with the content to be sent to each user
         """
         for user in filter(lambda user: bool(user.slack_user_id), self.users):
-            slack.send(user.slack_user_id)
+            if not user.user_notification_settings.filter(
+                notification_type=self.notificationType, slack=False
+            ).exists():
+                slack.send(user.slack_user_id)
 
         return self
 
-    def send_notification(self, title: Optional[str] = None, description: Optional[str] = None, link: Optional[str] = None):
+    def send_notification(
+        self,
+        title: Optional[str] = None,
+        description: Optional[str] = None,
+        link: Optional[str] = None,
+    ):
         """
         title -> Title in notification, defaults to given title\n
         description -> Description in notification, defaults to blank string\n
@@ -62,9 +81,14 @@ class Notify:
         bulk_inserts = []
 
         for user in self.users:
-            bulk_inserts.append(
-                Notification(user=user, title=title, description=description, link=link)
-            )
+            if not user.user_notification_settings.filter(
+                notification_type=self.notificationType, website=False
+            ).exists():
+                bulk_inserts.append(
+                    Notification(
+                        user=user, title=title, description=description, link=link
+                    )
+                )
 
         if bulk_inserts:
             Notification.objects.bulk_create(bulk_inserts, batch_size=1000)
@@ -72,7 +96,9 @@ class Notify:
         return self
 
 
-def send_html_email(to_mails: list[str], html: str, subject: str, attachments=None) -> bool:
+def send_html_email(
+    to_mails: list[str], html: str, subject: str, attachments=None
+) -> bool:
     """
     to_mails -> Email-addresses of receivers\n
     html -> The email HTML to be sent to the receivers\n

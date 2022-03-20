@@ -5,4 +5,9 @@ from app.communication.models import UserNotificationSetting
 class UserNotificationSettingSerializer(BaseModelSerializer):
     class Meta:
         model = UserNotificationSetting
-        fields = ("type", "email", "website", "slack",)
+        fields = (
+            "notification_type",
+            "email",
+            "website",
+            "slack",
+        )

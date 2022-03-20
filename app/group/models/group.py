@@ -6,6 +6,7 @@ from enumchoicefield import EnumChoiceField
 
 from app.common.enums import AdminGroup, GroupType
 from app.common.permissions import BasePermissionModel, set_user_id
+from app.communication.enums import UserNotificationSettingType
 from app.content.models.user import User
 from app.util.models import BaseModel, OptionalImage
 
@@ -64,7 +65,9 @@ class Group(OptionalImage, BaseModel, BasePermissionModel):
             "Lykke til!",
         ]
         Notify(
-            [self.fines_admin], f"Du har blitt botsjef for gruppen {self.name}"
+            [self.fines_admin],
+            f"Du har blitt botsjef for gruppen {self.name}",
+            UserNotificationSettingType.OTHER,
         ).send_email(
             MailCreator(f"Du har blitt botsjef for gruppen {self.name}")
             .add_paragraph(description[0])
