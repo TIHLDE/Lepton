@@ -55,7 +55,7 @@ class Slack:
         Add a link to a given event
         """
         return self.add_link(
-            "Se arrangement", f"{settings.WEBSITE_URL}/arrangementer/{event_id}/"
+            "Åpne arrangement", f"{settings.WEBSITE_URL}/arrangementer/{event_id}/"
         )
 
     def add_image(self, image_url: str, image_alt: str):
