@@ -18,6 +18,7 @@ from app.communication.events import (
     send_gift_cards_by_email,
 )
 from app.communication.notifier import Notify
+from app.communication.slack import Slack
 from app.constants import MAIL_INDEX
 from app.content.filters import EventFilter
 from app.content.models import Event, User
@@ -157,16 +158,25 @@ class EventViewSet(BaseViewSet, ActionMixin):
             event = self.get_object()
             self.check_object_permissions(self.request, event)
 
+            description = (
+                f"Arrangøren av {event.title} har en melding til deg: {message}"
+            )
+
             users = User.objects.filter(registrations__in=event.get_participants())
             Notify(users, title, UserNotificationSettingType.OTHER).send_email(
                 MailCreator(title)
-                .add_paragraph(f"Arrangøren av {event.title} har en melding til deg:")
+                .add_paragraph(description)
                 .add_paragraph(message)
                 .add_event_button(event.pk)
                 .generate_string()
             ).send_notification(
-                description=f"Arrangøren av {event.title} har en melding til deg: {message}",
+                description=description,
                 link=event.website_url,
+            ).send_slack(
+                Slack(title)
+                .add_header(title)
+                .add_markdwn(description)
+                .add_event_link(event.pk)
             )
 
             return Response(

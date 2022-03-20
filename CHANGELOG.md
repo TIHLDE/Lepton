@@ -13,6 +13,9 @@
 ---
 
 ## Neste versjon
+- ✨ **Slack**. Brukere kan koble kontoen sin til sin Slack-konto for å motta varsler i Slack.
+- ⚡ **Varsler**. Brukere kan styre hvor de ønsker å motta forskjellige typer varsler.
+
 ## Versjon 2022.03.13
 - 🦟 **Bruker**. Fikset bug som hindret brukere i å slette sin egen bruker.
 - ⚡ **RabbitMQ**. Kjører nå RabbitMQ i Docker-Compose istedenfor i en egen instans.

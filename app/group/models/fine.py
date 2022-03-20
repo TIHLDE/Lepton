@@ -1,13 +1,16 @@
 import uuid
 
+from django.conf import settings
 from django.db import models
 
 from app.common.enums import AdminGroup
 from app.common.permissions import BasePermissionModel, check_has_access
 from app.communication.enums import UserNotificationSettingType
+from app.communication.slack import Slack
 from app.content.models.user import User
 from app.group.exceptions import UserIsNotInGroup
 from app.group.models.group import Group
+from app.util.mail_creator import MailCreator
 from app.util.models import BaseModel
 
 
@@ -50,13 +53,25 @@ class Fine(BaseModel, BasePermissionModel):
     def notify_user(self):
         from app.communication.notifier import Notify
 
-        Notify(
-            [self.user],
-            f"Du har fått en bot i gruppen {self.group.name}",
-            UserNotificationSettingType.FINE,
+        title = f'Du har fått en bot i "{self.group.name}"'
+        description = f'{self.created_by.first_name} {self.created_by.last_name} har gitt deg {self.amount} bøter for å ha brutt paragraf "{self.description}" i gruppen {self.group.name}'
+        Notify([self.user], title, UserNotificationSettingType.FINE,).send_email(
+            MailCreator(title)
+            .add_paragraph(description)
+            .add_button(
+                "Gå til bøter", f"{settings.WEBSITE_URL}{self.group.website_url}boter/"
+            )
+            .generate_string()
         ).send_notification(
-            description=f'{self.created_by.first_name} {self.created_by.last_name} har gitt deg {self.amount} bøter for å ha brutt paragraf "{self.description}" i gruppen {self.group.name}',
-            link=f"/grupper/{self.group.slug}/boter/",
+            description=description,
+            link=f"{self.group.website_url}boter/",
+        ).send_slack(
+            Slack(title)
+            .add_header(title)
+            .add_markdwn(description)
+            .add_link(
+                "Gå til bøter", f"{settings.WEBSITE_URL}{self.group.website_url}boter/"
+            )
         )
 
     def save(self, *args, **kwargs):

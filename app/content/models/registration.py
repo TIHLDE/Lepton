@@ -8,6 +8,7 @@ from app.common.enums import StrikeEnum
 from app.common.permissions import BasePermissionModel
 from app.communication.enums import UserNotificationSettingType
 from app.communication.notifier import Notify
+from app.communication.slack import Slack
 from app.content.exceptions import (
     EventIsFullError,
     EventSignOffDeadlineHasPassed,
@@ -159,17 +160,17 @@ class Registration(BaseModel, BasePermissionModel):
     def send_notification_and_mail(self):
         has_not_attended = not self.has_attended
         if not self.is_on_wait and has_not_attended:
+            title = f'Du har fått plass på "{self.event.title}"'
             description = [
-                f"Du er påmeldt {self.event.title}!",
                 f"Arrangementet starter {datetime_format(self.event.start_date)} og vil være på {self.event.location}.",
                 f"Du kan melde deg av innen {datetime_format(self.event.sign_off_deadline)}.",
             ]
             Notify(
                 [self.user],
-                f"Du har fått plass på {self.event.title}",
+                title,
                 UserNotificationSettingType.REGISTRATION,
             ).send_email(
-                MailCreator("Du er påmeldt")
+                MailCreator(title)
                 .add_paragraph(f"Hei {self.user.first_name}!")
                 .add_paragraph(description[0])
                 .add_paragraph(description[1])
@@ -178,8 +179,14 @@ class Registration(BaseModel, BasePermissionModel):
                 .generate_string()
             ).send_notification(
                 description=" ".join(description), link=self.event.website_url
+            ).send_slack(
+                Slack(title)
+                .add_header(title)
+                .add_markdwn(" ".join(description))
+                .add_event_link(self.event.pk)
             )
         elif self.is_on_wait and has_not_attended:
+            title = f'Venteliste for "{self.event.title}"'
             description = [
                 f"På grunn av stor pågang har du blitt satt på venteliste for {self.event.title}.",
                 "Dersom noen melder seg av vil du automatisk bli flyttet opp på listen. Du vil få beskjed dersom du får plass på arrangementet.",
@@ -187,10 +194,10 @@ class Registration(BaseModel, BasePermissionModel):
             ]
             Notify(
                 [self.user],
-                f"Venteliste for {self.event.title}",
+                title,
                 UserNotificationSettingType.REGISTRATION,
             ).send_email(
-                MailCreator("Du er på ventelisten")
+                MailCreator(title)
                 .add_paragraph(f"Hei {self.user.first_name}!")
                 .add_paragraph(description[0])
                 .add_paragraph(description[1])
@@ -200,6 +207,11 @@ class Registration(BaseModel, BasePermissionModel):
             ).send_notification(
                 description=" ".join(description),
                 link=self.event.website_url,
+            ).send_slack(
+                Slack(title)
+                .add_header(title)
+                .add_markdwn("\n".join(description))
+                .add_event_link(self.event.pk)
             )
 
     def should_swap_with_non_prioritized_user(self):

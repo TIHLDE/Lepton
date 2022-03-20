@@ -8,6 +8,7 @@ from django.db.models.aggregates import Sum
 from app.common.enums import AdminGroup
 from app.common.permissions import BasePermissionModel, check_has_access
 from app.communication.enums import UserNotificationSettingType
+from app.communication.slack import Slack
 from app.content.models import Event
 from app.util.models import BaseModel
 from app.util.utils import getTimezone, now
@@ -94,18 +95,19 @@ class Strike(BaseModel, BasePermissionModel):
             from app.communication.notifier import Notify
             from app.util.mail_creator import MailCreator
 
+            title = "Du har fått en prikk"
             strike_info = "Prikken varer i 20 dager. Ta kontakt med arrangøren om du er uenig. Konsekvenser kan sees i arrangementsreglene. Du kan finne dine aktive prikker og mer info om dem i profilen."
 
-            Notify(
-                [self.user], "Du har fått en prikk", UserNotificationSettingType.STRIKE
-            ).send_email(
-                MailCreator("Du har fått en prikk")
+            Notify([self.user], title, UserNotificationSettingType.STRIKE).send_email(
+                MailCreator(title)
                 .add_paragraph(f"Hei {self.user.first_name}!")
                 .add_paragraph(self.description)
                 .add_paragraph(strike_info)
                 .generate_string()
             ).send_notification(
                 description=f"{self.description}\n{strike_info}",
+            ).send_slack(
+                Slack(title).add_header(title).add_markdwn(strike_info)
             )
         super(Strike, self).save(*args, **kwargs)
 

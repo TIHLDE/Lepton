@@ -11,6 +11,7 @@ from app.common.permissions import BasicViewPermission, IsLeader, is_admin_user
 from app.common.viewsets import BaseViewSet
 from app.communication.enums import UserNotificationSettingType
 from app.communication.notifier import Notify
+from app.communication.slack import Slack
 from app.content.models import User
 from app.group.filters.membership import MembershipFilter
 from app.group.models import Group, Membership
@@ -64,13 +65,21 @@ class MembershipViewSet(BaseViewSet):
                     .add_paragraph(f"Hei {membership.user.first_name}!")
                     .add_paragraph(description)
                     .add_button(
-                        "Se gruppen",
+                        "Gå til gruppen",
                         f"{settings.WEBSITE_URL}{membership.group.website_url}",
                     )
                     .generate_string()
                 ).send_notification(
                     description=description,
                     link=membership.group.website_url,
+                ).send_slack(
+                    Slack(title)
+                    .add_header(title)
+                    .add_markdwn(description)
+                    .add_link(
+                        "Gå til gruppen",
+                        f"{settings.WEBSITE_URL}{membership.group.website_url}",
+                    )
                 )
             return super().update(request, *args, **kwargs)
         except Membership.DoesNotExist:
@@ -98,13 +107,21 @@ class MembershipViewSet(BaseViewSet):
                 .add_paragraph(f"Hei {membership.user.first_name}!")
                 .add_paragraph(description)
                 .add_button(
-                    "Se gruppen",
+                    "Gå til gruppen",
                     f"{settings.WEBSITE_URL}{membership.group.website_url}/",
                 )
                 .generate_string()
             ).send_notification(
                 description=description,
                 link=f"/grupper/{membership.group.slug}/",
+            ).send_slack(
+                Slack(title)
+                .add_header(title)
+                .add_markdwn(description)
+                .add_link(
+                    "Gå til gruppen",
+                    f"{settings.WEBSITE_URL}{membership.group.website_url}",
+                )
             )
             return Response(data=serializer.data, status=status.HTTP_200_OK)
         except Membership.DoesNotExist:
