@@ -1,7 +1,10 @@
 import os
+from typing import Optional
 
 from django.core.mail import EmailMultiAlternatives
 from django.utils.html import strip_tags
+from app.communication.slack import Slack
+from app.content.models.user import User
 
 from sentry_sdk import capture_exception
 
@@ -9,18 +12,18 @@ from app.util.utils import chunk_list
 
 
 class Notify:
-    def __init__(self, users, title):
+    def __init__(self, users: list[User], title: str):
         """
-        users: User[] -> The users to be notified\n
-        title: str -> Title of the notification
+        users -> The users to be notified\n
+        title -> Title of the notification
         """
         self.users = users
         self.title = title
 
-    def send_email(self, html, subject=None):
+    def send_email(self, html: str, subject: Optional[str] = None):
         """
-        html: str -> The email HTML to be sent to the users\n
-        subject: str -> Subject of email, defaults to given title\n
+        html -> The email HTML to be sent to the users\n
+        subject -> Subject of email, defaults to given title
         """
         from app.communication.models.mail import Mail
 
@@ -34,11 +37,20 @@ class Notify:
 
         return self
 
-    def send_notification(self, title=None, description=None, link=None):
+    def send_slack(self, slack: Slack):
         """
-        title: str -> Title in notification, defaults to given title
-        description: str -> Description in notification, defaults to blank string
-        link: str -> Link in notification, optional
+        slack -> A Slack-object with the content to be sent to each user
+        """
+        for user in filter(lambda user: bool(user.slack_user_id), self.users):
+            slack.send(user.slack_user_id)
+
+        return self
+
+    def send_notification(self, title: Optional[str] = None, description: Optional[str] = None, link: Optional[str] = None):
+        """
+        title -> Title in notification, defaults to given title\n
+        description -> Description in notification, defaults to blank string\n
+        link -> Link in notification, optional
         """
         from app.communication.models.notification import Notification
 
@@ -60,13 +72,13 @@ class Notify:
         return self
 
 
-def send_html_email(to_mails, html, subject, attachments=None):
+def send_html_email(to_mails: list[str], html: str, subject: str, attachments=None) -> bool:
     """
-    to_mails: str -> Email-addresses of receivers\n
-    html: str -> The email HTML to be sent to the receivers\n
-    subject: str -> Subject of email\n
+    to_mails -> Email-addresses of receivers\n
+    html -> The email HTML to be sent to the receivers\n
+    subject -> Subject of email\n
 
-    returns: bool -> If the mails where sent successfully
+    returns -> If the mails where sent successfully
     """
 
     MAX_EMAILS_PER_SENDING = 100

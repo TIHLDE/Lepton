@@ -10,12 +10,10 @@ from app.common.enums import EnvironmentOptions
 
 
 class Slack:
-    def __init__(self, channel_id: str, fallback_text: str):
+    def __init__(self, fallback_text: str):
         """
-        channel_id: Id of channel to send to. Must be public
         fallback_text: Text which is displayed in case the unit doesn't support blocks or in notifications
         """
-        self.channel_id = channel_id
         self.fallback_text = fallback_text
         self.blocks = []
 
@@ -49,7 +47,11 @@ class Slack:
         )
         return self
 
-    def send(self):
+    def send(self, channel_id: str):
+        """
+        Send the built blocks to the given channel_id. The channel must be public.
+        Does only send if the current environment is production.
+        """
         SLACK_BOT_TOKEN = os.environ.get("SLACK_BOT_TOKEN")
         if not SLACK_BOT_TOKEN or settings.ENVIRONMENT != EnvironmentOptions.PRODUCTION:
             return
@@ -58,8 +60,26 @@ class Slack:
 
         try:
             client.chat_postMessage(
-                channel=self.channel_id, text=self.fallback_text, blocks=self.blocks
+                channel=channel_id, text=self.fallback_text, blocks=self.blocks
             )
 
         except SlackApiError as e:
             capture_exception(e)
+
+
+def get_slack_user_id(code: str):
+    SLACK_CLIENT_ID = os.environ.get("SLACK_CLIENT_ID")
+    SLACK_CLIENT_SECRET = os.environ.get("SLACK_CLIENT_SECRET")
+
+    if not SLACK_CLIENT_ID or not SLACK_CLIENT_SECRET:
+        return ""
+
+    token_response = WebClient().openid_connect_token(
+        client_id=SLACK_CLIENT_ID, client_secret=SLACK_CLIENT_SECRET, code=code
+    )
+
+    user_token = token_response.get("access_token")
+    user_info_response = WebClient(
+        token=user_token
+    ).openid_connect_userInfo()
+    return user_info_response.get("https://slack.com/user_id")

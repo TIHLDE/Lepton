@@ -170,10 +170,7 @@ def __sign_up_start_notifier(event, *args, **kwargs):
         else SLACK_ARRANGEMENTER_CHANNEL_ID
     )
     slack = (
-        Slack(
-            channel_id=CHANNEL_ID,
-            fallback_text=f'Påmelding til "{event.title}" har nå åpnet!',
-        )
+        Slack(fallback_text=f'Påmelding til "{event.title}" har nå åpnet!')
         .add_header(event.title)
         .add_markdwn(
             f'Påmelding til "{event.title}" har nå åpnet! 🏃 Arrangementet starter {datetime_format(event.start_date)} og har {event.limit} plasser. Påmeldingen er åpen frem til {datetime_format(event.end_registration_at)}, men husk at det kan bli fullt før det. ⏲️\n\n<{settings.WEBSITE_URL}{event.website_url}|*Se arrangementet her og meld deg på nå!*>'
@@ -181,7 +178,7 @@ def __sign_up_start_notifier(event, *args, **kwargs):
     )
     if event.image:
         slack.add_image(event.image, event.image_alt or event.title)
-    slack.send()
+    slack.send(CHANNEL_ID)
 
     event.runned_sign_up_start_notifier = True
     event.save(update_fields=["runned_sign_up_start_notifier"])

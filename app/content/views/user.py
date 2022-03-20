@@ -130,6 +130,33 @@ class UserViewSet(BaseViewSet, ActionMixin):
             return request.user
         return get_object_or_404(User, user_id=pk)
 
+    @action(detail=False, methods=["post"], url_path="me/slack")
+    def connect_to_slack(self, request, *args, **kwargs):
+        user = self.request.user
+        self.check_object_permissions(self.request, user)
+
+        code = request.data.get("code", None)
+
+        if not code:
+            return Response(
+                {
+                    "detail": 'Du må sende med "code" fra Slack-autentisering'
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        from app.communication.slack import get_slack_user_id
+
+        user.slack_user_id = get_slack_user_id(code)
+        user.save(update_fields=['slack_user_id'])
+        
+        return Response(
+            {
+                "detail": "Vi koblet brukeren din på TIHLDE.org til din Slack-bruker"
+            },
+            status=status.HTTP_200_OK,
+        )
+
     @action(detail=False, methods=["get"], url_path="me/permissions")
     def get_user_permissions(self, request, *args, **kwargs):
         serializer = UserPermissionsSerializer(
