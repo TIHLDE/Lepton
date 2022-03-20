@@ -13,6 +13,8 @@
 ---
 
 ## Neste versjon
+- ✨ **Arrangementer**. Brukere kan markere arrangementer som favoritter og motta varsel ved påmeldingsstart.
+
 ## Versjon 2022.03.13
 - 🦟 **Bruker**. Fikset bug som hindret brukere i å slette sin egen bruker.
 - ⚡ **RabbitMQ**. Kjører nå RabbitMQ i Docker-Compose istedenfor i en egen instans.
