@@ -174,7 +174,6 @@ class Registration(BaseModel, BasePermissionModel):
                 .add_paragraph(f"Hei {self.user.first_name}!")
                 .add_paragraph(description[0])
                 .add_paragraph(description[1])
-                .add_paragraph(description[2])
                 .add_event_button(self.event.pk)
                 .generate_string()
             ).send_notification(
