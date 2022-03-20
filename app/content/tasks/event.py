@@ -187,7 +187,7 @@ def __sign_up_start_notifier(event, *args, **kwargs):
     slack.send()
 
     Notify(
-        event.favorite_users, f'Påmelding til "{event.title}" har nå åpnet!'
+        event.favorite_users.all(), f'Påmelding til "{event.title}" har nå åpnet!'
     ).send_email(
         MailCreator(f'Påmelding til "{event.title}" har nå åpnet!')
         .add_paragraph("Hei!")
@@ -195,7 +195,7 @@ def __sign_up_start_notifier(event, *args, **kwargs):
         .add_event_button(event.id)
         .generate_string(),
     ).send_notification(
-        description=description, link=event.evaluation.website_url
+        description=description, link=event.website_url
     )
 
     event.runned_sign_up_start_notifier = True
