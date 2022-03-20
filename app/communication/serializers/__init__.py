@@ -2,4 +2,5 @@ from app.communication.serializers.notification import (
     NotificationSerializer,
     UpdateNotificationSerializer,
 )
+from app.communication.serializers.user_notification_settings import UserNotificationSettingSerializer
 from app.communication.serializers.warning import WarningSerializer

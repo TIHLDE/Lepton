@@ -1,0 +1,36 @@
+from rest_framework import mixins, status
+from rest_framework.response import Response
+from rest_framework.viewsets import GenericViewSet
+
+from app.common.mixins import LoggingViewSetMixin
+from app.common.permissions import BasicViewPermission
+from app.common.viewsets import BaseViewSet
+from app.communication.models import UserNotificationSetting
+from app.communication.serializers import UserNotificationSettingSerializer
+
+
+class UserNotificationSettingViewSet(LoggingViewSetMixin, mixins.CreateModelMixin, mixins.ListModelMixin, GenericViewSet):
+
+    queryset = UserNotificationSetting.objects.all()
+    serializer_class = UserNotificationSettingSerializer
+    permission_classes = [BasicViewPermission]
+
+    def get_queryset(self):
+        return super().get_queryset().filter(user=self.request.user)
+
+    def create(self, request, *args, **kwargs):
+        user = request.user
+        try:
+            user_notification_setting = UserNotificationSetting.objects.get(user=user, type=request.data['type'])
+            for key, value in request.data.items():
+                setattr(user_notification_setting, key, value)
+            user_notification_setting.full_clean()
+            user_notification_setting.save()
+        except UserNotificationSetting.DoesNotExist:
+            user_notification_setting = UserNotificationSetting(user=user, **request.data)
+            user_notification_setting.full_clean()
+            user_notification_setting.save()
+        user_notification_setting_serializer = UserNotificationSettingSerializer(
+            user_notification_setting
+        )
+        return Response(user_notification_setting_serializer.data, status=status.HTTP_200_OK)
