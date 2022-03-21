@@ -179,7 +179,7 @@ class GroupForm(Form):
         else:
             form_id = request.parser_context.get("kwargs", {}).get("pk", None)
             form = GroupForm.objects.filter(id=form_id).first()
-            group = form.group
+            group = form.group if form else None
 
         return request.user.is_leader_of(group) or check_has_access(
             cls.write_access, request
