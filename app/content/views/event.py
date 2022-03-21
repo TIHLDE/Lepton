@@ -133,6 +133,30 @@ class EventViewSet(BaseViewSet, ActionMixin):
 
     @action(
         detail=True,
+        methods=["get", "put"],
+        url_path="favorite",
+        permission_classes=(IsMember,),
+    )
+    def user_favorite(self, request, pk, *args, **kwargs):
+        event = get_object_or_404(Event, id=pk)
+
+        if request.method == "PUT":
+            if request.data["is_favorite"]:
+                event.favorite_users.add(request.user)
+            else:
+                event.favorite_users.remove(request.user)
+
+        return Response(
+            {
+                "is_favorite": event.favorite_users.filter(
+                    user_id=request.user.user_id
+                ).exists()
+            },
+            status=status.HTTP_200_OK,
+        )
+
+    @action(
+        detail=True,
         methods=["get"],
         url_path="public_registrations",
         permission_classes=(IsMember,),
