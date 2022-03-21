@@ -150,7 +150,7 @@ class UserViewSet(BaseViewSet, ActionMixin):
         user.save(update_fields=["slack_user_id"])
 
         return Response(
-            {"detail": "Vi koblet brukeren din på TIHLDE.org til din Slack-bruker"},
+            {"detail": "Vi har koblet brukeren din på TIHLDE.org til din Slack-bruker"},
             status=status.HTTP_200_OK,
         )
 

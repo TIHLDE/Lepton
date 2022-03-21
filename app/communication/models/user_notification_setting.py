@@ -1,6 +1,7 @@
 from django.db import models
 
 from app.communication.enums import UserNotificationSettingType
+from app.communication.exceptions import AllChannelsUnselected
 from app.content.models.user import User
 from app.util.models import BaseModel
 
@@ -27,6 +28,12 @@ class UserNotificationSetting(BaseModel):
         return (
             f"UserNotificationSetting for {self.user}, type: {self.notification_type}"
         )
+
+    def clean(self):
+        if not self.email and not self.website and not self.slack:
+            raise AllChannelsUnselected(
+                "Du må velge minst én av epost, nettsiden og Slack"
+            )
 
     @classmethod
     def has_read_permission(cls, request):

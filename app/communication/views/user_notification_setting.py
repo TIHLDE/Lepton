@@ -6,12 +6,17 @@ from rest_framework.viewsets import GenericViewSet
 from app.common.mixins import LoggingViewSetMixin
 from app.common.permissions import BasicViewPermission
 from app.communication.enums import UserNotificationSettingType
+from app.communication.mixins import APIUserNotificationSettingErrorsMixin
 from app.communication.models import UserNotificationSetting
 from app.communication.serializers import UserNotificationSettingSerializer
 
 
 class UserNotificationSettingViewSet(
-    LoggingViewSetMixin, mixins.CreateModelMixin, mixins.ListModelMixin, GenericViewSet
+    APIUserNotificationSettingErrorsMixin,
+    LoggingViewSetMixin,
+    mixins.CreateModelMixin,
+    mixins.ListModelMixin,
+    GenericViewSet,
 ):
 
     queryset = UserNotificationSetting.objects.all()
