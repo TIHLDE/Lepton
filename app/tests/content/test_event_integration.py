@@ -553,7 +553,7 @@ def test_retrieve_is_favorite_event_when_is_not_favorite(api_client, member, eve
     response = client.get(url)
 
     assert response.status_code == status.HTTP_200_OK
-    assert response.json().get("is_favorite") == False
+    assert not response.json().get("is_favorite")
 
 
 @pytest.mark.django_db
@@ -563,7 +563,7 @@ def test_update_is_favorite_event_to_is_favorite(api_client, member, event):
     response = client.put(url, {"is_favorite": True})
 
     assert response.status_code == status.HTTP_200_OK
-    assert response.json().get("is_favorite") == True
+    assert response.json().get("is_favorite")
 
 
 @pytest.mark.django_db
@@ -575,7 +575,7 @@ def test_update_is_favorite_event_to_is_not_favorite(api_client, member, event):
     response = client.put(url, {"is_favorite": False})
 
     assert response.status_code == status.HTTP_200_OK
-    assert response.json().get("is_favorite") == False
+    assert not response.json().get("is_favorite")
 
 
 @pytest.mark.django_db
@@ -587,7 +587,7 @@ def test_retrieve_is_favorite_event_when_is_favorite(api_client, member, event):
     response = client.get(url)
 
     assert response.status_code == status.HTTP_200_OK
-    assert response.json().get("is_favorite") == True
+    assert response.json().get("is_favorite")
 
 
 @pytest.mark.parametrize(
