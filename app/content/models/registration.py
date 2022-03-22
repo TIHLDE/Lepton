@@ -8,7 +8,6 @@ from app.common.enums import StrikeEnum
 from app.common.permissions import BasePermissionModel
 from app.communication.enums import UserNotificationSettingType
 from app.communication.notifier import Notify
-from app.communication.slack import Slack
 from app.content.exceptions import (
     EventIsFullError,
     EventSignOffDeadlineHasPassed,
@@ -20,7 +19,6 @@ from app.content.models.strike import create_strike
 from app.content.models.user import User
 from app.forms.enums import EventFormType
 from app.util import EnumUtils, now
-from app.util.mail_creator import MailCreator
 from app.util.models import BaseModel
 from app.util.utils import datetime_format
 
@@ -160,58 +158,31 @@ class Registration(BaseModel, BasePermissionModel):
     def send_notification_and_mail(self):
         has_not_attended = not self.has_attended
         if not self.is_on_wait and has_not_attended:
-            title = f'Du har fått plass på "{self.event.title}"'
-            description = [
-                f"Arrangementet starter {datetime_format(self.event.start_date)} og vil være på {self.event.location}.",
-                f"Du kan melde deg av innen {datetime_format(self.event.sign_off_deadline)}.",
-            ]
             Notify(
                 [self.user],
-                title,
+                f'Du har fått plass på "{self.event.title}"',
                 UserNotificationSettingType.REGISTRATION,
-            ).send_email(
-                MailCreator(title)
-                .add_paragraph(f"Hei {self.user.first_name}!")
-                .add_paragraph(description[0])
-                .add_paragraph(description[1])
-                .add_event_button(self.event.pk)
-                .generate_string()
-            ).send_notification(
-                description=" ".join(description), link=self.event.website_url
-            ).send_slack(
-                Slack(title)
-                .add_header(title)
-                .add_markdwn(" ".join(description))
-                .add_event_link(self.event.pk)
-            )
+            ).add_paragraph(f"Hei {self.user.first_name}!").add_paragraph(
+                f"Arrangementet starter {datetime_format(self.event.start_date)} og vil være på {self.event.location}."
+            ).add_paragraph(
+                f"Du kan melde deg av innen {datetime_format(self.event.sign_off_deadline)}."
+            ).add_event_link(
+                self.event.pk
+            ).send()
         elif self.is_on_wait and has_not_attended:
-            title = f'Venteliste for "{self.event.title}"'
-            description = [
-                f"På grunn av stor pågang har du blitt satt på venteliste for {self.event.title}.",
-                "Dersom noen melder seg av vil du automatisk bli flyttet opp på listen. Du vil få beskjed dersom du får plass på arrangementet.",
-                f"PS. De vanlige reglene for prikker gjelder også for venteliste, husk derfor å melde deg av arrangementet innen {datetime_format(self.event.sign_off_deadline)} dersom du ikke kan møte.",
-            ]
             Notify(
                 [self.user],
-                title,
+                f'Venteliste for "{self.event.title}"',
                 UserNotificationSettingType.REGISTRATION,
-            ).send_email(
-                MailCreator(title)
-                .add_paragraph(f"Hei {self.user.first_name}!")
-                .add_paragraph(description[0])
-                .add_paragraph(description[1])
-                .add_paragraph(description[2])
-                .add_event_button(self.event.pk)
-                .generate_string()
-            ).send_notification(
-                description=" ".join(description),
-                link=self.event.website_url,
-            ).send_slack(
-                Slack(title)
-                .add_header(title)
-                .add_markdwn("\n".join(description))
-                .add_event_link(self.event.pk)
-            )
+            ).add_paragraph(f"Hei {self.user.first_name}!").add_paragraph(
+                f"På grunn av stor pågang har du blitt satt på venteliste for {self.event.title}."
+            ).add_paragraph(
+                "Dersom noen melder seg av vil du automatisk bli flyttet opp på listen. Du vil få beskjed dersom du får plass på arrangementet."
+            ).add_paragraph(
+                f"PS. De vanlige reglene for prikker gjelder også for venteliste, husk derfor å melde deg av arrangementet innen {datetime_format(self.event.sign_off_deadline)} dersom du ikke kan møte."
+            ).add_event_link(
+                self.event.pk
+            ).send()
 
     def should_swap_with_non_prioritized_user(self):
         return (

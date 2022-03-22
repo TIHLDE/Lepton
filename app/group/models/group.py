@@ -7,7 +7,6 @@ from enumchoicefield import EnumChoiceField
 from app.common.enums import AdminGroup, GroupType
 from app.common.permissions import BasePermissionModel, set_user_id
 from app.communication.enums import UserNotificationSettingType
-from app.communication.slack import Slack
 from app.content.models.user import User
 from app.util.models import BaseModel, OptionalImage
 
@@ -58,34 +57,20 @@ class Group(OptionalImage, BaseModel, BasePermissionModel):
 
     def notify_fines_admin(self):
         from app.communication.notifier import Notify
-        from app.util.mail_creator import MailCreator
 
-        title = f'Du har blitt botsjef for "{self.name}"'
-        description = [
-            f"Hei! Lederen av {self.name} har gjort deg til botsjef i gruppen. I botsystemet i gruppen kan alle medlemmer melde inn bøter på en eller flere andre medlemmer. Gruppen kan selv velge hvor mye en bot er verdt og hvordan bøter skal godkjennes og betales.",
-            "Som botsjef kan du, sammen med leder av gruppen, redigere lovverket og bøter (godkjenne, markere som betalt, endre antall og slette). Medlemmene kan ikke opprette bøter før det er minst én lov i lovverket. Du og alle medlemmene kan se en oversikt over alle bøter, samt filtrere på om boten er godkjent, betalt og per medlem.",
-            "Lykke til!",
-        ]
         Notify(
             [self.fines_admin],
-            title,
+            f'Du har blitt botsjef for "{self.name}"',
             UserNotificationSettingType.OTHER,
-        ).send_email(
-            MailCreator(title)
-            .add_paragraph(description[0])
-            .add_paragraph(description[1])
-            .add_paragraph(description[2])
-            .add_button("Gå til gruppen", f"{settings.WEBSITE_URL}{self.website_url}")
-            .generate_string()
-        ).send_notification(
-            description=" \n".join(description),
-            link=f"/grupper/{self.slug}/boter/",
-        ).send_slack(
-            Slack(title)
-            .add_header(title)
-            .add_markdwn(" \n".join(description))
-            .add_link("Gå til gruppen", f"{settings.WEBSITE_URL}{self.website_url}")
-        )
+        ).add_paragraph(
+            f"Hei! Lederen av {self.name} har gjort deg til botsjef i gruppen. I botsystemet i gruppen kan alle medlemmer melde inn bøter på en eller flere andre medlemmer. Gruppen kan selv velge hvor mye en bot er verdt og hvordan bøter skal godkjennes og betales."
+        ).add_paragraph(
+            "Som botsjef kan du, sammen med leder av gruppen, redigere lovverket og bøter (godkjenne, markere som betalt, endre antall og slette). Medlemmene kan ikke opprette bøter før det er minst én lov i lovverket. Du og alle medlemmene kan se en oversikt over alle bøter, samt filtrere på om boten er godkjent, betalt og per medlem."
+        ).add_link(
+            "Gå til gruppen", f"{settings.WEBSITE_URL}{self.website_url}"
+        ).add_paragraph(
+            "Lykke til!"
+        ).send()
 
     def check_fine_admin(self):
         return (
