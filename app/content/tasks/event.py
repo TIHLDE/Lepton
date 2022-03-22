@@ -163,12 +163,15 @@ def __post_event_actions(event, *args, **kwargs):
 
 
 def __sign_up_start_notifier(event, *args, **kwargs):
+    description = f'Påmelding til "{event.title}" har nå åpnet! 🏃 Arrangementet starter {datetime_format(event.start_date)} og har {event.limit} plasser. Påmeldingen er åpen frem til {datetime_format(event.end_registration_at)}, men husk at det kan bli fullt før det. ⏲️'
+
     CHANNEL_ID = (
         SLACK_BEDPRES_OG_KURS_CHANNEL_ID
         if event.organizer
         and str(event.organizer.slug).lower() == str(AdminGroup.NOK).lower()
         else SLACK_ARRANGEMENTER_CHANNEL_ID
     )
+
     slack = (
         Slack(
             channel_id=CHANNEL_ID,
@@ -176,12 +179,24 @@ def __sign_up_start_notifier(event, *args, **kwargs):
         )
         .add_header(event.title)
         .add_markdwn(
-            f'Påmelding til "{event.title}" har nå åpnet! 🏃 Arrangementet starter {datetime_format(event.start_date)} og har {event.limit} plasser. Påmeldingen er åpen frem til {datetime_format(event.end_registration_at)}, men husk at det kan bli fullt før det. ⏲️\n\n<{settings.WEBSITE_URL}{event.website_url}|*Se arrangementet her og meld deg på nå!*>'
+            f"{description}\n\n<{settings.WEBSITE_URL}{event.website_url}|*Se arrangementet her og meld deg på nå!*>"
         )
     )
     if event.image:
         slack.add_image(event.image, event.image_alt or event.title)
     slack.send()
+
+    Notify(
+        event.favorite_users.all(), f'Påmelding til "{event.title}" har nå åpnet!'
+    ).send_email(
+        MailCreator(f'Påmelding til "{event.title}" har nå åpnet!')
+        .add_paragraph("Hei!")
+        .add_paragraph(description)
+        .add_event_button(event.id)
+        .generate_string(),
+    ).send_notification(
+        description=description, link=event.website_url
+    )
 
     event.runned_sign_up_start_notifier = True
     event.save(update_fields=["runned_sign_up_start_notifier"])
