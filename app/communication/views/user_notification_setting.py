@@ -43,7 +43,7 @@ class UserNotificationSettingViewSet(
             user_notification_setting.full_clean()
             user_notification_setting.save()
         user_notification_setting_serializer = UserNotificationSettingSerializer(
-            user_notification_setting
+            self.get_queryset(), many=True
         )
         return Response(
             user_notification_setting_serializer.data, status=status.HTTP_200_OK

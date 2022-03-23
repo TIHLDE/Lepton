@@ -2,7 +2,6 @@ import os
 from typing import Optional
 
 from django.core.mail import EmailMultiAlternatives
-from django.db.models import Exists, Q
 from django.utils.html import strip_tags
 
 from sentry_sdk import capture_exception
@@ -19,15 +18,16 @@ class Notify:
         self,
         users: list[User],
         title: str,
-        notificationType: UserNotificationSettingType,
+        notification_type: UserNotificationSettingType,
     ):
         """
         users -> The users to be notified\n
-        title -> Title of the notification
+        title -> Title of the notification\n
+        notification_type -> Type of notification
         """
         self.users = users
         self.title = title
-        self.notificationType = notificationType
+        self.notification_type = notification_type
 
         self.slack = Slack(title).add_header(title)
         self.mail = MailCreator(title)
@@ -94,14 +94,14 @@ class Notify:
 
             for user in self.users:
                 if not user.user_notification_settings.filter(
-                    notification_type=self.notificationType, email=False
+                    notification_type=self.notification_type, email=False
                 ).exists():
                     mail.users.add(user)
 
     def _send_slack(self):
         for user in filter(lambda user: bool(user.slack_user_id), self.users):
             if not user.user_notification_settings.filter(
-                notification_type=self.notificationType, slack=False
+                notification_type=self.notification_type, slack=False
             ).exists():
                 self.slack.send(user.slack_user_id)
 
@@ -112,7 +112,7 @@ class Notify:
 
         for user in self.users:
             if not user.user_notification_settings.filter(
-                notification_type=self.notificationType, website=False
+                notification_type=self.notification_type, website=False
             ).exists():
                 bulk_inserts.append(
                     Notification(
