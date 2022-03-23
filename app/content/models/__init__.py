@@ -7,6 +7,7 @@ from app.content.models.registration import Registration
 from app.content.models.page import Page
 from app.content.models.priority import Priority
 from app.content.models.priority_pool import PriorityPool
+from app.content.models.toddel import Toddel
 from app.content.models.short_link import ShortLink
 from app.content.models.strike import (
     Strike,

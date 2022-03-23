@@ -13,6 +13,8 @@
 ---
 
 ## Neste versjon
+- ✨ **Töddel**. Redaksjonen kan nå publisere Töddel på nettsiden.
+
 ## Versjon 2022.03.22
 - ✨ **Arrangementer**. Brukere kan markere arrangementer som favoritter og motta varsel ved påmeldingsstart.
 
