@@ -8,3 +8,4 @@ from app.content.factories.page_factory import PageFactory
 from app.content.factories.page_factory import ParentPageFactory
 from app.content.factories.short_link_factory import ShortLinkFactory
 from app.content.factories.strike_factory import StrikeFactory
+from app.content.factories.toddel_factory import ToddelFactory
