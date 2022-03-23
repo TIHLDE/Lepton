@@ -14,6 +14,7 @@
 
 ## Neste versjon
 - ✨ **Slack**. Brukere kan koble kontoen sin til sin Slack-konto for å motta varsler i Slack.
+- ✨ **Töddel**. Redaksjonen kan nå publisere Töddel på nettsiden.
 - ⚡ **Varsler**. Brukere kan styre hvor de ønsker å motta forskjellige typer varsler.
 
 ## Versjon 2022.03.22

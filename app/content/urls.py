@@ -11,6 +11,7 @@ from app.content.views import (
     RegistrationViewSet,
     ShortLinkViewSet,
     StrikeViewSet,
+    ToddelViewSet,
     UserCalendarEvents,
     UserViewSet,
     accept_form,
@@ -20,6 +21,7 @@ from app.content.views import (
 router = routers.DefaultRouter()
 
 # Register content viewpoints here
+router.register("toddel", ToddelViewSet)
 router.register("news", NewsViewSet)
 router.register("events", EventViewSet, basename="event")
 router.register("categories", CategoryViewSet)

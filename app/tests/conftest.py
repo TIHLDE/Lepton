@@ -20,6 +20,7 @@ from app.content.factories import (
     ShortLinkFactory,
     UserFactory,
 )
+from app.content.factories.toddel_factory import ToddelFactory
 from app.forms.tests.form_factories import FormFactory, SubmissionFactory
 from app.group.factories import GroupFactory, MembershipFactory
 from app.group.factories.fine_factory import FineFactory
@@ -170,3 +171,8 @@ def weekly_business():
 @pytest.fixture()
 def fine():
     return FineFactory()
+
+
+@pytest.fixture()
+def toddel():
+    return ToddelFactory()

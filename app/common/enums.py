@@ -40,6 +40,8 @@ class AdminGroup(ChoiceEnum):
 class Groups(ChoiceEnum):
     TIHLDE = "TIHLDE"
 
+    REDAKSJONEN = "redaksjonen"
+
 
 class AppModel(ChoiceEnum):
     EVENT = "Event"
