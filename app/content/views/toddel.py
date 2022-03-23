@@ -17,4 +17,6 @@ class ToddelViewSet(BaseViewSet):
 
     def destroy(self, request, *args, **kwargs):
         super().destroy(request, *args, **kwargs)
-        return Response({"detail": "Utgaven av Töddel ble slettet"}, status=status.HTTP_200_OK)
+        return Response(
+            {"detail": "Utgaven av Töddel ble slettet"}, status=status.HTTP_200_OK
+        )

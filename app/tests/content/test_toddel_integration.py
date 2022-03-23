@@ -19,12 +19,18 @@ def _get_toddel_post_data():
         "title": "Töddel title",
         "image": "https://macbasics.files.wordpress.com/2013/06/umlaut21.jpg",
         "pdf": "https://www.imore.com/sites/imore.com/files/styles/large/public/images/stories/2010/04/time-100401.png",
-        "published_at": "2022-02-22"
+        "published_at": "2022-02-22",
     }
 
 
 def _get_toddel_put_data(toddel):
-    return {"edition": toddel.edition, "title": toddel.title, "image": toddel.image, "pdf": toddel.pdf, "published_at": toddel.published_at}
+    return {
+        "edition": toddel.edition,
+        "title": toddel.title,
+        "image": toddel.image,
+        "pdf": toddel.pdf,
+        "published_at": toddel.published_at,
+    }
 
 
 @pytest.mark.django_db
@@ -128,9 +134,7 @@ def test_create_as_member(member):
         (AdminGroup.PROMO, status.HTTP_403_FORBIDDEN),
     ],
 )
-def test_create_as_member_of_admin_group(
-    member, group_name, expected_status_code
-):
+def test_create_as_member_of_admin_group(member, group_name, expected_status_code):
     """Only members of HS, Index or Redaksjonen should be able to create a Toddel."""
     client = get_api_client(user=member, group_name=group_name)
     response = client.post(API_TODDEL_BASE_URL, _get_toddel_post_data())
@@ -168,7 +172,9 @@ def test_destroy_as_member(member, toddel):
         (AdminGroup.PROMO, status.HTTP_403_FORBIDDEN),
     ],
 )
-def test_destroy_as_member_of_admin_group(toddel, member, group_name, expected_status_code):
+def test_destroy_as_member_of_admin_group(
+    toddel, member, group_name, expected_status_code
+):
     """Only members of HS, Index or Redaksjonen should be able to delete a Toddel."""
     client = get_api_client(user=member, group_name=group_name)
     url = _get_toddel_detail_url(toddel)

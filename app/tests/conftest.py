@@ -1,4 +1,3 @@
-from app.content.factories.toddel_factory import ToddelFactory
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIRequestFactory
 
@@ -18,6 +17,7 @@ from app.content.factories import (
     ShortLinkFactory,
     UserFactory,
 )
+from app.content.factories.toddel_factory import ToddelFactory
 from app.forms.tests.form_factories import FormFactory, SubmissionFactory
 from app.group.factories import GroupFactory, MembershipFactory
 from app.group.factories.fine_factory import FineFactory

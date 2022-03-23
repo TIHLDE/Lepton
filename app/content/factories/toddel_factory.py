@@ -1,8 +1,5 @@
-from datetime import datetime
 import factory
 from factory.django import DjangoModelFactory
-
-from django.utils import timezone
 
 from app.content.models import Toddel
 

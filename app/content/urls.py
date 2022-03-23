@@ -11,9 +11,9 @@ from app.content.views import (
     RegistrationViewSet,
     ShortLinkViewSet,
     StrikeViewSet,
+    ToddelViewSet,
     UserCalendarEvents,
     UserViewSet,
-    ToddelViewSet,
     accept_form,
     upload,
 )
