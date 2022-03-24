@@ -2,7 +2,7 @@ from django.conf import settings
 from django.db import models
 from django.utils.text import slugify
 
-from app.common.enumchoicefield import EnumChoiceField
+from enumchoicefield import EnumChoiceField
 
 from app.common.enums import AdminGroup, GroupType
 from app.common.permissions import BasePermissionModel, set_user_id

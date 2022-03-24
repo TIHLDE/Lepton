@@ -1,4 +1,4 @@
-from app.common.enumchoicefield import ChoiceEnum
+from enumchoicefield import ChoiceEnum
 
 
 class EventFormType(ChoiceEnum):

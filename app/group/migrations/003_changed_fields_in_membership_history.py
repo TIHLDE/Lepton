@@ -2,7 +2,7 @@
 
 import app.common.enums
 from django.db import migrations, models
-import app.common.enumchoicefield.fields
+import enumchoicefield.fields
 
 
 class Migration(migrations.Migration):
@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='membership',
             name='membership_type',
-            field=app.common.enumchoicefield.fields.EnumChoiceField(default=app.common.enums.MembershipType(2), enum_class=app.common.enums.MembershipType, max_length=6),
+            field=enumchoicefield.fields.EnumChoiceField(default=app.common.enums.MembershipType(2), enum_class=app.common.enums.MembershipType, max_length=6),
         ),
         migrations.AlterField(
             model_name='membershiphistory',
@@ -25,7 +25,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='membershiphistory',
             name='membership_type',
-            field=app.common.enumchoicefield.fields.EnumChoiceField(default=app.common.enums.MembershipType(2), enum_class=app.common.enums.MembershipType, max_length=6),
+            field=enumchoicefield.fields.EnumChoiceField(default=app.common.enums.MembershipType(2), enum_class=app.common.enums.MembershipType, max_length=6),
         ),
         migrations.AlterField(
             model_name='membershiphistory',

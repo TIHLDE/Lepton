@@ -1,6 +1,6 @@
 from django.db import models
 
-from app.common.enumchoicefield import EnumChoiceField
+from enumchoicefield import EnumChoiceField
 
 from app.common.enums import UserClass, UserStudy
 from app.util.models import BaseModel
