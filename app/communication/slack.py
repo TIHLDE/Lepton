@@ -29,7 +29,7 @@ class Slack:
         )
         return self
 
-    def add_markdwn(self, text: str):
+    def add_paragraph(self, text: str):
         """
         Add a markdown section. Must be formatted with Slack's custom markdown format
         """

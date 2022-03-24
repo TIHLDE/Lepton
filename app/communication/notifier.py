@@ -47,7 +47,7 @@ class Notify:
             self.notification_description.append(text)
 
         if slack:
-            self.slack.add_markdwn(text)
+            self.slack.add_paragraph(text)
 
         return self
 

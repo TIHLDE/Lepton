@@ -162,7 +162,7 @@ def __sign_up_start_notifier(event, *args, **kwargs):
     slack = (
         Slack(fallback_text=f'Påmelding til "{event.title}" har nå åpnet!')
         .add_header(event.title)
-        .add_markdwn(
+        .add_paragraph(
             f"{description}\n\n<{settings.WEBSITE_URL}{event.website_url}|*Se arrangementet her og meld deg på nå!*>"
         )
     )
