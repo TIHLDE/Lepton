@@ -9,11 +9,16 @@ from app.content.factories import (
     EventFactory,
     PriorityFactory,
     RegistrationFactory,
+    StrikeFactory,
     UserFactory,
 )
+from app.content.factories.priority_pool_factory import PriorityPoolFactory
 from app.forms.enums import EventFormType
 from app.forms.models.forms import Submission
 from app.forms.tests.form_factories import EventFormFactory, SubmissionFactory
+from app.group.factories import GroupFactory, MembershipFactory
+
+pytestmark = pytest.mark.django_db
 
 
 @pytest.fixture()
@@ -95,7 +100,6 @@ def registration_in_priority_pool(
     )
 
 
-@pytest.mark.django_db
 def test_swap_users_when_event_is_full(
     event, registration_not_in_priority_pool, user_in_priority_pool
 ):
@@ -109,7 +113,6 @@ def test_swap_users_when_event_is_full(
     assert registration_not_in_priority_pool.is_on_wait
 
 
-@pytest.mark.django_db
 def test_bump_user_when_event_is_not_full(
     event,
     user_not_in_priority_pool,
@@ -132,7 +135,6 @@ def test_bump_user_when_event_is_not_full(
     assert not registration_not_in_priority_pool.is_on_wait
 
 
-@pytest.mark.django_db
 def test_bump_user_when_user_is_not_in_priority_pool_and_event_is_full(
     event, user_not_in_priority_pool
 ):
@@ -152,7 +154,6 @@ def test_bump_user_when_user_is_not_in_priority_pool_and_event_is_full(
     assert other_registration_not_in_priority_pool.is_on_wait
 
 
-@pytest.mark.django_db
 def test_bump_user_without_event_priorities():
     """Test that users are not swapped when event does not have any priorities."""
     event = EventFactory(limit=1)
@@ -166,7 +167,6 @@ def test_bump_user_without_event_priorities():
     assert registration_on_waiting_list.is_on_wait
 
 
-@pytest.mark.django_db
 def test_that_bump_user_registers_on_waiting_list_when_no_one_to_swap_with_and_event_is_full(
     event_with_registrations_and_priority,
     user_in_priority_pool,
@@ -188,7 +188,6 @@ def test_that_bump_user_registers_on_waiting_list_when_no_one_to_swap_with_and_e
     assert other_registration_in_priority_pool.is_on_wait
 
 
-@pytest.mark.django_db
 def test_swap_places_with_swaps_users(
     registration_in_priority_pool, registration_not_in_priority_pool
 ):
@@ -199,14 +198,12 @@ def test_swap_places_with_swaps_users(
     assert registration_not_in_priority_pool.is_on_wait
 
 
-@pytest.mark.django_db
 def test_is_prioritized_when_user_in_priority_pool(registration_in_priority_pool):
     """Should return True when user is in a priority pool."""
 
     assert registration_in_priority_pool.is_prioritized
 
 
-@pytest.mark.django_db
 def test_is_prioritized_when_user_not_in_priority_pool(
     registration_not_in_priority_pool,
 ):
@@ -215,7 +212,72 @@ def test_is_prioritized_when_user_not_in_priority_pool(
     assert not registration_not_in_priority_pool.is_prioritized
 
 
-@pytest.mark.django_db
+def test_is_prioritized_when_user_in_group_priority_pool():
+    """Should return True when user is in a group priority pool."""
+    group = GroupFactory()
+    event = EventFactory(limit=1)
+    registration = RegistrationFactory(event=event)
+    MembershipFactory(user=registration.user, group=group)
+    PriorityPoolFactory(groups=[group], event=event)
+
+    assert registration.is_prioritized
+
+
+def test_is_prioritized_when_user_is_member_of_all_groups_in_priority_pool():
+    """A prioritized user has to be a member of all groups of the priority pool."""
+    group = GroupFactory()
+    event = EventFactory(limit=1)
+    registration = RegistrationFactory(event=event)
+    MembershipFactory(user=registration.user, group=group)
+
+    other_group = GroupFactory()
+    MembershipFactory(user=registration.user, group=other_group)
+
+    PriorityPoolFactory(groups=[group, other_group], event=event)
+    PriorityPoolFactory(groups=[GroupFactory(), GroupFactory()], event=event)
+
+    assert registration.is_prioritized
+
+
+def test_is_prioritized_when_user_is_not_member_of_all_groups_in_priority_pool():
+    """Should return false when user is not a member of all groups of the priority pool."""
+    group = GroupFactory()
+    event = EventFactory(limit=1)
+    registration = RegistrationFactory(event=event)
+    MembershipFactory(user=registration.user, group=group)
+
+    other_group = GroupFactory()
+    PriorityPoolFactory(groups=[group, other_group], event=event)
+
+    assert not registration.is_prioritized
+
+
+def test_is_prioritized_when_user_is_member_of_some_groups_across_all_priority_pools():
+    """Should return false when user is only member of some of the groups across priority pools."""
+    group = GroupFactory()
+    event = EventFactory(limit=1)
+    registration = RegistrationFactory(event=event)
+    MembershipFactory(user=registration.user, group=group)
+
+    other_group = GroupFactory()
+    MembershipFactory(user=registration.user, group=other_group)
+
+    PriorityPoolFactory(groups=[group, GroupFactory()], event=event)
+    PriorityPoolFactory(groups=[other_group, GroupFactory()], event=event)
+
+    assert not registration.is_prioritized
+
+
+def test_is_prioritized_when_user_not_in_group_priority_pool():
+    """Should return False when user is not in a group priority pool."""
+    event = EventFactory(limit=1)
+    PriorityPoolFactory(event=event, groups=[GroupFactory()])
+
+    registration = RegistrationFactory(event=event)
+
+    assert not registration.is_prioritized
+
+
 @patch("app.content.models.registration.Registration.send_notification_and_mail")
 def test_create_calls_send_notification_and_email(
     mock_send_notification_and_mail, event
@@ -226,7 +288,6 @@ def test_create_calls_send_notification_and_email(
     assert mock_send_notification_and_mail.called_once
 
 
-@pytest.mark.django_db
 def test_create_when_event_has_waiting_list(event_with_registrations_and_priority):
     """Should put user on waiting list if the event has a waiting list."""
     assert event_with_registrations_and_priority.has_waiting_list()
@@ -238,7 +299,6 @@ def test_create_when_event_has_waiting_list(event_with_registrations_and_priorit
     assert new_registration.is_on_wait
 
 
-@pytest.mark.django_db
 def test_users_are_not_swapped_when_both_are_in_a_priority_pool(
     event_with_registrations_and_priority,
     registration_in_priority_pool,
@@ -257,7 +317,6 @@ def test_users_are_not_swapped_when_both_are_in_a_priority_pool(
     assert other_registration_in_priority_pool.is_on_wait
 
 
-@pytest.mark.django_db
 def test_registration_in_queue_is_deleted_priority_in_waiting_list_is_moved_to_queue(
     event_with_registrations_and_priority,
     registration_in_priority_pool,
@@ -290,7 +349,6 @@ def test_registration_in_queue_is_deleted_priority_in_waiting_list_is_moved_to_q
     assert registration_not_in_priority_pool.is_on_wait
 
 
-@pytest.mark.django_db
 def test_registration_in_queue_is_deleted_if_no_priority_registration_in_waiting_list_first_registration_is_moved_to_queue(
     event_with_registrations_and_priority,
     registration_in_priority_pool,
@@ -323,7 +381,6 @@ def test_registration_in_queue_is_deleted_if_no_priority_registration_in_waiting
     assert other_registration_not_in_priority_pool.is_on_wait
 
 
-@pytest.mark.django_db
 def test_registration_in_queue_is_deleted_if_no_waiting_list(
     event_with_registrations_and_priority,
     registration_in_priority_pool,
@@ -338,7 +395,6 @@ def test_registration_in_queue_is_deleted_if_no_waiting_list(
     assert not event_with_registrations_and_priority.get_waiting_list().exists()
 
 
-@pytest.mark.django_db
 def test_delete_registration_when_no_users_on_wait_are_in_a_priority_pool_bumps_first_registration_on_wait():
     """
     Test that the first registration on wait is moved up when
@@ -364,7 +420,6 @@ def test_delete_registration_when_no_users_on_wait_are_in_a_priority_pool_bumps_
     assert not registration_on_wait.is_on_wait
 
 
-@pytest.mark.django_db
 @pytest.mark.parametrize(
     "form_type,should_exist",
     [(EventFormType.EVALUATION, True), (EventFormType.SURVEY, False)],
@@ -379,14 +434,12 @@ def test_deleting_registration_deletes_submission(event, user, form_type, should
     assert Submission.objects.filter(id=submission.id).exists() is should_exist
 
 
-@pytest.mark.django_db
 def test_create_registration_without_submission_answer_fails(event, user):
     EventFormFactory(event=event, type=EventFormType.SURVEY)
     with pytest.raises(ValidationError):
         RegistrationFactory(event=event, user=user)
 
 
-@pytest.mark.django_db
 def test_bump_user_from_wait_when_event_is_full_does_not_increments_limit(
     event_with_registrations_and_priority,
 ):
@@ -404,7 +457,6 @@ def test_bump_user_from_wait_when_event_is_full_does_not_increments_limit(
     assert event_with_registrations_and_priority.limit == limit
 
 
-@pytest.mark.django_db
 def test_attempted_bump_user_from_wait_when_event_is_full_does_not_bump_user(
     event_with_registrations_and_priority,
 ):
@@ -422,7 +474,6 @@ def test_attempted_bump_user_from_wait_when_event_is_full_does_not_bump_user(
     assert registration.is_on_wait
 
 
-@pytest.mark.django_db
 def test_bump_user_from_wait_does_not_increments_limit(
     event_with_registrations_and_priority,
 ):
@@ -442,7 +493,6 @@ def test_bump_user_from_wait_does_not_increments_limit(
     assert registration.is_on_wait
 
 
-@pytest.mark.django_db
 def test_auto_bump_user_from_wait_does_not_increments_limit():
     """
     Tests if an automatic bump of a registration happens, the event limit wil not be incremented
@@ -469,7 +519,6 @@ def test_auto_bump_user_from_wait_does_not_increments_limit():
     assert event.limit == limit
 
 
-@pytest.mark.django_db
 def test_set_attended_is_allowed_when_queue_exists():
     """
     Tests that admin can set participant as attended even if someone is on the waiting list
@@ -485,7 +534,6 @@ def test_set_attended_is_allowed_when_queue_exists():
     assert registration.has_attended == new_attended_state
 
 
-@pytest.mark.django_db
 def test_create_registration_on_priority_only_event_when_user_is_not_prioritized():
     """
     Tests if a user that is not prioritized throws an error when attempting to register
@@ -505,7 +553,6 @@ def test_create_registration_on_priority_only_event_when_user_is_not_prioritized
         RegistrationFactory(event=event, user=user_not_in_priority_pool)
 
 
-@pytest.mark.django_db
 def test_create_registration_on_priority_only_event_when_user_is_prioritized():
     """
     Tests if a user can register on an event that is only for prioritized users when the
@@ -522,3 +569,34 @@ def test_create_registration_on_priority_only_event_when_user_is_prioritized():
     event.save()
 
     RegistrationFactory(event=event, user=user_in_priority_pool)
+
+
+@pytest.mark.parametrize(
+    ("enable_strikes"),
+    [
+        (False),
+        (True),
+    ],
+)
+def test_strikes_has_no_effect_if_event_has_strikes_disabled(enable_strikes):
+    """
+    Tests if a user is prioritized even if they have 3 strikes, if the event
+    has enforces_previous_strikes set to false
+    """
+
+    user_in_priority_pool = UserFactory(
+        user_study=UserStudy.DATAING.value, user_class=UserClass.FIRST.value
+    )
+
+    StrikeFactory(user=user_in_priority_pool, strike_size=3)
+    event = EventFactory(
+        limit=1, only_allow_prioritized=True, enforces_previous_strikes=enable_strikes
+    )
+
+    priority = PriorityFactory(user_study=UserStudy.DATAING, user_class=UserClass.FIRST)
+    event.registration_priorities.add(priority)
+
+    event.save()
+    registration = RegistrationFactory.build(event=event, user=user_in_priority_pool)
+    is_prioritized = not enable_strikes
+    assert registration.is_prioritized == is_prioritized

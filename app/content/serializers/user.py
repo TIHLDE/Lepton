@@ -1,11 +1,12 @@
-from django.contrib.auth.hashers import make_password
-from django.core.exceptions import ValidationError
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 
 from dry_rest_permissions.generics import DRYGlobalPermissionsField
 
+from app.common.enums import GroupType
 from app.common.serializers import BaseModelSerializer
 from app.content.models import User
+from app.group.models import Group, Membership
 
 
 class DefaultUserSerializer(BaseModelSerializer):
@@ -94,7 +95,16 @@ class UserMemberSerializer(UserSerializer):
 
 
 class UserCreateSerializer(serializers.ModelSerializer):
-    """Serializer for creating user"""
+    study = serializers.SlugRelatedField(
+        slug_field="slug",
+        allow_null=True,
+        queryset=Group.objects.filter(type=GroupType.STUDY),
+    )
+    class_ = serializers.SlugRelatedField(
+        slug_field="slug",
+        allow_null=True,
+        queryset=Group.objects.filter(type=GroupType.STUDYYEAR),
+    )
 
     class Meta:
         model = User
@@ -106,21 +116,27 @@ class UserCreateSerializer(serializers.ModelSerializer):
             "email",
             "user_class",
             "user_study",
+            "study",
+            "class_",
         )
 
     def create(self, validated_data):
-        user = User.objects.create(
-            user_id=validated_data["user_id"],
-            password=make_password(validated_data["password"]),
-            first_name=validated_data["first_name"],
-            last_name=validated_data["last_name"],
-            email=validated_data["email"],
-            user_class=validated_data["user_class"],
-            user_study=validated_data["user_study"],
-        )
+        study = validated_data.pop("study", None)
+        class_ = validated_data.pop("class", None)
+
+        user = User.objects.create_user(**validated_data)
         user.set_password(validated_data["password"])
         user.save()
+
+        if study and class_:
+            self.add_user_to_class_and_study(user, study, class_)
+
         return user
+
+    @staticmethod
+    def add_user_to_class_and_study(user, study, class_):
+        Membership.objects.create(user=user, group=study)
+        Membership.objects.create(user=user, group=class_)
 
     def validate_email(self, data):
         if "@ntnu.no" in data:
@@ -128,6 +144,14 @@ class UserCreateSerializer(serializers.ModelSerializer):
                 "Vi kan ikke sende epost til @ntnu.no-adresser, bruk @stud.ntnu.no-adressen istedenfor."
             )
         return data
+
+    def get_fields(self):
+        """'class' is a reserved keyword in python resulting in the field being named 'class_'. This enables us to use 'class' in the request and 'class_' in the code."""
+        result = super().get_fields()
+        # Rename `class_` to `class`
+        class_ = result.pop("class_")
+        result["class"] = class_
+        return result
 
 
 class UserPermissionsSerializer(serializers.ModelSerializer):

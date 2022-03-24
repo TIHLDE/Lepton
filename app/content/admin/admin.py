@@ -10,9 +10,11 @@ admin.site.register(models.Event)
 admin.site.register(models.News)
 admin.site.register(models.Category)
 admin.site.register(models.Priority)
+admin.site.register(models.PriorityPool)
 admin.site.register(models.Cheatsheet)
 admin.site.register(models.Page)
 admin.site.register(models.ShortLink)
+admin.site.register(models.Toddel)
 
 
 @admin.register(models.Strike)

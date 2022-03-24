@@ -10,16 +10,17 @@ from app.content.views import (
     RegistrationViewSet,
     ShortLinkViewSet,
     StrikeViewSet,
+    ToddelViewSet,
     UserCalendarEvents,
     UserViewSet,
     accept_form,
-    gdpr,
     upload,
 )
 
 router = routers.DefaultRouter()
 
 # Register content viewpoints here
+router.register("toddel", ToddelViewSet)
 router.register("news", NewsViewSet)
 router.register("events", EventViewSet, basename="event")
 router.register("categories", CategoryViewSet)
@@ -42,6 +43,5 @@ urlpatterns = [
     re_path(r"", include(router.urls)),
     path("accept-form/", accept_form),
     path("upload/", upload),
-    path("gdpr/", gdpr),
     re_path(r"users/(?P<user_id>[^/.]+)/events.ics", UserCalendarEvents()),
 ]

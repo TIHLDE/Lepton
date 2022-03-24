@@ -13,6 +13,7 @@ from app.content.serializers.page import (
     PageListSerializer,
 )
 from app.content.serializers.priority import PrioritySerializer
+from app.content.serializers.toddel import ToddelSerializer
 from app.content.serializers.registration import (
     PublicRegistrationSerializer,
     RegistrationSerializer,

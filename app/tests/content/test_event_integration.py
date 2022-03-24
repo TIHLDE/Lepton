@@ -7,6 +7,7 @@ import pytest
 
 from app.common.enums import AdminGroup, GroupType, MembershipType
 from app.content.factories import EventFactory, RegistrationFactory, UserFactory
+from app.content.models import Event
 from app.forms.enums import EventFormType
 from app.forms.tests.form_factories import EventFormFactory
 from app.group.factories import GroupFactory
@@ -281,6 +282,65 @@ def test_create_event_as_admin(permission_test_util):
 
 
 @pytest.mark.django_db
+def test_create_event_with_group_priorities_returns_http_201(api_client, admin_user):
+    client = api_client(user=admin_user)
+    data = get_event_data()
+
+    groups = GroupFactory.create_batch(2)
+    groups = [group.slug for group in groups]
+    data["priority_pools"] = [{"groups": groups}]
+
+    response = client.post(API_EVENTS_BASE_URL, data)
+
+    assert response.status_code == 201
+
+
+@pytest.mark.django_db
+def test_create_event_with_group_priorities_creates_the_priority_pools(
+    api_client, admin_user
+):
+    client = api_client(user=admin_user)
+    data = get_event_data()
+
+    groups = GroupFactory.create_batch(2)
+    groups_data = [group.slug for group in groups]
+    data["priority_pools"] = [{"groups": groups_data}]
+
+    response = client.post(API_EVENTS_BASE_URL, data)
+
+    event_id = response.json().get("id")
+    event = Event.objects.get(id=event_id)
+
+    assert event.priority_pools.count() == 1
+    assert all(
+        actual == expected
+        for actual, expected in zip(event.priority_pools.first().groups.all(), groups)
+    )
+
+
+@pytest.mark.django_db
+def test_create_event_with_group_priorities_returns_priority_pools_in_response(
+    api_client, admin_user
+):
+    client = api_client(user=admin_user)
+    data = get_event_data()
+
+    batch_size = 2
+    groups = GroupFactory.create_batch(batch_size)
+    group_slugs = [group.slug for group in groups]
+    data["priority_pools"] = [{"groups": group_slugs}]
+
+    response = client.post(API_EVENTS_BASE_URL, data)
+
+    priority_pools = response.json().get("priority_pools")
+    actual_groups = priority_pools[0].get("groups")
+
+    assert len(priority_pools) == 1
+    assert len(actual_groups) == batch_size
+    assert all(group.get("slug") in group_slugs for group in actual_groups)
+
+
+@pytest.mark.django_db
 def test_delete_as_anonymous_user(default_client, event):
     """An anonymous user should not be able to delete an event entity."""
     url = get_events_url_detail(event)
@@ -484,6 +544,73 @@ def test_retrieve_expired_event_as_admin(api_client, admin_user):
     url = get_events_url_detail(event)
     response = client.get(url)
     assert response.status_code == status.HTTP_200_OK
+
+
+@pytest.mark.django_db
+def test_retrieve_is_favorite_event_when_is_not_favorite(api_client, member, event):
+    client = api_client(user=member)
+    url = f"{get_events_url_detail(event)}favorite/"
+    response = client.get(url)
+
+    assert response.status_code == status.HTTP_200_OK
+    assert not response.json().get("is_favorite")
+
+
+@pytest.mark.django_db
+def test_update_is_favorite_event_to_is_favorite(api_client, member, event):
+    client = api_client(user=member)
+    url = f"{get_events_url_detail(event)}favorite/"
+    response = client.put(url, {"is_favorite": True})
+
+    assert response.status_code == status.HTTP_200_OK
+    assert response.json().get("is_favorite")
+
+
+@pytest.mark.django_db
+def test_update_is_favorite_event_to_is_not_favorite(api_client, member, event):
+    event.favorite_users.add(member)
+
+    client = api_client(user=member)
+    url = f"{get_events_url_detail(event)}favorite/"
+    response = client.put(url, {"is_favorite": False})
+
+    assert response.status_code == status.HTTP_200_OK
+    assert not response.json().get("is_favorite")
+
+
+@pytest.mark.django_db
+def test_retrieve_is_favorite_event_when_is_favorite(api_client, member, event):
+    event.favorite_users.add(member)
+
+    client = api_client(user=member)
+    url = f"{get_events_url_detail(event)}favorite/"
+    response = client.get(url)
+
+    assert response.status_code == status.HTTP_200_OK
+    assert response.json().get("is_favorite")
+
+
+@pytest.mark.parametrize(
+    ("user_favorite", "expected_count"),
+    [
+        [True, 1],
+        [False, 3],
+    ],
+)
+@pytest.mark.django_db
+def test_user_favorite_filter_list(
+    api_client, member, event, user_favorite, expected_count
+):
+    event.favorite_users.add(member)
+    EventFactory.create_batch(2)
+
+    client = api_client(user=member)
+    url = f"{API_EVENTS_BASE_URL}?user_favorite={user_favorite}"
+    response = client.get(url)
+
+    actual_count = response.json().get("count")
+
+    assert actual_count == expected_count
 
 
 @pytest.mark.parametrize(

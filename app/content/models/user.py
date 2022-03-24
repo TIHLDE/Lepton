@@ -22,10 +22,8 @@ from app.util.utils import disable_for_loaddata, now
 class UserManager(BaseUserManager):
     use_in_migrations = True
 
-    def create_user(self, user_id, password):
-        user = self.model(
-            user_id=user_id,
-        )
+    def create_user(self, user_id, password, **extra_fields):
+        user = self.model(user_id=user_id, **extra_fields)
         user.set_password(make_password(password))
         user.save(using=self._db)
         return user
