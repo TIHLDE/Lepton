@@ -47,7 +47,7 @@ WEBSITE_URL = (
     if ENVIRONMENT == EnvironmentOptions.PRODUCTION
     else "https://dev.tihlde.org"
     if ENVIRONMENT == EnvironmentOptions.DEVELOPMENT
-    else "https://localhost:3000"
+    else "http://localhost:3000"
 )
 
 AZURE_BLOB_STORAGE_NAME = "tihldestorage.blob.core.windows.net"
