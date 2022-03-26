@@ -84,8 +84,7 @@ def test_only_active_strikes_are_listed(admin_user):
     strike1 = StrikeFactory(created_at=(now() - timedelta(days=100)))
     strike2 = StrikeFactory()
 
-    print(strike1.created_at, atus
-    str(strike1.active))
+    print(strike1.created_at, str(strike1.active))
     print(strike2.created_at, str(strike2.active))
 
     response = client.get(API_STRIKE_BASE_URL)
