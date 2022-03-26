@@ -18,6 +18,7 @@ from app.common.permissions import (
     is_admin_user,
 )
 from app.common.viewsets import BaseViewSet
+from app.communication.enums import UserNotificationSettingType
 from app.communication.notifier import Notify
 from app.content.filters import UserFilter
 from app.content.models import User
@@ -35,7 +36,6 @@ from app.forms.serializers import FormPolymorphicSerializer
 from app.group.models import Group, Membership
 from app.group.serializers import GroupSerializer
 from app.util.export_user_data import export_user_data
-from app.util.mail_creator import MailCreator
 from app.util.utils import CaseInsensitiveBooleanQueryParam
 
 
@@ -119,7 +119,7 @@ class UserViewSet(BaseViewSet, ActionMixin):
     def destroy(self, request, pk, *args, **kwargs):
         user = self._get_user(request, pk)
         self.check_object_permissions(self.request, user)
-        super().destroy(request, pk=user.user_id, *args, **kwargs)
+        self.perform_destroy(user)
         return Response(
             {"detail": "Brukeren har bltt slettet"},
             status=status.HTTP_200_OK,
@@ -129,6 +129,29 @@ class UserViewSet(BaseViewSet, ActionMixin):
         if pk == "me":
             return request.user
         return get_object_or_404(User, user_id=pk)
+
+    @action(detail=False, methods=["post"], url_path="me/slack")
+    def connect_to_slack(self, request, *args, **kwargs):
+        user = self.request.user
+        self.check_object_permissions(self.request, user)
+
+        code = request.data.get("code", None)
+
+        if not code:
+            return Response(
+                {"detail": 'Du må sende med "code" fra Slack-autentisering'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        from app.communication.slack import get_slack_user_id
+
+        user.slack_user_id = get_slack_user_id(code)
+        user.save(update_fields=["slack_user_id"])
+
+        return Response(
+            {"detail": "Vi har koblet brukeren din på TIHLDE.org til din Slack-bruker"},
+            status=status.HTTP_200_OK,
+        )
 
     @action(detail=False, methods=["get"], url_path="me/permissions")
     def get_user_permissions(self, request, *args, **kwargs):
@@ -270,15 +293,13 @@ class UserViewSet(BaseViewSet, ActionMixin):
         user_id = request.data["user_id"]
         user = get_object_or_404(User, user_id=user_id)
         Membership.objects.get_or_create(user=user, group=TIHLDE)
-        Notify([user], "Brukeren din er godkjent").send_email(
-            MailCreator("Brukeren din er godkjent")
-            .add_paragraph(f"Hei {user.first_name}!")
-            .add_paragraph(
-                "Vi har godkjent brukeren din på TIHLDE.org! Du kan nå logge inn og ta i bruk siden."
-            )
-            .add_button("Logg inn", f"{settings.WEBSITE_URL}/logg-inn/")
-            .generate_string()
-        )
+        Notify(
+            [user], "Brukeren din er godkjent", UserNotificationSettingType.OTHER
+        ).add_paragraph(f"Hei {user.first_name}!").add_paragraph(
+            "Vi har godkjent brukeren din på TIHLDE.org! Du kan nå logge inn og ta i bruk siden."
+        ).add_link(
+            "Logg inn", f"{settings.WEBSITE_URL}/logg-inn/"
+        ).send()
         return Response(
             {
                 "detail": "Brukeren ble lagt til som TIHLDE-medlem og har blitt informert på epost"
@@ -301,16 +322,15 @@ class UserViewSet(BaseViewSet, ActionMixin):
         except KeyError:
             reason = "Begrunnelse er ikke oppgitt"
         user = get_object_or_404(User, user_id=user_id)
-        Notify([user], "Brukeren din ble ikke godkjent").send_email(
-            MailCreator("Brukeren din ble ikke godkjent")
-            .add_paragraph(f"Hei {user.first_name}!")
-            .add_paragraph(
-                "Vi har avslått brukeren din på TIHLDE.org fordi den ikke oppfylte kravene til å ha bruker. Du kan lage en ny bruker der du har rettet feilen hvis du ønsker. Kontakt oss hvis du er uenig i avgjørelsen."
-            )
-            .add_paragraph(f"Vedlagt begrunnelse: {reason}.")
-            .add_button("Til forsiden", f"{settings.WEBSITE_URL}/")
-            .generate_string()
-        )
+        Notify(
+            [user], "Brukeren din ble ikke godkjent", UserNotificationSettingType.OTHER
+        ).add_paragraph(f"Hei {user.first_name}!").add_paragraph(
+            "Vi har avslått brukeren din på TIHLDE.org fordi den ikke oppfylte kravene til å ha bruker. Du kan lage en ny bruker der du har rettet feilen hvis du ønsker. Kontakt oss hvis du er uenig i avgjørelsen."
+        ).add_paragraph(
+            f"Vedlagt begrunnelse: {reason}."
+        ).add_link(
+            "Til forsiden", f"{settings.WEBSITE_URL}/"
+        ).send()
         user.delete()
         return Response(
             {"detail": "Brukeren ble avslått og har blitt informert på epost"},

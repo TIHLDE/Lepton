@@ -19,3 +19,12 @@ class AnotherVisibleBannerError(ValidationError):
 
 class DatesMixedError(ValidationError):
     pass
+
+  
+class APIAllChannelsUnselected(APIException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_detail = "Du må velge minst en kommunikasjonsmetode"
+
+
+class AllChannelsUnselected(ValueError):
+    pass

@@ -51,6 +51,7 @@ class UserSerializer(DefaultUserSerializer):
             "unread_notifications",
             "unanswered_evaluations_count",
             "number_of_strikes",
+            "slack_user_id",
         )
         read_only_fields = ("user_id",)
 
@@ -125,6 +126,8 @@ class UserCreateSerializer(serializers.ModelSerializer):
         class_ = validated_data.pop("class", None)
 
         user = User.objects.create_user(**validated_data)
+        user.set_password(validated_data["password"])
+        user.save()
 
         if study and class_:
             self.add_user_to_class_and_study(user, study, class_)

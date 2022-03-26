@@ -12,6 +12,7 @@ from app.common.mixins import ActionMixin
 from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission, IsMember
 from app.common.viewsets import BaseViewSet
+from app.communication.enums import UserNotificationSettingType
 from app.communication.events import (
     EventGiftCardAmountMismatchError,
     send_gift_cards_by_email,
@@ -28,7 +29,6 @@ from app.content.serializers import (
     PublicRegistrationSerializer,
 )
 from app.group.models.group import Group
-from app.util.mail_creator import MailCreator
 from app.util.utils import midday, now, yesterday
 
 
@@ -131,6 +131,30 @@ class EventViewSet(BaseViewSet, ActionMixin):
 
     @action(
         detail=True,
+        methods=["get", "put"],
+        url_path="favorite",
+        permission_classes=(IsMember,),
+    )
+    def user_favorite(self, request, pk, *args, **kwargs):
+        event = get_object_or_404(Event, id=pk)
+
+        if request.method == "PUT":
+            if request.data["is_favorite"]:
+                event.favorite_users.add(request.user)
+            else:
+                event.favorite_users.remove(request.user)
+
+        return Response(
+            {
+                "is_favorite": event.favorite_users.filter(
+                    user_id=request.user.user_id
+                ).exists()
+            },
+            status=status.HTTP_200_OK,
+        )
+
+    @action(
+        detail=True,
         methods=["get"],
         url_path="public_registrations",
         permission_classes=(IsMember,),
@@ -157,16 +181,9 @@ class EventViewSet(BaseViewSet, ActionMixin):
             self.check_object_permissions(self.request, event)
 
             users = User.objects.filter(registrations__in=event.get_participants())
-            Notify(users, title).send_email(
-                MailCreator(title)
-                .add_paragraph(f"Arrangøren av {event.title} har en melding til deg:")
-                .add_paragraph(message)
-                .add_event_button(event.pk)
-                .generate_string()
-            ).send_notification(
-                description=f"Arrangøren av {event.title} har en melding til deg: {message}",
-                link=event.website_url,
-            )
+            Notify(users, title, UserNotificationSettingType.OTHER).add_paragraph(
+                f"Arrangøren av {event.title} har en melding til deg: {message}"
+            ).add_event_link(event.pk).send()
 
             return Response(
                 {

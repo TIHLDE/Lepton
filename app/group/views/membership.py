@@ -9,6 +9,7 @@ from app.common.enums import MembershipType
 from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission, IsLeader, is_admin_user
 from app.common.viewsets import BaseViewSet
+from app.communication.enums import UserNotificationSettingType
 from app.communication.notifier import Notify
 from app.content.models import User
 from app.group.filters.membership import MembershipFilter
@@ -18,7 +19,6 @@ from app.group.serializers.membership import (
     MembershipLeaderSerializer,
     UpdateMembershipSerializer,
 )
-from app.util.mail_creator import MailCreator
 
 
 class MembershipViewSet(BaseViewSet):
@@ -52,21 +52,17 @@ class MembershipViewSet(BaseViewSet):
                 str(request.data.get("membership_type")).lower()
                 == str(MembershipType.LEADER).lower()
             ):
-                title = f"Du er nå leder i gruppen {membership.group.name}"
-                description = f"Du har blitt gjort til leder i gruppen {membership.group.name}. Gratulerer så mye og lykke til!"
-                Notify([membership.user], title).send_email(
-                    MailCreator(title)
-                    .add_paragraph(f"Hei {membership.user.first_name}!")
-                    .add_paragraph(description)
-                    .add_button(
-                        "Se gruppen",
-                        f"{settings.WEBSITE_URL}{membership.group.website_url}",
-                    )
-                    .generate_string()
-                ).send_notification(
-                    description=description,
-                    link=membership.group.website_url,
-                )
+                Notify(
+                    [membership.user],
+                    f"Du er nå leder i gruppen {membership.group.name}",
+                    UserNotificationSettingType.GROUP_MEMBERSHIP,
+                ).add_paragraph(f"Hei {membership.user.first_name}!").add_paragraph(
+                    f"Du har blitt gjort til leder i gruppen {membership.group.name}. Gratulerer så mye og lykke til!"
+                ).add_link(
+                    "Gå til gruppen",
+                    f"{settings.WEBSITE_URL}{membership.group.website_url}",
+                ).send()
+
             return super().update(request, *args, **kwargs)
         except Membership.DoesNotExist:
             return Response(
@@ -84,21 +80,16 @@ class MembershipViewSet(BaseViewSet):
             )
             serializer.is_valid(raise_exception=True)
             self._log_on_create(serializer)
-            title = f"Du er nå med i gruppen {membership.group.name}"
-            description = f"Du har blitt lagt til som medlem i gruppen {membership.group.name}. Gratulerer så mye og lykke til!"
-            Notify([membership.user], title).send_email(
-                MailCreator(title)
-                .add_paragraph(f"Hei {membership.user.first_name}!")
-                .add_paragraph(description)
-                .add_button(
-                    "Se gruppen",
-                    f"{settings.WEBSITE_URL}{membership.group.website_url}/",
-                )
-                .generate_string()
-            ).send_notification(
-                description=description,
-                link=f"/grupper/{membership.group.slug}/",
-            )
+            Notify(
+                [membership.user],
+                f"Du er nå med i gruppen {membership.group.name}",
+                UserNotificationSettingType.GROUP_MEMBERSHIP,
+            ).add_paragraph(f"Hei {membership.user.first_name}!").add_paragraph(
+                f"Du har blitt lagt til som medlem i gruppen {membership.group.name}. Gratulerer så mye og lykke til!"
+            ).add_link(
+                "Gå til gruppen",
+                f"{settings.WEBSITE_URL}{membership.group.website_url}/",
+            ).send()
             return Response(data=serializer.data, status=status.HTTP_200_OK)
         except Membership.DoesNotExist:
             return Response(
