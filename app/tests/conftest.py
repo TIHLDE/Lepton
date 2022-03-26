@@ -178,7 +178,7 @@ def fine():
 def banner():
     return BannerFactory()
 
-  
+
 @pytest.fixture()
 def toddel():
     return ToddelFactory()
