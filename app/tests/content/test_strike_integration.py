@@ -1,0 +1,96 @@
+from datetime import timedelta
+from rest_framework import status
+from app.content.factories import StrikeFactory
+from app.util.utils import now
+
+import pytest
+
+from app.common.enums import AdminGroup, Groups
+from app.content.factories.event_factory import EventFactory
+from app.content.factories.user_factory import UserFactory
+from app.util.test_utils import get_api_client
+
+API_STRIKE_BASE_URL = "/strikes/"
+
+
+@pytest.fixture()
+def strike_post_data():
+    return {
+        "user_id": UserFactory().user_id,
+        "event": EventFactory().id,
+        "description": "Strike test description",
+        "strike_size": 1,
+    }
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    ("group_name", "expected_status_code"),
+    [
+        (AdminGroup.HS, status.HTTP_200_OK),
+        (AdminGroup.INDEX, status.HTTP_200_OK),
+        (AdminGroup.NOK, status.HTTP_200_OK),
+        (AdminGroup.SOSIALEN, status.HTTP_200_OK),
+        (AdminGroup.PROMO, status.HTTP_403_FORBIDDEN),
+        (Groups.TIHLDE, status.HTTP_403_FORBIDDEN),
+    ],
+)
+def test_list_strikes_as_member_of_board_or_sub_group(
+    member, group_name, expected_status_code
+):
+    """A member of the board or a subgroup should be able to list strikes."""
+    client = get_api_client(user=member, group_name=group_name)
+    url = API_STRIKE_BASE_URL
+    response = client.get(url)
+
+    assert response.status_code == expected_status_code
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    ("group_name", "expected_status_code"),
+    [
+        (AdminGroup.HS, status.HTTP_200_OK),
+        (AdminGroup.INDEX, status.HTTP_200_OK),
+        (AdminGroup.NOK, status.HTTP_200_OK),
+        (AdminGroup.SOSIALEN, status.HTTP_200_OK),
+        (AdminGroup.PROMO, status.HTTP_403_FORBIDDEN),
+        (Groups.TIHLDE, status.HTTP_403_FORBIDDEN),
+    ],
+)
+def test_create_strikes_as_member_of_board_or_sub_group(
+    member, group_name, expected_status_code, strike_post_data
+):
+    """A member of the board or a subgroup should be able to give strikes."""
+    client = get_api_client(user=member, group_name=group_name)
+    response = client.post(API_STRIKE_BASE_URL, strike_post_data)
+
+    assert response.status_code == expected_status_code
+
+@pytest.mark.django_db
+def test_update_strikes_is_not_implemented(admin_user, strike_post_data):
+    """Functionality for updating a strike is not implemented"""
+    client = get_api_client(user=admin_user)
+    response = client.put(API_STRIKE_BASE_URL, strike_post_data)
+
+    assert response.status_code == status.HTTP_501_NOT_IMPLEMENTED
+
+
+@pytest.mark.django_db
+def test_only_active_strikes_are_listed(admin_user):
+    """Out of 2 strikes created, only one active strike is shown"""
+    client = get_api_client(user=admin_user)
+    
+    strike1 = StrikeFactory(created_at=(now() - timedelta(days=100)))
+    strike2 = StrikeFactory()
+
+    print(strike1.created_at, atus
+    str(strike1.active))
+    print(strike2.created_at, str(strike2.active))
+
+    response = client.get(API_STRIKE_BASE_URL)
+    response = response.json()
+
+
+
+    assert response["count"] == 1
