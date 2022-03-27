@@ -6,7 +6,10 @@ import pytest
 from app.badge.factories import BadgeFactory, UserBadgeFactory
 from app.career.factories import WeeklyBusinessFactory
 from app.common.enums import AdminGroup, Groups, MembershipType
-from app.communication.factories import NotificationFactory
+from app.communication.factories import (
+    NotificationFactory,
+    UserNotificationSettingFactory,
+)
 from app.content.factories import (
     CheatsheetFactory,
     EventFactory,
@@ -153,6 +156,11 @@ def short_link():
 @pytest.fixture()
 def notification():
     return NotificationFactory()
+
+
+@pytest.fixture()
+def user_notification_setting():
+    return UserNotificationSettingFactory()
 
 
 @pytest.fixture()

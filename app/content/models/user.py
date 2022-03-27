@@ -93,6 +93,8 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
 
     tool = models.CharField(max_length=100, blank=True)
 
+    slack_user_id = models.CharField(max_length=20, blank=True, default="")
+
     USERNAME_FIELD = "user_id"
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)

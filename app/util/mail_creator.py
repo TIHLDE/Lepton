@@ -3,14 +3,14 @@ from django.template.loader import render_to_string
 
 
 class MailCreator:
-    def __init__(self, title):
+    def __init__(self, title: str):
         """
         title: str -> Title of the mail
         """
         self.title = title
         self.content = []
 
-    def add_paragraph(self, text):
+    def add_paragraph(self, text: str):
         """
         Add a paragraph with text
 
@@ -19,7 +19,7 @@ class MailCreator:
         self.content.append({"type": "paragraph", "text": text})
         return self
 
-    def add_button(self, text, link):
+    def add_button(self, text: str, link: str):
         """
         Add a button with a link
 
@@ -35,14 +35,14 @@ class MailCreator:
         )
         return self
 
-    def add_event_button(self, event_id):
+    def add_event_button(self, event_id: int):
         """
         Add a button which links to an event
 
         event_id: -> Id of event which you want a link to
         """
         return self.add_button(
-            "Se arrangement", f"{settings.WEBSITE_URL}/arrangementer/{event_id}/"
+            "Åpne arrangement", f"{settings.WEBSITE_URL}/arrangementer/{event_id}/"
         )
 
     def generate_string(self):

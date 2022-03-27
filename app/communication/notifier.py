@@ -1,72 +1,152 @@
 import os
+from typing import Optional
 
 from django.core.mail import EmailMultiAlternatives
 from django.utils.html import strip_tags
 
 from sentry_sdk import capture_exception
 
+from app.communication.enums import UserNotificationSettingType
+from app.communication.slack import Slack
+from app.content.models.user import User
+from app.util.mail_creator import MailCreator
 from app.util.utils import chunk_list
 
 
 class Notify:
-    def __init__(self, users, title):
+    def __init__(
+        self,
+        users: list[User],
+        title: str,
+        notification_type: UserNotificationSettingType,
+    ):
         """
-        users: User[] -> The users to be notified\n
-        title: str -> Title of the notification
+        users -> The users to be notified\n
+        title -> Title of the notification\n
+        notification_type -> Type of notification
         """
         self.users = users
         self.title = title
+        self.notification_type = notification_type
 
-    def send_email(self, html, subject=None):
+        self.slack = Slack(title).add_header(title)
+        self.mail = MailCreator(title)
+        self.notification_title = title
+        self.notification_description = []
+        self.notification_link: Optional[str] = None
+
+    def add_paragraph(self, text: str, mail=True, website=True, slack=True):
         """
-        html: str -> The email HTML to be sent to the users\n
-        subject: str -> Subject of email, defaults to given title\n
+        text -> The text in the paragraph
         """
-        from app.communication.models.mail import Mail
 
-        if subject is None:
-            subject = self.title
+        if mail:
+            self.mail.add_paragraph(text)
 
-        if len(self.users) > 0:
-            mail = Mail.objects.create(subject=subject, body=html)
+        if website:
+            self.notification_description.append(text)
 
-            mail.users.add(*self.users)
+        if slack:
+            self.slack.add_paragraph(text)
 
         return self
 
-    def send_notification(self, title=None, description=None, link=None):
+    def add_link(self, text: str, link: str, mail=True, website=True, slack=True):
         """
-        title: str -> Title in notification, defaults to given title
-        description: str -> Description in notification, defaults to blank string
-        link: str -> Link in notification, optional
+        text -> The text on the button\n
+        link -> The link to go to on click
         """
-        from app.communication.models.notification import Notification
 
-        if title is None:
-            title = self.title
-        if description is None:
-            description = ""
+        if mail:
+            self.mail.add_button(text, link)
+
+        if website:
+            self.notification_link = link
+
+        if slack:
+            self.slack.add_link(text, link)
+
+        return self
+
+    def add_event_link(self, event_id: int, mail=True, website=True, slack=True):
+        """
+        event_id -> Id of the event
+        """
+
+        if mail:
+            self.mail.add_event_button(event_id)
+
+        if website:
+            self.notification_link = f"/arrangementer/{event_id}/"
+
+        if slack:
+            self.slack.add_event_link(event_id)
+
+        return self
+
+    def _send_mail(self):
+        from app.communication.models.mail import Mail
+
+        if len(self.users) > 0:
+            mail = Mail.objects.create(
+                subject=self.title, body=self.mail.generate_string()
+            )
+
+            for user in self.users:
+                if not user.user_notification_settings.filter(
+                    notification_type=self.notification_type, email=False
+                ).exists():
+                    mail.users.add(user)
+
+    def _send_slack(self):
+        for user in filter(lambda user: bool(user.slack_user_id), self.users):
+            if not user.user_notification_settings.filter(
+                notification_type=self.notification_type, slack=False
+            ).exists():
+                self.slack.send(user.slack_user_id)
+
+    def _send_notification(self):
+        from app.communication.models.notification import Notification
 
         bulk_inserts = []
 
         for user in self.users:
-            bulk_inserts.append(
-                Notification(user=user, title=title, description=description, link=link)
-            )
+            if not user.user_notification_settings.filter(
+                notification_type=self.notification_type, website=False
+            ).exists():
+                bulk_inserts.append(
+                    Notification(
+                        user=user,
+                        title=self.notification_title,
+                        description="\n".join(self.notification_description),
+                        link=self.notification_link,
+                    )
+                )
 
         if bulk_inserts:
             Notification.objects.bulk_create(bulk_inserts, batch_size=1000)
 
-        return self
+    def send(self, mail=True, website=True, slack=True):
+        """Send the created mails, notifications and Slack-messages"""
+        if mail:
+            self._send_mail()
+
+        if website:
+            self._send_notification()
+
+        if slack:
+            self._send_slack()
 
 
-def send_html_email(to_mails, html, subject, attachments=None):
+def send_html_email(
+    to_mails: list[str], html: str, subject: str, attachments=None
+) -> bool:
     """
-    to_mails: str -> Email-addresses of receivers\n
-    html: str -> The email HTML to be sent to the receivers\n
-    subject: str -> Subject of email\n
+    to_mails -> Email-addresses of receivers\n
+    html -> The email HTML to be sent to the receivers\n
+    subject -> Subject of email\n
 
-    returns: bool -> If the mails where sent successfully
+    returns -> If the mails where sent successfully
     """
 
     MAX_EMAILS_PER_SENDING = 100

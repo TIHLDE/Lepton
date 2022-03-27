@@ -6,6 +6,7 @@ from sentry_sdk import capture_exception
 
 from app.celery import app
 from app.common.enums import AdminGroup
+from app.communication.enums import UserNotificationSettingType
 from app.communication.notifier import Notify
 from app.communication.slack import Slack
 from app.constants import (
@@ -13,7 +14,6 @@ from app.constants import (
     SLACK_BEDPRES_OG_KURS_CHANNEL_ID,
 )
 from app.content.models.strike import create_strike
-from app.util.mail_creator import MailCreator
 from app.util.tasks import BaseTask
 from app.util.utils import datetime_format, midnight, now
 
@@ -88,38 +88,30 @@ def __sign_off_deadline_reminder(event, *args, **kwargs):
     users_not_on_wait = User.objects.filter(
         registrations__event=event, registrations__is_on_wait=False
     )
+    title = f'Påminnelse om avmeldingsfrist for "{event.title}"'
     if users_not_on_wait.exists():
         description_not_on_wait = f"Dette er en påminnelse om at avmeldingsfristen for {event.title} er imorgen. Dersom du ikke kan møte ber vi deg om å melde deg av arrangementet slik at andre kan få plassen din."
         if event.can_cause_strikes:
             description_not_on_wait += " Du kan melde deg av etter avmeldingsfristen og helt frem til 2 timer før arrangementsstart, men du vil da få 1 prikk. Dersom du ikke møter opp vil du få 2 prikker."
         Notify(
-            users_not_on_wait, f"Påminnelse om avmeldingsfrist for {event.title}"
-        ).send_email(
-            MailCreator("Påminnelse om avmeldingsfrist")
-            .add_paragraph("Hei!")
-            .add_paragraph(description_not_on_wait)
-            .add_event_button(event.id)
-            .generate_string(),
-        ).send_notification(
-            description=description_not_on_wait, link=event.website_url
-        )
+            users_not_on_wait,
+            title,
+            UserNotificationSettingType.EVENT_SIGN_OFF_DEADLINE,
+        ).add_paragraph(description_not_on_wait).add_event_link(event.id).send()
 
     users_on_wait = User.objects.filter(
         registrations__event=event, registrations__is_on_wait=True
     )
     if users_on_wait.exists():
-        description_on_wait = f"Dette er en påminnelse om at avmeldingsfristen for {event.title} er imorgen. Det forventes at du som står på venteliste kan møte opp dersom det blir en ledig plass. Dette gjelder helt frem til 2 timer før arrangementets starttid. Det er ditt ansvar å melde deg av ventelisten, hvis det ikke passer allikevel."
         Notify(
-            users_on_wait, f"Påminnelse om avmeldingsfrist for {event.title}"
-        ).send_email(
-            MailCreator("Påminnelse om avmeldingsfrist")
-            .add_paragraph("Hei!")
-            .add_paragraph(description_on_wait)
-            .add_event_button(event.id)
-            .generate_string(),
-        ).send_notification(
-            description=description_on_wait, link=event.website_url
-        )
+            users_on_wait,
+            title,
+            UserNotificationSettingType.EVENT_SIGN_OFF_DEADLINE,
+        ).add_paragraph(
+            f"Dette er en påminnelse om at avmeldingsfristen for {event.title} er imorgen. Det forventes at du som står på venteliste kan møte opp dersom det blir en ledig plass. Dette gjelder helt frem til 2 timer før arrangementets starttid. Det er ditt ansvar å melde deg av ventelisten, hvis det ikke passer allikevel."
+        ).add_event_link(
+            event.id
+        ).send()
 
     event.runned_sign_off_deadline_reminder = True
     event.save(update_fields=["runned_sign_off_deadline_reminder"])
@@ -138,25 +130,20 @@ def __post_event_actions(event, *args, **kwargs):
         users = User.objects.filter(
             registrations__event=event, registrations__has_attended=True
         )
-        description = [
-            f"Vi i TIHLDE setter stor pris på at du tar deg tid til å svare på denne korte undersøkelsen angående {event.title} den {datetime_format(event.start_date)}",
-            "Undersøkelsen tar ca 1 minutt å svare på, og er til stor hjelp for fremtidige arrangementer. Takk på forhånd!",
-            "PS: Du kan ikke melde deg på flere arrangementer gjennom TIHLDE.org før du har svart på denne undersøkelsen. Du kan alltid finne alle dine ubesvarte spørreskjemaer i profilen din.",
-        ]
-        Notify(users, f"Evaluering av {event.title}").send_email(
-            MailCreator(f"Evaluering av {event.title}")
-            .add_paragraph("Hei!")
-            .add_paragraph(description[0])
-            .add_paragraph(description[1])
-            .add_paragraph(description[2])
-            .add_button(
-                "Åpne undersøkelsen",
-                f"{settings.WEBSITE_URL}{event.evaluation.website_url}",
-            )
-            .generate_string(),
-        ).send_notification(
-            description=" \n".join(description), link=event.evaluation.website_url
-        )
+        Notify(
+            users,
+            f'Evaluering av "{event.title}"',
+            UserNotificationSettingType.EVENT_EVALUATION,
+        ).add_paragraph(
+            f"Vi i TIHLDE setter stor pris på at du tar deg tid til å svare på denne korte undersøkelsen angående {event.title} den {datetime_format(event.start_date)}"
+        ).add_paragraph(
+            "Undersøkelsen tar ca 1 minutt å svare på, og er til stor hjelp for fremtidige arrangementer. Takk på forhånd!"
+        ).add_paragraph(
+            "PS: Du kan ikke melde deg på flere arrangementer gjennom TIHLDE.org før du har svart på denne undersøkelsen. Du kan alltid finne alle dine ubesvarte spørreskjemaer i profilen din."
+        ).add_link(
+            "Åpne undersøkelsen",
+            f"{settings.WEBSITE_URL}{event.evaluation.website_url}",
+        ).send()
 
     event.runned_post_event_actions = True
     event.save(update_fields=["runned_post_event_actions"])
@@ -173,30 +160,21 @@ def __sign_up_start_notifier(event, *args, **kwargs):
     )
 
     slack = (
-        Slack(
-            channel_id=CHANNEL_ID,
-            fallback_text=f'Påmelding til "{event.title}" har nå åpnet!',
-        )
+        Slack(fallback_text=f'Påmelding til "{event.title}" har nå åpnet!')
         .add_header(event.title)
-        .add_markdwn(
+        .add_paragraph(
             f"{description}\n\n<{settings.WEBSITE_URL}{event.website_url}|*Se arrangementet her og meld deg på nå!*>"
         )
     )
     if event.image:
         slack.add_image(event.image, event.image_alt or event.title)
-    slack.send()
+    slack.send(CHANNEL_ID)
 
     Notify(
-        event.favorite_users.all(), f'Påmelding til "{event.title}" har nå åpnet!'
-    ).send_email(
-        MailCreator(f'Påmelding til "{event.title}" har nå åpnet!')
-        .add_paragraph("Hei!")
-        .add_paragraph(description)
-        .add_event_button(event.id)
-        .generate_string(),
-    ).send_notification(
-        description=description, link=event.website_url
-    )
+        event.favorite_users.all(),
+        f'Påmelding til "{event.title}" har nå åpnet!',
+        UserNotificationSettingType.EVENT_SIGN_UP_START,
+    ).add_paragraph(description).add_event_link(event.id).send()
 
     event.runned_sign_up_start_notifier = True
     event.save(update_fields=["runned_sign_up_start_notifier"])
