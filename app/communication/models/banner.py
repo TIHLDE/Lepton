@@ -30,12 +30,12 @@ class Banner(BaseModel, OptionalImage, BasePermissionModel, APIBannerErrorsMixin
     url = models.URLField(max_length=600, blank=True, null=True)
 
     def __str__(self):
-        return f"{self.title} {'- is visible' if self.is_visible else ''} - {self.description}"
+        return f"{self.title} - {self.description}"
 
     def save(self, *args, **kwargs):
-        if self.is_visible and self.exists_other_visible_banners:
+        if self.exists_overlapping_banners:
             raise AnotherVisibleBannerError(
-                "Det finnes allerede et banner som er synlig"
+                "Det finnes allerede et banner som er synlig for den tiden"
             )
         if self.visible_from > self.visible_until:
             raise DatesMixedError(
@@ -47,13 +47,12 @@ class Banner(BaseModel, OptionalImage, BasePermissionModel, APIBannerErrorsMixin
         ordering = ("-updated_at",)
 
     @property
-    def is_visible(self):
-        return self.visible_from <= now() and self.visible_until >= now()
-
-    @property
-    def exists_other_visible_banners(self):
+    def exists_overlapping_banners(self):
         return (
-            Banner.objects.filter(visible_from__lte=now(), visible_until__gte=now())
+            Banner.objects.filter(
+                visible_from__lte=self.visible_until,
+                visible_until__gte=self.visible_from,
+            )
             .exclude(id=self.id)
             .exists()
         )

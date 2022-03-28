@@ -1,10 +1,10 @@
 from app.communication.exceptions import (
+    AllChannelsUnselected,
     AnotherVisibleBannerError,
+    APIAllChannelsUnselected,
     APIAnotherVisibleBannerException,
     APIDatesMixedException,
     DatesMixedError,
-    AllChannelsUnselected,
-    APIAllChannelsUnselected,
 )
 from app.util.mixins import APIErrorsMixin
 

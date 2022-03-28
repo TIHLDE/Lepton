@@ -10,7 +10,6 @@ class BannerSerializer(serializers.ModelSerializer):
             "id",
             "title",
             "description",
-            "is_visible",
             "visible_from",
             "visible_until",
             "url",

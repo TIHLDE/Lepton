@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 import pytest
 
@@ -7,37 +7,35 @@ from app.communication.exceptions import (
     DatesMixedError,
 )
 from app.communication.factories.banner_factory import BannerFactory
-from app.util.utils import now
+from app.util.utils import getTimezone, now
 
 
-@pytest.mark.django_db
 @pytest.mark.parametrize(
-    "visible_from, visible_until, expected_value",
+    "visible_from_delta, visible_until_delta",
     [
-        (now() + timedelta(hours=1), now() + timedelta(hours=2), False),
-        (now(), now() + timedelta(2), True),
-        (now() - timedelta(hours=1), now() + timedelta(hours=1), True),
-        (now() - timedelta(hours=2), now() - timedelta(hours=1), False),
+        (5, 5),
+        (5, -5),
+        (-5, 5),
+        (-5, -5),
     ],
 )
-def test_banner_is_visible_with_different_dates(
-    visible_from, visible_until, expected_value
-):
-    "Banner is be visible when visible_from is passed and visible_until is not passed or None"
-    banner = BannerFactory(visible_from=visible_from, visible_until=visible_until)
-
-    is_visible = banner.is_visible
-
-    assert is_visible == expected_value
-
-
 @pytest.mark.django_db
-def test_two_banners_can_not_be_visible_simultaneously():
-    "A banner can not be visible in the same timeframe as another badge"
-    BannerFactory()
+def test_two_banners_can_not_be_visible_simultaneously_in_any_period(
+    visible_from_delta, visible_until_delta
+):
+    """A banner can not be visible in the same timeframe as another badge
+    This test uses timedelta and parameterize to switch visible_from
+    and visible_until between 5 days earlier or later."""
+    existing_banner = BannerFactory(
+        visible_from=datetime(2020, 1, 1, tzinfo=getTimezone()), visible_until=datetime(2021, 1, 1, tzinfo=getTimezone())
+    )
 
     with pytest.raises(AnotherVisibleBannerError):
-        BannerFactory()
+        BannerFactory(
+            visible_from=existing_banner.visible_from + timedelta(visible_from_delta),
+            visible_until=existing_banner.visible_until
+            + timedelta(visible_until_delta),
+        )
 
 
 @pytest.mark.django_db
