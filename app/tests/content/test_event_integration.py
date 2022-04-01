@@ -546,6 +546,73 @@ def test_retrieve_expired_event_as_admin(api_client, admin_user):
     assert response.status_code == status.HTTP_200_OK
 
 
+@pytest.mark.django_db
+def test_retrieve_is_favorite_event_when_is_not_favorite(api_client, member, event):
+    client = api_client(user=member)
+    url = f"{get_events_url_detail(event)}favorite/"
+    response = client.get(url)
+
+    assert response.status_code == status.HTTP_200_OK
+    assert not response.json().get("is_favorite")
+
+
+@pytest.mark.django_db
+def test_update_is_favorite_event_to_is_favorite(api_client, member, event):
+    client = api_client(user=member)
+    url = f"{get_events_url_detail(event)}favorite/"
+    response = client.put(url, {"is_favorite": True})
+
+    assert response.status_code == status.HTTP_200_OK
+    assert response.json().get("is_favorite")
+
+
+@pytest.mark.django_db
+def test_update_is_favorite_event_to_is_not_favorite(api_client, member, event):
+    event.favorite_users.add(member)
+
+    client = api_client(user=member)
+    url = f"{get_events_url_detail(event)}favorite/"
+    response = client.put(url, {"is_favorite": False})
+
+    assert response.status_code == status.HTTP_200_OK
+    assert not response.json().get("is_favorite")
+
+
+@pytest.mark.django_db
+def test_retrieve_is_favorite_event_when_is_favorite(api_client, member, event):
+    event.favorite_users.add(member)
+
+    client = api_client(user=member)
+    url = f"{get_events_url_detail(event)}favorite/"
+    response = client.get(url)
+
+    assert response.status_code == status.HTTP_200_OK
+    assert response.json().get("is_favorite")
+
+
+@pytest.mark.parametrize(
+    ("user_favorite", "expected_count"),
+    [
+        [True, 1],
+        [False, 3],
+    ],
+)
+@pytest.mark.django_db
+def test_user_favorite_filter_list(
+    api_client, member, event, user_favorite, expected_count
+):
+    event.favorite_users.add(member)
+    EventFactory.create_batch(2)
+
+    client = api_client(user=member)
+    url = f"{API_EVENTS_BASE_URL}?user_favorite={user_favorite}"
+    response = client.get(url)
+
+    actual_count = response.json().get("count")
+
+    assert actual_count == expected_count
+
+
 @pytest.mark.parametrize(
     ("expired", "expected_count"),
     [

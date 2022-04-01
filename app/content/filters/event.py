@@ -17,6 +17,10 @@ class EventFilter(FilterSet):
         method="filter_open_for_sign_up",
         label="Filter events that are open for sign up",
     )
+    user_favorite = BooleanFilter(
+        method="filter_user_favorites",
+        label="Filter events that are marked as favorite by current user",
+    )
 
     class Meta:
         model = Event
@@ -29,4 +33,9 @@ class EventFilter(FilterSet):
                 start_registration_at__lte=now(),
                 end_registration_at__gt=now(),
             )
+        return queryset
+
+    def filter_user_favorites(self, queryset, name, value):
+        if value and self.request.user:
+            return queryset.filter(favorite_users__user_id=self.request.user.user_id)
         return queryset

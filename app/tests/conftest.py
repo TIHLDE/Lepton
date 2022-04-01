@@ -6,7 +6,10 @@ import pytest
 from app.badge.factories import BadgeFactory, UserBadgeFactory
 from app.career.factories import WeeklyBusinessFactory
 from app.common.enums import AdminGroup, Groups, MembershipType
-from app.communication.factories import NotificationFactory
+from app.communication.factories import (
+    NotificationFactory,
+    UserNotificationSettingFactory,
+)
 from app.content.factories import (
     CheatsheetFactory,
     EventFactory,
@@ -17,6 +20,7 @@ from app.content.factories import (
     ShortLinkFactory,
     UserFactory,
 )
+from app.content.factories.toddel_factory import ToddelFactory
 from app.forms.tests.form_factories import FormFactory, SubmissionFactory
 from app.group.factories import GroupFactory, MembershipFactory
 from app.group.factories.fine_factory import FineFactory
@@ -155,6 +159,11 @@ def notification():
 
 
 @pytest.fixture()
+def user_notification_setting():
+    return UserNotificationSettingFactory()
+
+
+@pytest.fixture()
 def weekly_business():
     return WeeklyBusinessFactory()
 
@@ -162,3 +171,8 @@ def weekly_business():
 @pytest.fixture()
 def fine():
     return FineFactory()
+
+
+@pytest.fixture()
+def toddel():
+    return ToddelFactory()
