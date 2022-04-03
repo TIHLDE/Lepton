@@ -1,3 +1,4 @@
+from app.group.factories.membership_factory import MembershipHistoryFactory
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIRequestFactory
 
@@ -101,6 +102,11 @@ def membership():
 @pytest.fixture()
 def membership_leader():
     return MembershipFactory(membership_type=MembershipType.LEADER)
+
+
+@pytest.fixture()
+def membership_history():
+    return MembershipHistoryFactory()
 
 
 @pytest.fixture

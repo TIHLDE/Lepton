@@ -79,12 +79,3 @@ class GroupViewSet(BaseViewSet, ActionMixin):
                 {"detail": ("Gruppen eksisterer ikke")},
                 status=status.HTTP_404_NOT_FOUND,
             )
-
-    @action(detail=True, methods=["get"], url_path="membership-histories")
-    def get_group_history(self, request, *args, **kwargs):
-        group = self.get_object()
-        self.pagination_class = BasePagination
-        membership_history = group.membership_histories.order_by("-end_date")
-        return self.paginate_response(
-            data=membership_history, serializer=MembershipHistorySerializer
-        )

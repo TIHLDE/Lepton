@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+- ✨ **Medlemsskap**. Medlemsskapshistorikk kan nå opprettes, endres og slettes. En kan også hente ut medlemsskapshistorikk for spesifikke brukere.
 - 🦟 **Badge**. Fikset at ikke godkjente brukere var med i beregning til andel ervervet.
 
 ## Versjon 2022.03.24
