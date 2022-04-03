@@ -82,7 +82,6 @@ INSTALLED_APPS = [
     "rest_framework",
     "corsheaders",
     "django_filters",
-    "drf_yasg",
     "rest_framework.authtoken",
     "dj_rest_auth",
     "dry_rest_permissions",
