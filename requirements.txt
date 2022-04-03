@@ -5,7 +5,7 @@ wheel
 mysqlclient == 2.1.0
 sentry-sdk
 celery == 5.2.2
-azure-storage-blob == 12.10.0
+azure-storage-blob == 12.11.0
 python-dotenv ~= 0.20
 gunicorn == 20.1.0
 uvicorn == 0.17.6
@@ -37,7 +37,7 @@ django-mptt == 0.13.4
 # Code quality
 # ------------------------------------------------------------------------------
 pylint
-black == 22.1.0
+black == 22.3.0
 isort
 flake8
 flake8-django
