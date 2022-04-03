@@ -1,5 +1,4 @@
-from django.conf.urls import url
-from django.urls import include
+from django.urls import include, re_path
 from rest_framework import routers
 
 from app.forms.views.form import FormViewSet
@@ -10,5 +9,5 @@ router.register("", FormViewSet)
 router.register(r"(?P<form_id>[0-9a-f-]+)/submissions", SubmissionViewSet)
 
 urlpatterns = [
-    url(r"", include(router.urls)),
+    re_path(r"", include(router.urls)),
 ]
