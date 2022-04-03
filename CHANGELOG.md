@@ -13,6 +13,8 @@
 ---
 
 ## Neste versjon
+- 🦟 **Badge**. Fikset at ikke godkjente brukere var med i beregning til andel ervervet.
+
 ## Versjon 2022.03.24
 - ✨ **Slack**. Brukere kan koble kontoen sin til sin Slack-konto for å motta varsler i Slack.
 - ✨ **Töddel**. Redaksjonen kan nå publisere Töddel på nettsiden.
