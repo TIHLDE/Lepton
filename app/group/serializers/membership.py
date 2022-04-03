@@ -72,7 +72,11 @@ class MembershipHistorySerializer(BaseModelSerializer):
             "start_date",
             "end_date",
         )
-        read_only_fields = ("id", "user", "group",)
+        read_only_fields = (
+            "id",
+            "user",
+            "group",
+        )
 
     def create(self, validated_data):
         request = self.context["request"]
@@ -80,4 +84,6 @@ class MembershipHistorySerializer(BaseModelSerializer):
         user = User.objects.get(user_id=request.data.get("user", None))
         group = Group.objects.get(slug=request.parser_context["kwargs"]["slug"])
 
-        return MembershipHistory.objects.create(user=user, group=group, **validated_data)
+        return MembershipHistory.objects.create(
+            user=user, group=group, **validated_data
+        )

@@ -1,7 +1,11 @@
 from django.urls import include, re_path
 from rest_framework import routers
 
-from app.group.views import GroupViewSet, MembershipViewSet, MembershipHistoryViewSet
+from app.group.views import (
+    GroupViewSet,
+    MembershipHistoryViewSet,
+    MembershipViewSet,
+)
 from app.group.views.fine import FineViewSet
 from app.group.views.group_form import GroupFormViewSet
 from app.group.views.law import LawViewSet
@@ -12,7 +16,9 @@ router.register(
     r"groups/(?P<slug>[^\.]+)/memberships", MembershipViewSet, basename="membership"
 )
 router.register(
-    r"groups/(?P<slug>[^\.]+)/membership-histories", MembershipHistoryViewSet, basename="membership-history"
+    r"groups/(?P<slug>[^\.]+)/membership-histories",
+    MembershipHistoryViewSet,
+    basename="membership-history",
 )
 router.register(
     r"groups/(?P<slug>[^\.]+)/forms",

@@ -3,7 +3,7 @@ from rest_framework import status
 import pytest
 
 from app.common.enums import AdminGroup, MembershipType
-from app.group.factories.membership_factory import MembershipFactory, MembershipHistoryFactory
+from app.group.factories.membership_factory import MembershipHistoryFactory
 from app.util.test_utils import get_api_client
 
 GROUP_URL = "/groups"
@@ -22,7 +22,7 @@ def _get_post_membership_history_data(user=None, leader=False):
         "user": user.user_id,
         "membership_type": "LEADER" if (leader) else "MEMBER",
         "start_date": "2018-01-22T15:00:00.000000+02:00",
-        "end_date": "2020-05-03T15:00:00.000000+02:00"
+        "end_date": "2020-05-03T15:00:00.000000+02:00",
     }
 
 
@@ -30,7 +30,7 @@ def _get_put_membership_history_data(leader=False):
     return {
         "membership_type": "LEADER" if (leader) else "MEMBER",
         "start_date": "2018-01-22T15:00:00.000000+02:00",
-        "end_date": "2020-05-03T15:00:00.000000+02:00"
+        "end_date": "2020-05-03T15:00:00.000000+02:00",
     }
 
 
@@ -133,7 +133,9 @@ def test_create_as_group_user(user, group_name, expected_status_code, group):
 @pytest.mark.django_db
 def test_delete_membership_history_as_group_leader(membership_leader):
     """Tests that a group leader can update a membership history"""
-    membership = MembershipHistoryFactory(group=membership_leader.group, membership_type=MembershipType.MEMBER)
+    membership = MembershipHistoryFactory(
+        group=membership_leader.group, membership_type=MembershipType.MEMBER
+    )
     client = get_api_client(user=membership_leader.user)
     url = _get_membership_history_url_detail(membership)
     response = client.delete(url)
@@ -141,11 +143,12 @@ def test_delete_membership_history_as_group_leader(membership_leader):
     assert response.status_code == status.HTTP_200_OK
 
 
-
 @pytest.mark.django_db
 def test_update_membership_history_as_group_leader(membership_leader):
     """Tests that a group leader can update a membership history"""
-    membership = MembershipHistoryFactory(group=membership_leader.group, membership_type=MembershipType.MEMBER)
+    membership = MembershipHistoryFactory(
+        group=membership_leader.group, membership_type=MembershipType.MEMBER
+    )
     client = get_api_client(user=membership_leader.user)
     url = _get_membership_history_url_detail(membership)
     response = client.put(url, _get_put_membership_history_data())

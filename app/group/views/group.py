@@ -1,15 +1,12 @@
 from rest_framework import status
-from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from app.common.enums import GroupType
 from app.common.mixins import ActionMixin
-from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission, is_admin_user
 from app.common.viewsets import BaseViewSet
 from app.group.models import Group
 from app.group.serializers import GroupSerializer
-from app.group.serializers.membership import MembershipHistorySerializer
 
 
 class GroupViewSet(BaseViewSet, ActionMixin):
