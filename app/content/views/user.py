@@ -168,7 +168,9 @@ class UserViewSet(BaseViewSet, ActionMixin):
         user = self._get_user(request, pk)
         self.check_object_permissions(self.request, user)
 
-        memberships = user.memberships.filter(group__type__in=GroupType.public_groups())
+        memberships = user.memberships.filter(
+            group__type__in=GroupType.public_groups()
+        ).order_by("-created_at")
         return self.paginate_response(
             data=memberships,
             serializer=MembershipSerializer,

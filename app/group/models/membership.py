@@ -27,6 +27,7 @@ class MembershipHistory(BaseModel):
     end_date = models.DateTimeField()
 
     class Meta:
+        ordering = ("-end_date", "-start_date")
         unique_together = ("user", "group", "end_date")
         verbose_name = "Membership History"
         verbose_name_plural = "Membership Histories"
