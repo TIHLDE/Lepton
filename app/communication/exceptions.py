@@ -5,7 +5,7 @@ from rest_framework.exceptions import APIException
 
 class APIAnotherVisibleBannerException(APIException):
     status_code = status.HTTP_400_BAD_REQUEST
-    default_detail = "Det finnes allerede et banner som er synlig"
+    default_detail = "Det finnes allerede et banner som er synlig i samme tidsrom"
 
 
 class APIDatesMixedException(APIException):
