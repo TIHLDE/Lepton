@@ -14,6 +14,7 @@
 
 ## Neste versjon
 - ✨ **Banner**. Hovedstyret kan gi ut informasjon til brukere via bannere.
+- 🦟 **Badge**. Fikset at ikke godkjente brukere var med i beregning til andel ervervet.
 
 ## Versjon 2022.03.24
 - ✨ **Slack**. Brukere kan koble kontoen sin til sin Slack-konto for å motta varsler i Slack.
