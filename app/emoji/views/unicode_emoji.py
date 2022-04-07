@@ -16,10 +16,12 @@ class UnicodeEmojiViewSet(ViewSet, GenericAPIView):
     permission_classes = [BasicViewPermission]
     serializer_class = CustomEmojiSerializer
 
+    def get_queryset(self):
+        pass
+
     def list(self, request, *args, **kwargs):
         return Response(EMOJI_LIST)
 
     def retrieve(self, request, *args, **kwargs):
         print(request.path)
-        # return Response()
         return super().retrieve(request, *args, **kwargs)
