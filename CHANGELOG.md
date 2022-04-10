@@ -13,6 +13,18 @@
 ---
 
 ## Neste versjon
+- ⚡ **Prikker**. Lagt til bedre og flere tester for prikker.
+- ✨ **Banner**. Hovedstyret kan gi ut informasjon til brukere via bannere.
+- 🦟 **Badge**. Fikset at ikke godkjente brukere var med i beregning til andel ervervet.
+
+## Versjon 2022.03.24
+- ✨ **Slack**. Brukere kan koble kontoen sin til sin Slack-konto for å motta varsler i Slack.
+- ✨ **Töddel**. Redaksjonen kan nå publisere Töddel på nettsiden.
+- ⚡ **Varsler**. Brukere kan styre hvor de ønsker å motta forskjellige typer varsler.
+
+## Versjon 2022.03.22
+- ✨ **Arrangementer**. Brukere kan markere arrangementer som favoritter og motta varsel ved påmeldingsstart.
+
 ## Versjon 2022.03.13
 - 🦟 **Bruker**. Fikset bug som hindret brukere i å slette sin egen bruker.
 - ⚡ **RabbitMQ**. Kjører nå RabbitMQ i Docker-Compose istedenfor i en egen instans.

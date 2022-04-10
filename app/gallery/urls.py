@@ -1,5 +1,4 @@
-from django.conf.urls import url
-from django.urls import include
+from django.urls import include, re_path
 from rest_framework import routers
 
 from app.gallery.views.album import AlbumViewSet
@@ -10,5 +9,5 @@ router.register("", AlbumViewSet)
 router.register(r"(?P<slug>[^.]+)/pictures", PictureViewSet, basename="pictures")
 
 urlpatterns = [
-    url(r"", include(router.urls)),
+    re_path(r"", include(router.urls)),
 ]

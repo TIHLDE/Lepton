@@ -51,6 +51,7 @@ class UserSerializer(DefaultUserSerializer):
             "unread_notifications",
             "unanswered_evaluations_count",
             "number_of_strikes",
+            "slack_user_id",
         )
         read_only_fields = ("user_id",)
 

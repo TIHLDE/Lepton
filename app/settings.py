@@ -47,7 +47,7 @@ WEBSITE_URL = (
     if ENVIRONMENT == EnvironmentOptions.PRODUCTION
     else "https://dev.tihlde.org"
     if ENVIRONMENT == EnvironmentOptions.DEVELOPMENT
-    else "https://localhost:3000"
+    else "http://localhost:3000"
 )
 
 AZURE_BLOB_STORAGE_NAME = "tihldestorage.blob.core.windows.net"
@@ -82,9 +82,8 @@ INSTALLED_APPS = [
     "rest_framework",
     "corsheaders",
     "django_filters",
-    "drf_yasg",
     "rest_framework.authtoken",
-    "rest_auth",
+    "dj_rest_auth",
     "dry_rest_permissions",
     "polymorphic",
     # Our apps

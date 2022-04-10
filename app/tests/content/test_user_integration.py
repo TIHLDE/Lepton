@@ -180,6 +180,7 @@ def test_filter_only_users_with_active_strikes(
         ("/forms/", status.HTTP_200_OK),
         ("/strikes/", status.HTTP_200_OK),
         ("/data/", status.HTTP_200_OK),
+        ("/permissions/", status.HTTP_200_OK),
     ],
 )
 def test_user_actions_self(url, status_code, member, api_client):

@@ -21,6 +21,10 @@ def now():
     return datetime.now(tz=getTimezone())
 
 
+def tomorrow():
+    return now() + timedelta(days=1)
+
+
 def datetime_format(date_time):
     from django.template import Context, Template
 
