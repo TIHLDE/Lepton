@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+- ⚡ **Prikk**. Lagt til bedre tester for prikker.
 - ✨ **Banner**. Hovedstyret kan gi ut informasjon til brukere via bannere.
 - 🦟 **Badge**. Fikset at ikke godkjente brukere var med i beregning til andel ervervet.
 
