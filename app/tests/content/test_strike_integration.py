@@ -1,14 +1,15 @@
 from datetime import timedelta
+
 from rest_framework import status
-from app.content.factories import StrikeFactory
-from app.util.utils import now
 
 import pytest
 
 from app.common.enums import AdminGroup, Groups, StrikeEnum
+from app.content.factories import StrikeFactory
 from app.content.factories.event_factory import EventFactory
 from app.content.factories.user_factory import UserFactory
 from app.util.test_utils import get_api_client
+from app.util.utils import now
 
 API_STRIKE_BASE_URL = "/strikes/"
 
@@ -72,7 +73,7 @@ def test_create_strikes_as_member_of_board_or_sub_group(
 def test_only_active_strikes_are_listed(admin_user):
     """Out of 2 strikes created, only one active strike is shown"""
     client = get_api_client(user=admin_user)
-    
+
     StrikeFactory.build(created_at=now() - timedelta(days=100))
     StrikeFactory()
 
@@ -94,7 +95,9 @@ def test_only_active_strikes_are_listed(admin_user):
         ("NOT A VALID ENUM", status.HTTP_404_NOT_FOUND),
     ],
 )
-def test_all_strike_enums_are_valid(admin_user, strike_enum, expected_status_code, strike_post_data):
+def test_all_strike_enums_are_valid(
+    admin_user, strike_enum, expected_status_code, strike_post_data
+):
     """If a strike enum is not recognized, a 404 is returned"""
     strike_post_data["enum"] = str(strike_enum)
 
