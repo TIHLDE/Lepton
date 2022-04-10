@@ -5,7 +5,7 @@ from app.util.utils import now
 
 import pytest
 
-from app.common.enums import AdminGroup, Groups
+from app.common.enums import AdminGroup, Groups, StrikeEnum
 from app.content.factories.event_factory import EventFactory
 from app.content.factories.user_factory import UserFactory
 from app.util.test_utils import get_api_client
@@ -38,7 +38,7 @@ def strike_post_data():
 def test_list_strikes_as_member_of_board_or_sub_group(
     member, group_name, expected_status_code
 ):
-    """A member of the board or a subgroup should be able to list strikes."""
+    """A member of HS, Index, NOK or Sosialen can list strikes"""
     client = get_api_client(user=member, group_name=group_name)
     url = API_STRIKE_BASE_URL
     response = client.get(url)
@@ -61,19 +61,11 @@ def test_list_strikes_as_member_of_board_or_sub_group(
 def test_create_strikes_as_member_of_board_or_sub_group(
     member, group_name, expected_status_code, strike_post_data
 ):
-    """A member of the board or a subgroup should be able to give strikes."""
+    """A member of HS, Index, NOK or Sosialen can create a strike"""
     client = get_api_client(user=member, group_name=group_name)
     response = client.post(API_STRIKE_BASE_URL, strike_post_data)
 
     assert response.status_code == expected_status_code
-
-@pytest.mark.django_db
-def test_update_strikes_is_not_implemented(admin_user, strike_post_data):
-    """Functionality for updating a strike is not implemented"""
-    client = get_api_client(user=admin_user)
-    response = client.put(API_STRIKE_BASE_URL, strike_post_data)
-
-    assert response.status_code == status.HTTP_501_NOT_IMPLEMENTED
 
 
 @pytest.mark.django_db
@@ -81,15 +73,32 @@ def test_only_active_strikes_are_listed(admin_user):
     """Out of 2 strikes created, only one active strike is shown"""
     client = get_api_client(user=admin_user)
     
-    strike1 = StrikeFactory(created_at=(now() - timedelta(days=100)))
-    strike2 = StrikeFactory()
-
-    print(strike1.created_at, str(strike1.active))
-    print(strike2.created_at, str(strike2.active))
+    StrikeFactory.build(created_at=now() - timedelta(days=100))
+    StrikeFactory()
 
     response = client.get(API_STRIKE_BASE_URL)
     response = response.json()
 
-
-
     assert response["count"] == 1
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    ("strike_enum", "expected_status_code"),
+    [
+        (StrikeEnum.BAD_BEHAVIOR, status.HTTP_200_OK),
+        (StrikeEnum.EVAL_FORM, status.HTTP_200_OK),
+        (StrikeEnum.LATE, status.HTTP_200_OK),
+        (StrikeEnum.NO_SHOW, status.HTTP_200_OK),
+        (StrikeEnum.PAST_DEADLINE, status.HTTP_200_OK),
+        ("NOT A VALID ENUM", status.HTTP_404_NOT_FOUND),
+    ],
+)
+def test_all_strike_enums_are_valid(admin_user, strike_enum, expected_status_code, strike_post_data):
+    """If a strike enum is not recognized, a 404 is returned"""
+    strike_post_data["enum"] = str(strike_enum)
+
+    client = get_api_client(user=admin_user)
+    response = client.post(API_STRIKE_BASE_URL, strike_post_data)
+
+    assert response.status_code == expected_status_code

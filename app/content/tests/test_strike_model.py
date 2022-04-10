@@ -73,7 +73,7 @@ def test_strike_is_active_or_not_with_freeze_through_summer_holiday(
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
-    ("created_at", "offset"),
+    ("created_at", "days_active"),
     [
         (datetime(2021, 3, 1), 20),
         (datetime(2021, 3, 1, 1), 20),
@@ -86,15 +86,15 @@ def test_strike_is_active_or_not_with_freeze_through_summer_holiday(
         (datetime(2021, 12, 24), 37),
     ],
 )
-def test_active_days_of_a_strike_with_freeze_through_holidays(created_at, offset):
-    """A strike offset is the amount of days a strike is frozen"""
+def test_active_days_of_a_strike_with_freeze_through_holidays(created_at, days_active):
+    """Days active is the amount of days a strike is active which is at least 20 days"""
     created_at = created_at.replace(tzinfo=getTimezone())
 
     strike = StrikeFactory.build(created_at=created_at)
 
     active_days = strike.expires_at - strike.created_at
 
-    assert active_days == timedelta(offset)
+    assert active_days == timedelta(days_active)
 
 
 @pytest.mark.django_db
