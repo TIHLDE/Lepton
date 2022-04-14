@@ -41,8 +41,7 @@ def test_list_strikes_as_member_of_board_or_sub_group(
 ):
     """A member of HS, Index, NOK or Sosialen can list strikes"""
     client = get_api_client(user=member, group_name=group_name)
-    url = API_STRIKE_BASE_URL
-    response = client.get(url)
+    response = client.get(API_STRIKE_BASE_URL)
 
     assert response.status_code == expected_status_code
 
@@ -71,10 +70,10 @@ def test_create_strikes_as_member_of_board_or_sub_group(
 
 @pytest.mark.django_db
 def test_only_active_strikes_are_listed(admin_user):
-    """Out of 2 strikes created, only one active strike is shown"""
+    """Out of 2 strikes created, only the active strike is shown"""
     client = get_api_client(user=admin_user)
 
-    StrikeFactory.build(created_at=now() - timedelta(days=100))
+    StrikeFactory.build(created_at=now() - timedelta(days=365))
     StrikeFactory()
 
     response = client.get(API_STRIKE_BASE_URL)
@@ -103,5 +102,28 @@ def test_all_strike_enums_are_valid(
 
     client = get_api_client(user=admin_user)
     response = client.post(API_STRIKE_BASE_URL, strike_post_data)
+
+    assert response.status_code == expected_status_code
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    ("group_name", "expected_status_code"),
+    [
+        (AdminGroup.HS, status.HTTP_200_OK),
+        (AdminGroup.INDEX, status.HTTP_200_OK),
+        (AdminGroup.NOK, status.HTTP_403_FORBIDDEN),
+        (AdminGroup.SOSIALEN, status.HTTP_403_FORBIDDEN),
+        (AdminGroup.PROMO, status.HTTP_403_FORBIDDEN),
+        (Groups.TIHLDE, status.HTTP_403_FORBIDDEN),
+    ],
+)
+def test_delete_strike_as_member_of_board_or_sub_goup(
+    member, group_name, expected_status_code
+):
+    """A member of HS or Index can delete a strike"""
+    strike = StrikeFactory()
+    client = get_api_client(user=member, group_name=group_name)
+    response = client.delete(API_STRIKE_BASE_URL + str(strike.id) + "/")
 
     assert response.status_code == expected_status_code

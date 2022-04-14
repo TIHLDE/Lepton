@@ -4,6 +4,7 @@ from unittest import mock
 import pytest
 
 from app.content.factories import StrikeFactory
+from app.content.models.strike import STRIKE_DURATION_IN_DAYS
 from app.util.utils import getTimezone
 
 
@@ -34,6 +35,8 @@ def test_strike_is_active_or_not_with_freeze_through_winter_holiday(
 
     mock_now.return_value = today
     strike = StrikeFactory.build(created_at=created_at)
+
+    print(strike.expires_at)
 
     assert strike.active == expected_result
 
@@ -75,15 +78,15 @@ def test_strike_is_active_or_not_with_freeze_through_summer_holiday(
 @pytest.mark.parametrize(
     ("created_at", "days_active"),
     [
-        (datetime(2021, 3, 1), 20),
-        (datetime(2021, 3, 1, 1), 20),
-        (datetime(2021, 5, 9), 118),
-        (datetime(2021, 5, 9, 4), 118),
-        (datetime(2021, 5, 3), 118),
-        (datetime(2021, 8, 14), 22),
-        (datetime(2021, 11, 9), 20),
-        (datetime(2021, 11, 9, 1), 62),
-        (datetime(2021, 12, 24), 37),
+        (datetime(2021, 3, 1), STRIKE_DURATION_IN_DAYS),
+        (datetime(2021, 3, 1, 1), STRIKE_DURATION_IN_DAYS),
+        (datetime(2021, 5, 9), STRIKE_DURATION_IN_DAYS + 98),
+        (datetime(2021, 5, 9, 4), STRIKE_DURATION_IN_DAYS + 98),
+        (datetime(2021, 5, 3), STRIKE_DURATION_IN_DAYS + 98),
+        (datetime(2021, 8, 14), STRIKE_DURATION_IN_DAYS + 2),
+        (datetime(2021, 11, 9), STRIKE_DURATION_IN_DAYS),
+        (datetime(2021, 11, 9, 1), STRIKE_DURATION_IN_DAYS + 42),
+        (datetime(2021, 12, 24), STRIKE_DURATION_IN_DAYS + 17),
     ],
 )
 def test_active_days_of_a_strike_with_freeze_through_holidays(created_at, days_active):
@@ -99,7 +102,7 @@ def test_active_days_of_a_strike_with_freeze_through_holidays(created_at, days_a
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
-    ("created_at", "is_different_year"),
+    ("created_at", "is_same_year"),
     [
         (datetime(2021, 1, 1), True),
         (datetime(2021, 5, 9), True),
@@ -112,7 +115,7 @@ def test_active_days_of_a_strike_with_freeze_through_holidays(created_at, days_a
     ],
 )
 def test_year_of_expire_date_different_than_created_year_with_freeze_through_winter_holidays(
-    created_at, is_different_year
+    created_at, is_same_year
 ):
     """A strike should have a different year of expired date
     if created less 20 days before the winter holiday"""
@@ -123,4 +126,4 @@ def test_year_of_expire_date_different_than_created_year_with_freeze_through_win
     created_year = strike.created_at.year
     expired_year = strike.expires_at.year
 
-    assert (expired_year == created_year) == is_different_year
+    assert (expired_year == created_year) == is_same_year
