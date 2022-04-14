@@ -7,6 +7,7 @@ from app.badge.factories import BadgeFactory, UserBadgeFactory
 from app.career.factories import WeeklyBusinessFactory
 from app.common.enums import AdminGroup, Groups, MembershipType
 from app.communication.factories import (
+    BannerFactory,
     NotificationFactory,
     UserNotificationSettingFactory,
 )
@@ -177,6 +178,11 @@ def weekly_business():
 @pytest.fixture()
 def fine():
     return FineFactory()
+
+
+@pytest.fixture()
+def banner():
+    return BannerFactory()
 
 
 @pytest.fixture()
