@@ -22,5 +22,5 @@ class CustomShortName(models.Model):
         auto_created=True,
     )
 
-    def __str__(self) -> str:
+    def __str__(self):
         return self.value
