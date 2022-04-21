@@ -21,3 +21,6 @@ class CustomShortName(models.Model):
         on_delete=models.CASCADE,
         auto_created=True,
     )
+
+    def __str__(self) -> str:
+        return self.value
