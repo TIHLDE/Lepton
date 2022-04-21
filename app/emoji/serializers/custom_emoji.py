@@ -1,4 +1,3 @@
-from wsgiref import validate
 from app.common.serializers import BaseModelSerializer
 from rest_framework.serializers import RelatedField
 from django.db import transaction
@@ -11,7 +10,7 @@ class CustomShortNameField(RelatedField):
         return CustomShortName(value=data)
 
     def to_representation(self, value):
-        return value
+        return value.value
 
 
 class CustomEmojiSerializer(BaseModelSerializer):

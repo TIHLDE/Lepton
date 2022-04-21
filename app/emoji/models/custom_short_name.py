@@ -2,10 +2,9 @@ from django.db import models
 from django.core.validators import RegexValidator
 
 from app.emoji.models import CustomEmoji
-from app.util.models import BaseModel
 
 
-class CustomShortName(BaseModel):
+class CustomShortName(models.Model):
     value = models.CharField(
         primary_key=True,
         max_length=32,
