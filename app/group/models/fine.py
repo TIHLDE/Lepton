@@ -9,10 +9,10 @@ from app.communication.enums import UserNotificationSettingType
 from app.content.models.user import User
 from app.group.exceptions import UserIsNotInGroup
 from app.group.models.group import Group
-from app.util.models import BaseModel
+from app.util.models import BaseModel, OptionalImage
 
 
-class Fine(BaseModel, BasePermissionModel):
+class Fine(BaseModel, OptionalImage, BasePermissionModel):
 
     access = AdminGroup.admin()
     id = models.UUIDField(
