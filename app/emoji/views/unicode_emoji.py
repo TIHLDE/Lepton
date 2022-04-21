@@ -16,6 +16,7 @@ class UnicodeEmojiViewSet(ViewSet, GenericAPIView):
     permission_classes = [BasicViewPermission]
     serializer_class = CustomEmojiSerializer
 
+    # DRF complains if this is not here, even though it isn't used.
     def get_queryset(self):
         pass
 
@@ -23,5 +24,4 @@ class UnicodeEmojiViewSet(ViewSet, GenericAPIView):
         return Response(EMOJI_LIST)
 
     def retrieve(self, request, *args, **kwargs):
-        print(request.path)
         return super().retrieve(request, *args, **kwargs)
