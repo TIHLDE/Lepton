@@ -27,7 +27,8 @@ def test_two_banners_can_not_be_visible_simultaneously_in_any_period(
     This test uses timedelta and parameterize to switch visible_from
     and visible_until between 5 days earlier or later."""
     existing_banner = BannerFactory(
-        visible_from=datetime(2020, 1, 1, tzinfo=getTimezone()), visible_until=datetime(2021, 1, 1, tzinfo=getTimezone())
+        visible_from=datetime(2020, 1, 1, tzinfo=getTimezone()),
+        visible_until=datetime(2021, 1, 1, tzinfo=getTimezone()),
     )
 
     with pytest.raises(AnotherVisibleBannerError):
