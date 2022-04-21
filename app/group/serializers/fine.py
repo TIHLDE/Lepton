@@ -49,6 +49,7 @@ class FineUpdateCreateSerializer(BaseModelSerializer):
             "description",
             "created_at",
             "reason",
+            "image",
         )
 
         read_only_fields = (
@@ -79,6 +80,7 @@ class FineSerializer(BaseModelSerializer):
             "payed",
             "description",
             "reason",
+            "image",
             "created_by",
             "created_at",
         )
@@ -98,6 +100,7 @@ class FineNoUserSerializer(BaseModelSerializer):
             "payed",
             "description",
             "reason",
+            "image",
             "created_by",
             "created_at",
         )

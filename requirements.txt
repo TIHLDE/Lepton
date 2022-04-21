@@ -2,11 +2,11 @@ requests
 logzero
 aiohttp-cors
 wheel
-mysqlclient == 2.0.3
+mysqlclient == 2.1.0
 sentry-sdk
 celery == 5.2.2
-azure-storage-blob == 12.10.0
-python-dotenv ~= 0.19
+azure-storage-blob == 12.11.0
+python-dotenv ~= 0.20
 gunicorn == 20.1.0
 uvicorn == 0.17.6
 whitenoise == 6.0.0
@@ -15,33 +15,29 @@ slack-sdk == 3.15.2
 
 # Django
 # ------------------------------------------------------------------------------
-Django==3.2.12
-django-enumchoicefield
-django-filter
+Django==4.0.3
+django-enumchoicefield == 3.0.0
+django-filter == 21.1
 django-ordered-model~=3.5
 
 # Django REST Framework
 djangorestframework==3.13.1
 django-cors-headers
-django-rest-auth
+dj-rest-auth == 2.2.3
 
 #django dry rest permissions
-django-dry-rest-permissions
+django-dry-rest-permissions == 1.2.0
 
 # Django Polymorphic
 django-polymorphic ~= 3.1
-django-rest-polymorphic
+django-rest-polymorphic == 0.1.9
 
-django-mptt
-
-# Documentation
-# ------------------------------------------------------------------------------
-drf-yasg
+django-mptt == 0.13.4
 
 # Code quality
 # ------------------------------------------------------------------------------
 pylint
-black == 22.1.0
+black == 22.3.0
 isort
 flake8
 flake8-django
@@ -52,7 +48,7 @@ pre-commit == 2.7.1
 # ------------------------------------------------------------------------------
 coverage
 pdbpp
-pytest == 7.0.1
+pytest == 7.1.1
 pytest-cov == 3.0.0
 pytest-django == 4.5.2
 factory-boy == 3.2.1

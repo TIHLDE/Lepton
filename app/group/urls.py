@@ -1,4 +1,4 @@
-from django.conf.urls import include, url
+from django.urls import include, re_path
 from rest_framework import routers
 
 from app.group.views import GroupViewSet, MembershipViewSet
@@ -21,4 +21,4 @@ router.register(r"groups/(?P<slug>[^\.]+)/fines", FineViewSet, basename="fine")
 
 
 # Register group viewpoints here
-urlpatterns = [url(r"", include(router.urls))]
+urlpatterns = [re_path(r"", include(router.urls))]

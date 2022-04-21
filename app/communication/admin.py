@@ -1,6 +1,7 @@
 from django.contrib import admin
 
 from app.communication.models import (
+    Banner,
     Mail,
     Notification,
     UserNotificationSetting,
@@ -30,3 +31,4 @@ admin.site.register(Mail, MailAdmin)
 admin.site.register(Notification)
 admin.site.register(UserNotificationSetting, UserNotificationSettingAdmin)
 admin.site.register(Warning)
+admin.site.register(Banner)
