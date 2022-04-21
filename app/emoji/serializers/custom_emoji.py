@@ -1,6 +1,7 @@
-from app.common.serializers import BaseModelSerializer
-from rest_framework.serializers import RelatedField
 from django.db import transaction
+from rest_framework.serializers import RelatedField
+
+from app.common.serializers import BaseModelSerializer
 from app.emoji.models import CustomEmoji
 from app.emoji.models.custom_short_name import CustomShortName
 
