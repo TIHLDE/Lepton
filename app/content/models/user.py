@@ -126,6 +126,10 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
             | Q(group__type=GroupType.BOARD)
         )
 
+    @property
+    def memberships_with_group_form_access(self):
+        return self.memberships_with_events_access
+
     def has_perm(self, perm, obj=None):
         return self.is_superuser
 

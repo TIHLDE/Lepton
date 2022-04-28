@@ -32,7 +32,9 @@ class SimpleGroupSerializer(BaseModelSerializer):
 class GroupSerializer(SimpleGroupSerializer):
 
     leader = serializers.SerializerMethodField()
-    permissions = DRYPermissionsField(actions=["write", "read"], object_only=True)
+    permissions = DRYPermissionsField(
+        actions=["write", "read", "group_form"], object_only=True
+    )
     fines_admin = DefaultUserSerializer(read_only=True)
 
     class Meta:

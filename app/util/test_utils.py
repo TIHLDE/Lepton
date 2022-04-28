@@ -36,4 +36,4 @@ def get_group_type_from_group_name(group_name):
         return GroupType.BOARD
     elif group_name in AdminGroup.all():
         return GroupType.SUBGROUP
-    return GroupType.OTHER
+    return GroupType.COMMITTEE

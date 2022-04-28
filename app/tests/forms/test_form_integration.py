@@ -84,29 +84,33 @@ def test_list_form_templates_data(admin_user):
     response = client.get(url)
     response = response.json()
 
-    assert response[0] == {
-        "id": str(form.id),
-        "title": form.title,
-        "fields": [
-            {
-                "id": str(field.id),
-                "title": field.title,
-                "options": [
-                    {
-                        "id": str(option.id),
-                        "title": option.title,
-                        "order": option.order,
-                    }
-                ],
-                "type": field.type.name,
-                "required": field.required,
-                "order": field.order,
-            }
-        ],
-        "template": True,
-        "resource_type": form._meta.object_name,
-        "viewer_has_answered": False,
-    }
+    assert (
+        response[0]
+        | {
+            "id": str(form.id),
+            "title": form.title,
+            "fields": [
+                {
+                    "id": str(field.id),
+                    "title": field.title,
+                    "options": [
+                        {
+                            "id": str(option.id),
+                            "title": option.title,
+                            "order": option.order,
+                        }
+                    ],
+                    "type": field.type.name,
+                    "required": field.required,
+                    "order": field.order,
+                }
+            ],
+            "template": True,
+            "resource_type": form._meta.object_name,
+            "viewer_has_answered": False,
+        }
+        == response[0]
+    )
 
 
 def test_list_forms_as_anonymous_user_is_not_permitted(default_client):
