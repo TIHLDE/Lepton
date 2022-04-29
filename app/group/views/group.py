@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.response import Response
 
 from app.common.mixins import ActionMixin
-from app.common.permissions import BasicViewPermission, is_admin_user
+from app.common.permissions import BasicViewPermission
 from app.common.viewsets import BaseViewSet
 from app.group.filters.group import GroupFilter
 from app.group.models import Group
