@@ -6,7 +6,6 @@ from django.utils.safestring import mark_safe
 
 from app.content import models
 
-admin.site.register(models.Event)
 admin.site.register(models.News)
 admin.site.register(models.Category)
 admin.site.register(models.Priority)
@@ -53,16 +52,66 @@ class RegistrationAdmin(admin.ModelAdmin):
         "user__last_name",
     )
     readonly_fields = ("created_at", "updated_at")
+    list_filter = (
+        "is_on_wait",
+        "has_attended",
+        "event",
+        "user",
+    )
     # Enables checks bypassing from the 'Action' dropdown in Registration overview
     actions = [
         admin_delete_registration,
     ]
 
 
+class SlackConnectedListFilter(admin.SimpleListFilter):
+    """Filters users checking if they have connected to their Slack-user"""
+
+    title = "har tilkoblet Slack-bruker"
+    parameter_name = "slack_connected"
+
+    def lookups(self, *args, **kwargs):
+        return (
+            ("true", "Ja"),
+            ("false", "Nei"),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() == "true":
+            return queryset.exclude(slack_user_id__exact="")
+        if self.value() == "false":
+            return queryset.filter(slack_user_id__exact="")
+
+
 @admin.register(models.User)
 class UserAdmin(admin.ModelAdmin):
     list_display = ("user_id", "first_name", "last_name", "user_class", "user_study")
     search_fields = ("user_id", "first_name", "last_name", "user_class", "user_study")
+
+    list_filter = (
+        "gender",
+        "user_class",
+        "user_study",
+        "public_event_registrations",
+        SlackConnectedListFilter,
+    )
+
+
+@admin.register(models.Event)
+class EventAdmin(admin.ModelAdmin):
+    list_display = ("title", "start_date", "location", "category", "organizer")
+    search_fields = (
+        "title",
+        "description",
+        "location",
+    )
+
+    list_filter = (
+        "sign_up",
+        "start_date",
+        "category",
+        "organizer",
+    )
 
 
 class StrikesOverview(models.User):
