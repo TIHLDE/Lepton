@@ -145,3 +145,12 @@ class Group(OptionalImage, BaseModel, BasePermissionModel):
             ).is_leader() or super().has_object_write_permission(request)
         except Membership.DoesNotExist:
             return super().has_object_write_permission(request)
+
+    def has_object_group_form_permission(self, request):
+        """Checks if a user has access to read and write to group forms is used as a serializer field"""
+        return (
+            request.user
+            and request.user.memberships_with_group_form_access.filter(
+                group=self
+            ).exists()
+        )

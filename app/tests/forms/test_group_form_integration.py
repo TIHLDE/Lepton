@@ -2,7 +2,7 @@ from rest_framework import status
 
 import pytest
 
-from app.common.enums import AdminGroup, MembershipType
+from app.common.enums import AdminGroup, GroupType, MembershipType
 from app.forms.tests.form_factories import GroupFormFactory
 from app.group.factories import GroupFactory, MembershipFactory
 from app.util.test_utils import add_user_to_group_with_name
@@ -43,7 +43,9 @@ def test_that_creating_group_form_as_leader_of_group_creates_the_form(
     """Leaders of groups should be able to create group-forms"""
     group = GroupFactory.build(slug=group_name)
     add_user_to_group_with_name(
-        user=user, group_name=group_name, membership_type=MembershipType.LEADER
+        user=user,
+        group_name=group_name,
+        membership_type=MembershipType.LEADER,
     )
 
     client = api_client(user=user)
@@ -72,7 +74,9 @@ def test_that_creating_group_form_as_member_of_admin_group_creates_the_form(
     """Members of admin-groups should be able to create group-forms"""
     group = GroupFactory.build(slug=group_name)
     add_user_to_group_with_name(
-        user=user, group_name=group_name, membership_type=MembershipType.MEMBER
+        user=user,
+        group_name=group_name,
+        membership_type=MembershipType.MEMBER,
     )
 
     client = api_client(user=user)
@@ -92,7 +96,10 @@ def test_that_creating_group_form_as_member_of_group_does_not_create_the_form(
     """Members of groups should not be able to create group-forms"""
     group = GroupFactory.build(slug=group_name)
     add_user_to_group_with_name(
-        user=user, group_name=group_name, membership_type=MembershipType.MEMBER
+        user=user,
+        group_name=group_name,
+        group_type=GroupType.COMMITTEE,
+        membership_type=MembershipType.MEMBER,
     )
 
     client = api_client(user=user)
@@ -161,36 +168,59 @@ def test_retrieve_list_of_group_forms_only_returns_where_is_admin_or_can_answer(
 
 
 @pytest.mark.parametrize(
-    "membership_type, only_for_group_members, is_open_for_submissions, status_code",
+    (
+        "membership_type",
+        "only_for_group_members",
+        "is_open_for_submissions",
+        "status_code",
+        "group_type",
+    ),
     [
-        (MembershipType.LEADER, True, True, status.HTTP_200_OK),
-        (MembershipType.LEADER, True, False, status.HTTP_200_OK),
-        (MembershipType.LEADER, False, True, status.HTTP_200_OK),
-        (MembershipType.LEADER, False, False, status.HTTP_200_OK),
-        (MembershipType.MEMBER, True, True, status.HTTP_200_OK),
-        (MembershipType.MEMBER, True, False, status.HTTP_403_FORBIDDEN),
-        (MembershipType.MEMBER, False, True, status.HTTP_200_OK),
-        (MembershipType.MEMBER, False, False, status.HTTP_403_FORBIDDEN),
-        (None, True, True, status.HTTP_403_FORBIDDEN),
-        (None, True, False, status.HTTP_403_FORBIDDEN),
-        (None, False, True, status.HTTP_200_OK),
-        (None, False, False, status.HTTP_403_FORBIDDEN),
+        (MembershipType.LEADER, True, True, status.HTTP_200_OK, GroupType.COMMITTEE),
+        (MembershipType.LEADER, True, False, status.HTTP_200_OK, GroupType.COMMITTEE),
+        (MembershipType.LEADER, False, True, status.HTTP_200_OK, GroupType.COMMITTEE),
+        (MembershipType.LEADER, False, False, status.HTTP_200_OK, GroupType.COMMITTEE),
+        (MembershipType.MEMBER, True, True, status.HTTP_200_OK, GroupType.SUBGROUP),
+        (MembershipType.MEMBER, True, False, status.HTTP_200_OK, GroupType.SUBGROUP),
+        (MembershipType.MEMBER, False, True, status.HTTP_200_OK, GroupType.SUBGROUP),
+        (MembershipType.MEMBER, False, False, status.HTTP_200_OK, GroupType.SUBGROUP),
+        (MembershipType.MEMBER, True, True, status.HTTP_200_OK, GroupType.COMMITTEE),
+        (
+            MembershipType.MEMBER,
+            True,
+            False,
+            status.HTTP_403_FORBIDDEN,
+            GroupType.COMMITTEE,
+        ),
+        (MembershipType.MEMBER, False, True, status.HTTP_200_OK, GroupType.COMMITTEE),
+        (
+            MembershipType.MEMBER,
+            False,
+            False,
+            status.HTTP_403_FORBIDDEN,
+            GroupType.COMMITTEE,
+        ),
+        (None, True, True, status.HTTP_403_FORBIDDEN, GroupType.COMMITTEE),
+        (None, True, False, status.HTTP_403_FORBIDDEN, GroupType.COMMITTEE),
+        (None, False, True, status.HTTP_200_OK, GroupType.COMMITTEE),
+        (None, False, False, status.HTTP_403_FORBIDDEN, GroupType.COMMITTEE),
     ],
 )
 def test_retrieve_specific_group_form(
     api_client,
     member,
-    group,
     membership_type,
     only_for_group_members,
     is_open_for_submissions,
     status_code,
+    group_type,
 ):
     """
     Leaders of group should get all forms,
     members should get if it's open for submissions
     and others should only get if it's open for submissions and not only for group members
     """
+    group = GroupFactory(type=group_type)
     group_form = GroupFormFactory(
         group=group,
         only_for_group_members=only_for_group_members,

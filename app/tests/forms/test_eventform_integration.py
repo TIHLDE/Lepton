@@ -127,27 +127,35 @@ def test_list_forms_data(admin_user):
     response = client.get(url)
     response = response.json()
 
-    assert response[0] == {
-        "id": str(form.id),
-        "resource_type": "EventForm",
-        "title": form.title,
-        "event": EventListSerializer(form.event).data,
-        "type": form.type.name,
-        "viewer_has_answered": False,
-        "fields": [
-            {
-                "id": str(field.id),
-                "title": field.title,
-                "options": [
-                    {"id": str(option.id), "title": option.title, "order": option.order}
-                ],
-                "type": field.type.name,
-                "required": field.required,
-                "order": field.order,
-            }
-        ],
-        "template": False,
-    }
+    assert (
+        response[0]
+        | {
+            "id": str(form.id),
+            "resource_type": "EventForm",
+            "title": form.title,
+            "event": EventListSerializer(form.event).data,
+            "type": form.type.name,
+            "viewer_has_answered": False,
+            "fields": [
+                {
+                    "id": str(field.id),
+                    "title": field.title,
+                    "options": [
+                        {
+                            "id": str(option.id),
+                            "title": option.title,
+                            "order": option.order,
+                        }
+                    ],
+                    "type": field.type.name,
+                    "required": field.required,
+                    "order": field.order,
+                }
+            ],
+            "template": False,
+        }
+        == response[0]
+    )
 
 
 def test_retrieve_evaluation_event_form_as_member_when_has_attended_event(member):
