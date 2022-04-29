@@ -114,7 +114,9 @@ class FineViewSet(APIFineErrorsMixin, BaseViewSet, ActionMixin):
             .annotate(count=Sum("amount"))
             .values("count")
         )
-        return User.objects.annotate(fines_amount=Coalesce(Subquery(fines_amount), 0))
+        return User.objects.filter(memberships__group=self.kwargs["slug"]).annotate(
+            fines_amount=Coalesce(Subquery(fines_amount), 0)
+        )
 
     @action(detail=False, methods=["put"], url_path="batch-update")
     def batch_update_fines(self, request, *args, **kwargs):
