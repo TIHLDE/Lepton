@@ -180,10 +180,9 @@ class GroupForm(Form):
             form_id = request.parser_context.get("kwargs", {}).get("pk", None)
             form = GroupForm.objects.filter(id=form_id).first()
             group = form.group if form else None
-
-        return request.user.is_leader_of(group) or check_has_access(
-            cls.write_access, request
-        )
+        return (
+            group and group.has_object_group_form_permission(request)
+        ) or check_has_access(cls.write_access, request)
 
     @classmethod
     def has_list_permission(cls, request):
@@ -204,7 +203,7 @@ class GroupForm(Form):
         return True
 
     def has_object_write_permission(self, request):
-        return request.user.is_leader_of(self.group) or check_has_access(
+        return self.group.has_object_group_form_permission(request) or check_has_access(
             self.write_access, request
         )
 
@@ -370,7 +369,6 @@ class Submission(BaseModel, BasePermissionModel):
     def has_list_permission(cls, request):
         if request.user is None:
             return False
-
         form = cls._get_form_from_request(request)
         return form.has_object_write_permission(request)
 

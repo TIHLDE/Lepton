@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.db.models import Subquery
-from django.db.models.aggregates import Sum
+from django.db.models.aggregates import Coalesce, Sum
 from django.db.models.expressions import OuterRef
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
@@ -114,9 +114,7 @@ class FineViewSet(APIFineErrorsMixin, BaseViewSet, ActionMixin):
             .annotate(count=Sum("amount"))
             .values("count")
         )
-        return User.objects.annotate(fines_amount=Subquery(fines_amount)).filter(
-            fines_amount__gt=0
-        )
+        return User.objects.annotate(fines_amount=Coalesce(Subquery(fines_amount), 0))
 
     @action(detail=False, methods=["put"], url_path="batch-update")
     def batch_update_fines(self, request, *args, **kwargs):

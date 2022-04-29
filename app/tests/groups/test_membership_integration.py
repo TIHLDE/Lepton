@@ -40,7 +40,7 @@ def test_list_as_anonymous_user(default_client, membership):
     url = _get_membership_url(membership)
     response = default_client.get(url)
 
-    assert response.status_code == status.HTTP_200_OK
+    assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
 @pytest.mark.django_db
@@ -49,7 +49,7 @@ def test_retrieve_as_anonymous_user(default_client, membership):
     url = _get_membership_url_detail(membership)
     response = default_client.get(url)
 
-    assert response.status_code == status.HTTP_200_OK
+    assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
 @pytest.mark.django_db

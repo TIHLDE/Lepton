@@ -174,7 +174,8 @@ def test_filter_only_users_with_active_strikes(
     ("url", "status_code"),
     [
         ("/", status.HTTP_200_OK),
-        ("/groups/", status.HTTP_200_OK),
+        ("/memberships/", status.HTTP_200_OK),
+        ("/membership-histories/", status.HTTP_200_OK),
         ("/badges/", status.HTTP_200_OK),
         ("/events/", status.HTTP_200_OK),
         ("/forms/", status.HTTP_200_OK),
@@ -196,7 +197,8 @@ def test_user_actions_self(url, status_code, member, api_client):
     ("url", "status_code"),
     [
         ("/", status.HTTP_200_OK),
-        ("/groups/", status.HTTP_200_OK),
+        ("/memberships/", status.HTTP_200_OK),
+        ("/membership-histories/", status.HTTP_200_OK),
         ("/badges/", status.HTTP_200_OK),
         ("/events/", status.HTTP_404_NOT_FOUND),
         ("/forms/", status.HTTP_404_NOT_FOUND),
@@ -218,7 +220,8 @@ def test_user_actions_get_user_as_admin_user(
     ("url", "status_code"),
     [
         ("/", status.HTTP_200_OK),
-        ("/groups/", status.HTTP_200_OK),
+        ("/memberships/", status.HTTP_200_OK),
+        ("/membership-histories/", status.HTTP_200_OK),
         ("/badges/", status.HTTP_200_OK),
         ("/events/", status.HTTP_404_NOT_FOUND),
         ("/forms/", status.HTTP_404_NOT_FOUND),
@@ -238,7 +241,8 @@ def test_user_actions_get_user_as_member(url, status_code, user, member, api_cli
     ("url", "status_code"),
     [
         ("/", status.HTTP_403_FORBIDDEN),
-        ("/groups/", status.HTTP_403_FORBIDDEN),
+        ("/memberships/", status.HTTP_403_FORBIDDEN),
+        ("/membership-histories/", status.HTTP_403_FORBIDDEN),
         ("/badges/", status.HTTP_403_FORBIDDEN),
     ],
 )
