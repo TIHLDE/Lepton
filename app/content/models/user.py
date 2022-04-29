@@ -99,6 +99,12 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
 
+    class Meta:
+        ordering = (
+            "first_name",
+            "last_name",
+        )
+
     def __str__(self):
         return f"{self.first_name} {self.last_name} - {self.user_id}"
 
