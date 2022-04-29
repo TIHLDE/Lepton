@@ -14,6 +14,8 @@ from app.util.utils import now
 class MembershipHistory(BaseModel):
     """Model for a Group Membership History"""
 
+    write_access = AdminGroup.admin()
+
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="membership_histories"
     )
@@ -25,6 +27,7 @@ class MembershipHistory(BaseModel):
     end_date = models.DateTimeField()
 
     class Meta:
+        ordering = ("-end_date", "-start_date")
         unique_together = ("user", "group", "end_date")
         verbose_name = "Membership History"
         verbose_name_plural = "Membership Histories"
@@ -42,6 +45,20 @@ class MembershipHistory(BaseModel):
             start_date=membership.created_at,
             end_date=now(),
         )
+
+    @classmethod
+    def has_read_permission(cls, request):
+        return Membership.has_read_permission(request)
+
+    @classmethod
+    def has_write_permission(cls, request):
+        return Membership.has_write_permission(request)
+
+    def has_object_read_permission(self, request):
+        return Membership.has_read_permission(request)
+
+    def has_object_write_permission(self, request):
+        return Membership.has_write_permission(request)
 
 
 class Membership(BaseModel, BasePermissionModel):

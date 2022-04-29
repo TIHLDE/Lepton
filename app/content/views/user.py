@@ -34,7 +34,10 @@ from app.content.serializers import (
 from app.content.serializers.strike import UserInfoStrikeSerializer
 from app.forms.serializers import FormPolymorphicSerializer
 from app.group.models import Group, Membership
-from app.group.serializers import GroupSerializer
+from app.group.serializers.membership import (
+    MembershipHistorySerializer,
+    MembershipSerializer,
+)
 from app.util.export_user_data import export_user_data
 from app.util.utils import CaseInsensitiveBooleanQueryParam
 
@@ -160,19 +163,33 @@ class UserViewSet(BaseViewSet, ActionMixin):
         )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @action(detail=True, methods=["get"], url_path="groups")
+    @action(detail=True, methods=["get"], url_path="memberships")
     def get_user_memberships(self, request, pk, *args, **kwargs):
         user = self._get_user(request, pk)
         self.check_object_permissions(self.request, user)
 
-        memberships = user.memberships.all()
-        groups = [
-            membership.group
-            for membership in memberships
-            if membership.group.type in GroupType.public_groups()
-        ]
-        serializer = GroupSerializer(groups, many=True, context={"request": request})
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        memberships = user.memberships.filter(
+            group__type__in=GroupType.public_groups()
+        ).order_by("-created_at")
+        return self.paginate_response(
+            data=memberships,
+            serializer=MembershipSerializer,
+            context={"request": request},
+        )
+
+    @action(detail=True, methods=["get"], url_path="membership-histories")
+    def get_user_membership_histories(self, request, pk, *args, **kwargs):
+        user = self._get_user(request, pk)
+        self.check_object_permissions(self.request, user)
+
+        memberships = user.membership_histories.filter(
+            group__type__in=GroupType.public_groups()
+        )
+        return self.paginate_response(
+            data=memberships,
+            serializer=MembershipHistorySerializer,
+            context={"request": request},
+        )
 
     def post_user_badges(self, request, *args, **kwargs):
         import uuid

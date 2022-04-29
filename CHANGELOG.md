@@ -13,6 +13,8 @@
 ---
 
 ## Neste versjon
+- ✨ **Medlemsskap**. Medlemsskapshistorikk kan nå opprettes, endres og slettes. En kan også hente ut medlemsskapshistorikk for spesifikke brukere.
+
 ## Versjon 2022.04.21
 - ✨ **Botsystem**. Legg til bilder som bevis på bøter.
 - ✨ **Banner**. Hovedstyret kan gi ut informasjon til brukere via bannere.

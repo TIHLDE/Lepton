@@ -25,6 +25,7 @@ from app.content.factories.toddel_factory import ToddelFactory
 from app.forms.tests.form_factories import FormFactory, SubmissionFactory
 from app.group.factories import GroupFactory, MembershipFactory
 from app.group.factories.fine_factory import FineFactory
+from app.group.factories.membership_factory import MembershipHistoryFactory
 from app.util.test_utils import add_user_to_group_with_name, get_api_client
 
 
@@ -102,6 +103,11 @@ def membership():
 @pytest.fixture()
 def membership_leader():
     return MembershipFactory(membership_type=MembershipType.LEADER)
+
+
+@pytest.fixture()
+def membership_history():
+    return MembershipHistoryFactory()
 
 
 @pytest.fixture
