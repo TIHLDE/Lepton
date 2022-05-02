@@ -98,12 +98,10 @@ class UserMemberSerializer(UserSerializer):
 class UserCreateSerializer(serializers.ModelSerializer):
     study = serializers.SlugRelatedField(
         slug_field="slug",
-        allow_null=True,
         queryset=Group.objects.filter(type=GroupType.STUDY),
     )
     class_ = serializers.SlugRelatedField(
         slug_field="slug",
-        allow_null=True,
         queryset=Group.objects.filter(type=GroupType.STUDYYEAR),
     )
 
@@ -156,7 +154,9 @@ class UserCreateSerializer(serializers.ModelSerializer):
 
 
 class UserPermissionsSerializer(serializers.ModelSerializer):
-    permissions = DRYGlobalPermissionsField(actions=["write", "read", "destroy"])
+    permissions = DRYGlobalPermissionsField(
+        actions=["write", "write_all", "read", "destroy"]
+    )
 
     class Meta:
         model = User

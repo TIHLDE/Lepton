@@ -206,7 +206,7 @@ class EventViewSet(BaseViewSet, ActionMixin):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-        if self.request.user.is_HS_or_Index_member:
+        if Event.has_write_all_permission(self.request):
             events = self.get_queryset()
         else:
             allowed_organizers = Group.objects.filter(
