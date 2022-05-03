@@ -69,16 +69,16 @@ permission_params = pytest.mark.parametrize(
         # HS and Index have access if not member of the event.organizer
         (AdminGroup.HS, None, None, "other", None, 200),
         (AdminGroup.INDEX, None, None, "other", None, 200),
+        (AdminGroup.PROMO, None, None, "other", None, 200),
         # HS and Index have access even if not member of new organizer
         (AdminGroup.HS, None, None, "other", "other", 200),
         (AdminGroup.INDEX, None, None, "other", "other", 200),
+        (AdminGroup.PROMO, None, None, "other", None, 200),
         # Members of admin-organizers don't have access if not member of the event.organizer
         (AdminGroup.NOK, None, None, "other", None, 403),
-        (AdminGroup.PROMO, None, None, "other", None, 403),
         (AdminGroup.SOSIALEN, None, None, "other", None, 403),
         # Members of admin-organizers don't have access if not member of new organizer
         (AdminGroup.NOK, None, None, "same", "other", 403),
-        (AdminGroup.PROMO, None, None, "same", "other", 403),
         (AdminGroup.SOSIALEN, None, None, "same", "other", 403),
         # Not member of admin organizer don't have access
         ("Non_admin_group", None, None, "other", None, 403),
@@ -401,9 +401,9 @@ def test_delete_event_as_admin(permission_test_util):
     [
         (AdminGroup.HS, GroupType.BOARD, MembershipType.MEMBER, 9),
         (AdminGroup.INDEX, GroupType.SUBGROUP, MembershipType.MEMBER, 9),
+        (AdminGroup.PROMO, GroupType.SUBGROUP, MembershipType.MEMBER, 9),
         (AdminGroup.NOK, GroupType.SUBGROUP, MembershipType.MEMBER, 3),
         (AdminGroup.SOSIALEN, GroupType.SUBGROUP, MembershipType.MEMBER, 2),
-        (AdminGroup.PROMO, GroupType.SUBGROUP, MembershipType.MEMBER, 2),
         ("Pythons", GroupType.INTERESTGROUP, MembershipType.LEADER, 2),
         ("KontKom", GroupType.COMMITTEE, MembershipType.LEADER, 2),
         ("Pythons", GroupType.INTERESTGROUP, MembershipType.MEMBER, 0),
