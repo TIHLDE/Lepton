@@ -98,10 +98,12 @@ class UserMemberSerializer(UserSerializer):
 class UserCreateSerializer(serializers.ModelSerializer):
     study = serializers.SlugRelatedField(
         slug_field="slug",
+        allow_null=True,
         queryset=Group.objects.filter(type=GroupType.STUDY),
     )
     class_ = serializers.SlugRelatedField(
         slug_field="slug",
+        allow_null=True,
         queryset=Group.objects.filter(type=GroupType.STUDYYEAR),
     )
 
