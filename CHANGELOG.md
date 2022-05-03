@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+## Versjon 2022.05.03
 
 - ⚡ **Arrangementer**. Tillat Promo å redigere alle arrangementer.
 - ✨ **Bøter**. Det er mulig å legge til forsvar av mottatte bøter
