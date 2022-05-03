@@ -30,6 +30,7 @@ class Fine(BaseModel, OptionalImage, BasePermissionModel):
     payed = models.BooleanField(default=False)
     description = models.CharField(default="", blank=True, max_length=100)
     reason = models.TextField(default="", blank=True)
+    defense = models.TextField(default="", blank=True)
 
     class Meta:
         verbose_name_plural = "Fines"
@@ -87,3 +88,6 @@ class Fine(BaseModel, OptionalImage, BasePermissionModel):
 
     def has_object_destroy_permission(self, request):
         return self.has_destroy_permission(request)
+
+    def has_object_update_defense_permission(self, request):
+        return self.user == request.user

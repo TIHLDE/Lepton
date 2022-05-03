@@ -20,6 +20,8 @@ class SimpleGroupSerializer(BaseModelSerializer):
             "slug",
             "type",
             "viewer_is_member",
+            "image",
+            "image_alt",
         )
 
     def get_viewer_is_member(self, obj):
@@ -49,8 +51,6 @@ class GroupSerializer(SimpleGroupSerializer):
             "fines_admin",
             "fines_activated",
             "fine_info",
-            "image",
-            "image_alt",
         )
 
     def get_leader(self, obj):

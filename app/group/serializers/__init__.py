@@ -10,6 +10,7 @@ from app.group.serializers.fine import (
     FineSerializer,
     FineStatisticsSerializer,
     FineUpdateCreateSerializer,
+    FineUpdateDefenseSerializer,
     UserFineSerializer,
 )
 from app.group.serializers.law import LawSerializer
