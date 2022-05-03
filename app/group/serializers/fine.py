@@ -66,6 +66,12 @@ class FineUpdateCreateSerializer(BaseModelSerializer):
         )
 
 
+class FineUpdateDefenseSerializer(BaseModelSerializer):
+    class Meta:
+        model = Fine
+        fields = ("defense",)
+
+
 class FineSerializer(BaseModelSerializer):
     user = DefaultUserSerializer(read_only=True)
     created_by = DefaultUserSerializer(read_only=True)
@@ -80,12 +86,17 @@ class FineSerializer(BaseModelSerializer):
             "payed",
             "description",
             "reason",
+            "defense",
             "image",
             "created_by",
             "created_at",
         )
 
-        read_only_fields = ("user", "created_by")
+        read_only_fields = (
+            "user",
+            "created_by",
+            "defense",
+        )
 
 
 class FineNoUserSerializer(BaseModelSerializer):
@@ -100,12 +111,16 @@ class FineNoUserSerializer(BaseModelSerializer):
             "payed",
             "description",
             "reason",
+            "defense",
             "image",
             "created_by",
             "created_at",
         )
 
-        read_only_fields = ("created_by",)
+        read_only_fields = (
+            "created_by",
+            "defense",
+        )
 
 
 class UserFineSerializer(serializers.ModelSerializer):
