@@ -13,6 +13,8 @@
 ---
 
 ## Neste versjon
+- ✨ **Bøter**. Det er mulig å legge til forsvar av mottatte bøter
+
 ## Versjon 2022.04.29
 - ✨ **Medlemsskap**. Medlemsskapshistorikk kan nå opprettes, endres og slettes. En kan også hente ut medlemsskapshistorikk for spesifikke brukere.
 
