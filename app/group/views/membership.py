@@ -35,9 +35,9 @@ class MembershipViewSet(BaseViewSet):
         return super().get_queryset().filter(group__slug=self.kwargs["slug"])
 
     def get_serializer_class(self):
-        if is_admin_user(self.request):
-            return MembershipLeaderSerializer
-        if IsLeader().has_permission(request=self.request, view=self):
+        if is_admin_user(self.request) or IsLeader().has_permission(
+            request=self.request, view=self
+        ):
             return MembershipLeaderSerializer
         return super().get_serializer_class()
 
