@@ -9,23 +9,27 @@ from app.group.models.group import Group
 from app.group.serializers.group import SimpleGroupSerializer
 
 
-class MembershipSerializer(BaseModelSerializer):
-    user = DefaultUserSerializer(read_only=True)
+class BaseMembershipSerializer(BaseModelSerializer):
     group = SimpleGroupSerializer(read_only=True)
 
     class Meta:
         model = Membership
         fields = (
-            "user",
             "group",
             "membership_type",
             "created_at",
             "expiration_date",
         )
-        read_only_fields = (
-            "user",
-            "group",
-        )
+        read_only_fields = ("group",)
+
+
+class MembershipSerializer(BaseMembershipSerializer):
+    user = DefaultUserSerializer(read_only=True)
+
+    class Meta:
+        model = Membership
+        fields = BaseMembershipSerializer.Meta.fields + ("user",)
+        read_only_fields = BaseMembershipSerializer.Meta.read_only_fields + ("user",)
 
 
 class MembershipLeaderSerializer(BaseModelSerializer):

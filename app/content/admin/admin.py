@@ -1,10 +1,13 @@
 from django.contrib import admin
 from django.contrib.admin.models import DELETION, LogEntry
+from django.db.models import Exists, OuterRef
 from django.urls import reverse
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
 
+from app.common.enums import GroupType
 from app.content import models
+from app.group.models.membership import Membership
 
 admin.site.register(models.News)
 admin.site.register(models.Category)
@@ -83,16 +86,64 @@ class SlackConnectedListFilter(admin.SimpleListFilter):
             return queryset.filter(slack_user_id__exact="")
 
 
+class AffiliatedStudyListFilter(admin.SimpleListFilter):
+    """Filters users checking if they're connected to a study"""
+
+    title = "har studie-medlemskap"
+    parameter_name = "affiliated_study"
+
+    def lookups(self, *args, **kwargs):
+        return (
+            ("true", "Ja"),
+            ("false", "Nei"),
+        )
+
+    def queryset(self, request, queryset):
+        connected_query = Exists(
+            Membership.objects.filter(
+                user__user_id=OuterRef("pk"), group__type=GroupType.STUDY
+            )
+        )
+        if self.value() == "true":
+            return queryset.filter(connected_query)
+        if self.value() == "false":
+            return queryset.filter(~connected_query)
+
+
+class AffiliatedStudyyearListFilter(admin.SimpleListFilter):
+    """Filters users checking if they're connected to a studyyear"""
+
+    title = "har studieår-medlemskap"
+    parameter_name = "affiliated_studyyear"
+
+    def lookups(self, *args, **kwargs):
+        return (
+            ("true", "Ja"),
+            ("false", "Nei"),
+        )
+
+    def queryset(self, request, queryset):
+        connected_query = Exists(
+            Membership.objects.filter(
+                user__user_id=OuterRef("pk"), group__type=GroupType.STUDYYEAR
+            )
+        )
+        if self.value() == "true":
+            return queryset.filter(connected_query)
+        if self.value() == "false":
+            return queryset.filter(~connected_query)
+
+
 @admin.register(models.User)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ("user_id", "first_name", "last_name", "user_class", "user_study")
-    search_fields = ("user_id", "first_name", "last_name", "user_class", "user_study")
+    list_display = ("user_id", "first_name", "last_name")
+    search_fields = ("user_id", "first_name", "last_name")
 
     list_filter = (
         "gender",
-        "user_class",
-        "user_study",
         "public_event_registrations",
+        AffiliatedStudyListFilter,
+        AffiliatedStudyyearListFilter,
         SlackConnectedListFilter,
     )
 

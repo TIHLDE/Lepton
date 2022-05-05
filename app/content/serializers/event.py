@@ -3,14 +3,15 @@ from rest_framework import serializers
 from dry_rest_permissions.generics import DRYPermissionsField
 from sentry_sdk import capture_exception
 
+from app.common.enums import GroupType
 from app.common.serializers import BaseModelSerializer
 from app.content.models import Event, Priority, PriorityPool
-from app.content.models.user import CLASS, STUDY
 from app.content.serializers.priority import PrioritySerializer
 from app.content.serializers.priority_pool import (
     PriorityPoolCreateSerializer,
     PriorityPoolSerializer,
 )
+from app.group.models.group import Group
 from app.group.serializers.group import GroupSerializer
 from app.util import EnumUtils
 
@@ -205,7 +206,7 @@ class EventCreateAndUpdateSerializer(BaseModelSerializer):
 
 class EventStatisticsSerializer(BaseModelSerializer):
     has_attended_count = serializers.SerializerMethodField()
-    classes = serializers.SerializerMethodField()
+    studyyears = serializers.SerializerMethodField()
     studies = serializers.SerializerMethodField()
 
     class Meta:
@@ -214,31 +215,37 @@ class EventStatisticsSerializer(BaseModelSerializer):
             "has_attended_count",
             "list_count",
             "waiting_list_count",
-            "classes",
+            "studyyears",
             "studies",
         )
 
     def get_has_attended_count(self, obj, *args, **kwargs):
         return obj.registrations.filter(is_on_wait=False, has_attended=True).count()
 
-    def get_classes(self, obj, *args, **kwargs):
-        return map(
-            lambda cls: {
-                "user_class": cls[0],
-                "amount": obj.registrations.filter(
-                    user__user_class=cls[0], is_on_wait=False
-                ).count(),
-            },
-            CLASS,
+    def get_studyyears(self, obj, *args, **kwargs):
+        return filter(
+            lambda studyyear: studyyear["amount"] > 0,
+            map(
+                lambda group: {
+                    "studyyear": group.name,
+                    "amount": obj.registrations.filter(
+                        user__memberships__group=group, is_on_wait=False
+                    ).count(),
+                },
+                Group.objects.filter(type=GroupType.STUDYYEAR),
+            ),
         )
 
     def get_studies(self, obj, *args, **kwargs):
-        return map(
-            lambda study: {
-                "user_study": study[0],
-                "amount": obj.registrations.filter(
-                    user__user_study=study[0], is_on_wait=False
-                ).count(),
-            },
-            STUDY,
+        return filter(
+            lambda study: study["amount"] > 0,
+            map(
+                lambda group: {
+                    "study": group.name,
+                    "amount": obj.registrations.filter(
+                        user__memberships__group=group, is_on_wait=False
+                    ).count(),
+                },
+                Group.objects.filter(type=GroupType.STUDY),
+            ),
         )
