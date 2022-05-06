@@ -76,8 +76,11 @@ class UserViewSet(BaseViewSet, ActionMixin):
         serializer = UserCreateSerializer(data=self.request.data)
 
         if serializer.is_valid():
-            super().perform_create(serializer)
-            return Response({"detail": serializer.data}, status=status.HTTP_201_CREATED)
+            user = super().perform_create(serializer)
+            return Response(
+                {"detail": DefaultUserSerializer(user).data},
+                status=status.HTTP_201_CREATED,
+            )
 
         return Response(
             {"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST

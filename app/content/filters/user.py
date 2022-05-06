@@ -1,21 +1,17 @@
-from django_filters.rest_framework import (
-    BooleanFilter,
-    CharFilter,
-    ChoiceFilter,
-    FilterSet,
-)
+from django_filters.rest_framework import BooleanFilter, CharFilter, FilterSet
 
-from app.common.enums import Groups
+from app.common.enums import Groups, GroupType
 from app.content.models import User
 from app.content.models.strike import Strike
-from app.content.models.user import CLASS, STUDY
 
 
 class UserFilter(FilterSet):
     """Filters users"""
 
-    user_class = ChoiceFilter(choices=CLASS)
-    user_study = ChoiceFilter(choices=STUDY)
+    study = CharFilter(method="filter_is_in_study", label="Only list users in study")
+    studyyear = CharFilter(
+        method="filter_is_in_studyyear", label="Only list users in studyyear"
+    )
     is_TIHLDE_member = BooleanFilter(
         method="filter_is_TIHLDE_member", label="Is TIHLDE member"
     )
@@ -27,12 +23,22 @@ class UserFilter(FilterSet):
     class Meta:
         model: User
         fields = [
-            "user_class",
-            "user_study",
+            "study",
+            "studyyear",
             "has_active_strikes",
             "is_TIHLDE_member",
             "in_group",
         ]
+
+    def filter_is_in_study(self, queryset, name, value):
+        return queryset.filter(
+            memberships__group__slug=value, memberships__group__type=GroupType.STUDY
+        )
+
+    def filter_is_in_studyyear(self, queryset, name, value):
+        return queryset.filter(
+            memberships__group__slug=value, memberships__group__type=GroupType.STUDYYEAR
+        )
 
     def filter_is_in_group(self, queryset, name, value):
         return queryset.filter(memberships__group__slug=value)

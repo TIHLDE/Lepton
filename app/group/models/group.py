@@ -153,4 +153,5 @@ class Group(OptionalImage, BaseModel, BasePermissionModel):
             and request.user.memberships_with_group_form_access.filter(
                 group=self
             ).exists()
+            or super().has_write_permission(request)
         )
