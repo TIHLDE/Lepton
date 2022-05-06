@@ -1,4 +1,5 @@
 from datetime import timedelta
+from app.content.factories.priority_pool_factory import PriorityPoolFactory
 
 from rest_framework import status
 
@@ -729,12 +730,9 @@ def test_delete_own_registration_as_member_when_no_users_on_wait_are_in_a_priori
     a member deletes their own registration and the event has no priorities.
     """
     event = EventFactory(limit=1)
-    priority = PriorityFactory(user_study=UserStudy.DATAING, user_class=UserClass.FIRST)
-    event.registration_priorities.add(priority)
+    PriorityPoolFactory(event=event, groups=(GroupFactory(),))
 
-    user_not_in_priority_pool = UserFactory(
-        user_study=UserStudy.DIGFOR.value, user_class=UserClass.SECOND.value
-    )
+    user_not_in_priority_pool = UserFactory()
 
     registration_to_delete = RegistrationFactory(event=event, user=member)
     registration_on_wait = RegistrationFactory(
