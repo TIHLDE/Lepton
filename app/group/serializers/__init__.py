@@ -1,6 +1,7 @@
 from app.group.serializers.group import GroupSerializer
 from app.group.serializers.membership import (
     MembershipSerializer,
+    BaseMembershipSerializer,
     UpdateMembershipSerializer,
     MembershipHistorySerializer,
 )
