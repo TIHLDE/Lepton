@@ -146,6 +146,14 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
     def number_of_strikes(self):
         return self.strikes.sum_active()
 
+    @property
+    def study(self):
+        return self.memberships.filter(group__type=GroupType.STUDY).first()
+
+    @property
+    def studyyear(self):
+        return self.memberships.filter(group__type=GroupType.STUDYYEAR).first()
+
     objects = UserManager()
 
     @property

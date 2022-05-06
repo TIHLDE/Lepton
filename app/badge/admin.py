@@ -14,12 +14,7 @@ class UserBadgeAdmin(admin.ModelAdmin):
         "badge__description",
         "badge__badge_category__name",
     )
-    list_filter = (
-        "user__user_study",
-        "user__user_class",
-        "user__is_staff",
-        "badge__badge_category",
-    )
+    list_filter = ("badge__badge_category",)
 
 
 @admin.register(models.Badge)

@@ -157,7 +157,6 @@ class EventViewSet(BaseViewSet, ActionMixin):
         detail=True,
         methods=["get"],
         url_path="public_registrations",
-        permission_classes=(IsMember,),
     )
     def get_public_event_registrations(self, request, pk, *args, **kwargs):
         event = get_object_or_404(Event, id=pk)

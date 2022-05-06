@@ -10,6 +10,9 @@ from app.group.models import Group, Membership
 
 
 class DefaultUserSerializer(BaseModelSerializer):
+    study = serializers.SerializerMethodField()
+    studyyear = serializers.SerializerMethodField()
+
     class Meta:
         model = User
         fields = (
@@ -23,6 +26,8 @@ class DefaultUserSerializer(BaseModelSerializer):
             "gender",
             "user_class",
             "user_study",
+            "study",
+            "studyyear",
         )
         read_only_fields = (
             "user_id",
@@ -35,7 +40,19 @@ class DefaultUserSerializer(BaseModelSerializer):
             "gender",
             "user_class",
             "user_study",
+            "study",
+            "studyyear",
         )
+
+    def get_study(self, obj):
+        from app.group.serializers.membership import BaseMembershipSerializer
+
+        return BaseMembershipSerializer(obj.study).data
+
+    def get_studyyear(self, obj):
+        from app.group.serializers.membership import BaseMembershipSerializer
+
+        return BaseMembershipSerializer(obj.studyyear).data
 
 
 class UserSerializer(DefaultUserSerializer):
@@ -78,6 +95,8 @@ class UserListSerializer(UserSerializer):
             "allergy",
             "tool",
             "number_of_strikes",
+            "study",
+            "studyyear",
         )
 
 

@@ -1,11 +1,13 @@
 from django.shortcuts import get_object_or_404
-from rest_framework import status
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters, status
 from rest_framework.response import Response
 
 from app.common.enums import StrikeEnum
 from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission
 from app.common.viewsets import BaseViewSet
+from app.content.filters.strike import StrikeFilter
 from app.content.models import (
     Event,
     Strike,
@@ -21,6 +23,15 @@ class StrikeViewSet(BaseViewSet):
     queryset = Strike.objects.active()
     permission_classes = [BasicViewPermission]
     pagination_class = BasePagination
+
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filterset_class = StrikeFilter
+    search_fields = [
+        "user__user_id",
+        "user__first_name",
+        "user__last_name",
+        "user__email",
+    ]
 
     def update(self, request, *args, **kwargs):
         return Response(
