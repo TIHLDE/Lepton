@@ -13,7 +13,6 @@ from app.common.enums import (
 )
 from app.content.factories import (
     EventFactory,
-    PriorityFactory,
     RegistrationFactory,
     UserFactory,
 )

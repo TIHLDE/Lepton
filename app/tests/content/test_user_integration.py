@@ -36,8 +36,6 @@ def _get_user_post_data():
         "email": "ola@nordmann.org",
         "first_name": "Ola",
         "last_name": "Nordmann",
-        "user_class": 2,
-        "user_study": 2,
         "user_id": "olanord",
         "password": "SuperSecurePassword",
         "study": slugify("Dataingeniør"),
@@ -55,8 +53,6 @@ def _get_user_put_data():
         "image": None,
         "last_name": "Nordmann",
         "tool": "Keyboard",
-        "user_class": 2,
-        "user_study": 2,
     }
 
 
@@ -324,8 +320,6 @@ def test_update_self_as_member(member, api_client):
     assert member.email != data["email"]
     assert member.first_name != data["first_name"]
     assert member.last_name != data["last_name"]
-    assert member.user_study != data["user_study"]
-    assert member.user_class != data["user_class"]
 
 
 def test_update_other_user_as_member(member, user, api_client):
@@ -356,8 +350,6 @@ def test_update_other_user_as_admin_user(admin_user, user, api_client):
     assert user.email == data["email"]
     assert user.first_name == data["first_name"]
     assert user.last_name == data["last_name"]
-    assert user.user_study == data["user_study"]
-    assert user.user_class == data["user_class"]
 
 
 def test_create_as_anonymous(default_client):
@@ -379,8 +371,6 @@ def test_create_correctly_assigns_fields(api_client):
     assert user.email == data["email"]
     assert user.first_name == data["first_name"]
     assert user.last_name == data["last_name"]
-    assert user.user_study == data["user_study"]
-    assert user.user_class == data["user_class"]
 
 
 def test_create_adds_user_to_class_group(api_client, dataing, group2019):

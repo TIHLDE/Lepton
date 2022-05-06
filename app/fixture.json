@@ -246,146 +246,6 @@
     }
 },
 {
-    "model": "content.priority",
-    "pk": 1,
-    "fields": {
-        "created_at": "2020-10-01T18:37:22.880Z",
-        "updated_at": "2020-10-01T18:37:22.880Z",
-        "user_class": "FIRST",
-        "user_study": "DATAING"
-    }
-},
-{
-    "model": "content.priority",
-    "pk": 2,
-    "fields": {
-        "created_at": "2020-10-01T18:52:25.374Z",
-        "updated_at": "2020-10-01T18:52:25.374Z",
-        "user_class": "SECOND",
-        "user_study": "DATAING"
-    }
-},
-{
-    "model": "content.priority",
-    "pk": 3,
-    "fields": {
-        "created_at": "2020-10-01T18:52:31.281Z",
-        "updated_at": "2020-10-01T18:52:31.281Z",
-        "user_class": "THIRD",
-        "user_study": "DATAING"
-    }
-},
-{
-    "model": "content.priority",
-    "pk": 4,
-    "fields": {
-        "created_at": "2020-10-01T18:52:34.607Z",
-        "updated_at": "2020-10-01T18:52:34.607Z",
-        "user_class": "FIRST",
-        "user_study": "DIGFOR"
-    }
-},
-{
-    "model": "content.priority",
-    "pk": 5,
-    "fields": {
-        "created_at": "2020-10-01T18:52:41.961Z",
-        "updated_at": "2020-10-01T18:52:41.962Z",
-        "user_class": "SECOND",
-        "user_study": "DIGFOR"
-    }
-},
-{
-    "model": "content.priority",
-    "pk": 6,
-    "fields": {
-        "created_at": "2020-10-01T18:52:48.065Z",
-        "updated_at": "2020-10-01T18:52:48.065Z",
-        "user_class": "THIRD",
-        "user_study": "DIGFOR"
-    }
-},
-{
-    "model": "content.priority",
-    "pk": 7,
-    "fields": {
-        "created_at": "2020-10-01T18:53:18.041Z",
-        "updated_at": "2020-10-01T18:53:38.012Z",
-        "user_class": "FIFTH",
-        "user_study": "DIGSAM"
-    }
-},
-{
-    "model": "content.priority",
-    "pk": 8,
-    "fields": {
-        "created_at": "2021-02-09T21:35:59.751Z",
-        "updated_at": "2021-02-09T21:35:59.751Z",
-        "user_class": "FIRST",
-        "user_study": "DIGINC"
-    }
-},
-{
-    "model": "content.priority",
-    "pk": 9,
-    "fields": {
-        "created_at": "2021-02-09T21:35:59.762Z",
-        "updated_at": "2021-02-09T21:35:59.762Z",
-        "user_class": "FIRST",
-        "user_study": "DRIFT"
-    }
-},
-{
-    "model": "content.priority",
-    "pk": 10,
-    "fields": {
-        "created_at": "2021-02-09T21:35:59.783Z",
-        "updated_at": "2021-02-09T21:35:59.783Z",
-        "user_class": "SECOND",
-        "user_study": "DIGINC"
-    }
-},
-{
-    "model": "content.priority",
-    "pk": 11,
-    "fields": {
-        "created_at": "2021-02-09T21:35:59.792Z",
-        "updated_at": "2021-02-09T21:35:59.792Z",
-        "user_class": "SECOND",
-        "user_study": "DRIFT"
-    }
-},
-{
-    "model": "content.priority",
-    "pk": 12,
-    "fields": {
-        "created_at": "2021-02-09T21:35:59.814Z",
-        "updated_at": "2021-02-09T21:35:59.814Z",
-        "user_class": "THIRD",
-        "user_study": "DIGINC"
-    }
-},
-{
-    "model": "content.priority",
-    "pk": 13,
-    "fields": {
-        "created_at": "2021-02-09T21:35:59.824Z",
-        "updated_at": "2021-02-09T21:35:59.824Z",
-        "user_class": "THIRD",
-        "user_study": "DRIFT"
-    }
-},
-{
-    "model": "content.priority",
-    "pk": 14,
-    "fields": {
-        "created_at": "2021-02-09T21:35:59.834Z",
-        "updated_at": "2021-02-09T21:35:59.834Z",
-        "user_class": "FOURTH",
-        "user_study": "DIGSAM"
-    }
-},
-{
     "model": "content.user",
     "pk": "eivindste",
     "fields": {
@@ -400,8 +260,6 @@
         "last_name": "Øvstedal",
         "email": "EivindOvstedal@jourrapide.com",
         "gender": 2,
-        "user_class": 2,
-        "user_study": 2,
         "allergy": "",
         "public_event_registrations": true,
         "tool": "",
@@ -427,8 +285,6 @@
         "last_name": "TIHLDE",
         "email": "index@index.org",
         "gender": 1,
-        "user_class": 3,
-        "user_study": 1,
         "allergy": "Gode karakterer",
         "public_event_registrations": true,
         "tool": "Parentes",
@@ -456,8 +312,6 @@
         "last_name": "Nok",
         "email": "nok@gmail.com",
         "gender": 2,
-        "user_class": 1,
-        "user_study": 1,
         "allergy": "",
         "public_event_registrations": true,
         "tool": "",
@@ -497,18 +351,7 @@
         "runned_post_event_actions": false,
         "runned_sign_off_deadline_reminder": false,
         "runned_sign_up_start_notifier": true,
-        "favorite_users": [],
-        "registration_priorities": [
-            7,
-            2,
-            5,
-            10,
-            11,
-            3,
-            6,
-            12,
-            13
-        ]
+        "favorite_users": []
     }
 },
 {
@@ -538,23 +381,7 @@
         "runned_post_event_actions": false,
         "runned_sign_off_deadline_reminder": false,
         "runned_sign_up_start_notifier": false,
-        "favorite_users": [],
-        "registration_priorities": [
-            7,
-            1,
-            4,
-            8,
-            9,
-            14,
-            2,
-            5,
-            10,
-            11,
-            3,
-            6,
-            12,
-            13
-        ]
+        "favorite_users": []
     }
 },
 {
@@ -584,23 +411,7 @@
         "runned_post_event_actions": false,
         "runned_sign_off_deadline_reminder": false,
         "runned_sign_up_start_notifier": true,
-        "favorite_users": [],
-        "registration_priorities": [
-            7,
-            1,
-            4,
-            8,
-            9,
-            14,
-            2,
-            5,
-            10,
-            11,
-            3,
-            6,
-            12,
-            13
-        ]
+        "favorite_users": []
     }
 },
 {
@@ -630,8 +441,7 @@
         "runned_post_event_actions": false,
         "runned_sign_off_deadline_reminder": false,
         "runned_sign_up_start_notifier": true,
-        "favorite_users": [],
-        "registration_priorities": []
+        "favorite_users": []
     }
 },
 {
@@ -661,8 +471,7 @@
         "runned_post_event_actions": false,
         "runned_sign_off_deadline_reminder": false,
         "runned_sign_up_start_notifier": false,
-        "favorite_users": [],
-        "registration_priorities": []
+        "favorite_users": []
     }
 },
 {

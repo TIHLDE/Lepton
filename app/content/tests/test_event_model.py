@@ -5,9 +5,9 @@ from django.core.exceptions import ValidationError
 
 import pytest
 
+from app.content.factories.priority_pool_factory import PriorityPoolFactory
 from app.content.factories import (
     EventFactory,
-    PriorityFactory,
     RegistrationFactory,
 )
 from app.util.utils import now
@@ -24,8 +24,8 @@ def registration(event):
 
 
 @pytest.fixture()
-def priority():
-    return PriorityFactory()
+def priority_pool():
+    return PriorityPoolFactory()
 
 
 @pytest.mark.django_db
@@ -149,15 +149,15 @@ def test_is_full(event, limit, number_of_attendees, is_full):
 @pytest.mark.django_db
 def test_has_priorities_when_no_priorities_exists(event):
     """Should return False if no registration priorities are connected to event."""
-    event.registration_priorities.clear()
+    event.priority_pools.clear()
 
     assert not event.has_priorities()
 
 
 @pytest.mark.django_db
-def test_has_priorities_when_priorities_exists_on_event(event, priority):
+def test_has_priorities_when_priorities_exists_on_event(event, priority_pool):
     """Should return True if any registration priorities are connected to event."""
-    event.registration_priorities.add(priority)
+    event.priority_pools.add(priority_pool)
 
     assert event.has_priorities()
 

@@ -19,13 +19,9 @@ class DefaultUserSerializer(BaseModelSerializer):
             "user_id",
             "first_name",
             "last_name",
-            "user_class",
-            "user_study",
             "image",
             "email",
             "gender",
-            "user_class",
-            "user_study",
             "study",
             "studyyear",
         )
@@ -33,13 +29,9 @@ class DefaultUserSerializer(BaseModelSerializer):
             "user_id",
             "first_name",
             "last_name",
-            "user_class",
-            "user_study",
             "image",
             "email",
             "gender",
-            "user_class",
-            "user_study",
             "study",
             "studyyear",
         )
@@ -90,8 +82,6 @@ class UserListSerializer(UserSerializer):
             "image",
             "email",
             "gender",
-            "user_class",
-            "user_study",
             "allergy",
             "tool",
             "number_of_strikes",
@@ -109,8 +99,6 @@ class UserMemberSerializer(UserSerializer):
             "first_name",
             "last_name",
             "email",
-            "user_class",
-            "user_study",
         )
 
 
@@ -134,8 +122,6 @@ class UserCreateSerializer(serializers.ModelSerializer):
             "first_name",
             "last_name",
             "email",
-            "user_class",
-            "user_study",
             "study",
             "class_",
         )

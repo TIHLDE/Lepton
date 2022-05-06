@@ -1,18 +1,17 @@
 from unittest.mock import patch
 
 from django.core.exceptions import ValidationError
+from app.common.enums import MembershipType
 
 import pytest
 
-from app.common.enums import UserClass, UserStudy
 from app.content.factories import (
     EventFactory,
-    PriorityFactory,
     RegistrationFactory,
     StrikeFactory,
     UserFactory,
+    PriorityPoolFactory,
 )
-from app.content.factories.priority_pool_factory import PriorityPoolFactory
 from app.forms.enums import EventFormType
 from app.forms.models.forms import Submission
 from app.forms.tests.form_factories import EventFormFactory, SubmissionFactory
@@ -21,100 +20,84 @@ from app.group.factories import GroupFactory, MembershipFactory
 pytestmark = pytest.mark.django_db
 
 
-@pytest.fixture()
-def non_priority_user_class():
-    return UserClass.FIRST
-
-
-@pytest.fixture()
-def non_priority_user_study():
-    return UserStudy.DATAING
+def _add_user_to_group(user, group):
+    return MembershipFactory(user=user, group=group, membership_type=MembershipType.MEMBER)
 
 
 @pytest.fixture()
 def user():
     return UserFactory()
 
-
 @pytest.fixture()
-def priority_user_class():
-    return UserClass.THIRD
-
-
-@pytest.fixture()
-def priority_user_study():
-    return UserStudy.DATAING
+def non_priority_group():
+    return GroupFactory(name="Not prioritized group", slug="not_prioritized_group")
 
 
 @pytest.fixture()
-def user_in_priority_pool(priority_user_class, priority_user_study):
-    return UserFactory(
-        user_class=priority_user_class.value, user_study=priority_user_study.value
-    )
+def priority_group():
+    return GroupFactory(name="Prioritized group", slug="prioritized_group")
 
 
 @pytest.fixture()
-def user_not_in_priority_pool(non_priority_user_class, non_priority_user_study):
-    return UserFactory(
-        user_class=non_priority_user_class.value,
-        user_study=non_priority_user_study.value,
-    )
+def user_in_priority_pool(priority_group):
+    user = UserFactory()
+    _add_user_to_group(user, priority_group)
+    return user
 
 
 @pytest.fixture()
-def priority(priority_user_class, priority_user_study):
-    return PriorityFactory(
-        user_class=priority_user_class, user_study=priority_user_study
-    )
+def user_not_in_priority_pool(non_priority_group):
+    user = UserFactory()
+    _add_user_to_group(user, non_priority_group)
+    return user
 
 
 @pytest.fixture()
-def event(priority):
+def event_with_priority_pool(priority_group):
     event = EventFactory(limit=1)
-    event.registration_priorities.add(priority)
+    PriorityPoolFactory(event=event, groups=(priority_group,))
     return event
 
 
-@pytest.fixture(autouse=True)
-def event_with_registrations_and_priority(priority):
-    event = EventFactory(limit=1)
-    event.registration_priorities.add(priority)
-    return event
-
-
-@pytest.fixture(autouse=True)
+@pytest.fixture()
 def registration_not_in_priority_pool(
-    event_with_registrations_and_priority, user_not_in_priority_pool
+    event_with_priority_pool, user_not_in_priority_pool
 ):
     return RegistrationFactory(
-        event=event_with_registrations_and_priority, user=user_not_in_priority_pool
+        event=event_with_priority_pool, user=user_not_in_priority_pool
     )
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture()
 def registration_in_priority_pool(
-    event_with_registrations_and_priority, user_in_priority_pool
+    event_with_priority_pool, user_in_priority_pool
 ):
     return RegistrationFactory(
-        event=event_with_registrations_and_priority, user=user_in_priority_pool
+        event=event_with_priority_pool, user=user_in_priority_pool
     )
 
 
 def test_swap_users_when_event_is_full(
-    event, registration_not_in_priority_pool, user_in_priority_pool
+    event_with_priority_pool, registration_not_in_priority_pool, user_in_priority_pool
 ):
     """Test that a prioritized user is swapped with a non prioritized user if the event is full."""
 
     registration_in_priority_pool = RegistrationFactory(
-        event=event, user=user_in_priority_pool
+        event=event_with_priority_pool, user=user_in_priority_pool
     )
+
+    print("event.limit")
+    print(event_with_priority_pool.limit)
+    print(event_with_priority_pool.registrations.all())
+
+    registration_not_in_priority_pool.refresh_from_db()
 
     assert not registration_in_priority_pool.is_on_wait
     assert registration_not_in_priority_pool.is_on_wait
 
 
 def test_bump_user_when_event_is_not_full(
-    event,
+    event_with_priority_pool,
     user_not_in_priority_pool,
     user_in_priority_pool,
 ):
@@ -122,13 +105,13 @@ def test_bump_user_when_event_is_not_full(
     Test that a non prioritized user is not swapped with
     a prioritized user if the event is not full.
     """
-    event.limit = 10
+    event_with_priority_pool.limit = 10
 
     registration_not_in_priority_pool = RegistrationFactory(
-        event=event, user=user_not_in_priority_pool
+        event=event_with_priority_pool, user=user_not_in_priority_pool
     )
     registration_in_priority_pool = RegistrationFactory(
-        event=event, user=user_in_priority_pool
+        event=event_with_priority_pool, user=user_in_priority_pool
     )
 
     assert not registration_in_priority_pool.is_on_wait
@@ -136,18 +119,15 @@ def test_bump_user_when_event_is_not_full(
 
 
 def test_bump_user_when_user_is_not_in_priority_pool_and_event_is_full(
-    event, user_not_in_priority_pool
+    event_with_priority_pool, user_not_in_priority_pool
 ):
     """Test that users are not swapped when new user is not prioritized and event is full."""
     registration_not_in_priority_pool = RegistrationFactory(
-        event=event, user=user_not_in_priority_pool
+        event=event_with_priority_pool, user=user_not_in_priority_pool
     )
-    other_user_not_in_priority_pool = UserFactory(
-        user_class=user_not_in_priority_pool.user_class,
-        user_study=user_not_in_priority_pool.user_study,
-    )
+    other_user_not_in_priority_pool = UserFactory()
     other_registration_not_in_priority_pool = RegistrationFactory(
-        event=event, user=other_user_not_in_priority_pool
+        event=event_with_priority_pool, user=other_user_not_in_priority_pool
     )
 
     assert not registration_not_in_priority_pool.is_on_wait
@@ -168,20 +148,18 @@ def test_bump_user_without_event_priorities():
 
 
 def test_that_bump_user_registers_on_waiting_list_when_no_one_to_swap_with_and_event_is_full(
-    event_with_registrations_and_priority,
-    user_in_priority_pool,
+    event_with_priority_pool,
     registration_in_priority_pool,
+    priority_group,
 ):
     """
     Test that a prioritized user is put on waiting list
     if there is no one to swap places with and the event is full.
     """
-    other_user_in_priority_pool = UserFactory(
-        user_class=user_in_priority_pool.user_class,
-        user_study=user_in_priority_pool.user_study,
-    )
+    other_user_in_priority_pool = UserFactory()
+    _add_user_to_group(other_user_in_priority_pool, priority_group)
     other_registration_in_priority_pool = RegistrationFactory(
-        event=event_with_registrations_and_priority, user=other_user_in_priority_pool
+        event=event_with_priority_pool, user=other_user_in_priority_pool
     )
 
     assert not registration_in_priority_pool.is_on_wait
@@ -280,62 +258,39 @@ def test_is_prioritized_when_user_not_in_group_priority_pool():
 
 @patch("app.content.models.registration.Registration.send_notification_and_mail")
 def test_create_calls_send_notification_and_email(
-    mock_send_notification_and_mail, event
+    mock_send_notification_and_mail, event_with_priority_pool
 ):
     """send_notification_and_email should be called once during creation."""
-    RegistrationFactory(event=event, user=UserFactory())
+    RegistrationFactory(event=event_with_priority_pool, user=UserFactory())
 
     assert mock_send_notification_and_mail.called_once
 
 
-def test_create_when_event_has_waiting_list(event_with_registrations_and_priority):
+def test_create_when_event_has_waiting_list(event_with_priority_pool, registration_in_priority_pool):
     """Should put user on waiting list if the event has a waiting list."""
-    assert event_with_registrations_and_priority.has_waiting_list()
+    assert event_with_priority_pool.has_waiting_list()
 
     new_registration = RegistrationFactory(
-        event=event_with_registrations_and_priority, user=UserFactory()
+        event=event_with_priority_pool, user=UserFactory()
     )
 
     assert new_registration.is_on_wait
 
 
-def test_users_are_not_swapped_when_both_are_in_a_priority_pool(
-    event_with_registrations_and_priority,
-    registration_in_priority_pool,
-    priority_user_class,
-    priority_user_study,
-):
-    """Should not swap users if both are in a priority pool."""
-    user_in_priority_pool = UserFactory(
-        user_class=priority_user_class.value, user_study=priority_user_study.value
-    )
-    other_registration_in_priority_pool = RegistrationFactory(
-        event=event_with_registrations_and_priority, user=user_in_priority_pool
-    )
-
-    assert not registration_in_priority_pool.is_on_wait
-    assert other_registration_in_priority_pool.is_on_wait
-
-
 def test_registration_in_queue_is_deleted_priority_in_waiting_list_is_moved_to_queue(
-    event_with_registrations_and_priority,
+    event_with_priority_pool,
     registration_in_priority_pool,
-    priority_user_class,
-    priority_user_study,
-    non_priority_user_study,
+    priority_group,
 ):
     """Swap registration when user is deleted with prioritized user."""
-    user_in_priority_pool = UserFactory(
-        user_class=priority_user_class.value, user_study=priority_user_study.value
-    )
+    user_in_priority_pool = UserFactory()
+    _add_user_to_group(user_in_priority_pool, priority_group)
     other_registration_in_priority_pool = RegistrationFactory(
-        event=event_with_registrations_and_priority, user=user_in_priority_pool
+        event=event_with_priority_pool, user=user_in_priority_pool
     )
-    user_not_in_priority_pool = UserFactory(
-        user_class=priority_user_class.value, user_study=non_priority_user_study.value
-    )
+    user_not_in_priority_pool = UserFactory()
     registration_not_in_priority_pool = RegistrationFactory(
-        event=event_with_registrations_and_priority, user=user_not_in_priority_pool
+        event=event_with_priority_pool, user=user_not_in_priority_pool
     )
 
     registration_in_priority_pool.delete()
@@ -350,23 +305,17 @@ def test_registration_in_queue_is_deleted_priority_in_waiting_list_is_moved_to_q
 
 
 def test_registration_in_queue_is_deleted_if_no_priority_registration_in_waiting_list_first_registration_is_moved_to_queue(
-    event_with_registrations_and_priority,
+    event_with_priority_pool,
     registration_in_priority_pool,
-    priority_user_class,
-    non_priority_user_study,
 ):
     """Swap registration when user is deleted with first registration in waiting list, if no priority exists."""
-    user_not_in_priority_pool = UserFactory(
-        user_class=priority_user_class.value, user_study=non_priority_user_study.value
-    )
+    user_not_in_priority_pool = UserFactory()
     registration_not_in_priority_pool = RegistrationFactory(
-        event=event_with_registrations_and_priority, user=user_not_in_priority_pool
+        event=event_with_priority_pool, user=user_not_in_priority_pool
     )
-    other_user_not_in_priority_pool = UserFactory(
-        user_class=priority_user_class.value, user_study=non_priority_user_study.value
-    )
+    other_user_not_in_priority_pool = UserFactory()
     other_registration_not_in_priority_pool = RegistrationFactory(
-        event=event_with_registrations_and_priority,
+        event=event_with_priority_pool,
         user=other_user_not_in_priority_pool,
     )
 
@@ -374,7 +323,7 @@ def test_registration_in_queue_is_deleted_if_no_priority_registration_in_waiting
     registration_not_in_priority_pool.refresh_from_db()
     other_registration_not_in_priority_pool.refresh_from_db()
 
-    assert not registration_in_priority_pool.event.registrations.filter(
+    assert not event_with_priority_pool.registrations.filter(
         registration_id=registration_in_priority_pool.registration_id
     ).exists()
     assert not registration_not_in_priority_pool.is_on_wait
@@ -382,35 +331,29 @@ def test_registration_in_queue_is_deleted_if_no_priority_registration_in_waiting
 
 
 def test_registration_in_queue_is_deleted_if_no_waiting_list(
-    event_with_registrations_and_priority,
+    event_with_priority_pool,
     registration_in_priority_pool,
 ):
-    """Test that if there is no waiting list, a user is still able to unregister from  an event"""
+    """Test that if there is no waiting list, a user is still able to unregister from an event"""
     registration_in_priority_pool.delete()
-    event_with_registrations_and_priority.refresh_from_db()
+    event_with_priority_pool.refresh_from_db()
 
     assert not registration_in_priority_pool.event.registrations.filter(
         registration_id=registration_in_priority_pool.registration_id
     ).exists()
-    assert not event_with_registrations_and_priority.get_waiting_list().exists()
+    assert not event_with_priority_pool.get_waiting_list().exists()
 
 
-def test_delete_registration_when_no_users_on_wait_are_in_a_priority_pool_bumps_first_registration_on_wait():
+def test_delete_registration_when_no_users_on_wait_are_in_a_priority_pool_bumps_first_registration_on_wait(event_with_priority_pool):
     """
     Test that the first registration on wait is moved up when
     a registration is deleted and no registered users are prioritized.
     """
-    event = EventFactory(limit=1)
-    priority = PriorityFactory(user_study=UserStudy.DATAING, user_class=UserClass.FIRST)
-    event.registration_priorities.add(priority)
+    user_not_in_priority_pool = UserFactory()
 
-    user_not_in_priority_pool = UserFactory(
-        user_study=UserStudy.DIGFOR.value, user_class=UserClass.SECOND.value
-    )
-
-    registration_to_delete = RegistrationFactory(event=event)
+    registration_to_delete = RegistrationFactory(event=event_with_priority_pool)
     registration_on_wait = RegistrationFactory(
-        event=event, user=user_not_in_priority_pool
+        event=event_with_priority_pool, user=user_not_in_priority_pool
     )
 
     registration_to_delete.delete()
@@ -424,46 +367,47 @@ def test_delete_registration_when_no_users_on_wait_are_in_a_priority_pool_bumps_
     "form_type,should_exist",
     [(EventFormType.EVALUATION, True), (EventFormType.SURVEY, False)],
 )
-def test_deleting_registration_deletes_submission(event, user, form_type, should_exist):
-    form = EventFormFactory(event=event, type=form_type)
+def test_deleting_registration_deletes_submission(event_with_priority_pool, user, form_type, should_exist):
+    form = EventFormFactory(event=event_with_priority_pool, type=form_type)
     submission = SubmissionFactory(form=form, user=user)
-    registration = RegistrationFactory(event=event, user=user)
+    registration = RegistrationFactory(event=event_with_priority_pool, user=user)
 
     registration.delete()
 
     assert Submission.objects.filter(id=submission.id).exists() is should_exist
 
 
-def test_create_registration_without_submission_answer_fails(event, user):
-    EventFormFactory(event=event, type=EventFormType.SURVEY)
+def test_create_registration_without_submission_answer_fails(event_with_priority_pool, user):
+    EventFormFactory(event=event_with_priority_pool, type=EventFormType.SURVEY)
     with pytest.raises(ValidationError):
-        RegistrationFactory(event=event, user=user)
+        RegistrationFactory(event=event_with_priority_pool, user=user)
 
 
 def test_bump_user_from_wait_when_event_is_full_does_not_increments_limit(
-    event_with_registrations_and_priority,
+    event_with_priority_pool, registration_in_priority_pool,
 ):
     """
     Tests that event limit is not incremented
     when an admin attempts to bump a user up from the wait list when the event is full.
     """
-    registration = RegistrationFactory(event=event_with_registrations_and_priority)
-    limit = event_with_registrations_and_priority.limit
+    print(event_with_priority_pool.registrations.all())
+    registration = RegistrationFactory(event=event_with_priority_pool)
+    limit = event_with_priority_pool.limit
     registration.is_on_wait = False
 
     with pytest.raises(ValueError):
         registration.save()
 
-    assert event_with_registrations_and_priority.limit == limit
+    assert event_with_priority_pool.limit == limit
 
 
 def test_attempted_bump_user_from_wait_when_event_is_full_does_not_bump_user(
-    event_with_registrations_and_priority,
+    event_with_priority_pool, registration_in_priority_pool,
 ):
     """
     Tests that an admin cannot manualy bump a user up from the wait list when the event is full.
     """
-    registration = RegistrationFactory(event=event_with_registrations_and_priority)
+    registration = RegistrationFactory(event=event_with_priority_pool)
     registration.is_on_wait = False
 
     with pytest.raises(ValueError):
@@ -475,13 +419,13 @@ def test_attempted_bump_user_from_wait_when_event_is_full_does_not_bump_user(
 
 
 def test_bump_user_from_wait_does_not_increments_limit(
-    event_with_registrations_and_priority,
+    event_with_priority_pool, registration_in_priority_pool,
 ):
     """
     Tests that an admin cannot manualy bump a user up from the wait list when the event is full.
     """
-    registration = RegistrationFactory(event=event_with_registrations_and_priority)
-    limit = event_with_registrations_and_priority.limit
+    registration = RegistrationFactory(event=event_with_priority_pool)
+    limit = event_with_priority_pool.limit
     registration.is_on_wait = False
 
     with pytest.raises(ValueError):
@@ -489,34 +433,29 @@ def test_bump_user_from_wait_does_not_increments_limit(
 
     registration.refresh_from_db()
 
-    assert event_with_registrations_and_priority.limit == limit
+    assert event_with_priority_pool.limit == limit
     assert registration.is_on_wait
 
 
-def test_auto_bump_user_from_wait_does_not_increments_limit():
+def test_auto_bump_user_from_wait_does_not_increments_limit(event_with_priority_pool):
     """
     Tests if an automatic bump of a registration happens, the event limit wil not be incremented
     """
-    event = EventFactory(limit=1)
-    limit = event.limit
-    priority = PriorityFactory(user_study=UserStudy.DATAING, user_class=UserClass.FIRST)
-    event.registration_priorities.add(priority)
+    limit = event_with_priority_pool.limit
 
-    user_not_in_priority_pool = UserFactory(
-        user_study=UserStudy.DIGFOR.value, user_class=UserClass.SECOND.value
-    )
+    user_not_in_priority_pool = UserFactory()
 
-    registration_to_delete = RegistrationFactory(event=event)
+    registration_to_delete = RegistrationFactory(event=event_with_priority_pool)
     registration_on_wait = RegistrationFactory(
-        event=event, user=user_not_in_priority_pool
+        event=event_with_priority_pool, user=user_not_in_priority_pool
     )
 
     registration_to_delete.delete()
 
     registration_on_wait.refresh_from_db()
-    event.refresh_from_db()
+    event_with_priority_pool.refresh_from_db()
     assert not registration_on_wait.is_on_wait
-    assert event.limit == limit
+    assert event_with_priority_pool.limit == limit
 
 
 def test_set_attended_is_allowed_when_queue_exists():
@@ -534,41 +473,30 @@ def test_set_attended_is_allowed_when_queue_exists():
     assert registration.has_attended == new_attended_state
 
 
-def test_create_registration_on_priority_only_event_when_user_is_not_prioritized():
+def test_create_registration_on_priority_only_event_when_user_is_not_prioritized(event_with_priority_pool):
     """
     Tests if a user that is not prioritized throws an error when attempting to register
     on an event which is only open to prioritized users
     """
-    event = EventFactory(limit=1, only_allow_prioritized=True)
-    priority = PriorityFactory(user_study=UserStudy.DATAING, user_class=UserClass.FIRST)
-    event.registration_priorities.add(priority)
+    event_with_priority_pool.only_allow_prioritized = True
+    event_with_priority_pool.save()
 
-    user_not_in_priority_pool = UserFactory(
-        user_study=UserStudy.DIGFOR.value, user_class=UserClass.SECOND.value
-    )
+    user_not_in_priority_pool = UserFactory()
 
-    event.save()
 
     with pytest.raises(ValidationError):
-        RegistrationFactory(event=event, user=user_not_in_priority_pool)
+        RegistrationFactory(event=event_with_priority_pool, user=user_not_in_priority_pool)
 
 
-def test_create_registration_on_priority_only_event_when_user_is_prioritized():
+def test_create_registration_on_priority_only_event_when_user_is_prioritized(event_with_priority_pool, user_in_priority_pool):
     """
     Tests if a user can register on an event that is only for prioritized users when the
     user is prioritized
     """
-    user_in_priority_pool = UserFactory(
-        user_study=UserStudy.DATAING.value, user_class=UserClass.FIRST.value
-    )
+    event_with_priority_pool.only_allow_prioritized=True
+    event_with_priority_pool.save()
 
-    event = EventFactory(limit=1, only_allow_prioritized=True)
-    priority = PriorityFactory(user_study=UserStudy.DATAING, user_class=UserClass.FIRST)
-    event.registration_priorities.add(priority)
-
-    event.save()
-
-    RegistrationFactory(event=event, user=user_in_priority_pool)
+    RegistrationFactory(event=event_with_priority_pool, user=user_in_priority_pool)
 
 
 @pytest.mark.parametrize(
@@ -578,25 +506,17 @@ def test_create_registration_on_priority_only_event_when_user_is_prioritized():
         (True),
     ],
 )
-def test_strikes_has_no_effect_if_event_has_strikes_disabled(enable_strikes):
+def test_strikes_has_no_effect_if_event_has_strikes_disabled(event_with_priority_pool, user_in_priority_pool, enable_strikes):
     """
     Tests if a user is prioritized even if they have 3 strikes, if the event
     has enforces_previous_strikes set to false
     """
 
-    user_in_priority_pool = UserFactory(
-        user_study=UserStudy.DATAING.value, user_class=UserClass.FIRST.value
-    )
-
     StrikeFactory(user=user_in_priority_pool, strike_size=3)
-    event = EventFactory(
-        limit=1, only_allow_prioritized=True, enforces_previous_strikes=enable_strikes
-    )
+    event_with_priority_pool.only_allow_prioritized=True
+    event_with_priority_pool.enforces_previous_strikes=enable_strikes
+    event_with_priority_pool.save()
 
-    priority = PriorityFactory(user_study=UserStudy.DATAING, user_class=UserClass.FIRST)
-    event.registration_priorities.add(priority)
-
-    event.save()
-    registration = RegistrationFactory.build(event=event, user=user_in_priority_pool)
+    registration = RegistrationFactory.build(event=event_with_priority_pool, user=user_in_priority_pool)
     is_prioritized = not enable_strikes
     assert registration.is_prioritized == is_prioritized

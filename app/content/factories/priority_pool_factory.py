@@ -13,11 +13,9 @@ class PriorityPoolFactory(DjangoModelFactory):
 
     @factory.post_generation
     def groups(self, create, extracted, **kwargs):
-        if not create:
+        if not create or not extracted:
             # Simple build, do nothing.
             return
-
-        if extracted:
-            # A list of groups were passed in, use them
-            for group in extracted:
-                self.groups.add(group)
+        
+        # Add the iterable of groups using bulk addition
+        self.groups.add(*extracted)
