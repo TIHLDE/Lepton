@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+## Versjon 2022.05.06
 ## Versjon 2022.05.03
 
 - ⚡ **Arrangementer**. Tillat Promo å redigere alle arrangementer.
