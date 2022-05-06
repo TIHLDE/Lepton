@@ -169,6 +169,29 @@ def test_update_as_user(member, group, user_in_group):
 
 
 @pytest.mark.django_db
+def test_update_defense_as_user(group, user_in_group):
+    fine_user, group = user_in_group
+    fine = FineFactory(payed=False, group=group, user=fine_user)
+    client = get_api_client(user=fine_user)
+    url = _get_fine_url(group, fine)
+    data = {"defense": "I did not do this"}
+    response = client.put(f"{url}defense/", data=data)
+    assert response.status_code == status.HTTP_200_OK
+    assert response.json()["defense"] == data["defense"]
+
+
+@pytest.mark.django_db
+def test_update_defense_as_other_member(member, group, user_in_group):
+    fine_user, group = user_in_group
+    fine = FineFactory(payed=False, group=group, user=fine_user)
+    client = get_api_client(user=member)
+    url = _get_fine_url(group, fine)
+    data = {"defense": "I did not do this"}
+    response = client.put(f"{url}defense/", data=data)
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+@pytest.mark.django_db
 def test_delete_as_group_leader(group_leader):
     user, group = group_leader
     fine = FineFactory(group=group, user=user)

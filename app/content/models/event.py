@@ -20,7 +20,7 @@ from app.util.utils import now, yesterday
 
 class Event(BaseModel, OptionalImage, BasePermissionModel):
 
-    write_access = AdminGroup.admin()
+    write_access = (*AdminGroup.admin(), AdminGroup.PROMO)
 
     title = models.CharField(max_length=200)
     start_date = models.DateTimeField()
@@ -197,6 +197,12 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
             if request.data.get("organizer", None)
             else request.user.memberships_with_events_access.exists()
         )
+
+    @classmethod
+    def has_write_all_permission(cls, request):
+        if request.user is None:
+            return False
+        return check_has_access(cls.write_access, request)
 
     def clean(self):
         self.validate_start_end_registration_times()
