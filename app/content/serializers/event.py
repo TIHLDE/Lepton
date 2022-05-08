@@ -149,7 +149,7 @@ class EventCreateAndUpdateSerializer(BaseModelSerializer):
         return event
 
     def update_priority_pools(self, event, priority_pools_data):
-        event.priority_pools.clear()
+        event.priority_pools.all().delete()
         self.set_priority_pools(event, priority_pools_data)
 
     @staticmethod
