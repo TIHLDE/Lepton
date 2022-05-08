@@ -1,5 +1,4 @@
 from app.content.factories.event_factory import EventFactory
-from app.content.factories.priority_factory import PriorityFactory
 from app.content.factories.user_factory import UserFactory
 from app.content.factories.registration_factory import RegistrationFactory
 from app.content.factories.cheatsheet_factory import CheatsheetFactory
@@ -9,3 +8,4 @@ from app.content.factories.page_factory import ParentPageFactory
 from app.content.factories.short_link_factory import ShortLinkFactory
 from app.content.factories.strike_factory import StrikeFactory
 from app.content.factories.toddel_factory import ToddelFactory
+from app.content.factories.priority_pool_factory import PriorityPoolFactory

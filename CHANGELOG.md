@@ -13,6 +13,13 @@
 ---
 
 ## Neste versjon
+## Versjon 2022.05.08
+- ⚡ **Prikk**. Har lagt til bedre tester for prikker.
+- ✨ **Arrangementer**. Bruker ny logikk for prioritering. Kan nå prioritere grupper
+- ⚡ **Brukere**. Fjernet lagring av klasse og studie, dette finnes nå gjennom medlemskap.
+- ⚡ **Opplastning**. Brukere kan laste opp filer som er opptil 50 MB store.
+- ✨ **Grupper**. Man kan nå hente ut statestikk om forskjellige grupper.
+
 ## Versjon 2022.05.03
 
 - ⚡ **Arrangementer**. Tillat Promo å redigere alle arrangementer.

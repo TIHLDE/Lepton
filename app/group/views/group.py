@@ -1,5 +1,6 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
+from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from app.common.mixins import ActionMixin
@@ -7,7 +8,8 @@ from app.common.permissions import BasicViewPermission
 from app.common.viewsets import BaseViewSet
 from app.group.filters.group import GroupFilter
 from app.group.models import Group
-from app.group.serializers import GroupSerializer
+from app.group.serializers import GroupSerializer, GroupStatisticsSerializer
+from app.group.serializers.group import GroupListSerializer
 
 
 class GroupViewSet(BaseViewSet, ActionMixin):
@@ -17,6 +19,11 @@ class GroupViewSet(BaseViewSet, ActionMixin):
     filterset_class = GroupFilter
     queryset = Group.objects.all()
     lookup_field = "slug"
+
+    def get_serializer_class(self):
+        if hasattr(self, "action") and self.action == "list":
+            return GroupListSerializer
+        return super().get_serializer_class()
 
     def retrieve(self, request, slug):
         """Returns a specific group by slug"""
@@ -72,3 +79,9 @@ class GroupViewSet(BaseViewSet, ActionMixin):
                 {"detail": ("Gruppen eksisterer ikke")},
                 status=status.HTTP_404_NOT_FOUND,
             )
+
+    @action(detail=True, methods=["get"], url_path="statistics")
+    def statistics(self, request, *args, **kwargs):
+        group = self.get_object()
+        serializer = GroupStatisticsSerializer(group, context={"request": request})
+        return Response(serializer.data, status=status.HTTP_200_OK)

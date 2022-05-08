@@ -10,7 +10,6 @@ from app.common.permissions import (
     set_user_id,
 )
 from app.content.models import Category
-from app.content.models.priority import Priority
 from app.content.models.user import User
 from app.forms.enums import EventFormType
 from app.group.models.group import Group
@@ -62,9 +61,6 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
     start_registration_at = models.DateTimeField(blank=True, null=True, default=None)
     end_registration_at = models.DateTimeField(blank=True, null=True, default=None)
     sign_off_deadline = models.DateTimeField(blank=True, null=True, default=None)
-    registration_priorities = models.ManyToManyField(
-        Priority, blank=True, default=None, related_name="priorities"
-    )
     only_allow_prioritized = models.BooleanField(default=False)
 
     """ Cronjob fields """
@@ -131,7 +127,7 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
         return self.has_limit() and self.get_participants().count() >= self.limit
 
     def has_priorities(self):
-        return self.registration_priorities.all().exists()
+        return self.priority_pools.exists()
 
     @property
     def evaluation(self):
@@ -148,7 +144,7 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
         return self.has_object_write_permission(request)
 
     @classmethod
-    def has_get_public_event_registrations_permission(cls,request):
+    def has_get_public_event_registrations_permission(cls, request):
         return request.user and request.user.public_event_registrations
 
     def has_object_write_permission(self, request):

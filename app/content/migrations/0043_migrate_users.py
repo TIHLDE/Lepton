@@ -5,7 +5,15 @@ from django.db.transaction import atomic
 from django.utils.text import slugify
 
 from app.common.enums import GroupType
-from app.content.models.user import CLASS
+
+CLASS = (
+    (-1, "Alumni"),
+    (1, "1. Klasse"),
+    (2, "2. Klasse"),
+    (3, "3. Klasse"),
+    (4, "4. Klasse"),
+    (5, "5. Klasse"),
+)
 
 THIS_YEAR = 2022
 STUDY_FULL = (
