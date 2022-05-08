@@ -24,7 +24,7 @@ from app.group.serializers.membership import (
 class MembershipViewSet(BaseViewSet):
 
     serializer_class = MembershipSerializer
-    queryset = Membership.objects.all()
+    queryset = Membership.objects.select_related("group", "user")
     permission_classes = [BasicViewPermission]
     pagination_class = BasePagination
     filter_backends = [DjangoFilterBackend]

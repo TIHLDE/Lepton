@@ -9,6 +9,7 @@ from app.common.viewsets import BaseViewSet
 from app.group.filters.group import GroupFilter
 from app.group.models import Group
 from app.group.serializers import GroupSerializer, GroupStatisticsSerializer
+from app.group.serializers.group import GroupListSerializer
 
 
 class GroupViewSet(BaseViewSet, ActionMixin):
@@ -18,6 +19,11 @@ class GroupViewSet(BaseViewSet, ActionMixin):
     filterset_class = GroupFilter
     queryset = Group.objects.all()
     lookup_field = "slug"
+
+    def get_serializer_class(self):
+        if hasattr(self, "action") and self.action == "list":
+            return GroupListSerializer
+        return super().get_serializer_class()
 
     def retrieve(self, request, slug):
         """Returns a specific group by slug"""

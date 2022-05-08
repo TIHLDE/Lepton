@@ -31,26 +31,17 @@ class SimpleGroupSerializer(BaseModelSerializer):
         return False
 
 
-class GroupSerializer(SimpleGroupSerializer):
+class GroupListSerializer(SimpleGroupSerializer):
 
     leader = serializers.SerializerMethodField()
-    permissions = DRYPermissionsField(
-        actions=["write", "read", "group_form"], object_only=True
-    )
-    fines_admin = DefaultUserSerializer(read_only=True)
 
     class Meta:
         model = SimpleGroupSerializer.Meta.model
 
         lookup_field = SimpleGroupSerializer.Meta.lookup_field
         fields = SimpleGroupSerializer.Meta.fields + (
-            "description",
             "contact_email",
-            "permissions",
             "leader",
-            "fines_admin",
-            "fines_activated",
-            "fine_info",
         )
 
     def get_leader(self, obj):
@@ -61,6 +52,26 @@ class GroupSerializer(SimpleGroupSerializer):
             return DefaultUserSerializer(leader.user).data
         except Membership.DoesNotExist:
             return None
+
+
+class GroupSerializer(GroupListSerializer):
+
+    permissions = DRYPermissionsField(
+        actions=["write", "read", "group_form"], object_only=True
+    )
+    fines_admin = DefaultUserSerializer(read_only=True)
+
+    class Meta:
+        model = GroupListSerializer.Meta.model
+
+        lookup_field = GroupListSerializer.Meta.lookup_field
+        fields = GroupListSerializer.Meta.fields + (
+            "description",
+            "permissions",
+            "fines_admin",
+            "fines_activated",
+            "fine_info",
+        )
 
     def get_fine_admin_user(self):
         fines_admin_id = self.context["request"].data.get("fines_admin", None)

@@ -48,24 +48,6 @@ class UserManager(BaseUserManager):
         return user
 
 
-CLASS = (
-    (-1, "Alumni"),
-    (1, "1. Klasse"),
-    (2, "2. Klasse"),
-    (3, "3. Klasse"),
-    (4, "4. Klasse"),
-    (5, "5. Klasse"),
-)
-
-STUDY = (
-    (1, "Dataing"),
-    (2, "DigFor"),
-    (3, "DigInc"),
-    (4, "DigSam"),
-    (5, "Drift"),
-    (6, "Info"),
-)
-
 GENDER = (
     (1, "Mann"),
     (2, "Kvinne"),
@@ -85,8 +67,6 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
 
     gender = models.IntegerField(default=2, choices=GENDER, null=True, blank=True)
 
-    user_class = models.IntegerField(default=1, choices=CLASS, null=True, blank=True)
-    user_study = models.IntegerField(default=1, choices=STUDY, null=True, blank=True)
     allergy = models.CharField(max_length=250, blank=True)
 
     public_event_registrations = models.BooleanField(default=True)

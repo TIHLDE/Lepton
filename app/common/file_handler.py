@@ -3,7 +3,8 @@ from abc import ABC, abstractmethod
 
 class FileHandler(ABC):
 
-    SIZE_10_MB = 10000000
+    # Ensure that users don't upload very huge files
+    SIZE_50_MB = 50_000_000
 
     @abstractmethod
     def __init__(self, blob=None):
@@ -24,8 +25,8 @@ class FileHandler(ABC):
         )
 
     def checkBlobSize(self):
-        if self.blob.size > self.SIZE_10_MB:
-            raise ValueError("Filen kan ikke være større enn 10 MB")
+        if self.blob.size > self.SIZE_50_MB:
+            raise ValueError("Filen kan ikke være større enn 50 MB")
 
     @abstractmethod
     def uploadBlob(self):

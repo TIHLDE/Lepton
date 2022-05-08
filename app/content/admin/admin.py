@@ -11,7 +11,6 @@ from app.group.models.membership import Membership
 
 admin.site.register(models.News)
 admin.site.register(models.Category)
-admin.site.register(models.Priority)
 admin.site.register(models.PriorityPool)
 admin.site.register(models.Cheatsheet)
 admin.site.register(models.Page)

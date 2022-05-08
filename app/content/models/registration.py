@@ -18,7 +18,7 @@ from app.content.models.event import Event
 from app.content.models.strike import create_strike
 from app.content.models.user import User
 from app.forms.enums import EventFormType
-from app.util import EnumUtils, now
+from app.util import now
 from app.util.models import BaseModel
 from app.util.utils import datetime_format
 
@@ -197,9 +197,6 @@ class Registration(BaseModel, BasePermissionModel):
         if self.user.number_of_strikes >= 3 and self.event.enforces_previous_strikes:
             return False
 
-        user_class, user_study = EnumUtils.get_user_enums(**self.user.__dict__)
-        user_query = Q(user_class=user_class, user_study=user_study)
-
         user_groups = set(self.user.group_members.values_list("slug", flat=True))
         pools = self.event.priority_pools.prefetch_related("groups").all()
 
@@ -210,7 +207,7 @@ class Registration(BaseModel, BasePermissionModel):
             if is_in_priority_pool:
                 return True
 
-        return self.event.registration_priorities.filter(user_query).exists()
+        return False
 
     def swap_users(self):
         """Swaps a user with a spot with a prioritized user, if such user exists"""
@@ -259,7 +256,7 @@ class Registration(BaseModel, BasePermissionModel):
                 "Du må svare på spørreskjemaet før du kan melde deg på arrangementet"
             )
         if (
-            self.event.registration_priorities
+            self.event.priority_pools
             and self.event.only_allow_prioritized
             and not self.is_prioritized
         ):
