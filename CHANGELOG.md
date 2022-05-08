@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+- ✨ **Grupper**. Man kan nå hente ut statestikk om forskjellige grupper.
 ## Versjon 2022.05.03
 
 - ⚡ **Arrangementer**. Tillat Promo å redigere alle arrangementer.
