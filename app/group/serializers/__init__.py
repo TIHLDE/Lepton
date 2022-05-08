@@ -2,6 +2,7 @@ from app.group.serializers.group import (
     GroupSerializer,
     SimpleGroupSerializer,
     GroupListSerializer,
+    GroupStatisticsSerializer,
 )
 from app.group.serializers.membership import (
     MembershipSerializer,

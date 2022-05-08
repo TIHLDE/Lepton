@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from dry_rest_permissions.generics import DRYPermissionsField
 
-from app.common.enums import MembershipType
+from app.common.enums import GroupType, MembershipType
 from app.common.serializers import BaseModelSerializer
 from app.content.models.user import User
 from app.content.serializers.user import DefaultUserSerializer
@@ -88,3 +88,40 @@ class GroupSerializer(GroupListSerializer):
     def create(self, validated_data):
         fines_admin = self.get_fine_admin_user()
         return Group.objects.create(fines_admin=fines_admin, **validated_data)
+
+
+class GroupStatisticsSerializer(BaseModelSerializer):
+    studyyears = serializers.SerializerMethodField()
+    studies = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Group
+        fields = ("studyyears", "studies")
+
+    def get_studyyears(self, obj, *args, **kwargs):
+        return filter(
+            lambda studyyear: studyyear["amount"] > 0,
+            map(
+                lambda group: {
+                    "studyyear": group.name,
+                    "amount": obj.memberships.filter(
+                        user__memberships__group=group
+                    ).count(),
+                },
+                Group.objects.filter(type=GroupType.STUDYYEAR),
+            ),
+        )
+
+    def get_studies(self, obj, *args, **kwargs):
+        return filter(
+            lambda study: study["amount"] > 0,
+            map(
+                lambda group: {
+                    "study": group.name,
+                    "amount": obj.memberships.filter(
+                        user__memberships__group=group
+                    ).count(),
+                },
+                Group.objects.filter(type=GroupType.STUDY),
+            ),
+        )
