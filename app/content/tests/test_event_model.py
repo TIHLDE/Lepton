@@ -146,7 +146,7 @@ def test_is_full(event, limit, number_of_attendees, is_full):
 @pytest.mark.django_db
 def test_has_priorities_when_no_priorities_exists(event):
     """Should return False if no registration priorities are connected to event."""
-    event.priority_pools.clear()
+    event.priority_pools.all().delete()
 
     assert not event.has_priorities()
 

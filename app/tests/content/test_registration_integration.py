@@ -4,13 +4,7 @@ from rest_framework import status
 
 import pytest
 
-from app.common.enums import (
-    AdminGroup,
-    GroupType,
-    MembershipType,
-    UserClass,
-    UserStudy,
-)
+from app.common.enums import AdminGroup, GroupType, MembershipType
 from app.content.factories import EventFactory, RegistrationFactory, UserFactory
 from app.content.factories.priority_pool_factory import PriorityPoolFactory
 from app.forms.enums import EventFormType

@@ -18,7 +18,6 @@ from app.content.models.event import Event
 from app.content.models.strike import create_strike
 from app.content.models.user import User
 from app.forms.enums import EventFormType
-from app.group.models.group import Group
 from app.util import now
 from app.util.models import BaseModel
 from app.util.utils import datetime_format
