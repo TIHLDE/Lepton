@@ -157,7 +157,6 @@ class EventViewSet(BaseViewSet, ActionMixin):
         detail=True,
         methods=["get"],
         url_path="public_registrations",
-        permission_classes=(IsMember,),
     )
     def get_public_event_registrations(self, request, pk, *args, **kwargs):
         event = get_object_or_404(Event, id=pk)
@@ -206,7 +205,7 @@ class EventViewSet(BaseViewSet, ActionMixin):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-        if self.request.user.is_HS_or_Index_member:
+        if Event.has_write_all_permission(self.request):
             events = self.get_queryset()
         else:
             allowed_organizers = Group.objects.filter(

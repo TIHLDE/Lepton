@@ -36,8 +36,6 @@ def _get_user_post_data():
         "email": "ola@nordmann.org",
         "first_name": "Ola",
         "last_name": "Nordmann",
-        "user_class": 2,
-        "user_study": 2,
         "user_id": "olanord",
         "password": "SuperSecurePassword",
         "study": slugify("Dataingeniør"),
@@ -55,8 +53,6 @@ def _get_user_put_data():
         "image": None,
         "last_name": "Nordmann",
         "tool": "Keyboard",
-        "user_class": 2,
-        "user_study": 2,
     }
 
 
@@ -174,7 +170,8 @@ def test_filter_only_users_with_active_strikes(
     ("url", "status_code"),
     [
         ("/", status.HTTP_200_OK),
-        ("/groups/", status.HTTP_200_OK),
+        ("/memberships/", status.HTTP_200_OK),
+        ("/membership-histories/", status.HTTP_200_OK),
         ("/badges/", status.HTTP_200_OK),
         ("/events/", status.HTTP_200_OK),
         ("/forms/", status.HTTP_200_OK),
@@ -196,7 +193,8 @@ def test_user_actions_self(url, status_code, member, api_client):
     ("url", "status_code"),
     [
         ("/", status.HTTP_200_OK),
-        ("/groups/", status.HTTP_200_OK),
+        ("/memberships/", status.HTTP_200_OK),
+        ("/membership-histories/", status.HTTP_200_OK),
         ("/badges/", status.HTTP_200_OK),
         ("/events/", status.HTTP_404_NOT_FOUND),
         ("/forms/", status.HTTP_404_NOT_FOUND),
@@ -218,7 +216,8 @@ def test_user_actions_get_user_as_admin_user(
     ("url", "status_code"),
     [
         ("/", status.HTTP_200_OK),
-        ("/groups/", status.HTTP_200_OK),
+        ("/memberships/", status.HTTP_200_OK),
+        ("/membership-histories/", status.HTTP_200_OK),
         ("/badges/", status.HTTP_200_OK),
         ("/events/", status.HTTP_404_NOT_FOUND),
         ("/forms/", status.HTTP_404_NOT_FOUND),
@@ -238,7 +237,8 @@ def test_user_actions_get_user_as_member(url, status_code, user, member, api_cli
     ("url", "status_code"),
     [
         ("/", status.HTTP_403_FORBIDDEN),
-        ("/groups/", status.HTTP_403_FORBIDDEN),
+        ("/memberships/", status.HTTP_403_FORBIDDEN),
+        ("/membership-histories/", status.HTTP_403_FORBIDDEN),
         ("/badges/", status.HTTP_403_FORBIDDEN),
     ],
 )
@@ -320,8 +320,6 @@ def test_update_self_as_member(member, api_client):
     assert member.email != data["email"]
     assert member.first_name != data["first_name"]
     assert member.last_name != data["last_name"]
-    assert member.user_study != data["user_study"]
-    assert member.user_class != data["user_class"]
 
 
 def test_update_other_user_as_member(member, user, api_client):
@@ -352,8 +350,6 @@ def test_update_other_user_as_admin_user(admin_user, user, api_client):
     assert user.email == data["email"]
     assert user.first_name == data["first_name"]
     assert user.last_name == data["last_name"]
-    assert user.user_study == data["user_study"]
-    assert user.user_class == data["user_class"]
 
 
 def test_create_as_anonymous(default_client):
@@ -375,8 +371,6 @@ def test_create_correctly_assigns_fields(api_client):
     assert user.email == data["email"]
     assert user.first_name == data["first_name"]
     assert user.last_name == data["last_name"]
-    assert user.user_study == data["user_study"]
-    assert user.user_class == data["user_class"]
 
 
 def test_create_adds_user_to_class_group(api_client, dataing, group2019):

@@ -1,5 +1,6 @@
+from django.conf import settings
 from django.db.models import Subquery
-from django.db.models.aggregates import Sum
+from django.db.models.aggregates import Coalesce, Sum
 from django.db.models.expressions import OuterRef
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
@@ -10,6 +11,7 @@ from app.common.mixins import ActionMixin
 from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission
 from app.common.viewsets import BaseViewSet
+from app.communication.enums import UserNotificationSettingType
 from app.content.models.user import User
 from app.group.filters.fine import FineFilter
 from app.group.mixins import APIFineErrorsMixin
@@ -20,6 +22,7 @@ from app.group.serializers.fine import (
     FineSerializer,
     FineStatisticsSerializer,
     FineUpdateCreateSerializer,
+    FineUpdateDefenseSerializer,
     UserFineSerializer,
 )
 
@@ -53,7 +56,25 @@ class FineViewSet(APIFineErrorsMixin, BaseViewSet, ActionMixin):
         )
 
         if serializer.is_valid():
-            super().perform_create(serializer)
+            fines = super().perform_create(serializer)
+
+            if len(fines):
+                fine = fines[0]
+                users = list(map(lambda fine: fine.user, fines))
+
+                from app.communication.notifier import Notify
+
+                Notify(
+                    users,
+                    f'Du har fått en bot i "{fine.group.name}"',
+                    UserNotificationSettingType.FINE,
+                ).add_paragraph(
+                    f'{fine.created_by.first_name} {fine.created_by.last_name} har gitt deg {fine.amount} bøter for å ha brutt paragraf "{fine.description}" i gruppen {fine.group.name}'
+                ).add_link(
+                    "Gå til bøter",
+                    f"{settings.WEBSITE_URL}{fine.group.website_url}boter/",
+                ).send()
+
             return Response(data=serializer.data, status=status.HTTP_200_OK)
         return Response(
             {"detail": serializer.errors},
@@ -94,8 +115,8 @@ class FineViewSet(APIFineErrorsMixin, BaseViewSet, ActionMixin):
             .annotate(count=Sum("amount"))
             .values("count")
         )
-        return User.objects.annotate(fines_amount=Subquery(fines_amount)).filter(
-            fines_amount__gt=0
+        return User.objects.filter(memberships__group=self.kwargs["slug"]).annotate(
+            fines_amount=Coalesce(Subquery(fines_amount), 0)
         )
 
     @action(detail=False, methods=["put"], url_path="batch-update")
@@ -143,3 +164,17 @@ class FineViewSet(APIFineErrorsMixin, BaseViewSet, ActionMixin):
     def get_group_fine_statistics(self, request, *args, **kwargs):
         group = Group.objects.get(slug=kwargs["slug"])
         return Response(FineStatisticsSerializer(group).data, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=["put"], url_path="defense")
+    def update_defense(self, request, *args, **kwargs):
+        fine = self.get_object()
+        serializer = FineUpdateDefenseSerializer(
+            fine, data=request.data, context={"request": request}
+        )
+        if serializer.is_valid():
+            fine = super().perform_update(serializer)
+            return Response(FineSerializer(fine).data, status=status.HTTP_200_OK)
+        return Response(
+            {"detail": serializer.errors},
+            status=status.HTTP_400_BAD_REQUEST,
+        )

@@ -1,18 +1,16 @@
 import uuid
 
-from django.conf import settings
 from django.db import models
 
 from app.common.enums import AdminGroup
 from app.common.permissions import BasePermissionModel, check_has_access
-from app.communication.enums import UserNotificationSettingType
 from app.content.models.user import User
 from app.group.exceptions import UserIsNotInGroup
 from app.group.models.group import Group
-from app.util.models import BaseModel
+from app.util.models import BaseModel, OptionalImage
 
 
-class Fine(BaseModel, BasePermissionModel):
+class Fine(BaseModel, OptionalImage, BasePermissionModel):
 
     access = AdminGroup.admin()
     id = models.UUIDField(
@@ -32,6 +30,7 @@ class Fine(BaseModel, BasePermissionModel):
     payed = models.BooleanField(default=False)
     description = models.CharField(default="", blank=True, max_length=100)
     reason = models.TextField(default="", blank=True)
+    defense = models.TextField(default="", blank=True)
 
     class Meta:
         verbose_name_plural = "Fines"
@@ -45,21 +44,6 @@ class Fine(BaseModel, BasePermissionModel):
             raise UserIsNotInGroup(
                 f"{self.user.first_name} {self.user.last_name} er ikke medlem i gruppen"
             )
-        if not self.id:
-            self.notify_user()
-
-    def notify_user(self):
-        from app.communication.notifier import Notify
-
-        Notify(
-            [self.user],
-            f'Du har fått en bot i "{self.group.name}"',
-            UserNotificationSettingType.FINE,
-        ).add_paragraph(
-            f'{self.created_by.first_name} {self.created_by.last_name} har gitt deg {self.amount} bøter for å ha brutt paragraf "{self.description}" i gruppen {self.group.name}'
-        ).add_link(
-            "Gå til bøter", f"{settings.WEBSITE_URL}{self.group.website_url}boter/"
-        ).send()
 
     def save(self, *args, **kwargs):
         self.full_clean()
@@ -104,3 +88,6 @@ class Fine(BaseModel, BasePermissionModel):
 
     def has_object_destroy_permission(self, request):
         return self.has_destroy_permission(request)
+
+    def has_object_update_defense_permission(self, request):
+        return self.user == request.user

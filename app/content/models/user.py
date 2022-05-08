@@ -48,24 +48,6 @@ class UserManager(BaseUserManager):
         return user
 
 
-CLASS = (
-    (-1, "Alumni"),
-    (1, "1. Klasse"),
-    (2, "2. Klasse"),
-    (3, "3. Klasse"),
-    (4, "4. Klasse"),
-    (5, "5. Klasse"),
-)
-
-STUDY = (
-    (1, "Dataing"),
-    (2, "DigFor"),
-    (3, "DigInc"),
-    (4, "DigSam"),
-    (5, "Drift"),
-    (6, "Info"),
-)
-
 GENDER = (
     (1, "Mann"),
     (2, "Kvinne"),
@@ -85,8 +67,6 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
 
     gender = models.IntegerField(default=2, choices=GENDER, null=True, blank=True)
 
-    user_class = models.IntegerField(default=1, choices=CLASS, null=True, blank=True)
-    user_study = models.IntegerField(default=1, choices=STUDY, null=True, blank=True)
     allergy = models.CharField(max_length=250, blank=True)
 
     public_event_registrations = models.BooleanField(default=True)
@@ -98,6 +78,12 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
     USERNAME_FIELD = "user_id"
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = (
+            "first_name",
+            "last_name",
+        )
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} - {self.user_id}"
@@ -126,6 +112,10 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
             | Q(group__type=GroupType.BOARD)
         )
 
+    @property
+    def memberships_with_group_form_access(self):
+        return self.memberships_with_events_access
+
     def has_perm(self, perm, obj=None):
         return self.is_superuser
 
@@ -135,6 +125,14 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
     @property
     def number_of_strikes(self):
         return self.strikes.sum_active()
+
+    @property
+    def study(self):
+        return self.memberships.filter(group__type=GroupType.STUDY).first()
+
+    @property
+    def studyyear(self):
+        return self.memberships.filter(group__type=GroupType.STUDYYEAR).first()
 
     objects = UserManager()
 

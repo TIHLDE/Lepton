@@ -1,15 +1,16 @@
 from django.contrib import admin
 from django.contrib.admin.models import DELETION, LogEntry
+from django.db.models import Exists, OuterRef
 from django.urls import reverse
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
 
+from app.common.enums import GroupType
 from app.content import models
+from app.group.models.membership import Membership
 
-admin.site.register(models.Event)
 admin.site.register(models.News)
 admin.site.register(models.Category)
-admin.site.register(models.Priority)
 admin.site.register(models.PriorityPool)
 admin.site.register(models.Cheatsheet)
 admin.site.register(models.Page)
@@ -53,16 +54,114 @@ class RegistrationAdmin(admin.ModelAdmin):
         "user__last_name",
     )
     readonly_fields = ("created_at", "updated_at")
+    list_filter = (
+        "is_on_wait",
+        "has_attended",
+        "event",
+        "user",
+    )
     # Enables checks bypassing from the 'Action' dropdown in Registration overview
     actions = [
         admin_delete_registration,
     ]
 
 
+class SlackConnectedListFilter(admin.SimpleListFilter):
+    """Filters users checking if they have connected to their Slack-user"""
+
+    title = "har tilkoblet Slack-bruker"
+    parameter_name = "slack_connected"
+
+    def lookups(self, *args, **kwargs):
+        return (
+            ("true", "Ja"),
+            ("false", "Nei"),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() == "true":
+            return queryset.exclude(slack_user_id__exact="")
+        if self.value() == "false":
+            return queryset.filter(slack_user_id__exact="")
+
+
+class AffiliatedStudyListFilter(admin.SimpleListFilter):
+    """Filters users checking if they're connected to a study"""
+
+    title = "har studie-medlemskap"
+    parameter_name = "affiliated_study"
+
+    def lookups(self, *args, **kwargs):
+        return (
+            ("true", "Ja"),
+            ("false", "Nei"),
+        )
+
+    def queryset(self, request, queryset):
+        connected_query = Exists(
+            Membership.objects.filter(
+                user__user_id=OuterRef("pk"), group__type=GroupType.STUDY
+            )
+        )
+        if self.value() == "true":
+            return queryset.filter(connected_query)
+        if self.value() == "false":
+            return queryset.filter(~connected_query)
+
+
+class AffiliatedStudyyearListFilter(admin.SimpleListFilter):
+    """Filters users checking if they're connected to a studyyear"""
+
+    title = "har studieår-medlemskap"
+    parameter_name = "affiliated_studyyear"
+
+    def lookups(self, *args, **kwargs):
+        return (
+            ("true", "Ja"),
+            ("false", "Nei"),
+        )
+
+    def queryset(self, request, queryset):
+        connected_query = Exists(
+            Membership.objects.filter(
+                user__user_id=OuterRef("pk"), group__type=GroupType.STUDYYEAR
+            )
+        )
+        if self.value() == "true":
+            return queryset.filter(connected_query)
+        if self.value() == "false":
+            return queryset.filter(~connected_query)
+
+
 @admin.register(models.User)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ("user_id", "first_name", "last_name", "user_class", "user_study")
-    search_fields = ("user_id", "first_name", "last_name", "user_class", "user_study")
+    list_display = ("user_id", "first_name", "last_name")
+    search_fields = ("user_id", "first_name", "last_name")
+
+    list_filter = (
+        "gender",
+        "public_event_registrations",
+        AffiliatedStudyListFilter,
+        AffiliatedStudyyearListFilter,
+        SlackConnectedListFilter,
+    )
+
+
+@admin.register(models.Event)
+class EventAdmin(admin.ModelAdmin):
+    list_display = ("title", "start_date", "location", "category", "organizer")
+    search_fields = (
+        "title",
+        "description",
+        "location",
+    )
+
+    list_filter = (
+        "sign_up",
+        "start_date",
+        "category",
+        "organizer",
+    )
 
 
 class StrikesOverview(models.User):

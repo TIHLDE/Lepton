@@ -3,7 +3,32 @@ from django.contrib import admin
 from app.group import models
 
 admin.site.register(models.Group)
-admin.site.register(models.Membership)
-admin.site.register(models.MembershipHistory)
 admin.site.register(models.Law)
-admin.site.register(models.Fine)
+
+
+@admin.register(models.Fine)
+class FineAdmin(admin.ModelAdmin):
+    list_filter = (
+        "payed",
+        "approved",
+        "group",
+        "user",
+    )
+
+
+@admin.register(models.Membership)
+class MembershipAdmin(admin.ModelAdmin):
+    list_filter = (
+        "membership_type",
+        "group",
+        "user",
+    )
+
+
+@admin.register(models.MembershipHistory)
+class MembershipHistoryAdmin(admin.ModelAdmin):
+    list_filter = (
+        "membership_type",
+        "group",
+        "user",
+    )

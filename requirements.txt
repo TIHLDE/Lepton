@@ -11,11 +11,11 @@ gunicorn == 20.1.0
 uvicorn == 0.17.6
 whitenoise == 6.0.0
 django-ical == 1.8.0
-slack-sdk == 3.15.2
+slack-sdk == 3.16.0
 
 # Django
 # ------------------------------------------------------------------------------
-Django==4.0.3
+Django==4.0.4
 django-enumchoicefield == 3.0.0
 django-filter == 21.1
 django-ordered-model~=3.5
@@ -52,7 +52,7 @@ pytest == 7.1.1
 pytest-cov == 3.0.0
 pytest-django == 4.5.2
 factory-boy == 3.2.1
-pytest-factoryboy == 2.1.0
+pytest-factoryboy == 2.2.0
 pytest-lazy-fixture==0.6.3
 
 # CSV

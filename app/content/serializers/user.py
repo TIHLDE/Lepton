@@ -10,32 +10,41 @@ from app.group.models import Group, Membership
 
 
 class DefaultUserSerializer(BaseModelSerializer):
+    study = serializers.SerializerMethodField()
+    studyyear = serializers.SerializerMethodField()
+
     class Meta:
         model = User
         fields = (
             "user_id",
             "first_name",
             "last_name",
-            "user_class",
-            "user_study",
             "image",
             "email",
             "gender",
-            "user_class",
-            "user_study",
+            "study",
+            "studyyear",
         )
         read_only_fields = (
             "user_id",
             "first_name",
             "last_name",
-            "user_class",
-            "user_study",
             "image",
             "email",
             "gender",
-            "user_class",
-            "user_study",
+            "study",
+            "studyyear",
         )
+
+    def get_study(self, obj):
+        from app.group.serializers.membership import BaseMembershipSerializer
+
+        return BaseMembershipSerializer(obj.study).data
+
+    def get_studyyear(self, obj):
+        from app.group.serializers.membership import BaseMembershipSerializer
+
+        return BaseMembershipSerializer(obj.studyyear).data
 
 
 class UserSerializer(DefaultUserSerializer):
@@ -73,11 +82,11 @@ class UserListSerializer(UserSerializer):
             "image",
             "email",
             "gender",
-            "user_class",
-            "user_study",
             "allergy",
             "tool",
             "number_of_strikes",
+            "study",
+            "studyyear",
         )
 
 
@@ -90,8 +99,6 @@ class UserMemberSerializer(UserSerializer):
             "first_name",
             "last_name",
             "email",
-            "user_class",
-            "user_study",
         )
 
 
@@ -115,8 +122,6 @@ class UserCreateSerializer(serializers.ModelSerializer):
             "first_name",
             "last_name",
             "email",
-            "user_class",
-            "user_study",
             "study",
             "class_",
         )
@@ -156,7 +161,9 @@ class UserCreateSerializer(serializers.ModelSerializer):
 
 
 class UserPermissionsSerializer(serializers.ModelSerializer):
-    permissions = DRYGlobalPermissionsField(actions=["write", "read", "destroy"])
+    permissions = DRYGlobalPermissionsField(
+        actions=["write", "write_all", "read", "destroy"]
+    )
 
     class Meta:
         model = User

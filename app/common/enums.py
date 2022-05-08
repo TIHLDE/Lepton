@@ -66,6 +66,10 @@ class GroupType(ChoiceEnum):
     def public_groups(cls):
         return [cls.BOARD, cls.SUBGROUP, cls.COMMITTEE, cls.INTERESTGROUP]
 
+    @classmethod
+    def all(cls):
+        return list(map(lambda c: (c.name, c.value), cls))
+
 
 class EnvironmentOptions(Enum):
     LOCAL = "LOCAL"

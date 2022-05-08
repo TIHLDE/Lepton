@@ -14,6 +14,21 @@
 
 ## Neste versjon
 - ⚡ **Prikk**. Har lagt til bedre tester for prikker.
+- ✨ **Arrangementer**. Bruker ny logikk for prioritering. Kan nå prioritere grupper
+- ⚡ **Brukere**. Fjernet lagring av klasse og studie, dette finnes nå gjennom medlemskap.
+- ⚡ **Opplastning**. Brukere kan laste opp filer som er opptil 50 MB store.
+- ✨ **Grupper**. Man kan nå hente ut statestikk om forskjellige grupper.
+
+## Versjon 2022.05.03
+
+- ⚡ **Arrangementer**. Tillat Promo å redigere alle arrangementer.
+- ✨ **Bøter**. Det er mulig å legge til forsvar av mottatte bøter
+
+## Versjon 2022.04.29
+- ✨ **Medlemsskap**. Medlemsskapshistorikk kan nå opprettes, endres og slettes. En kan også hente ut medlemsskapshistorikk for spesifikke brukere.
+
+## Versjon 2022.04.21
+- ✨ **Botsystem**. Legg til bilder som bevis på bøter.
 - ✨ **Banner**. Hovedstyret kan gi ut informasjon til brukere via bannere.
 - 🦟 **Badge**. Fikset at ikke godkjente brukere var med i beregning til andel ervervet.
 
