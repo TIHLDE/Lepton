@@ -1,5 +1,4 @@
 from datetime import timedelta
-from app.content.factories.priority_pool_factory import PriorityPoolFactory
 
 from rest_framework import status
 
@@ -12,11 +11,8 @@ from app.common.enums import (
     UserClass,
     UserStudy,
 )
-from app.content.factories import (
-    EventFactory,
-    RegistrationFactory,
-    UserFactory,
-)
+from app.content.factories import EventFactory, RegistrationFactory, UserFactory
+from app.content.factories.priority_pool_factory import PriorityPoolFactory
 from app.forms.enums import EventFormType
 from app.forms.tests.form_factories import EventFormFactory, SubmissionFactory
 from app.group.factories import GroupFactory

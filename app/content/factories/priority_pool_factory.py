@@ -16,6 +16,6 @@ class PriorityPoolFactory(DjangoModelFactory):
         if not create or not extracted:
             # Simple build, do nothing.
             return
-        
+
         # Add the iterable of groups using bulk addition
         self.groups.add(*extracted)

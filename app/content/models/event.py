@@ -144,7 +144,7 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
         return self.has_object_write_permission(request)
 
     @classmethod
-    def has_get_public_event_registrations_permission(cls,request):
+    def has_get_public_event_registrations_permission(cls, request):
         return request.user and request.user.public_event_registrations
 
     def has_object_write_permission(self, request):

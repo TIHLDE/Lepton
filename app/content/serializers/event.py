@@ -11,7 +11,7 @@ from app.content.serializers.priority_pool import (
     PriorityPoolSerializer,
 )
 from app.group.models.group import Group
-from app.group.serializers.group import GroupSerializer
+from app.group.serializers.group import SimpleGroupSerializer
 
 
 class EventSerializer(serializers.ModelSerializer):
@@ -19,7 +19,7 @@ class EventSerializer(serializers.ModelSerializer):
     priority_pools = PriorityPoolSerializer(many=True, required=False)
     evaluation = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
     survey = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
-    organizer = GroupSerializer(read_only=True)
+    organizer = SimpleGroupSerializer(read_only=True)
     permissions = DRYPermissionsField(actions=["write", "read"], object_only=True)
 
     class Meta:
@@ -80,7 +80,7 @@ class EventSerializer(serializers.ModelSerializer):
 
 class EventListSerializer(serializers.ModelSerializer):
     expired = serializers.BooleanField(read_only=True)
-    organizer = GroupSerializer(read_only=True)
+    organizer = SimpleGroupSerializer(read_only=True)
 
     class Meta:
         model = Event

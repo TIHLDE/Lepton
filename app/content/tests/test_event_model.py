@@ -5,11 +5,8 @@ from django.core.exceptions import ValidationError
 
 import pytest
 
+from app.content.factories import EventFactory, RegistrationFactory
 from app.content.factories.priority_pool_factory import PriorityPoolFactory
-from app.content.factories import (
-    EventFactory,
-    RegistrationFactory,
-)
 from app.util.utils import now
 
 
