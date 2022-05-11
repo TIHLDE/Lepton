@@ -1,6 +1,5 @@
 import uuid
 
-from django.conf import settings
 from django.db import models, transaction
 
 from enumchoicefield import EnumChoiceField
@@ -263,7 +262,7 @@ class Submission(BaseModel, BasePermissionModel):
             )
             .add_button(
                 "Se spørreskjema",
-                f"{settings.WEBSITE_URL}{self.form.group.website_url}",
+                self.form.group.website_url,
             )
             .generate_string(),
             "Nytt spørreskjema svar",

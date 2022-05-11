@@ -30,7 +30,7 @@ class MailCreator:
             {
                 "type": "button",
                 "text": text,
-                "link": link,
+                "link": f"{settings.WEBSITE_URL}{link}",
             }
         )
         return self
@@ -41,9 +41,7 @@ class MailCreator:
 
         event_id: -> Id of event which you want a link to
         """
-        return self.add_button(
-            "Åpne arrangement", f"{settings.WEBSITE_URL}/arrangementer/{event_id}/"
-        )
+        return self.add_button("Åpne arrangement", f"/arrangementer/{event_id}/")
 
     def generate_string(self):
         """
