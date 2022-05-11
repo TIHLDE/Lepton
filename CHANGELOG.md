@@ -13,6 +13,8 @@
 ---
 
 ## Neste versjon
+- ✨ **Varsler**. Ny medlemmer og ledere av grupper får nå mer informasjon om hva det innebærer.
+
 ## Versjon 2022.05.08
 - ⚡ **Prikk**. Har lagt til bedre tester for prikker.
 - ✨ **Arrangementer**. Bruker ny logikk for prioritering. Kan nå prioritere grupper
