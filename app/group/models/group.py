@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.db import models
 from django.utils.text import slugify
 
@@ -67,7 +66,7 @@ class Group(OptionalImage, BaseModel, BasePermissionModel):
         ).add_paragraph(
             "Som botsjef kan du, sammen med leder av gruppen, redigere lovverket og bøter (godkjenne, markere som betalt, endre antall og slette). Medlemmene kan ikke opprette bøter før det er minst én lov i lovverket. Du og alle medlemmene kan se en oversikt over alle bøter, samt filtrere på om boten er godkjent, betalt og per medlem."
         ).add_link(
-            "Gå til gruppen", f"{settings.WEBSITE_URL}{self.website_url}"
+            "Gå til gruppen", self.website_url
         ).add_paragraph(
             "Lykke til!"
         ).send()

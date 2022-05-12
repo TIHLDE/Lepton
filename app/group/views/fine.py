@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.db.models import Subquery
 from django.db.models.aggregates import Coalesce, Sum
 from django.db.models.expressions import OuterRef
@@ -72,7 +71,7 @@ class FineViewSet(APIFineErrorsMixin, BaseViewSet, ActionMixin):
                     f'{fine.created_by.first_name} {fine.created_by.last_name} har gitt deg {fine.amount} bøter for å ha brutt paragraf "{fine.description}" i gruppen {fine.group.name}'
                 ).add_link(
                     "Gå til bøter",
-                    f"{settings.WEBSITE_URL}{fine.group.website_url}boter/",
+                    f"{fine.group.website_url}boter/",
                 ).send()
 
             return Response(data=serializer.data, status=status.HTTP_200_OK)

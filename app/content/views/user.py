@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.db import IntegrityError
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
@@ -318,7 +317,7 @@ class UserViewSet(BaseViewSet, ActionMixin):
         ).add_paragraph(f"Hei {user.first_name}!").add_paragraph(
             "Vi har godkjent brukeren din på TIHLDE.org! Du kan nå logge inn og ta i bruk siden."
         ).add_link(
-            "Logg inn", f"{settings.WEBSITE_URL}/logg-inn/"
+            "Logg inn", "/logg-inn/"
         ).send()
         return Response(
             {
@@ -349,7 +348,7 @@ class UserViewSet(BaseViewSet, ActionMixin):
         ).add_paragraph(
             f"Vedlagt begrunnelse: {reason}."
         ).add_link(
-            "Til forsiden", f"{settings.WEBSITE_URL}/"
+            "Til forsiden", "/"
         ).send()
         user.delete()
         return Response(

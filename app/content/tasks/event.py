@@ -142,7 +142,7 @@ def __post_event_actions(event, *args, **kwargs):
             "PS: Du kan ikke melde deg på flere arrangementer gjennom TIHLDE.org før du har svart på denne undersøkelsen. Du kan alltid finne alle dine ubesvarte spørreskjemaer i profilen din."
         ).add_link(
             "Åpne undersøkelsen",
-            f"{settings.WEBSITE_URL}{event.evaluation.website_url}",
+            event.evaluation.website_url,
         ).send()
 
     event.runned_post_event_actions = True

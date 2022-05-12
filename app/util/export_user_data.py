@@ -8,8 +8,13 @@ from sentry_sdk import capture_exception
 
 from app.badge.serializers import UserBadgeSerializer
 from app.communication.notifier import send_html_email
-from app.communication.serializers import NotificationSerializer
+from app.communication.serializers import (
+    MailGDPRSerializer,
+    NotificationSerializer,
+    UserNotificationSettingSerializer,
+)
 from app.content.serializers import (
+    NewsSerializer,
     RegistrationSerializer,
     ShortLinkSerializer,
     StrikeSerializer,
@@ -85,6 +90,19 @@ def export_user_data(request, user):
             user.submissions, many=True, context={"request": request}
         )
         data["skjema_svar"] = submissions.data
+
+        news = NewsSerializer(
+            user.created_news, many=True, context={"request": request}
+        )
+        data["nyheter"] = news.data
+
+        user_notification_settings = UserNotificationSettingSerializer(
+            user.user_notification_settings, many=True, context={"request": request}
+        )
+        data["varsel_innstillinger"] = user_notification_settings.data
+
+        mails = MailGDPRSerializer(user.emails, many=True, context={"request": request})
+        data["eposter"] = mails.data
 
         is_success = False
 
