@@ -6,7 +6,7 @@ from app.content.serializers.event import (
     EventSerializer,
     EventStatisticsSerializer,
 )
-from app.content.serializers.news import NewsSerializer
+from app.content.serializers.news import NewsSerializer, SimpleNewsSerializer
 from app.content.serializers.page import (
     PageSerializer,
     PageTreeSerializer,
