@@ -45,7 +45,10 @@ class Slack:
         self.blocks.append(
             {
                 "type": "section",
-                "text": {"type": "mrkdwn", "text": f"<{link}|*{text}*>"},
+                "text": {
+                    "type": "mrkdwn",
+                    "text": f"<{settings.WEBSITE_URL}{link}|*{text}*>",
+                },
             }
         )
         return self
@@ -54,9 +57,7 @@ class Slack:
         """
         Add a link to a given event
         """
-        return self.add_link(
-            "Åpne arrangement", f"{settings.WEBSITE_URL}/arrangementer/{event_id}/"
-        )
+        return self.add_link("Åpne arrangement", f"/arrangementer/{event_id}/")
 
     def add_image(self, image_url: str, image_alt: str):
         """

@@ -118,7 +118,7 @@ class Notify:
                     Notification(
                         user=user,
                         title=self.notification_title,
-                        description="\n".join(self.notification_description),
+                        description="\n\n".join(self.notification_description),
                         link=self.notification_link,
                     )
                 )
