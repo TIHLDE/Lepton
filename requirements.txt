@@ -9,7 +9,7 @@ azure-storage-blob == 12.12.0
 python-dotenv ~= 0.20
 gunicorn == 20.1.0
 uvicorn == 0.17.6
-whitenoise == 6.0.0
+whitenoise == 6.1.0
 django-ical == 1.8.0
 slack-sdk == 3.16.0
 
