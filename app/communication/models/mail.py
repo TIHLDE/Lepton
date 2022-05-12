@@ -17,7 +17,7 @@ class Mail(BaseModel):
     eta = models.DateTimeField(default=now)
     subject = models.CharField(max_length=200)
     body = models.TextField(default="")
-    users = models.ManyToManyField(User, blank=True)
+    users = models.ManyToManyField(User, related_name="emails", blank=True)
     sent = models.BooleanField(default=False)
 
     class Meta:
