@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+## Versjon 2022.05.12
 - ✨ **Varsler**. Ny medlemmer og ledere av grupper får nå mer informasjon om hva det innebærer.
 
 ## Versjon 2022.05.08
