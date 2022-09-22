@@ -18,13 +18,13 @@ class PictureViewSet(BaseViewSet):
     pagination_class = BasePagination
 
     def get_queryset(self):
-        album_id = self.kwargs.get("slug", None)
-        return Picture.objects.filter(album__slug=album_id)
+        album_id = self.kwargs.get("id", None)
+        return Picture.objects.filter(album__id=album_id)
 
     def create(self, request, *args, **kwargs):
 
-        album_id = self.kwargs.get("slug", None)
-        album = get_object_or_404(Album, slug=album_id)
+        album_id = self.kwargs.get("id", None)
+        album = get_object_or_404(Album, id=album_id)
 
         files = request.FILES.getlist("file")
         if len(files) < 1:
@@ -48,7 +48,7 @@ class PictureViewSet(BaseViewSet):
             )
         if errors == len(files):
             return Response(
-                {"detail": "Noe gikk galt, ingen bilder ble lagt til i albumet"},
+                {"detail": f"Noe gikk galt, ingen bilder ble lagt til i albumet"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         return Response(
