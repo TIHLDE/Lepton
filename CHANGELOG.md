@@ -14,6 +14,7 @@
 
 ## Neste versjon
 ## Versjon 2022.05.12
+- 🦟 **Galleri**. Problem hvor galleri ble duplisert er fikset.
 - ✨ **Varsler**. Ny medlemmer og ledere av grupper får nå mer informasjon om hva det innebærer.
 
 ## Versjon 2022.05.08
