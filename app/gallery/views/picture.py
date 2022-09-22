@@ -48,7 +48,7 @@ class PictureViewSet(BaseViewSet):
             )
         if errors == len(files):
             return Response(
-                {"detail": f"Noe gikk galt, ingen bilder ble lagt til i albumet"},
+                {"detail": "Noe gikk galt, ingen bilder ble lagt til i albumet"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         return Response(
