@@ -13,6 +13,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.RunPython(delete_sent),
         migrations.RemoveField(
             model_name="mail",
             name="sent",
