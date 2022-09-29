@@ -7,7 +7,7 @@ def send_due_mails(self, *args, **kwargs):
     from app.communication.models.mail import Mail
     from app.util.utils import now
 
-    mails_to_send = Mail.objects.filter(sent=False, eta__lt=now())
+    mails_to_send = Mail.objects.filter(eta__lt=now())
     mails_successfully_sent = 0
 
     for mail in mails_to_send:
