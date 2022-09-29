@@ -19,4 +19,4 @@ def send_due_mails(self, *args, **kwargs):
                 mails_sent += 1
             total_mails += 1
 
-    self.logger.info(f"Successfully sent: {mails_sent}/{total_mails.count()} mails")
+    self.logger.info(f"Successfully sent: {mails_sent}/{total_mails} mails")

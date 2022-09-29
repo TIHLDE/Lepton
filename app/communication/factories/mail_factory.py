@@ -10,7 +10,6 @@ class MailFactory(DjangoModelFactory):
 
     subject = factory.Sequence(lambda n: f"Mail {n}")
     body = factory.Faker("paragraph", nb_sentences=10)
-    sent = False
 
     @factory.post_generation
     def users(self, create, extracted, **kwargs):
