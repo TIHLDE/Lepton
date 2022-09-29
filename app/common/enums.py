@@ -60,6 +60,7 @@ class GroupType(ChoiceEnum):
     STUDYYEAR = "Studieår"
     STUDY = "Studie"
     INTERESTGROUP = "Interesse Gruppe"
+    GENDER = "Kjønn"
     OTHER = "Annet"
 
     @classmethod
@@ -70,6 +71,12 @@ class GroupType(ChoiceEnum):
     def all(cls):
         return list(map(lambda c: (c.name, c.value), cls))
 
+
+class GenderOptions(ChoiceEnum):
+    FEMALE = "Kvinne"
+    MALE = "Mann"
+    OTHER = "Annet"
+    
 
 class EnvironmentOptions(Enum):
     LOCAL = "LOCAL"
