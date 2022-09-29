@@ -18,13 +18,13 @@ class PictureViewSet(BaseViewSet):
     pagination_class = BasePagination
 
     def get_queryset(self):
-        album_id = self.kwargs.get("id", None)
-        return Picture.objects.filter(album__id=album_id)
+        id = self.kwargs.get("id", None)
+        return Picture.objects.filter(album__id=id)
 
     def create(self, request, *args, **kwargs):
 
-        album_id = self.kwargs.get("id", None)
-        album = get_object_or_404(Album, id=album_id)
+        id = self.kwargs.get("id", None)
+        album = get_object_or_404(Album, id=id)
 
         files = request.FILES.getlist("file")
         if len(files) < 1:
