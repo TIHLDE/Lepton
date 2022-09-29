@@ -1,6 +1,7 @@
+from django.db import transaction
+
 from app.celery import app
 from app.util.tasks import BaseTask
-from django.db import transaction
 
 
 @app.task(bind=True, base=BaseTask)
