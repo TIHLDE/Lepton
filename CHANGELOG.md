@@ -13,6 +13,9 @@
 ---
 
 ## Neste versjon
+
+- ⚡ **Grupper**. Har lagt til enums for kjønnsgrupper. 
+
 ## Versjon 2022.05.12
 - ✨ **Varsler**. Ny medlemmer og ledere av grupper får nå mer informasjon om hva det innebærer.
 
