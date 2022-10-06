@@ -7,8 +7,8 @@ from app.gallery.models.picture import Picture
 
 class ListPictureSerializer(serializers.ListSerializer):
     def create(self, validated_data):
-        album_id = self.context["slug"]
-        album = Album.objects.get(slug=album_id)
+        id = self.context["id"]
+        album = Album.objects.get(id=id)
 
         pictures = [Picture(album=album, **data) for data in validated_data]
         return Picture.objects.bulk_create(pictures)

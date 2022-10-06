@@ -10,6 +10,7 @@ class AlbumSerializer(BaseModelSerializer):
     class Meta:
         model = Album
         fields = [
+            "id",
             "title",
             "event",
             "image",

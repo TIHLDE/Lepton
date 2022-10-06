@@ -14,7 +14,7 @@ class AlbumViewSet(BaseViewSet):
     serializer_class = AlbumSerializer
     queryset = Album.objects.all()
     permission_classes = [BasicViewPermission]
-    lookup_field = "slug"
+    lookup_field = "id"
     pagination_class = BasePagination
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_class = AlbumFilter
