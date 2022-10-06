@@ -6,7 +6,8 @@ staticfiles
 __pycache__
 
 # VS Code
-.vscode
+/.vscode
+/.devcontainer
 
 .idea/
 volume/
