@@ -27,9 +27,10 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveField(
+        migrations.AlterField(
             model_name='picture',
             name='album',
+            field=models.SlugField(),
         ),
         migrations.AlterField(
             model_name='album',
@@ -41,11 +42,12 @@ class Migration(migrations.Migration):
             name='id',
             field=models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False),
         ),
-        migrations.AddField(
+        migrations.AlterField(
             model_name='picture',
             name='album',
             field=models.ForeignKey(to='gallery.album', on_delete=models.SET_NULL, null=True),
         ),
+        # Manual migration
         # migrations.RunPython(get_fk),
         # migrations.RunPython(insert_fk),
     ]
