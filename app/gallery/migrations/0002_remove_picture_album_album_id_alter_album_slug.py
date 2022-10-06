@@ -27,14 +27,12 @@ def save_pk(apps, schema_editor):
     Album = apps.get_model('gallery', 'Album')
     
     for album in Album.objects.all():
-        album.id = uuid.uuid4()
         pic_ids = []
         for picture in Picture.objects.filter(album=album): 
             pic_ids.append(picture.id)
 
         albums.append({
-            'slug': album.slug,
-            'id': album.id,
+            'album': album,
             'pic_ids': pic_ids,
         })
 
@@ -44,7 +42,7 @@ def update_pk(apps, schema_editor):
     for album in albums:
         for pic_id in album.get('pic_ids'):
             pic = Picture.objects.get(id=pic_id)
-            pic.album = album.id
+            pic.album = album
             pic.save()
         
 
@@ -58,7 +56,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='album',
             name='id',
-            field=models.UUIDField(default=str(uuid.uuid4()).replace('-', ''), serialize=False),
+            field=models.UUIDField(default=uuid.uuid4),
         ),
         migrations.RunPython(save_pk),
         migrations.RemoveField(
@@ -73,7 +71,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='album',
             name='id',
-            field=models.UUIDField(default=str(uuid.uuid4()).replace('-', ''), editable=False, primary_key=True, serialize=False),
+            field=models.UUIDField(editable=False, primary_key=True, serialize=False),
         ),
         migrations.AddField(
             model_name='picture',
