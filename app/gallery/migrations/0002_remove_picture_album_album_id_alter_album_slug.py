@@ -11,7 +11,7 @@ def save_pk(apps, schema_editor):
     
     for album in Album.objects.all():
         pic_ids = []
-        album.id = uuid.uuid4
+        album.id = uuid.uuid4()
         album.save()
         for picture in Picture.objects.filter(album=album): 
             pic_ids.append(picture.id)
