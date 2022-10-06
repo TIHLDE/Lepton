@@ -3,23 +3,6 @@
 from django.db import migrations, models
 import uuid
 
-# pictures = []
-
-# def get_fk(apps, schema_editor):
-#     Picture = apps.get_model('gallery', 'Picture')
-
-#     for picture in Picture.objects.all():
-#         pictures.append(picture)
-
-# def insert_fk(apps, schema_editor):
-#     Album = apps.get_model('gallery', 'Album')
-
-#     for picture in pictures:
-#         for album in Album.objects.all():
-#             if (picture.album.slug == album.slug):
-#                 picture.album = album
-
-
 albums = []
 
 def save_pk(apps, schema_editor):
@@ -42,7 +25,6 @@ def update_pk(apps, schema_editor):
     for album in albums:
         for pic_id in album.get('pic_ids'):
             pic = Picture.objects.get(id=pic_id)
-            pic.album = album
             pic.save()
         
 
@@ -79,7 +61,4 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(to='gallery.album', on_delete=models.SET_NULL, null=True),
         ),
         migrations.RunPython(update_pk),
-        # Manual migration
-        # migrations.RunPython(get_fk),
-        # migrations.RunPython(insert_fk),
     ]
