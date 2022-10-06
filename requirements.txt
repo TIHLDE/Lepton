@@ -3,7 +3,7 @@ logzero
 aiohttp-cors
 wheel
 mysqlclient == 2.1.0
-sentry-sdk
+sentry-sdk == 1.9.8 # 1.9.9 has a bug that causes the following https://github.com/TIHLDE/Lepton/actions/runs/3153138974/jobs/5129248894
 celery == 5.2.2
 azure-storage-blob == 12.12.0
 python-dotenv ~= 0.20
@@ -15,10 +15,10 @@ slack-sdk == 3.18.3
 
 # Django
 # ------------------------------------------------------------------------------
-Django==4.0.4
+Django==4.1.2
 django-enumchoicefield == 3.0.0
 django-filter == 21.1
-django-ordered-model~=3.5
+django-ordered-model~=3.6
 
 # Django REST Framework
 djangorestframework==3.13.1
