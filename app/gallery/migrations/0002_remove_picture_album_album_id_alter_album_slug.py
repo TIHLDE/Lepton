@@ -58,7 +58,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='album',
             name='id',
-            field=models.UUIDField(default=uuid.uuid4, serialize=False),
+            field=models.UUIDField(default=str(uuid.uuid4()).replace('-', ''), serialize=False),
         ),
         migrations.RunPython(save_pk),
         migrations.RemoveField(
@@ -73,7 +73,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='album',
             name='id',
-            field=models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False),
+            field=models.UUIDField(default=str(uuid.uuid4()).replace('-', ''), editable=False, primary_key=True, serialize=False),
         ),
         migrations.AddField(
             model_name='picture',
