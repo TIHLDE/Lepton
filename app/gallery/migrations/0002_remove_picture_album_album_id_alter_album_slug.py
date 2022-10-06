@@ -17,17 +17,18 @@ def save_pk(apps, schema_editor):
             pic_ids.append(picture.id)
 
         albums.append({
-            'album': album,
+            'album_id': album.id,
             'pic_ids': pic_ids,
         })
 
 def update_pk(apps, schema_editor):
     Picture = apps.get_model('gallery', 'Picture')
-    
+    Album = apps.get_model('gallery', 'Album')
+
     for album in albums:
         for pic_id in album.get('pic_ids'):
             pic = Picture.objects.get(id=pic_id)
-            pic.album = album.get('album')
+            pic.album = Album.objects.get(id=album.get('album_id'))
             pic.save()
 
 class Migration(migrations.Migration):
