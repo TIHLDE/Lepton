@@ -4,21 +4,21 @@ from cmath import pi
 from django.db import migrations, models
 import uuid
 
-pictures = []
+# pictures = []
 
-def get_fk(apps, schema_editor):
-    Picture = apps.get_model('gallery', 'Picture')
+# def get_fk(apps, schema_editor):
+#     Picture = apps.get_model('gallery', 'Picture')
 
-    for picture in Picture.objects.all():
-        pictures.append(picture)
+#     for picture in Picture.objects.all():
+#         pictures.append(picture)
 
-def insert_fk(apps, schema_editor):
-    Album = apps.get_model('gallery', 'Album')
+# def insert_fk(apps, schema_editor):
+#     Album = apps.get_model('gallery', 'Album')
 
-    for picture in pictures:
-        for album in Album.objects.all():
-            if (picture.album.slug == album.slug):
-                picture.album.id = album.id
+#     for picture in pictures:
+#         for album in Album.objects.all():
+#             if (picture.album.slug == album.slug):
+#                 picture.album = album
 
 class Migration(migrations.Migration):
 
@@ -27,7 +27,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(get_fk),
         migrations.RemoveField(
             model_name='picture',
             name='album',
@@ -47,5 +46,6 @@ class Migration(migrations.Migration):
             name='album',
             field=models.ForeignKey(to='gallery.album', on_delete=models.SET_NULL, null=True),
         ),
-        migrations.RunPython(insert_fk),
+        # migrations.RunPython(get_fk),
+        # migrations.RunPython(insert_fk),
     ]
