@@ -70,7 +70,7 @@ class Migration(migrations.Migration):
             name='slug',
             field=models.SlugField(),
         ),
-        migrations.AddField(
+        migrations.AlterField(
             model_name='album',
             name='id',
             field=models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False),
