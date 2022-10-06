@@ -18,7 +18,7 @@ slack-sdk == 3.18.3
 Django==4.1.2
 django-enumchoicefield == 3.0.0
 django-filter == 21.1
-django-ordered-model~=3.5
+django-ordered-model~=3.6
 
 # Django REST Framework
 djangorestframework==3.13.1
