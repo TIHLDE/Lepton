@@ -11,7 +11,6 @@ def save_pk(apps, schema_editor):
     
     for album in Album.objects.all():
         pic_ids = []
-        album.id = str(uuid.uuid4()).replace('-', '')
         album.save()
         for picture in Picture.objects.filter(album=album): 
             pic_ids.append(picture.id)
@@ -40,7 +39,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='album',
             name='id',
-            field=models.UUIDField(),
+            field=models.UUIDField(default=uuid.uuid4, editable=False, serialize=False),
         ),
         migrations.RunPython(save_pk),
         migrations.RemoveField(
