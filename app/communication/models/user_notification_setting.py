@@ -30,7 +30,7 @@ class UserNotificationSetting(BaseModel):
         )
 
     def clean(self):
-        if not self.email and not self.website and not self.slack:
+        if not self.email and not self.website and not (self.slack and self.user.slack_user_id):
             raise AllChannelsUnselected("Du må velge minst en kommunikasjonsmetode")
 
     @classmethod
