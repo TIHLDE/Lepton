@@ -3,7 +3,7 @@ from django.db import migrations
 
 def delete_sent(apps, schema_editor):
     Mail = apps.get_model("communication", "Mail")
-    Mail.objects.filter(sent=False).delete()
+    Mail.objects.filter(sent=True).delete()
 
 
 class Migration(migrations.Migration):
