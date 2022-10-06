@@ -11,7 +11,6 @@ from app.communication.models import (
 
 class MailAdmin(admin.ModelAdmin):
     list_filter = (
-        "sent",
         "users__user_id",
         "eta",
     )
