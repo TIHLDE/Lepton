@@ -24,7 +24,7 @@ def save_pk(apps, schema_editor):
 def update_pk(apps, schema_editor):
     Picture = apps.get_model('gallery', 'Picture')
     
-    for album in albums:
+    for album in albums.get('album'):
         for pic_id in album.get('pic_ids'):
             pic = Picture.objects.get(id=pic_id)
             pic.album = album
