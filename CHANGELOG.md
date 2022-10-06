@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+- 🦟 **Mails** Mails *skal* bli sendt kun én gang. 🤞
 - 🦟 **Varslinger**. Brukere kan ikke lenger sette Slack som eneste kommunikasjonskanal uten å koble til Slack-konto.
 
 ## Versjon 2022.05.12
