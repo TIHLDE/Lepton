@@ -18,7 +18,6 @@ class Mail(BaseModel):
     subject = models.CharField(max_length=200)
     body = models.TextField(default="")
     users = models.ManyToManyField(User, related_name="emails", blank=True)
-    sent = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = "Mail"
@@ -33,8 +32,8 @@ class Mail(BaseModel):
             to_mails=emails, html=self.body, subject=self.subject
         )
         if is_success:
-            self.sent = True
-            self.save(update_fields=["sent"])
+            self.delete()
+
         return is_success
 
     def __str__(self):

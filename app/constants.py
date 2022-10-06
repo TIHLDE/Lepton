@@ -6,7 +6,7 @@ MAIL_ECONOMY = (
 )
 MAIL_INDEX = "index@tihlde.org" if os.environ.get("PROD") else "test+index@tihlde.org"
 MAIL_NOK_LEADER = (
-    "naeringslivminister@tihlde.org"
+    "naeringslivsminister@tihlde.org"
     if os.environ.get("PROD")
     else "test+naeringslivminister@tihlde.org"
 )
