@@ -14,6 +14,7 @@
 
 ## Neste versjon
 - 🦟 **Galleri**. Problem hvor galleri ble duplisert er fikset.
+- 🦟 **Notifikasjoner** Fikset noen kommafeil i notifikasjonene.
 - 🦟 **Mails** Mails *skal* bli sendt kun én gang. 🤞
 - 🦟 **Varslinger**. Brukere kan ikke lenger sette Slack som eneste kommunikasjonskanal uten å koble til Slack-konto.
 
