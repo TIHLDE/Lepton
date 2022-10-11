@@ -177,7 +177,7 @@ class Registration(BaseModel, BasePermissionModel):
             ).add_paragraph(f"Hei, {self.user.first_name}!").add_paragraph(
                 f"På grunn av stor pågang har du blitt satt på venteliste for {self.event.title}."
             ).add_paragraph(
-                "Dersom noen melder seg av vil du automatisk bli flyttet opp på listen. Du vil få beskjed dersom du får plass på arrangementet."
+                "Dersom noen melder seg av, vil du automatisk bli flyttet opp på listen. Du vil få beskjed dersom du får plass på arrangementet."
             ).add_paragraph(
                 f"PS. De vanlige reglene for prikker gjelder også for venteliste, husk derfor å melde deg av arrangementet innen {datetime_format(self.event.sign_off_deadline)} dersom du ikke kan møte."
             ).add_event_link(
