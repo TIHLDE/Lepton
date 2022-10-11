@@ -95,7 +95,7 @@ class Strike(BaseModel, BasePermissionModel):
 
             Notify(
                 [self.user], "Du har fått en prikk", UserNotificationSettingType.STRIKE
-            ).add_paragraph(f"Hei {self.user.first_name}!").add_paragraph(
+            ).add_paragraph(f"Hei, {self.user.first_name}!").add_paragraph(
                 self.description
             ).add_paragraph(
                 "Prikken varer i 20 dager. Ta kontakt med arrangøren om du er uenig. Konsekvenser kan sees i arrangementsreglene. Du kan finne dine aktive prikker og mer info om dem i profilen."

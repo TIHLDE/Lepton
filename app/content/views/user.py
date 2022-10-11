@@ -314,7 +314,7 @@ class UserViewSet(BaseViewSet, ActionMixin):
         Membership.objects.get_or_create(user=user, group=TIHLDE)
         Notify(
             [user], "Brukeren din er godkjent", UserNotificationSettingType.OTHER
-        ).add_paragraph(f"Hei {user.first_name}!").add_paragraph(
+        ).add_paragraph(f"Hei, {user.first_name}!").add_paragraph(
             "Vi har godkjent brukeren din på TIHLDE.org! Du kan nå logge inn og ta i bruk siden."
         ).add_link(
             "Logg inn", "/logg-inn/"
@@ -343,7 +343,7 @@ class UserViewSet(BaseViewSet, ActionMixin):
         user = get_object_or_404(User, user_id=user_id)
         Notify(
             [user], "Brukeren din ble ikke godkjent", UserNotificationSettingType.OTHER
-        ).add_paragraph(f"Hei {user.first_name}!").add_paragraph(
+        ).add_paragraph(f"Hei, {user.first_name}!").add_paragraph(
             "Vi har avslått brukeren din på TIHLDE.org fordi den ikke oppfylte kravene til å ha bruker. Du kan lage en ny bruker der du har rettet feilen hvis du ønsker. Kontakt oss hvis du er uenig i avgjørelsen."
         ).add_paragraph(
             f"Vedlagt begrunnelse: {reason}."
