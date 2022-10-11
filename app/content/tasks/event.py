@@ -137,7 +137,7 @@ def __post_event_actions(event, *args, **kwargs):
         ).add_paragraph(
             f"Vi i TIHLDE setter stor pris på at du tar deg tid til å svare på denne korte undersøkelsen angående {event.title} den {datetime_format(event.start_date)}"
         ).add_paragraph(
-            "Undersøkelsen tar ca 1 minutt å svare på, og er til stor hjelp for fremtidige arrangementer. Takk på forhånd!"
+            "Undersøkelsen tar ca. ett minutt å svare på, og er til stor hjelp for fremtidige arrangementer. Takk på forhånd!"
         ).add_paragraph(
             "PS: Du kan ikke melde deg på flere arrangementer gjennom TIHLDE.org før du har svart på denne undersøkelsen. Du kan alltid finne alle dine ubesvarte spørreskjemaer i profilen din."
         ).add_link(
