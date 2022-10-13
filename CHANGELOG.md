@@ -13,6 +13,12 @@
 ---
 
 ## Neste versjon
+## Versjon 2022.10.13
+- 🦟 **Galleri**. Problem hvor galleri ble duplisert er fikset.
+- 🦟 **Notifikasjoner** Fikset noen grammatiske feil i notifikasjonene.
+- 🦟 **Mails** Mails *skal* bli sendt kun én gang. 🤞
+- 🦟 **Varslinger**. Brukere kan ikke lenger sette Slack som eneste kommunikasjonskanal uten å koble til Slack-konto.
+
 ## Versjon 2022.05.12
 - ✨ **Varsler**. Ny medlemmer og ledere av grupper får nå mer informasjon om hva det innebærer.
 

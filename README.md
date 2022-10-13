@@ -6,10 +6,10 @@
 </p>
 
 
-<h1 align="center">LEPTON</h1>
+<h1 align="center">Lepton</h1>
 
 <h4 align="center">
-    TIHLDEs open source backend for <a href="https://tihlde.org">tihlde.org</a> - the organizations main web site.
+    Open source backend for <a href="https://tihlde.org">TIHLDE's website.</a>
 </h4>
 
 <br/>
@@ -84,22 +84,20 @@ The tests can be run with pytest by running `make test`.
 To run with test coverage, run `make test args="--cov"`.
 
 ## ❤ Contributing
-The Lepton backend is an open source project build on voluntary work.
-We are committed to a fully transparent development process
-and highly appreciate any contributions.
-Whether you are helping us fixing bugs, proposing new feature, improving our documentation
-or spreading the word - **we would love to have you as part of the community**.
+The Lepton backend is an open source project built on voluntary work.
+We are committed to a fully transparent development process, and highly appreciate any contributions.
+Whether you are helping us by fixing bugs, proposing new feature, improving our documentation,
+or simply spreading the word - **we would love to have you as part of our community**.
 
 ## 🤝  Found a bug? Missing a specific feature?
 Feel free to file a new issue with a respective title and description
-on the the [tihlde/Lepton](https://github.com/tihlde/Lepton/issues) repository.
-If you already found a solution to your problem, we would love to review your pull request!
+in the [TIHLDE/Lepton](https://github.com/TIHLDE/Lepton/issues) repository.
+If you have already found a solution to your problem, we would love to review your pull request!
 We enforce the PEP-8 style guide with isort, black and flake8.
 Have a look at `setup.cfg` to find out more about our coding standards.
 
 ## 📫 Contact
-Feel free to send us a message on our official [slack channel](https://tihlde.slack.com/archives/C01CJ0EQCFM).
-Of course you can always reach out to us directly at index@tihlde.org.
+Feel free to send us a message on our official [slack channel](https://tihlde.slack.com/archives/C01CJ0EQCFM), or email us at index@tihlde.org.
 
-## 📘 Licence
-The code in this project is licensed under MIT license.
+## 📘 License
+The code in this repository is licensed under the [MIT license](LICENSE.md).

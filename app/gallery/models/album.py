@@ -1,3 +1,5 @@
+import uuid
+
 from django.db import models
 from django.utils.text import slugify
 
@@ -9,10 +11,11 @@ from app.util.models import BaseModel, OptionalImage
 
 class Album(BaseModel, BasePermissionModel, OptionalImage):
 
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=100)
     event = models.ForeignKey(Event, on_delete=models.SET_NULL, null=True)
     description = models.TextField(blank=True)
-    slug = models.SlugField(max_length=50, primary_key=True)
+    slug = models.SlugField(max_length=50, primary_key=False)
     write_access = AdminGroup.all()
 
     def __str__(self):
