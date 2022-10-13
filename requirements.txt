@@ -52,7 +52,7 @@ pytest == 7.1.1
 pytest-cov == 3.0.0
 pytest-django == 4.5.2
 factory-boy == 3.2.1
-pytest-factoryboy == 2.2.0
+pytest-factoryboy == 2.5.0
 pytest-lazy-fixture==0.6.3
 
 # CSV
