@@ -5,7 +5,7 @@ import pytest
 from app.common.enums import AdminGroup
 from app.forms.models.forms import Field
 from app.forms.tests.form_factories import FieldFactory, FormFactory
-from app.util.test_utils import get_api_client
+from app.util.test_utils import get_api_client, add_user_to_group_with_name
 
 pytestmark = pytest.mark.django_db
 
@@ -129,6 +129,14 @@ def test_list_forms_as_member_is_not_permitted(member):
 
     assert response.status_code == status.HTTP_403_FORBIDDEN
 
+def test_list_forms_as_nok_member_is_permitte(member):
+    """A nok member should be able to list forms."""
+    add_user_to_group_with_name(member, AdminGroup.NOK)
+    client = get_api_client(user=member)
+    url = _get_forms_url()
+    response = client.get(url)
+
+    assert response.status_code == status.HTTP_200_OK
 
 @pytest.mark.parametrize(
     ("group_name", "expected_status_code"),
@@ -212,6 +220,14 @@ def test_create_forms_as_member_is_not_permitted(form, member):
 
     assert response.status_code == status.HTTP_403_FORBIDDEN
 
+def test_create_forms_as_nok_member_is_permitted(form, member):
+    """A nok member should be able to create forms."""
+    add_user_to_group_with_name(member, AdminGroup.NOK)
+    client = get_api_client(user=member)
+    url = _get_forms_url()
+    response = client.post(url, _get_form_post_data(form))
+
+    assert response.status_code == status.HTTP_200_OK
 
 @pytest.mark.parametrize("group_name", [AdminGroup.HS, AdminGroup.INDEX])
 def test_create_forms_as_admin_is_permitted(form, member, group_name):
@@ -238,6 +254,15 @@ def test_update_form_as_member_is_not_permitted(member, form):
     response = client.put(url, _get_form_update_data(form))
 
     assert response.status_code == status.HTTP_403_FORBIDDEN
+
+def test_update_form_as_nok_member_is_permitted(member, form):
+    """A nok member should be allowed to update forms."""
+    add_user_to_group_with_name(member, AdminGroup.NOK)
+    client = get_api_client(user=member)
+    url = _get_form_detail_url(form)
+    response = client.put(url, _get_form_update_data(form))
+
+    assert response.status_code == status.HTTP_200_OK    
 
 
 @pytest.mark.parametrize(
@@ -457,6 +482,15 @@ def test_delete_form_as_member_is_not_permitted(member, form):
     response = client.delete(url)
 
     assert response.status_code == status.HTTP_403_FORBIDDEN
+
+def test_delete_form_as_nok_member_is_permitted(member, form):
+    """Nok members should be allowed to delete forms."""
+    add_user_to_group_with_name(member, AdminGroup.NOK)
+    client = get_api_client(user=member)
+    url = _get_form_detail_url(form)
+    response = client.delete(url)
+
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.parametrize(
