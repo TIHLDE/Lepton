@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+- ✨ **Spørreskjemaer** NOK medlemmer kan lage spørreskjema.
 ## Versjon 2022.10.13
 - 🦟 **Galleri**. Problem hvor galleri ble duplisert er fikset.
 - 🦟 **Notifikasjoner** Fikset noen grammatiske feil i notifikasjonene.
