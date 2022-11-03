@@ -227,7 +227,7 @@ def test_create_forms_as_nok_member_is_permitted(form, member):
     url = _get_forms_url()
     response = client.post(url, _get_form_post_data(form))
 
-    assert response.status_code == status.HTTP_200_OK
+    assert response.status_code == status.HTTP_201_CREATED
 
 @pytest.mark.parametrize("group_name", [AdminGroup.HS, AdminGroup.INDEX])
 def test_create_forms_as_admin_is_permitted(form, member, group_name):

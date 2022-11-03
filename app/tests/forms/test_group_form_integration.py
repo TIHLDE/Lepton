@@ -88,7 +88,7 @@ def test_that_creating_group_form_as_member_of_admin_group_creates_the_form(
 
 
 @pytest.mark.parametrize(
-    "group_name", [AdminGroup.NOK.name, AdminGroup.SOSIALEN.name, "ikke-admin"]
+    "group_name", [AdminGroup.SOSIALEN.name, "ikke-admin"]
 )
 def test_that_creating_group_form_as_member_of_group_does_not_create_the_form(
     api_client, user, group_name

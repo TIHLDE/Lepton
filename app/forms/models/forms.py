@@ -26,7 +26,6 @@ class Form(PolymorphicModel, BasePermissionModel):
     title = models.CharField(max_length=400)
     template = models.BooleanField(default=False)
 
-    # TODO: https://github.com/TIHLDE/Lepton/issues/286
     viewer_has_answered = None
 
     class Meta:
