@@ -38,11 +38,16 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
         """Register the current user for the given event."""
 
         if not request.user.accepts_event_rules:
-            return Response({"detail": "Du må akseptere arrangementreglene i profilen din for å melde deg på."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {
+                    "detail": "Du må akseptere arrangementreglene i profilen din for å melde deg på."
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         # Autofill allow_photo from user to avoid checkbox when registering for event
         request.data["allow_photo"] = request.user.allows_photo_by_default
-    
+
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
