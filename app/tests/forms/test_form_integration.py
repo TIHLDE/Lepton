@@ -130,7 +130,7 @@ def test_list_forms_as_member_is_not_permitted(member):
     assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
-def test_list_forms_as_nok_member_is_permitte(member):
+def test_list_forms_as_nok_member_is_permitted(member):
     """A nok member should be able to list forms."""
     add_user_to_group_with_name(member, AdminGroup.NOK)
     client = get_api_client(user=member)
