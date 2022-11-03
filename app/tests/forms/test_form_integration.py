@@ -143,7 +143,7 @@ def test_list_forms_as_nok_member_is_permitte(member):
     [
         (AdminGroup.HS, status.HTTP_200_OK),
         (AdminGroup.INDEX, status.HTTP_200_OK),
-        (AdminGroup.NOK, status.HTTP_403_FORBIDDEN),
+        (AdminGroup.NOK, status.HTTP_200_OK),
         (AdminGroup.SOSIALEN, status.HTTP_403_FORBIDDEN),
         (AdminGroup.PROMO, status.HTTP_403_FORBIDDEN),
     ],
@@ -270,7 +270,7 @@ def test_update_form_as_nok_member_is_permitted(member, form):
     [
         (AdminGroup.HS, status.HTTP_200_OK),
         (AdminGroup.INDEX, status.HTTP_200_OK),
-        (AdminGroup.NOK, status.HTTP_403_FORBIDDEN),
+        (AdminGroup.NOK, status.HTTP_200_OK),
         (AdminGroup.SOSIALEN, status.HTTP_403_FORBIDDEN),
         (AdminGroup.PROMO, status.HTTP_403_FORBIDDEN),
     ],
@@ -500,7 +500,7 @@ def test_delete_form_as_nok_member_is_permitted(member, form):
         (AdminGroup.INDEX, status.HTTP_200_OK),
         (AdminGroup.SOSIALEN, status.HTTP_403_FORBIDDEN),
         (AdminGroup.PROMO, status.HTTP_403_FORBIDDEN),
-        (AdminGroup.NOK, status.HTTP_403_FORBIDDEN),
+        (AdminGroup.NOK, status.HTTP_200_OK),
     ],
 )
 def test_delete_form_as_member_of_admin_group(
