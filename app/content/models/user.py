@@ -75,6 +75,10 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
 
     slack_user_id = models.CharField(max_length=20, blank=True, default="")
 
+    allows_photo_by_default = models.BooleanField(default=True)
+
+    accepts_event_rules = models.BooleanField(default=False)
+
     USERNAME_FIELD = "user_id"
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
