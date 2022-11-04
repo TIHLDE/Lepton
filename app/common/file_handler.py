@@ -31,18 +31,3 @@ class FileHandler(ABC):
     @abstractmethod
     def uploadBlob(self):
         pass
-
-
-def replace_file(instance_image, validated_data_image):
-    from django.conf import settings
-
-    from sentry_sdk import capture_exception
-
-    from app.common.azure_file_handler import AzureFileHandler
-
-    if instance_image and instance_image != validated_data_image:
-        if settings.AZURE_BLOB_STORAGE_NAME in instance_image:
-            try:
-                AzureFileHandler(url=instance_image).deleteBlob()
-            except Exception as e:
-                capture_exception(e)
