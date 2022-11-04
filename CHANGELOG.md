@@ -13,6 +13,8 @@
 ---
 
 ## Neste versjon
+- 🦟 **Bilder**. Bilder slettes ikke lengre fra fillagring.
+
 ## Versjon 2022.10.13
 - 🦟 **Galleri**. Problem hvor galleri ble duplisert er fikset.
 - 🦟 **Notifikasjoner** Fikset noen grammatiske feil i notifikasjonene.
