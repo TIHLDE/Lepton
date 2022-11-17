@@ -1,5 +1,4 @@
 from django.utils.text import slugify
-from app.util.test_utils import add_user_to_group_with_name
 from rest_framework import status
 
 import pytest
@@ -12,6 +11,7 @@ from app.content.models import User
 from app.forms.enums import EventFormType
 from app.forms.tests.form_factories import EventFormFactory, SubmissionFactory
 from app.group.models import Group
+from app.util.test_utils import add_user_to_group_with_name
 
 pytestmark = pytest.mark.django_db
 
