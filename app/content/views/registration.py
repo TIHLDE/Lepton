@@ -46,6 +46,7 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
             )
 
         # Autofill allow_photo from user to avoid checkbox when registering for event
+
         request.data["allow_photo"] = request.user.allows_photo_by_default
 
         serializer = self.get_serializer(data=request.data)
