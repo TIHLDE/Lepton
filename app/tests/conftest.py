@@ -74,20 +74,6 @@ def admin_user(member):
 
 
 @pytest.fixture()
-def index_user():
-    user = UserFactory()
-    add_user_to_group_with_name(user, AdminGroup.INDEX)
-    return user
-
-
-@pytest.fixture()
-def hs_user():
-    user = UserFactory()
-    add_user_to_group_with_name(user, AdminGroup.HS)
-    return user
-
-
-@pytest.fixture()
 def member():
     user = UserFactory()
     add_user_to_group_with_name(user, Groups.TIHLDE)
