@@ -48,7 +48,7 @@ pre-commit == 2.20.0
 # ------------------------------------------------------------------------------
 coverage
 pdbpp
-pytest == 7.1.1
+pytest == 7.2.0
 pytest-cov == 4.0.0
 pytest-django == 4.5.2
 factory-boy == 3.2.1
