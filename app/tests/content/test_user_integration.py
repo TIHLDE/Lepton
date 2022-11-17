@@ -331,6 +331,7 @@ def test_update_other_user_as_member(member, user, api_client):
 
     assert response.status_code == status.HTTP_403_FORBIDDEN
 
+
 def test_update_other_user_as_hs_user(hs_user, user, api_client):
     """A HS member should not be able to update other users."""
     client = api_client(user=hs_user)
@@ -339,6 +340,7 @@ def test_update_other_user_as_hs_user(hs_user, user, api_client):
     response = client.put(url, data)
 
     assert response.status_code == status.HTTP_403_FORBIDDEN
+
 
 def test_update_other_user_as_index_user(index_user, user, api_client):
     """
@@ -446,6 +448,7 @@ def test_destroy_other_user_as_member(member, user, api_client):
 
     assert response.status_code == status.HTTP_403_FORBIDDEN
 
+
 def test_destroy_other_user_as_hs_user(hs_user, user, api_client):
     """A HS user should not be able to destroy other users."""
     client = api_client(user=hs_user)
@@ -453,6 +456,7 @@ def test_destroy_other_user_as_hs_user(hs_user, user, api_client):
     response = client.delete(url)
 
     assert response.status_code == status.HTTP_403_FORBIDDEN
+
 
 def test_destroy_other_user_as_index_user(index_user, user, api_client):
     """An index user should be able to destroy other users."""
