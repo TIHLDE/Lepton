@@ -44,7 +44,7 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
-            
+
         # Autofill allow_photo from user to avoid checkbox when registering for event
 
         request.data["allow_photo"] = request.user.allows_photo_by_default
