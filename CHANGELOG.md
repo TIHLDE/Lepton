@@ -13,16 +13,23 @@
 ---
 
 ## Neste versjon
+
+- ⚡ **Mails** Nå logger vi på eposttjeneren kun en gang per batch med epost som sendes.
+- 🦟 **Bøter** Nå skal bilder på bøter ikke lengre forsvinne.
+
 ## Versjon 2022.10.13
+
 - 🦟 **Galleri**. Problem hvor galleri ble duplisert er fikset.
 - 🦟 **Notifikasjoner** Fikset noen grammatiske feil i notifikasjonene.
-- 🦟 **Mails** Mails *skal* bli sendt kun én gang. 🤞
+- 🦟 **Mails** Mails _skal_ bli sendt kun én gang. 🤞
 - 🦟 **Varslinger**. Brukere kan ikke lenger sette Slack som eneste kommunikasjonskanal uten å koble til Slack-konto.
 
 ## Versjon 2022.05.12
+
 - ✨ **Varsler**. Ny medlemmer og ledere av grupper får nå mer informasjon om hva det innebærer.
 
 ## Versjon 2022.05.08
+
 - ⚡ **Prikk**. Har lagt til bedre tester for prikker.
 - ✨ **Arrangementer**. Bruker ny logikk for prioritering. Kan nå prioritere grupper
 - ⚡ **Brukere**. Fjernet lagring av klasse og studie, dette finnes nå gjennom medlemskap.
@@ -35,56 +42,69 @@
 - ✨ **Bøter**. Det er mulig å legge til forsvar av mottatte bøter
 
 ## Versjon 2022.04.29
+
 - ✨ **Medlemsskap**. Medlemsskapshistorikk kan nå opprettes, endres og slettes. En kan også hente ut medlemsskapshistorikk for spesifikke brukere.
 
 ## Versjon 2022.04.21
+
 - ✨ **Botsystem**. Legg til bilder som bevis på bøter.
 - ✨ **Banner**. Hovedstyret kan gi ut informasjon til brukere via bannere.
 - 🦟 **Badge**. Fikset at ikke godkjente brukere var med i beregning til andel ervervet.
 
 ## Versjon 2022.03.24
+
 - ✨ **Slack**. Brukere kan koble kontoen sin til sin Slack-konto for å motta varsler i Slack.
 - ✨ **Töddel**. Redaksjonen kan nå publisere Töddel på nettsiden.
 - ⚡ **Varsler**. Brukere kan styre hvor de ønsker å motta forskjellige typer varsler.
 
 ## Versjon 2022.03.22
+
 - ✨ **Arrangementer**. Brukere kan markere arrangementer som favoritter og motta varsel ved påmeldingsstart.
 
 ## Versjon 2022.03.13
+
 - 🦟 **Bruker**. Fikset bug som hindret brukere i å slette sin egen bruker.
 - ⚡ **RabbitMQ**. Kjører nå RabbitMQ i Docker-Compose istedenfor i en egen instans.
 - ✨ **Arrangementer**. Varsel om at påmelding har åpnet sendes nå i Slack.
 - ✨ **Arrangementsprioriteringer** kan nå lages med grupper og ikke kun for klasser.
 
 ## Versjon 2022.03.05
+
 - 🦟 **Bilder**. Fikset feil som oppstod ved opplastning av profilbilde.
 - 🦟 **Badges**. Håndterer input av ugyldig badge.
 - ⚡ **Galleri**. Sender en respons ved sletting av galleri og bilder i galleri.
 
 ## Versjon 2022.03.04
+
 - 🦟 **Badge**. Fikset en bug som forårsaket at badges ble kvadrert under kategorier.
 - ✨ **Nyheter**. Forfatteren av nyheter blir offentliggjort.
 - ⚡ **Album**. Håndterer nå alt av opplastning slik at frontend kun må sende inn filene som skal inn i albumet.
 
 ## Versjon 2022.03.01
+
 - 🦟 **Admins** for arrangementer kan nå se tidligere arrangementer igjen.
 
 ## Versjon 2022.02.28
+
 - ✨ **Usending av gavekort** for arrangementer kan nå gjøres via epost.
 - ⚡ **Arrangementer**. Arrangementer i brukes profil er nå sortert på tid.
 - 🦟 **Spørreskjema**. Medlemmer av NoK, Sosialen og andre grupper kan nå laste ned CSV med svar på spørreskjema.
 
 ## Versjon 2022.02.24
+
 - ✨ **Ledertavle**. Laget en ledertavle rangert på antall badges en bruker har og en for når brukere fikk en spesifikk badge.
 
 ## Versjon 2022.02.17
+
 - 🦟 **Brukere**. Brukere som ikke er admin får ikke lenger se brukeradmin på nettsiden. De hadde aldri tilgang til å endre dem.
 - 🦟 **Spørreskjema**. Lagt til mulighet for å velge en email som skal varsles når nye svar blir sendt inn
 
 ## Versjon 2022.02.06
+
 - ⚡ **Registreringer**. La til filtrering på registreringer til arrangementer.
 
 ## Versjon 2022.02.03
+
 - ⚡ **Spørreskjema**. Mulig å bruke 400 karakterer i spørreskjema felter.
 - ✨ **Offentlige profiler**. Alle innloggede TIHLDE-medlemmer kan nå se andre brukere og deres badges og medlemskap.
 - ✨ **Arrangementer**. Deltagerlister er offentlig tilgjengelig, men brukere kan reservere seg gjennom en innstilling i profilen sin.
@@ -95,46 +115,55 @@
 - ⚡ **NoK-interesse**. Interesse for kun annonser går rett til egen epost-adresse.
 
 ## Versjon 2022.01.31
+
 - ✨ **GDPR**. Muliggjort eksportering av alle brukers data. Blir sendt som zip-fil til brukers mail på forepørsel.
 - ⚡ **Arrangement**. Mulighet til å se om et arrangement er lukket fra en liste med arrangementer
 
 ## Versjon 2022.01.15
+
 - ⚡ **Botsystem**. Lovverket er bedre sortert ved at paragraf-nummer nå lagres separat.
 - ⚡ **Epost**. Utsending av eposter er forhåpentligvis mye mer stabilt og loggbart nå.
 - ⚡ **Celery**. Periodiske oppgaver kjøres med cronjobs istedenfor planlagte tasks for bedre stabilitet.
 
 ## Versjon 2022.01.01
+
 - ✨ **Gruppeskjemaer**. Admin/leder av gruppe kan styre om det tillates flere besvarelser, om skjemaet er åpent og begrense svar til kun gruppens medlemmer.
 - ✨ **Botsystem**. Medlemmer får nå et varsl når de får en ny bot.
 - ✨ **Botsjef**. Nye botsjefer får nå informasjon om sin nye roller på varsel og epost.
 - ✨ **Botsystem**. Grupper kan nå ha et botsystem og lovverk. Det er kun åpent for medlemmene og medlemmer kan gi bøter til hverandre.
 
 ## Versjon 2021.11.30
+
 - ✨ **Påmeldinger**. Brukere kan abonnere på sine påmeldinger til arrangementer gjennom kalenderen sin.
 - ✨ **Sider**. Lagt til plassering og rekkefølge på sider.
 - ✨ **Gruppeskjemaer** kan nå bli opprettet av alle medlemmer av gruppen.
 
 ## Versjon 2021.11.16
+
 - ⚡ **Grupper** har nå bilder.
 - ✨ **Brukere**. Studenter kan nå registrere kontoer med Informasjonsbehandling som studieprogram.
 - ✨ **Arrangementer**. Endret tilgangshåndtering til arrangementer ved å knytte dem til grupper. Dermed kan også ledere av komitéer og interessegrupper opprette arrangementer.
 
 ## Versjon 2021.11.14
+
 - ⚡ **Arrangement**. Om en usvart evaluering er over 30 dager gammel, vil den ikke hindre deg i å melde deg på et arrangement.
 - ⚡ **Epost**. Støtter flere epost-leverandører gjennom mer universell formatering.
 - ✨ **Prioriteringer** En innstilling på arrangementer som gjør at kun prioriterte studenter kan melde seg på.
 - 🦟 **Svar på spørreskjemaer**. Fikset en bug der svar på spørreskjema ikke ble registrert.
 
 ## Versjon 2021.11.01
+
 - 🦟 **Arrangement**. Fikset bug der admins ikke kunne melde påmeldte som ankommet hvis noen var på ventelisten.
 
 ## Versjon 2021.10.28
+
 - ✨ **Digitalt fotalbum**. La til funksjonalitet for å legge til et fotoalbum.
-- ✨ **Prikk**.  Nedtellingstiden til prikker settes på vent med ferier.
+- ✨ **Prikk**. Nedtellingstiden til prikker settes på vent med ferier.
 - ✨ **Rekkefølge på spørsmål** er nå lagt til.
 - 🦟 **Tidssoner**. Standarisert tidssoner.
 
 ## Versjon 2021.10.19
+
 - ⚡ **Arrangement** blir nå ikke overbooket når en person blir flyttet opp fra ventelisten.
 - 🦟 **Bedrifter-skjema**. Fikset bug der bedrifts-skjema ikke ble sendt korrekt til NoK.
 - ✨ **Skjemamaler**. La inn støtte for skjemamaler.
@@ -146,53 +175,68 @@
 - ⚡ **Spørreskjema**. Tekstfelt kan nå svares på med lengre tekst enn bare 255 tegn.
 
 ## Versjon 2021.10.11
+
 - ⚡ **Ytelse**. Produksjon kjører nå med Gunicorn og Uvicorn med flere workers for å bli enda raskere.
 - ⚡ **Avhengigheter**. Python er oppgradert til v3.9 og Django er oppdatert til v3.2.8.
 - ✨ **Flower** Lagt til administrasjonspanel for Celery.
 
 ## Versjon 2021.10.06
+
 - ⚡ **Ytelse**. Forbedret ytelsen på API'et gjennom blant annet mer caching, async eposter og andre forbedringer.
 
 ## Versjon 2021.09.30
+
 - 🦟 **Arrangement**. Hent ut kun svar til spørreskjema for dem som ha plass på arrangementet.
 - 🦟 **Spørreskjema**. Fikset bug der medlemmer av NoK ikke hadde tilgang til å redigere spørreskjemaer.
 - 🦟 **Prikk**. Påmeldte på venteliste får nå ikke lenger prikk
 
 ## Versjon 2021.09.24
+
 - ✨ **Svar på skjemaer** kan nå lastes ned som en csv-fil.
 - ⚡ **Maksgrensen på arrangementer** økes nå hvis en admin melder på noen og det er fullt.
 
 ## Versjon 2021.09.21
+
 - Skjemaer
-    - ✨ **Evalueringer** må bli besvart før neste påmelding.
-    - ⚡ **Alternativ på flervalgsspørsmål** er nå sortert etter tittel.
-    - ✨ **Egne skjemaer** kan nå hentes ut i eget endepunkt.
-    - ⚡ **Skjemaer**. Legg ved mer info om arrangementet i spørrskjemaer tilknyttet et arrangement.
-    - ✨ **Skjemaer**. Legg ved info om bruker allerede har svart på et spørreskjema.
+  - ✨ **Evalueringer** må bli besvart før neste påmelding.
+  - ⚡ **Alternativ på flervalgsspørsmål** er nå sortert etter tittel.
+  - ✨ **Egne skjemaer** kan nå hentes ut i eget endepunkt.
+  - ⚡ **Skjemaer**. Legg ved mer info om arrangementet i spørrskjemaer tilknyttet et arrangement.
+  - ✨ **Skjemaer**. Legg ved info om bruker allerede har svart på et spørreskjema.
 
 ## Versjon 2021.09.15
+
 - 🦟 **Tidssoner**. Fikset bug der tidspunkter i eposter blir formatert med feil tidssone.
 
 ## Versjon 2021.09.12
+
 - ✨ **Svar på spørreskjemaer** blir nå sendt med sammen med påmeldingen.
 - ✨ **Statistikk spørreskjemaer** Kan nå hente ut statistikk over svar på spørreskjemaer.
 
 ## Versjon 2021.09.06
+
 - ✨ **Svar på spørreskjemaer** Medlemmer kan nå svare på spørreskjemaer.
 - ✨ **Grupper** Ledere for undergrupper blir nå automagisk medlem av hs gruppen
 
 ## Versjon 2021.08.22
+
 - 🦟 **Celery**. Fikset problem der oppdatering av arrangement førte til evig rekursjon.
 - ✨ **Varsler**. Varsler kan nå inneholder linker til relevant innhold.
 - ✨ **Arrangement-melding**. Arrangører av arrangementer kan sende ut epost/varsel til de påmeldte deltagerne.
 - ⚡ **Bedrifter**. Finere epost fra bedrifter til mottager.
+
 ## Versjon 2021.08.11
+
 - ✨ **Brukere**. Admins kan nå slette nye "ventende" brukere og legge ved en begrunnelse.
 - 🦟 **Celery**. Fikset Celery tasks slik at man ikke kjører samme flere ganger lengre.
 - 🦟 **Bruker**. Når admin oppdaterer egen bruker så kommer nå samme data tilbake som for vanlige medlemmer.
+
 ## Versjon 2021.05.10
+
 - ⚡ **Bruker** Lagt til egne endpunkter for å hente ut relatert bruker data
+
 ## Versjon 2021.05.05
+
 - ⚡ **Pages** Implementert søk i pages siden
 - ⚡ **Medlemskap**.Lagt til pagination på listing av medlemskap, og filtrering for å hente ut list med bare medlemmer.
 - ⚡ **Varsler**. Nye brukere får epost om at bruker er blitt godkjent. Brukere som blir lagt til i en gruppe får varsel.
@@ -200,37 +244,44 @@
 - ✨ **Brukeradmin**. HS og Index har nå mulighet til å oppdatere brukerdata.
 
 ## Versjon 2021.05.01
+
 - ⚡ **Brukere**. Fjernet felter fra brukere som hentes ut i liste, slik at forespørselen går raskere.
 - 🦟 **Påmelding**. Fikset bug der brukere ikke kunne avslå å bli avbildet på arrangementer.
 - 🦟 **Tilbakestilling av passord** tar brukeren til riktig side fremfor en som ikke finnes.
 
 ## Versjon 2021.04.26
+
 - ⚡ **Azure**. Satt opp produksjon i Azure og automatisk oppdatering ved push til master.
 - ✨ **Endring i permissions**. Endret hvordan vi håndterer tillatelser på nettsiden til å bruke våre nye grupper.
 - ⚡ **Utvidede tillatelser**. Alle medlemmer av Sosialen og Promo kan nå legge ut arrangementer og nyheter.
 - ⚡ **Medlemskap i TIHLDE**. Sjekk av medlemskap i TIHLDE bruker nå medlemskap til grupper.
 
 ## Versjon 2021.04.09
+
 - 🦟 **Oppdatert arrangement**. Fikset bug der det ikke var mulig å oppdatere arrangement.
 - ✨ **Azure**. Satt opp dev-miljø i Azure for å migrere vekk fra Drift og til skyen.
 - ✨ **Venteliste nummer**. Henter nå ut hvilken plass du er på i ventelisten
 - ✨ **Refusjons skjema**. Lagt til mulighet for å sende refusjons skjema rett til økonomiansvarlig, med kvittering.
 
 ## Versjon 2021.03.24
+
 - 🦟 **Opprett arrangement**. Fikset feil der det ikke var mulig å opprette et arrangement.
 - ✨ **Logging** av endringer skjer automatisk ved bruk.
 - ✨ **Prikksystemet**. Da er det endelig laget endepunkter for prikksystemet, slik at admin kan nå hente, lage og slette prikker.
 
 ## Versjon 2021.03.15
+
 - ✨ **Filopplastning**. Lagt til støtte for filopplastning til Azure gjennom eget endepunkt. Kun for medlemmer.
 - ✨ **Spørreskjemaer**. Admins kan opprette, redigere og slette spørreskjemaer. Disse kan brukes i blant annet arrangement-påmelding.
 
 ## Versjon 2021.03.09
+
 - ⚡ **Pagination i varsler**. Lagt til pagination i varsler, samt lagt til tester og fjernet admin's muligheter til å opprette/endre/slette andres varsler.
 - ✨ **Korte URL's**. Opprettet en ny tjeneste der brukere kan lagre url'er bak korte, valgfrie slugs.
 - ✨ **Ukens Bedrift**. Nå er det mulig for NoK å lage en kø med ukens bedrifter basert på ukenr
 
 ## Versjon 2021.02.22
+
 - 🦟 **Lås påmeldingstid i registrering**. Hindre at tidspunktet for påmelding endres når påmeldingen endres. Dermed beholder påmeldte sin prioritet i listen.
 - 🎨 **Nytt utseende i epost**. Oppdatert utseende i eposter som harmonierer med med resten av nettsiden.
 - 🦟 **Begrens epost-domener**. Hindre brukere i å lage bruker med @ntnu.no-adresser siden vi ikke klarer å sende epost til slike adresser.
@@ -242,5 +293,6 @@
 - ⚡ **Bruker får bilde** som kan brukes som profilbilde på TIHLDE siden
 
 ## Versjon 2021.02.09
+
 - ⚡ **Ryddet opp i event-felter**. Fjernet åpent tilgjengelig liste over deltagere, samt redusert antall felter som returneres når man henter flere.
 - 🦟 **Fikset utviklingsmiljø**. Fikset pipfile slik at Heroku-dev backend nå fungerer igjen.
