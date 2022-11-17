@@ -56,7 +56,7 @@ GENDER = (
 
 
 class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
-    write_access = AdminGroup.admin()
+    write_access = [AdminGroup.INDEX]
     read_access = [Groups.TIHLDE]
 
     user_id = models.CharField(max_length=15, primary_key=True)
