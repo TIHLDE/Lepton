@@ -24,12 +24,15 @@ class Mail(BaseModel):
         verbose_name_plural = "Mails"
         ordering = ["-eta"]
 
-    def send(self):
+    def send(self, connection):
         from app.communication.notifier import send_html_email
 
         emails = (user.email for user in self.users.all())
         is_success = send_html_email(
-            to_mails=emails, html=self.body, subject=self.subject
+            to_mails=emails,
+            html=self.body,
+            subject=self.subject,
+            connection=connection,
         )
         if is_success:
             self.delete()
