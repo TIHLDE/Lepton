@@ -3,7 +3,7 @@ from rest_framework import status
 
 import pytest
 
-from app.common.enums import GroupType
+from app.common.enums import AdminGroup, GroupType
 from app.content.factories.registration_factory import RegistrationFactory
 from app.content.factories.strike_factory import StrikeFactory
 from app.content.factories.user_factory import UserFactory
@@ -11,6 +11,7 @@ from app.content.models import User
 from app.forms.enums import EventFormType
 from app.forms.tests.form_factories import EventFormFactory, SubmissionFactory
 from app.group.models import Group
+from app.util.test_utils import add_user_to_group_with_name
 
 pytestmark = pytest.mark.django_db
 
@@ -332,12 +333,24 @@ def test_update_other_user_as_member(member, user, api_client):
     assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
-def test_update_other_user_as_admin_user(admin_user, user, api_client):
+def test_update_other_user_as_hs_user(member, user, api_client):
+    """A HS member should not be able to update other users."""
+    add_user_to_group_with_name(member, AdminGroup.HS)
+    client = api_client(user=member)
+    data = _get_user_put_data()
+    url = _get_user_detail_url(user)
+    response = client.put(url, data)
+
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+def test_update_other_user_as_index_user(member, user, api_client):
     """
-    A admin user should be able to update other users.
-    Admins should be able to update all fields.
+    Members of Index should be able to update other users.
+    Index should be able to update all fields.
     """
-    client = api_client(user=admin_user)
+    add_user_to_group_with_name(member, AdminGroup.INDEX)
+    client = api_client(user=member)
     data = _get_user_put_data()
     url = _get_user_detail_url(user)
     response = client.put(url, data)
@@ -439,9 +452,20 @@ def test_destroy_other_user_as_member(member, user, api_client):
     assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
-def test_destroy_other_user_as_admin_user(admin_user, user, api_client):
-    """An admin user should be able to destroy other users."""
-    client = api_client(user=admin_user)
+def test_destroy_other_user_as_hs_user(member, user, api_client):
+    """A HS user should not be able to destroy other users."""
+    add_user_to_group_with_name(member, AdminGroup.HS)
+    client = api_client(user=member)
+    url = _get_user_detail_url(user)
+    response = client.delete(url)
+
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+def test_destroy_other_user_as_index_user(member, user, api_client):
+    """An index user should be able to destroy other users."""
+    add_user_to_group_with_name(member, AdminGroup.INDEX)
+    client = api_client(user=member)
     url = _get_user_detail_url(user)
     response = client.delete(url)
 

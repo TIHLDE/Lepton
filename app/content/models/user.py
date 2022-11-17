@@ -56,7 +56,7 @@ GENDER = (
 
 
 class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
-    write_access = AdminGroup.admin()
+    write_access = [AdminGroup.INDEX]
     read_access = [Groups.TIHLDE]
 
     user_id = models.CharField(max_length=15, primary_key=True)
@@ -74,6 +74,10 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
     tool = models.CharField(max_length=100, blank=True)
 
     slack_user_id = models.CharField(max_length=20, blank=True, default="")
+
+    allows_photo_by_default = models.BooleanField(default=True)
+
+    accepts_event_rules = models.BooleanField(default=False)
 
     USERNAME_FIELD = "user_id"
     is_staff = models.BooleanField(default=False)

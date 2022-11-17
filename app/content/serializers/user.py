@@ -61,6 +61,8 @@ class UserSerializer(DefaultUserSerializer):
             "unanswered_evaluations_count",
             "number_of_strikes",
             "slack_user_id",
+            "allows_photo_by_default",
+            "accepts_event_rules",
         )
         read_only_fields = ("user_id",)
 
