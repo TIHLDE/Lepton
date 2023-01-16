@@ -13,7 +13,7 @@ from app.util.utils import now
 class BannerViewSet(BaseViewSet):
     serializer_class = BannerSerializer
     pagination_class = BasePagination
-    queryset = Banner.objects.all()
+    queryset = Banner.objects.order_by('visible_from')
     permission_classes = [BasicViewPermission]
 
     @action(
