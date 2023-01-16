@@ -7,3 +7,4 @@ from app.communication.serializers.user_notification_setting import (
     UserNotificationSettingSerializer,
 )
 from app.communication.serializers.warning import WarningSerializer
+from app.communication.serializers.mail import MailGDPRSerializer

@@ -10,7 +10,6 @@ from app.common.permissions import (
     set_user_id,
 )
 from app.content.models import Category
-from app.content.models.priority import Priority
 from app.content.models.user import User
 from app.forms.enums import EventFormType
 from app.group.models.group import Group
@@ -20,7 +19,7 @@ from app.util.utils import now, yesterday
 
 class Event(BaseModel, OptionalImage, BasePermissionModel):
 
-    write_access = AdminGroup.admin()
+    write_access = (*AdminGroup.admin(), AdminGroup.PROMO)
 
     title = models.CharField(max_length=200)
     start_date = models.DateTimeField()
@@ -39,7 +38,9 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
         related_name="events",
     )
 
-    favorite_users = models.ManyToManyField(User, related_name="favorite_events")
+    favorite_users = models.ManyToManyField(
+        User, related_name="favorite_events", blank=True
+    )
 
     """ Strike fields """
     can_cause_strikes = models.BooleanField(default=True)
@@ -60,9 +61,6 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
     start_registration_at = models.DateTimeField(blank=True, null=True, default=None)
     end_registration_at = models.DateTimeField(blank=True, null=True, default=None)
     sign_off_deadline = models.DateTimeField(blank=True, null=True, default=None)
-    registration_priorities = models.ManyToManyField(
-        Priority, blank=True, default=None, related_name="priorities"
-    )
     only_allow_prioritized = models.BooleanField(default=False)
 
     """ Cronjob fields """
@@ -129,7 +127,7 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
         return self.has_limit() and self.get_participants().count() >= self.limit
 
     def has_priorities(self):
-        return self.registration_priorities.all().exists()
+        return self.priority_pools.exists()
 
     @property
     def evaluation(self):
@@ -144,6 +142,10 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
 
     def has_object_statistics_permission(self, request):
         return self.has_object_write_permission(request)
+
+    @classmethod
+    def has_get_public_event_registrations_permission(cls, request):
+        return request.user and request.user.public_event_registrations
 
     def has_object_write_permission(self, request):
         if request.id is None:
@@ -191,6 +193,12 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
             if request.data.get("organizer", None)
             else request.user.memberships_with_events_access.exists()
         )
+
+    @classmethod
+    def has_write_all_permission(cls, request):
+        if request.user is None:
+            return False
+        return check_has_access(cls.write_access, request)
 
     def clean(self):
         self.validate_start_end_registration_times()

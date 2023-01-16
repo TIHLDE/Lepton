@@ -17,24 +17,26 @@ class Mail(BaseModel):
     eta = models.DateTimeField(default=now)
     subject = models.CharField(max_length=200)
     body = models.TextField(default="")
-    users = models.ManyToManyField(User, blank=True)
-    sent = models.BooleanField(default=False)
+    users = models.ManyToManyField(User, related_name="emails", blank=True)
 
     class Meta:
         verbose_name = "Mail"
         verbose_name_plural = "Mails"
         ordering = ["-eta"]
 
-    def send(self):
+    def send(self, connection):
         from app.communication.notifier import send_html_email
 
         emails = (user.email for user in self.users.all())
         is_success = send_html_email(
-            to_mails=emails, html=self.body, subject=self.subject
+            to_mails=emails,
+            html=self.body,
+            subject=self.subject,
+            connection=connection,
         )
         if is_success:
-            self.sent = True
-            self.save(update_fields=["sent"])
+            self.delete()
+
         return is_success
 
     def __str__(self):

@@ -7,7 +7,7 @@ from app.content.models.user import User
 from app.content.serializers.user import DefaultUserSerializer
 from app.group.models.fine import Fine
 from app.group.models.group import Group
-from app.group.serializers.group import GroupSerializer
+from app.group.serializers.group import SimpleGroupSerializer
 
 
 class FineListSerializer(serializers.ListSerializer):
@@ -36,7 +36,7 @@ class FineListSerializer(serializers.ListSerializer):
 
 class FineUpdateCreateSerializer(BaseModelSerializer):
     user = DefaultUserSerializer(read_only=True)
-    group = GroupSerializer(read_only=True)
+    group = SimpleGroupSerializer(read_only=True)
 
     class Meta:
         model = Fine
@@ -49,6 +49,7 @@ class FineUpdateCreateSerializer(BaseModelSerializer):
             "description",
             "created_at",
             "reason",
+            "image",
         )
 
         read_only_fields = (
@@ -65,6 +66,12 @@ class FineUpdateCreateSerializer(BaseModelSerializer):
         )
 
 
+class FineUpdateDefenseSerializer(BaseModelSerializer):
+    class Meta:
+        model = Fine
+        fields = ("defense",)
+
+
 class FineSerializer(BaseModelSerializer):
     user = DefaultUserSerializer(read_only=True)
     created_by = DefaultUserSerializer(read_only=True)
@@ -79,11 +86,17 @@ class FineSerializer(BaseModelSerializer):
             "payed",
             "description",
             "reason",
+            "defense",
+            "image",
             "created_by",
             "created_at",
         )
 
-        read_only_fields = ("user", "created_by")
+        read_only_fields = (
+            "user",
+            "created_by",
+            "defense",
+        )
 
 
 class FineNoUserSerializer(BaseModelSerializer):
@@ -98,11 +111,16 @@ class FineNoUserSerializer(BaseModelSerializer):
             "payed",
             "description",
             "reason",
+            "defense",
+            "image",
             "created_by",
             "created_at",
         )
 
-        read_only_fields = ("created_by",)
+        read_only_fields = (
+            "created_by",
+            "defense",
+        )
 
 
 class UserFineSerializer(serializers.ModelSerializer):

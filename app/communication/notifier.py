@@ -118,7 +118,7 @@ class Notify:
                     Notification(
                         user=user,
                         title=self.notification_title,
-                        description="\n".join(self.notification_description),
+                        description="\n\n".join(self.notification_description),
                         link=self.notification_link,
                     )
                 )
@@ -139,12 +139,18 @@ class Notify:
 
 
 def send_html_email(
-    to_mails: list[str], html: str, subject: str, attachments=None
+    to_mails: list[str],
+    html: str,
+    subject: str,
+    attachments=None,
+    connection=None,
 ) -> bool:
     """
     to_mails -> Email-addresses of receivers\n
     html -> The email HTML to be sent to the receivers\n
     subject -> Subject of email\n
+    attachments -> File attachments
+    connection -> Backend email connection to use with EmailMultiAlternatives. Creates a new one if none is provided.
 
     returns -> If the mails where sent successfully
     """
@@ -162,6 +168,7 @@ def send_html_email(
                 f"TIHLDE <{email_sender}>",
                 bcc=mails,
                 attachments=attachments,
+                connection=connection,
             )
             msg.attach_alternative(html, "text/html")
             result = msg.send()

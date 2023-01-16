@@ -8,7 +8,7 @@ from app.common.serializers import BaseModelSerializer
 from app.content.serializers import EventListSerializer
 from app.forms.models import EventForm, Field, Form, Option
 from app.forms.models.forms import GroupForm
-from app.group.serializers import GroupSerializer
+from app.group.serializers import SimpleGroupSerializer
 
 
 class OptionSerializer(BaseModelSerializer):
@@ -161,7 +161,7 @@ class GroupFormSerializer(FormSerializer):
         )
 
     def to_representation(self, instance):
-        self.fields["group"] = GroupSerializer(read_only=True)
+        self.fields["group"] = SimpleGroupSerializer(read_only=True)
         return super().to_representation(instance)
 
 

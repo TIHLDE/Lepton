@@ -4,19 +4,9 @@ from rest_framework import status
 
 import pytest
 
-from app.common.enums import (
-    AdminGroup,
-    GroupType,
-    MembershipType,
-    UserClass,
-    UserStudy,
-)
-from app.content.factories import (
-    EventFactory,
-    PriorityFactory,
-    RegistrationFactory,
-    UserFactory,
-)
+from app.common.enums import AdminGroup, GroupType, MembershipType
+from app.content.factories import EventFactory, RegistrationFactory, UserFactory
+from app.content.factories.priority_pool_factory import PriorityPoolFactory
 from app.forms.enums import EventFormType
 from app.forms.tests.form_factories import EventFormFactory, SubmissionFactory
 from app.group.factories import GroupFactory
@@ -94,7 +84,6 @@ def _get_registration_post_data(user, event):
     return {
         "user_id": user.user_id,
         "event": event.pk,
-        "allow_photo": True,
     }
 
 
@@ -230,10 +219,26 @@ def test_create_as_member_registers_themselves(member, event):
 
 
 @pytest.mark.django_db
+def test_create_as_member_registers_themselves_not_accept_rules(member, event):
+    """A member should not be able to create a registration for themselves without accepting rules."""
+    member.accepts_event_rules = False
+    member.save()
+
+    data = _get_registration_post_data(member, event)
+    client = get_api_client(user=member)
+
+    url = _get_registration_url(event=event)
+    response = client.post(url, data=data)
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
+@pytest.mark.django_db
 def test_create_as_member_registers_themselves_not_allow_photo(member, event):
     """A member should be able to create a registration and not allow photo."""
+    member.allows_photo_by_default = False
+    member.save()
     data = _get_registration_post_data(member, event)
-    data["allow_photo"] = False
     client = get_api_client(user=member)
 
     url = _get_registration_url(event=event)
@@ -730,12 +735,9 @@ def test_delete_own_registration_as_member_when_no_users_on_wait_are_in_a_priori
     a member deletes their own registration and the event has no priorities.
     """
     event = EventFactory(limit=1)
-    priority = PriorityFactory(user_study=UserStudy.DATAING, user_class=UserClass.FIRST)
-    event.registration_priorities.add(priority)
+    PriorityPoolFactory(event=event, groups=(GroupFactory(),))
 
-    user_not_in_priority_pool = UserFactory(
-        user_study=UserStudy.DIGFOR.value, user_class=UserClass.SECOND.value
-    )
+    user_not_in_priority_pool = UserFactory()
 
     registration_to_delete = RegistrationFactory(event=event, user=member)
     registration_on_wait = RegistrationFactory(

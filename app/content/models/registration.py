@@ -18,7 +18,7 @@ from app.content.models.event import Event
 from app.content.models.strike import create_strike
 from app.content.models.user import User
 from app.forms.enums import EventFormType
-from app.util import EnumUtils, now
+from app.util import now
 from app.util.models import BaseModel
 from app.util.utils import datetime_format
 
@@ -109,7 +109,7 @@ class Registration(BaseModel, BasePermissionModel):
     def save(self, *args, **kwargs):
         if not self.registration_id:
             self.create()
-        self.send_notification_and_mail()
+            self.send_notification_and_mail()
 
         if (
             self.event.is_full
@@ -162,7 +162,7 @@ class Registration(BaseModel, BasePermissionModel):
                 [self.user],
                 f'Du har fått plass på "{self.event.title}"',
                 UserNotificationSettingType.REGISTRATION,
-            ).add_paragraph(f"Hei {self.user.first_name}!").add_paragraph(
+            ).add_paragraph(f"Hei, {self.user.first_name}!").add_paragraph(
                 f"Arrangementet starter {datetime_format(self.event.start_date)} og vil være på {self.event.location}."
             ).add_paragraph(
                 f"Du kan melde deg av innen {datetime_format(self.event.sign_off_deadline)}."
@@ -174,10 +174,10 @@ class Registration(BaseModel, BasePermissionModel):
                 [self.user],
                 f'Venteliste for "{self.event.title}"',
                 UserNotificationSettingType.REGISTRATION,
-            ).add_paragraph(f"Hei {self.user.first_name}!").add_paragraph(
+            ).add_paragraph(f"Hei, {self.user.first_name}!").add_paragraph(
                 f"På grunn av stor pågang har du blitt satt på venteliste for {self.event.title}."
             ).add_paragraph(
-                "Dersom noen melder seg av vil du automatisk bli flyttet opp på listen. Du vil få beskjed dersom du får plass på arrangementet."
+                "Dersom noen melder seg av, vil du automatisk bli flyttet opp på listen. Du vil få beskjed dersom du får plass på arrangementet."
             ).add_paragraph(
                 f"PS. De vanlige reglene for prikker gjelder også for venteliste, husk derfor å melde deg av arrangementet innen {datetime_format(self.event.sign_off_deadline)} dersom du ikke kan møte."
             ).add_event_link(
@@ -197,9 +197,6 @@ class Registration(BaseModel, BasePermissionModel):
         if self.user.number_of_strikes >= 3 and self.event.enforces_previous_strikes:
             return False
 
-        user_class, user_study = EnumUtils.get_user_enums(**self.user.__dict__)
-        user_query = Q(user_class=user_class, user_study=user_study)
-
         user_groups = set(self.user.group_members.values_list("slug", flat=True))
         pools = self.event.priority_pools.prefetch_related("groups").all()
 
@@ -210,7 +207,7 @@ class Registration(BaseModel, BasePermissionModel):
             if is_in_priority_pool:
                 return True
 
-        return self.event.registration_priorities.filter(user_query).exists()
+        return False
 
     def swap_users(self):
         """Swaps a user with a spot with a prioritized user, if such user exists"""
@@ -259,7 +256,7 @@ class Registration(BaseModel, BasePermissionModel):
                 "Du må svare på spørreskjemaet før du kan melde deg på arrangementet"
             )
         if (
-            self.event.registration_priorities
+            self.event.priority_pools
             and self.event.only_allow_prioritized
             and not self.is_prioritized
         ):

@@ -279,3 +279,13 @@ def test_create_group_form_submission_when_only_for_group_members(
     response = client.post(url, data=_create_submission_data(group_form.fields.first()))
 
     assert response.status_code == status_code
+
+
+def test_create_group_form_member_can_view_submission(membership):
+    group_form = GroupFormFactory(group=membership.group, only_for_group_members=True)
+    url = _get_submission_url(group_form)
+
+    client = get_api_client(user=membership.user)
+    response = client.get(url)
+
+    assert response.status_code == status.HTTP_200_OK

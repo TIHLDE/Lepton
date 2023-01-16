@@ -1,6 +1,5 @@
 import uuid
 
-from django.conf import settings
 from django.db import models, transaction
 
 from enumchoicefield import EnumChoiceField
@@ -22,12 +21,11 @@ from app.util.models import BaseModel
 
 
 class Form(PolymorphicModel, BasePermissionModel):
-    write_access = AdminGroup.admin()
+    write_access = (*AdminGroup.admin(), AdminGroup.NOK)
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=400)
     template = models.BooleanField(default=False)
 
-    # TODO: https://github.com/TIHLDE/Lepton/issues/286
     viewer_has_answered = None
 
     class Meta:
@@ -180,10 +178,9 @@ class GroupForm(Form):
             form_id = request.parser_context.get("kwargs", {}).get("pk", None)
             form = GroupForm.objects.filter(id=form_id).first()
             group = form.group if form else None
-
-        return request.user.is_leader_of(group) or check_has_access(
-            cls.write_access, request
-        )
+        return (
+            group and group.has_object_group_form_permission(request)
+        ) or check_has_access(cls.write_access, request)
 
     @classmethod
     def has_list_permission(cls, request):
@@ -204,7 +201,7 @@ class GroupForm(Form):
         return True
 
     def has_object_write_permission(self, request):
-        return request.user.is_leader_of(self.group) or check_has_access(
+        return self.group.has_object_group_form_permission(request) or check_has_access(
             self.write_access, request
         )
 
@@ -264,7 +261,7 @@ class Submission(BaseModel, BasePermissionModel):
             )
             .add_button(
                 "Se spørreskjema",
-                f"{settings.WEBSITE_URL}{self.form.group.website_url}",
+                self.form.group.website_url,
             )
             .generate_string(),
             "Nytt spørreskjema svar",
@@ -370,7 +367,6 @@ class Submission(BaseModel, BasePermissionModel):
     def has_list_permission(cls, request):
         if request.user is None:
             return False
-
         form = cls._get_form_from_request(request)
         return form.has_object_write_permission(request)
 

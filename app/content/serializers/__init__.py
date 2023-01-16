@@ -6,13 +6,12 @@ from app.content.serializers.event import (
     EventSerializer,
     EventStatisticsSerializer,
 )
-from app.content.serializers.news import NewsSerializer
+from app.content.serializers.news import NewsSerializer, SimpleNewsSerializer
 from app.content.serializers.page import (
     PageSerializer,
     PageTreeSerializer,
     PageListSerializer,
 )
-from app.content.serializers.priority import PrioritySerializer
 from app.content.serializers.toddel import ToddelSerializer
 from app.content.serializers.registration import (
     PublicRegistrationSerializer,

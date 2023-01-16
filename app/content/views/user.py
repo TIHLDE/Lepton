@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.db import IntegrityError
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
@@ -34,7 +33,10 @@ from app.content.serializers import (
 from app.content.serializers.strike import UserInfoStrikeSerializer
 from app.forms.serializers import FormPolymorphicSerializer
 from app.group.models import Group, Membership
-from app.group.serializers import GroupSerializer
+from app.group.serializers.membership import (
+    MembershipHistorySerializer,
+    MembershipSerializer,
+)
 from app.util.export_user_data import export_user_data
 from app.util.utils import CaseInsensitiveBooleanQueryParam
 
@@ -73,8 +75,11 @@ class UserViewSet(BaseViewSet, ActionMixin):
         serializer = UserCreateSerializer(data=self.request.data)
 
         if serializer.is_valid():
-            super().perform_create(serializer)
-            return Response({"detail": serializer.data}, status=status.HTTP_201_CREATED)
+            user = super().perform_create(serializer)
+            return Response(
+                {"detail": DefaultUserSerializer(user).data},
+                status=status.HTTP_201_CREATED,
+            )
 
         return Response(
             {"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST
@@ -160,19 +165,33 @@ class UserViewSet(BaseViewSet, ActionMixin):
         )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @action(detail=True, methods=["get"], url_path="groups")
+    @action(detail=True, methods=["get"], url_path="memberships")
     def get_user_memberships(self, request, pk, *args, **kwargs):
         user = self._get_user(request, pk)
         self.check_object_permissions(self.request, user)
 
-        memberships = user.memberships.all()
-        groups = [
-            membership.group
-            for membership in memberships
-            if membership.group.type in GroupType.public_groups()
-        ]
-        serializer = GroupSerializer(groups, many=True, context={"request": request})
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        memberships = user.memberships.filter(
+            group__type__in=GroupType.public_groups()
+        ).order_by("-created_at")
+        return self.paginate_response(
+            data=memberships,
+            serializer=MembershipSerializer,
+            context={"request": request},
+        )
+
+    @action(detail=True, methods=["get"], url_path="membership-histories")
+    def get_user_membership_histories(self, request, pk, *args, **kwargs):
+        user = self._get_user(request, pk)
+        self.check_object_permissions(self.request, user)
+
+        memberships = user.membership_histories.filter(
+            group__type__in=GroupType.public_groups()
+        )
+        return self.paginate_response(
+            data=memberships,
+            serializer=MembershipHistorySerializer,
+            context={"request": request},
+        )
 
     def post_user_badges(self, request, *args, **kwargs):
         import uuid
@@ -295,10 +314,10 @@ class UserViewSet(BaseViewSet, ActionMixin):
         Membership.objects.get_or_create(user=user, group=TIHLDE)
         Notify(
             [user], "Brukeren din er godkjent", UserNotificationSettingType.OTHER
-        ).add_paragraph(f"Hei {user.first_name}!").add_paragraph(
+        ).add_paragraph(f"Hei, {user.first_name}!").add_paragraph(
             "Vi har godkjent brukeren din på TIHLDE.org! Du kan nå logge inn og ta i bruk siden."
         ).add_link(
-            "Logg inn", f"{settings.WEBSITE_URL}/logg-inn/"
+            "Logg inn", "/logg-inn/"
         ).send()
         return Response(
             {
@@ -324,12 +343,12 @@ class UserViewSet(BaseViewSet, ActionMixin):
         user = get_object_or_404(User, user_id=user_id)
         Notify(
             [user], "Brukeren din ble ikke godkjent", UserNotificationSettingType.OTHER
-        ).add_paragraph(f"Hei {user.first_name}!").add_paragraph(
+        ).add_paragraph(f"Hei, {user.first_name}!").add_paragraph(
             "Vi har avslått brukeren din på TIHLDE.org fordi den ikke oppfylte kravene til å ha bruker. Du kan lage en ny bruker der du har rettet feilen hvis du ønsker. Kontakt oss hvis du er uenig i avgjørelsen."
         ).add_paragraph(
             f"Vedlagt begrunnelse: {reason}."
         ).add_link(
-            "Til forsiden", f"{settings.WEBSITE_URL}/"
+            "Til forsiden", "/"
         ).send()
         user.delete()
         return Response(

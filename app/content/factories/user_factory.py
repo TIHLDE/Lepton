@@ -11,8 +11,6 @@ class UserFactory(DjangoModelFactory):
     user_id = factory.Sequence(lambda n: f"User_{n}")
     first_name = factory.Faker("first_name")
     last_name = factory.Faker("last_name")
+    accepts_event_rules = True
 
     email = factory.lazy_attribute(lambda user: f"{user.user_id}@mail.no")
-
-    user_class = 1
-    user_study = 1

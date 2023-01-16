@@ -3,25 +3,23 @@ from rest_framework import serializers
 from dry_rest_permissions.generics import DRYPermissionsField
 from sentry_sdk import capture_exception
 
+from app.common.enums import GroupType
 from app.common.serializers import BaseModelSerializer
-from app.content.models import Event, Priority, PriorityPool
-from app.content.models.user import CLASS, STUDY
-from app.content.serializers.priority import PrioritySerializer
+from app.content.models import Event, PriorityPool
 from app.content.serializers.priority_pool import (
     PriorityPoolCreateSerializer,
     PriorityPoolSerializer,
 )
-from app.group.serializers.group import GroupSerializer
-from app.util import EnumUtils
+from app.group.models.group import Group
+from app.group.serializers.group import SimpleGroupSerializer
 
 
 class EventSerializer(serializers.ModelSerializer):
     expired = serializers.BooleanField(read_only=True)
-    registration_priorities = serializers.SerializerMethodField()
     priority_pools = PriorityPoolSerializer(many=True, required=False)
     evaluation = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
     survey = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
-    organizer = GroupSerializer(read_only=True)
+    organizer = SimpleGroupSerializer(read_only=True)
     permissions = DRYPermissionsField(actions=["write", "read"], object_only=True)
 
     class Meta:
@@ -46,7 +44,6 @@ class EventSerializer(serializers.ModelSerializer):
             "start_registration_at",
             "end_registration_at",
             "sign_off_deadline",
-            "registration_priorities",
             "only_allow_prioritized",
             "evaluation",
             "survey",
@@ -80,19 +77,10 @@ class EventSerializer(serializers.ModelSerializer):
 
         return limit
 
-    def get_registration_priorities(self, obj):
-        return [
-            {
-                "user_class": registration_priority.user_class.value,
-                "user_study": registration_priority.user_study.value,
-            }
-            for registration_priority in obj.registration_priorities.all()
-        ]
-
 
 class EventListSerializer(serializers.ModelSerializer):
     expired = serializers.BooleanField(read_only=True)
-    organizer = GroupSerializer(read_only=True)
+    organizer = SimpleGroupSerializer(read_only=True)
 
     class Meta:
         model = Event
@@ -113,7 +101,6 @@ class EventListSerializer(serializers.ModelSerializer):
 
 
 class EventCreateAndUpdateSerializer(BaseModelSerializer):
-    registration_priorities = PrioritySerializer(many=True, required=False)
     priority_pools = PriorityPoolCreateSerializer(many=True, required=False)
 
     class Meta:
@@ -133,7 +120,6 @@ class EventCreateAndUpdateSerializer(BaseModelSerializer):
             "limit",
             "location",
             "only_allow_prioritized",
-            "registration_priorities",
             "sign_off_deadline",
             "sign_up",
             "start_date",
@@ -143,30 +129,18 @@ class EventCreateAndUpdateSerializer(BaseModelSerializer):
         )
 
     def create(self, validated_data):
-        registration_priorities_data = validated_data.pop(
-            "registration_priorities", None
-        )
         priority_pools_data = validated_data.pop("priority_pools", [])
 
         event = super().create(validated_data)
-
-        if registration_priorities_data:
-            self.set_registration_priorities(event, registration_priorities_data)
 
         self.set_priority_pools(event, priority_pools_data)
 
         return event
 
     def update(self, instance, validated_data):
-        registration_priorities_data = validated_data.pop(
-            "registration_priorities", None
-        )
         priority_pools_data = validated_data.pop("priority_pools", None)
 
         event = super().update(instance, validated_data)
-
-        if registration_priorities_data:
-            self.set_registration_priorities(event, registration_priorities_data)
 
         if priority_pools_data:
             self.update_priority_pools(event, priority_pools_data)
@@ -175,25 +149,8 @@ class EventCreateAndUpdateSerializer(BaseModelSerializer):
         return event
 
     def update_priority_pools(self, event, priority_pools_data):
-        event.priority_pools.clear()
+        event.priority_pools.all().delete()
         self.set_priority_pools(event, priority_pools_data)
-
-    def set_registration_priorities(self, event, registration_priorities_data):
-        event.registration_priorities.clear()
-        for registration_priority_data in registration_priorities_data:
-            registration_priority_to_add = self.get_registration_priority_from_data(
-                registration_priority_data
-            )
-            event.registration_priorities.add(registration_priority_to_add)
-
-    @staticmethod
-    def get_registration_priority_from_data(data):
-        user_class, user_study = EnumUtils.get_user_enums(**data)
-        priority, _ = Priority.objects.get_or_create(
-            user_class=user_class, user_study=user_study
-        )
-
-        return priority
 
     @staticmethod
     def set_priority_pools(event, priority_pool_data):
@@ -205,7 +162,7 @@ class EventCreateAndUpdateSerializer(BaseModelSerializer):
 
 class EventStatisticsSerializer(BaseModelSerializer):
     has_attended_count = serializers.SerializerMethodField()
-    classes = serializers.SerializerMethodField()
+    studyyears = serializers.SerializerMethodField()
     studies = serializers.SerializerMethodField()
 
     class Meta:
@@ -214,31 +171,37 @@ class EventStatisticsSerializer(BaseModelSerializer):
             "has_attended_count",
             "list_count",
             "waiting_list_count",
-            "classes",
+            "studyyears",
             "studies",
         )
 
     def get_has_attended_count(self, obj, *args, **kwargs):
         return obj.registrations.filter(is_on_wait=False, has_attended=True).count()
 
-    def get_classes(self, obj, *args, **kwargs):
-        return map(
-            lambda cls: {
-                "user_class": cls[0],
-                "amount": obj.registrations.filter(
-                    user__user_class=cls[0], is_on_wait=False
-                ).count(),
-            },
-            CLASS,
+    def get_studyyears(self, obj, *args, **kwargs):
+        return filter(
+            lambda studyyear: studyyear["amount"] > 0,
+            map(
+                lambda group: {
+                    "studyyear": group.name,
+                    "amount": obj.registrations.filter(
+                        user__memberships__group=group, is_on_wait=False
+                    ).count(),
+                },
+                Group.objects.filter(type=GroupType.STUDYYEAR),
+            ),
         )
 
     def get_studies(self, obj, *args, **kwargs):
-        return map(
-            lambda study: {
-                "user_study": study[0],
-                "amount": obj.registrations.filter(
-                    user__user_study=study[0], is_on_wait=False
-                ).count(),
-            },
-            STUDY,
+        return filter(
+            lambda study: study["amount"] > 0,
+            map(
+                lambda group: {
+                    "study": group.name,
+                    "amount": obj.registrations.filter(
+                        user__memberships__group=group, is_on_wait=False
+                    ).count(),
+                },
+                Group.objects.filter(type=GroupType.STUDY),
+            ),
         )
