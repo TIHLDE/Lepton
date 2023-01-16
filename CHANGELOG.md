@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+- ⚡ **Bannere** Bannere blir nå sortert riktig i admin panelet.
 - ✨ **Spørreskjemaer** NOK medlemmer kan lage spørreskjema.
 - ⚡ **Bruker** Nå kan ikke HS lenger endre eller slette brukere. 
 - ⚡ **Mails** Nå logger vi på eposttjeneren kun en gang per batch med epost som sendes.
