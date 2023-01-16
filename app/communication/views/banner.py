@@ -16,6 +16,10 @@ class BannerViewSet(BaseViewSet):
     queryset = Banner.objects.order_by('visible_from')
     permission_classes = [BasicViewPermission]
 
+    def destroy(self, request, *args, **kwargs):
+        super().destroy(request, *args, **kwargs)
+        return Response({"detail": "Banneret ble slettet"}, status=status.HTTP_200_OK)
+
     @action(
         detail=False,
         methods=["get"],
