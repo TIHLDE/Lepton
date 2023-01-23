@@ -53,7 +53,7 @@ class PictureViewSet(BaseViewSet):
             )
         return Response(
             {
-                "detail": f"Noe gikk galt, {errors} av {len(files)} bilder ble kunne ikke bli lagt til i albumet"
+                "detail": f"Noe gikk galt, {errors} av {len(files)} bilder kunne ikke bli lagt til i albumet"
             },
             status=status.HTTP_400_BAD_REQUEST,
         )
