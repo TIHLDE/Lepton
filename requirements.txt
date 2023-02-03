@@ -15,7 +15,7 @@ slack-sdk == 3.19.3
 
 # Django
 # ------------------------------------------------------------------------------
-Django==4.0.8
+Django==4.0.9
 django-enumchoicefield == 3.0.0
 django-filter == 22.1
 django-ordered-model~=3.6
