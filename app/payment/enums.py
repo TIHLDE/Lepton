@@ -1,16 +1,12 @@
 from enum import Enum
-from enumchoicefield import ChoiceEnum
+from django.db.models import TextChoices
 
-class OrderStatus(ChoiceEnum):
+class OrderStatus(TextChoices):
     INITIATE = "INITIATE",
     RESERVE = "RESERVE",
     CAPTURE = "CAPTURE",
     REFUND = "REFUND",
     CANCEL = "CANCEL",
     SALE = "SALE",
-<<<<<<< HEAD
     VOID = "VOID"
 
-=======
-    VOID = "VOID"
->>>>>>> 4255020 (added Order model, view and serializer)

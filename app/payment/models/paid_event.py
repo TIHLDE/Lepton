@@ -11,7 +11,6 @@ class PaidEvent(BaseModel):
 
     class Meta:
         verbose_name_plural = "Paid_events"
-        ordering = ("-created_at", )
 
         def __str__(self):
             return f"{self.event_id}"
