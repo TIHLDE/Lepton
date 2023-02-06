@@ -10,7 +10,7 @@ class OrderViewSet():
 
     def create(self, request, *args, **kwargs):
         context = {
-            "order_id": request.id
+            "order_id": request.order_id
         }
 
     def retrieve_by_id(self, request, order_id):
