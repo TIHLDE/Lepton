@@ -120,7 +120,10 @@ class EventViewSet(BaseViewSet, ActionMixin):
             serializer = EventSerializer(event, context={"request": request})
 
             if request.data["is_paid_event"] and request.data["price"]:
-                paid_event = PaidEvent.obejcts.create()
+                paid_event = PaidEvent.objects.get(
+                    event=event,
+                    price=request.data["price"]                    
+                )
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 

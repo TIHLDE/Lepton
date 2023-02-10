@@ -52,6 +52,7 @@ class EventSerializer(serializers.ModelSerializer):
             "enforces_previous_strikes",
             "permissions",
             "priority_pools",
+            "paid_information"
         )
 
     def validate_limit(self, limit):

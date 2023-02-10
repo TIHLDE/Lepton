@@ -41,6 +41,7 @@ def test_create_paid_event_as_admin(admin_user):
     data = get_paid_event_data(organizer=organizer.slug)
 
     response = client.post(API_EVENTS_BASE_URL, data)
+    print(response.data)
 
     assert response.status_code == 201
     assert False
