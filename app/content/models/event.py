@@ -83,6 +83,10 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
         return self.end_date <= yesterday()
 
     @property
+    def is_paid_event(self):
+        return self.paid_information.exists()
+
+    @property
     def list_count(self):
         """Number of users registered to attend the event"""
         return self.get_participants().count()
