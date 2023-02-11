@@ -22,7 +22,7 @@ def get_paid_event_data(title="New Title", location="New Location", organizer=No
         "start_date": start_date,
         "end_date": end_date,
         "paid_information": {
-            "price": 100,
+            "price": 100.00,
         },
     }
     if organizer:
@@ -48,9 +48,7 @@ def test_create_paid_event_as_admin(admin_user):
     created_event = Event.objects.get(title=data["title"])
     paid_event_information = PaidEvent.objects.get(event=created_event)
 
-    print(response.data)
-
     assert response.status_code == 201
     assert created_event.is_paid_event
-    assert paid_event_information.price == data["price"]
-    assert response.data["paid_information"]["price"] == data["price"]
+    assert paid_event_information.price == data["paid_information"]["price"]
+    assert float(response.data["paid_information"]["price"]) == data["paid_information"]["price"]

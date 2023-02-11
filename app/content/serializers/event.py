@@ -23,7 +23,7 @@ class EventSerializer(serializers.ModelSerializer):
     survey = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
     organizer = SimpleGroupSerializer(read_only=True)
     permissions = DRYPermissionsField(actions=["write", "read"], object_only=True)
-    paid_information = SimplePaidEventSerializer()
+    paid_information = serializers.SerializerMethodField(required=False)
 
     class Meta:
         model = Event
@@ -55,8 +55,14 @@ class EventSerializer(serializers.ModelSerializer):
             "enforces_previous_strikes",
             "permissions",
             "priority_pools",
-            "paid_information"
+            "paid_information",
         )
+
+    def get_paid_information(self, obj):
+        paid_event = PaidEvent.objects.filter(event=obj).first()
+        if paid_event:
+            return PaidEventCreateSerializer(paid_event).data
+        return None
 
     def validate_limit(self, limit):
         """

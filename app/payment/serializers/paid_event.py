@@ -6,7 +6,9 @@ class SimplePaidEventSerializer(BaseModelSerializer):
 
     class Meta:
         model = PaidEvent
-        fields = '__all__'
+        fields = (
+            'price',
+        )
 
 
 class PaidEventCreateSerializer(BaseModelSerializer):
