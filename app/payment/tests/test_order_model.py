@@ -1,14 +1,17 @@
-from django.core.exceptions import ValidationError
-from app.payment.factories.order_factory import OrderFactory
-from app.util.utils import now
 from datetime import timedelta
 
+from django.core.exceptions import ValidationError
 
 import pytest
+
+from app.payment.factories.order_factory import OrderFactory
+from app.util.utils import now
+
 
 @pytest.fixture()
 def order():
     return OrderFactory()
+
 
 @pytest.mark.django_db
 def test_expired_when_order_has_not_expired(order):

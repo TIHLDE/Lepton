@@ -1,5 +1,6 @@
 import os
-from app.payment.util.payment_utils import access_token_is_valid, get_new_access_token
+from datetime import datetime
+
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status
 from rest_framework.exceptions import PermissionDenied
@@ -13,8 +14,9 @@ from app.content.filters.registration import RegistrationFilter
 from app.content.mixins import APIRegistrationErrorsMixin
 from app.content.models import Event, Registration
 from app.content.serializers import RegistrationSerializer
-
-from datetime import datetime
+from app.payment.util.payment_utils import (
+    get_new_access_token,
+)
 
 
 class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
@@ -69,13 +71,14 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
         # Inlcude payment link in Serializer
 
         if event.paid_event:
-            access_token = os.environ.get('PAYMENT_ACCESS_TOKEN')
-            expires_at = os.environ.get('PAYMENT_ACCESS_TOKEN_EXPIRES_AT')
-            if not access_token and datetime.now() >= datetime.fromtimestamp(expires_at):
+            access_token = os.environ.get("PAYMENT_ACCESS_TOKEN")
+            expires_at = os.environ.get("PAYMENT_ACCESS_TOKEN_EXPIRES_AT")
+            if not access_token and datetime.now() >= datetime.fromtimestamp(
+                expires_at
+            ):
                 (expires_at, access_token) = get_new_access_token()
-                os.environ.update({'PAYMENT_ACCESS_TOKEN': access_token})
-                os.environ.update({'PAYMENT_ACCESS_TOKEN_EXPIRES_AT': str(expires_at)})
-
+                os.environ.update({"PAYMENT_ACCESS_TOKEN": access_token})
+                os.environ.update({"PAYMENT_ACCESS_TOKEN_EXPIRES_AT": str(expires_at)})
 
         registration_serializer = RegistrationSerializer(
             registration, context={"user": registration.user}

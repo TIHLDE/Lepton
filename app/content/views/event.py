@@ -12,7 +12,6 @@ from app.common.mixins import ActionMixin
 from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission, IsMember
 from app.common.viewsets import BaseViewSet
-from app.payment.models.paid_event import PaidEvent
 from app.communication.enums import UserNotificationSettingType
 from app.communication.events import (
     EventGiftCardAmountMismatchError,
@@ -30,6 +29,7 @@ from app.content.serializers import (
     PublicRegistrationSerializer,
 )
 from app.group.models.group import Group
+from app.payment.models.paid_event import PaidEvent
 from app.util.utils import midday, now, yesterday
 
 
@@ -118,7 +118,6 @@ class EventViewSet(BaseViewSet, ActionMixin):
         if serializer.is_valid():
             event = super().perform_create(serializer)
             serializer = EventSerializer(event, context={"request": request})
-
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 

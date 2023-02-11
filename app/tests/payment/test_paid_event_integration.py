@@ -1,6 +1,9 @@
-import pytest
 from datetime import timedelta
+
 from django.utils import timezone
+
+import pytest
+
 from app.common.enums import AdminGroup, GroupType, MembershipType
 from app.content.models.event import Event
 from app.group.models.group import Group
@@ -12,6 +15,7 @@ from app.util.test_utils import (
 )
 
 API_EVENTS_BASE_URL = "/events/"
+
 
 def get_paid_event_data(title="New Title", location="New Location", organizer=None):
     start_date = timezone.now() + timedelta(days=10)
@@ -51,4 +55,7 @@ def test_create_paid_event_as_admin(admin_user):
     assert response.status_code == 201
     assert created_event.is_paid_event
     assert paid_event_information.price == data["paid_information"]["price"]
-    assert float(response.data["paid_information"]["price"]) == data["paid_information"]["price"]
+    assert (
+        float(response.data["paid_information"]["price"])
+        == data["paid_information"]["price"]
+    )

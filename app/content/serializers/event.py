@@ -1,5 +1,3 @@
-from app.payment.models.paid_event import PaidEvent
-from app.payment.serializers.paid_event import PaidEventCreateSerializer, SimplePaidEventSerializer
 from rest_framework import serializers
 
 from dry_rest_permissions.generics import DRYPermissionsField
@@ -14,6 +12,10 @@ from app.content.serializers.priority_pool import (
 )
 from app.group.models.group import Group
 from app.group.serializers.group import SimpleGroupSerializer
+from app.payment.models.paid_event import PaidEvent
+from app.payment.serializers.paid_event import (
+    PaidEventCreateSerializer,
+)
 
 
 class EventSerializer(serializers.ModelSerializer):
@@ -22,7 +24,8 @@ class EventSerializer(serializers.ModelSerializer):
     evaluation = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
     survey = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
     organizer = SimpleGroupSerializer(read_only=True)
-    permissions = DRYPermissionsField(actions=["write", "read"], object_only=True)
+    permissions = DRYPermissionsField(
+        actions=["write", "read"], object_only=True)
     paid_information = serializers.SerializerMethodField(required=False)
 
     class Meta:
