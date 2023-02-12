@@ -1,15 +1,16 @@
 import pytest
 from datetime import timedelta
 from django.utils import timezone
-from app.common.enums import AdminGroup, GroupType, MembershipType
+from app.common.enums import GroupType
+from app.content.models.event import Event
 from app.group.models.group import Group
+from app.payment.models.paid_event import PaidEvent
 from app.util.test_utils import (
-    add_user_to_group_with_name,
     get_api_client,
-    get_group_type_from_group_name,
 )
 
 API_EVENTS_BASE_URL = "/events/"
+
 
 def get_paid_event_data(title="New Title", location="New Location", organizer=None):
     start_date = timezone.now() + timedelta(days=10)
@@ -19,14 +20,15 @@ def get_paid_event_data(title="New Title", location="New Location", organizer=No
         "location": location,
         "start_date": start_date,
         "end_date": end_date,
-        "is_paid_event": True,
-        "price": 100,
+        "paid_information": {
+            "price": 100.00,
+        },
     }
     if organizer:
         data["organizer"] = organizer
     return data
 
-    
+
 @pytest.mark.django_db
 def test_create_paid_event_as_admin(admin_user):
     """
@@ -41,7 +43,14 @@ def test_create_paid_event_as_admin(admin_user):
     data = get_paid_event_data(organizer=organizer.slug)
 
     response = client.post(API_EVENTS_BASE_URL, data)
-    print(response.data)
+
+    created_event = Event.objects.get(title=data["title"])
+    paid_event_information = PaidEvent.objects.get(event=created_event)
 
     assert response.status_code == 201
-    assert False
+    assert created_event.is_paid_event
+    assert paid_event_information.price == data["paid_information"]["price"]
+    assert (
+        float(response.data["paid_information"]["price"])
+        == data["paid_information"]["price"]
+    )
