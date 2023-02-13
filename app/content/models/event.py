@@ -84,7 +84,7 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
 
     @property
     def is_paid_event(self):
-        return self.paid_information.exists()
+        return self.paid_information is not None
 
     @property
     def list_count(self):

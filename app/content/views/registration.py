@@ -1,4 +1,5 @@
 import os
+import uuid
 from datetime import datetime
 
 from django_filters.rest_framework import DjangoFilterBackend
@@ -14,8 +15,10 @@ from app.content.filters.registration import RegistrationFilter
 from app.content.mixins import APIRegistrationErrorsMixin
 from app.content.models import Event, Registration
 from app.content.serializers import RegistrationSerializer
+from app.payment.models.order import Order
 from app.payment.util.payment_utils import (
     get_new_access_token,
+    initiate_payment,
 )
 
 
@@ -70,15 +73,35 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
         # If not fetch access token
         # Inlcude payment link in Serializer
 
-        if event.paid_event:
+        if event.is_paid_event:
             access_token = os.environ.get("PAYMENT_ACCESS_TOKEN")
             expires_at = os.environ.get("PAYMENT_ACCESS_TOKEN_EXPIRES_AT")
-            if not access_token and datetime.now() >= datetime.fromtimestamp(
-                expires_at
-            ):
+            if not access_token or datetime.now() >= datetime.fromtimestamp(expires_at):
                 (expires_at, access_token) = get_new_access_token()
                 os.environ.update({"PAYMENT_ACCESS_TOKEN": access_token})
                 os.environ.update({"PAYMENT_ACCESS_TOKEN_EXPIRES_AT": str(expires_at)})
+
+            # Create order
+            order_id = uuid.uuid4()
+            amount = int(event.paid_information.price * 100)
+            res = initiate_payment(amount, str(order_id), event.title, access_token)
+            print("Init Payment done")
+            payment_link = res["url"]
+            order = Order.objects.create(
+                order_id=order_id,
+                user=request.user,
+                event=event,
+                payment_link=payment_link,
+            )
+            order.save()
+            print("Order created")
+            # except:
+            #     return Response(
+            #     {
+            #         "detail": "Noe gikk galt med betalingen. Vennligst prøv igjen senere."
+            #     },
+            #     status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            # )
 
         registration_serializer = RegistrationSerializer(
             registration, context={"user": registration.user}

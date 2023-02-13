@@ -1,18 +1,17 @@
-from datetime import datetime
-from django.conf import settings
-import requests
-import jwt
+import json
+import os
 
+from django.conf import settings
+
+import requests
+
+# TODO : Try removing cookie from headers
 TOKEN_URL = "https://apitest.vipps.no/accessToken/get"
 TOKEN_HEADERS = {
     "client_id": settings.VIPPS_CLIENT_ID,
     "client_secret": settings.VIPPS_CLIENT_SECRET,
     "Ocp-Apim-Subscription-Key": settings.VIPPS_SUBSCRIPTION_KEY,
     "Merchant-Serial-Number": settings.VIPPS_MERCHANT_SERIAL_NUMBER,
-    "Vipps-System-Name": settings.VIPPS_SYSTEM_NAME,
-    "Vipps-System-Version": settings.VIPPS_SYSTEM_VERSION,
-    "Vipps-System-Plugin-Name": settings.VIPPS_SYSTEM_PLUGIN_NAME,
-    "Vipps-System-Plugin-Version": settings.VIPPS_SYSTEM_PLUGIN_VERSION,
     "Cookie": "fpc=AqiUsXVZL3NFr4JO1-F_-NRQ2zIJAQAAAEukedsOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
 }
 
@@ -22,3 +21,45 @@ def get_new_access_token():
     # TODO: Remove this print statement
     print(response)
     return (response["expires_on"], response["access_token"])
+
+
+def initiate_payment(amount, order_id, event_name, access_token):
+    """
+    Initiate a payment with Vipps
+    amount: Amount to pay in Øre (100 NOK = 10000)
+    """
+    url = "https://apitest.vipps.no/ecomm/v2/payments/"
+    print(f"callback: {settings.VIPPS_CALLBACK_PREFIX}")
+    print(f"fallback: {settings.VIPPS_FALLBACK}")
+    print(f"merchant: {settings.VIPPS_MERCHANT_SERIAL_NUMBER}")
+    print(f"sub key: {settings.VIPPS_SUBSCRIPTION_KEY}")
+    payload = json.dumps(
+        {
+            "merchantInfo": {
+                "callbackPrefix": settings.VIPPS_CALLBACK_PREFIX,
+                "fallBack": settings.VIPPS_FALLBACK,
+                "merchantSerialNumber": settings.VIPPS_MERCHANT_SERIAL_NUMBER,
+            },
+            "transaction": {
+                "amount": amount,
+                "transactionText": "This payment is for the event:" + event_name,
+                "orderId": order_id,
+                "skipLandingPage": False,
+            },
+        }
+    )
+    headers = {
+        "Content-Type": "application/json",
+        "Ocp-Apim-Subscription-Key": settings.VIPPS_SUBSCRIPTION_KEY,
+        "Authorization": "Bearer " + access_token,
+        "Merchant-Serial-Number": settings.VIPPS_MERCHANT_SERIAL_NUMBER,
+        "Cookie": "fpc=AqiUsXVZL3NFr4JO1-F_-NRQ2zIJAQAAAGhUfNsOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
+    }
+    print("fetching payment")
+    response = requests.post(url, headers=headers, data=payload)
+    print(f"response text: {response.text}")
+
+    if response.status_code != 200:
+        raise Exception("Could not initiate payment")
+
+    return response.json()

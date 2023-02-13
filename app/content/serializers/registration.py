@@ -14,6 +14,7 @@ class RegistrationSerializer(BaseModelSerializer):
     user_info = UserListSerializer(source="user", read_only=True)
     survey_submission = serializers.SerializerMethodField()
     has_unanswered_evaluation = serializers.SerializerMethodField()
+    payment_link = serializers.SerializerMethodField(required=False)
 
     class Meta:
         model = Registration
@@ -26,6 +27,7 @@ class RegistrationSerializer(BaseModelSerializer):
             "created_at",
             "survey_submission",
             "has_unanswered_evaluation",
+            "payment_link",
         )
 
     def get_survey_submission(self, obj):
@@ -34,6 +36,11 @@ class RegistrationSerializer(BaseModelSerializer):
 
     def get_has_unanswered_evaluation(self, obj):
         return obj.user.has_unanswered_evaluations_for(obj.event)
+
+    def get_payment_link(self, obj):
+        if obj.event.is_paid_event:
+            return obj.event.orders.filter(user=obj.user).first().payment_link
+        return None
 
 
 class PublicRegistrationSerializer(BaseModelSerializer):

@@ -235,6 +235,14 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.environ.get("EMAIL_USER") or "75ecff025dcb39"
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_PASSWORD") or "8b1a00e838d6b7"
 
+# Vipps
+VIPPS_CLIENT_ID = os.environ.get("VIPPS_CLIENT_ID")
+VIPPS_CLIENT_SECRET = os.environ.get("VIPPS_CLIENT_SECRET")
+VIPPS_SUBSCRIPTION_KEY = os.environ.get("VIPPS_SUBSCRIPTION_KEY")
+VIPPS_MERCHANT_SERIAL_NUMBER = os.environ.get("VIPPS_MERCHANT_SERIAL_NUMBER")
+VIPPS_CALLBACK_PREFIX = os.environ.get("VIPPS_CALLBACK_PREFIX")
+VIPPS_FALLBACK = os.environ.get("VIPPS_FALLBACK")
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,

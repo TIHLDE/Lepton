@@ -1,6 +1,8 @@
-import factory
 import random
+
+import factory
 from factory.django import DjangoModelFactory
+
 from app.content.factories.event_factory import EventFactory
 from app.payment.models.paid_event import PaidEvent
 

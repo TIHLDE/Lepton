@@ -1,13 +1,14 @@
-import pytest
 from datetime import timedelta
+
 from django.utils import timezone
+
+import pytest
+
 from app.common.enums import GroupType
 from app.content.models.event import Event
 from app.group.models.group import Group
 from app.payment.models.paid_event import PaidEvent
-from app.util.test_utils import (
-    get_api_client,
-)
+from app.util.test_utils import get_api_client
 
 API_EVENTS_BASE_URL = "/events/"
 

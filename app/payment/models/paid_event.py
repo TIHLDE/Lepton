@@ -8,7 +8,7 @@ from app.util.models import BaseModel
 class PaidEvent(BaseModel):
     write_access = AdminGroup.admin()
 
-    event = models.ForeignKey(
+    event = models.OneToOneField(
         Event,
         on_delete=models.PROTECT,
         related_name="paid_information",

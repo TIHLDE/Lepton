@@ -1,5 +1,7 @@
-import pytest
 from datetime import timedelta
+
+import pytest
+
 from app.payment.factories.order_factory import OrderFactory
 from app.util.utils import now
 
