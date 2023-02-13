@@ -1,4 +1,4 @@
-from django_filters import DateTimeFilter, OrderingFilter
+from django_filters import DateTimeFilter
 from django_filters.rest_framework import BooleanFilter, FilterSet
 
 from app.communication.models.banner import Banner
