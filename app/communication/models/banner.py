@@ -10,7 +10,7 @@ from app.communication.exceptions import (
 )
 from app.communication.mixins import APIBannerErrorsMixin
 from app.util.models import BaseModel, OptionalImage
-from app.util.utils import now, tomorrow
+from app.util.utils import now, tomorrow, yesterday
 
 
 class Banner(BaseModel, OptionalImage, BasePermissionModel, APIBannerErrorsMixin):
@@ -28,7 +28,6 @@ class Banner(BaseModel, OptionalImage, BasePermissionModel, APIBannerErrorsMixin
     visible_from = models.DateTimeField(default=now)
     visible_until = models.DateTimeField(default=tomorrow)
     url = models.URLField(max_length=600, blank=True, null=True)
-
     def __str__(self):
         return f"{self.title} - {self.description}"
 
@@ -43,9 +42,6 @@ class Banner(BaseModel, OptionalImage, BasePermissionModel, APIBannerErrorsMixin
             )
         super().save(*args, **kwargs)
 
-    class Meta:
-        ordering = ("-updated_at",)
-
     @property
     def exists_overlapping_banners(self):
         return (
@@ -56,6 +52,10 @@ class Banner(BaseModel, OptionalImage, BasePermissionModel, APIBannerErrorsMixin
             .exclude(id=self.id)
             .exists()
         )
+    
+    @property
+    def expired(self):
+        return self.visible_until <= yesterday()
 
     @classmethod
     def has_visible_permission(cls, request):
