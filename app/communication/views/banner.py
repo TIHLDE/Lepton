@@ -1,16 +1,15 @@
-from rest_framework import status
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters
 
-from app.communication.filters.banner import BannerFilter
 from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission
 from app.common.viewsets import BaseViewSet
+from app.communication.filters.banner import BannerFilter
 from app.communication.models.banner import Banner
 from app.communication.serializers.banner import BannerSerializer
-from app.util.utils import now, yesterday, midday
+from app.util.utils import midday, now, yesterday
 
 
 class BannerViewSet(BaseViewSet):
@@ -33,7 +32,9 @@ class BannerViewSet(BaseViewSet):
         time = midday_today if midday_today < now() else midday_yesterday
         expired = self.request.query_params.get("expired", "false").lower() == "true"
         if expired:
-            return self.queryset.filter(visible_from__lte=time).order_by("-visible_from")
+            return self.queryset.filter(visible_from__lte=time).order_by(
+                "-visible_from"
+            )
         return self.queryset.filter(visible_until__gte=time)
 
     @action(

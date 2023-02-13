@@ -1,7 +1,9 @@
-from django_filters.rest_framework import BooleanFilter, FilterSet
 from django_filters import DateTimeFilter, OrderingFilter
+from django_filters.rest_framework import BooleanFilter, FilterSet
+
 from app.communication.models.banner import Banner
 from app.util.utils import now
+
 
 class BannerFilter(FilterSet):
     end_range = DateTimeFilter(field_name="visible_until", lookup_expr="gte")
@@ -18,7 +20,7 @@ class BannerFilter(FilterSet):
     def filter_only_active(self, queryset, name, value):
         if value:
             return queryset.filter(
-                visible_from__lte = now(),
-                visible_until__gte = now(),
+                visible_from__lte=now(),
+                visible_until__gte=now(),
             )
         return queryset
