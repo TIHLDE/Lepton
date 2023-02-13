@@ -26,6 +26,7 @@ from app.forms.tests.form_factories import FormFactory, SubmissionFactory
 from app.group.factories import GroupFactory, MembershipFactory
 from app.group.factories.fine_factory import FineFactory
 from app.group.factories.membership_factory import MembershipHistoryFactory
+from app.emoji.factories.custom_emoji_factory import CustomEmojiFactory
 from app.util.test_utils import add_user_to_group_with_name, get_api_client
 
 
@@ -188,3 +189,7 @@ def banner():
 @pytest.fixture()
 def toddel():
     return ToddelFactory()
+
+@pytest.fixture()
+def emoji():
+    return CustomEmojiFactory()
