@@ -7,11 +7,16 @@ from app.common.permissions import BasePermissionModel
 from app.common.enums import Groups
 
 class UserNewsReaction(BaseModel, BasePermissionModel):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, primary_key=True)
-    news = models.ForeignKey(News, on_delete=models.CASCADE, primary_key=True)
-    emoji = models.ForeignKey(CustomEmoji)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    news = models.ForeignKey(News, on_delete=models.CASCADE)
+    emoji = models.ForeignKey(CustomEmoji, on_delete=models.PROTECT)
 
     write_access = [Groups.TIHLDE]
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'news'], name='unique together: user and news')
+        ]
 
     def __str__(self):
         return f"{self.news.title} - {self.emoji}"

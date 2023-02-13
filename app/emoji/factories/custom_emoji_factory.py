@@ -8,4 +8,4 @@ class CustomEmojiFactory(DjangoModelFactory):
     class Meta:
         model = CustomEmoji
 
-    img = factory.Faker("img_url", nb_words=5)
+    img = factory.Faker("url")

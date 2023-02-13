@@ -8,3 +8,4 @@ class CustomEmojiViewSet(BaseViewSet):
     serializer_class = CustomEmojiSerializer
     permission_classes = [BasicViewPermission]
     queryset = CustomEmoji.objects.all()
+
