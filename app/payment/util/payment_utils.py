@@ -1,5 +1,4 @@
 import json
-import os
 
 from django.conf import settings
 
@@ -29,10 +28,6 @@ def initiate_payment(amount, order_id, event_name, access_token):
     amount: Amount to pay in Øre (100 NOK = 10000)
     """
     url = "https://apitest.vipps.no/ecomm/v2/payments/"
-    print(f"callback: {settings.VIPPS_CALLBACK_PREFIX}")
-    print(f"fallback: {settings.VIPPS_FALLBACK}")
-    print(f"merchant: {settings.VIPPS_MERCHANT_SERIAL_NUMBER}")
-    print(f"sub key: {settings.VIPPS_SUBSCRIPTION_KEY}")
     payload = json.dumps(
         {
             "merchantInfo": {
@@ -55,9 +50,7 @@ def initiate_payment(amount, order_id, event_name, access_token):
         "Merchant-Serial-Number": settings.VIPPS_MERCHANT_SERIAL_NUMBER,
         "Cookie": "fpc=AqiUsXVZL3NFr4JO1-F_-NRQ2zIJAQAAAGhUfNsOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
     }
-    print("fetching payment")
     response = requests.post(url, headers=headers, data=payload)
-    print(f"response text: {response.text}")
 
     if response.status_code != 200:
         raise Exception("Could not initiate payment")
