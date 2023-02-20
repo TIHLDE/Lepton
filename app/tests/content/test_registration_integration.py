@@ -126,6 +126,7 @@ def test_list_as_member_in_organizer(permission_test_util):
     client = get_api_client(user=member)
     url = _get_registration_url(registration.event)
     response = client.get(url)
+    print(response.data)
 
     assert response.status_code == expected_status_code
     if expected_status_code == 200:
