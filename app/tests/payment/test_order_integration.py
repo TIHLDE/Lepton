@@ -33,7 +33,6 @@ def test_create_as_member_registers_themselves_at_paid_event(member, paid_event)
 
     url = _get_registration_url(event=paid_event)
     response = client.post(url, data=data)
-    print(response.data)
 
     payment_link = response.data.get("payment_link")
 
