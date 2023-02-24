@@ -12,7 +12,9 @@ class PaidEvent(BaseModel):
         Event,
         on_delete=models.PROTECT,
         related_name="paid_information",
-        primary_key=True
+        primary_key=True,
+        blank=True,
+        null=True
     )
     price = models.DecimalField(max_digits=6, decimal_places=2)
 
