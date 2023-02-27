@@ -15,7 +15,6 @@ class OrderFactory(DjangoModelFactory):
     class Meta:
         model = Order
 
-    order_id = "".join([str(random.randint(0, 10)) for _ in range(24)])
     user = factory.SubFactory(UserFactory)
     event = factory.SubFactory(EventFactory)
     status = random.choice([e.value for e in OrderStatus])

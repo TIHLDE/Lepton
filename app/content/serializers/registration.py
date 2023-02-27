@@ -28,6 +28,7 @@ class RegistrationSerializer(BaseModelSerializer):
             "survey_submission",
             "has_unanswered_evaluation",
             "payment_link",
+            # TODO sub serializer for order instead
         )
 
     def get_survey_submission(self, obj):
