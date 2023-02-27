@@ -8,10 +8,15 @@ from app.common.enums import GroupType
 from app.content.models.event import Event
 from app.group.models.group import Group
 from app.payment.models.paid_event import PaidEvent
-from app.util.test_utils import get_api_client
+from app.util.test_utils import (
+    get_api_client,
+)
 
 API_EVENTS_BASE_URL = "/events/"
+EVENT_PRICE = 100.00
 
+def get_events_url_detail(event=None):
+    return f"{API_EVENTS_BASE_URL}{event.pk}/"
 
 def get_paid_event_data(title="New Title", location="New Location", organizer=None):
     start_date = timezone.now() + timedelta(days=10)
@@ -23,7 +28,7 @@ def get_paid_event_data(title="New Title", location="New Location", organizer=No
         "end_date": end_date,
         "is_paid_event": True,
         "paid_information": {
-            "price": 100.00,
+            "price": EVENT_PRICE,
         },
     }
     if organizer:
@@ -95,3 +100,23 @@ def test_create_paid_event_without_price_as_admin(admin_user):
         float(response.data["paid_information"]["price"])
         == 0.00
     )
+
+@pytest.mark.django_db
+def test_update_paid_event_as_admin(admin_user):
+    """
+    HS and Index members should be able to update all paid events.
+    Other subgroup members can update paid events where event.organizer is their group or None.
+    Leaders of committees and interest groups should be able to
+    update events where event.organizer is their group or None.
+    """
+
+    organizer = Group.objects.get_or_create(name="HS", type=GroupType.BOARD)[0]
+    client = get_api_client(user=admin_user)
+    url = get_events_url_detail(event)
+    data = get_paid_event_data(organizer=organizer)
+
+    response = client.put(url, data)
+    event.refresh_from_db()
+
+    assert response.status_code == expected_status_code
+    assert event.title == EVENT_PRICE
