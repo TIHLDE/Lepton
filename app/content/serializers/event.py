@@ -170,6 +170,10 @@ class EventCreateAndUpdateSerializer(BaseModelSerializer):
     def update_priority_pools(self, event, priority_pools_data):
         event.priority_pools.all().delete()
         self.set_priority_pools(event, priority_pools_data)
+    
+    def update_paid_information(self, event, paid_information_data):
+        event.paid_information.price = paid_information_data["price"]
+        event.paid_information.save()
 
     @staticmethod
     def set_priority_pools(event, priority_pool_data):
