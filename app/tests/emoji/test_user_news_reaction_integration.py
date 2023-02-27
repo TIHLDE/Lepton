@@ -28,7 +28,6 @@ def _get_reactions_put_data(reaction):
         "emoji": CustomEmojiFactory().id
     }
     
-
 @pytest.mark.django_db
 def test_that_a_member_can_react_on_news(member, news, emoji):
     """A member should be able to do leave a reaction on a news page"""
@@ -36,7 +35,6 @@ def test_that_a_member_can_react_on_news(member, news, emoji):
     url = _get_reactions_url()
     client = get_api_client(user=member)
     data = _get_reactions_post_data(member, news, emoji)
-
     response = client.post(url, data)
 
     assert response.status_code == status.HTTP_201_CREATED
@@ -79,7 +77,6 @@ def test_that_a_member_can_not_post_multiple_reactions_on_the_same_news(member):
     url =_get_reactions_url()
     client = get_api_client(user=member)
     reaction = UserNewsReactionFactory(user=member)
-
     data = _get_reactions_put_data(reaction)
     response = client.post(url, data)
 
@@ -91,7 +88,6 @@ def test_that_a_member_can_not_post_a_reaction_for_another_member(member, news, 
 
     url = _get_reactions_url()
     client = get_api_client(user=member)
-
     data = _get_reactions_post_data(UserFactory(), news, emoji)
     response = client.put(url, data)
 
