@@ -84,11 +84,12 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
 
     @property
     def is_paid_event(self):
-        return self.paid_information is not None
-    
+        return hasattr(self, "paid_information") and self.paid_information is not None
+
     @property
     def paid_information(self):
-        if not self.paid_information: return None
+        if not self.paid_information:
+            return None
         return self.paid_information
 
     @property
