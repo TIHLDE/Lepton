@@ -84,6 +84,7 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
             # Create order
             order_id = uuid.uuid4()
             amount = int(event.paid_information.price * 100)
+            print("Initiating Payment")
             res = initiate_payment(amount, str(order_id), event.title, access_token)
             print("Init Payment done")
             payment_link = res["url"]

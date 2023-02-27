@@ -30,7 +30,10 @@ def get_paid_event_data(title="New Title", location="New Location", organizer=No
         data["organizer"] = organizer
     return data
 
-def get_paid_event_without_price_data(title="New Title", location="New Location", organizer=None):
+
+def get_paid_event_without_price_data(
+    title="New Title", location="New Location", organizer=None
+):
     start_date = timezone.now() + timedelta(days=10)
     end_date = timezone.now() + timedelta(days=11)
     data = {
@@ -38,7 +41,7 @@ def get_paid_event_without_price_data(title="New Title", location="New Location"
         "location": location,
         "start_date": start_date,
         "end_date": end_date,
-        "is_paid_event": True
+        "is_paid_event": True,
     }
     if organizer:
         data["organizer"] = organizer
@@ -70,6 +73,7 @@ def test_create_paid_event_as_admin(admin_user):
         == data["paid_information"]["price"]
     )
 
+
 @pytest.mark.django_db
 def test_create_paid_event_without_price_as_admin(admin_user):
     """
@@ -91,7 +95,4 @@ def test_create_paid_event_without_price_as_admin(admin_user):
     assert response.status_code == 201
     assert created_event.is_paid_event
     assert paid_event_information.price == 0.00
-    assert (
-        float(response.data["paid_information"]["price"])
-        == 0.00
-    )
+    assert float(response.data["paid_information"]["price"]) == 0.00

@@ -18,7 +18,6 @@ TOKEN_HEADERS = {
 def get_new_access_token():
     response = requests.post(TOKEN_URL, headers=TOKEN_HEADERS).json()
     # TODO: Remove this print statement
-    print(response)
     return (response["expires_on"], response["access_token"])
 
 
@@ -53,6 +52,7 @@ def initiate_payment(amount, order_id, event_name, access_token):
     response = requests.post(url, headers=headers, data=payload)
 
     if response.status_code != 200:
+        print(response.text)
         raise Exception("Could not initiate payment")
 
     return response.json()

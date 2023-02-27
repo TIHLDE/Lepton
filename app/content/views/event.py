@@ -109,7 +109,7 @@ class EventViewSet(BaseViewSet, ActionMixin):
                 {"detail": "Fant ikke arrangementet"}, status=status.HTTP_404_NOT_FOUND
             )
 
-    def create(self, request, *args, **kwargs):        
+    def create(self, request, *args, **kwargs):
         if "is_paid_event" in request.data and "paid_information" not in request.data:
             request.data["paid_information"] = {}
             request.data["paid_information"]["price"] = 0.00
