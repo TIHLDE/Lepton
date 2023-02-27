@@ -1,6 +1,5 @@
 from app.emoji.factories.user_news_reaction_factory import UserNewsReactionFactory
 import pytest 
-from app.common.enums import Groups
 from app.util.test_utils import get_api_client
 from app.content.factories.user_factory import UserFactory
 from app.emoji.factories.custom_emoji_factory import CustomEmojiFactory
@@ -74,7 +73,7 @@ def test_that_a_member_can_delete_their_reaction(member):
     assert response.status_code == status.HTTP_200_OK
 
 @pytest.mark.django_db
-def test_that_a_member_can_not_post_multiple_reactions_on_the_same_news(member, news):
+def test_that_a_member_can_not_post_multiple_reactions_on_the_same_news(member):
     """A member should not be able to post multiple reactions on the same news page"""
 
     url =_get_reactions_url()
@@ -93,7 +92,6 @@ def test_that_a_member_can_not_post_a_reaction_for_another_member(member, news, 
     url = _get_reactions_url()
     client = get_api_client(user=member)
 
-    #to do- bruk noe annet enn factory for å unngå dobbelt posting
     data = _get_reactions_post_data(UserFactory(), news, emoji)
     response = client.put(url, data)
 
