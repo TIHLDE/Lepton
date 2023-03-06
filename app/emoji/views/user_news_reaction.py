@@ -12,7 +12,6 @@ class UserNewsReactionViewSet(BaseViewSet):
     serializer_class = UserNewsReactionSerializer
     queryset = UserNewsReaction.objects.all()
     permission_classes = [BasicViewPermission]
-    # filter_backends = [DjangoFilterBackend, filters.SearchFilter]
 
     def destroy(self, request, *args, **kwargs):
         super().destroy(request, *args, **kwargs)

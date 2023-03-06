@@ -106,11 +106,11 @@ def test_that_a_member_can_not_post_a_reaction_for_another_member(member, news, 
 
 
 @pytest.mark.django_db
-def test_that_a_non_member_can_view_reaction_on_news(user):
-    """A member should not be able to post a reaction for another member on a news page"""
+def test_that_a_non_member_can_not_view_reactions_on_news(user):
+    """A non member should not be able to view reactions on a news page"""
 
     url = _get_reactions_url()
     client = get_api_client(user)
     response = client.get(url)
 
-    assert response.status_code == status.HTTP_200_OK
+    assert response.status_code == status.HTTP_403_FORBIDDEN

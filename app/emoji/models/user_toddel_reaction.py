@@ -14,6 +14,7 @@ class UserToddelReaction(BaseModel, BasePermissionModel):
     emoji = models.ForeignKey(CustomEmoji, on_delete=models.PROTECT)
 
     write_access = [Groups.TIHLDE]
+    read_access = [Groups.TIHLDE]
 
     class Meta:
         constraints = [

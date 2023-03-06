@@ -114,10 +114,10 @@ def test_that_a_member_can_delete_their_reaction(member):
 
 
 @pytest.mark.django_db
-def test_that_non_member_can_see_the_reactions_on_a_toddel(default_client):
-    """A non member should be able see reactions on a toddel"""
+def test_that_non_member_can_not_see_the_reactions_on_a_toddel(default_client):
+    """A non member should not be able to see reactions on a toddel"""
 
     url = _get_reactions_url()
     response = default_client.get(url)
 
-    assert response.status_code == status.HTTP_200_OK
+    assert response.status_code == status.HTTP_403_FORBIDDEN

@@ -14,7 +14,6 @@ class UserToddelReactionViewSet(BaseViewSet):
     serializer_class = UserToddelReactionSerializer
     queryset = UserToddelReaction.objects.all()
     permission_classes = [BasicViewPermission]
-    # filter_backends = [DjangoFilterBackend, filters.SearchFilter]
 
     def destroy(self, request, *args, **kwargs):
         super().destroy(request, *args, **kwargs)
