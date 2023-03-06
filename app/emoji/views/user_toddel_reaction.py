@@ -1,7 +1,6 @@
 from rest_framework import status
 from rest_framework.response import Response
 
-from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission
 from app.common.viewsets import BaseViewSet
 from app.emoji.models.user_toddel_reaction import UserToddelReaction

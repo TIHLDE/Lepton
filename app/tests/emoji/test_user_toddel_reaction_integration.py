@@ -2,16 +2,11 @@ from rest_framework import status
 
 import pytest
 
-from app.common.enums import AdminGroup, Groups
 from app.content.factories.toddel_factory import ToddelFactory
 from app.content.factories.user_factory import UserFactory
 from app.emoji.factories.custom_emoji_factory import CustomEmojiFactory
 from app.emoji.factories.user_toddel_reaction_factory import (
     UserToddelReactionFactory,
-)
-from app.emoji.models.user_toddel_reaction import UserToddelReaction
-from app.emoji.serializers.user_toddel_reaction import (
-    UserToddelReactionSerializer,
 )
 from app.util.test_utils import get_api_client
 
