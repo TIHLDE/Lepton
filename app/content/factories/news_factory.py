@@ -1,5 +1,6 @@
 import factory
 from factory.django import DjangoModelFactory
+
 from app.content.models.news import News
 
 

@@ -4,18 +4,19 @@ from rest_framework.response import Response
 from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission
 from app.common.viewsets import BaseViewSet
-from app.emoji.models.user_news_reaction import UserNewsReaction
-from app.emoji.serializers.user_news_reaction import UserNewsReactionSerializer
+from app.emoji.models.user_toddel_reaction import UserToddelReaction
+from app.emoji.serializers.user_toddel_reaction import (
+    UserToddelReactionSerializer,
+)
 
 
-class UserNewsReactionViewSet(BaseViewSet):
+class UserToddelReactionViewSet(BaseViewSet):
 
-    serializer_class = UserNewsReactionSerializer
-    queryset = UserNewsReaction.objects.all()
+    serializer_class = UserToddelReactionSerializer
+    queryset = UserToddelReaction.objects.all()
     permission_classes = [BasicViewPermission]
     # filter_backends = [DjangoFilterBackend, filters.SearchFilter]
 
     def destroy(self, request, *args, **kwargs):
         super().destroy(request, *args, **kwargs)
-        print("Running destroy")
-        return Response({"detail": "Reaksjonen ble slettet"}, status=status.HTTP_200_OK)
+        return Response({"detail": "Reaksjonen ble fjernet"}, status=status.HTTP_200_OK)

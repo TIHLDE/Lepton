@@ -22,12 +22,14 @@ from app.content.factories import (
     UserFactory,
 )
 from app.content.factories.toddel_factory import ToddelFactory
+from app.emoji.factories.custom_emoji_factory import CustomEmojiFactory
+from app.emoji.factories.user_news_reaction_factory import (
+    UserNewsReactionFactory,
+)
 from app.forms.tests.form_factories import FormFactory, SubmissionFactory
 from app.group.factories import GroupFactory, MembershipFactory
 from app.group.factories.fine_factory import FineFactory
 from app.group.factories.membership_factory import MembershipHistoryFactory
-from app.emoji.factories.custom_emoji_factory import CustomEmojiFactory
-from app.emoji.factories.user_news_reaction_factory import UserNewsReactionFactory
 from app.util.test_utils import add_user_to_group_with_name, get_api_client
 
 
@@ -191,9 +193,11 @@ def banner():
 def toddel():
     return ToddelFactory()
 
+
 @pytest.fixture()
 def emoji():
     return CustomEmojiFactory()
+
 
 @pytest.fixture()
 def reaction():

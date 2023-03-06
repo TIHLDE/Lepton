@@ -1,10 +1,10 @@
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
-from app.common.viewsets import BaseViewSet
 
 from emoji import UNICODE_EMOJI_ENGLISH
 
 from app.common.permissions import BasicViewPermission
+from app.common.viewsets import BaseViewSet
 from app.emoji.serializers.custom_emoji import CustomEmojiSerializer
 
 EMOJI_DETAIL = UNICODE_EMOJI_ENGLISH
@@ -21,6 +21,7 @@ class UnicodeEmojiViewSet(BaseViewSet, GenericAPIView):
 
     def list(self, request, *args, **kwargs):
         return Response(EMOJI_LIST)
+
     # Funker ikke atm
     def retrieve(self, request, *args, **kwargs):
         return super().retrieve(request, *args, **kwargs)

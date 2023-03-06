@@ -1,5 +1,6 @@
 import factory
 from factory.django import DjangoModelFactory
+
 from app.emoji.models.custom_emoji import CustomEmoji
 
 
