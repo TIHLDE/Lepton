@@ -3,7 +3,7 @@ from datetime import timedelta
 from django.core.exceptions import ValidationError
 from django.db import models
 
-from app.common.enums import AdminGroup
+from app.common.enums import AdminGroup, Groups
 from app.common.permissions import (
     BasePermissionModel,
     check_has_access,
@@ -19,7 +19,7 @@ from app.util.utils import now, yesterday
 
 class Event(BaseModel, OptionalImage, BasePermissionModel):
 
-    write_access = (*AdminGroup.admin(), AdminGroup.PROMO)
+    write_access = (*AdminGroup.admin(), AdminGroup.PROMO, Groups.JUBKOM)
 
     title = models.CharField(max_length=200)
     start_date = models.DateTimeField()

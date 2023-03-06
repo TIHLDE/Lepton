@@ -5,7 +5,7 @@ from rest_framework import status
 
 import pytest
 
-from app.common.enums import AdminGroup, GroupType, MembershipType
+from app.common.enums import AdminGroup, Groups, GroupType, MembershipType
 from app.content.factories import EventFactory, RegistrationFactory, UserFactory
 from app.content.models import Event
 from app.forms.enums import EventFormType
@@ -634,3 +634,13 @@ def test_expired_filter_list(api_client, admin_user, expired, expected_count):
     actual_count = response.json().get("count")
 
     assert actual_count == expected_count
+
+
+@pytest.mark.django_db
+def test_jubkom_has_create_permission(api_client, jubkom_member):
+    client = api_client(user=jubkom_member)
+    organizer = Group.objects.get(name=Groups.JUBKOM).slug
+    data = get_event_data(organizer=organizer)
+    response = client.post(API_EVENTS_BASE_URL, data)
+
+    assert response.status_code == status.HTTP_201_CREATED

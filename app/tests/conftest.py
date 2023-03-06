@@ -81,6 +81,12 @@ def member():
 
 
 @pytest.fixture()
+def jubkom_member(member):
+    add_user_to_group_with_name(member, Groups.JUBKOM)
+    return member
+
+
+@pytest.fixture()
 def member_client(member):
     return get_api_client(user=member)
 
