@@ -1,3 +1,4 @@
+from app.payment.serializers.order import OrderSerializer
 from rest_framework import serializers
 
 from app.common.serializers import BaseModelSerializer
@@ -14,7 +15,7 @@ class RegistrationSerializer(BaseModelSerializer):
     user_info = UserListSerializer(source="user", read_only=True)
     survey_submission = serializers.SerializerMethodField()
     has_unanswered_evaluation = serializers.SerializerMethodField()
-    payment_link = serializers.SerializerMethodField(required=False)
+    order = serializers.SerializerMethodField(required=False)
 
     class Meta:
         model = Registration
@@ -27,8 +28,7 @@ class RegistrationSerializer(BaseModelSerializer):
             "created_at",
             "survey_submission",
             "has_unanswered_evaluation",
-            "payment_link",
-            # TODO sub serializer for order instead
+            "order",
         )
 
     def get_survey_submission(self, obj):
@@ -38,12 +38,14 @@ class RegistrationSerializer(BaseModelSerializer):
     def get_has_unanswered_evaluation(self, obj):
         return obj.user.has_unanswered_evaluations_for(obj.event)
 
-    def get_payment_link(self, obj):
-        if obj.event.is_paid_event:
-            return obj.event.orders.filter(user=obj.user).first().payment_link
+    def get_order(self, obj):
+        orders = obj.event.orders.filter(user=obj.user)
+        if len(orders):
+            # TODO write test for this that 0 is the lates order.
+            return OrderSerializer(orders[0]).data
         return None
-
-
+    
+    
 class PublicRegistrationSerializer(BaseModelSerializer):
     user_info = serializers.SerializerMethodField()
 

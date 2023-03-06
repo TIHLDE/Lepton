@@ -5,7 +5,7 @@ from app.payment.enums import OrderStatus
 from app.util.tasks import BaseTask
 
 @app.task(bind=True, base=BaseTask)
-def check_if_has_paid(order_id, registration_id):
+def check_if_has_paid(self, order_id, registration_id):
     try:
         order = Order.objects.get(order_id=order_id)
         order_status = order.status

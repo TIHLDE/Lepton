@@ -1,6 +1,7 @@
 import os
 import uuid
 from datetime import datetime
+from app.payment.tasks import check_if_has_paid
 
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status
@@ -81,12 +82,12 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
                 os.environ.update({"PAYMENT_ACCESS_TOKEN": access_token})
                 os.environ.update({"PAYMENT_ACCESS_TOKEN_EXPIRES_AT": str(expires_at)})
 
-            # Create order
+            paytime = event.paid_information.paytime
+            
+            # Create Order
             order_id = uuid.uuid4()
             amount = int(event.paid_information.price * 100)
-            print("Initiating Payment")
             res = initiate_payment(amount, str(order_id), event.title, access_token)
-            print("Init Payment done")
             payment_link = res["url"]
             order = Order.objects.create(
                 order_id=order_id,
@@ -95,7 +96,10 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
                 payment_link=payment_link,
             )
             order.save()
-            print("Order created")
+            
+            check_if_has_paid.apply_async(args=(order.order_id, registration.registration_id), countdown=paytime)
+
+            
             # except:
             #     return Response(
             #     {

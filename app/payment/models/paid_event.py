@@ -15,6 +15,7 @@ class PaidEvent(BaseModel):
         primary_key=True,
     )
     price = models.DecimalField(max_digits=6, decimal_places=2)
+    paytime = models.TimeField()
 
     class Meta:
         verbose_name_plural = "Paid_events"
