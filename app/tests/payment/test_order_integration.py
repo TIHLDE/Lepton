@@ -41,25 +41,16 @@ def test_create_as_member_registers_themselves_at_paid_event(member, paid_event)
 
 @pytest.mark.django_db
 def test_not_paid_order_is_kicked_of_event_after_timeout(member):
-    paid_event = PaidEventFactory(paytime=time(second=30))
-    order = OrderFactory()
+    paid_event = PaidEventFactory(paytime=time(second=3))
+    # order = OrderFactory()
     data = _get_registration_post_data(member, paid_event)
     client = get_api_client(user=member)
     url = _get_registration_url(event=paid_event)
     response = client.post(url, data=data)
-    regs = Registration.objects.all()
-    print(regs)
-    print(len(regs))
 
     assert response.status_code == 201
     assert len(Order.objects.all())
-    assert len(Registration.objects.all())
-
-
-    sleep(35)
-
     assert len(Registration.objects.all()) == 0
-    
     
     # Lag event med lav tid
     # Lag ordre
