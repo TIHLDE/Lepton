@@ -77,7 +77,7 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
         if event.is_paid_event:
             access_token = os.environ.get("PAYMENT_ACCESS_TOKEN")
             expires_at = os.environ.get("PAYMENT_ACCESS_TOKEN_EXPIRES_AT")
-            if not access_token or datetime.now() >= datetime.fromtimestamp(expires_at):
+            if not access_token or datetime.now() >= datetime.fromtimestamp(int(expires_at)):
                 (expires_at, access_token) = get_new_access_token()
                 os.environ.update({"PAYMENT_ACCESS_TOKEN": access_token})
                 os.environ.update({"PAYMENT_ACCESS_TOKEN_EXPIRES_AT": str(expires_at)})

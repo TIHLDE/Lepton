@@ -185,7 +185,8 @@ class EventCreateAndUpdateSerializer(BaseModelSerializer):
     @staticmethod
     def set_paid_information(event, paid_information_data):
         price = paid_information_data.get("price")
-        paid_information = PaidEvent.objects.create(event=event, price=price)
+        paytime = paid_information_data.get("paytime")
+        paid_information = PaidEvent.objects.create(event=event, price=price, paytime=paytime)
         paid_information.save()
 
 
