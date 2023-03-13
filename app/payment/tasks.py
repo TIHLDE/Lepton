@@ -9,7 +9,7 @@ def check_if_has_paid(self, order_id, registration_id):
     try:
         order = Order.objects.get(order_id=order_id)
         order_status = order.status
-        if order_status is not OrderStatus.CAPTURE or order_status is not OrderStatus.RESERVE:
+        if order_status != OrderStatus.CAPTURE and order_status != OrderStatus.RESERVE:
             Registration.objects.filter(registration_id=registration_id).delete()
 
     except Exception as e:

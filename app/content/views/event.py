@@ -1,3 +1,4 @@
+from datetime import time
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
@@ -113,6 +114,7 @@ class EventViewSet(BaseViewSet, ActionMixin):
         if "is_paid_event" in request.data and "paid_information" not in request.data:
             request.data["paid_information"] = {}
             request.data["paid_information"]["price"] = 0.00
+            request.data["paid_information"]["paytime"] = time(second=0)
 
         serializer = EventCreateAndUpdateSerializer(
             data=request.data, context={"request": request}

@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import time, timedelta
 
 from django.utils import timezone
 
@@ -18,7 +18,7 @@ API_EVENTS_BASE_URL = "/events/"
 def get_events_url_detail(event=None):
     return f"{API_EVENTS_BASE_URL}{event.pk}/"
 
-def get_paid_event_data(title="New Title", location="New Location", organizer=None, price=100.00):
+def get_paid_event_data(title="New Title", location="New Location", organizer=None, price=100.00, paytime=time(second=3)):
     start_date = timezone.now() + timedelta(days=10)
     end_date = timezone.now() + timedelta(days=11)
     data = {
@@ -29,6 +29,7 @@ def get_paid_event_data(title="New Title", location="New Location", organizer=No
         "is_paid_event": True,
         "paid_information": {
             "price": price,
+            "paytime": paytime
         },
     }
     if organizer:
@@ -93,7 +94,6 @@ def test_create_paid_event_without_price_as_admin(admin_user):
     data = get_paid_event_without_price_data(organizer=organizer.slug)
 
     response = client.post(API_EVENTS_BASE_URL, data)
-
     created_event = Event.objects.get(title=data["title"])
     paid_event_information = PaidEvent.objects.get(event=created_event)
 

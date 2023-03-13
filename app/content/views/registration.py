@@ -99,7 +99,6 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
             
             check_if_has_paid.apply_async(args=(order.order_id, registration.registration_id), countdown=paytime)
 
-
         registration_serializer = RegistrationSerializer(
             registration, context={"user": registration.user}
         )
