@@ -3,14 +3,14 @@ from rest_framework.response import Response
 
 from app.common.permissions import BasicViewPermission
 from app.common.viewsets import BaseViewSet
-from app.emoji.models.user_news_reaction import UserNewsReaction
-from app.emoji.serializers.user_news_reaction import UserNewsReactionSerializer
+from app.emoji.models.news_emojis import NewsEmojis
+from app.emoji.serializers.news_emojis import NewsEmojisSerializer
 
 
-class UserNewsReactionViewSet(BaseViewSet):
+class NewsEmojisViewSet(BaseViewSet):
 
-    serializer_class = UserNewsReactionSerializer
-    queryset = UserNewsReaction.objects.all()
+    serializer_class = NewsEmojisSerializer
+    queryset = NewsEmojis.objects.all()
     permission_classes = [BasicViewPermission]
 
     def destroy(self, request, *args, **kwargs):
