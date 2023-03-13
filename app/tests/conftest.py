@@ -26,6 +26,7 @@ from app.emoji.factories.custom_emoji_factory import CustomEmojiFactory
 from app.emoji.factories.user_news_reaction_factory import (
     UserNewsReactionFactory,
 )
+from app.emoji.factories.news_emojis_factory import NewsEmojisFactory
 from app.forms.tests.form_factories import FormFactory, SubmissionFactory
 from app.group.factories import GroupFactory, MembershipFactory
 from app.group.factories.fine_factory import FineFactory
@@ -202,3 +203,7 @@ def emoji():
 @pytest.fixture()
 def reaction():
     return UserNewsReactionFactory()
+
+@pytest.fixture()
+def news_emojis():
+    return NewsEmojisFactory()
