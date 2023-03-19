@@ -1,7 +1,7 @@
 from django.db import models
 
 from app.common.enums import AdminGroup
-from app.common.permissions import BasePermissionModel, check_has_access
+from app.common.permissions import BasePermissionModel
 from app.content.models.news import News
 from app.emoji.models.custom_emoji import CustomEmoji
 from app.util.models import BaseModel
