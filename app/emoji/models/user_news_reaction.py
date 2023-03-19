@@ -9,8 +9,8 @@ from app.util.models import BaseModel
 
 
 class UserNewsReaction(BaseModel, BasePermissionModel):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    news = models.ForeignKey(News, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="reactions")
+    news = models.ForeignKey(News, on_delete=models.CASCADE, related_name="user_reactions")
     emoji = models.ForeignKey(CustomEmoji, on_delete=models.PROTECT)
 
     write_access = [Groups.TIHLDE]
