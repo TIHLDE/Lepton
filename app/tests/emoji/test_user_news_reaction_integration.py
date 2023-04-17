@@ -4,6 +4,7 @@ import pytest
 
 from app.content.factories.user_factory import UserFactory
 from app.emoji.factories.custom_emoji_factory import CustomEmojiFactory
+from app.emoji.factories.news_emojis_factory import NewsEmojisFactory
 from app.emoji.factories.user_news_reaction_factory import (
     UserNewsReactionFactory,
 )
@@ -33,9 +34,23 @@ def _get_reactions_put_data(reaction):
     }
 
 
+def _get_reactions_put_data_with_emoji(reaction):
+    emoji = CustomEmojiFactory()
+    return (
+        {
+            "user": reaction.user.user_id,
+            "news": reaction.news.id,
+            "emoji": emoji.id,
+        },
+        emoji,
+    )
+
+
 @pytest.mark.django_db
 def test_that_a_member_can_react_on_news(member, news, emoji):
     """A member should be able to do leave a reaction on a news page"""
+
+    NewsEmojisFactory(news=news, emoji=emoji)
 
     url = _get_reactions_url()
     client = get_api_client(user=member)
@@ -48,6 +63,8 @@ def test_that_a_member_can_react_on_news(member, news, emoji):
 @pytest.mark.django_db
 def test_that_a_non_member_cannot_react_on_news(user, news, emoji):
     """A non-member should not be able to leave a reaction on a news page"""
+    NewsEmojisFactory(news=news, emoji=emoji)
+
     url = _get_reactions_url()
     client = get_api_client(user)
     data = _get_reactions_post_data(user, news, emoji)
@@ -59,9 +76,15 @@ def test_that_a_non_member_cannot_react_on_news(user, news, emoji):
 @pytest.mark.django_db
 def test_that_a_member_can_change_reaction(member, reaction):
     """A member should be able to change their reaction on a news page"""
+    NewsEmojisFactory(news=reaction.news, emoji=reaction.emoji)
 
     client = get_api_client(user=member)
-    data = _get_reactions_put_data(reaction)
+    data_tuple = _get_reactions_put_data_with_emoji(reaction)
+
+    new_emoji = data_tuple[1]
+    NewsEmojisFactory(news=reaction.news, emoji=new_emoji)
+
+    data = data_tuple[0]
     url = _get_reactions_detailed_url(reaction)
     response = client.put(url, data)
 
@@ -73,7 +96,7 @@ def test_that_a_member_can_delete_their_reaction(member):
     """A member should be able to remove their reaction from a news page"""
 
     client = get_api_client(user=member)
-    url = _get_reactions_detailed_url(UserNewsReactionFactory())
+    url = _get_reactions_detailed_url(UserNewsReactionFactory(user=member))
     response = client.delete(url)
 
     assert response.status_code == status.HTTP_200_OK
@@ -89,12 +112,14 @@ def test_that_a_member_can_not_post_multiple_reactions_on_the_same_news(member):
     data = _get_reactions_put_data(reaction)
     response = client.post(url, data)
 
-    assert response.status_code == status.HTTP_409_CONFLICT
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
 
 
 @pytest.mark.django_db
 def test_that_a_member_can_not_post_a_reaction_for_another_member(member, news, emoji):
     """A member should not be able to post a reaction for another member on a news page"""
+
+    NewsEmojisFactory(news=news, emoji=emoji)
 
     url = _get_reactions_url()
     client = get_api_client(user=member)
@@ -106,11 +131,10 @@ def test_that_a_member_can_not_post_a_reaction_for_another_member(member, news, 
 
 
 @pytest.mark.django_db
-def test_that_a_non_member_can_not_view_reactions_on_news(user):
+def test_that_a_non_member_can_not_view_reactions_on_news(default_client):
     """A non member should not be able to view reactions on a news page"""
 
     url = _get_reactions_url()
-    client = get_api_client(user)
-    response = client.get(url)
+    response = default_client.get(url)
 
     assert response.status_code == status.HTTP_403_FORBIDDEN

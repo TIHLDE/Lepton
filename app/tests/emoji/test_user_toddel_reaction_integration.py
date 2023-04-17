@@ -5,6 +5,7 @@ import pytest
 from app.content.factories.toddel_factory import ToddelFactory
 from app.content.factories.user_factory import UserFactory
 from app.emoji.factories.custom_emoji_factory import CustomEmojiFactory
+from app.emoji.factories.toddel_emojis_factory import ToddelEmojisFactory
 from app.emoji.factories.user_toddel_reaction_factory import (
     UserToddelReactionFactory,
 )
@@ -17,16 +18,16 @@ def _get_reactions_url():
     return f"{API_EMOJI_BASE_URL}toddelreactions/"
 
 
+def _get_reactions_detailed_url(reaction):
+    return f"{_get_reactions_url()}{reaction.id}/"
+
+
 def _get_detailed_reactions_url(reaction):
     return f"{_get_reactions_url()}{reaction.id}/"
 
 
-def _get_reactions_post_data(user):
-    return {
-        "user": user.user_id,
-        "toddel": ToddelFactory().edition,
-        "emoji": CustomEmojiFactory().id,
-    }
+def _get_reactions_post_data(user, toddel, emoji):
+    return {"user": user.user_id, "toddel": toddel.edition, "emoji": emoji.id}
 
 
 def _get_reactions_put_data(reaction):
@@ -37,25 +38,46 @@ def _get_reactions_put_data(reaction):
     }
 
 
+def _get_reactions_put_data_with_emoji(reaction):
+    emoji = CustomEmojiFactory()
+    return (
+        {
+            "user": reaction.user.user_id,
+            "toddel": reaction.toddel.edition,
+            "emoji": emoji.id,
+        },
+        emoji,
+    )
+
+
 @pytest.mark.django_db
 def test_that_a_member_can_react_on_toddel(member):
     """A member should be able to do leave a reaction on a toddel"""
 
+    emoji = CustomEmojiFactory()
+    toddel = ToddelFactory()
+    ToddelEmojisFactory(toddel=toddel, emoji=emoji)
+
     url = _get_reactions_url()
     client = get_api_client(user=member)
-    data = _get_reactions_post_data(member)
+    data = _get_reactions_post_data(member, toddel, emoji)
     response = client.post(url, data)
 
     assert response.status_code == status.HTTP_201_CREATED
 
 
 @pytest.mark.django_db
-def test_that_a_non_member_cannot_react_on_toddel(default_client, user):
+def test_that_a_non_member_cannot_react_on_toddel(user):
     """A non-member should not be able to leave a reaction on a toddel"""
 
+    emoji = CustomEmojiFactory()
+    toddel = ToddelFactory()
+    ToddelEmojisFactory(toddel=toddel, emoji=emoji)
+
     url = _get_reactions_url()
-    data = _get_reactions_post_data(user)
-    response = default_client.post(url, data)
+    client = get_api_client(user)
+    data = _get_reactions_post_data(user, toddel, emoji)
+    response = client.post(url, data)
 
     assert response.status_code == status.HTTP_403_FORBIDDEN
 
@@ -63,15 +85,20 @@ def test_that_a_non_member_cannot_react_on_toddel(default_client, user):
 @pytest.mark.django_db
 def test_that_a_member_can_change_reaction(member):
     """A member should be able to change their reaction on a toddel"""
+
     reaction = UserToddelReactionFactory(user=member)
-    url = _get_detailed_reactions_url(reaction)
-    old_emoji = reaction.emoji
+    ToddelEmojisFactory(toddel=reaction.toddel, emoji=reaction.emoji)
 
     client = get_api_client(user=member)
-    data = _get_reactions_put_data(reaction)
+    data_tuple = _get_reactions_put_data_with_emoji(reaction)
+
+    new_emoji = data_tuple[1]
+    ToddelEmojisFactory(toddel=reaction.toddel, emoji=new_emoji)
+
+    data = data_tuple[0]
+    url = _get_reactions_detailed_url(reaction)
     response = client.put(url, data)
 
-    assert data["emoji"] != old_emoji
     assert response.status_code == status.HTTP_200_OK
 
 
@@ -79,9 +106,13 @@ def test_that_a_member_can_change_reaction(member):
 def test_that_a_member_can_not_post_a_reaction_for_another_member(member):
     """A member should not be able to post a reaction for another member on a toddel"""
 
+    emoji = CustomEmojiFactory()
+    toddel = ToddelFactory()
+    ToddelEmojisFactory(toddel=toddel, emoji=emoji)
+
     url = _get_reactions_url()
     client = get_api_client(user=member)
-    data = _get_reactions_post_data(UserFactory())
+    data = _get_reactions_post_data(UserFactory(), toddel, emoji)
     response = client.put(url, data)
 
     assert member != data["user"]
@@ -95,11 +126,10 @@ def test_that_a_member_can_not_post_multiple_reactions_on_the_same_toddel(member
     url = _get_reactions_url()
     client = get_api_client(user=member)
     reaction = UserToddelReactionFactory(user=member)
-
     data = _get_reactions_put_data(reaction)
     response = client.post(url, data)
 
-    assert response.status_code == status.HTTP_409_CONFLICT
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
 
 
 @pytest.mark.django_db
@@ -115,7 +145,7 @@ def test_that_a_member_can_delete_their_reaction(member):
 
 @pytest.mark.django_db
 def test_that_non_member_can_not_see_the_reactions_on_a_toddel(default_client):
-    """A non member should not be able to see reactions on a toddel"""
+    """A non member should not be able to view reactions on a toddel"""
 
     url = _get_reactions_url()
     response = default_client.get(url)

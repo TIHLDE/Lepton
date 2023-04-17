@@ -3,9 +3,8 @@ from rest_framework import status
 import pytest
 
 from app.emoji.factories.custom_emoji_factory import CustomEmojiFactory
-from app.util.test_utils import get_api_client
-
 from app.emoji.factories.news_emojis_factory import NewsEmojisFactory
+from app.util.test_utils import get_api_client
 
 API_EMOJI_BASE_URL = "/emojis/"
 API_NEWS_EMOJIS_BASE_URL = f"{API_EMOJI_BASE_URL}newsemojis/"
@@ -49,19 +48,21 @@ def test_that_a_member_cannot_create_an_emoji_on_a_news(member, news, emoji):
     url = _get_news_emojis_url()
     client = get_api_client(user=member)
     data = _get_news_emojis_post_data(news, emoji)
-    response = client.post(url,data)
+    response = client.post(url, data)
 
     assert response.status_code == status.HTTP_403_FORBIDDEN
 
+
 @pytest.mark.django_db
-def test_that_a_nonmember_cannot_create_an_emoji_on_a_news(user,news,emoji):
+def test_that_a_nonmember_cannot_create_an_emoji_on_a_news(user, news, emoji):
     """A nonmember should not be able to create an emoji on a news"""
-    url =_get_news_emojis_url()
+    url = _get_news_emojis_url()
     client = get_api_client(user)
     data = _get_news_emojis_post_data(news, emoji)
     response = client.post(url, data)
 
     assert response.status_code == status.HTTP_403_FORBIDDEN
+
 
 @pytest.mark.django_db
 def test_that_an_admin_can_change_emojis_on_a_news(admin_user, news_emojis):
@@ -70,9 +71,10 @@ def test_that_an_admin_can_change_emojis_on_a_news(admin_user, news_emojis):
     url = _get_news_emojis_detailed_url(news_emojis)
     client = get_api_client(user=admin_user)
     data = _get_news_emojis_put_data(news_emojis)
-    response = client.put(url,data)
-    
+    response = client.put(url, data)
+
     assert response.status_code == status.HTTP_200_OK
+
 
 @pytest.mark.django_db
 def test_that_a_member_cannot_change_emojis_on_a_news(member, news_emojis):
@@ -81,9 +83,10 @@ def test_that_a_member_cannot_change_emojis_on_a_news(member, news_emojis):
     url = _get_news_emojis_detailed_url(news_emojis)
     client = get_api_client(user=member)
     data = _get_news_emojis_put_data(news_emojis)
-    response = client.put(url,data)
-    
+    response = client.put(url, data)
+
     assert response.status_code == status.HTTP_403_FORBIDDEN
+
 
 @pytest.mark.django_db
 def test_that_a_nonmember_cannot_change_emojis_on_a_news(user, news_emojis):
@@ -92,9 +95,10 @@ def test_that_a_nonmember_cannot_change_emojis_on_a_news(user, news_emojis):
     url = _get_news_emojis_detailed_url(news_emojis)
     client = get_api_client(user)
     data = _get_news_emojis_put_data(news_emojis)
-    response = client.put(url,data)
-    
+    response = client.put(url, data)
+
     assert response.status_code == status.HTTP_403_FORBIDDEN
+
 
 @pytest.mark.django_db
 def test_that_an_admin_can_delete_emojis_on_a_news(admin_user):
@@ -108,7 +112,7 @@ def test_that_an_admin_can_delete_emojis_on_a_news(admin_user):
 
 
 @pytest.mark.django_db
-def test_that_an_admin_can_delete_emojis_on_a_news(member):
+def test_that_an_admin_can_not_delete_emojis_on_a_news(member):
     """A member should not be able to delete emojis on a news"""
 
     url = _get_news_emojis_detailed_url(NewsEmojisFactory())
@@ -116,4 +120,3 @@ def test_that_an_admin_can_delete_emojis_on_a_news(member):
     response = client.delete(url)
 
     assert response.status_code == status.HTTP_403_FORBIDDEN
-

@@ -27,7 +27,7 @@ class NewsSerializer(SimpleNewsSerializer):
         fields = SimpleNewsSerializer.Meta.fields + (
             "creator",
             "body",
-            "user_reaction",
+            "user_reactions",
         )
 
     def create(self, validated_data):
