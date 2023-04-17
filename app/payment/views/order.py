@@ -4,7 +4,7 @@ from app.payment.serializers import OrderSerializer
 
 class OrderViewSet:
     serializer_class = OrderSerializer
-    queryset = Order.objects.select_related(["user_id"])
+    # queryset = Order.objects.select_related(["user_id"])
 
     # def create(self, request, *args, **kwargs):
     #     context = {"order_id": request.order_id}
