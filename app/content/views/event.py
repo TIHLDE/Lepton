@@ -111,7 +111,7 @@ class EventViewSet(BaseViewSet, ActionMixin):
             )
 
     def create(self, request, *args, **kwargs):
-        if "is_paid_event" in request.data and "paid_information" not in request.data:
+        if "is_paid_event" in request.data and request.data["is_paid_event"] and "paid_information" not in request.data:
             request.data["paid_information"] = {}
             request.data["paid_information"]["price"] = 0.00
             request.data["paid_information"]["paytime"] = time(second=0)
