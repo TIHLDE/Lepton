@@ -128,3 +128,26 @@ def test_update_paid_event_as_admin(admin_user):
     assert response.status_code == 200
     assert event.paid_information.price == new_event_price
     assert float(response.data["paid_information"]["price"]) == new_event_price
+
+@pytest.mark.django_db
+def test_delete_paid_event_as_admin(admin_user):
+    organizer = Group.objects.get_or_create(name="HS", type=GroupType.BOARD)[0]
+    client = get_api_client(user=admin_user)
+    data = get_paid_event_data(organizer=organizer.slug)
+
+    response = client.post(API_EVENTS_BASE_URL, data)
+    created_event = Event.objects.get(title=data["title"])
+
+    url = get_events_url_detail(created_event)
+
+    assert response.status_code == 201
+    assert created_event.is_paid_event
+
+    response = client.delete(url)
+    paid_events = PaidEvent.objects.all()
+
+    assert response.status_code == 200
+    assert len(paid_events) == 0
+
+
+

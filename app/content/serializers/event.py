@@ -143,7 +143,6 @@ class EventCreateAndUpdateSerializer(BaseModelSerializer):
     def create(self, validated_data):
         priority_pools_data = validated_data.pop("priority_pools", [])
         paid_information_data = validated_data.pop("paid_information", None)
-        print(paid_information_data)
 
         event = super().create(validated_data)
 
