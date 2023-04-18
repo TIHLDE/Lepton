@@ -14,28 +14,29 @@ django-ical == 1.8.0
 slack-sdk == 3.19.3
 
 # Django
-# ------------------------------------------------------------------------------
 Django==4.0.8
 django-enumchoicefield == 3.0.0
 django-filter == 22.1
+django-mptt == 0.14.0
 django-ordered-model~=3.6
 
 # Django REST Framework
 djangorestframework==3.13.1
 django-cors-headers
 dj-rest-auth == 2.2.3
-
-#django dry rest permissions
 django-dry-rest-permissions == 1.2.0
+djangorestframework-csv == 2.1.1
 
 # Django Polymorphic
 django-polymorphic ~= 3.1
 django-rest-polymorphic == 0.1.9
 
-django-mptt == 0.14.0
+# Auth0 API Authorization
+cryptography ~= 40.0.2 
+drf-jwt ~= 1.19.2 
+pyjwt ~= 2.6.0 
 
 # Code quality
-# ------------------------------------------------------------------------------
 pylint
 black == 22.10.0
 isort
@@ -45,7 +46,6 @@ flake8-black
 pre-commit == 2.20.0
 
 # Testing
-# ------------------------------------------------------------------------------
 coverage
 pdbpp
 pytest == 7.1.1
@@ -54,6 +54,3 @@ pytest-django == 4.5.2
 factory-boy == 3.2.1
 pytest-factoryboy == 2.5.0
 pytest-lazy-fixture==0.6.3
-
-# CSV
-djangorestframework-csv==2.1.1
