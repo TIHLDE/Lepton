@@ -112,7 +112,7 @@ class EventViewSet(BaseViewSet, ActionMixin):
             )
 
     def create(self, request, *args, **kwargs):
-        if "is_paid_event" in request.data and request.data["is_paid_event"] and "paid_information" not in request.data:
+        if request.data["is_paid_event"] and "paid_information" not in request.data:
             request.data["paid_information"] = {}
             request.data["paid_information"]["price"] = 0.00
             request.data["paid_information"]["paytime"] = time(second=0)
@@ -132,8 +132,10 @@ class EventViewSet(BaseViewSet, ActionMixin):
         )
 
     def destroy(self, request, *args, **kwargs):
-        paid_event = PaidEvent.objects.get(event=kwargs["pk"])
-        paid_event.delete()
+        event = Event.objects.get(pk=kwargs["pk"])
+        if event.is_paid_event:
+            paid_event = PaidEvent.objects.get(event=kwargs["pk"])
+            paid_event.delete()
         super().destroy(request, *args, **kwargs)
         return Response(
             {"detail": ("Arrangementet ble slettet")}, status=status.HTTP_200_OK
