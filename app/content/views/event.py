@@ -31,6 +31,7 @@ from app.content.serializers import (
 )
 from app.group.models.group import Group
 from app.payment.models.paid_event import PaidEvent
+from app.payment.models.order import Order
 from app.util.utils import midday, now, yesterday
 
 
@@ -112,7 +113,7 @@ class EventViewSet(BaseViewSet, ActionMixin):
             )
 
     def create(self, request, *args, **kwargs):
-        if request.data["is_paid_event"] and "paid_information" not in request.data:
+        if "is_paid_event" in request.data and request.data["is_paid_event"] and "paid_information" not in request.data:
             request.data["paid_information"] = {}
             request.data["paid_information"]["price"] = 0.00
             request.data["paid_information"]["paytime"] = time(second=0)
@@ -136,6 +137,10 @@ class EventViewSet(BaseViewSet, ActionMixin):
         if event.is_paid_event:
             paid_event = PaidEvent.objects.get(event=kwargs["pk"])
             paid_event.delete()
+            orders = Order.objects.filter(event=kwargs["pk"])
+            if len(orders): 
+                for order in orders: order.delete()
+
         super().destroy(request, *args, **kwargs)
         return Response(
             {"detail": ("Arrangementet ble slettet")}, status=status.HTTP_200_OK

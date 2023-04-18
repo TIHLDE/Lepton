@@ -8,12 +8,16 @@ from app.common.enums import GroupType
 from app.content.models.event import Event
 from app.group.models.group import Group
 from app.payment.models.paid_event import PaidEvent
+from app.payment.models.order import Order
 from app.payment.factories.paid_event_factory import PaidEventFactory
 from app.util.test_utils import (
     get_api_client,
 )
 
 API_EVENTS_BASE_URL = "/events/"
+
+def _get_registration_url(event):
+    return f"{API_EVENTS_BASE_URL}{event.pk}/registrations/"
 
 def get_events_url_detail(event=None):
     return f"{API_EVENTS_BASE_URL}{event.pk}/"
@@ -36,6 +40,11 @@ def get_paid_event_data(title="New Title", location="New Location", organizer=No
         data["organizer"] = organizer
     return data
 
+def _get_registration_post_data(user, event):
+    return {
+        "user_id": user.user_id,
+        "event": event.pk,
+    }
 
 def get_paid_event_without_price_data(
     title="New Title", location="New Location", organizer=None
@@ -130,24 +139,23 @@ def test_update_paid_event_as_admin(admin_user):
     assert float(response.data["paid_information"]["price"]) == new_event_price
 
 @pytest.mark.django_db
-def test_delete_paid_event_as_admin(admin_user):
-    organizer = Group.objects.get_or_create(name="HS", type=GroupType.BOARD)[0]
+def test_delete_paid_event_as_admin(admin_user, paid_event):
     client = get_api_client(user=admin_user)
-    data = get_paid_event_data(organizer=organizer.slug)
+    event = paid_event.event
 
-    response = client.post(API_EVENTS_BASE_URL, data)
-    created_event = Event.objects.get(title=data["title"])
-
-    url = get_events_url_detail(created_event)
-
+    url = _get_registration_url(event=event)
+    data = _get_registration_post_data(admin_user, event)
+    response = client.post(url, data=data)
     assert response.status_code == 201
-    assert created_event.is_paid_event
 
-    response = client.delete(url)
+    url = get_events_url_detail(event)
+    event_response = client.delete(url)
     paid_events = PaidEvent.objects.all()
+    orders = Order.objects.all()
 
-    assert response.status_code == 200
+    assert event_response.status_code == 200
     assert len(paid_events) == 0
+    assert len(orders) == 0
 
 
 
