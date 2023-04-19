@@ -17,6 +17,7 @@ from app.content.mixins import APIRegistrationErrorsMixin
 from app.content.models import Event, Registration
 from app.content.serializers import RegistrationSerializer
 from app.payment.models.order import Order
+from app.payment.enums import OrderStatus
 from app.payment.util.payment_utils import (
     get_new_access_token,
     initiate_payment,

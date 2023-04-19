@@ -9,4 +9,8 @@ from app.payment.views.vipps_callback import vipps_callback
 router = routers.DefaultRouter()
 
 router.register("payment", OrderViewSet, basename="payment")
-router.register("payment-callback", vipps_callback, basename="payment-callback")
+# router.register("payment-callback", vipps_callback, basename="payment-callback")
+
+urlpatterns = [
+    re_path(r"", include(router.urls)),
+]

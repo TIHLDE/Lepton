@@ -10,7 +10,14 @@ class OrderSerializer(BaseModelSerializer):
 
     class Meta:
         model = Order
-        fields = ("order_id", "status", "expire_date", "payment_link")
+        fields = (
+            "order_id", 
+            "status", 
+            "expire_date", 
+            "payment_link",
+            "event",
+            "user"
+        )
 
 
 class OrderUpdateCreateSerializer(BaseModelSerializer):
