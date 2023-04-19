@@ -1,6 +1,6 @@
 import os
 import uuid
-from datetime import datetime
+from datetime import datetime, timedelta
 from app.payment.tasks import check_if_has_paid
 
 from django_filters.rest_framework import DjangoFilterBackend
@@ -88,6 +88,9 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
                 os.environ.update({"PAYMENT_ACCESS_TOKEN_EXPIRES_AT": str(expires_at)})
 
             paytime = event.paid_information.paytime
+            # paytime = datetime.strptime(str(paytime), "%H:%M:%S")
+
+            paytime = datetime.now() + timedelta(hours=paytime.hour, minutes=paytime.minute, seconds=paytime.second)
             print(paytime)
 
             # Create Order
@@ -100,7 +103,9 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
                 user=request.user,
                 event=event,
                 payment_link=payment_link,
+                expire_date=paytime
             )
+            print(order.expire_date)
             order.save()
 
             # TODO: This gets executed too early
