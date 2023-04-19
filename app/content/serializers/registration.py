@@ -28,7 +28,7 @@ class RegistrationSerializer(BaseModelSerializer):
             "created_at",
             "survey_submission",
             "has_unanswered_evaluation",
-            "order",
+            "order"
         )
 
     def get_survey_submission(self, obj):

@@ -14,7 +14,6 @@ class OrderViewSet(BaseViewSet, ActionMixin):
     
     def list(self, request):
         try:
-            print("list")
             queryset = Order.objects.all()
             serializer = OrderSerializer(queryset, many=True)
             return Response(serializer.data, status.HTTP_200_OK)
@@ -31,17 +30,17 @@ class OrderViewSet(BaseViewSet, ActionMixin):
         except Exception as e:
             raise Exception(e)
 
-    @action(
-        detail=True,
-        methods=["get"],
-        url_path="order"
-    )
-    def retrieve_order_by_event_and_user(self, request, pk):
-        try:
-            print("runs this endpoitn")
-            order = self.get_object()
-            print(order)
-            # serializer = OrderSerializer(queryset, many=True)
-            # return Response(serializer.data, status.HTTP_200_OK)
-        except Exception as e:
-            raise Exception(e)
+    # @action(
+    #     detail=True,
+    #     methods=["get"],
+    #     url_path="order"
+    # )
+    # def retrieve_order_by_event_and_user(self, request, pk):
+    #     try:
+    #         print("runs this endpoitn")
+    #         order = self.get_object()
+    #         print(order)
+    #         # serializer = OrderSerializer(queryset, many=True)
+    #         # return Response(serializer.data, status.HTTP_200_OK)
+    #     except Exception as e:
+    #         raise Exception(e)

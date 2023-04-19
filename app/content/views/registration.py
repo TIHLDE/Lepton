@@ -60,6 +60,10 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
 
         request.data["allow_photo"] = request.user.allows_photo_by_default
 
+        # remove payment information to allow serializer to create instance
+        # request.data.pop("is_paid_event", None)
+        # request.data.pop("paid_information", None)
+
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
@@ -84,7 +88,8 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
                 os.environ.update({"PAYMENT_ACCESS_TOKEN_EXPIRES_AT": str(expires_at)})
 
             paytime = event.paid_information.paytime
-            
+            print(paytime)
+
             # Create Order
             order_id = uuid.uuid4()
             amount = int(event.paid_information.price * 100)
@@ -97,12 +102,14 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
                 payment_link=payment_link,
             )
             order.save()
-            
-            check_if_has_paid.apply_async(args=(order.order_id, registration.registration_id), countdown=paytime)
+
+            # TODO: This gets executed too early
+            # check_if_has_paid.apply_async(args=(order.order_id, registration.registration_id), countdown=paytime)
 
         registration_serializer = RegistrationSerializer(
             registration, context={"user": registration.user}
         )
+
         return Response(registration_serializer.data, status=status.HTTP_201_CREATED)
 
     def update(self, request, *args, **kwargs):
