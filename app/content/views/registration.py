@@ -91,7 +91,6 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
             # paytime = datetime.strptime(str(paytime), "%H:%M:%S")
 
             paytime = datetime.now() + timedelta(hours=paytime.hour, minutes=paytime.minute, seconds=paytime.second)
-            print(paytime)
 
             # Create Order
             order_id = uuid.uuid4()
@@ -105,11 +104,10 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
                 payment_link=payment_link,
                 expire_date=paytime
             )
-            print(order.expire_date)
             order.save()
 
             # TODO: This gets executed too early
-            # check_if_has_paid.apply_async(args=(order.order_id, registration.registration_id), countdown=paytime)
+            # check_if_has_paid.apply_async(args=(order.order_id, registration.registration_id), countdown=60)
 
         registration_serializer = RegistrationSerializer(
             registration, context={"user": registration.user}
