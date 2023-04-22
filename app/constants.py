@@ -1,5 +1,8 @@
 import os
 
+AUTH0_DOMAIN = os.environ.get("AUTH0_DOMAIN")
+AUTH0_AUDIENCE = os.environ.get("AUTH0_AUDIENCE")
+
 MAIL_HS = "hs@tihlde.org" if os.environ.get("PROD") else "test+hs@tihlde.org"
 MAIL_ECONOMY = (
     "okonomi@tihlde.org" if os.environ.get("PROD") else "test+okonomi@tihlde.org"

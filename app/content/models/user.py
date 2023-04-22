@@ -1,6 +1,5 @@
 from datetime import timedelta
 
-from django.conf import settings
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import (
     AbstractBaseUser,
@@ -9,9 +8,6 @@ from django.contrib.auth.models import (
 )
 from django.db import models
 from django.db.models import Q
-from django.db.models.signals import post_save
-from django.dispatch import receiver
-from rest_framework.authtoken.models import Token
 
 from app.common.enums import AdminGroup, Groups, GroupType, MembershipType
 from app.common.permissions import check_has_access
@@ -59,7 +55,7 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
     write_access = [AdminGroup.INDEX]
     read_access = [Groups.TIHLDE]
 
-    user_id = models.CharField(max_length=15, primary_key=True)
+    user_id = models.CharField(max_length=255, primary_key=True)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
 
@@ -220,11 +216,3 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
             [AdminGroup.NOK, AdminGroup.INDEX, AdminGroup.HS, AdminGroup.SOSIALEN],
             request,
         )
-
-
-@receiver(post_save, sender=settings.AUTH_USER_MODEL)
-@disable_for_loaddata
-def create_auth_token(sender, instance=None, created=False, **kwargs):
-    """Generate token at creation of user"""
-    if created:
-        Token.objects.create(user=instance)

@@ -11,7 +11,6 @@ from app.common.enums import EnvironmentOptions
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 ROOT_URLCONF = "app.urls"
-DOMAIN = "api.tihlde.org"
 
 load_dotenv(str(BASE_DIR) + "/.env", override=True)
 
@@ -28,6 +27,7 @@ ENVIRONMENT = (
     else EnvironmentOptions.LOCAL
 )
 
+DOMAIN = "api.tihlde.org"
 WEBSITE_URL = (
     "https://tihlde.org"
     if ENVIRONMENT == EnvironmentOptions.PRODUCTION
@@ -35,8 +35,6 @@ WEBSITE_URL = (
     if ENVIRONMENT == EnvironmentOptions.DEVELOPMENT
     else "http://localhost:3000"
 )
-
-AZURE_BLOB_STORAGE_NAME = "tihldestorage.blob.core.windows.net"
 
 # Application definition
 INSTALLED_APPS = [
@@ -54,8 +52,6 @@ INSTALLED_APPS = [
     "rest_framework",
     "corsheaders",
     "django_filters",
-    "rest_framework.authtoken",
-    "dj_rest_auth",
     "dry_rest_permissions",
     "polymorphic",
     # Our apps
@@ -105,7 +101,6 @@ REST_FRAMEWORK = {
 
 # Auth0 Authentication
 AUTH_USER_MODEL = "content.User"
-
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'django.contrib.auth.backends.RemoteUserBackend',
@@ -228,6 +223,8 @@ LOGGING = {
 CELERY_BROKER_URL = "amqp://guest:guest@rabbitmq:5672"
 if ENVIRONMENT == EnvironmentOptions.LOCAL:
     CELERY_TASK_ALWAYS_EAGER = True
+
+AZURE_BLOB_STORAGE_NAME = "tihldestorage.blob.core.windows.net"
 
 sentry_sdk.init(
     dsn=os.environ.get("SENTRY_DSN"),
