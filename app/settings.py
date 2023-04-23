@@ -107,8 +107,8 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 JWT_AUTH = {
-    'JWT_PAYLOAD_GET_USERNAME_HANDLER': 'app.authentication.utils.jwt_get_username_from_payload_handler',
-    'JWT_DECODE_HANDLER': 'app.authentication.utils.jwt_decode_token',
+    'JWT_PAYLOAD_GET_USERNAME_HANDLER': 'app.authentication.utils.get_userid_from_decoded_jwt',
+    'JWT_DECODE_HANDLER': 'app.authentication.utils.decode_jwt',
     'JWT_ALGORITHM': 'RS256',
     'JWT_AUDIENCE': 'https://dev-api.tihlde.org',
     'JWT_ISSUER': 'https://tihlde-dev.eu.auth0.com/',

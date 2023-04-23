@@ -61,17 +61,16 @@ def check_has_access(groups_with_access, request):
 
 
 def set_user_id(request):
-    token = request.META.get("HTTP_X_CSRF_TOKEN")
+    # Import here to avoid circular import: This is why Python is a bad idea when writing APIs
+    from app.authentication.utils import get_user_from_request
+
     request.id = None
     request.user = None
 
-    if token is None:
-        return None
+    user = get_user_from_request(request)
 
-    try:
-        user = Token.objects.get(key=token).user
-    except Token.DoesNotExist:
-        return
+    if user is None:
+        return None
 
     request.id = user.user_id
     request.user = user
