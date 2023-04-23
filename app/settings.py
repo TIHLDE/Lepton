@@ -87,9 +87,7 @@ MIDDLEWARE = [
 # Django rest framework
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "rest_framework.schemas.coreapi.AutoSchema",
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
-    ),
+    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_jwt.authentication.JSONWebTokenAuthentication",
         "rest_framework.authentication.SessionAuthentication",
@@ -102,17 +100,17 @@ REST_FRAMEWORK = {
 # Auth0 Authentication
 AUTH_USER_MODEL = "content.User"
 AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
-    'django.contrib.auth.backends.RemoteUserBackend',
+    "django.contrib.auth.backends.ModelBackend",
+    "django.contrib.auth.backends.RemoteUserBackend",
 ]
 
 JWT_AUTH = {
-    'JWT_PAYLOAD_GET_USERNAME_HANDLER': 'app.authentication.utils.get_userid_from_decoded_jwt',
-    'JWT_DECODE_HANDLER': 'app.authentication.utils.decode_jwt',
-    'JWT_ALGORITHM': 'RS256',
-    'JWT_AUDIENCE': 'https://dev-api.tihlde.org',
-    'JWT_ISSUER': 'https://tihlde-dev.eu.auth0.com/',
-    'JWT_AUTH_HEADER_PREFIX': 'Bearer',
+    "JWT_PAYLOAD_GET_USERNAME_HANDLER": "app.authentication.utils.get_userid_from_decoded_jwt",
+    "JWT_DECODE_HANDLER": "app.authentication.utils.decode_jwt",
+    "JWT_ALGORITHM": "RS256",
+    "JWT_AUDIENCE": "https://dev-api.tihlde.org",
+    "JWT_ISSUER": "https://tihlde-dev.eu.auth0.com/",
+    "JWT_AUTH_HEADER_PREFIX": "Bearer",
 }
 
 TEMPLATES = [
