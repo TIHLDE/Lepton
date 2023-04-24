@@ -20,7 +20,9 @@ class SimpleNewsSerializer(BaseModelSerializer):
 
 class NewsSerializer(SimpleNewsSerializer):
     creator = DefaultUserSerializer(read_only=True)
-    user_reactions = UserNewsReactionSerializer(required=False, read_only=True)
+    user_reactions = UserNewsReactionSerializer(
+        many=True, required=False, read_only=True
+    )
 
     class Meta:
         model = SimpleNewsSerializer.Meta.model
