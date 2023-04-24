@@ -106,10 +106,10 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
             )
             order.save()
             # app.conf.task_always_eager = False
-            print(app.conf.CELERY_ALWAYS_EAGER)
+            # print(app.conf.CELERY_ALWAYS_EAGER)
             # eta = datetime.utcnow() + timedelta(seconds=120)
             # TODO: This gets executed too early
-            # check_if_has_paid.apply_async(args=(order.order_id, registration.registration_id), countdown=120)
+            check_if_has_paid.apply_async(args=(order.order_id, registration.registration_id), countdown=120)
 
         registration_serializer = RegistrationSerializer(
             registration, context={"user": registration.user}

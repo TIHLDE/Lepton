@@ -61,7 +61,7 @@ app.conf.update(
     task_always_eager=False
 )
 
-# app.conf.task_always_eager = False
+app.conf.task_always_eager = False
 
 
 @app.task(bind=True, base=BaseTask)

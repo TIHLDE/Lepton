@@ -4,9 +4,10 @@ from django.conf import settings
 from app.payment.util.payment_utils import get_new_access_token
 import requests
 
-def vipps_callback(request):
+def vipps_callback(request, order_id):
     try:
-        order_id = request["orderId"]
+        # order_id = request["order_id"]
+        print(order_id)
         access_token = get_new_access_token()[1]
         url = f"https://apitest.vipps.no/ecomm/v2/payments/{order_id}/details"
         headers = {
