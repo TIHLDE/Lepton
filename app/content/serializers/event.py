@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from datetime import datetime, timedelta
 
 from dry_rest_permissions.generics import DRYPermissionsField
 from sentry_sdk import capture_exception
@@ -147,7 +148,7 @@ class EventCreateAndUpdateSerializer(BaseModelSerializer):
         event = super().create(validated_data)
 
         self.set_priority_pools(event, priority_pools_data)
-
+        
         if paid_information_data:
             self.set_paid_information(event, paid_information_data)
 
@@ -158,10 +159,10 @@ class EventCreateAndUpdateSerializer(BaseModelSerializer):
         paid_information_data = validated_data.pop("paid_information", None)
 
         event = super().update(instance, validated_data)
-
         if priority_pools_data:
             self.update_priority_pools(event, priority_pools_data)
         if paid_information_data:
+            print(paid_information_data)
             self.update_paid_information(event, paid_information_data)
 
         event.save()
@@ -173,6 +174,7 @@ class EventCreateAndUpdateSerializer(BaseModelSerializer):
     
     def update_paid_information(self, event, paid_information_data):
         event.paid_information.price = paid_information_data["price"]
+        event.paid_information.paytime = paid_information_data["paytime"]
         event.paid_information.save()
 
     @staticmethod
