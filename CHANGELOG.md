@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+- ✨ **emoji** Nyheter og tøddel kan nå ha reaksjoner
 - ✨ **Spørreskjemaer** NOK medlemmer kan lage spørreskjema.
 - ⚡ **Bruker** Nå kan ikke HS lenger endre eller slette brukere. 
 - ⚡ **Mails** Nå logger vi på eposttjeneren kun en gang per batch med epost som sendes.
