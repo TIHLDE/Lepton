@@ -4,7 +4,7 @@ from django.conf import settings
 from app.payment.util.payment_utils import get_new_access_token
 import requests
 
-def vipps_callback(request, order_id):
+def vipps_callback(_request, order_id):
     try:
         # order_id = request["order_id"]
         print(order_id)

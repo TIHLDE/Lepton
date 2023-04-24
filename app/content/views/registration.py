@@ -9,6 +9,7 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 
 from app.celery import app
+from app.payment.views.vipps_callback import vipps_callback
 from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission, is_admin_user
 from app.common.viewsets import BaseViewSet
@@ -37,6 +38,8 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
 
     def get_queryset(self):
         event_id = self.kwargs.get("event_id", None)
+        order = Order.objects.filter(event=event_id)[0]
+        if order: vipps_callback(None, order.order_id)
         return Registration.objects.filter(event__pk=event_id).select_related("user")
 
     def _is_own_registration(self):
@@ -45,6 +48,7 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
 
     def _is_not_own_registration(self):
         return not self._is_own_registration()
+    
 
     def create(self, request, *args, **kwargs):
         """Register the current user for the given event."""
@@ -90,7 +94,7 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
 
             paytime = event.paid_information.paytime
 
-            paytime = datetime.now() + timedelta(hours=paytime.hour, minutes=paytime.minute, seconds=paytime.second)
+            expire_date = datetime.now() + timedelta(hours=paytime.hour, minutes=paytime.minute, seconds=paytime.second)
 
             # Create Order
             order_id = uuid.uuid4()
@@ -102,14 +106,11 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
                 user=request.user,
                 event=event,
                 payment_link=payment_link,
-                expire_date=paytime
+                expire_date=expire_date
             )
             order.save()
-            # app.conf.task_always_eager = False
-            # print(app.conf.CELERY_ALWAYS_EAGER)
-            # eta = datetime.utcnow() + timedelta(seconds=120)
-            # TODO: This gets executed too early
-            check_if_has_paid.apply_async(args=(order.order_id, registration.registration_id), countdown=120)
+            
+            check_if_has_paid.apply_async(args=(order.order_id, registration.registration_id), countdown=(paytime.hour * 60 + paytime.minute) * 60 + paytime.second)
 
         registration_serializer = RegistrationSerializer(
             registration, context={"user": registration.user}
