@@ -8,6 +8,7 @@ from rest_framework import filters, status
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 
+from app.celery import app
 from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission, is_admin_user
 from app.common.viewsets import BaseViewSet
@@ -88,7 +89,6 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
                 os.environ.update({"PAYMENT_ACCESS_TOKEN_EXPIRES_AT": str(expires_at)})
 
             paytime = event.paid_information.paytime
-            # paytime = datetime.strptime(str(paytime), "%H:%M:%S")
 
             paytime = datetime.now() + timedelta(hours=paytime.hour, minutes=paytime.minute, seconds=paytime.second)
 
@@ -105,9 +105,11 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
                 expire_date=paytime
             )
             order.save()
-
+            # app.conf.task_always_eager = False
+            print(app.conf.CELERY_ALWAYS_EAGER)
+            # eta = datetime.utcnow() + timedelta(seconds=120)
             # TODO: This gets executed too early
-            # check_if_has_paid.apply_async(args=(order.order_id, registration.registration_id), countdown=60)
+            # check_if_has_paid.apply_async(args=(order.order_id, registration.registration_id), countdown=120)
 
         registration_serializer = RegistrationSerializer(
             registration, context={"user": registration.user}
