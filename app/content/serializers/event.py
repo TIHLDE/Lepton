@@ -157,13 +157,26 @@ class EventCreateAndUpdateSerializer(BaseModelSerializer):
     def update(self, instance, validated_data):
         priority_pools_data = validated_data.pop("priority_pools", None)
         paid_information_data = validated_data.pop("paid_information", None)
-
         event = super().update(instance, validated_data)
+
+        if paid_information_data and not event.is_paid_event:
+            PaidEvent.objects.create(
+                    event=event,
+                    price=paid_information_data["price"],
+                    paytime=paid_information_data["paytime"]
+                )
+        
+        if event.is_paid_event and not paid_information_data:
+            paid_event = PaidEvent.objects.get(event=event)
+            if paid_event: paid_event.delete()
+
+        if paid_information_data:
+            self.update_paid_information(event, paid_information_data)
+
         if priority_pools_data:
             self.update_priority_pools(event, priority_pools_data)
-        if paid_information_data:
-            print(paid_information_data)
-            self.update_paid_information(event, paid_information_data)
+        
+        paid_event = PaidEvent.objects.get(event=event)
 
         event.save()
         return event

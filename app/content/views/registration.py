@@ -94,6 +94,7 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
 
 
             prev_orders = Order.objects.filter(event=event, user=request.user)
+
             has_paid_order = False
 
             for order in prev_orders:
@@ -120,7 +121,7 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
                     expire_date=expire_date
                 )
                 order.save()
-                
+
                 check_if_has_paid.apply_async(args=(order.order_id, registration.registration_id), countdown=(paytime.hour * 60 + paytime.minute) * 60 + paytime.second)
 
         registration_serializer = RegistrationSerializer(

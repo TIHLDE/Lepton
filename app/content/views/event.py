@@ -91,7 +91,6 @@ class EventViewSet(BaseViewSet, ActionMixin):
         """Update the event with the specified pk."""
         try:
             event = self.get_object()
-            print(event)
             self.check_object_permissions(self.request, event)
             serializer = EventCreateAndUpdateSerializer(
                 event, data=request.data, partial=True, context={"request": request}

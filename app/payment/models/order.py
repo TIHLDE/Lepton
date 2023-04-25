@@ -27,7 +27,7 @@ class Order(BaseModel, BasePermissionModel):
 
     class Meta:
         verbose_name_plural = "Orders"
-        ordering = ("-expire_date",)
+        ordering = ("-created_at",)
 
         def __str__(self):
             return f"{self.order_id} {self.user} {self.event} {self.status} {self.expire_date}"

@@ -13,5 +13,5 @@ router.register("payment", OrderViewSet, basename="payment")
 
 urlpatterns = [
     re_path(r"", include(router.urls)),
-    path("/v2/payment/<str:order_id>", vipps_callback)
+    path("v2/payment/<str:order_id>", vipps_callback)
 ]
