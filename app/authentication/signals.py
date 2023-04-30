@@ -13,7 +13,7 @@ def set_user_info_and_groups(sender, instance: User, created, **kwargs):
     if kwargs.get("raw") or not created:
         return
 
-    feide_username, name, study_programs = get_user_information(instance.user_id) # Return example: [('BIDATA', 2020), ...]
+    feide_username, name, email, study_programs = get_user_information(instance.user_id) # Return example: [('BIDATA', 2020), ...]
 
     if feide_username:
         instance.feide_id = feide_username
@@ -22,7 +22,10 @@ def set_user_info_and_groups(sender, instance: User, created, **kwargs):
         instance.first_name = name.split()[0]
         instance.last_name = " ".join(name.split()[1:])
 
-    if feide_username or name:
+    if email:
+        instance.email = email
+
+    if feide_username or name or email:
         instance.save()
 
     # For every program reported by Feide, try to add user groups.

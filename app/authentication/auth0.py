@@ -9,7 +9,7 @@ def get_user_information(user_id):
     """
     Gets zipped study programs + start years, name and Feide username from Auth0 given the user_id.
 
-    Example: "olanord", "Ola Nordmann", [('BIDATA', '2020')].
+    Example: "olanord", "Ola Nordmann", "olanord@stud.ntnu.no", [('BIDATA', '2020')].
     """
     token_manager = ManagementTokenManager()
 
@@ -18,16 +18,17 @@ def get_user_information(user_id):
         headers={"Authorization": f"Bearer {token_manager.get_token()}"},
     ).json()
 
+    feide_username = response["nickname"]
+    name = response["name"]
+    email = response["email"]
+
     # Example format: ['fc:fs:fs:kull:ntnu.no:BIDATA:2020H']
     metadata = response["app_metadata"]["programs"]
 
     programs = [p.split(":")[5] for p in metadata]
     years = [p.split(":")[6][:4] for p in metadata]
 
-    name = response["name"]
-    feide_username = response["nickname"]
-
-    return feide_username, name, zip(programs, years)
+    return feide_username, name, email, zip(programs, years)
 
 
 class Singleton(type):
