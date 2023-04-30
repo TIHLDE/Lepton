@@ -15,4 +15,9 @@ class Migration(migrations.Migration):
             name='user_id',
             field=models.CharField(max_length=255, primary_key=True, serialize=False),
         ),
+        migrations.AddField(
+            model_name='user',
+            name='feide_id',
+            field=models.CharField(max_length=64, null=True),
+        ),
     ]

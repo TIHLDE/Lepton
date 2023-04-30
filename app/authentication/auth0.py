@@ -3,13 +3,13 @@ import time
 import requests
 
 from app.constants import AUTH0_CLIENT_ID, AUTH0_CLIENT_SECRET, AUTH0_DOMAIN
+    
 
-
-def get_user_study_programs(user_id):
+def get_user_information(user_id):
     """
-    Gets zipped study programs and start years from Auth0 given the user_id.
+    Gets zipped study programs + start years, name and Feide username from Auth0 given the user_id.
 
-    Example: [('BIDATA', '2020')].
+    Example: "olanord", "Ola Nordmann", [('BIDATA', '2020')].
     """
     token_manager = ManagementTokenManager()
 
@@ -24,7 +24,10 @@ def get_user_study_programs(user_id):
     programs = [p.split(":")[5] for p in metadata]
     years = [p.split(":")[6][:4] for p in metadata]
 
-    return zip(programs, years)
+    name = response["name"]
+    feide_username = response["nickname"]
+
+    return feide_username, name, zip(programs, years)
 
 
 class Singleton(type):

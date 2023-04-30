@@ -5,7 +5,7 @@ from rest_framework import filters, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from app.authentication.auth0 import get_user_study_programs
+from app.authentication.auth0 import get_user_information
 from app.badge.models import Badge, UserBadge
 from app.badge.serializers import BadgeSerializer, UserBadgeSerializer
 from app.common.enums import Groups, GroupType

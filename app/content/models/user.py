@@ -56,6 +56,7 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
     read_access = [Groups.TIHLDE]
 
     user_id = models.CharField(max_length=255, primary_key=True)
+    feide_id = models.CharField(max_length=64, null=True)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
 

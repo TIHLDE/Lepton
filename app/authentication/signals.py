@@ -2,18 +2,28 @@ from app.content.models.user import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from app.authentication.auth0 import get_user_study_programs
+from app.authentication.auth0 import get_user_information, get_user_information
 from app.common.enums import Groups
 from app.group.models.group import Group
 from app.group.models.membership import Membership
 
 @receiver(post_save, sender=User)
-def set_user_groups(sender, instance: User, created, **kwargs):
-    # Only run this when the user if first created.
-    if not created:
+def set_user_info_and_groups(sender, instance: User, created, **kwargs):
+    # Only run this when the user if first created and if not loading data
+    if kwargs.get("raw") or not created:
         return
 
-    study_programs = get_user_study_programs(instance.user_id) # Return example: [('BIDATA', 2020), ...]
+    feide_username, name, study_programs = get_user_information(instance.user_id) # Return example: [('BIDATA', 2020), ...]
+
+    if feide_username:
+        instance.feide_id = feide_username
+
+    if name:
+        instance.first_name = name.split()[0]
+        instance.last_name = " ".join(name.split()[1:])
+
+    if feide_username or name:
+        instance.save()
 
     # For every program reported by Feide, try to add user groups.
     for program in study_programs:
