@@ -1,4 +1,5 @@
 import os
+from app.constants import AUTH0_AUDIENCE, AUTH0_DOMAIN
 
 import sentry_sdk
 from corsheaders.defaults import default_headers
@@ -71,20 +72,22 @@ MIDDLEWARE = [
     # Django Cors Headers
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
+
     # Base Middleware
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
-    "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "django.contrib.auth.middleware.RemoteUserMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django.middleware.locale.LocaleMiddleware",
+
+    # Auth0 Middleware
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.auth.middleware.RemoteUserMiddleware",
 ]
 
-# Django rest framework
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "rest_framework.schemas.coreapi.AutoSchema",
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
@@ -100,16 +103,16 @@ REST_FRAMEWORK = {
 # Auth0 Authentication
 AUTH_USER_MODEL = "content.User"
 AUTHENTICATION_BACKENDS = [
-    "django.contrib.auth.backends.ModelBackend",
     "django.contrib.auth.backends.RemoteUserBackend",
+    "django.contrib.auth.backends.ModelBackend",
 ]
 
 JWT_AUTH = {
-    "JWT_PAYLOAD_GET_USERNAME_HANDLER": "app.authentication.utils.get_userid_from_decoded_jwt",
+    "JWT_PAYLOAD_GET_USERNAME_HANDLER": "app.authentication.utils.authenticate_user_with_decoded_jwt",
     "JWT_DECODE_HANDLER": "app.authentication.utils.decode_jwt",
     "JWT_ALGORITHM": "RS256",
-    "JWT_AUDIENCE": "https://dev-api.tihlde.org",
-    "JWT_ISSUER": "https://tihlde-dev.eu.auth0.com/",
+    "JWT_AUDIENCE": AUTH0_AUDIENCE,
+    "JWT_ISSUER": AUTH0_DOMAIN,
     "JWT_AUTH_HEADER_PREFIX": "Bearer",
 }
 
@@ -135,7 +138,6 @@ TEMPLATES = [
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
@@ -161,7 +163,6 @@ EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_PASSWORD") or "8b1a00e838d6b7"
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
-
 LANGUAGE_CODE = "nb-no"
 TIME_ZONE = "Europe/Oslo"
 USE_I18N = True

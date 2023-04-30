@@ -38,7 +38,7 @@ def decode_jwt(token):
     )
 
 
-def get_userid_from_decoded_jwt(payload):
+def authenticate_user_with_decoded_jwt(payload):
     user_id = payload.get("sub")
     authenticate(remote_user=user_id)
 
@@ -46,6 +46,6 @@ def get_userid_from_decoded_jwt(payload):
 
 
 def get_user_from_request(request):
-    user_id = get_userid_from_decoded_jwt(decode_jwt(get_jwt_from_request(request)))
+    user_id = authenticate_user_with_decoded_jwt(decode_jwt(get_jwt_from_request(request)))
 
     return User.objects.get(user_id=user_id)
