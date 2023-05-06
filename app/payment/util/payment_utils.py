@@ -5,19 +5,18 @@ from django.conf import settings
 import requests
 
 # TODO : Try removing cookie from headers
-TOKEN_URL = "https://apitest.vipps.no/accessToken/get"
+TOKEN_URL = settings.VIPPS_TOKEN_URL
 TOKEN_HEADERS = {
     "client_id": settings.VIPPS_CLIENT_ID,
     "client_secret": settings.VIPPS_CLIENT_SECRET,
     "Ocp-Apim-Subscription-Key": settings.VIPPS_SUBSCRIPTION_KEY,
     "Merchant-Serial-Number": settings.VIPPS_MERCHANT_SERIAL_NUMBER,
-    "Cookie": "fpc=AqiUsXVZL3NFr4JO1-F_-NRQ2zIJAQAAAEukedsOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
+    "Cookie": settings.VIPPS_COOKIE,
 }
 
 
 def get_new_access_token():
     response = requests.post(TOKEN_URL, headers=TOKEN_HEADERS).json()
-    # TODO: Remove this print statement
     return (response["expires_on"], response["access_token"])
 
 
@@ -26,7 +25,7 @@ def initiate_payment(amount, order_id, event_name, access_token):
     Initiate a payment with Vipps
     amount: Amount to pay in Øre (100 NOK = 10000)
     """
-    url = "https://apitest.vipps.no/ecomm/v2/payments/"
+    url = settings.VIPPS_ORDER_URL
     payload = json.dumps(
         {
             "merchantInfo": {
@@ -47,12 +46,11 @@ def initiate_payment(amount, order_id, event_name, access_token):
         "Ocp-Apim-Subscription-Key": settings.VIPPS_SUBSCRIPTION_KEY,
         "Authorization": "Bearer " + access_token,
         "Merchant-Serial-Number": settings.VIPPS_MERCHANT_SERIAL_NUMBER,
-        "Cookie": "fpc=AqiUsXVZL3NFr4JO1-F_-NRQ2zIJAQAAAGhUfNsOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
+        "Cookie": settings.VIPPS_COOKIE,
     }
     response = requests.post(url, headers=headers, data=payload)
 
     if response.status_code != 200:
-        print(response.text)
         raise Exception("Could not initiate payment")
 
     return response.json()

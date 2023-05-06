@@ -176,8 +176,6 @@ class EventCreateAndUpdateSerializer(BaseModelSerializer):
         if priority_pools_data:
             self.update_priority_pools(event, priority_pools_data)
         
-        paid_event = PaidEvent.objects.get(event=event)
-
         event.save()
         return event
 

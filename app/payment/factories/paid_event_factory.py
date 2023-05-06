@@ -2,7 +2,7 @@ import random
 
 import factory
 from factory.django import DjangoModelFactory
-from datetime import time
+from datetime import time, datetime, timedelta
 from app.content.factories.event_factory import EventFactory
 from app.payment.models.paid_event import PaidEvent
 
@@ -13,4 +13,4 @@ class PaidEventFactory(DjangoModelFactory):
 
     price = random.randint(0, 1000)
     event = factory.SubFactory(EventFactory)
-    paytime = time(hour=1)
+    paytime = datetime.now() + timedelta(hours=0, minutes=1)
