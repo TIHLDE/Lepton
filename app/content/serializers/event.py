@@ -1,5 +1,6 @@
-from rest_framework import serializers
 from datetime import datetime, timedelta
+
+from rest_framework import serializers
 
 from dry_rest_permissions.generics import DRYPermissionsField
 from sentry_sdk import capture_exception
@@ -148,7 +149,7 @@ class EventCreateAndUpdateSerializer(BaseModelSerializer):
         event = super().create(validated_data)
 
         self.set_priority_pools(event, priority_pools_data)
-        
+
         if paid_information_data:
             self.set_paid_information(event, paid_information_data)
 
@@ -161,28 +162,29 @@ class EventCreateAndUpdateSerializer(BaseModelSerializer):
 
         if paid_information_data and not event.is_paid_event:
             PaidEvent.objects.create(
-                    event=event,
-                    price=paid_information_data["price"],
-                    paytime=paid_information_data["paytime"]
-                )
-        
+                event=event,
+                price=paid_information_data["price"],
+                paytime=paid_information_data["paytime"],
+            )
+
         if event.is_paid_event and not paid_information_data:
             paid_event = PaidEvent.objects.get(event=event)
-            if paid_event: paid_event.delete()
+            if paid_event:
+                paid_event.delete()
 
         if paid_information_data:
             self.update_paid_information(event, paid_information_data)
 
         if priority_pools_data:
             self.update_priority_pools(event, priority_pools_data)
-        
+
         event.save()
         return event
 
     def update_priority_pools(self, event, priority_pools_data):
         event.priority_pools.all().delete()
         self.set_priority_pools(event, priority_pools_data)
-    
+
     def update_paid_information(self, event, paid_information_data):
         event.paid_information.price = paid_information_data["price"]
         event.paid_information.paytime = paid_information_data["paytime"]
@@ -199,7 +201,9 @@ class EventCreateAndUpdateSerializer(BaseModelSerializer):
     def set_paid_information(event, paid_information_data):
         price = paid_information_data.get("price")
         paytime = paid_information_data.get("paytime")
-        paid_information = PaidEvent.objects.create(event=event, price=price, paytime=paytime)
+        paid_information = PaidEvent.objects.create(
+            event=event, price=price, paytime=paytime
+        )
         paid_information.save()
 
 

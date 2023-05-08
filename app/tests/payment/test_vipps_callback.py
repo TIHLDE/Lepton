@@ -1,10 +1,12 @@
+from rest_framework import status
+
 import pytest
+
 from app.payment.factories.order_factory import OrderFactory
 from app.payment.factories.paid_event_factory import PaidEventFactory
 from app.payment.models.order import Order
-from app.payment.views.vipps_callback import vipps_callback, force_payment
+from app.payment.views.vipps_callback import force_payment, vipps_callback
 from app.util.test_utils import get_api_client
-from rest_framework import status
 
 API_EVENT_BASE_URL = "/events/"
 
@@ -12,11 +14,13 @@ API_EVENT_BASE_URL = "/events/"
 def _get_registration_url(event):
     return f"{API_EVENT_BASE_URL}{event.pk}/registrations/"
 
+
 def _get_registration_post_data(user, event):
     return {
         "user_id": user.user_id,
         "event": event.pk,
     }
+
 
 # these tests can not be tested because of celery
 
@@ -53,7 +57,3 @@ def _get_registration_post_data(user, event):
 #     json, status_code = force_payment(order.order_id)
 #     print(status_code)
 #     print(json)
-
-
-
-    

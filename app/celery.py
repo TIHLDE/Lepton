@@ -58,8 +58,9 @@ app.conf.update(
     result_serializer="json",
     timezone=settings.TIME_ZONE,
     enable_utc=True,
-    task_always_eager=False
+    task_always_eager=False,
 )
+
 
 @app.task(bind=True, base=BaseTask)
 def debug_task(self, *args, **kwargs):

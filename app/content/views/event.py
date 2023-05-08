@@ -1,4 +1,5 @@
 from datetime import time
+
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
@@ -30,8 +31,8 @@ from app.content.serializers import (
     PublicRegistrationSerializer,
 )
 from app.group.models.group import Group
-from app.payment.models.paid_event import PaidEvent
 from app.payment.models.order import Order
+from app.payment.models.paid_event import PaidEvent
 from app.util.utils import midday, now, yesterday
 
 
@@ -113,7 +114,11 @@ class EventViewSet(BaseViewSet, ActionMixin):
             )
 
     def create(self, request, *args, **kwargs):
-        if "is_paid_event" in request.data and request.data["is_paid_event"] and "paid_information" not in request.data:
+        if (
+            "is_paid_event" in request.data
+            and request.data["is_paid_event"]
+            and "paid_information" not in request.data
+        ):
             request.data["paid_information"] = {}
             request.data["paid_information"]["price"] = 0.00
             request.data["paid_information"]["paytime"] = time(second=0)

@@ -1,8 +1,11 @@
-from app.payment.models.order import Order
-from app.payment.enums import OrderStatus
 from django.conf import settings
-from app.payment.util.payment_utils import get_new_access_token
+
 import requests
+
+from app.payment.enums import OrderStatus
+from app.payment.models.order import Order
+from app.payment.util.payment_utils import get_new_access_token
+
 
 def vipps_callback(_request, order_id):
     try:
@@ -24,6 +27,7 @@ def vipps_callback(_request, order_id):
         return status
     except Exception as e:
         print(e)
+
 
 def force_payment(order_id):
     try:

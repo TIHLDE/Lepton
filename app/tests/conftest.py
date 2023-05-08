@@ -100,6 +100,7 @@ def paid_event():
 def group():
     return GroupFactory()
 
+
 @pytest.fixture()
 def membership():
     return MembershipFactory(membership_type=MembershipType.MEMBER)

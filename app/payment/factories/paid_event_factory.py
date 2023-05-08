@@ -1,8 +1,9 @@
 import random
+from datetime import datetime, time, timedelta
 
 import factory
 from factory.django import DjangoModelFactory
-from datetime import time, datetime, timedelta
+
 from app.content.factories.event_factory import EventFactory
 from app.payment.models.paid_event import PaidEvent
 

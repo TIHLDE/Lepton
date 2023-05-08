@@ -1,7 +1,6 @@
 import os
 import uuid
 from datetime import datetime, timedelta
-from app.payment.tasks import check_if_has_paid
 
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status
@@ -9,7 +8,6 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 
 from app.celery import app
-from app.payment.views.vipps_callback import vipps_callback
 from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission, is_admin_user
 from app.common.viewsets import BaseViewSet
@@ -18,12 +16,14 @@ from app.content.filters.registration import RegistrationFilter
 from app.content.mixins import APIRegistrationErrorsMixin
 from app.content.models import Event, Registration
 from app.content.serializers import RegistrationSerializer
-from app.payment.models.order import Order
 from app.payment.enums import OrderStatus
+from app.payment.models.order import Order
+from app.payment.tasks import check_if_has_paid
 from app.payment.util.payment_utils import (
     get_new_access_token,
     initiate_payment,
 )
+from app.payment.views.vipps_callback import vipps_callback
 
 
 class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
@@ -39,7 +39,8 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
     def get_queryset(self):
         event_id = self.kwargs.get("event_id", None)
         order = Order.objects.filter(event=event_id)
-        if order: vipps_callback(None, order[0].order_id)
+        if order:
+            vipps_callback(None, order[0].order_id)
         return Registration.objects.filter(event__pk=event_id).select_related("user")
 
     def _is_own_registration(self):
@@ -48,7 +49,6 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
 
     def _is_not_own_registration(self):
         return not self._is_own_registration()
-    
 
     def create(self, request, *args, **kwargs):
         """Register the current user for the given event."""
@@ -87,25 +87,32 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
         if event.is_paid_event:
             access_token = os.environ.get("PAYMENT_ACCESS_TOKEN")
             expires_at = os.environ.get("PAYMENT_ACCESS_TOKEN_EXPIRES_AT")
-            if not access_token or datetime.now() >= datetime.fromtimestamp(int(expires_at)):
+            if not access_token or datetime.now() >= datetime.fromtimestamp(
+                int(expires_at)
+            ):
                 (expires_at, access_token) = get_new_access_token()
                 os.environ.update({"PAYMENT_ACCESS_TOKEN": access_token})
                 os.environ.update({"PAYMENT_ACCESS_TOKEN_EXPIRES_AT": str(expires_at)})
-
 
             prev_orders = Order.objects.filter(event=event, user=request.user)
             has_paid_order = False
 
             for order in prev_orders:
-                if order.status == OrderStatus.CAPTURE or order.status == OrderStatus.RESERVE or order.status == OrderStatus.SALE:
+                if (
+                    order.status == OrderStatus.CAPTURE
+                    or order.status == OrderStatus.RESERVE
+                    or order.status == OrderStatus.SALE
+                ):
                     has_paid_order = True
                     break
 
             if not has_paid_order:
-            
+
                 paytime = event.paid_information.paytime
 
-                expire_date = datetime.now() + timedelta(hours=paytime.hour, minutes=paytime.minute, seconds=paytime.second)
+                expire_date = datetime.now() + timedelta(
+                    hours=paytime.hour, minutes=paytime.minute, seconds=paytime.second
+                )
 
                 # Create Order
                 order_id = uuid.uuid4()
@@ -117,11 +124,15 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
                     user=request.user,
                     event=event,
                     payment_link=payment_link,
-                    expire_date=expire_date
+                    expire_date=expire_date,
                 )
                 order.save()
-                
-                check_if_has_paid.apply_async(args=(order.order_id, registration.registration_id), countdown=(paytime.hour * 60 + paytime.minute) * 60 + paytime.second)
+
+                check_if_has_paid.apply_async(
+                    args=(order.order_id, registration.registration_id),
+                    countdown=(paytime.hour * 60 + paytime.minute) * 60
+                    + paytime.second,
+                )
 
         registration_serializer = RegistrationSerializer(
             registration, context={"user": registration.user}

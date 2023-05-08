@@ -1,4 +1,3 @@
-from app.payment.serializers.order import OrderSerializer
 from rest_framework import serializers
 
 from app.common.serializers import BaseModelSerializer
@@ -8,8 +7,9 @@ from app.content.serializers.user import (
     UserListSerializer,
 )
 from app.forms.enums import EventFormType
-from app.payment.enums import OrderStatus
 from app.forms.serializers.submission import SubmissionInRegistrationSerializer
+from app.payment.enums import OrderStatus
+from app.payment.serializers.order import OrderSerializer
 
 
 class RegistrationSerializer(BaseModelSerializer):
@@ -31,7 +31,7 @@ class RegistrationSerializer(BaseModelSerializer):
             "survey_submission",
             "has_unanswered_evaluation",
             "order",
-            "has_paid_order"
+            "has_paid_order",
         )
 
     def get_survey_submission(self, obj):
@@ -50,10 +50,14 @@ class RegistrationSerializer(BaseModelSerializer):
 
     def get_has_paid_order(self, obj):
         for order in obj.event.orders.filter(user=obj.user):
-            if order.status == OrderStatus.CAPTURE or order.status == OrderStatus.RESERVE or order.status == OrderStatus.SALE:
+            if (
+                order.status == OrderStatus.CAPTURE
+                or order.status == OrderStatus.RESERVE
+                or order.status == OrderStatus.SALE
+            ):
                 return True
-    
-    
+
+
 class PublicRegistrationSerializer(BaseModelSerializer):
     user_info = serializers.SerializerMethodField()
 

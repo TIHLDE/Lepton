@@ -7,14 +7,14 @@ import pytest
 from app.common.enums import AdminGroup, GroupType, MembershipType
 from app.content.factories import EventFactory, RegistrationFactory, UserFactory
 from app.content.factories.priority_pool_factory import PriorityPoolFactory
+from app.content.models.registration import Registration
 from app.forms.enums import EventFormType
 from app.forms.tests.form_factories import EventFormFactory, SubmissionFactory
 from app.group.factories import GroupFactory
+from app.payment.enums import OrderStatus
+from app.payment.models.order import Order
 from app.util.test_utils import add_user_to_group_with_name, get_api_client
 from app.util.utils import now
-from app.payment.models.order import Order
-from app.payment.enums import OrderStatus
-from app.content.models.registration import Registration
 
 API_EVENT_BASE_URL = "/events/"
 
@@ -628,7 +628,7 @@ def test_delete_own_registration_as_member(member):
 #     data = _get_registration_post_data(user=member, event=event)
 #     post_url = _get_registration_url(event=event)
 #     post_response = client.post(post_url, data=data)
-    
+
 #     assert post_response.status_code == 201
 
 #     print(post_response.data)
@@ -646,6 +646,7 @@ def test_delete_own_registration_as_member(member):
 
 #     # assert response.status_code == status.HTTP_200_OK
 #     # assert order.status == OrderStatus.CANCEL
+
 
 @pytest.mark.django_db
 def test_delete_another_registration_as_member(member, user):

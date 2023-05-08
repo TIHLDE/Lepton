@@ -7,22 +7,29 @@ import pytest
 from app.common.enums import GroupType
 from app.content.models.event import Event
 from app.group.models.group import Group
-from app.payment.models.paid_event import PaidEvent
-from app.payment.models.order import Order
 from app.payment.factories.paid_event_factory import PaidEventFactory
-from app.util.test_utils import (
-    get_api_client,
-)
+from app.payment.models.order import Order
+from app.payment.models.paid_event import PaidEvent
+from app.util.test_utils import get_api_client
 
 API_EVENTS_BASE_URL = "/events/"
+
 
 def _get_registration_url(event):
     return f"{API_EVENTS_BASE_URL}{event.pk}/registrations/"
 
+
 def get_events_url_detail(event=None):
     return f"{API_EVENTS_BASE_URL}{event.pk}/"
 
-def get_paid_event_data(title="New Title", location="New Location", organizer=None, price=100.00, paytime="01:00:00"):
+
+def get_paid_event_data(
+    title="New Title",
+    location="New Location",
+    organizer=None,
+    price=100.00,
+    paytime="01:00:00",
+):
     start_date = timezone.now() + timedelta(days=10)
     end_date = timezone.now() + timedelta(days=11)
     data = {
@@ -31,20 +38,19 @@ def get_paid_event_data(title="New Title", location="New Location", organizer=No
         "start_date": start_date,
         "end_date": end_date,
         "is_paid_event": True,
-        "paid_information": {
-            "price": price,
-            "paytime": paytime
-        },
+        "paid_information": {"price": price, "paytime": paytime},
     }
     if organizer:
         data["organizer"] = organizer
     return data
+
 
 def _get_registration_post_data(user, event):
     return {
         "user_id": user.user_id,
         "event": event.pk,
     }
+
 
 def get_paid_event_without_price_data(
     title="New Title", location="New Location", organizer=None
@@ -109,10 +115,8 @@ def test_create_paid_event_without_price_as_admin(admin_user):
     assert response.status_code == 201
     assert created_event.is_paid_event
     assert paid_event_information.price == 0.00
-    assert (
-        float(response.data["paid_information"]["price"])
-        == 0.00
-    )
+    assert float(response.data["paid_information"]["price"]) == 0.00
+
 
 @pytest.mark.django_db
 def test_update_paid_event_as_admin(admin_user):
