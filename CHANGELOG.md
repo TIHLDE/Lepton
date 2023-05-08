@@ -18,6 +18,11 @@
 - ⚡ **Mails** Nå logger vi på eposttjeneren kun en gang per batch med epost som sendes.
 - 🦟 **Bøter** Nå skal bilder på bøter ikke lengre forsvinne.
 
+
+## Versjon 2023.05.08
+
+- ✨ **Betalte arrangementer med Vipps betaling**. Det kan nå opprettes arrangementer som krever betaling for å melde seg på. Denne betalingen betales via Vipps.
+
 ## Versjon 2022.10.13
 
 - 🦟 **Galleri**. Problem hvor galleri ble duplisert er fikset.
