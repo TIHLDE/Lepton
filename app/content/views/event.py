@@ -31,7 +31,6 @@ from app.content.serializers import (
     PublicRegistrationSerializer,
 )
 from app.group.models.group import Group
-from app.payment.models.order import Order
 from app.payment.models.paid_event import PaidEvent
 from app.util.utils import midday, now, yesterday
 
@@ -142,7 +141,6 @@ class EventViewSet(BaseViewSet, ActionMixin):
         if event.is_paid_event:
             paid_event = PaidEvent.objects.get(event=kwargs["pk"])
             paid_event.delete()
-            orders = Order.objects.filter(event=kwargs["pk"])
 
         super().destroy(request, *args, **kwargs)
         return Response(

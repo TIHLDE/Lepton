@@ -1,14 +1,11 @@
-from datetime import time, timedelta
-
-from django.utils import timezone
-
 import pytest
 
+from datetime import timedelta
+from django.utils import timezone
 from app.common.enums import GroupType
 from app.content.models.event import Event
 from app.group.models.group import Group
 from app.payment.factories.paid_event_factory import PaidEventFactory
-from app.payment.models.order import Order
 from app.payment.models.paid_event import PaidEvent
 from app.util.test_utils import get_api_client
 

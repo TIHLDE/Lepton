@@ -1,15 +1,3 @@
-from datetime import time
-from time import sleep
-
-from rest_framework import status
-
-import pytest
-
-from app.content.models.registration import Registration
-from app.payment.factories.paid_event_factory import PaidEventFactory
-from app.payment.models.order import Order
-from app.util.test_utils import get_api_client
-
 API_EVENT_BASE_URL = "/events/"
 API_PAYMENT_BASE_URL = "/payment/"
 

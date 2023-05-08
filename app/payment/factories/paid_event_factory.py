@@ -1,5 +1,5 @@
 import random
-from datetime import datetime, time, timedelta
+from datetime import datetime, timedelta
 
 import factory
 from factory.django import DjangoModelFactory

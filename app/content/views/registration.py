@@ -7,7 +7,6 @@ from rest_framework import filters, status
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 
-from app.celery import app
 from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission, is_admin_user
 from app.common.viewsets import BaseViewSet
