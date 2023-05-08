@@ -61,9 +61,6 @@ app.conf.update(
     task_always_eager=False
 )
 
-app.conf.task_always_eager = False
-
-
 @app.task(bind=True, base=BaseTask)
 def debug_task(self, *args, **kwargs):
     from app.util.utils import now
