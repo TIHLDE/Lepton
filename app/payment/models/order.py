@@ -17,8 +17,8 @@ class Order(BaseModel, BasePermissionModel):
     order_id = models.UUIDField(
         auto_created=True, default=uuid.uuid4, primary_key=True, serialize=False
     )
-    user = models.ForeignKey(User, on_delete=models.PROTECT, related_name="orders")
-    event = models.ForeignKey(Event, on_delete=models.PROTECT, related_name="orders")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="orders")
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name="orders")
     status = models.CharField(
         choices=OrderStatus.choices, default=OrderStatus.INITIATE, max_length=16
     )

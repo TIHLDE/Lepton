@@ -138,8 +138,6 @@ class EventViewSet(BaseViewSet, ActionMixin):
             paid_event = PaidEvent.objects.get(event=kwargs["pk"])
             paid_event.delete()
             orders = Order.objects.filter(event=kwargs["pk"])
-            if len(orders): 
-                for order in orders: order.delete()
 
         super().destroy(request, *args, **kwargs)
         return Response(
