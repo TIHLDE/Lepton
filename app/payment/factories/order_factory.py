@@ -1,4 +1,5 @@
 import random
+
 import factory
 from factory.django import DjangoModelFactory
 

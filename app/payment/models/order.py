@@ -1,5 +1,4 @@
 import uuid
-from datetime import timedelta
 
 from django.db import models
 
@@ -22,7 +21,7 @@ class Order(BaseModel, BasePermissionModel):
     status = models.CharField(
         choices=OrderStatus.choices, default=OrderStatus.INITIATE, max_length=16
     )
-    expire_date = models.DateTimeField(default=now() + timedelta(minutes=60))
+    expire_date = models.DateTimeField()
     payment_link = models.URLField(max_length=2000)
 
     class Meta:

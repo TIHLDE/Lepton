@@ -1,7 +1,9 @@
+from datetime import timedelta
+
+from django.utils import timezone
+
 import pytest
 
-from datetime import timedelta
-from django.utils import timezone
 from app.common.enums import GroupType
 from app.content.models.event import Event
 from app.group.models.group import Group
