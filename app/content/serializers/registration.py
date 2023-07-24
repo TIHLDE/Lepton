@@ -42,10 +42,9 @@ class RegistrationSerializer(BaseModelSerializer):
         return obj.user.has_unanswered_evaluations_for(obj.event)
 
     def get_order(self, obj):
-        orders = obj.event.orders.filter(user=obj.user)
-        if len(orders):
-            # TODO write test for this that 0 is the lates order.
-            return OrderSerializer(orders[0]).data
+        order = obj.event.orders.filter(user=obj.user).first()
+        if order:
+            return OrderSerializer(order).data
         return None
 
     def get_has_paid_order(self, obj):

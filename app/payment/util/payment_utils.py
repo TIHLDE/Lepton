@@ -4,14 +4,12 @@ from django.conf import settings
 
 import requests
 
-# TODO : Try removing cookie from headers
 TOKEN_URL = settings.VIPPS_TOKEN_URL
 TOKEN_HEADERS = {
     "client_id": settings.VIPPS_CLIENT_ID,
     "client_secret": settings.VIPPS_CLIENT_SECRET,
     "Ocp-Apim-Subscription-Key": settings.VIPPS_SUBSCRIPTION_KEY,
-    "Merchant-Serial-Number": settings.VIPPS_MERCHANT_SERIAL_NUMBER,
-    "Cookie": settings.VIPPS_COOKIE,
+    "Merchant-Serial-Number": settings.VIPPS_MERCHANT_SERIAL_NUMBER
 }
 
 

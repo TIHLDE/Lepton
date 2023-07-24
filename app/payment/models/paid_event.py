@@ -10,7 +10,7 @@ class PaidEvent(BaseModel):
 
     event = models.OneToOneField(
         Event,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name="paid_information",
         primary_key=True,
     )

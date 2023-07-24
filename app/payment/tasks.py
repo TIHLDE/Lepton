@@ -4,6 +4,7 @@ from app.payment.enums import OrderStatus
 from app.payment.models.order import Order
 from app.payment.views.vipps_callback import vipps_callback
 from app.util.tasks import BaseTask
+from sentry_sdk import capture_exception
 
 
 @app.task(bind=True, base=BaseTask)
@@ -19,5 +20,5 @@ def check_if_has_paid(self, order_id, registration_id):
         ):
             Registration.objects.filter(registration_id=registration_id).delete()
 
-    except Exception as e:
-        print(e)
+    except Order.DoesNotExist as order_not_exist:
+        capture_exception(order_not_exist)

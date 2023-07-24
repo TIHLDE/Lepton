@@ -1,10 +1,11 @@
-from django.conf import settings
-
 import requests
-
+from django.conf import settings
 from app.payment.models.order import Order
 from app.payment.util.payment_utils import get_new_access_token
-
+from app.payment.exceptions import (
+    VippsCallbackInternalServerException,
+    VippsForcePaymentException
+)
 
 def vipps_callback(_request, order_id):
     try:
@@ -14,8 +15,7 @@ def vipps_callback(_request, order_id):
             "Content-Type": "application/json",
             "Ocp-Apim-Subscription-Key": settings.VIPPS_SUBSCRIPTION_KEY,
             "Authorization": "Bearer " + access_token,
-            "Merchant-Serial-Number": settings.VIPPS_MERCHANT_SERIAL_NUMBER,
-            "Cookie": settings.VIPPS_COOKIE,
+            "Merchant-Serial-Number": settings.VIPPS_MERCHANT_SERIAL_NUMBER
         }
         res = requests.get(url, headers=headers)
         json = res.json()
@@ -24,8 +24,8 @@ def vipps_callback(_request, order_id):
         order.status = status
         order.save()
         return status
-    except Exception as e:
-        print(e)
+    except Exception:
+        raise VippsCallbackInternalServerException()
 
 
 def force_payment(order_id):
@@ -36,13 +36,12 @@ def force_payment(order_id):
             "Content-Type": "application/json",
             "Ocp-Apim-Subscription-Key": settings.VIPPS_SUBSCRIPTION_KEY,
             "Authorization": "Bearer " + access_token,
-            "Merchant-Serial-Number": settings.VIPPS_MERCHANT_SERIAL_NUMBER,
-            "Cookie": settings.VIPPS_COOKIE,
+            "Merchant-Serial-Number": settings.VIPPS_MERCHANT_SERIAL_NUMBER
         }
 
         res = requests.post(url, headers=headers)
         status_code = res.status_code
         json = res.json()
         return (json, status_code)
-    except Exception as e:
-        print(e)
+    except Exception:
+        raise VippsForcePaymentException()

@@ -1,5 +1,3 @@
-from datetime import time
-
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
@@ -90,10 +88,15 @@ class EventViewSet(BaseViewSet, ActionMixin):
     def update(self, request, pk):
         """Update the event with the specified pk."""
         try:
+            data = request.data
+
+            if not data["is_paid_event"]:
+                data["paid_information"] = {}
+
             event = self.get_object()
             self.check_object_permissions(self.request, event)
             serializer = EventCreateAndUpdateSerializer(
-                event, data=request.data, partial=True, context={"request": request}
+                event, data=data, partial=True, context={"request": request}
             )
 
             if serializer.is_valid():
@@ -113,23 +116,14 @@ class EventViewSet(BaseViewSet, ActionMixin):
             )
 
     def create(self, request, *args, **kwargs):
-        if (
-            "is_paid_event" in request.data
-            and request.data["is_paid_event"]
-            and "paid_information" not in request.data
-        ):
-            request.data["paid_information"] = {}
-            request.data["paid_information"]["price"] = 0.00
-            request.data["paid_information"]["paytime"] = time(second=0)
-
+        data = request.data
         serializer = EventCreateAndUpdateSerializer(
-            data=request.data, context={"request": request}
+            data=data, context={"request": request}
         )
 
         if serializer.is_valid():
             event = super().perform_create(serializer)
             serializer = EventSerializer(event, context={"request": request})
-
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(

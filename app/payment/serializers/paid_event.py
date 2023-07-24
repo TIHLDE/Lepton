@@ -12,3 +12,7 @@ class PaidEventCreateSerializer(BaseModelSerializer):
     class Meta:
         model = PaidEvent
         fields = ("price", "paytime")
+        extra_kwargs = {
+            "price": {"required": False},
+            "paytime": {"required": False}
+        }

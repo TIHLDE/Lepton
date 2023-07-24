@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from rest_framework import serializers
 
 from dry_rest_permissions.generics import DRYPermissionsField
@@ -23,7 +24,7 @@ class EventSerializer(serializers.ModelSerializer):
     survey = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
     organizer = SimpleGroupSerializer(read_only=True)
     permissions = DRYPermissionsField(actions=["write", "read"], object_only=True)
-    paid_information = serializers.SerializerMethodField(required=False)
+    paid_information = serializers.SerializerMethodField(required=False, allow_null=True)
 
     class Meta:
         model = Event
@@ -59,7 +60,10 @@ class EventSerializer(serializers.ModelSerializer):
         )
 
     def get_paid_information(self, obj):
-        paid_event = PaidEvent.objects.filter(event=obj).first()
+        if not obj.is_paid_event:
+            return None
+
+        paid_event = PaidEvent.objects.get(event=obj)
         if paid_event:
             return PaidEventCreateSerializer(paid_event).data
         return None
@@ -138,17 +142,20 @@ class EventCreateAndUpdateSerializer(BaseModelSerializer):
             "title",
             "priority_pools",
             "paid_information",
+            "is_paid_event"
         )
+
+    def to_internal_value(self, data):
+        data.setdefault("paid_information", {})
+        return super().to_internal_value(data)
 
     def create(self, validated_data):
         priority_pools_data = validated_data.pop("priority_pools", [])
         paid_information_data = validated_data.pop("paid_information", None)
-
         event = super().create(validated_data)
-
         self.set_priority_pools(event, priority_pools_data)
 
-        if paid_information_data:
+        if len(paid_information_data):
             self.set_paid_information(event, paid_information_data)
 
         return event
@@ -157,7 +164,6 @@ class EventCreateAndUpdateSerializer(BaseModelSerializer):
         priority_pools_data = validated_data.pop("priority_pools", None)
         paid_information_data = validated_data.pop("paid_information", None)
         event = super().update(instance, validated_data)
-
         if paid_information_data and not event.is_paid_event:
             PaidEvent.objects.create(
                 event=event,
@@ -165,12 +171,13 @@ class EventCreateAndUpdateSerializer(BaseModelSerializer):
                 paytime=paid_information_data["paytime"],
             )
 
-        if event.is_paid_event and not paid_information_data:
+        if event.is_paid_event and not len(paid_information_data):
             paid_event = PaidEvent.objects.get(event=event)
             if paid_event:
                 paid_event.delete()
+                event.paid_information = None
 
-        if paid_information_data:
+        if len(paid_information_data):
             self.update_paid_information(event, paid_information_data)
 
         if priority_pools_data:

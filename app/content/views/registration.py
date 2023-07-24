@@ -1,7 +1,3 @@
-import os
-import uuid
-from datetime import datetime, timedelta
-
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status
 from rest_framework.exceptions import PermissionDenied
@@ -15,13 +11,8 @@ from app.content.filters.registration import RegistrationFilter
 from app.content.mixins import APIRegistrationErrorsMixin
 from app.content.models import Event, Registration
 from app.content.serializers import RegistrationSerializer
-from app.payment.enums import OrderStatus
+from app.content.util.event_utils import create_payment_order
 from app.payment.models.order import Order
-from app.payment.tasks import check_if_has_paid
-from app.payment.util.payment_utils import (
-    get_new_access_token,
-    initiate_payment,
-)
 from app.payment.views.vipps_callback import vipps_callback
 
 
@@ -37,9 +28,9 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
 
     def get_queryset(self):
         event_id = self.kwargs.get("event_id", None)
-        order = Order.objects.filter(event=event_id)
+        order = Order.objects.filter(event=event_id).first()
         if order:
-            vipps_callback(None, order[0].order_id)
+            vipps_callback(None, order.order_id)
         return Registration.objects.filter(event__pk=event_id).select_related("user")
 
     def _is_own_registration(self):
@@ -64,10 +55,6 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
 
         request.data["allow_photo"] = request.user.allows_photo_by_default
 
-        # remove payment information to allow serializer to create instance
-        # request.data.pop("is_paid_event", None)
-        # request.data.pop("paid_information", None)
-
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
@@ -78,60 +65,7 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
             serializer, event=event, user=request.user
         )
 
-        # Create order if event is a paid event
-        # Check if we have access token
-        # If not fetch access token
-        # Inlcude payment link in Serializer
-
-        if event.is_paid_event:
-            access_token = os.environ.get("PAYMENT_ACCESS_TOKEN")
-            expires_at = os.environ.get("PAYMENT_ACCESS_TOKEN_EXPIRES_AT")
-            if not access_token or datetime.now() >= datetime.fromtimestamp(
-                int(expires_at)
-            ):
-                (expires_at, access_token) = get_new_access_token()
-                os.environ.update({"PAYMENT_ACCESS_TOKEN": access_token})
-                os.environ.update({"PAYMENT_ACCESS_TOKEN_EXPIRES_AT": str(expires_at)})
-
-            prev_orders = Order.objects.filter(event=event, user=request.user)
-            has_paid_order = False
-
-            for order in prev_orders:
-                if (
-                    order.status == OrderStatus.CAPTURE
-                    or order.status == OrderStatus.RESERVE
-                    or order.status == OrderStatus.SALE
-                ):
-                    has_paid_order = True
-                    break
-
-            if not has_paid_order:
-
-                paytime = event.paid_information.paytime
-
-                expire_date = datetime.now() + timedelta(
-                    hours=paytime.hour, minutes=paytime.minute, seconds=paytime.second
-                )
-
-                # Create Order
-                order_id = uuid.uuid4()
-                amount = int(event.paid_information.price * 100)
-                res = initiate_payment(amount, str(order_id), event.title, access_token)
-                payment_link = res["url"]
-                order = Order.objects.create(
-                    order_id=order_id,
-                    user=request.user,
-                    event=event,
-                    payment_link=payment_link,
-                    expire_date=expire_date,
-                )
-                order.save()
-
-                check_if_has_paid.apply_async(
-                    args=(order.order_id, registration.registration_id),
-                    countdown=(paytime.hour * 60 + paytime.minute) * 60
-                    + paytime.second,
-                )
+        create_payment_order(event, request, registration)
 
         registration_serializer = RegistrationSerializer(
             registration, context={"user": registration.user}

@@ -1,4 +1,5 @@
 from datetime import timedelta
+from app.payment.enums import OrderStatus
 
 from rest_framework import status
 
@@ -12,6 +13,8 @@ from app.forms.tests.form_factories import EventFormFactory, SubmissionFactory
 from app.group.factories import GroupFactory
 from app.util.test_utils import add_user_to_group_with_name, get_api_client
 from app.util.utils import now
+from app.payment.models.order import Order
+from app.content.models.registration import Registration
 
 API_EVENT_BASE_URL = "/events/"
 
@@ -126,7 +129,7 @@ def test_list_as_member_in_organizer(permission_test_util):
     client = get_api_client(user=member)
     url = _get_registration_url(registration.event)
     response = client.get(url)
-    print(response)
+    
     assert response.status_code == expected_status_code
     if expected_status_code == 200:
         assert len(response.json()) > 0
@@ -633,16 +636,16 @@ def test_delete_own_registration_as_member(member):
 #     registrations = Registration.objects.all()
 #     print(registrations)
 #     print(registration)
-#     # order = Order.objects.filter(event=event, user=member)[0]
+#     order = Order.objects.filter(event=event, user=member)[0]
 
-#     # assert order.status == OrderStatus.INITIATE
+#     assert order.status == OrderStatus.INITIATE
 
-#     # url = _get_registration_detail_url(registration)
-#     # response = client.delete(url)
-#     # order = Order.objects.filter(event=event, user=member)[0]
+#     url = _get_registration_detail_url(registration)
+#     response = client.delete(url)
+#     order = Order.objects.filter(event=event, user=member)[0]
 
-#     # assert response.status_code == status.HTTP_200_OK
-#     # assert order.status == OrderStatus.CANCEL
+#     assert response.status_code == status.HTTP_200_OK
+#     assert order.status == OrderStatus.CANCEL
 
 
 @pytest.mark.django_db
