@@ -1,19 +1,20 @@
 import os
 import uuid
 from datetime import datetime, timedelta
+
 from app.payment.enums import OrderStatus
 from app.payment.models.order import Order
+from app.payment.tasks import check_if_has_paid
 from app.payment.util.payment_utils import (
     get_new_access_token,
     initiate_payment,
 )
-from app.payment.tasks import check_if_has_paid
 
 
-def create_payment_order(event, request, registration): 
+def create_payment_order(event, request, registration):
     """
-        Checks if event is a paid event
-        and creates a new Vipps payment order.
+    Checks if event is a paid event
+    and creates a new Vipps payment order.
     """
 
     if event.is_paid_event:
@@ -61,7 +62,5 @@ def create_payment_order(event, request, registration):
             order.save()
             check_if_has_paid.apply_async(
                 args=(order.order_id, registration.registration_id),
-                countdown=(paytime.hour * 60 + paytime.minute) * 60
-                + paytime.second,
+                countdown=(paytime.hour * 60 + paytime.minute) * 60 + paytime.second,
             )
-

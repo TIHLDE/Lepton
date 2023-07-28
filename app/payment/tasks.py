@@ -1,10 +1,11 @@
+from sentry_sdk import capture_exception
+
 from app.celery import app
 from app.content.models.registration import Registration
 from app.payment.enums import OrderStatus
 from app.payment.models.order import Order
 from app.payment.views.vipps_callback import vipps_callback
 from app.util.tasks import BaseTask
-from sentry_sdk import capture_exception
 
 
 @app.task(bind=True, base=BaseTask)

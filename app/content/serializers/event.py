@@ -1,4 +1,3 @@
-from collections import OrderedDict
 from rest_framework import serializers
 
 from dry_rest_permissions.generics import DRYPermissionsField
@@ -24,7 +23,9 @@ class EventSerializer(serializers.ModelSerializer):
     survey = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
     organizer = SimpleGroupSerializer(read_only=True)
     permissions = DRYPermissionsField(actions=["write", "read"], object_only=True)
-    paid_information = serializers.SerializerMethodField(required=False, allow_null=True)
+    paid_information = serializers.SerializerMethodField(
+        required=False, allow_null=True
+    )
 
     class Meta:
         model = Event
@@ -142,7 +143,7 @@ class EventCreateAndUpdateSerializer(BaseModelSerializer):
             "title",
             "priority_pools",
             "paid_information",
-            "is_paid_event"
+            "is_paid_event",
         )
 
     def to_internal_value(self, data):

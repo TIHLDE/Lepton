@@ -9,7 +9,7 @@ TOKEN_HEADERS = {
     "client_id": settings.VIPPS_CLIENT_ID,
     "client_secret": settings.VIPPS_CLIENT_SECRET,
     "Ocp-Apim-Subscription-Key": settings.VIPPS_SUBSCRIPTION_KEY,
-    "Merchant-Serial-Number": settings.VIPPS_MERCHANT_SERIAL_NUMBER
+    "Merchant-Serial-Number": settings.VIPPS_MERCHANT_SERIAL_NUMBER,
 }
 
 

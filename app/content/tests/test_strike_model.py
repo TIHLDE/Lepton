@@ -36,7 +36,6 @@ def test_strike_is_active_or_not_with_freeze_through_winter_holiday(
     mock_now.return_value = today
     strike = StrikeFactory.build(created_at=created_at)
 
-
     assert strike.active == expected_result
 
 

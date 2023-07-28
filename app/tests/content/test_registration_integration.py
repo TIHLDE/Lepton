@@ -1,5 +1,4 @@
 from datetime import timedelta
-from app.payment.enums import OrderStatus
 
 from rest_framework import status
 
@@ -13,8 +12,6 @@ from app.forms.tests.form_factories import EventFormFactory, SubmissionFactory
 from app.group.factories import GroupFactory
 from app.util.test_utils import add_user_to_group_with_name, get_api_client
 from app.util.utils import now
-from app.payment.models.order import Order
-from app.content.models.registration import Registration
 
 API_EVENT_BASE_URL = "/events/"
 
@@ -129,7 +126,7 @@ def test_list_as_member_in_organizer(permission_test_util):
     client = get_api_client(user=member)
     url = _get_registration_url(registration.event)
     response = client.get(url)
-    
+
     assert response.status_code == expected_status_code
     if expected_status_code == 200:
         assert len(response.json()) > 0

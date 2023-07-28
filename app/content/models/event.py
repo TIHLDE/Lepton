@@ -84,7 +84,9 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
 
     @property
     def is_paid_event(self):
-        return hasattr(self, "paid_information") and (self.paid_information is not None or not len(self.paid_information))
+        return hasattr(self, "paid_information") and (
+            self.paid_information is not None or not len(self.paid_information)
+        )
 
     @property
     def list_count(self):

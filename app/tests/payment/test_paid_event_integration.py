@@ -9,7 +9,6 @@ from app.content.models.event import Event
 from app.group.models.group import Group
 from app.payment.factories.paid_event_factory import PaidEventFactory
 from app.payment.models.paid_event import PaidEvent
-from app.payment.models.order import Order
 from app.util.test_utils import get_api_client
 
 API_EVENTS_BASE_URL = "/events/"

@@ -1,8 +1,8 @@
 from django.urls import include, path, re_path
 from rest_framework import routers
+
 from app.payment.views.order import OrderViewSet
 from app.payment.views.vipps_callback import vipps_callback
-
 
 router = routers.DefaultRouter()
 
