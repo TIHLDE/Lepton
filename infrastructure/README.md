@@ -12,6 +12,27 @@ First of all, IaC (infrastructre as code) is a way of managing infrastructure in
 
 Now with that out of the way, let's get into the actual infrastructure. We use Azure as our cloud provider. This means that we use Azure to host our infrastructure. This documentation will not go into detail about how Azure works, but it will explain the basics of how we use it.
 
+### You need
+- Terraform cli
+- Azure cli
+
+### Contributing to the infrastructure
+First of all, you need to create a service principal to use with terraform authentication to Azure. Look at the section "Setup from scratch" to see how to do this. 
+
+We have multiple enviroments for our infra, `dev` and `pro`. Dev is used for development and correspond to api-dev.tihlde.org and pro is used for production and correspond to api.tihlde.org. When you are working on the infrastructure, you should always work in the `dev` environment. This is done by running the following command:
+
+```bash
+terraform workspace select dev
+terraform init
+```
+
+After selecting the correct enviroment, you must have the correct `terraform.tfvars` file in the root of the project. This file contains the variables that are used to configure the infrastructure. Ask some of the other developers for the correct values. When you have the correct values, you can run `terraform plan` to see what will be changed. 
+
+> ⚠️ Don't run "terraform apply" locally. This will change the infrastructure in the cloud. This task should be done by Github Actions. Keep this as a rule of thumb.
+
+When you are done making changes, you can commit and push your changes to Github. This will trigger a Github Action that will run terraform plan. Inspect this plan to see if everything looks good. If it does, you can merge it to master. This will trigger another Github Action that will run terraform apply. This will change the infrastructure in the cloud.
+
+
 ### Setup from scratch
 If you are setting up the infrastructure from scratch, you will need to do a few things. First of all, you will need to setup a storage account to store the terraform state. This is done by running the following command ([source](https://learn.microsoft.com/en-us/azure/developer/terraform/store-state-in-azure-storage?tabs=azure-cli)):
 
@@ -75,11 +96,10 @@ Remember to run `source ~/.bashrc` after you have added these values.😉
 > - We added the values of the service principal to the `~/.bashrc` file
 
 
-We are now ready to start working with terraform localy. We want to have a `dev`, `staging` and `prod` environment. This is done by creating terraform workspaces. You can create a workspace by running the following command:
+We are now ready to start working with terraform localy. We want to have a `dev` and `prod` environment. This is done by creating terraform workspaces. You can create a workspace by running the following command:
 
 ```bash
 terraform workspace new dev
-terraform workspace new pre
 terraform workspace new pro
 ```
 
