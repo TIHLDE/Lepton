@@ -1,25 +1,43 @@
 resource "azurerm_resource_group" "lepton" {
-  name     = "${var.resource_group_name}-${random_integer.lepton.result}"
-  location = var.resource_group_location
+  name     = "tihlde-${var.enviroment}"
+  location = "northeurope"
 
-  tags = {
-    environment = terraform.workspace
-  }
+  tags = local.common_tags
 }
 
-resource "random_integer" "lepton" {
-  min = 10000
-  max = 99999
+resource "random_password" "database_password" {
+  length           = 18
+  special          = true
+  override_special = "!#$%&*()-_=+[]{}<>:?"
 }
 
-resource "random_string" "name" {
-  length  = 8
-  lower   = true
-  numeric = false
+resource "random_string" "database_username" {
+  length  = 16
   special = false
-  upper   = false
+}
+
+resource "random_string" "django_secret" {
+  length  = 32
+  special = true
+}
+
+output "acr_admin_username" {
+  value = azurerm_container_registry.lepton.admin_username
+}
+
+output "acr_admin_password" {
+  value = azurerm_container_registry.lepton.admin_password
+}
+
+output "acr_login_server" {
+  value = azurerm_container_registry.lepton.login_server
 }
 
 locals {
-  database_internal_hostname = "leptondb.mysql.database.azure.com"
+  common_tags = {
+    environment = "${var.enviroment}"
+    workspace   = "${terraform.workspace}"
+    team        = "index"
+    managed_by  = "terraform"
+  }
 }

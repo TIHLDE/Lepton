@@ -39,14 +39,16 @@ If you are setting up the infrastructure from scratch, you will need to do a few
 ```bash
 #!/bin/bash
 RESOURCE_GROUP_NAME=tfstate
-STORAGE_ACCOUNT_NAME=tfstaterandomname # must be globaly unique
+STORAGE_ACCOUNT_NAME=tfstatetihlde # must be globaly unique
 CONTAINER_NAME=tfstate
 
 # Create resource group
-az group create --name $RESOURCE_GROUP_NAME --location eastus
+az group create --name $RESOURCE_GROUP_NAME --location norwayeast
 
 # Create storage account
 az storage account create --resource-group $RESOURCE_GROUP_NAME --name $STORAGE_ACCOUNT_NAME --sku Standard_LRS --encryption-services blob
+
+# Wait for a while... Azure is hella slow
 
 # Create blob container
 az storage container create --name $CONTAINER_NAME --account-name $STORAGE_ACCOUNT_NAME
@@ -70,7 +72,6 @@ The command with output something similar to this:
 {
   "appId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
   "displayName": "martin-terraform",
-  "name": "http://martin-terraform",
   "password": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
   "tenant": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 }

@@ -1,26 +1,57 @@
-variable "resource_group_location" {
+variable "vipps_client_secret" {
+  type      = string
+  sensitive = true
+}
+
+variable "vipps_client_id" {
+  type      = string
+  sensitive = true
+}
+
+variable "vipps_subscription_key" {
+  type      = string
+  sensitive = true
+}
+
+variable "vipps_callback_prefix" {
+  type = string
+}
+
+variable "vipps_fallback_url" {
+  type = string
+}
+
+variable "centry_dsn" {
+  type      = string
+  sensitive = true
+}
+
+variable "email_user" {
+  type = string
+}
+
+variable "email_password" {
+  type      = string
+  sensitive = true
+}
+
+variable "vipps_merchant_serial_number" {
+  type      = string
+  sensitive = true
+}
+
+variable "lepton_api_min_replicas" {
+  type    = number
+  default = 1
+}
+
+variable "lepton_api_max_replicas" {
+  type    = number
+  default = 1
+}
+
+variable "enviroment" {
   type        = string
-  description = "The Azure Region in which all resources in this example should be created."
-  default     = "West Europe"
-}
-
-variable "resource_group_name" {
-  type        = string
-  description = "The name of the resource group in which all resources in this example should be created."
-}
-
-variable "registry_name" {
-  default = "Name of the container registry"
-}
-
-variable "docker_image" {
-  default = "Docker image to deploy"
-}
-
-variable "database_username" {
-  default = "Username for the database"
-}
-
-variable "database_password" {
-  default = "Password for the database"
+  description = "value is either dev or pro"
+  default     = "dev"
 }

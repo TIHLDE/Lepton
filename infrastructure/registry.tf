@@ -1,7 +1,9 @@
 resource "azurerm_container_registry" "lepton" {
-  name                = var.registry_name
+  name                = "leptonregistry${var.enviroment}"
   resource_group_name = azurerm_resource_group.lepton.name
   location            = azurerm_resource_group.lepton.location
-  sku                 = "Premium"
-  admin_enabled       = false
+  sku                 = "Basic"
+  admin_enabled       = true
+
+  tags = local.common_tags
 }
