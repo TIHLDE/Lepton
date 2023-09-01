@@ -99,7 +99,7 @@ class EventListSerializer(serializers.ModelSerializer):
             "closed",
             "image",
             "image_alt",
-            "updated_at",
+            "updated_at"
         ]
 
 
