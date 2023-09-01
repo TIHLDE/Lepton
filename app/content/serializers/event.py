@@ -10,6 +10,7 @@ from app.content.serializers.priority_pool import (
     PriorityPoolCreateSerializer,
     PriorityPoolSerializer,
 )
+from app.content.serializers.user import DefaultUserSerializer
 from app.group.models.group import Group
 from app.group.serializers.group import SimpleGroupSerializer
 
@@ -21,6 +22,7 @@ class EventSerializer(serializers.ModelSerializer):
     survey = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
     organizer = SimpleGroupSerializer(read_only=True)
     permissions = DRYPermissionsField(actions=["write", "read"], object_only=True)
+    contact_person = DefaultUserSerializer(read_only=True, required=False)
 
     class Meta:
         model = Event
@@ -52,6 +54,7 @@ class EventSerializer(serializers.ModelSerializer):
             "enforces_previous_strikes",
             "permissions",
             "priority_pools",
+            "contact_person"
         )
 
     def validate_limit(self, limit):
@@ -126,6 +129,7 @@ class EventCreateAndUpdateSerializer(BaseModelSerializer):
             "start_registration_at",
             "title",
             "priority_pools",
+            "contact_person"
         )
 
     def create(self, validated_data):

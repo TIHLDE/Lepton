@@ -26,7 +26,7 @@ def get_events_url_detail(event=None):
     return f"{API_EVENTS_BASE_URL}{event.pk}/"
 
 
-def get_event_data(title="New Title", location="New Location", organizer=None):
+def get_event_data(title="New Title", location="New Location", organizer=None, contact_person=None):
     start_date = timezone.now() + timedelta(days=10)
     end_date = timezone.now() + timedelta(days=11)
     data = {
@@ -37,6 +37,8 @@ def get_event_data(title="New Title", location="New Location", organizer=None):
     }
     if organizer:
         data["organizer"] = organizer
+    if contact_person:
+        data["contact_person"] = contact_person
     return data
 
 
@@ -280,6 +282,37 @@ def test_create_event_as_admin(permission_test_util):
         else expected_status_code
     )
 
+
+@pytest.mark.django_db
+@permission_params
+def test_create_event_as_admin_with_contact_person(permission_test_util):
+    """
+    HS and Index members should be able to create events no matter which organizer is selected.
+    They should also be able to create events no matter which contact person is selected.
+    Other subgroup members can create events where event.organizer is their group or None.
+    Leaders of committees and interest groups should be able to
+    update events where event.organizer is their group or None.
+    """
+
+    (
+        user,
+        _,
+        new_organizer,
+        _,
+        expected_status_code,
+        _,
+        _,
+    ) = permission_test_util
+
+    client = get_api_client(user=user)
+    data = get_event_data(organizer=new_organizer, contact_person=user.user_id)
+    response = client.post(API_EVENTS_BASE_URL, data)
+
+    assert (
+        response.status_code == 201
+        if expected_status_code == 200
+        else expected_status_code
+    )
 
 @pytest.mark.django_db
 def test_create_event_with_group_priorities_returns_http_201(api_client, admin_user):
