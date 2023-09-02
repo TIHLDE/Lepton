@@ -54,7 +54,7 @@ class EventSerializer(serializers.ModelSerializer):
             "enforces_previous_strikes",
             "permissions",
             "priority_pools",
-            "contact_person"
+            "contact_person",
         )
 
     def validate_limit(self, limit):
@@ -99,7 +99,7 @@ class EventListSerializer(serializers.ModelSerializer):
             "closed",
             "image",
             "image_alt",
-            "updated_at"
+            "updated_at",
         ]
 
 
@@ -129,7 +129,7 @@ class EventCreateAndUpdateSerializer(BaseModelSerializer):
             "start_registration_at",
             "title",
             "priority_pools",
-            "contact_person"
+            "contact_person",
         )
 
     def create(self, validated_data):

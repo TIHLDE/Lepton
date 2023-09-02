@@ -44,7 +44,7 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
         null=True,
         default=None,
         on_delete=models.SET_NULL,
-        related_name="contact_events"
+        related_name="contact_events",
     )
 
     favorite_users = models.ManyToManyField(

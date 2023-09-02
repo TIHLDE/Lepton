@@ -26,7 +26,9 @@ def get_events_url_detail(event=None):
     return f"{API_EVENTS_BASE_URL}{event.pk}/"
 
 
-def get_event_data(title="New Title", location="New Location", organizer=None, contact_person=None):
+def get_event_data(
+    title="New Title", location="New Location", organizer=None, contact_person=None
+):
     start_date = timezone.now() + timedelta(days=10)
     end_date = timezone.now() + timedelta(days=11)
     data = {
@@ -313,6 +315,7 @@ def test_create_event_as_admin_with_contact_person(permission_test_util):
         if expected_status_code == 200
         else expected_status_code
     )
+
 
 @pytest.mark.django_db
 def test_create_event_with_group_priorities_returns_http_201(api_client, admin_user):
