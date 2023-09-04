@@ -144,30 +144,6 @@
     }
 },
 {
-    "model": "authtoken.token",
-    "pk": "606d9b0894c798fa511d85f876fd8611b7109e32",
-    "fields": {
-        "user": "index",
-        "created": "2020-10-01T18:22:57.720Z"
-    }
-},
-{
-    "model": "authtoken.token",
-    "pk": "64e443d5d4eb019b6055bece575d13e32553fb23",
-    "fields": {
-        "user": "eivindste",
-        "created": "2020-10-01T18:58:32.305Z"
-    }
-},
-{
-    "model": "authtoken.token",
-    "pk": "813e9d426d9cfe20b184492b417072aa533d29bc",
-    "fields": {
-        "user": "nok",
-        "created": "2021-03-04T16:59:43.225Z"
-    }
-},
-{
     "model": "communication.notification",
     "pk": 1,
     "fields": {

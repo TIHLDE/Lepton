@@ -25,7 +25,6 @@ urlpatterns = [
     path("", include("app.communication.urls")),
     path("", include("app.content.urls")),
     path("", include("app.group.urls")),
-    path("auth/", include("app.authentication.urls")),
     path("badges/", include("app.badge.urls")),
     path("forms/", include("app.forms.urls")),
     path("galleries/", include("app.gallery.urls")),
