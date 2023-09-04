@@ -26,7 +26,7 @@ class UserNewsReactionViewSet(BaseViewSet):
         emoji = request.data["emoji"]
         if emoji not in allowed_emojis:
             return Response(
-                {"detail": f"'{emoji}' ulovlig emoji for denne nyheten"},
+                {"detail": "Ulovlig emoji for denne nyheten"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         serializer = UserNewsReactionSerializer(
@@ -40,9 +40,9 @@ class UserNewsReactionViewSet(BaseViewSet):
             return Response(
                 {"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST
             )
-        except ValueError as value_error:
+        except ValueError:
             return Response(
-                {"detail": str(value_error)}, status=status.HTTP_400_BAD_REQUEST
+                {"detail": "Noe gikk galt"}, status=status.HTTP_400_BAD_REQUEST
             )
 
     def update(self, request, *args, **kwargs):

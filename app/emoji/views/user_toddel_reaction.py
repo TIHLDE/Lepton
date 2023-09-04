@@ -28,7 +28,7 @@ class UserToddelReactionViewSet(BaseViewSet):
 
         if emoji not in allowed_emojis:
             return Response(
-                {"detail": f"'{emoji}' ulovlig emoji for denne tøddelen"},
+                {"detail": "Ulovlig emoji for denne tøddelen"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         serializer = UserToddelReactionSerializer(
@@ -42,9 +42,9 @@ class UserToddelReactionViewSet(BaseViewSet):
             return Response(
                 {"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST
             )
-        except ValueError as value_error:
+        except ValueError:
             return Response(
-                {"detail": str(value_error)}, status=status.HTTP_400_BAD_REQUEST
+                {"detail": "Noe gikk galt"}, status=status.HTTP_400_BAD_REQUEST
             )
 
     def update(self, request, *args, **kwargs):
