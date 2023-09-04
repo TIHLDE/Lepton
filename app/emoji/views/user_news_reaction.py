@@ -53,7 +53,7 @@ class UserNewsReactionViewSet(BaseViewSet):
 
         if emoji not in allowed_emojis:
             return Response(
-                {"detail": f"'{emoji}' ulovlig emoji for denne nyheten"},
+                {"detail": "Ulovlig emoji for denne nyheten"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 

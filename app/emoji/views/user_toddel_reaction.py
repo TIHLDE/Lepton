@@ -55,7 +55,7 @@ class UserToddelReactionViewSet(BaseViewSet):
 
         if emoji not in allowed_emojis:
             return Response(
-                {"detail": f"'{emoji}' ulovlig emoji for denne tøddelen"},
+                {"detail": "Ulovlig emoji for denne tøddelen"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
