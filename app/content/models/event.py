@@ -38,6 +38,15 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
         related_name="events",
     )
 
+    contact_person = models.ForeignKey(
+        User,
+        blank=True,
+        null=True,
+        default=None,
+        on_delete=models.SET_NULL,
+        related_name="contact_events",
+    )
+
     favorite_users = models.ManyToManyField(
         User, related_name="favorite_events", blank=True
     )
