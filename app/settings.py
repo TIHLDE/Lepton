@@ -284,4 +284,5 @@ DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 CELERY_BROKER_URL = "amqp://guest:guest@rabbitmq:5672"
 if ENVIRONMENT == EnvironmentOptions.LOCAL:
-    CELERY_TASK_ALWAYS_EAGER = False
+    # Change this to False when testing async celery tasks localy
+    CELERY_TASK_ALWAYS_EAGER = True

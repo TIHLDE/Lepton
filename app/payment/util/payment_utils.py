@@ -4,16 +4,19 @@ from django.conf import settings
 
 import requests
 
-TOKEN_URL = settings.VIPPS_TOKEN_URL
-TOKEN_HEADERS = {
-    "client_id": settings.VIPPS_CLIENT_ID,
-    "client_secret": settings.VIPPS_CLIENT_SECRET,
-    "Ocp-Apim-Subscription-Key": settings.VIPPS_SUBSCRIPTION_KEY,
-    "Merchant-Serial-Number": settings.VIPPS_MERCHANT_SERIAL_NUMBER,
-}
-
 
 def get_new_access_token():
+    """
+    Get new access token from Vipps for dealing with payments from Vipps.
+    """
+    TOKEN_URL = settings.VIPPS_TOKEN_URL
+    TOKEN_HEADERS = {
+        "client_id": settings.VIPPS_CLIENT_ID,
+        "client_secret": settings.VIPPS_CLIENT_SECRET,
+        "Ocp-Apim-Subscription-Key": settings.VIPPS_SUBSCRIPTION_KEY,
+        "Merchant-Serial-Number": settings.VIPPS_MERCHANT_SERIAL_NUMBER,
+    }
+
     response = requests.post(TOKEN_URL, headers=TOKEN_HEADERS).json()
     return (response["expires_on"], response["access_token"])
 
