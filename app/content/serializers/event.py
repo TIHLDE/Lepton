@@ -10,6 +10,7 @@ from app.content.serializers.priority_pool import (
     PriorityPoolCreateSerializer,
     PriorityPoolSerializer,
 )
+from app.content.serializers.user import DefaultUserSerializer
 from app.group.models.group import Group
 from app.group.serializers.group import SimpleGroupSerializer
 from app.payment.models.paid_event import PaidEvent
@@ -26,6 +27,7 @@ class EventSerializer(serializers.ModelSerializer):
     paid_information = serializers.SerializerMethodField(
         required=False, allow_null=True
     )
+    contact_person = DefaultUserSerializer(read_only=True, required=False)
 
     class Meta:
         model = Event
@@ -58,6 +60,7 @@ class EventSerializer(serializers.ModelSerializer):
             "permissions",
             "priority_pools",
             "paid_information",
+            "contact_person",
         )
 
     def get_paid_information(self, obj):
@@ -144,6 +147,7 @@ class EventCreateAndUpdateSerializer(BaseModelSerializer):
             "priority_pools",
             "paid_information",
             "is_paid_event",
+            "contact_person",
         )
 
     def to_internal_value(self, data):
