@@ -87,10 +87,6 @@ def test_swap_users_when_event_is_full(
         event=event_with_priority_pool, user=user_in_priority_pool
     )
 
-    print("event.limit")
-    print(event_with_priority_pool.limit)
-    print(event_with_priority_pool.registrations.all())
-
     registration_not_in_priority_pool.refresh_from_db()
 
     assert not registration_in_priority_pool.is_on_wait
@@ -400,7 +396,6 @@ def test_bump_user_from_wait_when_event_is_full_does_not_increments_limit(
     Tests that event limit is not incremented
     when an admin attempts to bump a user up from the wait list when the event is full.
     """
-    print(event_with_priority_pool.registrations.all())
     registration = RegistrationFactory(event=event_with_priority_pool)
     limit = event_with_priority_pool.limit
     registration.is_on_wait = False
