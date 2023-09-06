@@ -12,6 +12,15 @@ class OrderSerializer(BaseModelSerializer):
         fields = ("order_id", "status", "expire_date", "payment_link", "event", "user")
 
 
+class OrderListSerializer(BaseModelSerializer):
+    # TODO: fix this circular import issue so that I can use the event serializer
+    # event = EventSerializer(read_only=True)
+
+    class Meta:
+        model = Order
+        fields = ("status", "user", "event")
+
+
 class OrderUpdateCreateSerializer(BaseModelSerializer):
     user = DefaultUserSerializer(read_only=True)
 

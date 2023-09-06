@@ -1,21 +1,49 @@
-API_EVENT_BASE_URL = "/events/"
-API_PAYMENT_BASE_URL = "/payment/"
+import pytest
+
+from app.util.test_utils import get_api_client
+
+API_PAYMENTS_BASE_URL = "/payment/"
 
 
-def _get_registration_url(event):
-    return f"{API_EVENT_BASE_URL}{event.pk}/registrations/"
+def get_payment_order(order_id):
+    return f"{API_PAYMENTS_BASE_URL}{order_id}/"
 
 
-def _get_order_url():
-    return f"{API_PAYMENT_BASE_URL}order/"
+@pytest.mark.django_db
+def test_list_payment_orders_as_anonymous_user(default_client):
+    """An anonymous user should not be able to list all payment orders."""
+
+    response = default_client.get(API_PAYMENTS_BASE_URL)
+
+    assert response.status_code == 403
 
 
-def _get_registration_post_data(user, event):
-    return {
-        "user_id": user.user_id,
-        "event": event.pk,
-    }
+@pytest.mark.django_db
+def test_list_payment_orders_as_admin_user(admin_user):
+    """An admin user should be able to list all payment orders."""
+
+    client = get_api_client(admin_user)
+    response = client.get(API_PAYMENTS_BASE_URL)
+
+    assert response.status_code == 200
 
 
-def _get_order_data(user, event):
-    return {"user_id": user.user_id, "event": event.pk}
+@pytest.mark.django_db
+def test_get_order_as_anonymous_user(default_client, payment_order):
+    """An anonymous user should not be able to retrieve a spesific order."""
+
+    url = get_payment_order(payment_order.order_id)
+    response = default_client.get(url)
+
+    assert response.status_code == 403
+
+
+@pytest.mark.django_db
+def test_get_order_as_admin_user(admin_user, payment_order):
+    """An admin user should be able to retrieve a spesific order."""
+
+    url = get_payment_order(payment_order.order_id)
+    client = get_api_client(admin_user)
+    response = client.get(url)
+
+    assert response.status_code == 200

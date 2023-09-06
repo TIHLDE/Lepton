@@ -1,4 +1,5 @@
 import random
+import string
 from datetime import timedelta
 
 import factory
@@ -19,3 +20,4 @@ class OrderFactory(DjangoModelFactory):
     event = factory.SubFactory(EventFactory)
     status = random.choice([e.value for e in OrderStatus])
     expire_date = now() + timedelta(hours=1)
+    payment_link = "".join(random.choices(string.ascii_letters, k=36))
