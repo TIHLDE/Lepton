@@ -5,6 +5,7 @@ from sentry_sdk import capture_exception
 
 from app.common.mixins import ActionMixin
 from app.common.viewsets import BaseViewSet
+from app.common.pagination import BasePagination
 from app.payment.models import Order
 from app.payment.serializers import OrderSerializer
 
@@ -12,12 +13,17 @@ from app.payment.serializers import OrderSerializer
 class OrderViewSet(BaseViewSet, ActionMixin):
     serializer_class = OrderSerializer
     queryset = Order.objects.all()
+    search_fields = ["user", "event"]
+    pagination_class = BasePagination
 
     def retrieve(self, request, pk):
+        """
+        Return detailed information about the order with the specified pk.
+        """
         try:
             user = request.query_params.get("user_id")
             event = request.query_params.get("event")
-            order = Order.objects.filter(user=user, event=event)[0]
+            order = Order.objects.get(user=user, event=event)
             serializer = OrderSerializer(
                 order, context={"request": request}, many=False
             )
