@@ -97,6 +97,7 @@ INSTALLED_APPS = [
     "app.forms",
     "app.gallery",
     "app.badge",
+    "app.payment",
 ]
 
 # Django rest framework
@@ -234,6 +235,18 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.environ.get("EMAIL_USER") or "75ecff025dcb39"
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_PASSWORD") or "8b1a00e838d6b7"
 
+# Vipps
+VIPPS_CLIENT_ID = os.environ.get("VIPPS_CLIENT_ID")
+VIPPS_CLIENT_SECRET = os.environ.get("VIPPS_CLIENT_SECRET")
+VIPPS_SUBSCRIPTION_KEY = os.environ.get("VIPPS_SUBSCRIPTION_KEY")
+VIPPS_MERCHANT_SERIAL_NUMBER = os.environ.get("VIPPS_MERCHANT_SERIAL_NUMBER")
+VIPPS_CALLBACK_PREFIX = os.environ.get("VIPPS_CALLBACK_PREFIX")
+VIPPS_FALLBACK = os.environ.get("VIPPS_FALLBACK")
+VIPPS_TOKEN_URL = os.environ.get("VIPPS_TOKEN_URL")
+VIPPS_ORDER_URL = os.environ.get("VIPPS_ORDER_URL")
+VIPPS_FORCE_PAYMENT_URL = os.environ.get("VIPPS_FORCE_PAYMENT_URL")
+VIPPS_COOKIE = os.environ.get("VIPPS_COOKIE")
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
@@ -271,4 +284,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 CELERY_BROKER_URL = "amqp://guest:guest@rabbitmq:5672"
 if ENVIRONMENT == EnvironmentOptions.LOCAL:
+    # Change this to False when testing async celery tasks localy
     CELERY_TASK_ALWAYS_EAGER = True
+
+    

@@ -26,6 +26,7 @@ from app.forms.tests.form_factories import FormFactory, SubmissionFactory
 from app.group.factories import GroupFactory, MembershipFactory
 from app.group.factories.fine_factory import FineFactory
 from app.group.factories.membership_factory import MembershipHistoryFactory
+from app.payment.factories.paid_event_factory import PaidEventFactory
 from app.util.test_utils import add_user_to_group_with_name, get_api_client
 
 
@@ -81,6 +82,12 @@ def member():
 
 
 @pytest.fixture()
+def jubkom_member(member):
+    add_user_to_group_with_name(member, Groups.JUBKOM)
+    return member
+
+
+@pytest.fixture()
 def member_client(member):
     return get_api_client(user=member)
 
@@ -88,6 +95,11 @@ def member_client(member):
 @pytest.fixture()
 def event():
     return EventFactory()
+
+
+@pytest.fixture()
+def paid_event():
+    return PaidEventFactory()
 
 
 @pytest.fixture()
