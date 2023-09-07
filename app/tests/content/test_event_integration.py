@@ -36,6 +36,7 @@ def get_event_data(
         "location": location,
         "start_date": start_date,
         "end_date": end_date,
+        "is_paid_event": False,
     }
     if organizer:
         data["organizer"] = organizer

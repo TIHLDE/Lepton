@@ -13,6 +13,8 @@ from app.content.serializers.priority_pool import (
 from app.content.serializers.user import DefaultUserSerializer
 from app.group.models.group import Group
 from app.group.serializers.group import SimpleGroupSerializer
+from app.payment.models.paid_event import PaidEvent
+from app.payment.serializers.paid_event import PaidEventCreateSerializer
 
 
 class EventSerializer(serializers.ModelSerializer):
@@ -22,6 +24,9 @@ class EventSerializer(serializers.ModelSerializer):
     survey = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
     organizer = SimpleGroupSerializer(read_only=True)
     permissions = DRYPermissionsField(actions=["write", "read"], object_only=True)
+    paid_information = serializers.SerializerMethodField(
+        required=False, allow_null=True
+    )
     contact_person = DefaultUserSerializer(read_only=True, required=False)
 
     class Meta:
@@ -54,8 +59,18 @@ class EventSerializer(serializers.ModelSerializer):
             "enforces_previous_strikes",
             "permissions",
             "priority_pools",
+            "paid_information",
             "contact_person",
         )
+
+    def get_paid_information(self, obj):
+        if not obj.is_paid_event:
+            return None
+
+        paid_event = PaidEvent.objects.get(event=obj)
+        if paid_event:
+            return PaidEventCreateSerializer(paid_event).data
+        return None
 
     def validate_limit(self, limit):
         """
@@ -105,6 +120,7 @@ class EventListSerializer(serializers.ModelSerializer):
 
 class EventCreateAndUpdateSerializer(BaseModelSerializer):
     priority_pools = PriorityPoolCreateSerializer(many=True, required=False)
+    paid_information = PaidEventCreateSerializer(required=False)
 
     class Meta:
         model = Event
@@ -129,22 +145,45 @@ class EventCreateAndUpdateSerializer(BaseModelSerializer):
             "start_registration_at",
             "title",
             "priority_pools",
+            "paid_information",
+            "is_paid_event",
             "contact_person",
         )
 
+    def to_internal_value(self, data):
+        data.setdefault("paid_information", {})
+        return super().to_internal_value(data)
+
     def create(self, validated_data):
         priority_pools_data = validated_data.pop("priority_pools", [])
-
+        paid_information_data = validated_data.pop("paid_information", None)
         event = super().create(validated_data)
-
         self.set_priority_pools(event, priority_pools_data)
+
+        if len(paid_information_data):
+            self.set_paid_information(event, paid_information_data)
 
         return event
 
     def update(self, instance, validated_data):
         priority_pools_data = validated_data.pop("priority_pools", None)
-
+        paid_information_data = validated_data.pop("paid_information", None)
         event = super().update(instance, validated_data)
+        if paid_information_data and not event.is_paid_event:
+            PaidEvent.objects.create(
+                event=event,
+                price=paid_information_data["price"],
+                paytime=paid_information_data["paytime"],
+            )
+
+        if event.is_paid_event and not len(paid_information_data):
+            paid_event = PaidEvent.objects.get(event=event)
+            if paid_event:
+                paid_event.delete()
+                event.paid_information = None
+
+        if len(paid_information_data):
+            self.update_paid_information(event, paid_information_data)
 
         if priority_pools_data:
             self.update_priority_pools(event, priority_pools_data)
@@ -156,12 +195,26 @@ class EventCreateAndUpdateSerializer(BaseModelSerializer):
         event.priority_pools.all().delete()
         self.set_priority_pools(event, priority_pools_data)
 
+    def update_paid_information(self, event, paid_information_data):
+        event.paid_information.price = paid_information_data["price"]
+        event.paid_information.paytime = paid_information_data["paytime"]
+        event.paid_information.save()
+
     @staticmethod
     def set_priority_pools(event, priority_pool_data):
         for priority_pool in priority_pool_data:
             groups = priority_pool.get("groups")
             priority_pool = PriorityPool.objects.create(event=event)
             priority_pool.groups.add(*groups)
+
+    @staticmethod
+    def set_paid_information(event, paid_information_data):
+        price = paid_information_data.get("price")
+        paytime = paid_information_data.get("paytime")
+        paid_information = PaidEvent.objects.create(
+            event=event, price=price, paytime=paytime
+        )
+        paid_information.save()
 
 
 class EventStatisticsSerializer(BaseModelSerializer):
