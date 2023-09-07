@@ -19,7 +19,8 @@ try:
 
     db=MySQLdb.connect(host=db_host,user=db_user,
                   passwd=db_password,db=db_name)
-except MySQLdb._exceptions.OperationalError:
+except MySQLdb._exceptions.OperationalError as e:
+    print(e)
     sys.exit(-1)
 sys.exit(0)
 
