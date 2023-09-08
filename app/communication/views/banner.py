@@ -23,12 +23,12 @@ class BannerFilter(FilterSet):
 
     def filter_isVisible(self, queryset, name, value):
         if value:
-            return queryset.filter(visible_from__lte=now(), visible_until__gte=now())
+            return queryset.filter(is_visible=True)
         return queryset
 
     def filter_isExpired(self, queryset, name, value):
         if value:
-            return queryset.filter(visible_until__lt=now())
+            return queryset.filter(is_expired=True)
         return queryset
 
 
@@ -40,6 +40,13 @@ class BannerViewSet(BaseViewSet):
 
     filter_backends = [DjangoFilterBackend]
     filterset_class = BannerFilter
+
+    def destroy(self, request, *args, **kwargs):
+        super().destroy(request, *args, **kwargs)
+        return Response({"detail": "Banneret ble slettet"}, status=status.HTTP_200_OK)
+
+    def get_queryset(self):
+        return self.queryset.order_by("-visible_from")
 
     @action(
         detail=False,
