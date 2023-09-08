@@ -56,11 +56,11 @@ class Banner(BaseModel, OptionalImage, BasePermissionModel, APIBannerErrorsMixin
             .exclude(id=self.id)
             .exists()
         )
-    
+
     @property
     def is_expired(self):
         return self.visible_until < now()
-    
+
     @property
     def is_visible(self):
         return self.visible_from <= now() <= self.visible_until

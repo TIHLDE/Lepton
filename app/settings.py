@@ -286,5 +286,3 @@ CELERY_BROKER_URL = "amqp://guest:guest@rabbitmq:5672"
 if ENVIRONMENT == EnvironmentOptions.LOCAL:
     # Change this to False when testing async celery tasks localy
     CELERY_TASK_ALWAYS_EAGER = True
-
-    
