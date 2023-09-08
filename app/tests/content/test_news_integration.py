@@ -2,7 +2,7 @@ from rest_framework import status
 
 import pytest
 
-from app.common.enums import AdminGroup
+from app.common.enums import AdminGroup, Groups
 from app.content.factories.news_factory import NewsFactory
 from app.content.factories.user_factory import UserFactory
 from app.util.test_utils import get_api_client
@@ -225,6 +225,7 @@ def test_create_as_member(member, news_post_data):
         (AdminGroup.NOK, status.HTTP_201_CREATED),
         (AdminGroup.SOSIALEN, status.HTTP_201_CREATED),
         (AdminGroup.PROMO, status.HTTP_201_CREATED),
+        (Groups.FONDET, status.HTTP_201_CREATED),
     ],
 )
 def test_create_as_member_of_admin_group(
