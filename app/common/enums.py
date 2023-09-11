@@ -39,8 +39,9 @@ class AdminGroup(ChoiceEnum):
 
 class Groups(ChoiceEnum):
     TIHLDE = "TIHLDE"
-    REDAKSJONEN = "redaksjonen"
     JUBKOM = "JubKom"
+    REDAKSJONEN = "Redaksjonen"
+    FONDET = "Forvaltningsgruppen"
 
 
 class AppModel(ChoiceEnum):
