@@ -8,12 +8,16 @@ from app.content.serializers.user import (
 )
 from app.forms.enums import EventFormType
 from app.forms.serializers.submission import SubmissionInRegistrationSerializer
+from app.payment.enums import OrderStatus
+from app.payment.serializers.order import OrderSerializer
 
 
 class RegistrationSerializer(BaseModelSerializer):
     user_info = UserListSerializer(source="user", read_only=True)
     survey_submission = serializers.SerializerMethodField()
     has_unanswered_evaluation = serializers.SerializerMethodField()
+    order = serializers.SerializerMethodField(required=False)
+    has_paid_order = serializers.SerializerMethodField(required=False)
 
     class Meta:
         model = Registration
@@ -26,6 +30,8 @@ class RegistrationSerializer(BaseModelSerializer):
             "created_at",
             "survey_submission",
             "has_unanswered_evaluation",
+            "order",
+            "has_paid_order",
         )
 
     def get_survey_submission(self, obj):
@@ -34,6 +40,21 @@ class RegistrationSerializer(BaseModelSerializer):
 
     def get_has_unanswered_evaluation(self, obj):
         return obj.user.has_unanswered_evaluations_for(obj.event)
+
+    def get_order(self, obj):
+        order = obj.event.orders.filter(user=obj.user).first()
+        if order:
+            return OrderSerializer(order).data
+        return None
+
+    def get_has_paid_order(self, obj):
+        for order in obj.event.orders.filter(user=obj.user):
+            if (
+                order.status == OrderStatus.CAPTURE
+                or order.status == OrderStatus.RESERVE
+                or order.status == OrderStatus.SALE
+            ):
+                return True
 
 
 class PublicRegistrationSerializer(BaseModelSerializer):

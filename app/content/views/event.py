@@ -29,6 +29,7 @@ from app.content.serializers import (
     PublicRegistrationSerializer,
 )
 from app.group.models.group import Group
+from app.payment.models.paid_event import PaidEvent
 from app.util.utils import midday, now, yesterday
 
 
@@ -87,10 +88,15 @@ class EventViewSet(BaseViewSet, ActionMixin):
     def update(self, request, pk):
         """Update the event with the specified pk."""
         try:
+            data = request.data
+
+            if not data["is_paid_event"]:
+                data["paid_information"] = {}
+
             event = self.get_object()
             self.check_object_permissions(self.request, event)
             serializer = EventCreateAndUpdateSerializer(
-                event, data=request.data, partial=True, context={"request": request}
+                event, data=data, partial=True, context={"request": request}
             )
 
             if serializer.is_valid():
@@ -110,8 +116,9 @@ class EventViewSet(BaseViewSet, ActionMixin):
             )
 
     def create(self, request, *args, **kwargs):
+        data = request.data
         serializer = EventCreateAndUpdateSerializer(
-            data=request.data, context={"request": request}
+            data=data, context={"request": request}
         )
 
         if serializer.is_valid():
@@ -124,6 +131,11 @@ class EventViewSet(BaseViewSet, ActionMixin):
         )
 
     def destroy(self, request, *args, **kwargs):
+        event = Event.objects.get(pk=kwargs["pk"])
+        if event.is_paid_event:
+            paid_event = PaidEvent.objects.get(event=kwargs["pk"])
+            paid_event.delete()
+
         super().destroy(request, *args, **kwargs)
         return Response(
             {"detail": ("Arrangementet ble slettet")}, status=status.HTTP_200_OK

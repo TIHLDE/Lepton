@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.db import models
 
-from app.common.enums import AdminGroup
+from app.common.enums import AdminGroup, Groups
 from app.common.permissions import BasePermissionModel
 from app.util.models import BaseModel, OptionalImage
 
@@ -18,7 +18,7 @@ class News(BaseModel, OptionalImage, BasePermissionModel):
     )
     body = models.TextField()
 
-    write_access = AdminGroup.all()
+    write_access = [*AdminGroup.all(), Groups.FONDET]
 
     class Meta:
         verbose_name_plural = "News"
