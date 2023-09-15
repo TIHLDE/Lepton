@@ -38,6 +38,15 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
         related_name="events",
     )
 
+    contact_person = models.ForeignKey(
+        User,
+        blank=True,
+        null=True,
+        default=None,
+        on_delete=models.SET_NULL,
+        related_name="contact_events",
+    )
+
     favorite_users = models.ManyToManyField(
         User, related_name="favorite_events", blank=True
     )
@@ -81,6 +90,12 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
     @property
     def expired(self):
         return self.end_date <= yesterday()
+
+    @property
+    def is_paid_event(self):
+        return hasattr(self, "paid_information") and (
+            self.paid_information is not None or not len(self.paid_information)
+        )
 
     @property
     def list_count(self):
