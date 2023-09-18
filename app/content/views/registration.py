@@ -1,3 +1,4 @@
+from app.content.tests.test_event_model import registration
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status
 from rest_framework.exceptions import PermissionDenied
