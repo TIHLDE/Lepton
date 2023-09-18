@@ -37,6 +37,8 @@ from app.group.serializers.membership import (
     MembershipHistorySerializer,
     MembershipSerializer,
 )
+from app.payment.models import Order
+from app.payment.views import OrderListSerializer
 from app.util.export_user_data import export_user_data
 from app.util.utils import CaseInsensitiveBooleanQueryParam
 
@@ -283,6 +285,14 @@ class UserViewSet(BaseViewSet, ActionMixin):
         ]
         return self.paginate_response(
             data=events, serializer=EventListSerializer, context={"request": request}
+        )
+    
+    @action(detail=False, methods=["get"], url_path="me/payment_orders")
+    def get_user_payment_orders(self, request, *args, **kwargs):
+        user = self.get_object()
+        payment_orders = Order.objects.filter(user=user)
+        return self.paginate_response(
+            data=payment_orders, serializer=OrderListSerializer, context={"request": request}
         )
 
     @action(detail=False, methods=["get"], url_path="me/forms")
