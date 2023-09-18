@@ -24,6 +24,7 @@ django-ordered-model~=3.6
 djangorestframework==3.13.1
 django-cors-headers
 dj-rest-auth == 2.2.3
+drf-yasg == 1.21.7
 
 #django dry rest permissions
 django-dry-rest-permissions == 1.2.0
