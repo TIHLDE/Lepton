@@ -6,32 +6,35 @@ from sentry_sdk import capture_exception
 
 from app.common.permissions import BasicViewPermission
 from app.common.viewsets import BaseViewSet
-from app.content.models.news import News
-from app.emoji.models.news_emojis import NewsEmojis
-from app.emoji.models.user_news_reaction import UserNewsReaction
-from app.emoji.serializers.user_news_reaction import UserNewsReactionSerializer
+from app.content.models.toddel import Toddel
+from app.emoji.models.toddel_emojis import ToddelEmojis
+from app.emoji.models.user_toddel_reaction_unicode import (
+    UserToddelReactionUnicode,
+)
+from app.emoji.serializers.user_toddel_reaction_unicode import (
+    UserToddelReactionUnicodeSerializer,
+)
 
 
-class UserNewsReactionViewSet(BaseViewSet):
+class UserToddelReactionUnicodeViewSet(BaseViewSet):
 
-    serializer_class = UserNewsReactionSerializer
-    queryset = UserNewsReaction.objects.all()
+    serializer_class = UserToddelReactionUnicodeSerializer
+    queryset = UserToddelReactionUnicode.objects.all()
     permission_classes = [BasicViewPermission]
 
     def create(self, request, *args, **kwargs):
-        news = get_object_or_404(News, id=request.data["news"])
-
+        toddel = get_object_or_404(Toddel, edition=request.data["toddel"])
         try:
-            news_emojis = NewsEmojis.objects.get(news=news)
-            emojis_allowed = news_emojis.emojis_allowed
+            toddel_emojis = ToddelEmojis.objects.get(toddel=toddel)
+            emojis_allowed = toddel_emojis.emojis_allowed
 
             if not emojis_allowed:
                 return Response(
-                    {"detail": "Ulovlig emoji for denne nyheten"},
+                    {"detail": "Ulovlig emoji for denne tøddelen"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            serializer = UserNewsReactionSerializer(
+            serializer = UserToddelReactionUnicodeSerializer(
                 data=request.data, context={"request": request}
             )
             if serializer.is_valid():
@@ -47,22 +50,22 @@ class UserNewsReactionViewSet(BaseViewSet):
             )
 
     def update(self, request, *args, **kwargs):
-        news = get_object_or_404(News, id=request.data["news"])
-
+        toddel = get_object_or_404(Toddel, edition=request.data["toddel"])
         try:
-            news_emojis = NewsEmojis.objects.get(news=news)
-            emojis_allowed = news_emojis.emojis_allowed
+            toddel_emojis = ToddelEmojis.objects.get(toddel=toddel)
+            emojis_allowed = toddel_emojis.emojis_allowed
 
             if not emojis_allowed:
                 return Response(
-                    {"detail": "Ulovlig emoji for denne nyheten"},
+                    {"detail": "Ulovlig emoji for denne tøddelen"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
             reaction = self.get_object()
-            serializer = UserNewsReactionSerializer(
+            serializer = UserToddelReactionUnicodeSerializer(
                 reaction, data=request.data, context={"request": request}
             )
+
             if serializer.is_valid():
                 super().perform_update(serializer)
                 return Response(serializer.data, status=status.HTTP_200_OK)
@@ -70,7 +73,7 @@ class UserNewsReactionViewSet(BaseViewSet):
                 {"detail": "Du har ikke tillatelse til å oppdatere med den emojien"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        except UserNewsReaction.DoesNotExist as reaction_not_exist:
+        except UserToddelReactionUnicode.DoesNotExist as reaction_not_exist:
             capture_exception(reaction_not_exist)
             return Response(
                 {"details": "Reaksjonen ble ikke funnet"},
@@ -79,4 +82,4 @@ class UserNewsReactionViewSet(BaseViewSet):
 
     def destroy(self, request, *args, **kwargs):
         super().destroy(request, *args, **kwargs)
-        return Response({"detail": "Reaksjonen ble slettet"}, status=status.HTTP_200_OK)
+        return Response({"detail": "Reaksjonen ble fjernet"}, status=status.HTTP_200_OK)

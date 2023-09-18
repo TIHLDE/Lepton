@@ -22,19 +22,19 @@ class UserToddelReactionViewSet(BaseViewSet):
 
     def create(self, request, *args, **kwargs):
         toddel = get_object_or_404(Toddel, edition=request.data["toddel"])
-        toddel_emojis = ToddelEmojis.objects.filter(toddel=toddel)
-        allowed_emojis = [t.emoji.id for t in toddel_emojis]
-        emoji = request.data["emoji"]
-
-        if emoji not in allowed_emojis:
-            return Response(
-                {"detail": "Ulovlig emoji for denne tøddelen"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        serializer = UserToddelReactionSerializer(
-            data=request.data, context={"request": request}
-        )
         try:
+            toddel_emojis = ToddelEmojis.objects.get(toddel=toddel)
+            emojis_allowed = toddel_emojis.emojis_allowed
+
+            if not emojis_allowed:
+                return Response(
+                    {"detail": "Ulovlig emoji for denne tøddelen"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            serializer = UserToddelReactionSerializer(
+                data=request.data, context={"request": request}
+            )
             if serializer.is_valid():
                 super().perform_create(serializer)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -49,22 +49,21 @@ class UserToddelReactionViewSet(BaseViewSet):
 
     def update(self, request, *args, **kwargs):
         toddel = get_object_or_404(Toddel, edition=request.data["toddel"])
-        toddel_emojis = ToddelEmojis.objects.filter(toddel=toddel)
-        allowed_emojis = [t.emoji.id for t in toddel_emojis]
-        emoji = request.data["emoji"]
+        try:
+            toddel_emojis = ToddelEmojis.objects.get(toddel=toddel)
+            emojis_allowed = toddel_emojis.emojis_allowed
 
-        if emoji not in allowed_emojis:
-            return Response(
-                {"detail": "Ulovlig emoji for denne tøddelen"},
-                status=status.HTTP_400_BAD_REQUEST,
+            if not emojis_allowed:
+                return Response(
+                    {"detail": "Ulovlig emoji for denne tøddelen"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            reaction = self.get_object()
+            serializer = UserToddelReactionSerializer(
+                reaction, data=request.data, context={"request": request}
             )
 
-        reaction = self.get_object()
-        serializer = UserToddelReactionSerializer(
-            reaction, data=request.data, context={"request": request}
-        )
-
-        try:
             if serializer.is_valid():
                 super().perform_update(serializer)
                 return Response(serializer.data, status=status.HTTP_200_OK)

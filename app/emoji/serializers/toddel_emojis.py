@@ -5,4 +5,4 @@ from app.emoji.models.toddel_emojis import ToddelEmojis
 class ToddelEmojisSerializer(BaseModelSerializer):
     class Meta:
         model = ToddelEmojis
-        fields = ("toddel", "emoji")
+        fields = ("toddel", "emojis_allowed")

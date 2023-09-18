@@ -8,14 +8,16 @@ from app.common.permissions import BasicViewPermission
 from app.common.viewsets import BaseViewSet
 from app.content.models.news import News
 from app.emoji.models.news_emojis import NewsEmojis
-from app.emoji.models.user_news_reaction import UserNewsReaction
-from app.emoji.serializers.user_news_reaction import UserNewsReactionSerializer
+from app.emoji.models.user_news_reaction_unicode import UserNewsReactionUnicode
+from app.emoji.serializers.user_news_reaction_unicode import (
+    UserNewsReactionUnicodeSerializer,
+)
 
 
-class UserNewsReactionViewSet(BaseViewSet):
+class UserNewsReactionUnicodeViewSet(BaseViewSet):
 
-    serializer_class = UserNewsReactionSerializer
-    queryset = UserNewsReaction.objects.all()
+    serializer_class = UserNewsReactionUnicodeSerializer
+    queryset = UserNewsReactionUnicode.objects.all()
     permission_classes = [BasicViewPermission]
 
     def create(self, request, *args, **kwargs):
@@ -31,7 +33,7 @@ class UserNewsReactionViewSet(BaseViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            serializer = UserNewsReactionSerializer(
+            serializer = UserNewsReactionUnicodeSerializer(
                 data=request.data, context={"request": request}
             )
             if serializer.is_valid():
@@ -60,7 +62,7 @@ class UserNewsReactionViewSet(BaseViewSet):
                 )
 
             reaction = self.get_object()
-            serializer = UserNewsReactionSerializer(
+            serializer = UserNewsReactionUnicodeSerializer(
                 reaction, data=request.data, context={"request": request}
             )
             if serializer.is_valid():
@@ -70,7 +72,7 @@ class UserNewsReactionViewSet(BaseViewSet):
                 {"detail": "Du har ikke tillatelse til å oppdatere med den emojien"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        except UserNewsReaction.DoesNotExist as reaction_not_exist:
+        except UserNewsReactionUnicode.DoesNotExist as reaction_not_exist:
             capture_exception(reaction_not_exist)
             return Response(
                 {"details": "Reaksjonen ble ikke funnet"},
