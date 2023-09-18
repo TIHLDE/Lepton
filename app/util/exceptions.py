@@ -9,7 +9,6 @@ from rest_framework.views import exception_handler as drf_exception_handler
 
 logger = logging.getLogger(__name__)
 
-
 def exception_handler(exc, context):
     response = drf_exception_handler(exc, context)
 
@@ -22,7 +21,7 @@ def exception_handler(exc, context):
     if response:
         log_api_error(response, exc)
     else:
-        logger.error(f"Unhandled request exception: {traceback(exc)}")
+        logger.error(traceback.format_exc())
 
     if not settings.DEBUG and not response:
         response = Response(
