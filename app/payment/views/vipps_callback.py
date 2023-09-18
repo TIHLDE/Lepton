@@ -2,10 +2,6 @@ from django.conf import settings
 
 import requests
 
-from app.payment.exceptions import (
-    VippsCallbackInternalServerException,
-    VippsForcePaymentException,
-)
 from app.payment.models.order import Order
 from app.payment.util.payment_utils import get_new_access_token
 
