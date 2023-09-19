@@ -32,20 +32,14 @@ class OrderUpdateCreateSerializer(BaseModelSerializer):
 
 
 class OrderEventListSerializer(BaseModelSerializer):
-
     class Meta:
         model = Event
-        fields = (
-            "title",
-        )
+        fields = ("title",)
+
 
 class OrderListSerializer(BaseModelSerializer):
     event = OrderEventListSerializer(read_only=True)
 
     class Meta:
         model = Order
-        fields = (
-            "status",
-            "user",
-            "event"
-        )
+        fields = ("order_id", "status", "payment_link", "user", "event")
