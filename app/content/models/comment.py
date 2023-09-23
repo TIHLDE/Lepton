@@ -1,10 +1,10 @@
 from django.db import models
 
-from app.util.models import BaseModel
-from app.common.permissions import BasePermissionModel
 from app.common.enums import Groups
-from app.content.models.user import User
+from app.common.permissions import BasePermissionModel
 from app.content.models.event import Event
+from app.content.models.user import User
+from app.util.models import BaseModel
 
 
 class Comment(BaseModel, BasePermissionModel):
@@ -18,15 +18,7 @@ class Comment(BaseModel, BasePermissionModel):
         null=True,
         default=None,
         on_delete=models.SET_NULL,
-        related_name="comments"
-    )
-    event = models.ForeignKey(   
-        Event,
-        blank=True,
-        null=True,
-        default=None,
-        on_delete=models.SET_NULL,
-        related_name="comments"
+        related_name="comments",
     )
     parent = models.ForeignKey(
         "self",
@@ -35,7 +27,16 @@ class Comment(BaseModel, BasePermissionModel):
         default=None,
         on_delete=models.SET_NULL,
         related_name="children",
-        verbose_name="parent"
+        verbose_name="parent",
+    )
+
+    event = models.ForeignKey(
+        Event,
+        blank=True,
+        null=True,
+        default=None,
+        on_delete=models.SET_NULL,
+        related_name="comments",
     )
 
     class Meta:
@@ -43,6 +44,3 @@ class Comment(BaseModel, BasePermissionModel):
 
     def __str__(self):
         return f"Comment by {self.user.first_name} {self.user.last_name} - Created at {self.created_at}"
-    
-
-        

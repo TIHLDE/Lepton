@@ -6,6 +6,7 @@ from sentry_sdk import capture_exception
 from app.common.enums import GroupType
 from app.common.serializers import BaseModelSerializer
 from app.content.models import Event, PriorityPool
+from app.content.serializers.comment import CommentSerializer
 from app.content.serializers.priority_pool import (
     PriorityPoolCreateSerializer,
     PriorityPoolSerializer,
@@ -28,6 +29,7 @@ class EventSerializer(serializers.ModelSerializer):
         required=False, allow_null=True
     )
     contact_person = DefaultUserSerializer(read_only=True, required=False)
+    comments = CommentSerializer(many=True, required=False)
 
     class Meta:
         model = Event
@@ -62,6 +64,7 @@ class EventSerializer(serializers.ModelSerializer):
             "paid_information",
             "is_paid_event",
             "contact_person",
+            "comments",
         )
 
     def get_paid_information(self, obj):

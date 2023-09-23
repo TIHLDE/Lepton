@@ -253,5 +253,11 @@ class LogEntryAdmin(admin.ModelAdmin):
 
 @admin.register(models.Comment)
 class CommentAdmin(admin.ModelAdmin):
-    pass
+    search_fields = [
+        "user__first_name",
+        "user__last_name",
+    ]
 
+    list_filter = [
+        "event",
+    ]
