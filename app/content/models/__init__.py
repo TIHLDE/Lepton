@@ -13,3 +13,4 @@ from app.content.models.strike import (
     get_strike_description,
     get_strike_strike_size,
 )
+from app.content.models.comment import Comment
