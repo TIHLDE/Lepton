@@ -289,6 +289,12 @@ class UserViewSet(BaseViewSet, ActionMixin):
     @action(detail=False, methods=["get"], url_path="me/payment_orders")
     def get_user_payment_orders(self, request, *args, **kwargs):
         payment_orders = request.user.orders.all()
+        print(payment_orders)
+        payment_orders = [
+            order
+            for order in payment_orders
+            if (order.event and not order.event.expired)
+        ]
         return self.paginate_response(
             data=payment_orders,
             serializer=OrderListSerializer,
