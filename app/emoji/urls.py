@@ -34,4 +34,9 @@ router.register("toddelemojis", ToddelEmojisViewSet, basename="toddelemojis")
 
 urlpatterns = [
     path("", include(router.urls)),
+    path(
+        "emojis/newsemojis/is_allowed/<int:news_id>/",
+        NewsEmojisViewSet.as_view({"get": "get_emojis_allowed_status"}),
+        name="emojis-allowed",
+    ),
 ]
