@@ -17,11 +17,17 @@ class NewsEmojisViewSet(BaseViewSet):
     @action(detail=False, methods=["get"])
     def get_emojis_allowed_status(self, request, news_id):
         try:
+            news_id = request.data.get("news")
+            if not news_id:
+                return Response(
+                    {"detail": "Vennligst send med id-en til nyheten."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
             news_emojis = NewsEmojis.objects.get(news__id=news_id)
-            emojis_allowed = news_emojis.emojis_allowed
 
             return Response(
-                {"emojis_allowed": emojis_allowed}, status=status.HTTP_200_OK
+                {"emojis_allowed": news_emojis.emojis_allowed},
+                status=status.HTTP_200_OK,
             )
         except NewsEmojis.DoesNotExist:
             return Response(

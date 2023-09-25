@@ -14,7 +14,6 @@ from app.emoji.views.user_toddel_reaction import UserToddelReactionViewSet
 from app.emoji.views.user_toddel_reaction_unicode import (
     UserToddelReactionUnicodeViewSet,
 )
-from app.emoji.views.news_emojis import NewsEmojisViewSet
 
 router = routers.DefaultRouter()
 
@@ -36,8 +35,13 @@ router.register("toddelemojis", ToddelEmojisViewSet, basename="toddelemojis")
 urlpatterns = [
     path("", include(router.urls)),
     path(
-        "emojis/newsemojis/is_allowed/<int:news_id>/",
+        "emojis/newsemojis/is_allowed/",
         NewsEmojisViewSet.as_view({"get": "get_emojis_allowed_status"}),
         name="emojis-allowed",
+    ),
+    path(
+        "emojis/reactionsUni/news/",
+        UserNewsReactionUnicodeViewSet.as_view({"get": "get_reactions_by_news"}),
+        name="get-reactions-by-news",
     ),
 ]

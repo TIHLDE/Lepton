@@ -1,5 +1,6 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import status
+from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from sentry_sdk import capture_exception
@@ -82,3 +83,29 @@ class UserNewsReactionUnicodeViewSet(BaseViewSet):
     def destroy(self, request, *args, **kwargs):
         super().destroy(request, *args, **kwargs)
         return Response({"detail": "Reaksjonen ble slettet"}, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=["get"])
+    def get_reactions_by_news(self, request):
+        try:
+            news_id = request.query_params.get("news")
+            if not news_id:
+                return Response(
+                    {"detail": "Vennligst send med id-en til nyheten."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            reactions = UserNewsReactionUnicode.objects.filter(news=news_id)
+            serializer = UserNewsReactionUnicodeSerializer(reactions, many=True)
+
+            if reactions.exists():
+                return Response(serializer.data, status=status.HTTP_200_OK)
+
+            return Response(
+                {"detail": "Ingen reaksjoner funnet for den angitte nyheten."},
+                status=status.HTTP_200_OK,
+            )
+        except ValueError:
+            return Response(
+                {"detail": "Noe gikk galt ved henting av reaksjoner"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
