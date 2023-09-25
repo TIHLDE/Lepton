@@ -30,14 +30,12 @@ class NewsViewSet(BaseViewSet):
         try:
             if serializer.is_valid():
                 news = super().perform_create(serializer)
-                if emojis_allowed:
-                    if not self.allow_emojis(
-                        data={"news": news.id, "emojis_allowed": emojis_allowed}
-                    ):
-                        return Response(
-                            {"detail": "Emoji ble ikke tillatt fordi noe gikk galt"},
-                            status=status.HTTP_400_BAD_REQUEST,
-                        )
+                res = self.allow_emojis(
+                    data={"news": news.id, "emojis_allowed": emojis_allowed}
+                )
+
+                if res.status == status.HTTP_400_BAD_REQUEST:
+                    return res
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
 
             return Response(
@@ -54,10 +52,19 @@ class NewsViewSet(BaseViewSet):
         try:
             if serializer.is_valid():
                 super().perform_create(serializer)
-                return True
-            return False
+                return Response(
+                    {"detail": "Emoji ble tillatt for nyhet"},
+                    status=status.HTTP_200_OK,
+                )
+            return Response(
+                {"detail": "Emoji ble ikke tillatt fordi noe gikk galt"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         except ValueError:
-            return False
+            return Response(
+                {"detail": "Emoji ble ikke tillatt fordi noe gikk galt"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
     def destroy(self, request, *args, **kwargs):
         super().destroy(request, *args, **kwargs)

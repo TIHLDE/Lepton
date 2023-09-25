@@ -13,5 +13,4 @@ class CustomEmoji(BaseModel, BasePermissionModel):
     def __str__(self):
         if self.short_names.exists():
             return ", ".join(name.value for name in self.short_names.all())
-        else:
-            return "Uten navn"
+        return "Uten navn"
