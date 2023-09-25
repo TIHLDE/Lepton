@@ -14,6 +14,7 @@ from app.emoji.views.user_toddel_reaction import UserToddelReactionViewSet
 from app.emoji.views.user_toddel_reaction_unicode import (
     UserToddelReactionUnicodeViewSet,
 )
+from app.emoji.views.news_emojis import NewsEmojisViewSet
 
 router = routers.DefaultRouter()
 
