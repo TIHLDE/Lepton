@@ -104,6 +104,16 @@ class UserMemberSerializer(UserSerializer):
         )
 
 
+class SimpleUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = (
+            "user_id",
+            "first_name",
+            "last_name",
+        )
+
+
 class UserCreateSerializer(serializers.ModelSerializer):
     study = serializers.SlugRelatedField(
         slug_field="slug",

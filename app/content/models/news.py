@@ -3,6 +3,7 @@ from django.db import models
 
 from app.common.enums import AdminGroup
 from app.common.permissions import BasePermissionModel
+from app.emoji.models.reaction import Reaction
 from app.util.models import BaseModel, OptionalImage
 
 
@@ -17,6 +18,14 @@ class News(BaseModel, OptionalImage, BasePermissionModel):
         related_name="created_news",
     )
     body = models.TextField()
+    emojis_allowed = models.BooleanField(default=False)
+    reactions = models.ForeignKey(
+        Reaction,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name="reactions",
+    )
 
     write_access = AdminGroup.all()
 
