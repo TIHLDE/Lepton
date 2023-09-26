@@ -2,6 +2,7 @@ from datetime import timedelta
 
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.contrib.contenttypes.fields import GenericRelation
 
 from app.common.enums import AdminGroup, Groups
 from app.common.permissions import (
@@ -10,6 +11,7 @@ from app.common.permissions import (
     set_user_id,
 )
 from app.content.models import Category
+from app.content.models.comment import Comment
 from app.content.models.user import User
 from app.forms.enums import EventFormType
 from app.group.models.group import Group
@@ -46,6 +48,9 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
         on_delete=models.SET_NULL,
         related_name="contact_events",
     )
+
+    allow_comments = models.BooleanField(default=True)
+    comments = GenericRelation(Comment)
 
     favorite_users = models.ManyToManyField(
         User, related_name="favorite_events", blank=True

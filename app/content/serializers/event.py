@@ -11,6 +11,7 @@ from app.content.serializers.priority_pool import (
     PriorityPoolSerializer,
 )
 from app.content.serializers.user import DefaultUserSerializer
+from app.content.serializers.comment import CommentSerializer
 from app.group.models.group import Group
 from app.group.serializers.group import SimpleGroupSerializer
 from app.payment.models.paid_event import PaidEvent
@@ -28,6 +29,7 @@ class EventSerializer(serializers.ModelSerializer):
         required=False, allow_null=True
     )
     contact_person = DefaultUserSerializer(read_only=True, required=False)
+    comments = CommentSerializer(read_only=True, required=False, many=True)
 
     class Meta:
         model = Event
@@ -62,6 +64,8 @@ class EventSerializer(serializers.ModelSerializer):
             "paid_information",
             "is_paid_event",
             "contact_person",
+            "allow_comments",
+            "comments"
         )
 
     def get_paid_information(self, obj):
@@ -149,6 +153,7 @@ class EventCreateAndUpdateSerializer(BaseModelSerializer):
             "paid_information",
             "is_paid_event",
             "contact_person",
+            "allow_comments"
         )
 
     def to_internal_value(self, data):

@@ -9,3 +9,4 @@ from app.content.factories.short_link_factory import ShortLinkFactory
 from app.content.factories.strike_factory import StrikeFactory
 from app.content.factories.toddel_factory import ToddelFactory
 from app.content.factories.priority_pool_factory import PriorityPoolFactory
+from app.content.factories.comment_factory import CommentFactory
