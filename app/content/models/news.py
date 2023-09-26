@@ -19,13 +19,6 @@ class News(BaseModel, OptionalImage, BasePermissionModel):
     )
     body = models.TextField()
     emojis_allowed = models.BooleanField(default=False)
-    reactions = models.ForeignKey(
-        Reaction,
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
-        related_name="reactions",
-    )
 
     write_access = AdminGroup.all()
 
