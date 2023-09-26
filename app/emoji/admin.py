@@ -17,3 +17,8 @@ class CustomEmojiAdmin(admin.ModelAdmin):
 @admin.register(models.CustomShortName)
 class CustomShortNameAdmin(admin.ModelAdmin):
     pass
+
+
+@admin.register(models.Reaction)
+class ReactionAdmin(admin.ModelAdmin):
+    pass

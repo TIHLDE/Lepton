@@ -16,27 +16,42 @@ class ReactionViewSet(BaseViewSet):
     pagination_class = BasePagination
 
     def create(self, request, *args, **kwargs):
-        news = get_object_or_404(News, id=request.data["news"])
-        if not news.emojis_allowed:
+        content_type = request.data.get("content_type")
+        if content_type == "news":
+            content_object = get_object_or_404(News, id=request.data.get("object_id"))
+            if not content_object.emojis_allowed:
+                return Response(
+                    {"detail": "Reaksjoner er ikke tillatt her."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+        else:
             return Response(
-                {"detail": "Reaksjoner er ikke tillatt her."},
+                {"detail": "Content type er ikke støttet"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
         serializer = ReactionSerializer(data=request.data, context={"request": request})
         if serializer.is_valid():
             super().perform_create(serializer)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(
-            {"detail": "Kunne ikke reagere fordi noe gikk galt"},
+            {"detail": "Du har ikke tillattelse til å reagere"},
             status=status.HTTP_400_BAD_REQUEST,
         )
 
     def update(self, request, *args, **kwargs):
-        news = get_object_or_404(News, id=request.data["news"])
-        if not news.emojis_allowed:
+        content_type = request.data.get("content_type")
+        if content_type == "news":
+            content_object = get_object_or_404(News, id=request.data.get("object_id"))
+            if not content_object.emojis_allowed:
+                return Response(
+                    {"detail": "Reaksjoner er ikke tillatt her."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+        else:
             return Response(
-                {"detail": "Reaksjoner er ikke tillatt her."},
+                {"detail": "Content type er ikke støttet"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -49,7 +64,7 @@ class ReactionViewSet(BaseViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         return Response(
-            {"detail": "Kunne ikke reagere fordi noe gikk galt"},
+            {"detail": "Du har ikke tillatelse til å endre reaksjon"},
             status=status.HTTP_400_BAD_REQUEST,
         )
 

@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 
 from app.common.enums import AdminGroup
@@ -19,6 +20,7 @@ class News(BaseModel, OptionalImage, BasePermissionModel):
     )
     body = models.TextField()
     emojis_allowed = models.BooleanField(default=False)
+    reactions = GenericRelation(Reaction)
 
     write_access = AdminGroup.all()
 
