@@ -40,7 +40,7 @@ from app.group.serializers.membership import (
 from app.payment.views import OrderListSerializer
 from app.util.export_user_data import export_user_data
 from app.util.utils import CaseInsensitiveBooleanQueryParam
-
+from app.payment.util.order_utils import filter_user_event_orders
 
 class UserViewSet(BaseViewSet, ActionMixin):
     """API endpoint to display one user"""
@@ -289,14 +289,11 @@ class UserViewSet(BaseViewSet, ActionMixin):
     @action(detail=False, methods=["get"], url_path="me/payment_orders")
     def get_user_payment_orders(self, request, *args, **kwargs):
         payment_orders = request.user.orders.all()
-        print(payment_orders)
-        payment_orders = [
-            order
-            for order in payment_orders
-            if (order.event and not order.event.expired)
-        ]
+
+        filtered_orders = filter_user_event_orders(payment_orders)
+
         return self.paginate_response(
-            data=payment_orders,
+            data=filtered_orders,
             serializer=OrderListSerializer,
             context={"request": request},
         )
