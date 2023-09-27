@@ -23,6 +23,7 @@ from app.content.factories import (
 )
 from app.content.factories.toddel_factory import ToddelFactory
 from app.emoji.factories.custom_emoji_factory import CustomEmojiFactory
+from app.emoji.factories.reaction_factory import NewsReactionFactory
 from app.forms.tests.form_factories import FormFactory, SubmissionFactory
 from app.group.factories import GroupFactory, MembershipFactory
 from app.group.factories.fine_factory import FineFactory
@@ -200,3 +201,8 @@ def toddel():
 @pytest.fixture()
 def emoji():
     return CustomEmojiFactory()
+
+
+@pytest.fixture()
+def news_reaction(member, news):
+    return NewsReactionFactory(user=member, content_object=news)
