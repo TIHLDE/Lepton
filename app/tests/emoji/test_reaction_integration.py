@@ -56,6 +56,27 @@ def test_that_a_member_can_change_reaction_on_news(news_reaction):
 
 
 @pytest.mark.django_db
+def test_that_a_member_can_not_react_on_news_more_than_once(news_reaction):
+    """A member should not be able to leave more than one reaction on the same news page"""
+    url = _get_reactions_url()
+    client = get_api_client(user=news_reaction.user)
+    data = _get_reactions_put_data(news_reaction)
+    response = client.post(url, data)
+
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+@pytest.mark.django_db
+def test_that_a_member_can_remove_their_reaction_on_a_news(news_reaction):
+    """A member should be able to remove their reaction on a news page"""
+    url = _get_reactions_detailed_url(news_reaction)
+    client = get_api_client(user=news_reaction.user)
+    response = client.delete(url)
+
+    assert response.status_code == status.HTTP_200_OK
+
+
+@pytest.mark.django_db
 def test_that_a_non_member_cannot_react_on_news(user, news, default_client):
     """A non-member should not be able to leave a reaction on a news page"""
     url = _get_reactions_url()

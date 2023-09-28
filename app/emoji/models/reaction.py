@@ -25,6 +25,7 @@ class Reaction(BaseModel, BasePermissionModel):
     read_access = [Groups.TIHLDE]
 
     class Meta:
+        unique_together = ("user", "object_id", "content_type")
         verbose_name = "Reaction"
         verbose_name_plural = "Reactions"
 
