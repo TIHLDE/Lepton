@@ -65,15 +65,16 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
             serializer, event=event, user=request.user
         )
 
-        try:
-            create_payment_order(event, request, registration)
-        except Exception as e:
-            registration.delete()
-            raise e
+        if event.is_paid_event:
+            try:
+                create_payment_order(event, request, registration)
+            except Exception as e:
+                registration.delete()
+                raise e
 
-        registration_serializer = RegistrationSerializer(
-            registration, context={"user": registration.user}
-        )
+            registration_serializer = RegistrationSerializer(
+                registration, context={"user": registration.user}
+            )
 
         return Response(registration_serializer.data, status=status.HTTP_201_CREATED)
 

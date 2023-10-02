@@ -5,7 +5,7 @@ services:
     image: mysql:8.0
     container_name: db
     platform: linux/amd64
-    restart: always
+    restart: unless-stopped
     ports:
       - "3306:3306"
     environment:
@@ -19,7 +19,7 @@ services:
     depends_on:
       - db
     image: phpmyadmin/phpmyadmin
-    restart: always
+    restart: unless-stopped
     ports:
       - "8080:80"
     environment:
@@ -35,7 +35,7 @@ services:
       - ./.envs/.local
     image: web
     container_name: web
-    restart: on-failure
+    restart: unless-stopped
     platform: linux/amd64
     volumes:
       - .:/usr/src/
