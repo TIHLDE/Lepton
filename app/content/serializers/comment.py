@@ -4,6 +4,7 @@ from app.content.models.comment import Comment
 from app.content.models.event import Event
 from app.content.serializers.user import DefaultUserSerializer
 
+
 class CommentSerializer(serializers.ModelSerializer):
     author = DefaultUserSerializer(read_only=True, required=False)
 
@@ -15,8 +16,12 @@ class CommentSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
             "author",
-            "parent"
+            "children",
         )
+
+    def to_representation(self, instance):
+        self.fields["children"] = CommentSerializer(many=True, read_only=True)
+        return super(CommentSerializer, self).to_representation(instance)
 
 
 class CommentCreateAndUpdateSerializer(serializers.ModelSerializer):

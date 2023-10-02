@@ -41,7 +41,7 @@ class Comment(BaseModel, BasePermissionModel):
     content_object = GenericForeignKey()
 
     class Meta:
-        ordering = ("-created_at",)
+        ordering = ("created_at",)
     
     def __str__(self):
         return f"Comment by: {self.author.first_name} {self.author.last_name} - created: {self.created_at}"
