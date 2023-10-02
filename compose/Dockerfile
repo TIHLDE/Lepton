@@ -8,7 +8,6 @@ ENV PYTHONUNBUFFERED 1
 WORKDIR /usr/src
 
 RUN apt-get update \
-  && apt-get upgrade -y \
   # dependencies for building Python packages
   && apt-get install -y build-essential \
   # mysqlclient dependencies
