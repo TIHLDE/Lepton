@@ -44,7 +44,7 @@ class Banner(BaseModel, OptionalImage, BasePermissionModel, APIBannerErrorsMixin
         super().save(*args, **kwargs)
 
     class Meta:
-        ordering = ("-updated_at",)
+        ordering = ("-visible_from",)
 
     @property
     def exists_overlapping_banners(self):

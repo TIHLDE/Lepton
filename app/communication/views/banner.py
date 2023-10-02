@@ -14,19 +14,19 @@ from app.util.utils import now
 
 
 class BannerFilter(FilterSet):
-    is_visible = BooleanFilter(method="filter_isVisible")
-    is_expired = BooleanFilter(method="filter_isExpired")
+    is_visible = BooleanFilter(method="filter_is_visible")
+    is_expired = BooleanFilter(method="filter_is_expired")
 
     class Meta:
         model = Banner
         fields = ["is_visible", "is_expired"]
 
-    def filter_isVisible(self, queryset, name, value):
+    def filter_is_visible(self, queryset, name, value):
         if value:
             return queryset.filter(is_visible=True)
         return queryset
 
-    def filter_isExpired(self, queryset, name, value):
+    def filter_is_expired(self, queryset, name, value):
         if value:
             return queryset.filter(is_expired=True)
         return queryset
@@ -40,13 +40,6 @@ class BannerViewSet(BaseViewSet):
 
     filter_backends = [DjangoFilterBackend]
     filterset_class = BannerFilter
-
-    def destroy(self, request, *args, **kwargs):
-        super().destroy(request, *args, **kwargs)
-        return Response({"detail": "Banneret ble slettet"}, status=status.HTTP_200_OK)
-
-    def get_queryset(self):
-        return self.queryset.order_by("-visible_from")
 
     @action(
         detail=False,
