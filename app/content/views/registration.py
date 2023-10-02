@@ -65,7 +65,11 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
             serializer, event=event, user=request.user
         )
 
-        create_payment_order(event, request, registration)
+        try:
+            create_payment_order(event, request, registration)
+        except Exception as e:
+            registration.delete()
+            raise e
 
         registration_serializer = RegistrationSerializer(
             registration, context={"user": registration.user}

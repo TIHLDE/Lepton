@@ -60,6 +60,7 @@ class EventSerializer(serializers.ModelSerializer):
             "permissions",
             "priority_pools",
             "paid_information",
+            "is_paid_event",
             "contact_person",
         )
 
