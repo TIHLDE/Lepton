@@ -17,7 +17,13 @@ def get_new_access_token():
         "Merchant-Serial-Number": settings.VIPPS_MERCHANT_SERIAL_NUMBER,
     }
 
-    response = requests.post(TOKEN_URL, headers=TOKEN_HEADERS).json()
+    response = requests.post(TOKEN_URL, headers=TOKEN_HEADERS)
+
+    if response.status_code != 200:
+        raise Exception("Could not get access token")
+
+    response = response.json()
+
     return (response["expires_on"], response["access_token"])
 
 
