@@ -1,6 +1,5 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework import status
 from app.kontres.serializer.reservation_seralizer import ReservationSerializer
 from app.kontres.models.reservation import Reservation
 
