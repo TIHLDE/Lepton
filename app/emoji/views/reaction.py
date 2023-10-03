@@ -8,7 +8,11 @@ from app.common.permissions import BasicViewPermission
 from app.common.viewsets import BaseViewSet
 from app.content.models.news import News
 from app.emoji.models.reaction import Reaction
-from app.emoji.serializers.reaction import ReactionSerializer
+from app.emoji.serializers.reaction import (
+    ReactionCreateSerializer,
+    ReactionSerializer,
+    ReactionUpdateSerializer,
+)
 
 
 class ReactionViewSet(BaseViewSet):
@@ -29,19 +33,14 @@ class ReactionViewSet(BaseViewSet):
         if content_type_str == "news":
             content_object = get_object_or_404(News, id=request.data.get("object_id"))
 
-            if not content_object.emojis_allowed:
-                return Response(
-                    {"detail": "Reaksjoner er ikke tillatt her."},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-        else:
+        if not content_object.emojis_allowed:
             return Response(
-                {"detail": "Content type er ikke støttet"},
+                {"detail": "Reaksjoner er ikke tillatt her."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         try:
             request.data["content_type"] = content_type.id
-            serializer = ReactionSerializer(
+            serializer = ReactionCreateSerializer(
                 data=request.data, context={"request": request}
             )
             if serializer.is_valid():
@@ -58,33 +57,19 @@ class ReactionViewSet(BaseViewSet):
             )
 
     def update(self, request, *args, **kwargs):
-        content_type_str = request.data.get("content_type")
-        try:
-            content_type = ContentType.objects.get(model=content_type_str)
-        except ContentType.DoesNotExist:
+        reaction = self.get_object()
+        if reaction.content_type.model == "news":
+            content_object = get_object_or_404(News, id=reaction.object_id)
+
+        if not content_object.emojis_allowed:
             return Response(
-                {"detail": "Fant ikke content type"},
+                {"detail": "Reaksjoner er ikke tillatt her."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-
-        if content_type_str == "news":
-            content_object = get_object_or_404(News, id=request.data.get("object_id"))
-
-            if not content_object.emojis_allowed:
-                return Response(
-                    {"detail": "Reaksjoner er ikke tillatt her."},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-        else:
-            return Response(
-                {"detail": "Content type er ikke støttet"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
         try:
-            reaction = self.get_object()
-            request.data["content_type"] = content_type.id
-            serializer = ReactionSerializer(
+            request.data["object_id"] = reaction.object_id
+            request.data["content_type"] = content_object.id
+            serializer = ReactionUpdateSerializer(
                 reaction, data=request.data, context={"request": request}
             )
 
