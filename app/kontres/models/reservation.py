@@ -28,6 +28,6 @@ class Reservation(models.Model):
         super(Reservation, self).save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.state} - Reservation request by {self.author} to book {self.bookable_item.name}. Created at {self.created_at}"
+        return f"{self.state} - Reservation request by {self.author.first_name} {self.author.last_name} to book {self.bookable_item.name}. Created at {self.created_at}"
 
 
