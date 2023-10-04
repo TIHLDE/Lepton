@@ -7,9 +7,8 @@ from django.core.exceptions import ObjectDoesNotExist
 
 
 @api_view(['GET'])
-def fetch_reservation(request):
+def fetch_reservation(request, reservation_id):
     try:
-        reservation_id = request.GET.get('reservation_id')
         if not reservation_id:
             return Response({"error": "Reservation ID is required"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -19,3 +18,4 @@ def fetch_reservation(request):
 
     except ObjectDoesNotExist:
         return Response({"error": "Reservation not found"}, status=status.HTTP_404_NOT_FOUND)
+
