@@ -7,7 +7,7 @@ from django.core.exceptions import ValidationError
 
 class Reservation(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reservations')
-    bookable_item = models.ForeignKey(BookableItem, on_delete=models.CASCADE, related_name='reservations', default=1)
+    bookable_item = models.ForeignKey(BookableItem, on_delete=models.CASCADE, related_name='reservations')
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
     state = models.CharField(max_length=15, choices=ReservationStateEnum.choices, default=ReservationStateEnum.PENDING)
@@ -28,6 +28,6 @@ class Reservation(models.Model):
         super(Reservation, self).save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.state} - Reservation request by {self.author} to book {self.bookable_item.name}"
+        return f"{self.state} - Reservation request by {self.author} to book {self.bookable_item.name}. Created at {self.created_at}"
 
 
