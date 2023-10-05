@@ -1,7 +1,7 @@
 from django.core.validators import RegexValidator
 from django.db import models
 
-from app.emoji.models import CustomEmoji
+from app.emoji.models.custom_emoji import CustomEmoji
 
 
 class CustomShortName(models.Model):
