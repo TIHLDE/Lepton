@@ -2,7 +2,9 @@ from rest_framework import serializers
 
 from app.content.models.comment import Comment
 from app.content.models.event import Event
+from app.content.models.news import News
 from app.content.serializers.user import DefaultUserSerializer
+from app.content.enums import ContentType
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -24,9 +26,9 @@ class CommentSerializer(serializers.ModelSerializer):
         return super(CommentSerializer, self).to_representation(instance)
 
 
-class CommentCreateAndUpdateSerializer(serializers.ModelSerializer):
+class CommentCreateSerializer(serializers.ModelSerializer):
     content_type = serializers.CharField()
-    content_id = serializers.FloatField()
+    content_id = serializers.IntegerField()
 
     class Meta:
         model = Comment
@@ -39,17 +41,39 @@ class CommentCreateAndUpdateSerializer(serializers.ModelSerializer):
         )
 
     def create(self, validated_data):
-        print("inside create")
-        print(validated_data)
         content_type = validated_data.pop("content_type")
         content_id = validated_data.pop("content_id")
         author = validated_data.pop("author")
         body = validated_data.pop("body")
 
-        if content_type == "event":
-            event = Event.objects.get(id=int(content_id))
+        if content_type == ContentType.EVENT:
+            event = Event.objects.get(id=content_id)
             created_comment = event.comments.create(
                 author=author,
                 body=body
             )
-            print(created_comment)
+            return created_comment
+        
+        if content_type == ContentType.NEWS:
+            news = News.objects.get(id=content_id)
+            created_comment = news.comments.create(
+                author=author,
+                body=body
+            )
+            return created_comment
+
+
+class CommentUpdateSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Comment
+        fields = (
+            "id",
+            "body"
+        )
+
+    def update(self, instance, validated_data):
+        comment = super().update(instance, validated_data)
+        comment.save()
+
+        return comment

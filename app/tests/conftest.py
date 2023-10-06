@@ -20,7 +20,8 @@ from app.content.factories import (
     RegistrationFactory,
     ShortLinkFactory,
     UserFactory,
-    CommentFactory
+    EventCommentFactory,
+    NewsCommentFactory
 )
 from app.content.factories.toddel_factory import ToddelFactory
 from app.forms.tests.form_factories import FormFactory, SubmissionFactory
@@ -65,8 +66,13 @@ def user():
 
 
 @pytest.fixture()
-def comment():
-    return CommentFactory()
+def event_comment():
+    return EventCommentFactory()
+
+
+@pytest.fixture()
+def news_comment():
+    return NewsCommentFactory()
 
 
 @pytest.fixture
