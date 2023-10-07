@@ -19,6 +19,7 @@ class EventCommentFactory(DjangoModelFactory):
     body = factory.Faker("paragraph", nb_sentences=10)
     author = factory.SubFactory(UserFactory)
     parent = None
+    indent_level = 0
     content_object = factory.SubFactory(EventFactory)
 
     @factory.lazy_attribute
@@ -33,6 +34,7 @@ class NewsCommentFactory(DjangoModelFactory):
     body = factory.Faker("paragraph", nb_sentences=10)
     author = factory.SubFactory(UserFactory)
     parent = None
+    indent_level = 0
     content_object = factory.SubFactory(NewsFactory)
 
     @factory.lazy_attribute

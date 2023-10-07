@@ -14,6 +14,8 @@ class Comment(BaseModel, BasePermissionModel):
 
     body = models.TextField()
 
+    indent_level = models.IntegerField(default=0)
+
     author = models.ForeignKey(
         User,
         blank=True,

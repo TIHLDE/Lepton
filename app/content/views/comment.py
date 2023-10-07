@@ -43,9 +43,16 @@ class CommentViewSet(BaseViewSet, ActionMixin):
         )
 
         if serializer.is_valid():
-            comment = super().perform_create(serializer)
-            serializer = CommentSerializer(comment, context={"request": request})
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            try:
+                comment = super().perform_create(serializer)
+                serializer = CommentSerializer(comment, context={"request": request})
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            except Exception as oversized_thread:
+                capture_exception(oversized_thread)
+                return Response(
+                    {"detail": "Denne kommentartråden er for lang."},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
 
         return Response(
             {"detail": serializer.error}, status=status.HTTP_400_BAD_REQUEST

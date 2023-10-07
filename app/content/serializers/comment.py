@@ -18,7 +18,9 @@ class CommentSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
             "author",
-            "children",
+            "indent_level",
+            "parent",
+            "children"
         )
 
     def to_representation(self, instance):
@@ -45,9 +47,24 @@ class CommentCreateSerializer(serializers.ModelSerializer):
         content_id = validated_data.pop("content_id")
         author = validated_data.pop("author")
         body = validated_data.pop("body")
+        parent = validated_data.pop("parent")
+
+        if parent and parent.indent_level >= 3:
+            # TODO: make exception for many indents in thread
+            raise Exception("For mange kommentarer i tråden.")
 
         if content_type == ContentType.EVENT:
             event = Event.objects.get(id=content_id)
+
+            if parent:
+                created_comment = event.comments.create(
+                    author=author,
+                    body=body,
+                    parent=parent,
+                    indent_level=parent.indent_level + 1
+                )
+                return created_comment
+
             created_comment = event.comments.create(
                 author=author,
                 body=body
@@ -56,6 +73,15 @@ class CommentCreateSerializer(serializers.ModelSerializer):
         
         if content_type == ContentType.NEWS:
             news = News.objects.get(id=content_id)
+
+            if parent:
+                created_comment = news.comments.create(
+                    author=author,
+                    body=body,
+                    parent=parent,
+                    indent_level=parent.indent_level + 1
+                )
+
             created_comment = news.comments.create(
                 author=author,
                 body=body
