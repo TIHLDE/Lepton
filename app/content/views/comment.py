@@ -84,3 +84,10 @@ class CommentViewSet(BaseViewSet, ActionMixin):
                 {"detail": "Fant ikke kommentaren."},
                 status=status.HTTP_404_NOT_FOUND
             )
+    
+    def destroy(self, request, *args, **kwargs):
+        super().destroy(request, *args, **kwargs)
+        return Response(
+            {"detaul": "Kommentaren ble slettet."},
+            status=status.HTTP_204_NO_CONTENT
+        )

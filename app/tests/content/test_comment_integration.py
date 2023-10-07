@@ -226,4 +226,28 @@ def test_update_news_comment_as_anonymous_user(default_client, news_comment):
     response = default_client.put(url, data)
 
     assert response.status_code == status.HTTP_403_FORBIDDEN
-    
+
+
+@pytest.mark.django_db
+def test_delete_as_anonymous_user(default_client, event_comment):
+    """
+        An anonymous user should not be able to delete a comment.
+    """
+
+    url = get_comments_url_detail(event_comment)
+    response = default_client.delete(url)
+
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+@pytest.mark.django_db
+def test_delete_as_member(member, event_comment):
+    """
+        A member should be able to delete a comment.
+    """
+
+    client = get_api_client(user=member)
+    url = get_comments_url_detail(event_comment)
+    response = client.delete(url)
+
+    assert response.status_code == status.HTTP_204_NO_CONTENT
