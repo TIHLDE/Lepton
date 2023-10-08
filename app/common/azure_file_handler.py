@@ -36,13 +36,13 @@ class AzureFileHandler(FileHandler):
         return re.sub("\w+:\/{2}[\d\w-]+(\.[\d\w-]+)*/", "", url).split("/")  # noqa: W605
         # fmt: on
 
-    def uploadBlob(self):
+    def uploadBlob(self, content_type=None):
         "Uploads the given blob to Azure and returns a url to the blob"
         if not self.blob:
             raise ValueError("Du må sende med en blob for som skal lastes opp")
 
         self.checkBlobSize()
-        containerName = self.getContainerNameFromBlob()
+        containerName = self.getContainerNameFromBlob(content_type=content_type)
         container = self.get_or_create_container(containerName)
 
         blob_name = f"{uuid.uuid4()}{self.getBlobName()}"
