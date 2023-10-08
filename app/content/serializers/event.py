@@ -178,6 +178,7 @@ class EventCreateAndUpdateSerializer(BaseModelSerializer):
             )
 
         if event.is_paid_event and not len(paid_information_data):
+            # TODO: It should not be allowed to remove payment from a paid event
             paid_event = PaidEvent.objects.get(event=event)
             if paid_event:
                 paid_event.delete()
