@@ -35,9 +35,9 @@ def test_can_fetch_single_reservation(client, create_valid_reservation_for_editi
     response = client.get(f'/kontres/reservations/{reservation.id}/', format='json')
 
     assert response.status_code == 200
-    assert response.data['id'] == reservation.id
+    assert str(response.data['id']) == str(reservation.id)  # Convert both to string
     assert response.data['author'] == reservation.author.user_id
-    assert response.data['bookable_item'] == reservation.bookable_item.id
+    assert str(response.data['bookable_item']) == str(reservation.bookable_item.id)  # Convert both to string
     assert response.data['state'] == 'PENDING'
 
 
@@ -46,7 +46,7 @@ def test_user_cannot_fetch_nonexistent_reservation(test_user):
     client = APIClient()
     client.force_authenticate(user=test_user)
 
-    response = client.get('/kontres/reservations/999/', format='json')
+    non_existent_uuid = '12345678-1234-5678-1234-567812345678'
+    response = client.get(f'/kontres/reservations/{non_existent_uuid}/', format='json')
 
     assert response.status_code == 404
-

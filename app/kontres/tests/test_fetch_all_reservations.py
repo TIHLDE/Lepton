@@ -38,7 +38,7 @@ def test_can_fetch_all_reservations(client, create_multiple_reservations, test_u
 
     # Optional: Check that the first reservation in the list is as expected
     first_reservation = Reservation.objects.first()
-    assert response.data['reservations'][0]['id'] == first_reservation.id
+    assert str(response.data['reservations'][0]['id']) == str(first_reservation.id)
     assert response.data['reservations'][0]['author'] == first_reservation.author.user_id
     assert response.data['reservations'][0]['bookable_item'] == first_reservation.bookable_item.id
     assert response.data['reservations'][0]['state'] == 'PENDING'
