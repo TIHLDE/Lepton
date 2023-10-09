@@ -17,4 +17,6 @@ class BannerSerializer(serializers.ModelSerializer):
             "updated_at",
             "image",
             "image_alt",
+            "is_visible",
+            "is_expired",
         )
