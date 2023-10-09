@@ -1,4 +1,3 @@
-# create_reservation.py or serializers.py
 from rest_framework import serializers
 from app.kontres.models.reservation import Reservation
 from app.kontres.serializer.bookable_item_serializer import BookableItemSerializer
