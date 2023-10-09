@@ -32,7 +32,7 @@ def test_can_fetch_single_reservation(client, create_valid_reservation_for_editi
     reservation = create_valid_reservation_for_editing
     client = APIClient()
     client.force_authenticate(user=reservation.author)
-    response = client.get(f'/kontres/fetch_reservation/{reservation.id}/', format='json')
+    response = client.get(f'/kontres/reservations/{reservation.id}/', format='json')
 
     assert response.status_code == 200
     assert response.data['id'] == reservation.id
@@ -46,7 +46,7 @@ def test_user_cannot_fetch_nonexistent_reservation(test_user):
     client = APIClient()
     client.force_authenticate(user=test_user)
 
-    response = client.get('/kontres/fetch_reservation/999/', format='json')
+    response = client.get('/kontres/reservations/999/', format='json')
 
     assert response.status_code == 404
 

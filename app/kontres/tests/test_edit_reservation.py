@@ -33,7 +33,7 @@ def test_admin_can_edit_reservation(create_valid_reservation_for_editing, test_u
     client.force_authenticate(user=test_user)
 
     reservation_id = create_valid_reservation_for_editing.id
-    response = client.put(f'/kontres/edit_reservation/{reservation_id}/', {
+    response = client.put(f'/kontres/reservations/{reservation_id}/', {
         'state': 'CONFIRMED'
     }, format='json')
 
@@ -46,7 +46,7 @@ def test_user_cannot_edit_nonexistent_reservation(test_user):
     client = APIClient()
     client.force_authenticate(user=test_user)
 
-    response = client.put('/kontres/edit_reservation/999/', {
+    response = client.put('/kontres/reservations/999/', {
         'state': 'CONFIRMED'
     }, format='json')
 

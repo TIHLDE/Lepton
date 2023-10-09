@@ -31,7 +31,7 @@ def create_multiple_reservations(test_user, test_bookable_item):
 def test_can_fetch_all_reservations(client, create_multiple_reservations, test_user):
     client = APIClient()
     client.force_authenticate(user=test_user)
-    response = client.get('/kontres/fetch_all_reservations/', format='json')
+    response = client.get('/kontres/reservations/', format='json')
 
     assert response.status_code == 200
     assert len(response.data['reservations']) == 3  # We created 3 reservations
