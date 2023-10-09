@@ -275,6 +275,10 @@ class Registration(BaseModel, BasePermissionModel):
     def check_registration_has_ended(self):
         if self.event.end_registration_at < now():
             raise ValidationError("Påmeldingsfristen har passert")
+        
+    @property
+    def event_has_ended(self):
+        return self.event.event_has_ended
 
     def get_submissions(self, type=None):
         from app.forms.models import EventForm, Submission
