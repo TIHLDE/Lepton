@@ -3,9 +3,11 @@ from app.content.models import User
 from app.kontres.reservation_state import ReservationStateEnum
 from app.kontres.models.bookable_item import BookableItem
 from django.core.exceptions import ValidationError
+import uuid
 
 
 class Reservation(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reservations')
     bookable_item = models.ForeignKey(BookableItem, on_delete=models.CASCADE, related_name='reservations')
     start_time = models.DateTimeField()
