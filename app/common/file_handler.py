@@ -17,19 +17,20 @@ class FileHandler(ABC):
     def getBlobName(self):
         return self.blob.name if self.blob.name else ""
 
-    def getContainerNameFromBlob(self, content_type=None):
-        if content_type:
-            return "".join(e for e in content_type if e.isalnum())
-
+    def getContainerNameFromBlob(self):
         return (
             "".join(e for e in self.blob.content_type if e.isalnum())
             if self.blob.content_type
             else None
         )
 
-    def checkBlobSize(self):
-        if self.blob.size > self.SIZE_50_MB:
-            raise ValueError("Filen kan ikke være større enn 50 MB")
+    def checkBlobSize(self, size=None):
+        if size:
+            if size > self.SIZE_50_MB:
+                raise ValueError("Filen kan ikke være større enn 50 MB")
+        else:
+            if self.blob.size > self.SIZE_50_MB:
+                raise ValueError("Filen kan ikke være større enn 50 MB")
 
     @abstractmethod
     def uploadBlob(self):

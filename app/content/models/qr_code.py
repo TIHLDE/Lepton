@@ -8,6 +8,7 @@ from app.common.enums import Groups
 
 class QRCode(BaseModel, OptionalImage, BasePermissionModel):
     write_access = (Groups.TIHLDE, )
+    read_access = (Groups.TIHLDE, )
 
     name = models.CharField(max_length=50)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="qr_codes")

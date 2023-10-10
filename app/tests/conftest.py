@@ -20,6 +20,7 @@ from app.content.factories import (
     RegistrationFactory,
     ShortLinkFactory,
     UserFactory,
+    QRCodeFactory,
 )
 from app.content.factories.toddel_factory import ToddelFactory
 from app.forms.tests.form_factories import FormFactory, SubmissionFactory
@@ -62,6 +63,10 @@ def api_client():
 def user():
     return UserFactory()
 
+
+@pytest.fixture()
+def qr_code():
+    return QRCodeFactory()
 
 @pytest.fixture
 def token(user):
