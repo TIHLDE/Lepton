@@ -4,7 +4,7 @@ import pytest
 
 from app.util.test_utils import get_api_client
 
-API_SESSION_BASE_URL = "/wasted/session/"
+API_SESSION_BASE_URL = "/blitzed/session/"
 
 
 def _get_session_url():

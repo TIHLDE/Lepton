@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from app.wasted.models.session import Session
+from app.blitzed.models.session import Session
 
 
 @admin.register(Session)
