@@ -29,21 +29,27 @@ class QRCodeCreateSerializer(BaseModelSerializer):
         fields = (
             "name",
             "url",
-            "user"
         )
     
     def create(self, validated_data):
         url = validated_data.pop("url")
         name = validated_data.pop("name")
+        user = validated_data.pop("user")
 
         image_url = self.create_qr(url, name)
-        os.remove("qr.png")
 
-        validated_data["image"] = image_url
+        qr_code = QRCode.objects.create(
+            user=user,
+            name=name,
+            url=url,
+            image=image_url
+        )
 
-        return super().create(validated_data)
+        return qr_code
     
     def create_qr(self, url, name):
+        SAVE_PATH = "qr.png"
+
         qr = qrcode.QRCode(
             version=1,
             box_size=10,
@@ -54,13 +60,16 @@ class QRCodeCreateSerializer(BaseModelSerializer):
         qr.make(fit=True)
 
         img = qr.make_image(fill="black", back_color="white")
-        img.save("qr.png")
+        img.save(SAVE_PATH)
 
-        with open(file="qr.png", mode="rb") as data:
+        with open(file=SAVE_PATH, mode="rb") as data:
             file = ByteFile(
                 data=data,
                 content_type="image/png",
                 size=File(data).size,
                 name=name
             )
-            return AzureFileHandler(file).uploadBlob()         
+            url = AzureFileHandler(file).uploadBlob()   
+
+        os.remove(SAVE_PATH) 
+        return url    

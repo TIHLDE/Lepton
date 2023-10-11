@@ -15,6 +15,29 @@ def get_data(user=None):
 
 
 @pytest.mark.django_db
+def test_list_qr_codes_as_anonymous_user(default_client):
+    """
+        An anonymous user should not be able to list QR Codes.
+    """
+
+    response = default_client.get(API_QR_CODE_BASE_URL)
+
+    assert response.status_code == status.HTTP_403_NOT_FOUND
+
+
+@pytest.mark.django_db
+def test_list_qr_codes_as_member(member, api_client):
+    """
+        A member of TIHLDE should be able to list QR Codes.
+    """
+
+    client = api_client(user=member)
+    response = client.get(API_QR_CODE_BASE_URL)
+
+    assert response.status_code == status.HTTP_200_OK
+
+
+@pytest.mark.django_db
 def test_create_qr_code_as_member(member, api_client):
     """
         A member of TIHLDE should be able to create a QR Code.
