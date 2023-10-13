@@ -73,8 +73,10 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
             capture_exception(order_error)
             registration.delete()
             return Response(
-                {"detail": "Det skjedde en feil med opprettelse av betalingsordre. Påmeldingen ble ikke fullført."},
-                status=status.HTTP_400_BAD_REQUEST
+                {
+                    "detail": "Det skjedde en feil med opprettelse av betalingsordre. Påmeldingen ble ikke fullført."
+                },
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         registration_serializer = RegistrationSerializer(
