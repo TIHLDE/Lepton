@@ -1,8 +1,8 @@
 import factory
 from factory.django import DjangoModelFactory
 
-from app.content.models import QRCode
 from app.content.factories.user_factory import UserFactory
+from app.content.models import QRCode
 
 
 class QRCodeFactory(DjangoModelFactory):

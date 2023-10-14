@@ -1,17 +1,18 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.response import Response
 
-from django.shortcuts import get_object_or_404
-
+from azure.core.exceptions import ResourceNotFoundError
 from sentry_sdk import capture_exception
 
-from azure.core.exceptions import ResourceNotFoundError
-
+from app.common.azure_file_handler import AzureFileHandler
 from app.common.permissions import BasicViewPermission
 from app.common.viewsets import BaseViewSet
 from app.content.models import QRCode, User
-from app.content.serializers.qr_code import QRCodeSerializer, QRCodeCreateSerializer
-from app.common.azure_file_handler import AzureFileHandler
+from app.content.serializers.qr_code import (
+    QRCodeCreateSerializer,
+    QRCodeSerializer,
+)
 
 
 class QRCodeViewSet(BaseViewSet):
@@ -29,20 +30,15 @@ class QRCodeViewSet(BaseViewSet):
         user = get_object_or_404(User, user_id=request.id)
         data = request.data
 
-        serializer = QRCodeCreateSerializer(
-            data=data, context={"request": request}
-        )
+        serializer = QRCodeCreateSerializer(data=data, context={"request": request})
 
         if serializer.is_valid():
             qr_code = super().perform_create(serializer, user=user)
-            serializer = QRCodeSerializer(
-                qr_code, context={"request": request}
-            )
+            serializer = QRCodeSerializer(qr_code, context={"request": request})
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        
+
         return Response(
-            {"detail": serializer.errors},
-            status=status.HTTP_400_BAD_REQUEST
+            {"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST
         )
 
     def destroy(self, request, *args, **kwargs):
@@ -54,12 +50,11 @@ class QRCodeViewSet(BaseViewSet):
             capture_exception(blob_not_found)
             super().destroy(request, *args, **kwargs)
             return Response(
-                {"detail": "Kunne ikke finne blob i Azure Storage. QR-koden ble slettet"},
-                status=status.HTTP_200_OK
+                {
+                    "detail": "Kunne ikke finne blob i Azure Storage. QR-koden ble slettet"
+                },
+                status=status.HTTP_200_OK,
             )
 
         super().destroy(request, *args, **kwargs)
-        return Response(
-            {"detail": "QR-koden ble slettet"},
-            status=status.HTTP_200_OK
-        )
+        return Response({"detail": "QR-koden ble slettet"}, status=status.HTTP_200_OK)

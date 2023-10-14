@@ -54,8 +54,8 @@ class AzureFileHandler(FileHandler):
 
         blob_client = container.get_blob_client(blob_name)
         blob_client.upload_blob(
-            data=self.blob.data if hasattr(self.blob, "data") else self.blob, 
-            content_settings=content_settings
+            data=self.blob.data if hasattr(self.blob, "data") else self.blob,
+            content_settings=content_settings,
         )
         if blob_client.url:
             return blob_client.url

@@ -1,7 +1,4 @@
-
-
 class ByteFile:
-
     def __init__(self, data, content_type, size, name):
         self.data = data
         self.content_type = content_type

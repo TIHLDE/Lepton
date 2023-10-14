@@ -17,10 +17,10 @@ from app.content.factories import (
     NewsFactory,
     PageFactory,
     ParentPageFactory,
+    QRCodeFactory,
     RegistrationFactory,
     ShortLinkFactory,
     UserFactory,
-    QRCodeFactory,
 )
 from app.content.factories.toddel_factory import ToddelFactory
 from app.forms.tests.form_factories import FormFactory, SubmissionFactory
@@ -67,6 +67,7 @@ def user():
 @pytest.fixture()
 def qr_code():
     return QRCodeFactory()
+
 
 @pytest.fixture
 def token(user):

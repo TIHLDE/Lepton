@@ -1,26 +1,20 @@
-import qrcode
 import os
 
 from django.core.files import File
-
 from rest_framework import serializers
 
+import qrcode
+
+from app.common.azure_file_handler import AzureFileHandler
+from app.common.serializers import BaseModelSerializer
 from app.content.models import QRCode
 from app.content.util.byte_file import ByteFile
-from app.common.serializers import BaseModelSerializer
-from app.common.azure_file_handler import AzureFileHandler
 
 
 class QRCodeSerializer(serializers.ModelSerializer):
     class Meta:
         model = QRCode
-        fields = (
-            "id",
-            "name",
-            "created_at",
-            "updated_at",
-            "image"
-        )
+        fields = ("id", "name", "created_at", "updated_at", "image")
 
 
 class QRCodeCreateSerializer(BaseModelSerializer):
@@ -30,7 +24,7 @@ class QRCodeCreateSerializer(BaseModelSerializer):
             "name",
             "url",
         )
-    
+
     def create(self, validated_data):
         url = validated_data.pop("url")
         name = validated_data.pop("name")
@@ -38,23 +32,14 @@ class QRCodeCreateSerializer(BaseModelSerializer):
 
         image_url = self.create_qr(url, name)
 
-        qr_code = QRCode.objects.create(
-            user=user,
-            name=name,
-            url=url,
-            image=image_url
-        )
+        qr_code = QRCode.objects.create(user=user, name=name, url=url, image=image_url)
 
         return qr_code
-    
+
     def create_qr(self, url, name):
         SAVE_PATH = "qr.png"
 
-        qr = qrcode.QRCode(
-            version=1,
-            box_size=10,
-            border=4
-        )
+        qr = qrcode.QRCode(version=1, box_size=10, border=4)
 
         qr.add_data(url)
         qr.make(fit=True)
@@ -64,12 +49,9 @@ class QRCodeCreateSerializer(BaseModelSerializer):
 
         with open(file=SAVE_PATH, mode="rb") as data:
             file = ByteFile(
-                data=data,
-                content_type="image/png",
-                size=File(data).size,
-                name=name
+                data=data, content_type="image/png", size=File(data).size, name=name
             )
-            url = AzureFileHandler(file).uploadBlob()   
+            url = AzureFileHandler(file).uploadBlob()
 
-        os.remove(SAVE_PATH) 
-        return url    
+        os.remove(SAVE_PATH)
+        return url
