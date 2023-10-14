@@ -24,13 +24,9 @@ class FileHandler(ABC):
             else None
         )
 
-    def checkBlobSize(self, size=None):
-        if size:
-            if size > self.SIZE_50_MB:
-                raise ValueError("Filen kan ikke være større enn 50 MB")
-        else:
-            if self.blob.size > self.SIZE_50_MB:
-                raise ValueError("Filen kan ikke være større enn 50 MB")
+    def checkBlobSize(self):
+        if self.blob.size > self.SIZE_50_MB:
+            raise ValueError("Filen kan ikke være større enn 50 MB")
 
     @abstractmethod
     def uploadBlob(self):
