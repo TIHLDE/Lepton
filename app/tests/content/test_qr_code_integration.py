@@ -2,8 +2,6 @@ from rest_framework import status
 
 import pytest
 
-from app.content.models import QRCode
-
 API_QR_CODE_BASE_URL = "/qr-codes/"
 
 
