@@ -77,7 +77,7 @@ def test_delete_qr_code_with_invalid_blob_as_member(member, api_client, qr_code)
     client = api_client(user=member)
     response = client.delete(f"{API_QR_CODE_BASE_URL}{qr_code.id}/")
 
-    assert response.status_code == status.HTTP_204_NO_CONTENT
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db
