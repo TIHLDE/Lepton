@@ -46,8 +46,8 @@ class QRCodeViewSet(BaseViewSet):
         try:
             instance = get_object_or_404(QRCode, id=kwargs["pk"])
             AzureFileHandler(url=instance.image).deleteBlob()
-        except ResourceNotFoundError as blob_not_found:
-            capture_exception(blob_not_found)
+        except Exception as blob_not_made:
+            capture_exception(blob_not_made)
             super().destroy(request, *args, **kwargs)
             return Response(
                 {
