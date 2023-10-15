@@ -51,7 +51,7 @@ class QRCodeViewSet(BaseViewSet):
                 {
                     "detail": "Kunne ikke finne blob i Azure Storage. QR-koden ble slettet"
                 },
-                status=status.HTTP_200_OK,
+                status=status.HTTP_200_OK
             )
 
         super().destroy(request, *args, **kwargs)
