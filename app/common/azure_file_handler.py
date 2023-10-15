@@ -2,6 +2,8 @@ import os
 import re
 import uuid
 
+from django.conf import settings
+
 from azure.storage.blob import BlobServiceClient, ContentSettings
 
 from app.common.file_handler import FileHandler
@@ -17,7 +19,7 @@ class AzureFileHandler(FileHandler):
             self.blobName = data[1]
 
     def get_or_create_container(self, name="default"):
-        connection_string = os.environ.get("AZURE_STORAGE_CONNECTION_STRING")
+        connection_string = settings.AZURE_STORAGE_CONNECTION_STRING
         blob_service_client = BlobServiceClient.from_connection_string(
             connection_string
         )

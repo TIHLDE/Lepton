@@ -51,6 +51,7 @@ WEBSITE_URL = (
 )
 
 AZURE_BLOB_STORAGE_NAME = "tihldestorage.blob.core.windows.net"
+AZURE_STORAGE_CONNECTION_STRING = os.environ.get("AZURE_STORAGE_CONNECTION_STRING")
 
 # Application definition
 sentry_sdk.init(

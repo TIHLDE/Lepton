@@ -41,7 +41,6 @@ class QRCodeViewSet(BaseViewSet):
         )
 
     def destroy(self, request, *args, **kwargs):
-        print("destroying qr-code")
         try:
             instance = get_object_or_404(QRCode, id=kwargs["pk"])
             AzureFileHandler(url=instance.image).deleteBlob()
