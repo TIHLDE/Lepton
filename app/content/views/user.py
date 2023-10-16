@@ -37,7 +37,6 @@ from app.group.serializers.membership import (
     MembershipHistorySerializer,
     MembershipSerializer,
 )
-from app.content.filters.registration import RegistrationFilter
 
 from app.util.export_user_data import export_user_data
 from app.util.utils import CaseInsensitiveBooleanQueryParam
