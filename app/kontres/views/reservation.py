@@ -1,7 +1,10 @@
 from django.shortcuts import get_object_or_404
-from rest_framework import viewsets, status
+from rest_framework import status, viewsets
 from rest_framework.response import Response
-from app.kontres.models.reservation import Reservation  # Replace with the actual path to your model
+
+from app.kontres.models.reservation import (  # Replace with the actual path to your model
+    Reservation,
+)
 from app.kontres.serializer.reservation_seralizer import ReservationSerializer
 
 
@@ -16,13 +19,15 @@ class ReservationViewSet(viewsets.ViewSet):
 
     # GET: Retrieve a list of all reservations
     def list(self, request):
-        start_date = request.GET.get('start_date')
-        end_date = request.GET.get('end_date')
+        start_date = request.GET.get("start_date")
+        end_date = request.GET.get("end_date")
 
-        if start_date == '0' and end_date == '0':
+        if start_date == "0" and end_date == "0":
             queryset = Reservation.objects.all()
         elif start_date and end_date:
-            queryset = Reservation.objects.filter(start_time__gte=start_date, end_time__lte=end_date)
+            queryset = Reservation.objects.filter(
+                start_time__gte=start_date, end_time__lte=end_date
+            )
         else:
             queryset = Reservation.objects.all()
 
@@ -37,7 +42,7 @@ class ReservationViewSet(viewsets.ViewSet):
         serializer = ReservationSerializer(data=request.data)
         if serializer.is_valid():
             # Overriding the state to PENDING, if needed
-            serializer.validated_data['state'] = 'PENDING'
+            serializer.validated_data["state"] = "PENDING"
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

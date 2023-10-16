@@ -1,7 +1,10 @@
-from rest_framework import viewsets, status
+from rest_framework import status, viewsets
 from rest_framework.response import Response
+
 from app.kontres.models.bookable_item import BookableItem
-from app.kontres.serializer.bookable_item_serializer import BookableItemSerializer
+from app.kontres.serializer.bookable_item_serializer import (
+    BookableItemSerializer,
+)
 
 
 class BookableItemViewSet(viewsets.ViewSet):

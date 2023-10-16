@@ -1,18 +1,28 @@
-from django.db import models
-from app.content.models import User
-from app.kontres.reservation_state import ReservationStateEnum
-from app.kontres.models.bookable_item import BookableItem
-from django.core.exceptions import ValidationError
 import uuid
+
+from django.core.exceptions import ValidationError
+from django.db import models
+
+from app.content.models import User
+from app.kontres.models.bookable_item import BookableItem
+from app.kontres.reservation_state import ReservationStateEnum
 
 
 class Reservation(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reservations')
-    bookable_item = models.ForeignKey(BookableItem, on_delete=models.CASCADE, related_name='reservations')
+    author = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="reservations"
+    )
+    bookable_item = models.ForeignKey(
+        BookableItem, on_delete=models.CASCADE, related_name="reservations"
+    )
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
-    state = models.CharField(max_length=15, choices=ReservationStateEnum.choices, default=ReservationStateEnum.PENDING)
+    state = models.CharField(
+        max_length=15,
+        choices=ReservationStateEnum.choices,
+        default=ReservationStateEnum.PENDING,
+    )
     description = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -31,5 +41,3 @@ class Reservation(models.Model):
 
     def __str__(self):
         return f"{self.state} - Reservation request by {self.author.first_name} {self.author.last_name} to book {self.bookable_item.name}. Created at {self.created_at}"
-
-
