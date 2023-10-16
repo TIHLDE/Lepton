@@ -6,7 +6,7 @@ from app.payment.views.vipps_callback import vipps_callback
 
 router = routers.DefaultRouter()
 
-router.register("payment", OrderViewSet, basename="payment")
+router.register("payments", OrderViewSet, basename="payment")
 
 urlpatterns = [
     re_path(r"", include(router.urls)),

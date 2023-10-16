@@ -11,6 +11,45 @@ from app.payment.util.payment_utils import (
 )
 
 
+def start_payment_countdown(event, request, registration):
+    """
+    Checks if event is a paid event
+    and starts the countdown for payment for an user.
+    """
+
+    if not event.is_paid_event:
+        return
+
+    check_if_has_paid.apply_async(
+        args=(event, registration), countdown=get_countdown_time(event)
+    )
+
+
+def get_countdown_time(event):
+    paytime = event.paid_information.paytime
+    return (paytime.hour * 60 + paytime.minute) * 60 + paytime.second
+
+
+def create_vipps_order(order_id, event):
+    """
+    Creates vipps order, and returns the url.
+    """
+
+    access_token = os.environ.get("PAYMENT_ACCESS_TOKEN")
+    expires_at = os.environ.get("PAYMENT_ACCESS_TOKEN_EXPIRES_AT")
+
+    if not access_token or datetime.now() >= datetime.fromtimestamp(int(expires_at)):
+        (expires_at, access_token) = get_new_access_token()
+        os.environ.update({"PAYMENT_ACCESS_TOKEN": access_token})
+        os.environ.update({"PAYMENT_ACCESS_TOKEN_EXPIRES_AT": str(expires_at)})
+
+    event_price = int(event.paid_information.price * 100)
+
+    response = initiate_payment(event_price, str(order_id), event.title, access_token)
+
+    return response["url"]
+
+
 def create_payment_order(event, request, registration):
     """
     Checks if event is a paid event

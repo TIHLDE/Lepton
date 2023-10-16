@@ -1,21 +1,23 @@
-API_EVENT_BASE_URL = "/events/"
-API_PAYMENT_BASE_URL = "/payment/"
+import pytest
+
+from app.payment.enums import OrderStatus
+from app.util.test_utils import get_api_client
+
+API_PAYMENT_BASE_URL = "/payments/"
 
 
-def _get_registration_url(event):
-    return f"{API_EVENT_BASE_URL}{event.pk}/registrations/"
+def get_order_data(event):
+    return {"event": event.id}
 
 
-def _get_order_url():
-    return f"{API_PAYMENT_BASE_URL}order/"
+@pytest.mark.django_db
+def test_create_paid_event_order(user, paid_event):
 
+    client = get_api_client(user=user)
+    data = get_order_data(paid_event.event)
+    response = client.post(f"{API_PAYMENT_BASE_URL}", data=data)
 
-def _get_registration_post_data(user, event):
-    return {
-        "user_id": user.user_id,
-        "event": event.pk,
-    }
+    order = response.data
 
-
-def _get_order_data(user, event):
-    return {"user_id": user.user_id, "event": event.pk}
+    assert response.status_code == 201
+    assert order["status"] == OrderStatus.INITIATE

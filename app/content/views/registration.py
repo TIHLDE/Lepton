@@ -13,7 +13,10 @@ from app.content.filters.registration import RegistrationFilter
 from app.content.mixins import APIRegistrationErrorsMixin
 from app.content.models import Event, Registration
 from app.content.serializers import RegistrationSerializer
-from app.content.util.event_utils import create_payment_order
+from app.content.util.event_utils import (
+    create_payment_order,
+    start_payment_countdown,
+)
 from app.payment.models.order import Order
 from app.payment.views.vipps_callback import vipps_callback
 
@@ -68,16 +71,28 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
         )
 
         try:
-            create_payment_order(event, request, registration)
-        except Exception as order_error:
-            capture_exception(order_error)
+            start_payment_countdown(event, request, registration)
+        except Exception as countdown_error:
+            capture_exception(countdown_error)
             registration.delete()
             return Response(
                 {
-                    "detail": "Det skjedde en feil med opprettelse av betalingsordre. Påmeldingen ble ikke fullført."
+                    "detail": "Det skjedde en feil med oppstart av betalingsfrist. Påmeldingen ble ikke fullført."
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+        # try:
+        #     create_payment_order(event, request, registration)
+        # except Exception as order_error:
+        #     capture_exception(order_error)
+        #     registration.delete()
+        #     return Response(
+        #         {
+        #             "detail": "Det skjedde en feil med opprettelse av betalingsordre. Påmeldingen ble ikke fullført."
+        #         },
+        #         status=status.HTTP_400_BAD_REQUEST,
+        #     )
 
         registration_serializer = RegistrationSerializer(
             registration, context={"user": registration.user}

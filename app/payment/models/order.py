@@ -25,7 +25,6 @@ class Order(BaseModel, BasePermissionModel):
     status = models.CharField(
         choices=OrderStatus.choices, default=OrderStatus.INITIATE, max_length=16
     )
-    expire_date = models.DateTimeField()
     payment_link = models.URLField(max_length=2000)
 
     class Meta:
@@ -33,7 +32,7 @@ class Order(BaseModel, BasePermissionModel):
         ordering = ("-created_at",)
 
         def __str__(self):
-            return f"{self.order_id} {self.user} {self.event} {self.status} {self.expire_date}"
+            return f"{self.user} - {self.event} - {self.status} - {self.created_at}"
 
     @property
     def expired(self):

@@ -178,8 +178,14 @@ class EventCreateAndUpdateSerializer(BaseModelSerializer):
                 paytime=paid_information_data["paytime"],
             )
 
-        if event.is_paid_event and not len(paid_information_data):
-            raise APIPaidEventCantBeChangedToFreeEventException()
+        if event.is_paid_event:
+            if not len(paid_information_data) and event.list_count > 0:
+                raise APIPaidEventCantBeChangedToFreeEventException()
+
+            paid_event = PaidEvent.objects.get(event=event)
+            if paid_event:
+                paid_event.delete()
+                event.paid_information = None
 
         if len(paid_information_data):
             self.update_paid_information(event, paid_information_data)
