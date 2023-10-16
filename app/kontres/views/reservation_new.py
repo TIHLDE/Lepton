@@ -36,6 +36,8 @@ class ReservationViewSet(viewsets.ViewSet):
     def create(self, request):
         serializer = ReservationSerializer(data=request.data)
         if serializer.is_valid():
+            # Overriding the state to PENDING, if needed
+            serializer.validated_data['state'] = 'PENDING'
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
