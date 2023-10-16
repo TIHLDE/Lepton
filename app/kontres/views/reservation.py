@@ -59,3 +59,5 @@ def reservation_view(request, reservation_id=None):
                 return Response({"reservations": serializer.data})
             else:
                 return Response({"message": "No reservations found."})
+    else:
+        return Response({"error": "Method not allowed"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
