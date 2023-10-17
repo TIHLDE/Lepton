@@ -1,7 +1,6 @@
 from django.db import models
 from django.utils.safestring import mark_safe
 
-from app.common.enums import Groups
 from app.util.models import BaseModel
 from app.blitzed.models.pong_team import PongTeam
 from app.blitzed.models.pong_result import PongResult
@@ -14,7 +13,6 @@ class PongMatch(BaseModel, BasePermissionModel):
     result = models.ForeignKey(PongResult, on_delete=models.CASCADE, null=True, blank=True)
     prev_match = models.OneToOneField('self', on_delete=models.SET_NULL, null=True, blank=True)
 
-    write_access = [Groups.TIHLDE]
 
     class Meta:
         verbose_name_plural = 'Matches'

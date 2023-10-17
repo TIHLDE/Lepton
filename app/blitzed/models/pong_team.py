@@ -14,8 +14,6 @@ class PongTeam(BaseModel, BasePermissionModel):
     members = models.ManyToManyField(User, related_name='pong_teams')
     anonymous_members = models.ManyToManyField(AnonymousUser, blank=True, related_name='pong_teams')
 
-    write_access = [Groups.TIHLDE]
-
     class Meta:
         verbose_name_plural = 'Pong teams'
 

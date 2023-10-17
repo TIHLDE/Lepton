@@ -3,7 +3,6 @@ import random
 from django.db import models
 from django.utils.safestring import mark_safe
 
-from app.common.enums import Groups
 from app.util.models import BaseModel
 from app.blitzed.models.pong_match import PongMatch
 from app.common.permissions import BasePermissionModel
@@ -12,8 +11,6 @@ from app.common.permissions import BasePermissionModel
 class BeerpongTournament(BaseModel, BasePermissionModel):
     name = models.CharField(max_length=60, default=generate_tournament_name)
     matches = models.ManyToManyField(PongMatch, related_name='tournaments')
-
-    write_access = [Groups.TIHLDE]
 
     class Meta:
         verbose_name_plural = 'Pong tournaments'
