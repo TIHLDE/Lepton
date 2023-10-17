@@ -11,12 +11,12 @@ from app.common.permissions import (
     set_user_id,
 )
 from app.content.models import Category
+from app.content.models.comment import Comment
 from app.content.models.user import User
 from app.forms.enums import EventFormType
 from app.group.models.group import Group
 from app.util.models import BaseModel, OptionalImage
 from app.util.utils import now, yesterday
-from app.content.models.comment import Comment
 
 
 class Event(BaseModel, OptionalImage, BasePermissionModel):

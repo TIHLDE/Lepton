@@ -3,9 +3,10 @@ from django.db import models
 from django.contrib.contenttypes.fields import GenericRelation
 
 from app.common.enums import AdminGroup, Groups
+from app.content.models.comment import Comment
 from app.common.permissions import BasePermissionModel
 from app.util.models import BaseModel, OptionalImage
-from app.content.models.comment import Comment
+
 
 class News(BaseModel, OptionalImage, BasePermissionModel):
     title = models.CharField(max_length=200)

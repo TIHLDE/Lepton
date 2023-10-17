@@ -1,21 +1,11 @@
+from app.content.views import (CategoryViewSet, CheatsheetViewSet,
+                               CommentViewSet, EventViewSet, NewsViewSet,
+                               PageViewSet, RegistrationViewSet,
+                               ShortLinkViewSet, StrikeViewSet, ToddelViewSet,
+                               UserCalendarEvents, UserViewSet, accept_form,
+                               upload)
 from django.urls import include, path, re_path
 from rest_framework import routers
-
-from app.content.views import (
-    CategoryViewSet,
-    CheatsheetViewSet,
-    EventViewSet,
-    NewsViewSet,
-    PageViewSet,
-    RegistrationViewSet,
-    ShortLinkViewSet,
-    StrikeViewSet,
-    ToddelViewSet,
-    UserCalendarEvents,
-    UserViewSet,
-    accept_form,
-    upload,
-)
 
 router = routers.DefaultRouter()
 
@@ -23,6 +13,7 @@ router = routers.DefaultRouter()
 router.register("toddel", ToddelViewSet)
 router.register("news", NewsViewSet)
 router.register("events", EventViewSet, basename="event")
+router.register("comments", CommentViewSet, basename="comment")
 router.register("categories", CategoryViewSet)
 router.register("short-links", ShortLinkViewSet, basename="short-link")
 router.register("users", UserViewSet, basename="user")

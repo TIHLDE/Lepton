@@ -1,12 +1,10 @@
-from django.db import models
-from django.contrib.contenttypes.fields import GenericForeignKey
-from django.contrib.contenttypes.models import ContentType
-
 from app.common.enums import Groups
 from app.common.permissions import BasePermissionModel
-from app.content.models.event import Event
 from app.content.models.user import User
 from app.util.models import BaseModel
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
+from django.db import models
 
 
 class Comment(BaseModel, BasePermissionModel):
@@ -32,7 +30,7 @@ class Comment(BaseModel, BasePermissionModel):
         verbose_name="parent",
     )
 
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, default=None)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey()
 
