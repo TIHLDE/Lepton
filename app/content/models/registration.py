@@ -214,11 +214,12 @@ class Registration(BaseModel, BasePermissionModel):
         """
         Returns the number of people in front of the user in the waiting list.
         """
-        return (self.event.get_waiting_list().order_by("-created_at")
-                .filter(
-            is_on_wait=True,
-            created_at__lt=self.created_at
-        ).count()) + 1
+        return (
+            self.event.get_waiting_list()
+            .order_by("-created_at")
+            .filter(is_on_wait=True, created_at__lt=self.created_at)
+            .count()
+        ) + 1
 
     def swap_users(self):
         """Swaps a user with a spot with a prioritized user, if such user exists"""

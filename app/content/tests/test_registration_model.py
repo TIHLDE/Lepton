@@ -537,8 +537,9 @@ def test_strikes_has_no_effect_if_event_has_strikes_disabled(
     is_prioritized = not enable_strikes
     assert registration.is_prioritized == is_prioritized
 
+
 def test_wait_queue_number_is_null_when_not_in_wait_list(
-        user_not_in_priority_pool, event_with_priority_pool
+    user_not_in_priority_pool, event_with_priority_pool
 ):
     registration_not_in_priority_pool = RegistrationFactory(
         event=event_with_priority_pool, user=user_not_in_priority_pool
@@ -546,8 +547,9 @@ def test_wait_queue_number_is_null_when_not_in_wait_list(
 
     assert registration_not_in_priority_pool.wait_queue_number is None
 
+
 def test_wait_queue_number_is_correct_when_in_wait_list(
-        user_not_in_priority_pool, event_with_priority_pool
+    user_not_in_priority_pool, event_with_priority_pool
 ):
     registration_not_in_priority_pool = RegistrationFactory(
         event=event_with_priority_pool, user=user_not_in_priority_pool
