@@ -8,7 +8,7 @@ class AnonymousUser(BaseModel, BasePermissionModel):
     name = models.CharField(max_length=60)
 
     class Meta:
-        verbose_name_plural = 'Anonymous users'
+        verbose_name_plural = "Anonymous users"
 
     def __str__(self):
         return self.name
