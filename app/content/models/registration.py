@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -215,7 +215,7 @@ class Registration(BaseModel, BasePermissionModel):
         ).add_paragraph(f"Hei, {self.user.first_name}!").add_paragraph(
             f"Du har blitt meldt av {self.event.title} og vil bli refundert."
         ).add_paragraph(
-            f"Du vil få pengene tilbake på kontoen din innen kort tid."
+            "Du vil få pengene tilbake på kontoen din innen kort tid."
         ).add_paragraph(
             f"Hvis det skulle oppstå noen problemer så kontakt oss på hs@tihlde.org. Ditt ordrenummer er {order.order_id}."
         ).send()

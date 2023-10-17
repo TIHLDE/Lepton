@@ -1,5 +1,3 @@
-from datetime import datetime, timedelta
-
 from rest_framework import serializers
 
 from app.common.serializers import BaseModelSerializer

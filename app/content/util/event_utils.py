@@ -1,5 +1,4 @@
 import os
-import uuid
 from datetime import datetime
 
 from app.payment.tasks import check_if_has_paid
