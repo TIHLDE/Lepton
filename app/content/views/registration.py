@@ -3,6 +3,8 @@ from rest_framework import filters, status
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 
+from sentry_sdk import capture_exception
+
 from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission, is_admin_user
 from app.common.viewsets import BaseViewSet
@@ -11,6 +13,9 @@ from app.content.filters.registration import RegistrationFilter
 from app.content.mixins import APIRegistrationErrorsMixin
 from app.content.models import Event, Registration
 from app.content.serializers import RegistrationSerializer
+from app.content.util.event_utils import create_payment_order
+from app.payment.models.order import Order
+from app.payment.views.vipps_callback import vipps_callback
 
 
 class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
@@ -25,6 +30,9 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
 
     def get_queryset(self):
         event_id = self.kwargs.get("event_id", None)
+        order = Order.objects.filter(event=event_id).first()
+        if order:
+            vipps_callback(None, order.order_id)
         return Registration.objects.filter(event__pk=event_id).select_related("user")
 
     def _is_own_registration(self):
@@ -58,9 +66,23 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
         registration = super().perform_create(
             serializer, event=event, user=request.user
         )
+
+        try:
+            create_payment_order(event, request, registration)
+        except Exception as order_error:
+            capture_exception(order_error)
+            registration.delete()
+            return Response(
+                {
+                    "detail": "Det skjedde en feil med opprettelse av betalingsordre. Påmeldingen ble ikke fullført."
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         registration_serializer = RegistrationSerializer(
             registration, context={"user": registration.user}
         )
+
         return Response(registration_serializer.data, status=status.HTTP_201_CREATED)
 
     def update(self, request, *args, **kwargs):

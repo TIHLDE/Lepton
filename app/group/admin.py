@@ -24,6 +24,8 @@ class MembershipAdmin(admin.ModelAdmin):
         "user",
     )
 
+    search_fields = ["user__first_name", "user__last_name"]
+
 
 @admin.register(models.MembershipHistory)
 class MembershipHistoryAdmin(admin.ModelAdmin):

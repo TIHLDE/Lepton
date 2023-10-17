@@ -13,11 +13,14 @@
 ---
 
 ## Neste versjon
-- ✨ **emoji** Nyheter og tøddel kan nå ha reaksjoner
+- ✨ **Bannere** Filtrering på bannere
+- ✨ **emoji** Nyheter kan nå ha reaksjoner
 - ✨ **Spørreskjemaer** NOK medlemmer kan lage spørreskjema.
-- ⚡ **Bruker** Nå kan ikke HS lenger endre eller slette brukere. 
+- ⚡ **Bruker** Nå kan ikke HS lenger endre eller slette brukere.
 - ⚡ **Mails** Nå logger vi på eposttjeneren kun en gang per batch med epost som sendes.
 - 🦟 **Bøter** Nå skal bilder på bøter ikke lengre forsvinne.
+- ✨ **Betalte arrangementer med Vipps betaling**. Det kan nå opprettes arrangementer som krever betaling for å melde seg på. Denne betalingen betales via Vipps.
+- ⚡ **Nyheter** Fondesforvalere kan nå lage nyheter.
 
 ## Versjon 2022.10.13
 

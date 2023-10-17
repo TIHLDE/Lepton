@@ -1,9 +1,10 @@
-version: '3.8'
+version: "3.8"
 
 services:
   db:
-    image: mysql:5.7
+    image: mysql:8.0
     container_name: db
+    platform: linux/amd64
     restart: always
     ports:
       - "3306:3306"
@@ -20,7 +21,7 @@ services:
     image: phpmyadmin/phpmyadmin
     restart: always
     ports:
-      - '8080:80'
+      - "8080:80"
     environment:
       PMA_HOST: db
       MYSQL_ROOT_PASSWORD: password
@@ -55,4 +56,4 @@ services:
     image: rabbitmq:3.9.13
     container_name: rabbitmq
     ports:
-        - 5672:5672
+      - 5672:5672
