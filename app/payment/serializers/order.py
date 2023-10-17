@@ -21,7 +21,11 @@ class OrderCreateSerializer(BaseModelSerializer):
         event = validated_data.pop("event")
 
         order_id = uuid.uuid4()
-        payment_url = create_vipps_order(order_id, event)
+        payment_url = create_vipps_order(
+            order_id=order_id,
+            event=event,
+            transaction_text=f"Betaling for {event.title} - {user.first_name} {user.last_name}",
+        )
 
         order = Order.objects.create(
             order_id=order_id,

@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 from rest_framework import serializers
 
 from app.common.serializers import BaseModelSerializer
@@ -6,17 +8,16 @@ from app.content.serializers.user import (
     DefaultUserSerializer,
     UserListSerializer,
 )
+from app.content.util.registration_utils import get_payment_expiredate
 from app.forms.enums import EventFormType
 from app.forms.serializers.submission import SubmissionInRegistrationSerializer
-from app.payment.enums import OrderStatus
-from app.payment.serializers.order import OrderSerializer
+from app.payment.util.order_utils import check_if_order_is_paid
 
 
 class RegistrationSerializer(BaseModelSerializer):
     user_info = UserListSerializer(source="user", read_only=True)
     survey_submission = serializers.SerializerMethodField()
     has_unanswered_evaluation = serializers.SerializerMethodField()
-    order = serializers.SerializerMethodField(required=False)
     has_paid_order = serializers.SerializerMethodField(required=False)
 
     class Meta:
@@ -30,7 +31,7 @@ class RegistrationSerializer(BaseModelSerializer):
             "created_at",
             "survey_submission",
             "has_unanswered_evaluation",
-            "order",
+            "payment_expiredate",
             "has_paid_order",
         )
 
@@ -41,20 +42,18 @@ class RegistrationSerializer(BaseModelSerializer):
     def get_has_unanswered_evaluation(self, obj):
         return obj.user.has_unanswered_evaluations_for(obj.event)
 
-    def get_order(self, obj):
-        order = obj.event.orders.filter(user=obj.user).first()
-        if order:
-            return OrderSerializer(order).data
-        return None
-
     def get_has_paid_order(self, obj):
-        for order in obj.event.orders.filter(user=obj.user):
-            if (
-                order.status == OrderStatus.CAPTURE
-                or order.status == OrderStatus.RESERVE
-                or order.status == OrderStatus.SALE
-            ):
-                return True
+        order = obj.event.orders.filter(user=obj.user).first()
+
+        return check_if_order_is_paid(order)
+
+    def create(self, validated_data):
+        event = validated_data["event"]
+
+        if event.is_paid_event and not event.is_full:
+            validated_data["payment_expiredate"] = get_payment_expiredate(event)
+
+        return super().create(validated_data)
 
 
 class PublicRegistrationSerializer(BaseModelSerializer):

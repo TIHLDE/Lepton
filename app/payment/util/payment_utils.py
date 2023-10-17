@@ -27,7 +27,7 @@ def get_new_access_token():
     return (response["expires_on"], response["access_token"])
 
 
-def initiate_payment(amount, order_id, event_name, access_token):
+def initiate_payment(amount, order_id, access_token, transaction_text):
     """
     Initiate a payment with Vipps
     amount: Amount to pay in Øre (100 NOK = 10000)
@@ -42,9 +42,10 @@ def initiate_payment(amount, order_id, event_name, access_token):
             },
             "transaction": {
                 "amount": amount,
-                "transactionText": "This payment is for the event:" + event_name,
+                "transactionText": transaction_text,
                 "orderId": order_id,
                 "skipLandingPage": False,
+                "scope": "name phoneNumber",
             },
         }
     )
@@ -61,3 +62,37 @@ def initiate_payment(amount, order_id, event_name, access_token):
         raise Exception("Could not initiate payment")
 
     return response.json()
+
+
+def refund_payment(amount, order_id, access_token, transaction_text):
+    """
+    Refund a payment from Vipps
+    amount: Amount to pay in Øre (100 NOK = 10000)
+    """
+
+    url = f"{settings.VIPPS_ORDER_URL}/{order_id}/refund/"
+
+    payload = json.dumps(
+        {
+            "merchantInfo": {
+                "merchantSerialNumber": settings.VIPPS_MERCHANT_SERIAL_NUMBER,
+            },
+            "transaction": {
+                "amount": amount,
+                "transactionText": transaction_text,
+            },
+        }
+    )
+
+    headers = {
+        "Content-Type": "application/json",
+        "Ocp-Apim-Subscription-Key": settings.VIPPS_SUBSCRIPTION_KEY,
+        "Authorization": "Bearer " + access_token,
+        "Merchant-Serial-Number": settings.VIPPS_MERCHANT_SERIAL_NUMBER,
+        "X-Request-Id": order_id,
+    }
+
+    response = requests.post(url, headers=headers, data=payload)
+
+    if response.status_code != 200:
+        raise Exception("Could not initiate payment")

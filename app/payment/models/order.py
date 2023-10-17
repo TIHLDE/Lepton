@@ -31,8 +31,8 @@ class Order(BaseModel, BasePermissionModel):
         verbose_name_plural = "Orders"
         ordering = ("-created_at",)
 
-        def __str__(self):
-            return f"{self.user} - {self.event} - {self.status} - {self.created_at}"
+    def __str__(self):
+        return f"{self.user} - {self.event.title} - {self.status} - {self.created_at}"
 
     @property
     def expired(self):
