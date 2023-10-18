@@ -617,34 +617,6 @@ def test_delete_own_registration_as_member(member):
     assert response.status_code == status.HTTP_200_OK
 
 
-# @pytest.mark.django_db
-# def test_delete_own_registration_on_paid_event_as_member(member, paid_event):
-#     """A member should only be able to delete their own registration on a paid event."""
-#     event = paid_event.event
-#     client = get_api_client(user=member)
-#     data = _get_registration_post_data(user=member, event=event)
-#     post_url = _get_registration_url(event=event)
-#     post_response = client.post(post_url, data=data)
-
-#     assert post_response.status_code == 201
-
-#     print(post_response.data)
-#     registration = Registration.objects.filter(event=event, user=member)
-#     registrations = Registration.objects.all()
-#     print(registrations)
-#     print(registration)
-#     order = Order.objects.filter(event=event, user=member)[0]
-
-#     assert order.status == OrderStatus.INITIATE
-
-#     url = _get_registration_detail_url(registration)
-#     response = client.delete(url)
-#     order = Order.objects.filter(event=event, user=member)[0]
-
-#     assert response.status_code == status.HTTP_200_OK
-#     assert order.status == OrderStatus.CANCEL
-
-
 @pytest.mark.django_db
 def test_delete_another_registration_as_member(member, user):
     """A member should not be able to delete another registration."""

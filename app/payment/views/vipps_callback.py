@@ -21,7 +21,7 @@ def vipps_callback(_request, order_id):
     order = Order.objects.get(order_id=order_id)
     order.status = status
     order.save()
-    return status
+    return order
 
 
 def force_payment(order_id):

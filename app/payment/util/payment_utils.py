@@ -27,7 +27,7 @@ def get_new_access_token():
     return (response["expires_on"], response["access_token"])
 
 
-def initiate_payment(amount, order_id, access_token, transaction_text):
+def initiate_payment(amount, order_id, access_token, transaction_text, fallback):
     """
     Initiate a payment with Vipps
     amount: Amount to pay in Øre (100 NOK = 10000)
@@ -37,7 +37,7 @@ def initiate_payment(amount, order_id, access_token, transaction_text):
         {
             "merchantInfo": {
                 "callbackPrefix": settings.VIPPS_CALLBACK_PREFIX,
-                "fallBack": settings.VIPPS_FALLBACK,
+                "fallBack": f"{settings.VIPPS_FALLBACK}{fallback}",
                 "merchantSerialNumber": settings.VIPPS_MERCHANT_SERIAL_NUMBER,
             },
             "transaction": {

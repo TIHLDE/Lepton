@@ -18,4 +18,4 @@ class OrderFactory(DjangoModelFactory):
     user = factory.SubFactory(UserFactory)
     event = factory.SubFactory(EventFactory)
     status = random.choice([e.value for e in OrderStatus])
-    expire_date = now() + timedelta(hours=1)
+    payment_link = factory.Faker("url")

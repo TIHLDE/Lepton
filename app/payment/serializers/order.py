@@ -25,6 +25,7 @@ class OrderCreateSerializer(BaseModelSerializer):
             order_id=order_id,
             event=event,
             transaction_text=f"Betaling for {event.title} - {user.first_name} {user.last_name}",
+            fallback=f"/arrangementer/{event.id}",
         )
 
         order = Order.objects.create(
