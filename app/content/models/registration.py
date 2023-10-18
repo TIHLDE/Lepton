@@ -132,7 +132,7 @@ class Registration(BaseModel, BasePermissionModel):
     def save(self, *args, **kwargs):
         if not self.registration_id:
             self.create()
-            # self.send_notification_and_mail()
+            self.send_notification_and_mail()
 
         if (
             self.event.is_full
@@ -141,6 +141,7 @@ class Registration(BaseModel, BasePermissionModel):
         ):
             raise EventIsFullError
 
+        self.send_notification_and_mail()
         return super().save(*args, **kwargs)
 
     def create(self):
