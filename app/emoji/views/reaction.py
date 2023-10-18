@@ -7,6 +7,7 @@ from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission
 from app.common.viewsets import BaseViewSet
 from app.content.models.news import News
+from app.emoji.enums import ContentTypes
 from app.emoji.models.reaction import Reaction
 from app.emoji.serializers.reaction import (
     ReactionCreateSerializer,
@@ -30,7 +31,7 @@ class ReactionViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        if content_type_str == "news":
+        if content_type_str.lower() == ContentTypes.NEWS:
             content_object = get_object_or_404(News, id=request.data.get("object_id"))
 
         if not content_object.emojis_allowed:
@@ -58,7 +59,7 @@ class ReactionViewSet(BaseViewSet):
 
     def update(self, request, *args, **kwargs):
         reaction = self.get_object()
-        if reaction.content_type.model == "news":
+        if reaction.content_type.model.lower() == ContentTypes.NEWS:
             content_object = get_object_or_404(News, id=reaction.object_id)
 
         if not content_object.emojis_allowed:

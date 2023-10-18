@@ -3,6 +3,7 @@ from rest_framework import serializers
 
 from app.common.serializers import BaseModelSerializer
 from app.content.models.news import News
+from app.emoji.enums import ContentTypes
 from app.emoji.models.reaction import Reaction
 
 
@@ -28,7 +29,7 @@ class ReactionCreateSerializer(serializers.ModelSerializer):
         object_id = validated_data.pop("object_id")
         content_type = validated_data.pop("content_type")
 
-        if content_type.model.lower() == "news":
+        if content_type.model.lower() == ContentTypes.NEWS:
             news = News.objects.get(id=int(object_id))
             created_reaction = news.reactions.create(
                 user=user,
@@ -52,7 +53,7 @@ class ReactionUpdateSerializer(serializers.ModelSerializer):
         object_id = validated_data.pop("object_id")
         content_type = validated_data.pop("content_type")
 
-        if content_type.model.lower() == "news":
+        if content_type.model.lower() == ContentTypes.NEWS:
             news = News.objects.get(id=int(object_id))
             created_reaction = news.reactions.create(
                 emoji=emoji,
