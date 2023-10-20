@@ -104,6 +104,7 @@ class Registration(BaseModel, BasePermissionModel):
                 refund_vipps_order(
                     order_id=order.order_id,
                     event=self.event,
+                    registration=self,
                     transaction_text=f"Refund for {self.event.title} - {self.user.first_name} {self.user.last_name}",
                 )
 

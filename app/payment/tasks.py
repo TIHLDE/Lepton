@@ -18,7 +18,7 @@ def check_if_has_paid(self, event_id, registration_id):
         return
 
     try:
-        user_order = Order.objects.get(event=event, user=registration.user)
+        user_order = Order.objects.filter(event=event, user=registration.user).first()
     except Order.DoesNotExist as order_not_exist:
         capture_exception(order_not_exist)
         registration.delete()

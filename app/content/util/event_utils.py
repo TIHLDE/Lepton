@@ -24,7 +24,6 @@ def start_payment_countdown(event, registration):
         return
 
     try:
-        print("Starting payment countdown for user")
         check_if_has_paid.apply_async(
             args=(event.id, registration.registration_id),
             countdown=get_countdown_time(event),
@@ -64,7 +63,7 @@ def create_vipps_order(order_id, event, transaction_text, fallback):
     return response["url"]
 
 
-def refund_vipps_order(order_id, event, transaction_text):
+def refund_vipps_order(order_id, event, registration, transaction_text):
     """
     Refunds vipps order.
     """
@@ -90,6 +89,8 @@ def refund_vipps_order(order_id, event, transaction_text):
         order = Order.objects.get(order_id=order_id)
         order.status = OrderStatus.REFUND
         order.save()
+
+        registration
 
     except Exception as refund_error:
         capture_exception(refund_error)
