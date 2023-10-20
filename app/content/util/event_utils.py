@@ -9,6 +9,8 @@ from app.payment.util.payment_utils import (
     initiate_payment,
     refund_payment,
 )
+from app.payment.models import Order
+from app.payment.enums import OrderStatus
 
 
 def start_payment_countdown(event, registration):
@@ -76,9 +78,18 @@ def refund_vipps_order(order_id, event, transaction_text):
 
     event_price = int(event.paid_information.price * 100)
 
-    refund_payment(
-        amount=event_price,
-        order_id=str(order_id),
-        access_token=access_token,
-        transaction_text=transaction_text,
-    )
+    try:
+        refund_payment(
+            amount=event_price,
+            order_id=str(order_id),
+            access_token=access_token,
+            transaction_text=transaction_text,
+        )
+
+        order = Order.objects.get(order_id=order_id)
+        order.status = OrderStatus.REFUND
+        order.save()
+
+    except Exception as refund_error:
+        capture_exception(refund_error)
+    
