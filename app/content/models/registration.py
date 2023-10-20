@@ -4,6 +4,8 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q
 
+from sentry_sdk import capture_exception
+
 from app.common.enums import StrikeEnum
 from app.common.permissions import BasePermissionModel
 from app.communication.enums import UserNotificationSettingType
@@ -20,6 +22,7 @@ from app.content.models.user import User
 from app.content.util.registration_utils import get_payment_expiredate
 from app.forms.enums import EventFormType
 from app.payment.util.order_utils import check_if_order_is_paid
+from app.payment.models import Order
 from app.util import now
 from app.util.models import BaseModel
 from app.util.utils import datetime_format
@@ -94,16 +97,19 @@ class Registration(BaseModel, BasePermissionModel):
         if not self.event.is_paid_event:
             return
 
-        order = self.event.orders.filter(user=self.user).first()
+        try:
+            order = self.event.orders.filter(user=self.user).first()
 
-        if check_if_order_is_paid(order):
-            refund_vipps_order(
-                order_id=order.order_id,
-                event=self.event,
-                transaction_text=f"Refund for {self.event.title} - {self.user.first_name} {self.user.last_name}",
-            )
+            if check_if_order_is_paid(order):
+                refund_vipps_order(
+                    order_id=order.order_id,
+                    event=self.event,
+                    transaction_text=f"Refund for {self.event.title} - {self.user.first_name} {self.user.last_name}",
+                )
 
-            self.send_notification_and_mail_for_refund(order)
+                self.send_notification_and_mail_for_refund(order)
+        except Order.DoesNotExist as order_does_not_exist:
+            capture_exception(order_does_not_exist)
 
     def delete(self, *args, **kwargs):
         moved_registration = None

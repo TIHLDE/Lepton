@@ -48,3 +48,7 @@ class UnansweredFormError(ValueError):
 
 class EventIsFullError(ValueError):
     pass
+
+
+class RefundFailedError(ValueError):
+    pass
