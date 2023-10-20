@@ -3,15 +3,15 @@ from datetime import datetime
 
 from sentry_sdk import capture_exception
 
+from app.content.exceptions import RefundFailedError
+from app.payment.enums import OrderStatus
+from app.payment.models import Order
 from app.payment.tasks import check_if_has_paid
 from app.payment.util.payment_utils import (
     get_new_access_token,
     initiate_payment,
     refund_payment,
 )
-from app.payment.models import Order
-from app.payment.enums import OrderStatus
-from app.content.exceptions import RefundFailedError
 
 
 def start_payment_countdown(event, registration):
@@ -94,4 +94,3 @@ def refund_vipps_order(order_id, event, transaction_text):
     except Exception as refund_error:
         capture_exception(refund_error)
         raise RefundFailedError("Tilbakebetaling feilet")
-    
