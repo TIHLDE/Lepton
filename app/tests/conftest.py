@@ -4,6 +4,14 @@ from rest_framework.test import APIRequestFactory
 import pytest
 
 from app.badge.factories import BadgeFactory, UserBadgeFactory
+from app.blitzed.factories.anonymous_user_factory import AnonymousUserFactory
+from app.blitzed.factories.beerpong_tournament_factory import (
+    BeerpongTournamentFactory,
+)
+from app.blitzed.factories.pong_match_factory import PongMatchFactory
+from app.blitzed.factories.pong_result_factory import PongResultFactory
+from app.blitzed.factories.pong_team_factory import PongTeamFactory
+from app.blitzed.factories.session_factory import SessionFactory
 from app.career.factories import WeeklyBusinessFactory
 from app.common.enums import AdminGroup, Groups, MembershipType
 from app.communication.factories import (
@@ -200,3 +208,33 @@ def banner():
 @pytest.fixture()
 def toddel():
     return ToddelFactory()
+
+
+@pytest.fixture()
+def anonymous_user():
+    return AnonymousUserFactory()
+
+
+@pytest.fixture()
+def pong_match():
+    return PongMatchFactory()
+
+
+@pytest.fixture()
+def pong_result():
+    return PongResultFactory()
+
+
+@pytest.fixture()
+def pong_team():
+    return PongTeamFactory()
+
+
+@pytest.fixture()
+def session():
+    return SessionFactory()
+
+
+@pytest.fixture()
+def beerpong_tournament():
+    return BeerpongTournamentFactory()

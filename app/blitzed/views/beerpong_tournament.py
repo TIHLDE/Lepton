@@ -1,4 +1,4 @@
-from app.blitzed.serializers.beerpong_tournamnet import (
+from app.blitzed.serializers.beerpong_tournament import (
     BeerpongTournamentSerializer,
 )
 from app.common.permissions import BasicViewPermission

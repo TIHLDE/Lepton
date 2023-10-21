@@ -22,7 +22,7 @@ def generate_team_name():
 
 class PongTeam(BaseModel, BasePermissionModel):
     team_name = models.CharField(max_length=60, default=generate_team_name)
-    members = models.ManyToManyField(User, related_name="pong_teams")
+    members = models.ManyToManyField(User, blank=True, related_name="pong_teams")
     anonymous_members = models.ManyToManyField(
         AnonymousUser, blank=True, related_name="pong_teams"
     )

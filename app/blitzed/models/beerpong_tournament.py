@@ -4,12 +4,13 @@ from django.db import models
 from django.utils.safestring import mark_safe
 
 from app.blitzed.models.pong_match import PongMatch
+from app.blitzed.models.pong_team import PongTeam
 from app.common.permissions import BasePermissionModel
 from app.util.models import BaseModel
 
 
 def generate_tournament_name():
-    team_names = [
+    tournament_names = [
         "Pongapalooza",
         "Beerlympics",
         "Brewski Battle",
@@ -21,12 +22,17 @@ def generate_tournament_name():
         "IntoxiCup",
         "Cerveza Classic",
     ]
-    return random.choice(team_names)
+    return random.choice(tournament_names)
 
 
 class BeerpongTournament(BaseModel, BasePermissionModel):
     name = models.CharField(max_length=60, default=generate_tournament_name)
-    matches = models.ManyToManyField(PongMatch, related_name="tournaments")
+    matches = models.ManyToManyField(
+        PongMatch, related_name="tournaments_matches", blank=True
+    )
+    teams = models.ManyToManyField(
+        PongTeam, related_name="tournaments_teams", blank=True
+    )
 
     class Meta:
         verbose_name_plural = "Pong tournaments"

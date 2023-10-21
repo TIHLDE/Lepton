@@ -3,7 +3,7 @@ from django.urls import path
 from rest_framework import routers
 
 from app.blitzed.views.anonymous_user import AnonymousUserViewset
-from app.blitzed.views.beerpong_tournamnet import BeerpongTournamentViewset
+from app.blitzed.views.beerpong_tournament import BeerpongTournamentViewset
 from app.blitzed.views.pong_match import PongMatchViewset
 from app.blitzed.views.pong_result import PongResultViewset
 from app.blitzed.views.pong_team import PongTeamViewset
