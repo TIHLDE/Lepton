@@ -55,7 +55,7 @@ class ReactionUpdateSerializer(serializers.ModelSerializer):
 
         if content_type.model.lower() == ContentTypes.NEWS:
             news = News.objects.get(id=int(object_id))
-            created_reaction = news.reactions.create(
+            created_reaction = news.reactions.update(
                 emoji=emoji,
             )
             return created_reaction
