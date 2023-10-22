@@ -13,7 +13,7 @@ class PongResult(BaseModel, BasePermissionModel):
     )
     winner = models.ForeignKey(
         PongTeam,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         null=True,
         blank=True,
         related_name="match_winners",

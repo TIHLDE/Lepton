@@ -8,10 +8,10 @@ from app.util.models import BaseModel
 
 class PongMatch(BaseModel, BasePermissionModel):
     team1 = models.ForeignKey(
-        PongTeam, on_delete=models.CASCADE, related_name="matches_team1"
+        PongTeam, on_delete=models.SET_NULL, related_name="matches_team1", null=True
     )
     team2 = models.ForeignKey(
-        PongTeam, on_delete=models.CASCADE, related_name="matches_team2"
+        PongTeam, on_delete=models.SET_NULL, related_name="matches_team2", null=True
     )
     prev_match = models.OneToOneField(
         "self", on_delete=models.SET_NULL, null=True, blank=True

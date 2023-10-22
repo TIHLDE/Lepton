@@ -1,9 +1,7 @@
 import factory
 from factory.django import DjangoModelFactory
 
-from app.blitzed.factories.anonymous_user_factory import AnonymousUserFactory
 from app.blitzed.models.pong_team import PongTeam
-from app.content.factories.user_factory import UserFactory
 
 
 class PongTeamFactory(DjangoModelFactory):
@@ -11,9 +9,15 @@ class PongTeamFactory(DjangoModelFactory):
         model = PongTeam
 
     team_name = factory.Faker("sentence", nb_words=3)
-    # members = factory.List([
-    #    factory.SubFactory(UserFactory) for _ in range(2)
-    # ])
-    # anonymous_members = factory.List([
-    #    factory.SubFactory(AnonymousUserFactory) for _ in range(1)
-    # ])
+
+    @factory.post_generation
+    def members(self, create, extracted, **kwargs):
+        if not create or not extracted:
+            return
+        self.members.add(*extracted)
+
+    @factory.post_generation
+    def anonymous_members(self, create, extracted, **kwargs):
+        if not create or not extracted:
+            return
+        self.anonymous_members.add(*extracted)

@@ -2,7 +2,6 @@ from django.conf.urls import include
 from django.urls import path
 from rest_framework import routers
 
-from app.blitzed.views.anonymous_user import AnonymousUserViewset
 from app.blitzed.views.beerpong_tournament import BeerpongTournamentViewset
 from app.blitzed.views.pong_match import PongMatchViewset
 from app.blitzed.views.pong_result import PongResultViewset
@@ -16,7 +15,6 @@ router.register("tournament", BeerpongTournamentViewset, basename="tournament")
 router.register("match", PongMatchViewset, basename="match")
 router.register("result", PongResultViewset, basename="result")
 router.register("team", PongTeamViewset, basename="team")
-router.register("anonymous", AnonymousUserViewset, basename="anonymous")
 
 urlpatterns = [
     path("", include(router.urls)),

@@ -1,8 +1,6 @@
 import factory
 from factory.django import DjangoModelFactory
 
-from app.blitzed.factories.pong_match_factory import PongMatchFactory
-from app.blitzed.factories.pong_team_factory import PongTeamFactory
 from app.blitzed.models.beerpong_tournament import BeerpongTournament
 
 
@@ -11,5 +9,15 @@ class BeerpongTournamentFactory(DjangoModelFactory):
         model = BeerpongTournament
 
     name = factory.Faker("sentence", nb_words=3)
-    # matches = factory.RelatedFactory(PongMatchFactory, "tournaments")
-    # teams = factory.RelatedFactory(PongTeamFactory, "tournaments")
+
+    @factory.post_generation
+    def matches(self, create, extracted, **kwargs):
+        if not create or not extracted:
+            return
+        self.matches.add(*extracted)
+
+    @factory.post_generation
+    def teams(self, create, extracted, **kwargs):
+        if not create or not extracted:
+            return
+        self.teams.add(*extracted)
