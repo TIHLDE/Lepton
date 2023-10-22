@@ -5,4 +5,4 @@ from app.common.serializers import BaseModelSerializer
 class PongResultSerializer(BaseModelSerializer):
     class Meta:
         model = PongResult
-        fields = ("match", "winner", "result")
+        fields = ("winner", "result")

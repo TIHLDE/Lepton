@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.safestring import mark_safe
 
+from app.blitzed.models.beerpong_tournament import BeerpongTournament
 from app.blitzed.models.pong_team import PongTeam
 from app.common.permissions import BasePermissionModel
 from app.util.models import BaseModel
@@ -15,6 +16,9 @@ class PongMatch(BaseModel, BasePermissionModel):
     )
     prev_match = models.OneToOneField(
         "self", on_delete=models.SET_NULL, null=True, blank=True
+    )
+    tournament = models.ForeignKey(
+        BeerpongTournament, on_delete=models.CASCADE, related_name="matches"
     )
 
     class Meta:

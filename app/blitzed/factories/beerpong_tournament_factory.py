@@ -9,15 +9,3 @@ class BeerpongTournamentFactory(DjangoModelFactory):
         model = BeerpongTournament
 
     name = factory.Faker("sentence", nb_words=3)
-
-    @factory.post_generation
-    def matches(self, create, extracted, **kwargs):
-        if not create or not extracted:
-            return
-        self.matches.add(*extracted)
-
-    @factory.post_generation
-    def teams(self, create, extracted, **kwargs):
-        if not create or not extracted:
-            return
-        self.teams.add(*extracted)
