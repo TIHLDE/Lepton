@@ -13,6 +13,8 @@
 ---
 
 ## Neste versjon
+
+## Versjon 2023.10.23
 - ⚡ **Brukere** HS kan styre medlemmer
 - ✨ **Bannere** Filtrering på bannere
 - ✨ **Spørreskjemaer** NOK medlemmer kan lage spørreskjema.
