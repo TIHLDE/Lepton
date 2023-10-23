@@ -2,7 +2,7 @@
 
 from rest_framework import serializers
 
-from ..models.bookable_item import BookableItem
+from kontres.models.bookable_item import BookableItem
 
 
 class BookableItemSerializer(serializers.ModelSerializer):

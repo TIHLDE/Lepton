@@ -3,18 +3,20 @@ import uuid
 from django.core.exceptions import ValidationError
 from django.db import models
 
+from app.util.models import BaseModel
+
 from app.content.models import User
 from app.kontres.models.bookable_item import BookableItem
-from app.kontres.reservation_state import ReservationStateEnum
+from app.kontres.enums import ReservationStateEnum
 
 
-class Reservation(models.Model):
+class Reservation(BaseModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     author = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="reservations"
     )
     bookable_item = models.ForeignKey(
-        BookableItem, on_delete=models.CASCADE, related_name="reservations"
+        BookableItem, on_delete=models.PROTECT, related_name="reservations"
     )
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
@@ -24,7 +26,6 @@ class Reservation(models.Model):
         default=ReservationStateEnum.PENDING,
     )
     description = models.TextField(blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
 
     def clean(self):
         # Check if end_time is greater than start_time
