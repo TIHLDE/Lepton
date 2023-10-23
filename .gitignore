@@ -26,3 +26,5 @@ mysite.log
 .coverage
 
 celerybeat-schedule
+
+**/target/

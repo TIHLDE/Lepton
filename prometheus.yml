@@ -1,0 +1,9 @@
+# global:
+#   scrape_interval: 5s
+#   evaluation_interval: 5s
+#
+scrape_configs:
+  - job_name: "lepton"
+    static_configs:
+      - targets: ["localhost:8000"]
+      - targets: ["docker.for.mac.localhost:8000"]
