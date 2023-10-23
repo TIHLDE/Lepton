@@ -4,6 +4,7 @@ from rest_framework.test import APIRequestFactory
 import pytest
 
 from app.badge.factories import BadgeFactory, UserBadgeFactory
+from app.blitzed.factories.drinking_game_factory import DrinkingGameFactory
 from app.career.factories import WeeklyBusinessFactory
 from app.common.enums import AdminGroup, Groups, MembershipType
 from app.communication.factories import (
@@ -200,3 +201,8 @@ def banner():
 @pytest.fixture()
 def toddel():
     return ToddelFactory()
+
+
+@pytest.fixture()
+def drinking_game():
+    return DrinkingGameFactory()
