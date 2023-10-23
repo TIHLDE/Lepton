@@ -3,6 +3,8 @@ from rest_framework import filters, status
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 
+from sentry_sdk import capture_exception
+
 from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission, is_admin_user
 from app.common.viewsets import BaseViewSet
@@ -67,9 +69,15 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
 
         try:
             create_payment_order(event, request, registration)
-        except Exception as e:
+        except Exception as order_error:
+            capture_exception(order_error)
             registration.delete()
-            raise e
+            return Response(
+                {
+                    "detail": "Det skjedde en feil med opprettelse av betalingsordre. Påmeldingen ble ikke fullført."
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         registration_serializer = RegistrationSerializer(
             registration, context={"user": registration.user}
