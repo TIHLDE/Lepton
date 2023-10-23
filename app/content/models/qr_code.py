@@ -12,7 +12,7 @@ class QRCode(BaseModel, OptionalImage, BasePermissionModel):
 
     name = models.CharField(max_length=50)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="qr_codes")
-    url = models.URLField(max_length=600)
+    content = models.CharField(max_length=600)
 
     class Meta:
         verbose_name = "qr_code"

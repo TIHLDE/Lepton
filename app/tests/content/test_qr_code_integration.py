@@ -6,7 +6,7 @@ API_QR_CODE_BASE_URL = "/qr-codes/"
 
 
 def get_data():
-    return {"name": "Test QR Code", "url": "https://tihlde.org"}
+    return {"name": "Test QR Code", "content": "https://tihlde.org"}
 
 
 @pytest.mark.django_db
@@ -62,7 +62,7 @@ def test_create_qr_code_as_anonymous_user(default_client):
 @pytest.mark.django_db
 def test_delete_qr_code_with_invalid_blob_as_member(member, api_client, qr_code):
     """
-    A member of TIHLDE should be able to delete a QR Code when the blob is not found.
+    A member of TIHLDE should be able to delete a QR Code.
     """
 
     qr_code.user = member
@@ -77,9 +77,21 @@ def test_delete_qr_code_with_invalid_blob_as_member(member, api_client, qr_code)
 @pytest.mark.django_db
 def test_delete_qr_code_with_invalid_blob_as_anonymous_user(default_client, qr_code):
     """
-    An anonymous user should not be able to delete a QR Code when the blob is not found.
+    An anonymous user should not be able to delete a QR Code.
     """
 
     response = default_client.delete(f"{API_QR_CODE_BASE_URL}{qr_code.id}/")
 
     assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+@pytest.mark.django_db
+def test_delete_other_users_qr_code(member, api_client, qr_code):
+    """
+    A member of TIHLDE should not be able to delete another users QR Code.
+    """
+
+    client = api_client(user=member)
+    response = client.delete(f"{API_QR_CODE_BASE_URL}{qr_code.id}/")
+
+    assert response.status_code == status.HTTP_404_NOT_FOUND

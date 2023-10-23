@@ -41,18 +41,5 @@ class QRCodeViewSet(BaseViewSet):
         )
 
     def destroy(self, request, *args, **kwargs):
-        try:
-            instance = get_object_or_404(QRCode, id=kwargs["pk"])
-            AzureFileHandler(url=instance.image).deleteBlob()
-        except Exception as blob_not_found:
-            capture_exception(blob_not_found)
-            super().destroy(request, *args, **kwargs)
-            return Response(
-                {
-                    "detail": "Kunne ikke finne blob i Azure Storage. QR-koden ble slettet"
-                },
-                status=status.HTTP_200_OK
-            )
-
         super().destroy(request, *args, **kwargs)
         return Response({"detail": "QR-koden ble slettet"}, status=status.HTTP_200_OK)
