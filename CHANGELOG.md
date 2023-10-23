@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+- ⚡ **Brukere** HS kan styre medlemmer
 - ✨ **Bannere** Filtrering på bannere
 - ✨ **Spørreskjemaer** NOK medlemmer kan lage spørreskjema.
 - ⚡ **Bruker** Nå kan ikke HS lenger endre eller slette brukere.
