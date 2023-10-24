@@ -236,6 +236,21 @@ class Registration(BaseModel, BasePermissionModel):
             )
             registration_move_to_queue.is_on_wait = False
             return registration_move_to_queue
+    
+    def move_from_queue_to_waiting_list(self):
+        registrations_in_queue = self.event.get_participants().order_by("-created_at")
+
+        if registrations_in_queue:
+            registration_move_to_waiting_list = next(
+                (
+                    registration
+                    for registration in registrations_in_queue
+                    if not registration.is_prioritized
+                ),
+                registrations_in_queue[0],
+            )
+            registration_move_to_waiting_list.is_on_wait = True
+            return registration_move_to_waiting_list
 
     def clean(self):
         """

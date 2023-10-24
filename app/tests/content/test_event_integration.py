@@ -27,7 +27,7 @@ def get_events_url_detail(event=None):
 
 
 def get_event_data(
-    title="New Title", location="New Location", organizer=None, contact_person=None
+    title="New Title", location="New Location", organizer=None, contact_person=None, limit=0
 ):
     start_date = timezone.now() + timedelta(days=10)
     end_date = timezone.now() + timedelta(days=11)
@@ -37,6 +37,7 @@ def get_event_data(
         "start_date": start_date,
         "end_date": end_date,
         "is_paid_event": False,
+        "limit": limit
     }
     if organizer:
         data["organizer"] = organizer
@@ -224,7 +225,7 @@ def test_update_event_as_admin(permission_test_util):
 
     client = get_api_client(user=user)
     url = get_events_url_detail(event)
-    data = get_event_data(title=expected_title, organizer=new_organizer)
+    data = get_event_data(title=expected_title, organizer=new_organizer, limit=event.limit)
 
     response = client.put(url, data)
     event.refresh_from_db()
@@ -233,6 +234,72 @@ def test_update_event_as_admin(permission_test_util):
     assert event.title == expected_title
 
 
+@pytest.mark.django_db
+def test_update_event_with_increased_limit(admin_user, event):
+    """
+    Admins should be able to update the limit of an event.
+    Then the first person on the waiting list should be moved to the queue.
+    Priorities should be respected.
+    """
+
+    event.limit = 1
+    event.save()
+
+    registration = RegistrationFactory(event=event)
+    waiting_registration = RegistrationFactory(event=event)
+
+    assert not registration.is_on_wait
+    assert waiting_registration.is_on_wait
+    assert event.waiting_list_count == 1
+
+    client = get_api_client(user=admin_user)
+    url = get_events_url_detail(event)
+    data = get_event_data(limit=2)
+
+    response = client.put(url, data)
+    event.refresh_from_db()
+    registration.refresh_from_db()
+    waiting_registration.refresh_from_db()
+
+    assert response.status_code == status.HTTP_200_OK
+    assert event.limit == 2
+    assert event.waiting_list_count == 0
+    assert not waiting_registration.is_on_wait
+
+
+@pytest.mark.django_db
+def test_update_event_with_decreased_limit(admin_user, event):
+    """
+    Admins should be able to update the limit of an event.
+    Then the first person on the queue should be moved to the waiting list.
+    Priorities should be respected.
+    """
+
+    event.limit = 2
+    event.save()
+
+    registration = RegistrationFactory(event=event)
+    queue_registration = RegistrationFactory(event=event)
+
+    assert not registration.is_on_wait
+    assert not queue_registration.is_on_wait
+    assert event.waiting_list_count == 0
+
+    client = get_api_client(user=admin_user)
+    url = get_events_url_detail(event)
+    data = get_event_data(limit=1)
+
+    response = client.put(url, data)
+    event.refresh_from_db()
+    registration.refresh_from_db()
+    queue_registration.refresh_from_db()
+
+    assert response.status_code == status.HTTP_200_OK
+    assert event.limit == 1
+    assert event.waiting_list_count == 1
+    assert queue_registration.is_on_wait    
+
+    
 @pytest.mark.django_db
 def test_create_as_anonymous_user(default_client):
     """An anonymous user should not be able to create an event entity."""
