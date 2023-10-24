@@ -561,4 +561,27 @@ def test_wait_queue_number_is_correct_when_in_wait_list(
 
     assert not registration_not_in_priority_pool.is_on_wait
     assert registration_not_in_priority_pool.wait_queue_number is None
-    assert other_registration_not_in_priority_pool.is_on_wait == 1
+    assert other_registration_not_in_priority_pool.wait_queue_number == 1
+
+
+def test_wait_queue_number_is_correct_when_not_first_in_wait_list(
+    user_not_in_priority_pool, event_with_priority_pool
+):
+    registration_not_in_priority_pool = RegistrationFactory(
+        event=event_with_priority_pool, user=user_not_in_priority_pool
+    )
+
+    second_user_not_in_priority_pool = UserFactory()
+    second_registration_not_in_priority_pool = RegistrationFactory(
+        event=event_with_priority_pool, user=second_user_not_in_priority_pool
+    )
+
+    third_user_not_in_priority_pool = UserFactory()
+    third_registration_not_in_priority_pool = RegistrationFactory(
+        event=event_with_priority_pool, user=third_user_not_in_priority_pool
+    )
+
+    assert not registration_not_in_priority_pool.is_on_wait
+    assert registration_not_in_priority_pool.wait_queue_number is None
+    assert second_registration_not_in_priority_pool.wait_queue_number == 1
+    assert third_registration_not_in_priority_pool.wait_queue_number == 2
