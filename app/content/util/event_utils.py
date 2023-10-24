@@ -34,7 +34,7 @@ def start_payment_countdown(event, registration):
 
 def get_countdown_time(event):
     paytime = event.paid_information.paytime
-    return (paytime.hour * 60 + paytime.minute) * 60 + paytime.second
+    return (paytime.hour * 60 + paytime.minute + 10) * 60 + paytime.second
 
 
 def create_vipps_order(order_id, event, transaction_text, fallback):
