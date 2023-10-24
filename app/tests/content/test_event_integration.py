@@ -27,7 +27,11 @@ def get_events_url_detail(event=None):
 
 
 def get_event_data(
-    title="New Title", location="New Location", organizer=None, contact_person=None, limit=0
+    title="New Title",
+    location="New Location",
+    organizer=None,
+    contact_person=None,
+    limit=0,
 ):
     start_date = timezone.now() + timedelta(days=10)
     end_date = timezone.now() + timedelta(days=11)
@@ -37,7 +41,7 @@ def get_event_data(
         "start_date": start_date,
         "end_date": end_date,
         "is_paid_event": False,
-        "limit": limit
+        "limit": limit,
     }
     if organizer:
         data["organizer"] = organizer
@@ -225,7 +229,9 @@ def test_update_event_as_admin(permission_test_util):
 
     client = get_api_client(user=user)
     url = get_events_url_detail(event)
-    data = get_event_data(title=expected_title, organizer=new_organizer, limit=event.limit)
+    data = get_event_data(
+        title=expected_title, organizer=new_organizer, limit=event.limit
+    )
 
     response = client.put(url, data)
     event.refresh_from_db()
@@ -297,9 +303,9 @@ def test_update_event_with_decreased_limit(admin_user, event):
     assert response.status_code == status.HTTP_200_OK
     assert event.limit == 1
     assert event.waiting_list_count == 1
-    assert queue_registration.is_on_wait    
+    assert queue_registration.is_on_wait
 
-    
+
 @pytest.mark.django_db
 def test_create_as_anonymous_user(default_client):
     """An anonymous user should not be able to create an event entity."""

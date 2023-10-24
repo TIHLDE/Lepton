@@ -236,7 +236,7 @@ class Registration(BaseModel, BasePermissionModel):
             )
             registration_move_to_queue.is_on_wait = False
             return registration_move_to_queue
-    
+
     def move_from_queue_to_waiting_list(self):
         registrations_in_queue = self.event.get_participants().order_by("-created_at")
 

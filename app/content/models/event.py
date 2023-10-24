@@ -106,7 +106,7 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
     def waiting_list_count(self):
         """Number of users on the waiting list"""
         return self.get_waiting_list().count()
-    
+
     def move_users_from_waiting_list_to_queue(self, count):
         """Move x users from waiting list to queue"""
         waiting_list = self.get_waiting_list().order_by("created_at")
