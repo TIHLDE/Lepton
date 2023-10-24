@@ -2,9 +2,6 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.response import Response
 
-from sentry_sdk import capture_exception
-
-from app.common.azure_file_handler import AzureFileHandler
 from app.common.permissions import BasicViewPermission
 from app.common.viewsets import BaseViewSet
 from app.content.models import QRCode, User
