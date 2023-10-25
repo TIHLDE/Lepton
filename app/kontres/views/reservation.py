@@ -7,7 +7,6 @@ from app.kontres.serializer.reservation_seralizer import ReservationSerializer
 
 
 class ReservationViewSet(viewsets.ViewSet):
-
     def get_queryset(self):
         start_date = self.request.GET.get("start_date")
         end_date = self.request.GET.get("end_date")
@@ -64,4 +63,3 @@ class ReservationViewSet(viewsets.ViewSet):
         reservation = get_object_or_404(queryset, pk=pk)
         reservation.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
