@@ -2,34 +2,35 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 
-from app.kontres.models.reservation import (  # Replace with the actual path to your model
-    Reservation,
-)
+from app.kontres.models.reservation import Reservation
 from app.kontres.serializer.reservation_seralizer import ReservationSerializer
 
 
 class ReservationViewSet(viewsets.ViewSet):
 
+    def get_queryset(self):
+        start_date = self.request.GET.get("start_date")
+        end_date = self.request.GET.get("end_date")
+
+        if start_date == "0" and end_date == "0":
+            return Reservation.objects.all()
+        elif start_date and end_date:
+            return Reservation.objects.filter(
+                start_time__gte=start_date, end_time__lte=end_date
+            )
+        else:
+            return Reservation.objects.all()
+
     # GET: Retrieve a single reservation by its primary key
     def retrieve(self, request, pk=None):
-        queryset = Reservation.objects.all()
+        queryset = self.get_queryset()
         reservation = get_object_or_404(queryset, pk=pk)
         serializer = ReservationSerializer(reservation)
         return Response(serializer.data)
 
     # GET: Retrieve a list of all reservations
     def list(self, request):
-        start_date = request.GET.get("start_date")
-        end_date = request.GET.get("end_date")
-
-        if start_date == "0" and end_date == "0":
-            queryset = Reservation.objects.all()
-        elif start_date and end_date:
-            queryset = Reservation.objects.filter(
-                start_time__gte=start_date, end_time__lte=end_date
-            )
-        else:
-            queryset = Reservation.objects.all()
+        queryset = self.get_queryset()
 
         if queryset.exists():
             serializer = ReservationSerializer(queryset, many=True)
@@ -49,7 +50,7 @@ class ReservationViewSet(viewsets.ViewSet):
 
     # PUT: Update an existing reservation by its primary key
     def update(self, request, pk=None):
-        queryset = Reservation.objects.all()
+        queryset = self.get_queryset()
         reservation = get_object_or_404(queryset, pk=pk)
         serializer = ReservationSerializer(reservation, data=request.data, partial=True)
         if serializer.is_valid():
@@ -59,7 +60,8 @@ class ReservationViewSet(viewsets.ViewSet):
 
     # DELETE: Delete an existing reservation by its primary key
     def destroy(self, request, pk=None):
-        queryset = Reservation.objects.all()
+        queryset = self.get_queryset()
         reservation = get_object_or_404(queryset, pk=pk)
         reservation.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
