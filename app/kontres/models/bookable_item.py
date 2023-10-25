@@ -1,6 +1,8 @@
 import uuid
-from app.common.enums import AdminGroup, Groups
+
 from django.db import models
+
+from app.common.enums import AdminGroup, Groups
 from app.common.permissions import BasePermissionModel
 from app.util.models import BaseModel
 

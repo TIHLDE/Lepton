@@ -3,11 +3,11 @@ import uuid
 from django.core.exceptions import ValidationError
 from django.db import models
 
+from app.common.enums import AdminGroup, Groups
 from app.content.models import User
 from app.kontres.enums import ReservationStateEnum
 from app.kontres.models.bookable_item import BookableItem
 from app.util.models import BaseModel
-from app.common.enums import AdminGroup, Groups
 
 
 class Reservation(BaseModel):
