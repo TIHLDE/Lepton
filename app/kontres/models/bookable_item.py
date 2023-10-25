@@ -1,11 +1,10 @@
+from django.db import models
+from app.util.models import BaseModel
+from app.common.permissions import BasePermissionModel
 import uuid
 
-from django.db import models
 
-from app.util.models import BaseModel
-
-
-class BookableItem(BaseModel):
+class BookableItem(BaseModel, BasePermissionModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=20)
     description = models.TextField(blank=True)
