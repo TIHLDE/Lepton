@@ -1,7 +1,7 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
-from app.kontres.views.fetch_bookable_items import BookableItemViewSet
+from app.kontres.views.bookable_item import BookableItemViewSet
 from app.kontres.views.reservation import ReservationViewSet
 
 # Create a router and register our viewsets with it.
