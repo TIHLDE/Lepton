@@ -37,7 +37,6 @@ def test_anonymous_cannot_create_reservation(default_client, bookable_item):
     response = client.post(
         "/kontres/reservations/",
         {
-            "author": "",
             "bookable_item": bookable_item.id,
             "start_time": "2023-10-10T10:00:00Z",
             "end_time": "2023-10-10T11:00:00Z",
@@ -45,7 +44,7 @@ def test_anonymous_cannot_create_reservation(default_client, bookable_item):
         format="json",
     )
 
-    assert response.status_code == status.HTTP_403_FORBIDDEN
+    assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
 
 @pytest.mark.django_db
@@ -213,8 +212,7 @@ def test_can_fetch_single_reservation(reservation, user):
 
 @pytest.mark.django_db
 def test_user_cannot_fetch_nonexistent_reservation(user):
-    client = APIClient()
-    client.force_authenticate(user=user)
+    client = get_api_client(user=user)
 
     non_existent_uuid = "12345678-1234-5678-1234-567812345678"
     response = client.get(f"/kontres/reservations/{non_existent_uuid}/", format="json")
