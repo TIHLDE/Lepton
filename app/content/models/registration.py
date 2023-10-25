@@ -209,6 +209,23 @@ class Registration(BaseModel, BasePermissionModel):
 
         return False
 
+    @property
+    def wait_queue_number(self):
+        """
+        Returns the number of people in front of the user in the waiting list.
+        """
+        waiting_list_count = (
+            self.event.get_waiting_list()
+            .order_by("-created_at")
+            .filter(created_at__lte=self.created_at)
+            .count()
+        )
+
+        if waiting_list_count == 0 or not self.is_on_wait:
+            return None
+
+        return waiting_list_count
+
     def swap_users(self):
         """Swaps a user with a spot with a prioritized user, if such user exists"""
         for registration in self.event.get_participants().order_by("-created_at"):
