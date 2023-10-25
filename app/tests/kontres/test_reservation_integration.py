@@ -68,7 +68,8 @@ def test_user_cannot_create_confirmed_reservation(bookable_item, member):
 
 
 @pytest.mark.django_db
-def test_user_cannot_create_reservation_without_author(client, bookable_item):
+def test_user_cannot_create_reservation_without_author(member, bookable_item):
+    client = get_api_client(user=member)
     response = client.post(
         "/kontres/reservations/",
         {
@@ -83,9 +84,8 @@ def test_user_cannot_create_reservation_without_author(client, bookable_item):
 
 
 @pytest.mark.django_db
-def test_user_cannot_create_reservation_with_invalid_date_format(
-    client, user, bookable_item
-):
+def test_user_cannot_create_reservation_with_invalid_date_format(user, bookable_item):
+    client = get_api_client(user=user)
     response = client.post(
         "/kontres/reservations/",
         {
@@ -170,8 +170,8 @@ def test_user_can_fetch_all_reservations(reservation, user):
 
 
 @pytest.mark.django_db
-def test_can_fetch_all_bookable_items(bookable_item, user):
-    client = get_api_client(user=user)
+def test_can_fetch_all_bookable_items(bookable_item, member):
+    client = get_api_client(user=member)
 
     bookable_items = [bookable_item]
     for _ in range(2):
@@ -189,8 +189,8 @@ def test_can_fetch_all_bookable_items(bookable_item, user):
 
 
 @pytest.mark.django_db
-def test_can_fetch_bookable_items_when_none_exist(user):
-    client = get_api_client(user=user)
+def test_can_fetch_bookable_items_when_none_exist(member):
+    client = get_api_client(user=member)
     response = client.get("/kontres/bookable_items/", format="json")
 
     assert response.status_code == 200
