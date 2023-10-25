@@ -1,12 +1,13 @@
 import uuid
-
+from app.common.enums import AdminGroup, Groups
 from django.db import models
-
 from app.common.permissions import BasePermissionModel
 from app.util.models import BaseModel
 
 
 class BookableItem(BaseModel, BasePermissionModel):
+    write_access = AdminGroup.admin()
+    read_access = [Groups.TIHLDE]
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=20)
     description = models.TextField(blank=True)

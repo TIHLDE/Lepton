@@ -7,9 +7,12 @@ from app.content.models import User
 from app.kontres.enums import ReservationStateEnum
 from app.kontres.models.bookable_item import BookableItem
 from app.util.models import BaseModel
+from app.common.enums import AdminGroup, Groups
 
 
 class Reservation(BaseModel):
+    write_access = AdminGroup.admin()
+    read_access = [Groups.TIHLDE]
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     author = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="reservations"
