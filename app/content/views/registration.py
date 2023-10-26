@@ -146,16 +146,16 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
+        request.data["allow_photo"] = user.allows_photo_by_default
+
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
         event_id = self.kwargs.get("event_id", None)
         user_id = request.data["user"]
 
         event = get_object_or_404(Event, id=event_id)
         user = get_object_or_404(User, user_id=user_id)
-
-        request.data["allow_photo"] = user.allows_photo_by_default
-
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
 
         registration = super().perform_create(serializer, event=event, user=user)
 
