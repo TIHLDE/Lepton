@@ -822,6 +822,30 @@ def test_add_registration_to_event_as_admin(api_client, admin_user, event):
 
 
 @pytest.mark.django_db
+def test_add_registration_to_event_as_admin_when_event_is_full(api_client, admin_user, member, event):
+    """
+    An admin should be able to add a registration to an event
+    manually. If the event is full, the member should be added to the waiting list.
+    """
+
+    event.limit = 1
+    event.save()
+    registration = RegistrationFactory(event=event)
+
+    assert not registration.is_on_wait
+
+    data = {"user": member.user_id, "event": event.id}
+    url = f"{_get_registration_url(event=event)}add/"
+
+    response = api_client(user=admin_user).post(url, data=data)
+
+    event.refresh_from_db()
+
+    assert response.status_code == status.HTTP_201_CREATED
+    assert event.registrations.get(user=member).is_on_wait
+
+
+@pytest.mark.django_db
 @pytest.mark.parametrize(
     "organizer_name",
     [
