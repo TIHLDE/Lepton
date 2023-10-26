@@ -274,36 +274,49 @@ def test_update_event_with_increased_limit(admin_user, event):
 
 
 @pytest.mark.django_db
-def test_update_event_with_decreased_limit(admin_user, event):
+def test_update_event_with_decreased_limit(
+    admin_user, event_with_priority_pool, user_in_priority_pool
+):
     """
     Admins should be able to update the limit of an event.
     Then the first person on the queue should be moved to the waiting list.
     Priorities should be respected.
     """
 
-    event.limit = 2
-    event.save()
+    event_with_priority_pool.limit = 4
+    event_with_priority_pool.save()
 
-    registration = RegistrationFactory(event=event)
-    queue_registration = RegistrationFactory(event=event)
+    registration = RegistrationFactory(event=event_with_priority_pool)
+    first_queue_registration = RegistrationFactory(event=event_with_priority_pool)
+    second_queue_registration = RegistrationFactory(event=event_with_priority_pool)
+    third_queue_registration = RegistrationFactory(
+        event=event_with_priority_pool, user=user_in_priority_pool
+    )
 
     assert not registration.is_on_wait
-    assert not queue_registration.is_on_wait
-    assert event.waiting_list_count == 0
+    assert not first_queue_registration.is_on_wait
+    assert not second_queue_registration.is_on_wait
+    assert not third_queue_registration.is_on_wait
+    assert event_with_priority_pool.waiting_list_count == 0
 
     client = get_api_client(user=admin_user)
-    url = get_events_url_detail(event)
+    url = get_events_url_detail(event_with_priority_pool)
     data = get_event_data(limit=1)
 
     response = client.put(url, data)
-    event.refresh_from_db()
+    event_with_priority_pool.refresh_from_db()
     registration.refresh_from_db()
-    queue_registration.refresh_from_db()
+    first_queue_registration.refresh_from_db()
+    second_queue_registration.refresh_from_db()
+    third_queue_registration.refresh_from_db()
 
     assert response.status_code == status.HTTP_200_OK
-    assert event.limit == 1
-    assert event.waiting_list_count == 1
-    assert queue_registration.is_on_wait
+    assert event_with_priority_pool.limit == 1
+    assert event_with_priority_pool.waiting_list_count == 3
+    assert registration.is_on_wait
+    assert first_queue_registration.is_on_wait
+    assert second_queue_registration.is_on_wait
+    assert not third_queue_registration.is_on_wait
 
 
 @pytest.mark.django_db

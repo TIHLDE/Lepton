@@ -108,14 +108,14 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
         return self.get_waiting_list().count()
 
     def move_users_from_waiting_list_to_queue(self, count):
-        """Move x users from waiting list to queue"""
+        """Moves the first x users from waiting list to queue"""
         waiting_list = self.get_waiting_list().order_by("created_at")
         for registration in waiting_list[:count]:
             moved_registration = registration.move_from_waiting_list_to_queue()
             moved_registration.save()
 
     def move_users_from_queue_to_waiting_list(self, count):
-        """Move x users from queue to waiting list"""
+        """Moves the last created x users from queue to waiting list"""
         queue = self.get_participants().order_by("-created_at")
         for registration in queue[:count]:
             moved_registration = registration.move_from_queue_to_waiting_list()
