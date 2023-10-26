@@ -617,34 +617,6 @@ def test_delete_own_registration_as_member(member):
     assert response.status_code == status.HTTP_200_OK
 
 
-# @pytest.mark.django_db
-# def test_delete_own_registration_on_paid_event_as_member(member, paid_event):
-#     """A member should only be able to delete their own registration on a paid event."""
-#     event = paid_event.event
-#     client = get_api_client(user=member)
-#     data = _get_registration_post_data(user=member, event=event)
-#     post_url = _get_registration_url(event=event)
-#     post_response = client.post(post_url, data=data)
-
-#     assert post_response.status_code == 201
-
-#     print(post_response.data)
-#     registration = Registration.objects.filter(event=event, user=member)
-#     registrations = Registration.objects.all()
-#     print(registrations)
-#     print(registration)
-#     order = Order.objects.filter(event=event, user=member)[0]
-
-#     assert order.status == OrderStatus.INITIATE
-
-#     url = _get_registration_detail_url(registration)
-#     response = client.delete(url)
-#     order = Order.objects.filter(event=event, user=member)[0]
-
-#     assert response.status_code == status.HTTP_200_OK
-#     assert order.status == OrderStatus.CANCEL
-
-
 @pytest.mark.django_db
 def test_delete_another_registration_as_member(member, user):
     """A member should not be able to delete another registration."""
@@ -695,17 +667,20 @@ def test_delete_as_member_when_sign_off_deadline_has_passed_and_on_wait(member):
     [
         AdminGroup.PROMO,
         AdminGroup.NOK,
+        AdminGroup.KOK,
+        AdminGroup.SOSIALEN,
+        AdminGroup.INDEX,
     ],
 )
 def test_delete_another_registration_as_member_in_nok_or_promo(
     member, organizer_name, user
 ):
-    """A member of NOK or PROMO should not be able to delete another registration for an event."""
+    """A member of NOK, PROMO, Sosialen or KOK should be able to delete another registration for an event."""
     registration = RegistrationFactory(user=user)
     client = get_api_client(user=member, group_name=organizer_name)
     response = client.delete(_get_registration_detail_url(registration))
 
-    assert response.status_code == status.HTTP_403_FORBIDDEN
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db
@@ -829,3 +804,77 @@ def test_that_users_can_register_when_has_no_unanswered_evaluations(api_client, 
 
     assert response.status_code == status.HTTP_201_CREATED
     assert next_event.registrations.filter(user=user).exists()
+
+
+@pytest.mark.django_db
+def test_add_registration_to_event_as_admin(api_client, admin_user, event):
+    """
+    An admin should be able to add a registration to an event
+    manually.
+    """
+
+    data = {"user": admin_user.user_id, "event": event.id}
+    url = f"{_get_registration_url(event=event)}add/"
+
+    response = api_client(user=admin_user).post(url, data=data)
+
+    assert response.status_code == status.HTTP_201_CREATED
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "organizer_name",
+    [
+        AdminGroup.PROMO,
+        AdminGroup.NOK,
+        AdminGroup.KOK,
+        AdminGroup.SOSIALEN,
+        AdminGroup.INDEX,
+    ],
+)
+def test_add_registration_to_event_as_admin_group_member(event, member, organizer_name):
+    """
+    A member of NOK, Promo, Sosialen or KOK should be able to add a
+    registration to an event manually.
+    """
+
+    data = {"user": member.user_id, "event": event.id}
+    url = f"{_get_registration_url(event=event)}add/"
+
+    client = get_api_client(user=member, group_name=organizer_name)
+
+    response = client.post(url, data)
+
+    assert response.status_code == status.HTTP_201_CREATED
+
+
+@pytest.mark.django_db
+def test_add_registration_to_event_as_anonymous_user(default_client, event, member):
+    """
+    An anonymous user should not be able to add a registration to an
+    event manually.
+    """
+
+    data = {"user": member.user_id, "event": event.id}
+    url = f"{_get_registration_url(event=event)}add/"
+
+    response = default_client.post(url, data=data)
+
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+@pytest.mark.django_db
+def test_add_registration_to_event_as_member(member, event):
+    """
+    A member should not be able to add a registration to an
+    event manually.
+    """
+
+    data = {"user": member.user_id, "event": event.id}
+    url = f"{_get_registration_url(event=event)}add/"
+
+    client = get_api_client(user=member)
+
+    response = client.post(url, data)
+
+    assert response.status_code == status.HTTP_403_FORBIDDEN

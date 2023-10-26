@@ -104,7 +104,14 @@ class Registration(BaseModel, BasePermissionModel):
         return registration
 
     def admin_unregister(self, *args, **kwargs):
-        return super().delete(*args, **kwargs)
+        moved_registration = self.move_from_waiting_list_to_queue()
+        self.delete_submission_if_exists()
+        self.send_unregistered_notification_and_mail()
+
+        super().delete(*args, **kwargs)
+
+        if moved_registration:
+            moved_registration.save()
 
     def save(self, *args, **kwargs):
         if not self.registration_id:
@@ -154,6 +161,21 @@ class Registration(BaseModel, BasePermissionModel):
         form = EventForm.objects.filter(event=self.event, type=EventFormType.SURVEY)
         submission = self.get_submissions(type=EventFormType.SURVEY)
         return not form.exists() or submission.exists()
+
+    def send_unregistered_notification_and_mail(self):
+        Notify(
+            [self.user],
+            f'Du har blitt meldt av "{self.event.title}"',
+            UserNotificationSettingType.UNREGISTRATION,
+        ).add_paragraph(f"Hei, {self.user.first_name}!").add_paragraph(
+            "Den ansvarlige for dette arrangementet har fjernet påmeldingen din."
+        ).add_paragraph(
+            "Det kan være flere årsaker til dette. Dersom du har spørsmål kan du kontakte den ansvarlige for arrangementet."
+        ).add_paragraph(
+            "Husk at du må melde deg på igjen hvis du ønsker plass på ventelisten."
+        ).add_event_link(
+            self.event.pk
+        ).send()
 
     def send_notification_and_mail(self):
         has_not_attended = not self.has_attended
