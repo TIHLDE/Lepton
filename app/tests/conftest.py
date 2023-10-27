@@ -17,6 +17,7 @@ from app.content.factories import (
     NewsFactory,
     PageFactory,
     ParentPageFactory,
+    QRCodeFactory,
     PriorityPoolFactory,
     RegistrationFactory,
     ShortLinkFactory,
@@ -68,6 +69,11 @@ def api_client():
 @pytest.fixture()
 def user():
     return UserFactory()
+
+
+@pytest.fixture()
+def qr_code():
+    return QRCodeFactory()
 
 
 @pytest.fixture
