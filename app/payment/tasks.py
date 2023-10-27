@@ -11,16 +11,15 @@ from app.util.tasks import BaseTask
 
 @app.task(bind=True, base=BaseTask)
 def check_if_has_paid(self, event_id, registration_id):
-    registration = Registration.objects.get(registration_id=registration_id)
-    event = Event.objects.get(id=event_id)
+    registration = Registration.objects.filter(registration_id=registration_id).first()
+    event = Event.objects.filter(id=event_id).first()
 
     if not registration or not event:
         return
 
-    try:
-        user_order = Order.objects.filter(event=event, user=registration.user).first()
-    except Order.DoesNotExist as order_not_exist:
-        capture_exception(order_not_exist)
+    user_order = Order.objects.filter(event=event, user=registration.user).first()
+
+    if not user_order:
         registration.delete()
         return
 
