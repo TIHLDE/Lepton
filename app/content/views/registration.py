@@ -1,17 +1,23 @@
+from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status
+from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 
 from sentry_sdk import capture_exception
 
 from app.common.pagination import BasePagination
-from app.common.permissions import BasicViewPermission, is_admin_user
+from app.common.permissions import (
+    BasicViewPermission,
+    is_admin_group_user,
+    is_admin_user,
+)
 from app.common.viewsets import BaseViewSet
 from app.content.exceptions import APIUserAlreadyAttendedEvent
 from app.content.filters.registration import RegistrationFilter
 from app.content.mixins import APIRegistrationErrorsMixin
-from app.content.models import Event, Registration
+from app.content.models import Event, Registration, User
 from app.content.serializers import RegistrationSerializer
 from app.content.util.event_utils import create_payment_order
 from app.payment.models.order import Order
@@ -105,7 +111,7 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
         if is_admin_user(request) and self._is_own_registration():
             return self._unregister(registration)
 
-        if is_admin_user(request):
+        if is_admin_group_user(request):
             return self._admin_unregister(registration)
 
         if self._is_not_own_registration():
@@ -127,3 +133,34 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
             {"detail": "Brukeren har blitt meldt av arrangement"},
             status=status.HTTP_200_OK,
         )
+
+    @action(detail=False, methods=["post"], url_path="add")
+    def add_registration(self, request, *args, **kwargs):
+        """Add registration to event for admins"""
+
+        if not is_admin_group_user(request):
+            return Response(
+                {
+                    "detail": "Du har ikke tillatelse til å opprette en påmelding på dette arrangementet"
+                },
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        event_id = self.kwargs.get("event_id", None)
+        user_id = request.data["user"]
+
+        event = get_object_or_404(Event, id=event_id)
+        user = get_object_or_404(User, user_id=user_id)
+
+        request.data["allow_photo"] = user.allows_photo_by_default
+
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        registration = super().perform_create(serializer, event=event, user=user)
+
+        registration_serializer = RegistrationSerializer(
+            registration, context={"user": registration.user}
+        )
+
+        return Response(registration_serializer.data, status=status.HTTP_201_CREATED)

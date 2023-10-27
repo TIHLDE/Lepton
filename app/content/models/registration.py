@@ -104,12 +104,18 @@ class Registration(BaseModel, BasePermissionModel):
         return registration
 
     def admin_unregister(self, *args, **kwargs):
-        return super().delete(*args, **kwargs)
+        moved_registration = self.move_from_waiting_list_to_queue()
+        self.delete_submission_if_exists()
+        self.send_unregistered_notification_and_mail()
+
+        super().delete(*args, **kwargs)
+
+        if moved_registration:
+            moved_registration.save()
 
     def save(self, *args, **kwargs):
         if not self.registration_id:
             self.create()
-            self.send_notification_and_mail()
 
         if (
             self.event.is_full
@@ -118,6 +124,7 @@ class Registration(BaseModel, BasePermissionModel):
         ):
             raise EventIsFullError
 
+        self.send_notification_and_mail()
         return super().save(*args, **kwargs)
 
     def create(self):
@@ -154,6 +161,21 @@ class Registration(BaseModel, BasePermissionModel):
         form = EventForm.objects.filter(event=self.event, type=EventFormType.SURVEY)
         submission = self.get_submissions(type=EventFormType.SURVEY)
         return not form.exists() or submission.exists()
+
+    def send_unregistered_notification_and_mail(self):
+        Notify(
+            [self.user],
+            f'Du har blitt meldt av "{self.event.title}"',
+            UserNotificationSettingType.UNREGISTRATION,
+        ).add_paragraph(f"Hei, {self.user.first_name}!").add_paragraph(
+            "Den ansvarlige for dette arrangementet har fjernet påmeldingen din."
+        ).add_paragraph(
+            "Det kan være flere årsaker til dette. Dersom du har spørsmål kan du kontakte den ansvarlige for arrangementet."
+        ).add_paragraph(
+            "Husk at du må melde deg på igjen hvis du ønsker plass på ventelisten."
+        ).add_event_link(
+            self.event.pk
+        ).send()
 
     def send_notification_and_mail(self):
         has_not_attended = not self.has_attended
@@ -209,6 +231,23 @@ class Registration(BaseModel, BasePermissionModel):
 
         return False
 
+    @property
+    def wait_queue_number(self):
+        """
+        Returns the number of people in front of the user in the waiting list.
+        """
+        waiting_list_count = (
+            self.event.get_waiting_list()
+            .order_by("-created_at")
+            .filter(created_at__lte=self.created_at)
+            .count()
+        )
+
+        if waiting_list_count == 0 or not self.is_on_wait:
+            return None
+
+        return waiting_list_count
+
     def swap_users(self):
         """Swaps a user with a spot with a prioritized user, if such user exists"""
         for registration in self.event.get_participants().order_by("-created_at"):
@@ -236,6 +275,21 @@ class Registration(BaseModel, BasePermissionModel):
             )
             registration_move_to_queue.is_on_wait = False
             return registration_move_to_queue
+
+    def move_from_queue_to_waiting_list(self):
+        registrations_in_queue = self.event.get_participants().order_by("-created_at")
+
+        if registrations_in_queue:
+            registration_move_to_waiting_list = next(
+                (
+                    registration
+                    for registration in registrations_in_queue
+                    if not registration.is_prioritized
+                ),
+                registrations_in_queue[0],
+            )
+            registration_move_to_waiting_list.is_on_wait = True
+            return registration_move_to_waiting_list
 
     def clean(self):
         """

@@ -13,6 +13,9 @@
 ---
 
 ## Neste versjon
+
+## Versjon 2023.10.23
+- ⚡ **Brukere** HS kan styre medlemmer
 - ✨ **Bannere** Filtrering på bannere
 - ✨ **emoji** Nyheter kan nå ha reaksjoner
 - ✨ **Spørreskjemaer** NOK medlemmer kan lage spørreskjema.
@@ -21,6 +24,7 @@
 - 🦟 **Bøter** Nå skal bilder på bøter ikke lengre forsvinne.
 - ✨ **Betalte arrangementer med Vipps betaling**. Det kan nå opprettes arrangementer som krever betaling for å melde seg på. Denne betalingen betales via Vipps.
 - ⚡ **Nyheter** Fondesforvalere kan nå lage nyheter.
+- ⚡ **Arrangementer** Du kan nå se hvilken plass du har på ventelisten til et arrangement.
 
 ## Versjon 2022.10.13
 
