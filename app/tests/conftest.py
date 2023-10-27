@@ -82,6 +82,18 @@ def admin_user(member):
 
 
 @pytest.fixture()
+def nok_user(member):
+    add_user_to_group_with_name(member, AdminGroup.NOK)
+    return member
+
+
+@pytest.fixture()
+def sosialen_user(member):
+    add_user_to_group_with_name(member, AdminGroup.SOSIALEN)
+    return member
+
+
+@pytest.fixture()
 def member():
     user = UserFactory()
     add_user_to_group_with_name(user, Groups.TIHLDE)
