@@ -8,7 +8,7 @@ from app.emoji.views.reaction import ReactionViewSet
 router = routers.DefaultRouter()
 
 router.register("custom", CustomEmojiViewSet, basename="custom")
-router.register("reaction", ReactionViewSet, basename="reaction")
+router.register("reactions", ReactionViewSet, basename="reactions")
 
 urlpatterns = [
     path("", include(router.urls)),

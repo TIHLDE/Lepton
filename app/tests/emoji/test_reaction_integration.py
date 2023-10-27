@@ -2,10 +2,13 @@ from rest_framework import status
 
 import pytest
 
+from app.common.enums import Groups
+from app.content.factories.user_factory import UserFactory
 from app.emoji.models.reaction import Reaction
+from app.tests.conftest import add_user_to_group_with_name
 from app.util.test_utils import get_api_client
 
-API_REACTION_BASE_URL = "/emojis/reaction/"
+API_REACTION_BASE_URL = "/emojis/reactions/"
 
 
 def _get_reactions_url():
@@ -52,7 +55,24 @@ def test_that_a_member_can_change_reaction_on_news(news_reaction):
 
     assert response.status_code == status.HTTP_200_OK
     news_reaction.refresh_from_db()
-    assert news_reaction.emoji == ":Newsmiley:"
+    assert news_reaction.emoji == data["emoji"]
+
+
+@pytest.mark.django_db
+def test_that_a_member_cannot_change_another_users_reaction_on_news(news_reaction):
+    """A member should not be able to change another user's reaction on a news page"""
+    malicious_user = UserFactory()
+    add_user_to_group_with_name(malicious_user, Groups.TIHLDE)
+    assert malicious_user.user_id != news_reaction.user.user_id
+
+    url = _get_reactions_detailed_url(news_reaction)
+    client = get_api_client(user=malicious_user)
+    data = _get_reactions_put_data()
+    response = client.put(url, data)
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    news_reaction.refresh_from_db()
+    assert news_reaction.emoji != data["emoji"]
 
 
 @pytest.mark.django_db

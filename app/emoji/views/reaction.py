@@ -67,13 +67,17 @@ class ReactionViewSet(BaseViewSet):
                 {"detail": "Reaksjoner er ikke tillatt her."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+        if reaction.user.user_id != request.id:
+            return Response(
+                {"detail": "Du har ikke tilgang til å endre reaksjonen"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         try:
             serializer = ReactionUpdateSerializer(
                 reaction, data=request.data, context={"request": request}
             )
             if serializer.is_valid():
                 reaction = super().perform_update(serializer)
-                serializer = ReactionSerializer(reaction, context={"request": request})
                 return Response(serializer.data, status=status.HTTP_200_OK)
 
             return Response(

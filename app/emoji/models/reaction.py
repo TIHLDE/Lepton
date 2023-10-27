@@ -1,5 +1,3 @@
-import uuid
-
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
@@ -11,7 +9,7 @@ from app.util.models import BaseModel
 
 
 class Reaction(BaseModel, BasePermissionModel):
-    reaction_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    reaction_id = models.AutoField(primary_key=True, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="reactions")
     emoji = models.CharField(max_length=60)
 

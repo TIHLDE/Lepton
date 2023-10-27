@@ -41,7 +41,7 @@ class ReactionCreateSerializer(serializers.ModelSerializer):
 class ReactionUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Reaction
-        fields = ["emoji"]
+        fields = ("reaction_id", "emoji")
 
     def update(self, instance, validated_data):
         return super().update(instance, validated_data)
