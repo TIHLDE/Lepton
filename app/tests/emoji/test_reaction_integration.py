@@ -2,6 +2,7 @@ from rest_framework import status
 
 import pytest
 
+from app.emoji.models.reaction import Reaction
 from app.util.test_utils import get_api_client
 
 API_REACTION_BASE_URL = "/emojis/reaction/"
@@ -50,6 +51,8 @@ def test_that_a_member_can_change_reaction_on_news(news_reaction):
     response = client.put(url, data)
 
     assert response.status_code == status.HTTP_200_OK
+    news_reaction.refresh_from_db()
+    assert news_reaction.emoji == ":Newsmiley:"
 
 
 @pytest.mark.django_db
@@ -62,6 +65,7 @@ def test_that_a_member_can_not_react_on_news_more_than_once(news_reaction):
     response = client.post(url, data)
 
     assert response.status_code == status.HTTP_403_FORBIDDEN
+    assert Reaction.objects.filter(user=news_reaction.user).count() == 1
 
 
 @pytest.mark.django_db
@@ -72,6 +76,7 @@ def test_that_a_member_can_remove_their_reaction_on_a_news(news_reaction):
     response = client.delete(url)
 
     assert response.status_code == status.HTTP_200_OK
+    assert Reaction.objects.filter(user=news_reaction.user).count() == 0
 
 
 @pytest.mark.django_db
@@ -82,3 +87,4 @@ def test_that_a_non_member_cannot_react_on_news(user, news, default_client):
     response = default_client.post(url, data)
 
     assert response.status_code == status.HTTP_403_FORBIDDEN
+    assert Reaction.objects.filter(object_id=news.id).count() == 0

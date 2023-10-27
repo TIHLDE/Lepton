@@ -68,14 +68,12 @@ class ReactionViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         try:
-            request.data["object_id"] = reaction.object_id
-            request.data["content_type"] = content_object.id
             serializer = ReactionUpdateSerializer(
                 reaction, data=request.data, context={"request": request}
             )
-
             if serializer.is_valid():
-                super().perform_update(serializer)
+                reaction = super().perform_update(serializer)
+                serializer = ReactionSerializer(reaction, context={"request": request})
                 return Response(serializer.data, status=status.HTTP_200_OK)
 
             return Response(
@@ -89,8 +87,7 @@ class ReactionViewSet(BaseViewSet):
             )
 
     def get_queryset(self):
-        queryset = Reaction.objects.all()
-        return queryset
+        return Reaction.objects.all()
 
     def destroy(self, request, *args, **kwargs):
         super().destroy(request, *args, **kwargs)

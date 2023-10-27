@@ -39,23 +39,9 @@ class ReactionCreateSerializer(serializers.ModelSerializer):
 
 
 class ReactionUpdateSerializer(serializers.ModelSerializer):
-    content_type = serializers.PrimaryKeyRelatedField(
-        queryset=ContentType.objects.all()
-    )
-    object_id = serializers.IntegerField()
-
     class Meta:
         model = Reaction
-        fields = ("reaction_id", "emoji", "content_type", "object_id")
+        fields = ["emoji"]
 
-    def create(self, validated_data):
-        emoji = validated_data.pop("emoji")
-        object_id = validated_data.pop("object_id")
-        content_type = validated_data.pop("content_type")
-
-        if content_type.model.lower() == ContentTypes.NEWS:
-            news = News.objects.get(id=int(object_id))
-            created_reaction = news.reactions.update(
-                emoji=emoji,
-            )
-            return created_reaction
+    def update(self, instance, validated_data):
+        return super().update(instance, validated_data)
