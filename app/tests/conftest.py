@@ -17,6 +17,7 @@ from app.content.factories import (
     NewsFactory,
     PageFactory,
     ParentPageFactory,
+    QRCodeFactory,
     PriorityPoolFactory,
     RegistrationFactory,
     ShortLinkFactory,
@@ -70,6 +71,11 @@ def user():
     return UserFactory()
 
 
+@pytest.fixture()
+def qr_code():
+    return QRCodeFactory()
+
+
 @pytest.fixture
 def token(user):
     return Token.objects.get(user_id=user.user_id)
@@ -78,6 +84,18 @@ def token(user):
 @pytest.fixture()
 def admin_user(member):
     add_user_to_group_with_name(member, AdminGroup.HS)
+    return member
+
+
+@pytest.fixture()
+def nok_user(member):
+    add_user_to_group_with_name(member, AdminGroup.NOK)
+    return member
+
+
+@pytest.fixture()
+def sosialen_user(member):
+    add_user_to_group_with_name(member, AdminGroup.SOSIALEN)
     return member
 
 
