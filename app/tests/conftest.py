@@ -17,8 +17,8 @@ from app.content.factories import (
     NewsFactory,
     PageFactory,
     ParentPageFactory,
-    QRCodeFactory,
     PriorityPoolFactory,
+    QRCodeFactory,
     RegistrationFactory,
     ShortLinkFactory,
     UserFactory,
@@ -237,8 +237,8 @@ def emoji():
 @pytest.fixture()
 def news_reaction(member, news):
     return NewsReactionFactory(user=member, content_object=news)
-  
-  
+
+
 def priority_group():
     return GroupFactory(name="Prioritized group", slug="prioritized_group")
 

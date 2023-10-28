@@ -822,7 +822,9 @@ def test_add_registration_to_event_as_admin(api_client, admin_user, event):
 
 
 @pytest.mark.django_db
-def test_add_registration_to_event_as_admin_when_event_is_full(api_client, admin_user, member, event):
+def test_add_registration_to_event_as_admin_when_event_is_full(
+    api_client, admin_user, member, event
+):
     """
     An admin should be able to add a registration to an event
     manually. If the event is full, the member should be added to the waiting list.
