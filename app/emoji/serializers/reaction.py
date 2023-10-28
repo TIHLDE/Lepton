@@ -4,6 +4,7 @@ from rest_framework import serializers
 from app.common.serializers import BaseModelSerializer
 from app.content.models.news import News
 from app.emoji.enums import ContentTypes
+from app.emoji.exception import APIReactionNotAllowedException
 from app.emoji.models.reaction import Reaction
 
 
@@ -14,10 +15,7 @@ class ReactionSerializer(BaseModelSerializer):
 
 
 class ReactionCreateSerializer(serializers.ModelSerializer):
-    content_type = serializers.PrimaryKeyRelatedField(
-        queryset=ContentType.objects.all()
-    )
-    object_id = serializers.IntegerField()
+    content_type = serializers.CharField()
 
     class Meta:
         model = Reaction
@@ -28,14 +26,18 @@ class ReactionCreateSerializer(serializers.ModelSerializer):
         emoji = validated_data.pop("emoji")
         object_id = validated_data.pop("object_id")
         content_type = validated_data.pop("content_type")
+        content_type = ContentType.objects.get(model=content_type)
 
         if content_type.model.lower() == ContentTypes.NEWS:
-            news = News.objects.get(id=int(object_id))
-            created_reaction = news.reactions.create(
-                user=user,
-                emoji=emoji,
-            )
-            return created_reaction
+            object = News.objects.get(id=int(object_id))
+        if not object.emojis_allowed:
+            raise APIReactionNotAllowedException()
+
+        created_reaction = object.reactions.create(
+            user=user,
+            emoji=emoji,
+        )
+        return created_reaction
 
 
 class ReactionUpdateSerializer(serializers.ModelSerializer):

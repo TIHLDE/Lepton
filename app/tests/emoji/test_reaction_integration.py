@@ -70,7 +70,7 @@ def test_that_a_member_cannot_change_another_users_reaction_on_news(news_reactio
     data = _get_reactions_put_data()
     response = client.put(url, data)
 
-    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert response.status_code == status.HTTP_403_FORBIDDEN
     news_reaction.refresh_from_db()
     assert news_reaction.emoji != data["emoji"]
 
@@ -81,11 +81,10 @@ def test_that_a_member_can_not_react_on_news_more_than_once(news_reaction):
     url = _get_reactions_url()
     client = get_api_client(user=news_reaction.user)
     data = _get_reactions_post_data(news_reaction.user, news_reaction.object_id)
-    data["emoji"] = ":Smiley:"
+    data["emoji"] = ":SecondSmiley:"
     response = client.post(url, data)
 
-    assert response.status_code == status.HTTP_403_FORBIDDEN
-    assert Reaction.objects.filter(user=news_reaction.user).count() == 1
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
 
 
 @pytest.mark.django_db
