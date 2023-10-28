@@ -22,7 +22,7 @@ from app.content.models.user import User
 from app.content.util.registration_utils import get_payment_expiredate
 from app.forms.enums import EventFormType
 from app.payment.models import Order
-from app.payment.util.order_utils import check_if_order_is_paid
+from app.payment.util.order_utils import check_if_order_is_paid, has_paid_order
 from app.util import now
 from app.util.models import BaseModel
 from app.util.utils import datetime_format
@@ -97,22 +97,20 @@ class Registration(BaseModel, BasePermissionModel):
         if not self.event.is_paid_event:
             return
 
-        try:
-            order = self.event.orders.filter(user=self.user).first()
+        orders = self.event.orders.filter(user=self.user)
 
-            if check_if_order_is_paid(order):
-                refund_vipps_order(
-                    order_id=order.order_id,
-                    event=self.event,
-                    registration=self,
-                    transaction_text=f"Refund for {self.event.title} - {self.user.first_name} {self.user.last_name}",
-                )
-
-                self.send_notification_and_mail_for_refund(order)
-        except Order.DoesNotExist as order_does_not_exist:
-            capture_exception(order_does_not_exist)
+        if has_paid_order(orders):
+            for order in orders:
+                if check_if_order_is_paid(order):
+                    refund_vipps_order(
+                        order_id=order.order_id,
+                        event=self.event,
+                        transaction_text=f"Refund for {self.event.title} - {self.user.first_name} {self.user.last_name}",
+                    )
 
     def delete(self, *args, **kwargs):
+        from app.content.util.event_utils import start_payment_countdown
+
         moved_registration = None
         if not self.is_on_wait:
             if self.event.is_past_sign_off_deadline:
@@ -131,12 +129,26 @@ class Registration(BaseModel, BasePermissionModel):
         registration = super().delete(*args, **kwargs)
         if moved_registration:
             moved_registration.save()
+
+            if (
+                moved_registration.event.is_paid_event
+                and not moved_registration.is_on_wait
+            ):
+                try:
+                    start_payment_countdown(
+                        moved_registration.event, moved_registration
+                    )
+                except Exception as countdown_error:
+                    capture_exception(countdown_error)
+                    moved_registration.delete()
+
         return registration
 
     def admin_unregister(self, *args, **kwargs):
         return super().delete(*args, **kwargs)
 
     def save(self, *args, **kwargs):
+
         if not self.registration_id:
             self.create()
 
@@ -222,7 +234,7 @@ class Registration(BaseModel, BasePermissionModel):
         ).add_paragraph(f"Hei, {self.user.first_name}!").add_paragraph(
             f"Du har blitt meldt av {self.event.title} og vil bli refundert."
         ).add_paragraph(
-            "Du vil få pengene tilbake på kontoen din innen kort tid."
+            "Du vil få pengene tilbake på kontoen din innen 2 til 3 virkedager. I enkelte tilfeller, avhengig av bank, tar det inntil 10 virkedager."
         ).add_paragraph(
             f"Hvis det skulle oppstå noen problemer så kontakt oss på hs@tihlde.org. Ditt ordrenummer er {order.order_id}."
         ).send()

@@ -1,10 +1,9 @@
-from sentry_sdk import capture_exception
-
 from app.celery import app
 from app.content.models.event import Event
 from app.content.models.registration import Registration
+from app.payment.enums import OrderStatus
 from app.payment.models.order import Order
-from app.payment.util.order_utils import check_if_order_is_paid
+from app.payment.util.order_utils import has_paid_order
 from app.payment.views.vipps_callback import vipps_callback
 from app.util.tasks import BaseTask
 
@@ -17,13 +16,11 @@ def check_if_has_paid(self, event_id, registration_id):
     if not registration or not event:
         return
 
-    user_order = Order.objects.filter(event=event, user=registration.user).first()
+    user_orders = Order.objects.filter(event=event, user=registration.user)
 
-    if not user_order:
+    if not user_orders:
         registration.delete()
         return
 
-    order = vipps_callback(None, user_order.order_id)
-
-    if not check_if_order_is_paid(order):
+    if not has_paid_order(user_orders):
         registration.delete()

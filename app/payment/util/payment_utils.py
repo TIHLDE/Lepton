@@ -95,4 +95,4 @@ def refund_payment(amount, order_id, access_token, transaction_text):
     response = requests.post(url, headers=headers, data=payload)
 
     if response.status_code != 200:
-        raise Exception("Could not initiate payment")
+        raise Exception("Could not refund payment")

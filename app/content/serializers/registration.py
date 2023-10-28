@@ -9,7 +9,7 @@ from app.content.serializers.user import (
 from app.content.util.registration_utils import get_payment_expiredate
 from app.forms.enums import EventFormType
 from app.forms.serializers.submission import SubmissionInRegistrationSerializer
-from app.payment.util.order_utils import check_if_order_is_paid
+from app.payment.util.order_utils import has_paid_order
 
 
 class RegistrationSerializer(BaseModelSerializer):
@@ -41,9 +41,9 @@ class RegistrationSerializer(BaseModelSerializer):
         return obj.user.has_unanswered_evaluations_for(obj.event)
 
     def get_has_paid_order(self, obj):
-        order = obj.event.orders.filter(user=obj.user).first()
+        orders = obj.event.orders.filter(user=obj.user)
 
-        return check_if_order_is_paid(order)
+        return has_paid_order(orders)
 
     def create(self, validated_data):
         event = validated_data["event"]

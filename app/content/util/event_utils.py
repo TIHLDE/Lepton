@@ -63,7 +63,7 @@ def create_vipps_order(order_id, event, transaction_text, fallback):
     return response["url"]
 
 
-def refund_vipps_order(order_id, event, registration, transaction_text):
+def refund_vipps_order(order_id, event, transaction_text):
     """
     Refunds vipps order.
     """
@@ -85,12 +85,6 @@ def refund_vipps_order(order_id, event, registration, transaction_text):
             access_token=access_token,
             transaction_text=transaction_text,
         )
-
-        order = Order.objects.get(order_id=order_id)
-        order.status = OrderStatus.REFUND
-        order.save()
-
-        registration
 
     except Exception as refund_error:
         capture_exception(refund_error)
