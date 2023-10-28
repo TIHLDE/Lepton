@@ -239,6 +239,7 @@ def news_reaction(member, news):
     return NewsReactionFactory(user=member, content_object=news)
 
 
+@pytest.fixture()
 def priority_group():
     return GroupFactory(name="Prioritized group", slug="prioritized_group")
 
