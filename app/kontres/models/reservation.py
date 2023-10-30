@@ -2,16 +2,17 @@ import uuid
 
 from django.core.exceptions import ValidationError
 from django.db import models
+from rest_framework.permissions import SAFE_METHODS
 
-from app.common.enums import AdminGroup, Groups
+from app.common.enums import Groups
+from app.common.permissions import BasePermissionModel
 from app.content.models import User
 from app.kontres.enums import ReservationStateEnum
 from app.kontres.models.bookable_item import BookableItem
 from app.util.models import BaseModel
 
 
-class Reservation(BaseModel):
-    write_access = AdminGroup.admin()
+class Reservation(BaseModel, BasePermissionModel):
     read_access = [Groups.TIHLDE]
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     author = models.ForeignKey(
@@ -44,3 +45,16 @@ class Reservation(BaseModel):
 
     def __str__(self):
         return f"{self.state} - Reservation request by {self.author.first_name} {self.author.last_name} to book {self.bookable_item.name}. Created at {self.created_at}"
+
+    def has_object_read_permission(self, request):
+        return True
+
+    def has_object_permission(self, request, view, obj):
+        # Allow admin users to perform any action
+        if request.user.is_superuser:
+            return True
+
+        if request.method in SAFE_METHODS or obj.author == request.user:
+            return True
+
+        return False

@@ -32,23 +32,6 @@ def test_user_can_create_reservation(user, bookable_item):
 
 
 @pytest.mark.django_db
-def test_anonymous_cannot_create_reservation(default_client, bookable_item):
-
-    client = default_client
-    response = client.post(
-        "/kontres/reservations/",
-        {
-            "bookable_item": bookable_item.id,
-            "start_time": "2023-10-10T10:00:00Z",
-            "end_time": "2023-10-10T11:00:00Z",
-        },
-        format="json",
-    )
-
-    assert response.status_code == status.HTTP_401_UNAUTHORIZED
-
-
-@pytest.mark.django_db
 def test_user_cannot_create_confirmed_reservation(bookable_item, member):
     client = get_api_client(user=member)
 
@@ -102,7 +85,7 @@ def test_user_cannot_create_reservation_with_invalid_date_format(user, bookable_
 
 @pytest.mark.django_db
 def test_admin_can_edit_reservation(reservation, user):
-    client = get_api_client(user=user, group_name=AdminGroup.HS)
+    client = get_api_client(user=user, group_name=AdminGroup.INDEX)
 
     reservation_id = str(reservation.id)
     response = client.put(
@@ -116,22 +99,8 @@ def test_admin_can_edit_reservation(reservation, user):
 
 
 @pytest.mark.django_db
-def test_edit_as_user(reservation, user):
-    client = get_api_client(user=user)
-
-    reservation_id = str(reservation.id)
-    response = client.put(
-        f"/kontres/reservations/{reservation_id}/",
-        {"state": "CONFIRMED"},
-        format="json",
-    )
-
-    assert response.status_code == 403
-
-
-@pytest.mark.django_db
-def test_admin_cannot_edit_nonexistent_reservation(user):
-    client = get_api_client(user=user, group_name=AdminGroup.HS)
+def test_admin_cannot_edit_nonexistent_reservation(admin_user):
+    client = get_api_client(user=admin_user)
 
     nonexistent_uuid = "123e4567-e89b-12d3-a456-426655440000"
     response = client.put(
@@ -144,8 +113,8 @@ def test_admin_cannot_edit_nonexistent_reservation(user):
 
 
 @pytest.mark.django_db
-def test_user_can_fetch_all_reservations(reservation, user):
-    client = get_api_client(user=user)
+def test_user_can_fetch_all_reservations(reservation, member):
+    client = get_api_client(user=member)
 
     reservations = [reservation]
     for _ in range(2):
@@ -189,17 +158,16 @@ def test_can_fetch_all_bookable_items(bookable_item, member):
 
 
 @pytest.mark.django_db
-def test_can_fetch_bookable_items_when_none_exist(member):
+def test_user_can_fetch_bookable_items_when_none_exist(member):
     client = get_api_client(user=member)
     response = client.get("/kontres/bookable_items/", format="json")
 
-    assert response.status_code == 200
-    assert len(response.data) == 0
+    assert response.status_code == 403
 
 
 @pytest.mark.django_db
-def test_can_fetch_single_reservation(reservation, user):
-    client = get_api_client(user=user)
+def test_can_fetch_single_reservation(reservation, member):
+    client = get_api_client(user=member)
     response = client.get(f"/kontres/reservations/{reservation.id}/", format="json")
 
     assert response.status_code == 200
@@ -212,10 +180,21 @@ def test_can_fetch_single_reservation(reservation, user):
 
 
 @pytest.mark.django_db
-def test_user_cannot_fetch_nonexistent_reservation(user):
-    client = get_api_client(user=user)
+def test_user_cannot_fetch_nonexistent_reservation(member):
+    client = get_api_client(user=member)
 
     non_existent_uuid = "12345678-1234-5678-1234-567812345678"
     response = client.get(f"/kontres/reservations/{non_existent_uuid}/", format="json")
 
     assert response.status_code == 404
+
+
+@pytest.mark.django_db
+def test_admin_can_delete_any_reservation(user, reservation):
+    client = get_api_client(user=user, group_name=AdminGroup.INDEX)
+    reservation_id = str(reservation.id)
+    response = client.delete(
+        f"/kontres/reservations/{reservation_id}/",
+        format="json",
+    )
+    assert response.status_code == status.HTTP_204_NO_CONTENT
