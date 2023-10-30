@@ -1,12 +1,17 @@
 from django.utils.text import slugify
 from rest_framework import status
 
+from django.utils import timezone
+from datetime import timedelta
+
 import pytest
 
 from app.common.enums import AdminGroup, GroupType
 from app.content.factories.registration_factory import RegistrationFactory
 from app.content.factories.strike_factory import StrikeFactory
 from app.content.factories.user_factory import UserFactory
+from app.content.factories.event_factory import EventFactory
+from app.content.factories.registration_factory import RegistrationFactory
 from app.content.models import User
 from app.forms.enums import EventFormType
 from app.forms.tests.form_factories import EventFormFactory, SubmissionFactory
@@ -31,6 +36,8 @@ def group2019():
 def _get_user_detail_url(user):
     return f"{API_USER_BASE_URL}{user.user_id}/"
 
+def _get_user_events_url(user):
+    return f"{API_USER_BASE_URL}me/events/"
 
 def _get_user_post_data():
     return {
@@ -470,3 +477,64 @@ def test_destroy_other_user_as_index_user(member, user, api_client):
     response = client.delete(url)
 
     assert response.status_code == status.HTTP_200_OK
+    
+#def test_getting_events_returns_ok():
+
+    
+def test_expired_user_event_shows_as_expired(member, api_client):
+   """"All the events listed as expired should be expired"""
+   client = api_client(user=member)
+
+   two_days_ago = timezone.now() - timedelta(days=2)
+   event = EventFactory(end_date = two_days_ago)
+
+   registration = RegistrationFactory(user=member, event=event)
+   url = _get_user_events_url(user) # legge til query params
+
+   print(url)
+
+   response = client.get(url)
+
+   assert response.status_code == status.HTTP_200_OK
+   print(response)
+   for registration in response.registrations:
+       assert registration.event.expired == True
+       
+   #Teste get for både expired og ongoing event -> er alle expired / er alle ongoing?? -> sier basically det samme to ganger???
+#def test_removing_registred_event(member, user, api_client): #todo er dette nødvendig å teste?? - blir implisitt tested i registration
+#    '''An event that a user is registred for, that is deleted should no longer be displayed in a user's event archive'''
+#
+#    client = api_client(user=member)
+#    event = event()
+#    registration = registration(user=member, event=event)
+#    url = _get_user_events_url(user) # legge til query params
+#    response = client.get(url)
+#
+#    assert response.status_code == status.HTTP_200_OK
+#
+#    #kan forsøke å tracke antall regisrerte events - sammenligne talled med etter vi har lagt til event
+#    nr_events_bf = response.registrations.len()
+#
+#    #assert ok
+
+
+#def test_registrating_for_event(member, user, api_client):
+    #'''A newly registred event should be displayed in a user's event archive'''
+
+
+
+'''Spør thomas
+ - tom/dårlige query params - forms (metoden rett under vår metode) tar ikke hensyn
+ - Hvordan registrere til expired event - må vi endre event dates etter vi medler oss på
+ - Se på fixtures våre
+ - Se på testmetodebasen vår
+ - Ser ikke ut som vi trenger å asserte responskode dersom det ikke gir mening - ja/nei? - kan asserte andre ting - JO, alltid lurt å ha responskode
+'''
+
+
+#Teste når event fjernes at den fjernes for brukeren også
+#Teste legge til nytt event (ny påmelding)
+
+#Må bruke factories fra conftest fixtures
+#Må knytte sammen den genererte useren og eventsa - påmelding - men hvordan spesifiiserer vi en spesifikk event
+#

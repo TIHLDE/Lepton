@@ -292,6 +292,17 @@ class UserViewSet(BaseViewSet, ActionMixin):
 
         # Apply the filter
         event_has_ended = self.request.query_params.get("expired") == "true"
+
+        # expired_field = self.request_params.get("expired")
+        # filter_expired = CaseInsensitiveBooleanQueryParam(expired_field) / teste for None
+        #  
+        #  events = [
+        #    registration.event
+        #    for registration in registrations
+        #    if registration.event.expired == filter_expired
+        #  ]
+
+        #todo tom query -> = false
         events = [
             registration.event
             for registration in registrations
