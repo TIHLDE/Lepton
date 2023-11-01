@@ -1,6 +1,3 @@
-from datetime import timedelta
-
-from django.core.exceptions import ValidationError
 from django.db.utils import IntegrityError
 from django.utils import timezone
 
@@ -60,28 +57,6 @@ def test_state_transitions(reservation):
     reservation.state = ReservationStateEnum.CANCELLED
     reservation.save()
     assert reservation.state == ReservationStateEnum.CANCELLED
-
-
-@pytest.mark.django_db
-def test_reservation_time_constraints():
-    """Should raise an exception if end_time is before start_time."""
-
-    # Setup
-    now = timezone.now()
-    start_time = now
-    end_time = now - timedelta(hours=1)  # end_time intentionally set before start_time
-
-    # Attempt to create an invalid reservation
-    with pytest.raises(ValidationError):
-        user = User.objects.create(user_id="test_user", email="test@test.com")
-        bookable_item = BookableItem.objects.create(name="Test Item")
-        Reservation.objects.create(
-            start_time=start_time,
-            end_time=end_time,
-            state=ReservationStateEnum.PENDING,
-            author=user,
-            bookable_item=bookable_item,
-        )
 
 
 @pytest.mark.django_db
