@@ -1,8 +1,6 @@
 import uuid
 
-from django.core.exceptions import ValidationError
 from django.db import models
-from rest_framework.permissions import SAFE_METHODS
 
 from app.common.enums import Groups
 from app.common.permissions import BasePermissionModel
@@ -30,31 +28,50 @@ class Reservation(BaseModel, BasePermissionModel):
     )
     description = models.TextField(blank=True)
 
-    def clean(self):
-        # Check if end_time is greater than start_time
-        if self.end_time <= self.start_time:
-            raise ValidationError("end_time must be after start_time")
-
-        # Check if start_time and end_time are provided
-        if not self.start_time or not self.end_time:
-            raise ValidationError("Both start_time and end_time must be provided")
-
     def save(self, *args, **kwargs):
-        self.clean()
         super(Reservation, self).save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.state} - Reservation request by {self.author.first_name} {self.author.last_name} to book {self.bookable_item.name}. Created at {self.created_at}"
 
-    def has_object_read_permission(self, request):
+    @classmethod
+    def has_retrieve_permission(cls, request):
+        return request.user and request.user.is_authenticated
+
+    @classmethod
+    def has_list_permission(cls, request):
+        return cls.has_retrieve_permission(request)
+
+    @classmethod
+    def has_write_permission(cls, request):
+        return cls.has_reservation_permission(request)
+
+    def has_object_destroy_permission(self, request):
+        return (
+            self.is_own_reservation(request)
+            or self.has_reservation_permission(request)
+            or request.user.is_HS_or_Index_member
+        )
+
+    @classmethod
+    def has_reservation_permission(cls, request):
+        # Any authenticated TIHLDE member can create a reservation.
+        return (
+            request.user
+            and request.user.is_authenticated
+            and request.user.is_TIHLDE_member
+        )
+
+    def has_object_update_permission(self, request):
+        # Users can update their own reservations, but cannot change the state
+        # Admins can update any reservation and change the state
+        if not self.is_own_reservation(request):
+            return False
+
+        if "state" in request.data and request.data["state"] != self.state:
+            # If the user is trying to change the state, check if they are allowed to.
+            return request.user and request.user.is_HS_or_Index_member
         return True
 
-    def has_object_permission(self, request, view, obj):
-        # Allow admin users to perform any action
-        if request.user.is_superuser:
-            return True
-
-        if request.method in SAFE_METHODS or obj.author == request.user:
-            return True
-
-        return False
+    def is_own_reservation(self, request):
+        return self.author == request.user
