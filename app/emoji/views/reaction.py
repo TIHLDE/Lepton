@@ -18,9 +18,15 @@ class ReactionViewSet(BaseViewSet):
     pagination_class = BasePagination
 
     def create(self, request, *args, **kwargs):
+        data = request.data
+        if data["user"] != request.id:
+            return Response(
+                {"detail": "Du har ikke tillatelse til å lage reaksjon"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         try:
             serializer = ReactionCreateSerializer(
-                data=request.data, context={"request": request}
+                data=data, context={"request": request}
             )
             if serializer.is_valid():
                 super().perform_create(serializer)

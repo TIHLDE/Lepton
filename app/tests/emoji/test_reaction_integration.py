@@ -76,6 +76,22 @@ def test_that_a_member_cannot_change_another_users_reaction_on_news(news_reactio
 
 
 @pytest.mark.django_db
+def test_that_a_member_cannot_create_another_users_reaction_on_news(news):
+    """A member should not be able to create a reaction for another user  on a news page"""
+    malicious_user = UserFactory()
+    add_user_to_group_with_name(malicious_user, Groups.TIHLDE)
+    user = UserFactory()
+    assert malicious_user.user_id != user.user_id
+
+    url = _get_reactions_url()
+    client = get_api_client(user=malicious_user)
+    data = _get_reactions_post_data(user, news.id)
+    response = client.post(url, data)
+
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+@pytest.mark.django_db
 def test_that_a_member_can_not_react_on_news_more_than_once(news_reaction):
     """A member should not be able to leave more than one reaction on the same news page"""
     url = _get_reactions_url()
