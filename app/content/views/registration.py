@@ -152,7 +152,16 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
         event = get_object_or_404(Event, id=event_id)
         user = get_object_or_404(User, user_id=user_id)
 
+        if not user.accepts_event_rules:
+            return Response(
+                {
+                    "detail": "Brukeren må akseptere arrangementreglene i profilen sin først."
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         request.data["allow_photo"] = user.allows_photo_by_default
+        request.data["created_by_admin"] = True
 
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)

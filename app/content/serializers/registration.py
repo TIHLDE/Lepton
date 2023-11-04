@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from rest_framework import serializers
 
 from app.common.serializers import BaseModelSerializer
@@ -34,6 +35,7 @@ class RegistrationSerializer(BaseModelSerializer):
             "order",
             "has_paid_order",
             "wait_queue_number",
+            "created_by_admin",
         )
 
     def get_survey_submission(self, obj):

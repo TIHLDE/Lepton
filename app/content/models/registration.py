@@ -36,6 +36,7 @@ class Registration(BaseModel, BasePermissionModel):
     is_on_wait = models.BooleanField(default=False, verbose_name="waiting list")
     has_attended = models.BooleanField(default=False)
     allow_photo = models.BooleanField(default=True)
+    created_by_admin = models.BooleanField(default=False)
 
     class Meta:
         ordering = ("event", "created_at", "is_on_wait")
@@ -128,11 +129,12 @@ class Registration(BaseModel, BasePermissionModel):
         return super().save(*args, **kwargs)
 
     def create(self):
-        if self.event.enforces_previous_strikes:
+        if self.event.enforces_previous_strikes and not self.created_by_admin:
             self._abort_for_unanswered_evaluations()
             self.strike_handler()
 
         self.clean()
+
         self.is_on_wait = self.event.is_full
 
         if self.should_swap_with_non_prioritized_user():
@@ -216,6 +218,9 @@ class Registration(BaseModel, BasePermissionModel):
 
     @property
     def is_prioritized(self):
+        if self.created_by_admin:
+            return True
+
         if self.user.number_of_strikes >= 3 and self.event.enforces_previous_strikes:
             return False
 
@@ -297,15 +302,15 @@ class Registration(BaseModel, BasePermissionModel):
 
         :raises ValidationError if the event or queue is closed.
         """
-        if self.event.closed:
+        if self.event.closed and not self.created_by_admin:
             raise ValidationError(
                 "Dette arrangementet er stengt du kan derfor ikke melde deg på"
             )
         if not self.event.sign_up:
             raise ValidationError("Påmelding er ikke mulig")
-        if not self.registration_id:
+        if not self.registration_id and not self.created_by_admin:
             self.validate_start_and_end_registration_time()
-        if not self.check_answered_submission():
+        if not self.check_answered_submission() and not self.created_by_admin:
             raise ValidationError(
                 "Du må svare på spørreskjemaet før du kan melde deg på arrangementet"
             )
