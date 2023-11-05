@@ -24,7 +24,6 @@ from app.content.models import Event, Registration, User
 from app.content.serializers import RegistrationSerializer
 from app.content.util.event_utils import create_payment_order
 from app.payment.models import Order
-from app.payment.models.order import Order
 
 
 class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
