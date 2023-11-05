@@ -1,3 +1,6 @@
+import uuid
+from datetime import datetime
+
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status
@@ -20,6 +23,7 @@ from app.content.mixins import APIRegistrationErrorsMixin
 from app.content.models import Event, Registration, User
 from app.content.serializers import RegistrationSerializer
 from app.content.util.event_utils import create_payment_order
+from app.payment.models import Order
 from app.payment.models.order import Order
 from app.payment.views.vipps_callback import vipps_callback
 
@@ -36,9 +40,6 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
 
     def get_queryset(self):
         event_id = self.kwargs.get("event_id", None)
-        order = Order.objects.filter(event=event_id).first()
-        if order:
-            vipps_callback(None, order.order_id)
         return Registration.objects.filter(event__pk=event_id).select_related("user")
 
     def _is_own_registration(self):
@@ -156,6 +157,24 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
             return Response(
                 {
                     "detail": "Brukeren må akseptere arrangementreglene i profilen sin først."
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            if event.is_paid_event and not event.is_full:
+                Order.objects.create(
+                    order_id=uuid.uuid4(),
+                    user=user,
+                    event=event,
+                    payment_link=f"https://tihlde.org/arrangementer/{event_id}/",
+                    expire_date=datetime.now(),
+                )
+        except Exception as e:
+            capture_exception(e)
+            return Response(
+                {
+                    "detail": "Det skjedde en feil med opprettelse av betalingsordre. Påmeldingen ble ikke fullført"
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
