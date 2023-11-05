@@ -25,7 +25,6 @@ from app.content.serializers import RegistrationSerializer
 from app.content.util.event_utils import create_payment_order
 from app.payment.models import Order
 from app.payment.models.order import Order
-from app.payment.views.vipps_callback import vipps_callback
 
 
 class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
