@@ -3,6 +3,7 @@ from django.db import models
 
 class UserNotificationSettingType(models.TextChoices):
     REGISTRATION = "REGISTRATION", "Påmeldingsoppdateringer"
+    UNREGISTRATION = "UNREGISTRATION", "Avmeldingsoppdateringer"
     STRIKE = "STRIKE", "Prikkoppdateringer"
     EVENT_SIGN_UP_START = "EVENT_SIGN_UP_START", "Arrangementer - påmeldingsstart"
     EVENT_SIGN_OFF_DEADLINE = (

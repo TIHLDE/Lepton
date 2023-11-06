@@ -14,6 +14,12 @@
 
 ## Neste versjon
 
+## Versjon 2023.11.06
+- ✨ **Påmelding** Medlemmer av undergrupper kan nå manuelt legge til brukere på arrangementer.
+- ⚡ **Venteliste** Brukere på venteliste kan nå se sin egen plass på ventelisten.
+- ✨ **QR Kode** Brukere kan nå generere sine egne QR koder.
+- ⚡ **Endring av arrangement plasser** Venteliste og liste vil nå bli automatisk oppdatert hvis man endrer på antall plasser på et arrangement.
+
 ## Versjon 2023.10.23
 - ⚡ **Brukere** HS kan styre medlemmer
 - ✨ **Bannere** Filtrering på bannere
@@ -23,6 +29,7 @@
 - 🦟 **Bøter** Nå skal bilder på bøter ikke lengre forsvinne.
 - ✨ **Betalte arrangementer med Vipps betaling**. Det kan nå opprettes arrangementer som krever betaling for å melde seg på. Denne betalingen betales via Vipps.
 - ⚡ **Nyheter** Fondesforvalere kan nå lage nyheter.
+- ⚡ **Arrangementer** Du kan nå se hvilken plass du har på ventelisten til et arrangement.
 
 ## Versjon 2022.10.13
 

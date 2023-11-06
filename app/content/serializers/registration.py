@@ -18,6 +18,7 @@ class RegistrationSerializer(BaseModelSerializer):
     has_unanswered_evaluation = serializers.SerializerMethodField()
     order = serializers.SerializerMethodField(required=False)
     has_paid_order = serializers.SerializerMethodField(required=False)
+    wait_queue_number = serializers.SerializerMethodField(required=False)
 
     class Meta:
         model = Registration
@@ -32,6 +33,8 @@ class RegistrationSerializer(BaseModelSerializer):
             "has_unanswered_evaluation",
             "order",
             "has_paid_order",
+            "wait_queue_number",
+            "created_by_admin",
         )
 
     def get_survey_submission(self, obj):
@@ -55,6 +58,11 @@ class RegistrationSerializer(BaseModelSerializer):
                 or order.status == OrderStatus.SALE
             ):
                 return True
+
+    def get_wait_queue_number(self, obj):
+        if obj.is_on_wait:
+            return obj.wait_queue_number
+        return None
 
 
 class PublicRegistrationSerializer(BaseModelSerializer):
