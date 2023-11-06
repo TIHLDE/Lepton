@@ -236,8 +236,9 @@ def bookable_item():
 @pytest.fixture()
 def reservation():
     return ReservationFactory()
-  
-  
+
+
+@pytest.fixture()
 def priority_group():
     return GroupFactory(name="Prioritized group", slug="prioritized_group")
 
