@@ -7,3 +7,7 @@ class UserClass(models.IntegerChoices):
     THIRD = 3
     FORTH = 4
     FIFTH = 5
+
+
+class CategoryEnum(models.TextChoices):
+    ACTIVITY = "Aktivitet"
