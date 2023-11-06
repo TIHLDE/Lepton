@@ -17,6 +17,8 @@ from app.content.factories import (
     NewsFactory,
     PageFactory,
     ParentPageFactory,
+    PriorityPoolFactory,
+    QRCodeFactory,
     RegistrationFactory,
     ShortLinkFactory,
     UserFactory,
@@ -29,6 +31,12 @@ from app.group.factories.membership_factory import MembershipHistoryFactory
 from app.kontres.factories import BookableItemFactory, ReservationFactory
 from app.payment.factories.paid_event_factory import PaidEventFactory
 from app.util.test_utils import add_user_to_group_with_name, get_api_client
+
+
+def _add_user_to_group(user, group):
+    return MembershipFactory(
+        user=user, group=group, membership_type=MembershipType.MEMBER
+    )
 
 
 @pytest.fixture()
@@ -64,6 +72,11 @@ def user():
     return UserFactory()
 
 
+@pytest.fixture()
+def qr_code():
+    return QRCodeFactory()
+
+
 @pytest.fixture
 def token(user):
     return Token.objects.get(user_id=user.user_id)
@@ -72,6 +85,18 @@ def token(user):
 @pytest.fixture()
 def admin_user(member):
     add_user_to_group_with_name(member, AdminGroup.HS)
+    return member
+
+
+@pytest.fixture()
+def nok_user(member):
+    add_user_to_group_with_name(member, AdminGroup.NOK)
+    return member
+
+
+@pytest.fixture()
+def sosialen_user(member):
+    add_user_to_group_with_name(member, AdminGroup.SOSIALEN)
     return member
 
 
@@ -211,3 +236,21 @@ def bookable_item():
 @pytest.fixture()
 def reservation():
     return ReservationFactory()
+  
+  
+def priority_group():
+    return GroupFactory(name="Prioritized group", slug="prioritized_group")
+
+
+@pytest.fixture()
+def user_in_priority_pool(priority_group):
+    user = UserFactory()
+    _add_user_to_group(user, priority_group)
+    return user
+
+
+@pytest.fixture()
+def event_with_priority_pool(priority_group):
+    event = EventFactory(limit=1)
+    PriorityPoolFactory(event=event, groups=(priority_group,))
+    return event
