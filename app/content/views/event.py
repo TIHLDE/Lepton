@@ -86,11 +86,7 @@ class EventViewSet(BaseViewSet, ActionMixin):
                 .filter(category=category)
                 .order_by("-start_date")
             )
-        return (
-            self.queryset.filter(end_date__gte=time)
-            .filter(category=category)
-            .order_by("-start_date")
-        )
+        return self.queryset.filter(end_date__gte=time).filter(category=category)
 
     def get_serializer_class(self):
         if hasattr(self, "action") and self.action == "list":
