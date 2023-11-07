@@ -8,9 +8,8 @@ from app.blitzed.factories.anonymous_user_factory import AnonymousUserFactory
 from app.blitzed.factories.beerpong_tournament_factory import (
     BeerpongTournamentFactory,
 )
+from app.blitzed.factories.drinking_game_factory import DrinkingGameFactory
 from app.blitzed.factories.pong_match_factory import PongMatchFactory
-from app.blitzed.factories.pong_result_factory import PongResultFactory
-from app.blitzed.factories.pong_team_factory import PongTeamFactory
 from app.blitzed.factories.session_factory import SessionFactory
 from app.career.factories import WeeklyBusinessFactory
 from app.common.enums import AdminGroup, Groups, MembershipType
@@ -211,8 +210,13 @@ def toddel():
 
 
 @pytest.fixture()
-def anonymous_user():
-    return AnonymousUserFactory()
+def drinking_game():
+    return DrinkingGameFactory()
+
+
+@pytest.fixture()
+def beerpong_tournament():
+    return BeerpongTournamentFactory()
 
 
 @pytest.fixture()
@@ -221,20 +225,10 @@ def pong_match():
 
 
 @pytest.fixture()
-def pong_result():
-    return PongResultFactory()
-
-
-@pytest.fixture()
-def pong_team():
-    return PongTeamFactory()
+def anonymous_user():
+    return AnonymousUserFactory()
 
 
 @pytest.fixture()
 def session():
     return SessionFactory()
-
-
-@pytest.fixture()
-def beerpong_tournament():
-    return BeerpongTournamentFactory()

@@ -3,6 +3,7 @@ from django.urls import path
 from rest_framework import routers
 
 from app.blitzed.views.beerpong_tournament import BeerpongTournamentViewset
+from app.blitzed.views.drinking_game import DrinkingGameViewSet
 from app.blitzed.views.pong_match import PongMatchViewset
 from app.blitzed.views.pong_result import PongResultViewset
 from app.blitzed.views.pong_team import PongTeamViewset
@@ -11,6 +12,7 @@ from app.blitzed.views.session import SessionViewset
 router = routers.DefaultRouter()
 
 router.register("session", SessionViewset, basename="session")
+router.register("drinking_game", DrinkingGameViewSet, basename="drinking_game")
 router.register("tournament", BeerpongTournamentViewset, basename="tournament")
 router.register("match", PongMatchViewset, basename="match")
 router.register("result", PongResultViewset, basename="result")
