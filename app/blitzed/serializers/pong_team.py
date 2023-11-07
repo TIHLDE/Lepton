@@ -7,10 +7,10 @@ from app.common.serializers import BaseModelSerializer
 class PongTeamSerializer(BaseModelSerializer):
     class Meta:
         model = PongTeam
-        fields = ("team_name", "members", "anonymous_members")
+        fields = ("id", "team_name", "members", "anonymous_members")
 
 
 class PongTeamCreateAndUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = PongTeam
-        fields = ("team_name", "members", "anonymous_members", "tournament")
+        fields = ("id", "team_name", "members", "anonymous_members", "tournament")

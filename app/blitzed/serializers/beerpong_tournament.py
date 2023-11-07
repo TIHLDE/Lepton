@@ -10,4 +10,4 @@ class BeerpongTournamentSerializer(BaseModelSerializer):
 
     class Meta:
         model = BeerpongTournament
-        fields = ("name", "matches", "teams")
+        fields = ("id", "name", "matches", "teams")

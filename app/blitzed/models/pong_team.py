@@ -1,5 +1,3 @@
-import random
-
 from django.db import models
 from django.utils.safestring import mark_safe
 
@@ -10,19 +8,8 @@ from app.content.models.user import User
 from app.util.models import BaseModel
 
 
-def generate_team_name():
-    team_names = [
-        "Tipsy Titans",
-        "Beer Pong Buddies",
-        "Margarita Mavericks",
-        "Drunken Ducks",
-        "Party Planners",
-    ]
-    return random.choice(team_names)
-
-
 class PongTeam(BaseModel, BasePermissionModel):
-    team_name = models.CharField(max_length=60, default=generate_team_name)
+    team_name = models.CharField(max_length=60)
     members = models.ManyToManyField(User, blank=True, related_name="pong_teams")
     anonymous_members = models.ManyToManyField(
         AnonymousUser, blank=True, related_name="pong_teams"
@@ -32,6 +19,7 @@ class PongTeam(BaseModel, BasePermissionModel):
     )
 
     class Meta:
+        verbose_name = "Pong team"
         verbose_name_plural = "Pong teams"
 
     def __str__(self):

@@ -8,7 +8,8 @@ from app.util.models import BaseModel
 
 
 class PongResult(BaseModel, BasePermissionModel):
-    match = models.ForeignKey(
+    id = models.AutoField(primary_key=True)
+    match = models.OneToOneField(
         PongMatch, on_delete=models.CASCADE, related_name="match_results"
     )
     winner = models.ForeignKey(
@@ -21,7 +22,7 @@ class PongResult(BaseModel, BasePermissionModel):
     result = models.CharField(max_length=10, default="0 - 0")
 
     class Meta:
-        verbose_name_plural = "Matche results"
+        verbose_name_plural = "Match results"
 
     def __str__(self):
         return mark_safe(f"Winner:{self.winner} -> {self.result}")

@@ -31,6 +31,7 @@ def _get_match_post_data(tournament, team1, team2, prev_match):
         "tournament": tournament.id,
     }
 
+
 def _get_match_put_data(match, tournament):
     return {
         "team1": PongTeamFactory(tournament=tournament).id,
@@ -72,10 +73,8 @@ def test_that_a_pong_match_can_be_created_with_a_prev_match(
 
 
 @pytest.mark.django_db
-def test_that_a_pong_match_can_be_updated(
-    default_client, beerpong_tournament
-):
-    """A pong match should be able to be uodated for a tournament"""
+def test_that_a_pong_match_can_be_updated(default_client, beerpong_tournament):
+    """A pong match should be able to be updated for a tournament"""
     match = PongMatchFactory(tournament=beerpong_tournament)
 
     url = _get_detailed_match_url(match)
@@ -86,9 +85,7 @@ def test_that_a_pong_match_can_be_updated(
 
 
 @pytest.mark.django_db
-def test_that_a_pong_match_can_be_deleted(
-    default_client, beerpong_tournament
-):
+def test_that_a_pong_match_can_be_deleted(default_client, beerpong_tournament):
     """A pong match should be able to be deleted from a tournament"""
     match = PongMatchFactory(tournament=beerpong_tournament)
     old_match_count = beerpong_tournament.matches.count()

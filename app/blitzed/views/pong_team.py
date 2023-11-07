@@ -35,10 +35,10 @@ class PongTeamViewset(BaseViewSet):
     def update(self, request, *args, **kwargs):
         try:
             serializer = PongTeamCreateAndUpdateSerializer(
-                data=request.data, context={"request": request}
+                data=request.data, partial=True, context={"request": request}
             )
             if serializer.is_valid():
-                super().perform_create(serializer)
+                super().update(serializer)
                 return Response(serializer.data, status=status.HTTP_200_OK)
 
             return Response(

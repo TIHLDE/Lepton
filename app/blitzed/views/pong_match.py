@@ -38,7 +38,7 @@ class PongMatchViewset(BaseViewSet):
                 data=request.data, context={"request": request}
             )
             if serializer.is_valid():
-                super().perform_create(serializer)
+                super().update(serializer)
                 return Response(serializer.data, status=status.HTTP_200_OK)
 
             return Response(

@@ -13,7 +13,5 @@ class PongResultFactory(DjangoModelFactory):
         model = PongResult
 
     match = factory.SubFactory(PongMatchFactory)
-    winner = factory.Faker(PongTeamFactory)
-    result = factory.LazyAttribute(
-        lambda _: f"{random.randint(0, 10)} - {random.randint(0, 10)}"
-    )
+    winner = factory.SubFactory(PongTeamFactory)
+    result = f"{random.randint(0, 5)} - {random.randint(0, 6)}"

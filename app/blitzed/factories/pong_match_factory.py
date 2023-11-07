@@ -14,5 +14,5 @@ class PongMatchFactory(DjangoModelFactory):
 
     team1 = factory.SubFactory(PongTeamFactory)
     team2 = factory.SubFactory(PongTeamFactory)
-    prev_match = factory.LazyAttribute(lambda x: None)
+    future_match = factory.LazyAttribute(lambda x: None)
     tournament = factory.SubFactory(BeerpongTournamentFactory)

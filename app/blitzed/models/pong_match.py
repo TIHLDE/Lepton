@@ -14,7 +14,7 @@ class PongMatch(BaseModel, BasePermissionModel):
     team2 = models.ForeignKey(
         PongTeam, on_delete=models.SET_NULL, related_name="matches_team2", null=True
     )
-    prev_match = models.OneToOneField(
+    future_match = models.ForeignKey(
         "self", on_delete=models.SET_NULL, null=True, blank=True
     )
     tournament = models.ForeignKey(
