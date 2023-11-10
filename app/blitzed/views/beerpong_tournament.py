@@ -56,9 +56,9 @@ class BeerpongTournamentViewset(BaseViewSet):
                     status=status.HTTP_207_MULTI_STATUS,
                 )
             return Response(serializer.data, status=status.HTTP_200_OK)
-        except Exception as e:
+        except Exception:
             return Response(
-                {"detail": f"Noe gikk galt ved generering av turneringen: {e}"},
+                {"detail": f"Noe gikk galt ved generering av turneringen."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 

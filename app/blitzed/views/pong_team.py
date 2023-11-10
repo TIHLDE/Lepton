@@ -27,9 +27,9 @@ class PongTeamViewset(BaseViewSet):
             return Response(
                 {"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST
             )
-        except ValueError as value_error:
+        except ValueError:
             return Response(
-                {"detail": str(value_error)}, status=status.HTTP_400_BAD_REQUEST
+                {"detail": "Noe gikk galt ved lagring av lag."}, status=status.HTTP_400_BAD_REQUEST
             )
 
     def update(self, request, *args, **kwargs):
@@ -44,9 +44,9 @@ class PongTeamViewset(BaseViewSet):
             return Response(
                 {"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST
             )
-        except ValueError as value_error:
+        except ValueError:
             return Response(
-                {"detail": str(value_error)}, status=status.HTTP_400_BAD_REQUEST
+                {"detail": "Noe gikk galt ved oppdatering."}, status=status.HTTP_400_BAD_REQUEST
             )
 
     def destroy(self, request, *args, **kwargs):
