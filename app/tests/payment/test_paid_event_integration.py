@@ -28,6 +28,7 @@ def get_paid_event_data(
     organizer=None,
     price=100.00,
     paytime="01:00:00",
+    is_paid_event=True,
 ):
     start_date = timezone.now() + timedelta(days=10)
     end_date = timezone.now() + timedelta(days=11)
@@ -36,7 +37,7 @@ def get_paid_event_data(
         "location": location,
         "start_date": start_date,
         "end_date": end_date,
-        "is_paid_event": True,
+        "is_paid_event": is_paid_event,
         "paid_information": {"price": price, "paytime": paytime},
     }
     if organizer:
@@ -52,7 +53,7 @@ def _get_registration_post_data(user, event):
 
 
 def get_paid_event_without_price_data(
-    title="New Title", location="New Location", organizer=None
+    title="New Title", location="New Location", organizer=None, is_paid_event=True
 ):
     start_date = timezone.now() + timedelta(days=10)
     end_date = timezone.now() + timedelta(days=11)
@@ -61,7 +62,7 @@ def get_paid_event_without_price_data(
         "location": location,
         "start_date": start_date,
         "end_date": end_date,
-        "is_paid_event": True,
+        "is_paid_event": is_paid_event,
     }
     if organizer:
         data["organizer"] = organizer
@@ -134,21 +135,24 @@ def test_update_paid_event_as_admin(admin_user):
     assert float(response.data["paid_information"]["price"]) == new_event_price
 
 
-# @pytest.mark.django_db
-# def test_delete_paid_event_as_admin(admin_user, paid_event):
-#     client = get_api_client(user=admin_user)
-#     event = paid_event.event
+@pytest.mark.django_db
+def test_update_paid_event_to_free_event_as_admin(admin_user):
+    """
+    HS and Index members should not be able to update a paid event to a free event.
+    Other subgroup members can update paid events where event.organizer is their group or None.
+    Leaders of committees and interest groups should be able to
+    update events where event.organizer is their group or None.
+    """
 
-#     url = _get_registration_url(event=event)
-#     data = _get_registration_post_data(admin_user, event)
-#     response = client.post(url, data=data)
-#     assert response.status_code == 201
+    paid_event = PaidEventFactory(price=100.00)
+    event = paid_event.event
+    organizer = Group.objects.get_or_create(name="HS", type=GroupType.BOARD)[0]
+    client = get_api_client(user=admin_user)
+    url = get_events_url_detail(event)
+    data = get_paid_event_data(organizer=organizer.slug, is_paid_event=False)
 
-#     url = get_events_url_detail(event)
-#     event_response = client.delete(url)
-#     paid_events = PaidEvent.objects.all()
-#     orders = Order.objects.all()
+    response = client.put(url, data)
+    event.refresh_from_db()
 
-#     assert event_response.status_code == 200
-#     assert len(paid_events) == 0
-#     assert len(orders) == 0
+    assert response.status_code == 400
+    assert event.is_paid_event

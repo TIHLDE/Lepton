@@ -98,6 +98,18 @@ def admin_user(member):
 
 
 @pytest.fixture()
+def nok_user(member):
+    add_user_to_group_with_name(member, AdminGroup.NOK)
+    return member
+
+
+@pytest.fixture()
+def sosialen_user(member):
+    add_user_to_group_with_name(member, AdminGroup.SOSIALEN)
+    return member
+
+
+@pytest.fixture()
 def member():
     user = UserFactory()
     add_user_to_group_with_name(user, Groups.TIHLDE)
@@ -242,7 +254,7 @@ def event_with_priority_pool(priority_group):
     event = EventFactory(limit=1)
     PriorityPoolFactory(event=event, groups=(priority_group,))
     return event
-
+  
 
 @pytest.fixture()
 def drinking_game():
@@ -271,3 +283,4 @@ def anonymous_user():
 @pytest.fixture()
 def session():
     return SessionFactory()
+
