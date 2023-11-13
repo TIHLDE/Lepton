@@ -3,11 +3,16 @@ from rest_framework import serializers
 from app.blitzed.exceptions import APIDrawMatch
 from app.blitzed.models.pong_match import PongMatch
 from app.blitzed.models.pong_result import PongResult
-from app.blitzed.serializers.pong_team import PongTeamSerializer
+from app.blitzed.serializers.pong_team import (
+    PongTeamSerializer,
+    SimplePongTeamSerializer,
+)
 from app.common.serializers import BaseModelSerializer
 
 
 class PongResultSerializer(BaseModelSerializer):
+    winner = SimplePongTeamSerializer()
+
     class Meta:
         model = PongResult
         fields = ("id", "match", "winner", "result")

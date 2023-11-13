@@ -15,6 +15,11 @@ class PongMatchViewset(BaseViewSet):
     permission_classes = [BasicViewPermission]
     queryset = PongMatch.objects.all()
 
+    def get_serializer_class(self):
+        if self.action == "create" or self.action == "update":
+            return PongMatchCreateAndUpdateSerializer
+        return self.serializer_class
+
     def create(self, request, *args, **kwargs):
         try:
             serializer = PongMatchCreateAndUpdateSerializer(
@@ -27,26 +32,28 @@ class PongMatchViewset(BaseViewSet):
             return Response(
                 {"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST
             )
-        except ValueError:
+        except Exception:
             return Response(
-                {"detail": "Noe gikk galt ved lagring av kamp."}, status=status.HTTP_400_BAD_REQUEST
+                {"detail": "Noe gikk galt ved lagring av kamp."},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
     def update(self, request, *args, **kwargs):
         try:
+            match = self.get_object()
             serializer = PongMatchCreateAndUpdateSerializer(
-                data=request.data, context={"request": request}
+                match, data=request.data, context={"request": request}
             )
             if serializer.is_valid():
                 super().update(serializer)
                 return Response(serializer.data, status=status.HTTP_200_OK)
-
             return Response(
                 {"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST
             )
-        except ValueError:
+        except Exception:
             return Response(
-                {"detail": "Noe gikk galt ved oppdatering av kamp."}, status=status.HTTP_400_BAD_REQUEST
+                {"detail": "Noe gikk galt ved oppdatering av kamp."},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
     def destroy(self, request, *args, **kwargs):

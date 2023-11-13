@@ -10,7 +10,7 @@ from app.util.models import BaseModel
 class PongResult(BaseModel, BasePermissionModel):
     id = models.AutoField(primary_key=True)
     match = models.OneToOneField(
-        PongMatch, on_delete=models.CASCADE, related_name="match_results"
+        PongMatch, on_delete=models.CASCADE, related_name="result"
     )
     winner = models.ForeignKey(
         PongTeam,

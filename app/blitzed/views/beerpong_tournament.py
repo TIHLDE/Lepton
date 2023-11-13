@@ -8,6 +8,7 @@ from app.blitzed.models.beerpong_tournament import BeerpongTournament
 from app.blitzed.models.pong_match import PongMatch
 from app.blitzed.models.pong_team import PongTeam
 from app.blitzed.serializers.beerpong_tournament import (
+    BeerpongTournamentGeneratedSerializer,
     BeerpongTournamentSerializer,
 )
 from app.blitzed.serializers.pong_match import (
@@ -25,7 +26,7 @@ class BeerpongTournamentViewset(BaseViewSet):
     @action(detail=False, methods=["GET"])
     def get_tournament_by_name(self, request, *args, **kwargs):
         tournament_name = request.query_params.get("name")
-        tournament = BeerpongTournament.objects.get(name=tournament_name)
+        tournament = BeerpongTournament.objects.filter(name=tournament_name)
         serializer = BeerpongTournamentSerializer(tournament)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -34,31 +35,21 @@ class BeerpongTournamentViewset(BaseViewSet):
         try:
             tournament = self.get_object()
             matches = self.generate_tournament(tournament)
-            serialized_matches = [
-                PongMatchCreateAndUpdateSerializer(match).data for match in matches
-            ]
 
-            match_counter = 0
-            for i, match_data in enumerate(serialized_matches):
-                match_instance = matches[i]
+            for i, match in enumerate(matches):
                 serializer = PongMatchCreateAndUpdateSerializer(
-                    match_instance, data=match_data, partial=True
+                    match,
+                    data=PongMatchCreateAndUpdateSerializer(match).data,
+                    partial=True,
                 )
                 if serializer.is_valid(raise_exception=True):
                     super().perform_update(serializer)
-                    match_counter += 1
-
-            if match_counter < len(serialized_matches):
-                return Response(
-                    {
-                        "detail": f"Klarte ikke generere turnering fullstendig. {match_counter} av {len(serialized_matches)} matches generert"
-                    },
-                    status=status.HTTP_207_MULTI_STATUS,
-                )
+            serializer = BeerpongTournamentGeneratedSerializer(tournament)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception:
+            PongMatch.objects.filter(tournament=tournament).delete()
             return Response(
-                {"detail": f"Noe gikk galt ved generering av turneringen."},
+                {"detail": "Noe gikk galt ved generering av turneringen."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 

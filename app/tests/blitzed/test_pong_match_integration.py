@@ -16,18 +16,18 @@ def _get_detailed_match_url(match):
     return f"{API_MATCH_BASE_URL}{match.id}/"
 
 
-def _get_match_post_data(tournament, team1, team2, prev_match):
-    if prev_match:
+def _get_match_post_data(tournament, team1, team2, future_match):
+    if future_match:
         return {
             "team1": team1.id,
             "team2": team2.id,
-            "prev_match": prev_match.id,
+            "future_match": future_match.id,
             "tournament": tournament.id,
         }
     return {
         "team1": team1.id,
         "team2": team2.id,
-        "prev_match": None,
+        "future_match": None,
         "tournament": tournament.id,
     }
 
@@ -36,16 +36,16 @@ def _get_match_put_data(match, tournament):
     return {
         "team1": PongTeamFactory(tournament=tournament).id,
         "team2": PongTeamFactory(tournament=tournament).id,
-        "prev_match": PongMatchFactory(tournament=tournament).id,
+        "future_match": PongMatchFactory(tournament=tournament).id,
         "tournament": tournament.id,
     }
 
 
 @pytest.mark.django_db
-def test_that_a_pong_match_can_be_created_without_a_prev_match(
+def test_that_a_pong_match_can_be_created_without_a_future_match(
     default_client, beerpong_tournament
 ):
-    """A pong match should be able to be created for a tournament without a previous match"""
+    """A pong match should be able to be created for a tournament without a future match"""
     team1 = PongTeamFactory(tournament=beerpong_tournament)
     team2 = PongTeamFactory(tournament=beerpong_tournament)
 
@@ -57,16 +57,16 @@ def test_that_a_pong_match_can_be_created_without_a_prev_match(
 
 
 @pytest.mark.django_db
-def test_that_a_pong_match_can_be_created_with_a_prev_match(
+def test_that_a_pong_match_can_be_created_with_a_future_match(
     default_client, beerpong_tournament
 ):
-    """A pong match should be able to be created for a tournament with a previous match"""
+    """A pong match should be able to be created for a tournament with a future match"""
     team1 = PongTeamFactory(tournament=beerpong_tournament)
     team2 = PongTeamFactory(tournament=beerpong_tournament)
-    prev_match = PongMatchFactory(tournament=beerpong_tournament)
+    future_match = PongMatchFactory(tournament=beerpong_tournament)
 
     url = _get_match_url()
-    data = _get_match_post_data(beerpong_tournament, team1, team2, prev_match)
+    data = _get_match_post_data(beerpong_tournament, team1, team2, future_match)
     response = default_client.post(url, data)
 
     assert response.status_code == status.HTTP_201_CREATED

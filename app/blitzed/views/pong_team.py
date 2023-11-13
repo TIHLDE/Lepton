@@ -1,4 +1,5 @@
 from rest_framework import status
+from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from app.blitzed.models.pong_team import PongTeam
@@ -15,6 +16,18 @@ class PongTeamViewset(BaseViewSet):
     permission_classes = [BasicViewPermission]
     queryset = PongTeam.objects.all()
 
+    def get_serializer_class(self):
+        if self.action == "create" or self.action == "update":
+            return PongTeamCreateAndUpdateSerializer
+        return self.serializer_class
+
+    @action(detail=False, methods=["GET"])
+    def get_team_by_tournament_id(self, request, *args, **kwargs):
+        tournament_id = request.query_params.get("tournament")
+        teams = PongTeam.objects.filter(tournamnet=tournament_id)
+        serializer = PongTeamSerializer(teams, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
     def create(self, request, *args, **kwargs):
         try:
             serializer = PongTeamCreateAndUpdateSerializer(
@@ -27,9 +40,10 @@ class PongTeamViewset(BaseViewSet):
             return Response(
                 {"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST
             )
-        except ValueError:
+        except Exception:
             return Response(
-                {"detail": "Noe gikk galt ved lagring av lag."}, status=status.HTTP_400_BAD_REQUEST
+                {"detail": "Noe gikk galt ved lagring av lag."},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
     def update(self, request, *args, **kwargs):
@@ -44,9 +58,10 @@ class PongTeamViewset(BaseViewSet):
             return Response(
                 {"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST
             )
-        except ValueError:
+        except Exception:
             return Response(
-                {"detail": "Noe gikk galt ved oppdatering."}, status=status.HTTP_400_BAD_REQUEST
+                {"detail": "Noe gikk galt ved oppdatering."},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
     def destroy(self, request, *args, **kwargs):
