@@ -500,4 +500,4 @@ def test_expired_user_event_shows_as_expired(member, api_client):
 
     registrations = response.json().get("results")
     for registration in registrations:
-        assert registration.get("expired") == True
+        assert registration.get("expired")
