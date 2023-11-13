@@ -8,10 +8,14 @@ from app.blitzed.views.pong_match import PongMatchViewset
 from app.blitzed.views.pong_result import PongResultViewset
 from app.blitzed.views.pong_team import PongTeamViewset
 from app.blitzed.views.session import SessionViewset
+from app.blitzed.views.user_wasted_level import UserWastedLevelViewset
 
 router = routers.DefaultRouter()
 
 router.register("session", SessionViewset, basename="session")
+router.register(
+    "user_wasted_level", UserWastedLevelViewset, basename="user_wasted_level"
+)
 router.register("drinking_game", DrinkingGameViewSet, basename="drinking_game")
 router.register("tournament", BeerpongTournamentViewset, basename="tournament")
 router.register("match", PongMatchViewset, basename="match")
