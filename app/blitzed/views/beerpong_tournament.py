@@ -23,14 +23,11 @@ class BeerpongTournamentViewset(BaseViewSet):
     permission_classes = [BasicViewPermission]
     queryset = BeerpongTournament.objects.all()
 
-    @action(detail=False, methods=["GET"])
-    def get_tournament_by_name(self, request, *args, **kwargs):
-        tournament_name = request.query_params.get("name")
-        tournaments = BeerpongTournament.objects.filter(name=tournament_name)
-        if tournaments.count() == 0:
-            return Response({"detail": "Fant ingen turnering med det navnet"}, status=status.HTTP_404_NOT_FOUND)
-        serializer = BeerpongTournamentSerializer(tournaments, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    def get_queryset(self):
+        tournament_name = self.request.query_params.get("name", None)
+        if tournament_name is not None:
+            return BeerpongTournament.objects.filter(name=tournament_name)
+        return BeerpongTournament.objects.all()
 
     @action(detail=True, methods=["GET"], url_path="generate")
     def generate_tournament_matches_and_return_matches(self, request, *args, **kwargs):

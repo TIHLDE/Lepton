@@ -1,5 +1,4 @@
 from rest_framework import status
-from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from app.blitzed.models.pong_team import PongTeam
@@ -21,14 +20,11 @@ class PongTeamViewset(BaseViewSet):
             return PongTeamCreateAndUpdateSerializer
         return self.serializer_class
 
-    @action(detail=False, methods=["GET"])
-    def get_team_by_tournament_id(self, request, *args, **kwargs):
-        tournament_id = request.query_params.get("tournament")
-        teams = PongTeam.objects.filter(tournament=tournament_id)
-        if teams.count() == 0:
-            return Response({"detail": "Fant ingen lag tilhørende turnering"}, status=status.HTTP_404_NOT_FOUND)
-        serializer = PongTeamSerializer(teams, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    def get_queryset(self):
+        tournament = self.request.query_params.get("tournament", None)
+        if tournament is not None:
+            return PongTeam.objects.filter(tournament=tournament)
+        return PongTeam.objects.all()
 
     def create(self, request, *args, **kwargs):
         try:
