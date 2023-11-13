@@ -5,6 +5,10 @@ import pytest
 
 from app.badge.factories import BadgeFactory, UserBadgeFactory
 from app.blitzed.factories.drinking_game_factory import DrinkingGameFactory
+from app.blitzed.factories.session_factory import SessionFactory
+from app.blitzed.factories.user_wasted_level_factory import (
+    UserWastedLevelFactory,
+)
 from app.career.factories import WeeklyBusinessFactory
 from app.common.enums import AdminGroup, Groups, MembershipType
 from app.communication.factories import (
@@ -206,3 +210,13 @@ def toddel():
 @pytest.fixture()
 def drinking_game():
     return DrinkingGameFactory()
+
+
+@pytest.fixture()
+def session():
+    return SessionFactory()
+
+
+@pytest.fixture()
+def wasted_level():
+    return UserWastedLevelFactory()
