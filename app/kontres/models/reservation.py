@@ -1,7 +1,6 @@
 import uuid
 
 from django.db import models
-
 from app.common.enums import Groups
 from app.common.permissions import BasePermissionModel
 from app.content.models import User
