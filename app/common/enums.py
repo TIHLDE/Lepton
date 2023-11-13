@@ -27,10 +27,11 @@ class AdminGroup(ChoiceEnum):
     NOK = "Nok"
     PROMO = "Promo"
     SOSIALEN = "Sosialen"
+    KOK = "Kok"
 
     @classmethod
     def all(cls):
-        return (cls.HS, cls.INDEX, cls.NOK, cls.PROMO, cls.SOSIALEN)
+        return (cls.HS, cls.INDEX, cls.NOK, cls.PROMO, cls.SOSIALEN, cls.KOK)
 
     @classmethod
     def admin(cls):
