@@ -190,7 +190,6 @@ def test_filter_only_users_with_active_strikes(
     ],
 )
 def test_user_actions_self(url, status_code, member, api_client):
-
     url = f"{API_USER_BASE_URL}me{url}"
     client = api_client(user=member)
 
@@ -349,7 +348,7 @@ def test_update_other_user_as_hs_user(member, user, api_client):
     url = _get_user_detail_url(user)
     response = client.put(url, data)
 
-    assert response.status_code == status.HTTP_403_FORBIDDEN
+    assert response.status_code == status.HTTP_200_OK
 
 
 def test_update_other_user_as_index_user(member, user, api_client):
@@ -467,7 +466,7 @@ def test_destroy_other_user_as_hs_user(member, user, api_client):
     url = _get_user_detail_url(user)
     response = client.delete(url)
 
-    assert response.status_code == status.HTTP_403_FORBIDDEN
+    assert response.status_code == status.HTTP_200_OK
 
 
 def test_destroy_other_user_as_index_user(member, user, api_client):

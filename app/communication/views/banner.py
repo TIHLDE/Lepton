@@ -23,12 +23,12 @@ class BannerFilter(FilterSet):
 
     def filter_is_visible(self, queryset, name, value):
         if value:
-            return queryset.filter(is_visible=True)
+            return queryset.filter(visible_from__lte=now(), visible_until__gte=now())
         return queryset
 
     def filter_is_expired(self, queryset, name, value):
         if value:
-            return queryset.filter(is_expired=True)
+            return queryset.filter(visible_until__lt=now())
         return queryset
 
 
