@@ -8,7 +8,6 @@ from app.blitzed.models.beerpong_tournament import BeerpongTournament
 from app.blitzed.models.pong_match import PongMatch
 from app.blitzed.models.pong_team import PongTeam
 from app.blitzed.serializers.beerpong_tournament import (
-    BeerpongTournamentGeneratedSerializer,
     BeerpongTournamentSerializer,
 )
 from app.blitzed.serializers.pong_match import (
@@ -43,7 +42,7 @@ class BeerpongTournamentViewset(BaseViewSet):
                 )
                 if serializer.is_valid(raise_exception=True):
                     super().perform_update(serializer)
-            serializer = BeerpongTournamentGeneratedSerializer(tournament)
+            serializer = BeerpongTournamentSerializer(tournament)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception:
             PongMatch.objects.filter(tournament=tournament).delete()
@@ -55,23 +54,27 @@ class BeerpongTournamentViewset(BaseViewSet):
     def generate_tournament(self, tournament):
         PongMatch.objects.filter(tournament=tournament).delete()
         matches = self.create_matches(tournament)
-        self.create_match_tree(matches, len(matches) - 1, 1)
+        self.create_match_tree(matches=matches, at=len(matches) - 1, n=1, round=1)
         return matches
 
-    def create_match_tree(self, matches, at, n):
-        if at - n < 0:
-            return
+    def create_match_tree(self, matches, at, n, round):
+        node1 = at - n
+        n *= 2
+
+        node2 = node1 - 1
         root = matches[at]
-        node1 = matches[at - n]
-        node1.future_match = root
-
-        if at - n - 1 < 0:
+        if node1 < 0:
             return
-        node2 = matches[at - n - 1]
-        node2.future_match = root
+        match1 = matches[node1]
+        match1.future_match = root
 
-        self.create_match_tree(matches, at - n, n + 1)
-        self.create_match_tree(matches, at - n - 1, n + 2)
+        if node2 < 0:
+            return
+        match2 = matches[node2]
+        match2.future_match = root
+
+        self.create_match_tree(matches, node1, n, round + 1)
+        self.create_match_tree(matches, node2, n + 1, round + 1)
 
     def create_matches(self, tournament):
         teams = list(PongTeam.objects.filter(tournament=tournament))

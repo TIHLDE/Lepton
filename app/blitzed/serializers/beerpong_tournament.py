@@ -9,11 +9,3 @@ class BeerpongTournamentSerializer(BaseModelSerializer):
     class Meta:
         model = BeerpongTournament
         fields = ("id", "name", "matches")
-
-
-class BeerpongTournamentGeneratedSerializer(BaseModelSerializer):
-    matches = PongMatchSerializer(required=False, many=True)
-
-    class Meta:
-        model = BeerpongTournament
-        fields = ("id", "matches")

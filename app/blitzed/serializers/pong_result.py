@@ -71,8 +71,8 @@ class PongResultCreateAndUpdateSerializer(serializers.ModelSerializer):
             next_match.team1 = winner
         else:
             next_match.team2 = winner
-        next_match.save()
         self.update_match_tree(next_match.id, winner)
+        next_match.save()
 
     def get_winner(self, result, match_id):
         team1_score, team2_score = map(int, result.split("-"))
