@@ -24,7 +24,9 @@ class PongTeamViewset(BaseViewSet):
     @action(detail=False, methods=["GET"])
     def get_team_by_tournament_id(self, request, *args, **kwargs):
         tournament_id = request.query_params.get("tournament")
-        teams = PongTeam.objects.filter(tournamnet=tournament_id)
+        teams = PongTeam.objects.filter(tournament=tournament_id)
+        if teams.count() == 0:
+            return Response({"detail": "Fant ingen lag tilhørende turnering"}, status=status.HTTP_404_NOT_FOUND)
         serializer = PongTeamSerializer(teams, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 

@@ -1,11 +1,11 @@
 from app.blitzed.models.beerpong_tournament import BeerpongTournament
-from app.blitzed.serializers.pong_match import SimplePongMatchSerializer
+from app.blitzed.serializers.pong_match import PongMatchSerializer
 from app.blitzed.serializers.pong_team import SimplePongTeamSerializer
 from app.common.serializers import BaseModelSerializer
 
 
 class BeerpongTournamentSerializer(BaseModelSerializer):
-    matches = SimplePongMatchSerializer(required=False, many=True)
+    matches = PongMatchSerializer(required=False, many=True)
     teams = SimplePongTeamSerializer(required=False, many=True)
 
     class Meta:
@@ -14,7 +14,7 @@ class BeerpongTournamentSerializer(BaseModelSerializer):
 
 
 class BeerpongTournamentGeneratedSerializer(BaseModelSerializer):
-    matches = SimplePongMatchSerializer(required=False, many=True)
+    matches = PongMatchSerializer(required=False, many=True)
 
     class Meta:
         model = BeerpongTournament

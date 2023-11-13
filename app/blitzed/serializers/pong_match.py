@@ -16,15 +16,6 @@ class PongMatchSerializer(BaseModelSerializer):
         fields = ("id", "team1", "team2", "result", "future_match")
 
 
-class SimplePongMatchSerializer(BaseModelSerializer):
-    team1 = SimplePongTeamSerializer()
-    team2 = SimplePongTeamSerializer()
-
-    class Meta:
-        model = PongMatch
-        fields = ("id", "team1", "team2", "future_match")
-
-
 class PongMatchCreateAndUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = PongMatch
