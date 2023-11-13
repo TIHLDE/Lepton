@@ -20,6 +20,7 @@
 - 🦟 **Bøter** Nå skal bilder på bøter ikke lengre forsvinne.
 - ✨ **Betalte arrangementer med Vipps betaling**. Det kan nå opprettes arrangementer som krever betaling for å melde seg på. Denne betalingen betales via Vipps.
 - ⚡ **Nyheter** Fondesforvalere kan nå lage nyheter.
+- ✨ **Profil** Filtrere kommende og tidligere arrangementer
 
 ## Versjon 2022.10.13
 
