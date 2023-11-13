@@ -27,6 +27,8 @@ from app.content.factories import (
     NewsFactory,
     PageFactory,
     ParentPageFactory,
+    PriorityPoolFactory,
+    QRCodeFactory,
     RegistrationFactory,
     ShortLinkFactory,
     UserFactory,
@@ -38,6 +40,12 @@ from app.group.factories.fine_factory import FineFactory
 from app.group.factories.membership_factory import MembershipHistoryFactory
 from app.payment.factories.paid_event_factory import PaidEventFactory
 from app.util.test_utils import add_user_to_group_with_name, get_api_client
+
+
+def _add_user_to_group(user, group):
+    return MembershipFactory(
+        user=user, group=group, membership_type=MembershipType.MEMBER
+    )
 
 
 @pytest.fixture()
@@ -71,6 +79,11 @@ def api_client():
 @pytest.fixture()
 def user():
     return UserFactory()
+
+
+@pytest.fixture()
+def qr_code():
+    return QRCodeFactory()
 
 
 @pytest.fixture
@@ -213,13 +226,27 @@ def toddel():
 
 
 @pytest.fixture()
-def drinking_game():
-    return DrinkingGameFactory()
+def priority_group():
+    return GroupFactory(name="Prioritized group", slug="prioritized_group")
 
 
 @pytest.fixture()
-def session():
-    return SessionFactory()
+def user_in_priority_pool(priority_group):
+    user = UserFactory()
+    _add_user_to_group(user, priority_group)
+    return user
+
+
+@pytest.fixture()
+def event_with_priority_pool(priority_group):
+    event = EventFactory(limit=1)
+    PriorityPoolFactory(event=event, groups=(priority_group,))
+    return event
+
+
+@pytest.fixture()
+def drinking_game():
+    return DrinkingGameFactory()
 
 
 @pytest.fixture()
