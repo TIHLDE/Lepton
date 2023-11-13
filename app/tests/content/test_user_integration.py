@@ -1,17 +1,16 @@
-from django.utils.text import slugify
-from rest_framework import status
+from datetime import timedelta
 
 from django.utils import timezone
-from datetime import timedelta
+from django.utils.text import slugify
+from rest_framework import status
 
 import pytest
 
 from app.common.enums import AdminGroup, GroupType
+from app.content.factories.event_factory import EventFactory
 from app.content.factories.registration_factory import RegistrationFactory
 from app.content.factories.strike_factory import StrikeFactory
 from app.content.factories.user_factory import UserFactory
-from app.content.factories.event_factory import EventFactory
-from app.content.factories.registration_factory import RegistrationFactory
 from app.content.models import User
 from app.forms.enums import EventFormType
 from app.forms.tests.form_factories import EventFormFactory, SubmissionFactory
@@ -36,8 +35,10 @@ def group2019():
 def _get_user_detail_url(user):
     return f"{API_USER_BASE_URL}{user.user_id}/"
 
+
 def _get_user_events_url():
     return f"{API_USER_BASE_URL}me/events/"
+
 
 def _get_user_post_data():
     return {
@@ -477,25 +478,26 @@ def test_destroy_other_user_as_index_user(member, user, api_client):
     response = client.delete(url)
 
     assert response.status_code == status.HTTP_200_OK
-    
+
+
 @pytest.mark.django_db
 def test_expired_user_event_shows_as_expired(member, api_client):
-   """"All the events listed as expired should be expired"""
-   client = api_client(user=member)
+    """ "All the events listed as expired should be expired"""
+    client = api_client(user=member)
 
-   two_days_ago = timezone.now() - timedelta(days=2)
-   event = EventFactory(end_date = two_days_ago)
+    two_days_ago = timezone.now() - timedelta(days=2)
+    event = EventFactory(end_date=two_days_ago)
 
-   registration = RegistrationFactory(user=member, event=event)
-   
-   url = _get_user_events_url()
+    registration = RegistrationFactory(user=member, event=event)
 
-   query_params = {'expired': 'true'}
+    url = _get_user_events_url()
 
-   response = client.get(url, data=query_params)
+    query_params = {"expired": "true"}
 
-   assert response.status_code == status.HTTP_200_OK
+    response = client.get(url, data=query_params)
 
-   registrations = response.json().get('results')
-   for registration in registrations:
-       assert registration.get('expired') == True
+    assert response.status_code == status.HTTP_200_OK
+
+    registrations = response.json().get("results")
+    for registration in registrations:
+        assert registration.get("expired") == True

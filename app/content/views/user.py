@@ -37,7 +37,6 @@ from app.group.serializers.membership import (
     MembershipHistorySerializer,
     MembershipSerializer,
 )
-
 from app.util.export_user_data import export_user_data
 from app.util.utils import CaseInsensitiveBooleanQueryParam
 
@@ -285,7 +284,7 @@ class UserViewSet(BaseViewSet, ActionMixin):
     #     return self.paginate_response(
     #         data=events, serializer=EventListSerializer, context={"request": request}
     #     )
-    
+
     @action(detail=False, methods=["get"], url_path="me/events")
     def get_user_events(self, request, *args, **kwargs):
         registrations = request.user.registrations.all()
@@ -295,14 +294,14 @@ class UserViewSet(BaseViewSet, ActionMixin):
 
         # expired_field = self.request_params.get("expired")
         # filter_expired = CaseInsensitiveBooleanQueryParam(expired_field) / teste for None
-        #  
+        #
         #  events = [
         #    registration.event
         #    for registration in registrations
         #    if registration.event.expired == filter_expired
         #  ]
 
-        #todo tom query -> = false
+        # todo tom query -> = false
         events = [
             registration.event
             for registration in registrations
@@ -310,7 +309,7 @@ class UserViewSet(BaseViewSet, ActionMixin):
         ]
 
         return self.paginate_response(
-           data=events, serializer=EventListSerializer, context={"request": request}
+            data=events, serializer=EventListSerializer, context={"request": request}
         )
 
     @action(detail=False, methods=["get"], url_path="me/forms")
