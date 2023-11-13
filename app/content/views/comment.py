@@ -20,12 +20,9 @@ class CommentViewSet(BaseViewSet, ActionMixin):
 
         user = get_object_or_404(User, user_id=request.id)
 
-        print(user)
-
         create_serizalier = CommentCreateSerializer(data=data, context={"request": request})
 
         if create_serizalier.is_valid():
-            print("Valid")
             comment = super().perform_create(create_serizalier, user=user)
             serializer = CommentSerializer(comment, context={"request": request})
             return Response(serializer.data, status=status.HTTP_201_CREATED)
