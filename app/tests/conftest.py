@@ -265,6 +265,7 @@ def drinking_game():
 def wasted_level():
     return UserWastedLevelFactory()
 
+
 @pytest.fixture()
 def beerpong_tournament():
     return BeerpongTournamentFactory()

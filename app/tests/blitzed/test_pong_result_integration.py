@@ -27,7 +27,6 @@ def _get_result_post_data(match):
 
 def _get_result_put_data(result):
     return {
-        "match": result.match.id,
         "result": "6 - 2",
     }
 

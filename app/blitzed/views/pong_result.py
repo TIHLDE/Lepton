@@ -1,11 +1,11 @@
 from rest_framework import status
 from rest_framework.response import Response
 
-from app.blitzed.models.pong_match import PongMatch
 from app.blitzed.models.pong_result import PongResult
 from app.blitzed.serializers.pong_result import (
-    PongResultCreateAndUpdateSerializer,
+    PongMatchCreateSerializer,
     PongResultSerializer,
+    PongResultUpdateSerializer,
 )
 from app.common.permissions import BasicViewPermission
 from app.common.viewsets import BaseViewSet
@@ -18,7 +18,7 @@ class PongResultViewset(BaseViewSet):
 
     def create(self, request, *args, **kwargs):
         try:
-            serializer = PongResultCreateAndUpdateSerializer(
+            serializer = PongMatchCreateSerializer(
                 data=request.data, context={"request": request}
             )
             if serializer.is_valid():
@@ -31,14 +31,14 @@ class PongResultViewset(BaseViewSet):
             )
         except Exception:
             return Response(
-                {"detail": "Noe gikk galt ved lagring av resultat"},
+                {"detail": "Noe gikk galt ved lagring av resultat."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
     def update(self, request, *args, **kwargs):
         try:
             result = self.get_object()
-            serializer = PongResultCreateAndUpdateSerializer(
+            serializer = PongResultUpdateSerializer(
                 result, data=request.data, context={"request": request}
             )
             if serializer.is_valid():
@@ -46,7 +46,7 @@ class PongResultViewset(BaseViewSet):
                 return Response(serializer.data, status=status.HTTP_200_OK)
 
             return Response(
-                {"detail": "Klarte ikke oppdatere resultat"},
+                {"detail": "Klarte ikke oppdatere resultat."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         except Exception:
@@ -59,27 +59,38 @@ class PongResultViewset(BaseViewSet):
         try:
             instance = self.get_object()
             super().destroy(request, *args, **kwargs)
-            self.update_match_tree(instance.match.id)
+            self.update_match_tree(
+                instance.match, instance.match.team1, instance.match.team2
+            )
             return Response(
                 {"detail": "Resultat ble slettet"}, status=status.HTTP_200_OK
             )
         except Exception:
             return Response(
-                {"detail": "Noe gikk galt ved sletting av resultat"},
+                {"detail": "Noe gikk galt ved sletting av resultat."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-    def update_match_tree(self, match_id):
-        current_match = PongMatch.objects.get(id=match_id)
+    def update_match_tree(self, current_match, team1, team2):
         if current_match.future_match is None:
             return
 
         next_match = current_match.future_match
-        if current_match.team1 == next_match.team1:
-            next_match.team1 = None
-        elif current_match.team2 == next_match.team1:
+        if not self.team_in_match(next_match, team1, team2):
+            return
+
+        if next_match.team1 in {team1, team2}:
             next_match.team1 = None
         else:
             next_match.team2 = None
-        self.update_match_tree(next_match.id)
+
+        self.update_match_tree(next_match, team1, team2)
+        if PongResult.objects.filter(match=next_match.id).exists():
+            PongResult.objects.get(match=next_match.id).delete()
         next_match.save()
+
+    def team_in_match(self, match, team1, team2):
+        return team1 in {match.team1, match.team2} or team2 in {
+            match.team1,
+            match.team2,
+        }
