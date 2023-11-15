@@ -875,6 +875,129 @@ def test_add_registration_to_event_as_admin_group_member(event, member, organize
 
 
 @pytest.mark.django_db
+@pytest.mark.parametrize(
+    "organizer_name",
+    [
+        AdminGroup.PROMO,
+        AdminGroup.NOK,
+        AdminGroup.KOK,
+        AdminGroup.SOSIALEN,
+        AdminGroup.INDEX,
+    ],
+)
+def test_add_registration_to_event_as_admin_group_member_when_event_closed(
+    event, member, organizer_name
+):
+    """
+    A member of NOK, Promo, Sosialen or KOK should be able to add a
+    registration to an event manually even though the event is closed.
+    """
+
+    event.closed = True
+    event.save()
+
+    data = {"user": member.user_id, "event": event.id}
+    url = f"{_get_registration_url(event=event)}add/"
+
+    client = get_api_client(user=member, group_name=organizer_name)
+
+    response = client.post(url, data)
+
+    assert response.status_code == status.HTTP_201_CREATED
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "organizer_name",
+    [
+        AdminGroup.PROMO,
+        AdminGroup.NOK,
+        AdminGroup.KOK,
+        AdminGroup.SOSIALEN,
+        AdminGroup.INDEX,
+    ],
+)
+def test_add_registration_to_event_as_admin_group_member_before_registration_open(
+    event, member, organizer_name
+):
+    """
+    A member of NOK, Promo, Sosialen or KOK should be able to add a
+    registration to an event manually even though the registration has not opened.
+    """
+
+    event.start_registration_at = now() + timedelta(days=1)
+    event.save()
+
+    data = {"user": member.user_id, "event": event.id}
+    url = f"{_get_registration_url(event=event)}add/"
+
+    client = get_api_client(user=member, group_name=organizer_name)
+
+    response = client.post(url, data)
+
+    assert response.status_code == status.HTTP_201_CREATED
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "organizer_name",
+    [
+        AdminGroup.PROMO,
+        AdminGroup.NOK,
+        AdminGroup.KOK,
+        AdminGroup.SOSIALEN,
+        AdminGroup.INDEX,
+    ],
+)
+def test_add_registration_to_event_as_admin_group_member_after_registration_closed(
+    event, member, organizer_name
+):
+    """
+    A member of NOK, Promo, Sosialen or KOK should be able to add a
+    registration to an event manually even though the registration has closed.
+    """
+
+    event.end_registration_at = now() - timedelta(days=1)
+    event.save()
+
+    data = {"user": member.user_id, "event": event.id}
+    url = f"{_get_registration_url(event=event)}add/"
+
+    client = get_api_client(user=member, group_name=organizer_name)
+
+    response = client.post(url, data)
+
+    assert response.status_code == status.HTTP_201_CREATED
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "organizer_name",
+    [
+        AdminGroup.PROMO,
+        AdminGroup.NOK,
+        AdminGroup.KOK,
+        AdminGroup.SOSIALEN,
+        AdminGroup.INDEX,
+    ],
+)
+def test_add_registration_to_paid_event(paid_event, member, organizer_name):
+    """
+    A member of NOK, Promo, Sosialen or KOK should be able to add a
+    registration to a paid event manually. A order with status "SALE" should be created.
+    """
+
+    data = {"user": member.user_id, "event": paid_event.event.id}
+    url = f"{_get_registration_url(event=paid_event.event)}add/"
+
+    client = get_api_client(user=member, group_name=organizer_name)
+
+    response = client.post(url, data)
+
+    assert response.status_code == status.HTTP_201_CREATED
+
+
+@pytest.mark.django_db
 def test_add_registration_to_event_as_anonymous_user(default_client, event, member):
     """
     An anonymous user should not be able to add a registration to an

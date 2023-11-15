@@ -34,6 +34,7 @@ class RegistrationSerializer(BaseModelSerializer):
             "order",
             "has_paid_order",
             "wait_queue_number",
+            "created_by_admin",
         )
 
     def get_survey_submission(self, obj):
