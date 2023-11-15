@@ -10,3 +10,8 @@ class APIReactionNotAllowedException(APIException):
 class APIContentTypeNotSupportedException(APIException):
     status_code = status.HTTP_400_BAD_REQUEST
     default_detail = "Er ikke støtte for denne typen"
+
+
+class APIReactionDuplicateNotAllowedException(APIException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_detail = "Du har allerede reagert her"
