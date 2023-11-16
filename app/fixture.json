@@ -1,19 +1,4 @@
-failed to get console mode for stdout: The handle is invalid.
-failed to get console mode for stdout: The handle is invalid.
-[1A[1B[0G[?25l[+] Creating 1/0
- [32m✔[0m Container db  [32mCreated[0m[34m0.0s [0m
-[?25hfailed to get console mode for stdout: The handle is invalid.
-[1A[1B[0G[?25l[+] Running 0/0
- - Container db  Starting[34m0.1s [0m
-[?25h[1A[1A[0G[?25l[+] Running 0/1
- - Container db  Starting[34m0.2s [0m
-[?25h[1A[1A[0G[?25l[+] Running 0/1
- - Container db  Starting[34m0.3s [0m
-[?25h[1A[1A[0G[?25l[+] Running 0/1
- - Container db  Starting[34m0.4s [0m
-[?25h[1A[1A[0G[?25l[34m[+] Running 1/1[0m
- [32m✔[0m Container db  [32mStarted[0m[34m0.4s [0m
-[?25h[
+[
 {
     "model": "auth.group",
     "pk": 1,
@@ -1554,6 +1539,19 @@ failed to get console mode for stdout: The handle is invalid.
         "has_attended": false,
         "allow_photo": true,
         "created_by_admin": false
+    }
+},
+{
+    "model": "content.registration",
+    "pk": 17,
+    "fields": {
+        "created_at": "2023-10-24T14:25:05.091Z",
+        "updated_at": "2023-10-24T14:25:05.091Z",
+        "user": "index",
+        "event": 9,
+        "is_on_wait": false,
+        "has_attended": false,
+        "allow_photo": true
     }
 },
 {
