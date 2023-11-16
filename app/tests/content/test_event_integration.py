@@ -170,11 +170,14 @@ def permission_test_util(
 
 
 @pytest.mark.django_db
-def test_list_as_anonymous_user(default_client):
+def test_list_as_anonymous_user(default_client, event):
     """An anonymous user should be able to list all events that are not activities."""
 
     category = Category.objects.create(text="Aktivitet")
-    event = EventFactory(category=category)
+    activity = EventFactory(category=category)
+
+    activity.category = category
+    activity.save()
 
     event.category = None
     event.save()
