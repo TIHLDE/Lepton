@@ -25,7 +25,10 @@ from app.content.factories import (
 )
 from app.content.factories.toddel_factory import ToddelFactory
 from app.emoji.factories.custom_emoji_factory import CustomEmojiFactory
-from app.emoji.factories.reaction_factory import NewsReactionFactory
+from app.emoji.factories.reaction_factory import (
+    EventReactionFactory,
+    NewsReactionFactory,
+)
 from app.forms.tests.form_factories import FormFactory, SubmissionFactory
 from app.group.factories import GroupFactory, MembershipFactory
 from app.group.factories.fine_factory import FineFactory
@@ -237,6 +240,11 @@ def emoji():
 @pytest.fixture()
 def news_reaction(member, news):
     return NewsReactionFactory(user=member, content_object=news)
+
+
+@pytest.fixture()
+def event_reaction(member, event):
+    return EventReactionFactory(user=member, content_object=event)
 
 
 @pytest.fixture()

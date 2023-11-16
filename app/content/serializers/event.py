@@ -12,6 +12,7 @@ from app.content.serializers.priority_pool import (
     PriorityPoolSerializer,
 )
 from app.content.serializers.user import DefaultUserSerializer
+from app.emoji.serializers.reaction import ReactionSerializer
 from app.group.models.group import Group
 from app.group.serializers.group import SimpleGroupSerializer
 from app.payment.models.paid_event import PaidEvent
@@ -29,6 +30,7 @@ class EventSerializer(serializers.ModelSerializer):
         required=False, allow_null=True
     )
     contact_person = DefaultUserSerializer(read_only=True, required=False)
+    reactions = ReactionSerializer(required=False, many=True)
 
     class Meta:
         model = Event
@@ -63,6 +65,8 @@ class EventSerializer(serializers.ModelSerializer):
             "paid_information",
             "is_paid_event",
             "contact_person",
+            "reactions",
+            "emojis_allowed",
         )
 
     def get_paid_information(self, obj):

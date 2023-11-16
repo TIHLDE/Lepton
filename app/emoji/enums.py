@@ -2,4 +2,5 @@ from django.db import models
 
 
 class ContentTypes(models.TextChoices):
-    NEWS = "news"
+    NEWS = ("news",)
+    EVENT = ("event",)

@@ -3,6 +3,7 @@ from django.db.utils import IntegrityError
 from rest_framework import serializers
 
 from app.common.serializers import BaseModelSerializer
+from app.content.models.event import Event
 from app.content.models.news import News
 from app.emoji.enums import ContentTypes
 from app.emoji.exception import (
@@ -36,6 +37,8 @@ class ReactionCreateSerializer(serializers.ModelSerializer):
         object = None
         if content_type.model.lower() == ContentTypes.NEWS:
             object = News.objects.get(id=int(object_id))
+        elif content_type.model.lower() == ContentTypes.EVENT:
+            object = Event.objects.get(id=int(object_id))
 
         if not object:
             raise APIContentTypeNotSupportedException()
