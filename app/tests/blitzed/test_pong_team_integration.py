@@ -35,7 +35,9 @@ def _get_team_put_data(team, beerpong_tournament):
     return {
         "team_name": "Margarita Mavericks",
         "members": [member.user_id for member in members],
-        "anonymous_members": [member.id for member in anonymous_members],
+        "anonymous_members": [
+            {"id": member.id, "name": member.name} for member in anonymous_members
+        ],
         "tournament": beerpong_tournament.id,
     }
 
@@ -45,7 +47,7 @@ def _get_user_list():
 
 
 def _get_anonymous_user_list():
-    return [AnonymousUserFactory().id, AnonymousUserFactory().id]
+    return [{"name": "John Doe"}, {"name": "Jane Doe"}]
 
 
 @pytest.mark.django_db
@@ -53,7 +55,7 @@ def test_that_a_pong_team_can_be_created_with_users_and_anonymous_users(
     default_client, beerpong_tournament
 ):
     """A pong team should be able to be created with bouth users and anonymous users for a tournament"""
-    anonymous_members = [AnonymousUserFactory().id]
+    anonymous_members = [{"name": "John Doe"}, {"name": "Jane Doe"}]
     members = [UserFactory().user_id]
 
     url = _get_team_url()
@@ -61,6 +63,35 @@ def test_that_a_pong_team_can_be_created_with_users_and_anonymous_users(
     response = default_client.post(url, data)
 
     assert response.status_code == status.HTTP_201_CREATED
+
+
+@pytest.mark.django_db
+def test_that_a_pong_team_can_be_created_with_new_anonymous_users(
+    default_client, beerpong_tournament
+):
+    """A pong team should be able to be created with new anonymous users for a tournament"""
+
+    url = _get_team_url()
+    data = _get_team_post_data(beerpong_tournament, [], [])
+    data["anonymous_members"] = [{"name": "John Doe"}, {"name": "Jane Doe"}]
+    response = default_client.post(url, data)
+
+    assert response.status_code == status.HTTP_201_CREATED
+
+
+@pytest.mark.django_db
+def test_that_a_pong_team_can_be_updated_with_new_anonymous_users(
+    default_client, beerpong_tournament
+):
+    """A pong team should be able to be updated for a tournament with new anonymous users"""
+    team = PongTeamFactory(tournament=beerpong_tournament)
+
+    url = _get_detailed_team_url(team)
+    data = _get_team_put_data(team, beerpong_tournament)
+    data["anonymous_members"] = [{"name": "John Doe"}, {"name": "Jane Doe"}]
+    response = default_client.put(url, data)
+
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db
