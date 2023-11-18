@@ -24,7 +24,6 @@ from app.content.factories import (
     UserFactory,
 )
 from app.content.factories.toddel_factory import ToddelFactory
-from app.emoji.factories.custom_emoji_factory import CustomEmojiFactory
 from app.emoji.factories.reaction_factory import (
     EventReactionFactory,
     NewsReactionFactory,
@@ -230,11 +229,6 @@ def banner():
 @pytest.fixture()
 def toddel():
     return ToddelFactory()
-
-
-@pytest.fixture()
-def emoji():
-    return CustomEmojiFactory()
 
 
 @pytest.fixture()

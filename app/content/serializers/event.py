@@ -154,7 +154,7 @@ class EventCreateAndUpdateSerializer(BaseModelSerializer):
             "paid_information",
             "is_paid_event",
             "contact_person",
-            "emojis_allowed"
+            "emojis_allowed",
         )
 
     def to_internal_value(self, data):
