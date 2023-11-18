@@ -224,6 +224,14 @@
 },
 {
     "model": "sessions.session",
+    "pk": "wd487o1l4lippc8nvmsu76awx1m5ql7r",
+    "fields": {
+        "session_data": ".eJxVjMsOgjAQRf-la9MMU1qKS_d8A5lHEdSUhEJiYvx3JWGh23vOuS_T07aO_VbS0k9qzmbKmp7m9LszyT3lHeqN8nW2Mud1mdjuij1osd2s6XE53L-Dkcr4rYGHWps01IQDsPMCFH1yEFgqCFBxCK1G9Si1i4JOBINvGCNS2yCBeX8AKt85bQ:1r12e9:uu-Il52WMklNtfTpwkcRT-L2Uyh_lHDZS1YG23T5YRE",
+        "expire_date": "2023-11-23T10:52:25.327Z"
+    }
+},
+{
+    "model": "sessions.session",
     "pk": "x2g88outp6fek547v1t7wdp2kqv00bpn",
     "fields": {
         "session_data": ".eJxVjMsOgjAUBf-la9NQaHuLS_d8A7kvBDUloZCYGP9dSVjo9szMeZket3Xst6JLP4k5mymLPs3pdyfku-Ydyg3zdbY853WZyO6KPWix3Sz6uBzu38GIZfzWgaSpKLGrtKpBCdCpb9ShKguFFNjHFBVcgDpSqxGA68ELO4Chwda8PzXPOh4:1lGlen:7sRAiQBCkdQnFzCIKZwr3m0sv1eCJtjp-ezrolmL2qo",
@@ -378,6 +386,20 @@
         "subject": "Venteliste for \"Test\"",
         "body": "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n<html xmlns=\"http://www.w3.org/1999/xhtml\">\n<head>\n    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n    <title>TIHLDE - Venteliste for &quot;Test&quot; </title>\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"/>\n    <style>\n        * {\n            color: white;\n            background: #121519;\n            font-family: -apple-system,BlinkMacSystemFont,\"Segoe UI\",Roboto,\"Helvetica Neue\",Arial,sans-serif;\n        }\n        html {\n            background-color: #121519;\n        }\n        p {\n          font-size: 1rem;\n          color:white;\n          white-space:break-spaces;\n          overflow-wrap:break-word;\n        }\n        a {\n          font-size:1rem;\n          color:white;\n          text-decoration:underline;\n          white-space:break-spaces;\n          overflow-wrap:break-word;\n        }\n        button {\n          padding:16px 0;\n          margin:16px 0;\n          background-color:#9ec0ff;\n          color:black;\n          font-size:1rem;\n          text-align:center;\n          border-radius:8px;\n          position:relative;\n          font-weight:bold;\n          text-transform:uppercase;\n          border:0;\n          width:100%;\n        }\n        button:hover {\n          background-color: #819dd0;\n          cursor:pointer;\n        }\n    </style>\n</head>\n<body style=\"background-color: #121519\">\n<center style=\"background-color: #121519; padding: 16px;\">\n    <div style=\"max-width: 600px; width: 100%; background-color: #121519; text-align: center;\">\n        <center>\n            <table style=\"width:100%!important;border-collapse:separate;min-width:100%!important; padding: 16px 16px 32px;\">\n                <tbody>\n                <tr>\n                  <td align=\"center\">\n                    <img class=\"topBoxes\" src=\"https://tihldestorage.blob.core.windows.net/imagepng/535a0936-fa31-4279-8c2c-7fc0db585f3fTIHLDE-LOGO-HVIT-1.png\" height=\"49\" width=\"250\" uk-svg alt=\"TIHLDE LOGO\">\n                  </td>\n                </tr>\n                </tbody>\n            </table>\n        </center>\n        <div style=\"padding: 16px; border: 2px solid #ffffff; border-radius: 8px; text-align: left;\">\n            \n\n<h1 style=\"font-size: 1.4rem; margin: 0; color: white;\">VENTELISTE FOR &quot;TEST&quot;</h1>\n\n    \n        <p style=\"font-size:1rem;color:white;margin:4px 0px;white-space:break-spaces;overflow-wrap:break-word;\">Hei, Mads!</p>\n    \n\n    \n        <p style=\"font-size:1rem;color:white;margin:4px 0px;white-space:break-spaces;overflow-wrap:break-word;\">På grunn av stor pågang har du blitt satt på venteliste for Test.</p>\n    \n\n    \n        <p style=\"font-size:1rem;color:white;margin:4px 0px;white-space:break-spaces;overflow-wrap:break-word;\">Dersom noen melder seg av, vil du automatisk bli flyttet opp på listen. Du vil få beskjed dersom du får plass på arrangementet.</p>\n    \n\n    \n        <p style=\"font-size:1rem;color:white;margin:4px 0px;white-space:break-spaces;overflow-wrap:break-word;\">PS. De vanlige reglene for prikker gjelder også for venteliste, husk derfor å melde deg av arrangementet innen Oct. 23, 2023, noon dersom du ikke kan møte.</p>\n    \n\n    \n        <a class=\"link\" href=\"http://localhost:3000/arrangementer/9/?utm_medium=email\" style=\"text-decoration:none;white-space:initial;\">\n          <button style=\"color:black\">Åpne arrangement</button>\n        </a>\n    \n\n\n\n\n            <p style=\"font-size:0.8rem;color:white;\">Med vennlig hilsen,<br><b style=\"font-size: 1rem;\">TIHLDE</b></p>\n        </div>\n        <div style=\"padding: 0 20px;\">\n            <p><a style=\"color:white;text-decoration:underline;\" href=\"mailto:hs@tihlde.org\">Kontakt oss</a> | <a style=\"color:white;text-decoration: underline;\" href=\"https://tihlde.org\">tihlde.org</a></p>\n        </div>\n        <div style=\"padding: 0 20px;\">\n            <p style=\"font-size:0.80rem;color:white;padding-top:20px;\">Sendt med 💗 av <a style=\"font-size:0.80rem;color:white;text-decoration: underline;\" href=\"https://tihlde.org/wiki/tihlde/undergrupper/index/\">TIHLDE Index</a></p>\n            <p style=\"font-size:0.80rem;color:white;padding-top:20px;\">Ønsker du å motta færre eposter? Du kan selv bestemme hvor du vil motta varsler gjennom innstillingene i <a style=\"font-size:0.80rem;color:white;text-decoration: underline;\" href=\"https://tihlde.org/profil/\">din profil</a></p>\n        </div>\n    </div>\n</center>\n</body>\n</html>\n",
         "users": []
+    }
+},
+{
+    "model": "communication.mail",
+    "pk": "50725749-a31c-4721-9d5e-019a7e5849ae",
+    "fields": {
+        "created_at": "2023-11-06T20:42:11.302Z",
+        "updated_at": "2023-11-06T20:42:11.302Z",
+        "eta": "2023-11-06T20:42:11.301Z",
+        "subject": "Du har fått en prikk",
+        "body": "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n<html xmlns=\"http://www.w3.org/1999/xhtml\">\n<head>\n    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n    <title>TIHLDE - Du har fått en prikk </title>\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"/>\n    <style>\n        * {\n            color: white;\n            background: #121519;\n            font-family: -apple-system,BlinkMacSystemFont,\"Segoe UI\",Roboto,\"Helvetica Neue\",Arial,sans-serif;\n        }\n        html {\n            background-color: #121519;\n        }\n        p {\n          font-size: 1rem;\n          color:white;\n          white-space:break-spaces;\n          overflow-wrap:break-word;\n        }\n        a {\n          font-size:1rem;\n          color:white;\n          text-decoration:underline;\n          white-space:break-spaces;\n          overflow-wrap:break-word;\n        }\n        button {\n          padding:16px 0;\n          margin:16px 0;\n          background-color:#9ec0ff;\n          color:black;\n          font-size:1rem;\n          text-align:center;\n          border-radius:8px;\n          position:relative;\n          font-weight:bold;\n          text-transform:uppercase;\n          border:0;\n          width:100%;\n        }\n        button:hover {\n          background-color: #819dd0;\n          cursor:pointer;\n        }\n    </style>\n</head>\n<body style=\"background-color: #121519\">\n<center style=\"background-color: #121519; padding: 16px;\">\n    <div style=\"max-width: 600px; width: 100%; background-color: #121519; text-align: center;\">\n        <center>\n            <table style=\"width:100%!important;border-collapse:separate;min-width:100%!important; padding: 16px 16px 32px;\">\n                <tbody>\n                <tr>\n                  <td align=\"center\">\n                    <img class=\"topBoxes\" src=\"https://tihldestorage.blob.core.windows.net/imagepng/535a0936-fa31-4279-8c2c-7fc0db585f3fTIHLDE-LOGO-HVIT-1.png\" height=\"49\" width=\"250\" uk-svg alt=\"TIHLDE LOGO\">\n                  </td>\n                </tr>\n                </tbody>\n            </table>\n        </center>\n        <div style=\"padding: 16px; border: 2px solid #ffffff; border-radius: 8px; text-align: left;\">\n            \n\n<h1 style=\"font-size: 1.4rem; margin: 0; color: white;\">DU HAR FÅTT EN PRIKK</h1>\n\n    \n        <p style=\"font-size:1rem;color:white;margin:4px 0px;white-space:break-spaces;overflow-wrap:break-word;\">Hei, Index!</p>\n    \n\n    \n        <p style=\"font-size:1rem;color:white;margin:4px 0px;white-space:break-spaces;overflow-wrap:break-word;\">Du har fått prikk fordi du ikke møtte på et arrangement</p>\n    \n\n    \n        <p style=\"font-size:1rem;color:white;margin:4px 0px;white-space:break-spaces;overflow-wrap:break-word;\">Prikken varer i 20 dager. Ta kontakt med arrangøren om du er uenig. Konsekvenser kan sees i arrangementsreglene. Du kan finne dine aktive prikker og mer info om dem i profilen.</p>\n    \n\n\n\n\n            <p style=\"font-size:0.8rem;color:white;\">Med vennlig hilsen,<br><b style=\"font-size: 1rem;\">TIHLDE</b></p>\n        </div>\n        <div style=\"padding: 0 20px;\">\n            <p><a style=\"color:white;text-decoration:underline;\" href=\"mailto:hs@tihlde.org\">Kontakt oss</a> | <a style=\"color:white;text-decoration: underline;\" href=\"https://tihlde.org\">tihlde.org</a></p>\n        </div>\n        <div style=\"padding: 0 20px;\">\n            <p style=\"font-size:0.80rem;color:white;padding-top:20px;\">Sendt med 💗 av <a style=\"font-size:0.80rem;color:white;text-decoration: underline;\" href=\"https://tihlde.org/wiki/tihlde/undergrupper/index/\">TIHLDE Index</a></p>\n            <p style=\"font-size:0.80rem;color:white;padding-top:20px;\">Ønsker du å motta færre eposter? Du kan selv bestemme hvor du vil motta varsler gjennom innstillingene i <a style=\"font-size:0.80rem;color:white;text-decoration: underline;\" href=\"https://tihlde.org/profil/\">din profil</a></p>\n        </div>\n    </div>\n</center>\n</body>\n</html>\n",
+        "users": [
+            "index"
+        ]
     }
 },
 {
@@ -866,39 +888,70 @@
     }
 },
 {
-    "model": "content.category",
-    "pk": 1,
+    "model": "communication.notification",
+    "pk": 38,
     "fields": {
-        "created_at": "2020-10-01T18:29:57.037Z",
-        "updated_at": "2020-10-01T18:29:57.037Z",
-        "text": "Fest"
+        "created_at": "2023-11-06T20:42:11.352Z",
+        "updated_at": "2023-11-06T20:43:18.008Z",
+        "user": "index",
+        "title": "Du har fått en prikk",
+        "description": "Hei, Index!\n\nDu har fått prikk fordi du ikke møtte på et arrangement\n\nPrikken varer i 20 dager. Ta kontakt med arrangøren om du er uenig. Konsekvenser kan sees i arrangementsreglene. Du kan finne dine aktive prikker og mer info om dem i profilen.",
+        "link": null,
+        "read": true
     }
 },
 {
     "model": "content.category",
-    "pk": 2,
-    "fields": {
-        "created_at": "2020-10-01T18:30:12.523Z",
-        "updated_at": "2020-10-01T18:30:12.523Z",
-        "text": "Bedpress"
-    }
-},
-{
-    "model": "content.category",
-    "pk": 3,
-    "fields": {
-        "created_at": "2020-10-01T18:30:37.229Z",
-        "updated_at": "2020-10-01T18:30:37.229Z",
-        "text": "Fadderuke"
-    }
-},
-{
-    "model": "content.category",
-    "pk": 4,
+    "pk": 5,
     "fields": {
         "created_at": "2020-10-01T18:32:18.564Z",
         "updated_at": "2020-10-01T18:32:18.564Z",
-        "text": "Sport"
+        "text": "Aktivitet"
+    }
+},
+{
+    "model": "content.category",
+    "pk": 6,
+    "fields": {
+        "created_at": "2023-11-09T10:53:06.747Z",
+        "updated_at": "2023-11-09T10:53:06.747Z",
+        "text": "Sosialt"
+    }
+},
+{
+    "model": "content.category",
+    "pk": 7,
+    "fields": {
+        "created_at": "2023-11-09T10:53:12.069Z",
+        "updated_at": "2023-11-09T10:53:12.069Z",
+        "text": "Bedpres"
+    }
+},
+{
+    "model": "content.category",
+    "pk": 8,
+    "fields": {
+        "created_at": "2023-11-09T10:53:17.027Z",
+        "updated_at": "2023-11-09T10:53:17.027Z",
+        "text": "Fadderuka"
+    }
+},
+{
+    "model": "content.category",
+    "pk": 9,
+    "fields": {
+        "created_at": "2023-11-09T10:53:21.608Z",
+        "updated_at": "2023-11-09T10:53:21.608Z",
+        "text": "Annet"
+    }
+},
+{
+    "model": "content.category",
+    "pk": 10,
+    "fields": {
+        "created_at": "2023-11-09T10:53:26.390Z",
+        "updated_at": "2023-11-09T10:53:26.390Z",
+        "text": "Kurs"
     }
 },
 {
@@ -925,7 +978,7 @@
         "last_login": null,
         "is_superuser": false,
         "created_at": "2023-10-27T17:07:02.878Z",
-        "updated_at": "2023-10-27T17:07:03.166Z",
+        "updated_at": "2023-11-09T10:55:32.102Z",
         "image": null,
         "image_alt": null,
         "first_name": "HS",
@@ -937,7 +990,7 @@
         "tool": "",
         "slack_user_id": "",
         "allows_photo_by_default": true,
-        "accepts_event_rules": false,
+        "accepts_event_rules": true,
         "is_staff": false,
         "is_active": true,
         "groups": [],
@@ -949,7 +1002,7 @@
     "pk": "index",
     "fields": {
         "password": "pbkdf2_sha256$600000$zrpHc6MciDYg9OkGFSllUd$YksemKm752mxdPN2bdz8VEiItI1DSacPr0ik2jHHN4Q=",
-        "last_login": "2023-10-24T14:40:34.061Z",
+        "last_login": "2023-11-09T10:52:25.310Z",
         "is_superuser": true,
         "created_at": "2020-10-01T18:22:57.665Z",
         "updated_at": "2023-10-24T14:24:58.273Z",
@@ -981,7 +1034,7 @@
         "last_login": null,
         "is_superuser": false,
         "created_at": "2023-10-27T17:16:16.246Z",
-        "updated_at": "2023-10-27T17:16:16.481Z",
+        "updated_at": "2023-11-09T10:55:45.542Z",
         "image": null,
         "image_alt": null,
         "first_name": "Medlem",
@@ -993,7 +1046,7 @@
         "tool": "",
         "slack_user_id": "",
         "allows_photo_by_default": true,
-        "accepts_event_rules": false,
+        "accepts_event_rules": true,
         "is_staff": false,
         "is_active": true,
         "groups": [],
@@ -1008,7 +1061,7 @@
         "last_login": null,
         "is_superuser": false,
         "created_at": "2023-10-27T17:05:44.981Z",
-        "updated_at": "2023-10-27T17:05:45.240Z",
+        "updated_at": "2023-11-09T10:55:52.122Z",
         "image": null,
         "image_alt": null,
         "first_name": "NoK",
@@ -1020,7 +1073,7 @@
         "tool": "",
         "slack_user_id": "",
         "allows_photo_by_default": true,
-        "accepts_event_rules": false,
+        "accepts_event_rules": true,
         "is_staff": false,
         "is_active": true,
         "groups": [],
@@ -1035,7 +1088,7 @@
         "last_login": null,
         "is_superuser": false,
         "created_at": "2023-10-27T17:06:16.718Z",
-        "updated_at": "2023-10-27T17:06:16.965Z",
+        "updated_at": "2023-11-09T10:56:04.127Z",
         "image": null,
         "image_alt": null,
         "first_name": "Promo",
@@ -1047,7 +1100,7 @@
         "tool": "",
         "slack_user_id": "",
         "allows_photo_by_default": true,
-        "accepts_event_rules": false,
+        "accepts_event_rules": true,
         "is_staff": false,
         "is_active": true,
         "groups": [],
@@ -1062,7 +1115,7 @@
         "last_login": null,
         "is_superuser": false,
         "created_at": "2023-10-27T17:06:42.315Z",
-        "updated_at": "2023-10-27T17:06:42.552Z",
+        "updated_at": "2023-11-09T10:56:09.458Z",
         "image": null,
         "image_alt": null,
         "first_name": "Sosialen",
@@ -1074,7 +1127,7 @@
         "tool": "",
         "slack_user_id": "",
         "allows_photo_by_default": true,
-        "accepts_event_rules": false,
+        "accepts_event_rules": true,
         "is_staff": false,
         "is_active": true,
         "groups": [],
@@ -1094,7 +1147,7 @@
         "end_date": "2029-07-05T12:00:00Z",
         "location": "Kristiansand",
         "description": "Palmesus er Skandinavias største strandfest. Hvert år samles nesten 40 000 festglade mennesker på Bystranda midt i Kristiansand sentrum for å nyte sol, sommer og en helt enestående fest. \n\nSelv om det er den gode stemningen og selve strandfesten som står i sentrum er det likevel alltid en svært sterk line-up på Palmesus. Artister som KYGO, Martin Garrix, Kent, Migos, Jason Derulo, Axwell ^ Ingrosso, Dimitri Vegas & Like Mike, Madcon, Taio Cruz, Benny Benassi, Nelly Furtado, Faithless, Fedde Le Grand, Karpe Diem, Fatboy Slim, Steve Aoki, Wyclef Jean, Charlie XCX, Highasakite og mange flere har alle spilt på Palmesus.",
-        "category": 3,
+        "category": null,
         "organizer": null,
         "contact_person": null,
         "can_cause_strikes": true,
@@ -1125,7 +1178,7 @@
         "end_date": "2028-06-09T16:00:00Z",
         "location": "Rockheim",
         "description": "**Lær å lage native apps for alle plattformer - Flutter 101**\n\nFlutter er et open source UI toolkit laget av Google ene og alene for native compiled apps for mobile, web og desktop. Alt fra en kodebase! All utvikling skjer i programmeringsspråket Dart, som er designet for å lage raske apps til alle plattformer.\n\nI kurset vil vi ha en kort gjennomgang av Flutter og Dart, for så å bevege oss over til å lage en app. Learning by doing er beste måten å lære. Ved kursslutt sitter du med en fiks ferdig app! Du trenger ingen erfaring med apputvikling, Dart eller Flutter for å bli med.\n\nKurset vil hovedsakelig ta for seg utvikling til iOS og Android, så det man må få installert et par ting på forhånd. Dette er lurt å gjøre før kursstart, slik at vi slipper å bruke kurstid på installasjon. På lenkene under følger enkle steg for hvordan man kan få installert det man trenger.\n\nWindows: [https://flutter.dev/docs/get-started/install/windows](https://flutter.dev/docs/get-started/install/windows)\n\nMac: [https://flutter.dev/docs/get-started/install/macos](https://flutter.dev/docs/get-started/install/macos)\n\nLinux: [https://flutter.dev/docs/get-started/install/linux](https://flutter.dev/docs/get-started/install/linux)\n\nEditor setup: [https://flutter.dev/docs/get-started/editor](https://flutter.dev/docs/get-started/editor)\n\nKursleder vil bruke Android Studio, men du velger fritt om du heller vil bruke IntelliJ, VSCode eller Emacs. \n\nTa gjerne en titt her for å kjøre en enkel testrunde: [https://flutter.dev/docs/get-started/test-drive](https://flutter.dev/docs/get-started/test-drive)\n\n\nKodeworks sponser også gavekort fra Foodora, så man kan ta seg en matbit under kurset!",
-        "category": 1,
+        "category": null,
         "organizer": null,
         "contact_person": null,
         "can_cause_strikes": true,
@@ -1156,7 +1209,7 @@
         "end_date": "2029-05-17T09:15:00Z",
         "location": "Trondheim",
         "description": "Bli med\n\n![ty](https://www.logiqpay.no/wp-content/uploads/2020/03/bouvet_nyhet.png)",
-        "category": 1,
+        "category": null,
         "organizer": null,
         "contact_person": null,
         "can_cause_strikes": true,
@@ -1187,7 +1240,7 @@
         "end_date": "2030-04-23T12:00:00Z",
         "location": "Her",
         "description": "**Lær å lage native apps for alle plattformer - Flutter 101**\n\nFlutter er et open source UI toolkit laget av Google ene og alene for native compiled apps for mobile, web og desktop. Alt fra en kodebase! All utvikling skjer i programmeringsspråket Dart, som er designet for å lage raske apps til alle plattformer.\n\nI kurset vil vi ha en kort gjennomgang av Flutter og Dart, for så å bevege oss over til å lage en app. Learning by doing er beste måten å lære. Ved kursslutt sitter du med en fiks ferdig app! Du trenger ingen erfaring med apputvikling, Dart eller Flutter for å bli med.\n\nKurset vil hovedsakelig ta for seg utvikling til iOS og Android, så det man må få installert et par ting på forhånd. Dette er lurt å gjøre før kursstart, slik at vi slipper å bruke kurstid på installasjon. På lenkene under følger enkle steg for hvordan man kan få installert det man trenger.\n\nWindows: [https://flutter.dev/docs/get-started/install/windows](https://flutter.dev/docs/get-started/install/windows)\n\nMac: [https://flutter.dev/docs/get-started/install/macos](https://flutter.dev/docs/get-started/install/macos)\n\nLinux: [https://flutter.dev/docs/get-started/install/linux](https://flutter.dev/docs/get-started/install/linux)\n\nEditor setup: [https://flutter.dev/docs/get-started/editor](https://flutter.dev/docs/get-started/editor)\n\nKursleder vil bruke Android Studio, men du velger fritt om du heller vil bruke IntelliJ, VSCode eller Emacs. \n\nTa gjerne en titt her for å kjøre en enkel testrunde: [https://flutter.dev/docs/get-started/test-drive](https://flutter.dev/docs/get-started/test-drive)\n\n\nKodeworks sponser også gavekort fra Foodora, så man kan ta seg en matbit under kurset!",
-        "category": 1,
+        "category": null,
         "organizer": null,
         "contact_person": null,
         "can_cause_strikes": true,
@@ -1218,7 +1271,7 @@
         "end_date": "2025-03-22T20:00:00Z",
         "location": "Zoom",
         "description": "Velkomment til bedpres med Telia!\r\n\r\nTelia er et ledende teknologiselskap som arbeider med å utvikle digitale plattformer og tjenester slik at selskaper kan ta del av de enorme mulighetene innen digital transformasjon. Med store kunder som AkerBP gjør vår teknologi det mulig å utnytte data for blant annet bedre beslutningstaking  og innovasjon.\r\n\r\nGjennom bedriftspresentasjonen vil dere bli kjent med et knippe Teliaere, deres reise i selskapet og mulighetene som ligger til rette for studenter som dere. Det blir også gavekort på Wolt på 300kr slik at dere kan nyte noe godt underveis.\r\n\r\nVi gleder oss til å bli bedre kjent!",
-        "category": 1,
+        "category": null,
         "organizer": null,
         "contact_person": null,
         "can_cause_strikes": true,
@@ -1249,7 +1302,7 @@
         "end_date": "2023-10-27T03:23:57Z",
         "location": "Oslo",
         "description": "Test",
-        "category": 1,
+        "category": null,
         "organizer": "index",
         "contact_person": null,
         "can_cause_strikes": true,
@@ -1261,9 +1314,133 @@
         "end_registration_at": "2023-10-25T03:24:00Z",
         "sign_off_deadline": "2023-10-23T10:00:00Z",
         "only_allow_prioritized": false,
+        "runned_post_event_actions": true,
+        "runned_sign_off_deadline_reminder": true,
+        "runned_sign_up_start_notifier": true,
+        "favorite_users": []
+    }
+},
+{
+    "model": "content.event",
+    "pk": 10,
+    "fields": {
+        "created_at": "2023-11-06T20:52:59.325Z",
+        "updated_at": "2023-11-07T13:09:05.390Z",
+        "image": "",
+        "image_alt": "",
+        "title": "Aktivitet",
+        "start_date": "2023-11-16T04:23:42Z",
+        "end_date": "2023-11-16T06:23:42Z",
+        "location": "Test",
+        "description": "test",
+        "category": 5,
+        "organizer": "gloshaugen",
+        "contact_person": null,
+        "can_cause_strikes": true,
+        "enforces_previous_strikes": true,
+        "sign_up": false,
+        "limit": 0,
+        "closed": false,
+        "start_registration_at": "2023-11-09T11:00:00Z",
+        "end_registration_at": "2023-11-16T04:00:00Z",
+        "sign_off_deadline": "2023-11-15T11:00:00Z",
+        "only_allow_prioritized": false,
+        "runned_post_event_actions": false,
+        "runned_sign_off_deadline_reminder": false,
+        "runned_sign_up_start_notifier": false,
+        "favorite_users": []
+    }
+},
+{
+    "model": "content.event",
+    "pk": 11,
+    "fields": {
+        "created_at": "2023-11-06T21:10:12.573Z",
+        "updated_at": "2023-11-06T21:10:12.573Z",
+        "image": "",
+        "image_alt": "",
+        "title": "Test NOK",
+        "start_date": "2023-11-06T21:09:57.595Z",
+        "end_date": "2023-11-06T23:09:57.992Z",
+        "location": "test",
+        "description": "test",
+        "category": null,
+        "organizer": "nok",
+        "contact_person": null,
+        "can_cause_strikes": true,
+        "enforces_previous_strikes": true,
+        "sign_up": false,
+        "limit": 0,
+        "closed": false,
+        "start_registration_at": "2023-10-30T11:00:00Z",
+        "end_registration_at": "2023-11-06T11:00:00Z",
+        "sign_off_deadline": "2023-11-05T11:00:00Z",
+        "only_allow_prioritized": false,
+        "runned_post_event_actions": false,
+        "runned_sign_off_deadline_reminder": false,
+        "runned_sign_up_start_notifier": false,
+        "favorite_users": []
+    }
+},
+{
+    "model": "content.event",
+    "pk": 12,
+    "fields": {
+        "created_at": "2023-11-06T21:42:07.504Z",
+        "updated_at": "2023-11-06T21:42:07.504Z",
+        "image": "",
+        "image_alt": "",
+        "title": "Påmelding",
+        "start_date": "2023-11-09T15:21:47Z",
+        "end_date": "2023-11-09T17:21:47Z",
+        "location": "test",
+        "description": "1",
+        "category": 5,
+        "organizer": "nok",
+        "contact_person": null,
+        "can_cause_strikes": true,
+        "enforces_previous_strikes": true,
+        "sign_up": true,
+        "limit": 1,
+        "closed": false,
+        "start_registration_at": "2023-11-02T11:00:00Z",
+        "end_registration_at": "2023-11-09T11:00:00Z",
+        "sign_off_deadline": "2023-11-08T11:00:00Z",
+        "only_allow_prioritized": false,
         "runned_post_event_actions": false,
         "runned_sign_off_deadline_reminder": true,
         "runned_sign_up_start_notifier": true,
+        "favorite_users": []
+    }
+},
+{
+    "model": "content.event",
+    "pk": 13,
+    "fields": {
+        "created_at": "2023-11-06T21:42:26.621Z",
+        "updated_at": "2023-11-06T21:42:26.621Z",
+        "image": "",
+        "image_alt": "",
+        "title": "Ferdig",
+        "start_date": "2023-10-11T16:30:11Z",
+        "end_date": "2023-10-11T18:30:11Z",
+        "location": "Oslo",
+        "description": "test",
+        "category": 5,
+        "organizer": "nok",
+        "contact_person": null,
+        "can_cause_strikes": true,
+        "enforces_previous_strikes": true,
+        "sign_up": false,
+        "limit": 0,
+        "closed": false,
+        "start_registration_at": "2023-10-04T10:00:00Z",
+        "end_registration_at": "2023-10-11T10:00:00Z",
+        "sign_off_deadline": "2023-10-10T10:00:00Z",
+        "only_allow_prioritized": false,
+        "runned_post_event_actions": false,
+        "runned_sign_off_deadline_reminder": false,
+        "runned_sign_up_start_notifier": false,
         "favorite_users": []
     }
 },
@@ -1324,6 +1501,19 @@
     }
 },
 {
+    "model": "content.strike",
+    "pk": "a296ae58-96bf-4fe8-8a5a-30a05eae7505",
+    "fields": {
+        "created_at": "2023-11-06T20:42:11.363Z",
+        "updated_at": "2023-11-06T20:42:11.363Z",
+        "description": "Du har fått prikk fordi du ikke møtte på et arrangement",
+        "strike_size": 2,
+        "user": "index",
+        "event": 9,
+        "creator": null
+    }
+},
+{
     "model": "content.registration",
     "pk": 16,
     "fields": {
@@ -1333,7 +1523,22 @@
         "event": 3,
         "is_on_wait": false,
         "has_attended": false,
-        "allow_photo": true
+        "allow_photo": true,
+        "created_by_admin": false
+    }
+},
+{
+    "model": "content.registration",
+    "pk": 17,
+    "fields": {
+        "created_at": "2023-10-24T14:25:05.091Z",
+        "updated_at": "2023-10-24T14:25:05.091Z",
+        "user": "index",
+        "event": 9,
+        "is_on_wait": false,
+        "has_attended": false,
+        "allow_photo": true,
+        "created_by_admin": false
     }
 },
 {
