@@ -5,6 +5,7 @@ from rest_framework import serializers
 from app.common.serializers import BaseModelSerializer
 from app.content.models.event import Event
 from app.content.models.news import News
+from app.content.models.user import User
 from app.emoji.enums import ContentTypes
 from app.emoji.exception import (
     APIContentTypeNotSupportedException,
@@ -14,7 +15,15 @@ from app.emoji.exception import (
 from app.emoji.models.reaction import Reaction
 
 
+class SimpleUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ("user_id", "first_name", "last_name", "image")
+
+
 class ReactionSerializer(BaseModelSerializer):
+    user = SimpleUserSerializer(read_only=True)
+
     class Meta:
         model = Reaction
         fields = ("reaction_id", "user", "emoji")
