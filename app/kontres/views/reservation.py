@@ -2,16 +2,16 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.response import Response
-
 from app.common.permissions import BasicViewPermission
 from app.common.viewsets import BaseViewSet
 from app.kontres.enums import ReservationStateEnum
 from app.kontres.models.reservation import Reservation
 from app.kontres.serializer.reservation_seralizer import ReservationSerializer
+from django.utils.dateparse import parse_datetime
+from django.db.models import Q
 
 
 class ReservationViewSet(BaseViewSet):
-
     permission_classes = [BasicViewPermission]
     serializer_class = ReservationSerializer
 
@@ -19,14 +19,20 @@ class ReservationViewSet(BaseViewSet):
         start_date = self.request.GET.get("start_date")
         end_date = self.request.GET.get("end_date")
 
-        if start_date == "0" and end_date == "0":
-            return Reservation.objects.all()
-        elif start_date and end_date:
-            return Reservation.objects.filter(
-                start_time__gte=start_date, end_time__lte=end_date
+        # Convert string dates to datetime objects
+        if start_date:
+            start_date = parse_datetime(start_date)
+        if end_date:
+            end_date = parse_datetime(end_date)
+
+        # Adjusted filter to capture overlapping reservations
+        if start_date and end_date:
+            queryset = Reservation.objects.filter(
+                Q(start_time__lt=end_date) & Q(end_time__gt=start_date)
             )
-        else:
-            return Reservation.objects.all()
+            return queryset
+
+        return Reservation.objects.all()
 
     def retrieve(self, request, *args, **kwargs):
         reservation = self.get_object()
@@ -54,10 +60,9 @@ class ReservationViewSet(BaseViewSet):
     def update(self, request, *args, **kwargs):
         reservation = self.get_object()
 
-        print(request.user.groups)
         # Check if 'state' is in the request and if it has been changed.
         state_changed = (
-            "state" in request.data and request.data["state"] != reservation.state
+                "state" in request.data and request.data["state"] != reservation.state
         )
         if state_changed:
             # If the user is not an HS or Index member, raise PermissionDenied.
