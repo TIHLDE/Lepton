@@ -19,6 +19,7 @@
 - ⚡ **Venteliste** Brukere på venteliste kan nå se sin egen plass på ventelisten.
 - ✨ **QR Kode** Brukere kan nå generere sine egne QR koder.
 - ⚡ **Endring av arrangement plasser** Venteliste og liste vil nå bli automatisk oppdatert hvis man endrer på antall plasser på et arrangement.
+- ✨ **Aktiviteter** Arrangementer kan nå filtreres på aktiviteter.
 
 ## Versjon 2023.10.23
 - ⚡ **Brukere** HS kan styre medlemmer

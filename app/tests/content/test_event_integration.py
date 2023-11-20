@@ -7,7 +7,7 @@ import pytest
 
 from app.common.enums import AdminGroup, Groups, GroupType, MembershipType
 from app.content.factories import EventFactory, RegistrationFactory, UserFactory
-from app.content.models import Event
+from app.content.models import Category, Event
 from app.forms.enums import EventFormType
 from app.forms.tests.form_factories import EventFormFactory
 from app.group.factories import GroupFactory
@@ -170,10 +170,40 @@ def permission_test_util(
 
 
 @pytest.mark.django_db
-def test_list_as_anonymous_user(default_client):
-    """An anonymous user should be able to list all events."""
+def test_list_as_anonymous_user(default_client, event):
+    """An anonymous user should be able to list all events that are not activities."""
+
+    category = Category.objects.create(text="Aktivitet")
+    activity = EventFactory(category=category)
+
+    activity.category = category
+    activity.save()
+
+    event.category = None
+    event.save()
+
     response = default_client.get(API_EVENTS_BASE_URL)
     assert response.status_code == 200
+    assert response.json().get("count") == 1
+
+
+@pytest.mark.django_db
+def test_list_activities_as_anonymous_user(default_client, event):
+    """An anonymous user should be able to list all activities."""
+
+    category = Category.objects.create(text="Aktivitet")
+    activity = EventFactory(category=category)
+
+    activity.category = category
+    activity.save()
+
+    event.category = None
+    event.save()
+
+    response = default_client.get(f"{API_EVENTS_BASE_URL}?activity=true")
+
+    assert response.status_code == 200
+    assert response.json().get("count") == 1
 
 
 @pytest.mark.django_db
