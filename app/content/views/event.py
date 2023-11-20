@@ -19,8 +19,9 @@ from app.communication.events import (
 )
 from app.communication.notifier import Notify
 from app.constants import MAIL_INDEX
+from app.content.enums import CategoryEnum
 from app.content.filters import EventFilter
-from app.content.models import Event, User
+from app.content.models import Category, Event, User
 from app.content.serializers import (
     EventCreateAndUpdateSerializer,
     EventListSerializer,
@@ -60,10 +61,32 @@ class EventViewSet(BaseViewSet, ActionMixin):
             or "start_range" in self.request.query_params
         ):
             return self.queryset
+
+        activity = self.request.query_params.get("activity", "false").lower() == "true"
+        category = Category.objects.filter(text=CategoryEnum.ACTIVITY).first()
         expired = self.request.query_params.get("expired", "false").lower() == "true"
+
+        if activity and category:
+            return self._list_activity_queryset(category, expired, time)
+
         if expired:
             return self.queryset.filter(end_date__lt=time).order_by("-start_date")
+
+        if category:
+            return self.queryset.filter(end_date__gte=time).filter(
+                ~Q(category=category)
+            )
+
         return self.queryset.filter(end_date__gte=time)
+
+    def _list_activity_queryset(self, category, expired, time):
+        if expired:
+            return (
+                self.queryset.filter(end_date__lt=time)
+                .filter(category=category)
+                .order_by("-start_date")
+            )
+        return self.queryset.filter(end_date__gte=time).filter(category=category)
 
     def get_serializer_class(self):
         if hasattr(self, "action") and self.action == "list":
