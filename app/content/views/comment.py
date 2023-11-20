@@ -7,7 +7,7 @@ from app.common.mixins import ActionMixin
 from app.common.permissions import BasicViewPermission
 from app.common.viewsets import BaseViewSet
 from app.content.models import Comment, User
-from app.content.serializers import CommentCreateSerializer, CommentSerializer
+from app.content.serializers import CommentCreateSerializer, CommentSerializer, CommentUpdateSerializer
 
 
 class CommentViewSet(BaseViewSet, ActionMixin):
@@ -28,47 +28,28 @@ class CommentViewSet(BaseViewSet, ActionMixin):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(
-            {"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST
+            {"detail": create_serizalier.errors}, status=status.HTTP_400_BAD_REQUEST
         )
-'''
-    def update(self, request):
-        """Update the event with the specified pk."""
-        try:
-            data = request.data
 
-            if not data["is_paid_event"]:
-                data["paid_information"] = {}
+    def update(self, request, pk):
+        data = request.data
 
-            event = self.get_object()
-            self.check_object_permissions(self.request, event)
-            serializer = EventCreateAndUpdateSerializer(
-                event, data=data, partial=True, context={"request": request}
-            )
+        comment = self.get_object()
 
-            if serializer.is_valid():
-                event = super().perform_update(serializer)
-                serializer = EventSerializer(event, context={"request": request})
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            else:
-                return Response(
-                    {"detail": "Kunne ikke utføre oppdatering av arrangementet"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
+        update_serializer = CommentUpdateSerializer(comment, data=data, context={"request": request})
 
-        except Event.DoesNotExist as event_not_exist:
-            capture_exception(event_not_exist)
-            return Response(
-                {"detail": "Fant ikke arrangementet"}, status=status.HTTP_404_NOT_FOUND
-            )
+        if update_serializer.is_valid():
+            super().perform_update(update_serializer)
+            serializer = CommentSerializer(comment, context={"request": request})
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        return Response(
+            {"detail": update_serializer.errors}, status=status.HTTP_400_BAD_REQUEST
+        )
+            
 
     def destroy(self, request, *args, **kwargs):
-        event = Event.objects.get(pk=kwargs["pk"])
-        if event.is_paid_event:
-            paid_event = PaidEvent.objects.get(event=kwargs["pk"])
-            paid_event.delete()
-
         super().destroy(request, *args, **kwargs)
         return Response(
-            {"detail": ("Arrangementet ble slettet")}, status=status.HTTP_200_OK
+            {"detail": ("Kommentaren ble slettet")}, status=status.HTTP_200_OK
         )
-    '''

@@ -1,7 +1,8 @@
 from app.content.serializers.category import CategorySerializer
 from app.content.serializers.cheatsheet import CheatsheetSerializer
 from app.content.serializers.comment import (CommentCreateSerializer,
-                                             CommentSerializer)
+                                             CommentSerializer,
+                                             CommentUpdateSerializer)
 from app.content.serializers.event import (EventCreateAndUpdateSerializer,
                                            EventListSerializer,
                                            EventSerializer,

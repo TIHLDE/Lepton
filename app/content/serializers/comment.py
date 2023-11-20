@@ -42,3 +42,8 @@ class CommentCreateSerializer(serializers.ModelSerializer):
                 body=body, author=author, parent=parent
             )
             return created_comment
+    
+class CommentUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ("body", )

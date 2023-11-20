@@ -5,6 +5,7 @@ from app.util.models import BaseModel
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
+from app.common.permissions import is_admin_user
 
 
 class Comment(BaseModel, BasePermissionModel):
@@ -39,3 +40,8 @@ class Comment(BaseModel, BasePermissionModel):
 
     def __str__(self):
         return f"Comment by {self.author.first_name} {self.author.last_name} - Created at {self.created_at}"
+
+    def has_object_write_permission(self, request):
+        if request.method == "DELETE":
+            return (self.has_write_permission(request) and self.author == request.user) or is_admin_user(request)
+        return self.has_write_permission(request) and self.author == request.user
