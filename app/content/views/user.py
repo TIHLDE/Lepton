@@ -273,35 +273,14 @@ class UserViewSet(BaseViewSet, ActionMixin):
         )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    # @action(detail=False, methods=["get"], url_path="me/events")
-    # def get_user_events(self, request, *args, **kwargs):
-    #     registrations = request.user.registrations.all()
-    #     events = [
-    #         registration.event
-    #         for registration in registrations
-    #         if not registration.event.expired
-    #     ]
-    #     return self.paginate_response(
-    #         data=events, serializer=EventListSerializer, context={"request": request}
-    #     )
-
     @action(detail=False, methods=["get"], url_path="me/events")
     def get_user_events(self, request, *args, **kwargs):
         registrations = request.user.registrations.all()
 
         # Apply the filter
-        event_has_ended = self.request.query_params.get("expired") == "true"
-
-        # expired_field = self.request_params.get("expired")
-        # filter_expired = CaseInsensitiveBooleanQueryParam(expired_field) / teste for None
-        #
-        #  events = [
-        #    registration.event
-        #    for registration in registrations
-        #    if registration.event.expired == filter_expired
-        #  ]
-
-        # todo tom query -> = false
+        filter_field = self.request.query_params.get("expired")
+        event_has_ended = CaseInsensitiveBooleanQueryParam(filter_field)
+        
         events = [
             registration.event
             for registration in registrations
