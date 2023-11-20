@@ -31,6 +31,7 @@
 - ✨ **Betalte arrangementer med Vipps betaling**. Det kan nå opprettes arrangementer som krever betaling for å melde seg på. Denne betalingen betales via Vipps.
 - ⚡ **Nyheter** Fondesforvalere kan nå lage nyheter.
 - ⚡ **Arrangementer** Du kan nå se hvilken plass du har på ventelisten til et arrangement.
+- ✨ **Profil** Filtrere kommende og tidligere arrangementer
 
 ## Versjon 2022.10.13
 
