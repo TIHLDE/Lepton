@@ -56,7 +56,7 @@ GENDER = (
 
 
 class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
-    write_access = [AdminGroup.INDEX]
+    write_access = AdminGroup.admin()
     read_access = [Groups.TIHLDE]
 
     user_id = models.CharField(max_length=15, primary_key=True)
@@ -161,7 +161,6 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
         return self.get_unanswered_evaluations().filter(event=event).exists()
 
     def get_unanswered_evaluations(self):
-
         from app.forms.models.forms import EventForm, EventFormType
 
         date_30_days_ago = now() - timedelta(days=30)

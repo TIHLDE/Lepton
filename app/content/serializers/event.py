@@ -170,7 +170,19 @@ class EventCreateAndUpdateSerializer(BaseModelSerializer):
     def update(self, instance, validated_data):
         priority_pools_data = validated_data.pop("priority_pools", None)
         paid_information_data = validated_data.pop("paid_information", None)
+        limit = validated_data.get("limit")
+        limit_difference = 0
+        if limit:
+            limit_difference = limit - instance.limit
+
         event = super().update(instance, validated_data)
+
+        if limit_difference > 0 and event.waiting_list_count > 0:
+            event.move_users_from_waiting_list_to_queue(limit_difference)
+
+        if limit_difference < 0:
+            event.move_users_from_queue_to_waiting_list(abs(limit_difference))
+
         if paid_information_data and not event.is_paid_event:
             PaidEvent.objects.create(
                 event=event,
