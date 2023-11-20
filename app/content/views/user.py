@@ -280,7 +280,7 @@ class UserViewSet(BaseViewSet, ActionMixin):
         # Apply the filter
         filter_field = self.request.query_params.get("expired")
         event_has_ended = CaseInsensitiveBooleanQueryParam(filter_field)
-        
+
         events = [
             registration.event
             for registration in registrations
