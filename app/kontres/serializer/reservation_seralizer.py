@@ -29,15 +29,6 @@ class ReservationSerializer(serializers.ModelSerializer):
 
         # Validate the state change permission
         if "state" in data:
-            # Get the list of valid state values from ReservationStateEnum
-            valid_states = [state.value for state in ReservationStateEnum]
-
-            # Validate the state change permission
-            if "state" in data and data["state"] not in valid_states:
-                raise serializers.ValidationError(
-                    {"state": "Invalid state for reservation."}
-                )
-
             if self.instance and data["state"] != self.instance.state:
                 user = self.context["request"].user
                 if not (user and user.is_authenticated and user.is_HS_or_Index_member):
