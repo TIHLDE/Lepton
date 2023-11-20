@@ -27,19 +27,8 @@ class Reservation(BaseModel, BasePermissionModel):
     )
     description = models.TextField(blank=True)
 
-    def save(self, *args, **kwargs):
-        super(Reservation, self).save(*args, **kwargs)
-
     def __str__(self):
         return f"{self.state} - Reservation request by {self.author.first_name} {self.author.last_name} to book {self.bookable_item.name}. Created at {self.created_at}"
-
-    @classmethod
-    def has_retrieve_permission(cls, request):
-        return request.user and request.user.is_authenticated
-
-    @classmethod
-    def has_list_permission(cls, request):
-        return cls.has_retrieve_permission(request)
 
     @classmethod
     def has_write_permission(cls, request):

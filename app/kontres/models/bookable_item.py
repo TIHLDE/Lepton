@@ -16,6 +16,3 @@ class BookableItem(BaseModel, BasePermissionModel):
 
     def __str__(self):
         return self.name
-
-    def has_object_read_permission(self, request):
-        return True
