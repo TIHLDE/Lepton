@@ -480,7 +480,7 @@ def test_destroy_other_user_as_index_user(member, user, api_client):
 
 
 @pytest.mark.django_db
-def test_expired_user_event_shows_as_expired(member, api_client):
+def test_list_expired_user_events(member, api_client):
     """ "All the events listed as expired should be expired"""
     client = api_client(user=member)
 
@@ -500,3 +500,67 @@ def test_expired_user_event_shows_as_expired(member, api_client):
     registrations = response.json().get("results")
     for registration in registrations:
         assert registration.get("expired")
+
+@pytest.mark.django_db
+def test_list_unexpired_user_events(member, api_client):
+    """ All the events listed as unexpired should be unexpired"""
+    client = api_client(user=member)
+
+    two_days_ago = timezone.now() - timedelta(days=2)
+    event = EventFactory(end_date=two_days_ago)
+
+    registration = RegistrationFactory(user=member, event=event)
+
+    url = _get_user_events_url()
+
+    query_params = {"expired": "false"}
+
+    response = client.get(url, data=query_params)
+
+    assert response.status_code == status.HTTP_200_OK
+
+    registrations = response.json().get("results")
+    for registration in registrations:
+        assert not registration.get("expired")
+
+@pytest.mark.django_db
+def test_list_expired_user_events_with_a_blank_query_params(member, api_client):
+    """ All the events listed should be unexpired with when returning a blank query params"""
+    client = api_client(user=member)
+
+    two_days_ago = timezone.now() - timedelta(days=2)
+    event = EventFactory(end_date=two_days_ago)
+
+    registration = RegistrationFactory(user=member, event=event)
+
+    url = _get_user_events_url()
+
+    query_params = {"expired": ""}
+
+    response = client.get(url, data=query_params)
+
+    assert response.status_code == status.HTTP_200_OK
+
+    registrations = response.json().get("results")
+    for registration in registrations:
+        assert not registration.get("expired")
+ 
+@pytest.mark.django_db
+def test_list_expired_user_events_with_no_query_params(member, api_client):
+    """ All the events listed should be unexpired with no query params"""
+    client = api_client(user=member)
+
+    two_days_ago = timezone.now() - timedelta(days=2)
+    event = EventFactory(end_date=two_days_ago)
+
+    registration = RegistrationFactory(user=member, event=event)
+
+    url = _get_user_events_url()
+
+    response = client.get(url)
+
+    assert response.status_code == status.HTTP_200_OK
+
+    registrations = response.json().get("results")
+    for registration in registrations:
+        assert not registration.get("expired")
