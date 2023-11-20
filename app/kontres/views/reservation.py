@@ -62,7 +62,7 @@ class ReservationViewSet(BaseViewSet):
 
         # Check if 'state' is in the request and if it has been changed.
         state_changed = (
-                "state" in request.data and request.data["state"] != reservation.state
+            "state" in request.data and request.data["state"] != reservation.state
         )
         if state_changed:
             # If the user is not an HS or Index member, raise PermissionDenied.

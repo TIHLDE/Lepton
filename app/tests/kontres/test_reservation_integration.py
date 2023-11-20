@@ -421,7 +421,7 @@ def test_retrieve_specific_reservation_within_its_date_range(member, bookable_it
         author=member,
         bookable_item=bookable_item,
         start_time=timezone.now(),
-        end_time=timezone.now() + timezone.timedelta(hours=1)
+        end_time=timezone.now() + timezone.timedelta(hours=1),
     )
 
     # Broaden the query time range significantly for debugging
@@ -432,13 +432,18 @@ def test_retrieve_specific_reservation_within_its_date_range(member, bookable_it
     start_time_iso = start_time.isoformat()
     end_time_iso = end_time.isoformat()
 
-    response = client.get(f"/kontres/reservations/?start_date={start_time_iso}&end_date={end_time_iso}")
+    response = client.get(
+        f"/kontres/reservations/?start_date={start_time_iso}&end_date={end_time_iso}"
+    )
     print("Start date from request:", start_time_iso)
     print("End date from request:", end_time_iso)
     print("Response data:", response.data)
 
     assert response.status_code == status.HTTP_200_OK
-    assert any(res["id"] == str(reservation.id) for res in response.data.get("reservations", []))
+    assert any(
+        res["id"] == str(reservation.id)
+        for res in response.data.get("reservations", [])
+    )
 
 
 @pytest.mark.django_db
@@ -450,12 +455,22 @@ def test_retrieve_subset_of_reservations(member, bookable_item):
     current_time = timezone.now()
 
     times = [
-        (current_time.replace(hour=10, minute=0, second=0, microsecond=0),
-         current_time.replace(hour=11, minute=0, second=0, microsecond=0)),
-        (current_time.replace(hour=10, minute=0, second=0, microsecond=0) + timedelta(days=1),
-         current_time.replace(hour=11, minute=0, second=0, microsecond=0) + timedelta(days=1)),
-        (current_time.replace(hour=10, minute=0, second=0, microsecond=0) + timedelta(days=2),
-         current_time.replace(hour=11, minute=0, second=0, microsecond=0) + timedelta(days=2))
+        (
+            current_time.replace(hour=10, minute=0, second=0, microsecond=0),
+            current_time.replace(hour=11, minute=0, second=0, microsecond=0),
+        ),
+        (
+            current_time.replace(hour=10, minute=0, second=0, microsecond=0)
+            + timedelta(days=1),
+            current_time.replace(hour=11, minute=0, second=0, microsecond=0)
+            + timedelta(days=1),
+        ),
+        (
+            current_time.replace(hour=10, minute=0, second=0, microsecond=0)
+            + timedelta(days=2),
+            current_time.replace(hour=11, minute=0, second=0, microsecond=0)
+            + timedelta(days=2),
+        ),
     ]
 
     for start_time, end_time in times:
@@ -471,14 +486,17 @@ def test_retrieve_subset_of_reservations(member, bookable_item):
         )
 
     # Define the query date range to include only the first two reservations
-    query_start_date = current_time.replace(hour=9, minute=0, second=0, microsecond=0).isoformat()
-    query_end_date = current_time.replace(hour=9, minute=0, second=0, microsecond=0, day=current_time.day+2).isoformat()
+    query_start_date = current_time.replace(
+        hour=9, minute=0, second=0, microsecond=0
+    ).isoformat()
+    query_end_date = current_time.replace(
+        hour=9, minute=0, second=0, microsecond=0, day=current_time.day + 2
+    ).isoformat()
 
     # Retrieve reservations for the specific date range
-    response = client.get(f"/kontres/reservations/?start_date={query_start_date}&end_date={query_end_date}")
+    response = client.get(
+        f"/kontres/reservations/?start_date={query_start_date}&end_date={query_end_date}"
+    )
 
     assert response.status_code == status.HTTP_200_OK
     assert len(response.data["reservations"]) == 2
-
-
-
