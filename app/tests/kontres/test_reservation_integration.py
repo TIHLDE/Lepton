@@ -1,10 +1,7 @@
 from datetime import timedelta
-
 from django.utils import timezone
 from rest_framework import status
-
 import pytest
-
 from app.common.enums import AdminGroup
 from app.kontres.enums import ReservationStateEnum
 from app.kontres.factories.bookable_item_factory import BookableItemFactory
@@ -167,28 +164,24 @@ def test_admin_can_edit_reservation_to_cancelled(reservation, admin_user):
 def test_updating_reservation_with_valid_times(member, reservation):
     client = get_api_client(user=member)
 
-    # Set the start_time to one hour from the current time
     start_time = timezone.now() + timedelta(hours=1)
-    # Set the end_time to two hours from the current time
     end_time = timezone.now() + timedelta(hours=2)
 
     response = client.put(
         f"/kontres/reservations/{reservation.id}/",
         {
-            # Format start_time and end_time to ISO format for the PUT request
             "start_time": start_time.isoformat(),
             "end_time": end_time.isoformat(),
         },
         format="json",
     )
     assert response.status_code == status.HTTP_200_OK
-    # Convert the times from the response to datetime objects for comparison
-    response_start_time = timezone.datetime.fromisoformat(
-        response.data["start_time"].rstrip("Z")
-    ).replace(tzinfo=timezone.utc)
-    response_end_time = timezone.datetime.fromisoformat(
-        response.data["end_time"].rstrip("Z")
-    ).replace(tzinfo=timezone.utc)
+
+    # Parse the response times as timezone-aware datetimes
+    response_start_time = timezone.datetime.fromisoformat(response.data["start_time"])
+    response_end_time = timezone.datetime.fromisoformat(response.data["end_time"])
+
+    # Ensure that the response_end_time is greater than response_start_time
     assert response_end_time > response_start_time
 
 
@@ -410,10 +403,82 @@ def test_creating_overlapping_reservation(member, bookable_item, admin_user):
             "start_time": overlapping_start_time,
             "end_time": existing_confirmed_reservation.end_time
             + timezone.timedelta(hours=1),
-            "state": ReservationStateEnum.PENDING,  # This is pending, but it shouldn't matter
+            "state": ReservationStateEnum.PENDING,
         },
         format="json",
     )
 
     # The system should not allow this, as it overlaps with a confirmed reservation
     assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
+@pytest.mark.django_db
+def test_retrieve_specific_reservation_within_its_date_range(member, bookable_item):
+    client = get_api_client(user=member)
+
+    # Create a reservation with the current time
+    reservation = ReservationFactory(
+        author=member,
+        bookable_item=bookable_item,
+        start_time=timezone.now(),
+        end_time=timezone.now() + timezone.timedelta(hours=1)
+    )
+
+    # Broaden the query time range significantly for debugging
+    start_time = reservation.start_time - timezone.timedelta(hours=1)
+    end_time = reservation.end_time + timezone.timedelta(hours=1)
+
+    # Format the start and end times in ISO 8601 format
+    start_time_iso = start_time.isoformat()
+    end_time_iso = end_time.isoformat()
+
+    response = client.get(f"/kontres/reservations/?start_date={start_time_iso}&end_date={end_time_iso}")
+    print("Start date from request:", start_time_iso)
+    print("End date from request:", end_time_iso)
+    print("Response data:", response.data)
+
+    assert response.status_code == status.HTTP_200_OK
+    assert any(res["id"] == str(reservation.id) for res in response.data.get("reservations", []))
+
+
+@pytest.mark.django_db
+def test_retrieve_subset_of_reservations(member, bookable_item):
+    client = get_api_client(user=member)
+
+    # Create three reservations with different times
+    # Use current time as a base to ensure consistency
+    current_time = timezone.now()
+
+    times = [
+        (current_time.replace(hour=10, minute=0, second=0, microsecond=0),
+         current_time.replace(hour=11, minute=0, second=0, microsecond=0)),
+        (current_time.replace(hour=10, minute=0, second=0, microsecond=0) + timedelta(days=1),
+         current_time.replace(hour=11, minute=0, second=0, microsecond=0) + timedelta(days=1)),
+        (current_time.replace(hour=10, minute=0, second=0, microsecond=0) + timedelta(days=2),
+         current_time.replace(hour=11, minute=0, second=0, microsecond=0) + timedelta(days=2))
+    ]
+
+    for start_time, end_time in times:
+        client.post(
+            "/kontres/reservations/",
+            {
+                "author": member.user_id,
+                "bookable_item": bookable_item.id,
+                "start_time": start_time.isoformat(),
+                "end_time": end_time.isoformat(),
+            },
+            format="json",
+        )
+
+    # Define the query date range to include only the first two reservations
+    query_start_date = current_time.replace(hour=9, minute=0, second=0, microsecond=0).isoformat()
+    query_end_date = current_time.replace(hour=9, minute=0, second=0, microsecond=0, day=current_time.day+2).isoformat()
+
+    # Retrieve reservations for the specific date range
+    response = client.get(f"/kontres/reservations/?start_date={query_start_date}&end_date={query_end_date}")
+
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.data["reservations"]) == 2
+
+
+
