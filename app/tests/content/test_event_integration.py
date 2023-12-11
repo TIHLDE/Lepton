@@ -171,7 +171,7 @@ def permission_test_util(
 
 @pytest.mark.django_db
 def test_list_as_anonymous_user(default_client, event):
-    """An anonymous user should be able to list all events that are not activities."""
+    """An anonymous user should be able to list all events. Activities should included."""
 
     category = Category.objects.create(text="Aktivitet")
     EventFactory(category=category)
@@ -182,6 +182,22 @@ def test_list_as_anonymous_user(default_client, event):
     response = default_client.get(API_EVENTS_BASE_URL)
     assert response.status_code == 200
     assert response.json().get("count") == 1
+
+
+@pytest.mark.django_db
+def test_list_events_as_anonymous_user(default_client, event):
+    """An anonymous user should be able to list all events. Activities should not be included."""
+
+    category = Category.objects.create(text="Aktivitet")
+    EventFactory(category=category)
+
+    event.category = None
+    event.save()
+
+    response = default_client.get(f"{API_EVENTS_BASE_URL}?all=true/")
+
+    assert response.status_code == 200
+    assert response.json().get("count") == 2
 
 
 @pytest.mark.django_db

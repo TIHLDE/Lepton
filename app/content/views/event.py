@@ -63,6 +63,7 @@ class EventViewSet(BaseViewSet, ActionMixin):
             return self.queryset
 
         activity = self.request.query_params.get("activity", "false").lower() == "true"
+        show_all = self.request.query_params.get("all", "false").lower() == "true"
         category = Category.objects.filter(text=CategoryEnum.ACTIVITY).first()
         expired = self.request.query_params.get("expired", "false").lower() == "true"
 
@@ -76,10 +77,13 @@ class EventViewSet(BaseViewSet, ActionMixin):
         ):
             return self.queryset.filter(end_date__lt=time).filter(~Q(category=category))
 
+        if show_all:
+            return self.queryset.filter(end_date__gte=time)
+
         if expired:
             return self.queryset.filter(end_date__lt=time).order_by("-start_date")
-
-        return self.queryset.filter(end_date__gte=time)
+        
+        return self.queryset.filter(~Q(category=category))
 
     def _list_activity_queryset(self, category, expired, time):
         if expired:
