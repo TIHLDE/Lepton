@@ -23,6 +23,7 @@ from app.content.mixins import APIRegistrationErrorsMixin
 from app.content.models import Event, Registration, User
 from app.content.serializers import RegistrationSerializer
 from app.content.util.event_utils import create_payment_order
+from app.payment.enums import OrderStatus
 from app.payment.models import Order
 
 
@@ -159,6 +160,12 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        if event.user_is_participant(user):
+            return Response(
+                {"detail": "Brukeren er allerede påmeldt arrangementet."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         try:
             if event.is_paid_event and not event.is_full:
                 Order.objects.create(
@@ -167,6 +174,7 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
                     event=event,
                     payment_link=f"https://tihlde.org/arrangementer/{event_id}/",
                     expire_date=datetime.now(),
+                    status=OrderStatus.SALE,
                 )
         except Exception as e:
             capture_exception(e)
