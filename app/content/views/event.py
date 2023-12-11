@@ -69,13 +69,15 @@ class EventViewSet(BaseViewSet, ActionMixin):
         if activity and category:
             return self._list_activity_queryset(category, expired, time)
 
+        if (
+            expired and 
+            category and
+            not activity
+        ):
+            return self.queryset.filter(end_date__lt=time).filter(~Q(category=category))
+
         if expired:
             return self.queryset.filter(end_date__lt=time).order_by("-start_date")
-
-        if category:
-            return self.queryset.filter(end_date__gte=time).filter(
-                ~Q(category=category)
-            )
 
         return self.queryset.filter(end_date__gte=time)
 
