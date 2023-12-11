@@ -134,6 +134,9 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
     def user_has_attended_event(self, user):
         return self.get_participants().filter(user=user, has_attended=True).exists()
 
+    def user_is_participant(self, user):
+        return self.get_participants().filter(user=user).exists()
+
     @property
     def is_past_sign_off_deadline(self):
         return now() >= self.sign_off_deadline
