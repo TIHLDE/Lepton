@@ -171,18 +171,31 @@ def permission_test_util(
 
 @pytest.mark.django_db
 def test_list_as_anonymous_user(default_client, event):
-    """An anonymous user should be able to list all events that are not activities."""
+    """An anonymous user should be able to list all events. Activities should included."""
 
     category = Category.objects.create(text="Aktivitet")
-    activity = EventFactory(category=category)
-
-    activity.category = category
-    activity.save()
+    EventFactory(category=category)
 
     event.category = None
     event.save()
 
     response = default_client.get(API_EVENTS_BASE_URL)
+    assert response.status_code == 200
+    assert response.json().get("count") == 2
+
+
+@pytest.mark.django_db
+def test_list_events_as_anonymous_user(default_client, event):
+    """An anonymous user should be able to list all events. Activities should not be included."""
+
+    category = Category.objects.create(text="Aktivitet")
+    EventFactory(category=category)
+
+    event.category = None
+    event.save()
+
+    response = default_client.get(f"{API_EVENTS_BASE_URL}?activity=false")
+
     assert response.status_code == 200
     assert response.json().get("count") == 1
 
@@ -192,15 +205,46 @@ def test_list_activities_as_anonymous_user(default_client, event):
     """An anonymous user should be able to list all activities."""
 
     category = Category.objects.create(text="Aktivitet")
-    activity = EventFactory(category=category)
-
-    activity.category = category
-    activity.save()
+    EventFactory(category=category)
 
     event.category = None
     event.save()
 
     response = default_client.get(f"{API_EVENTS_BASE_URL}?activity=true")
+
+    assert response.status_code == 200
+    assert response.json().get("count") == 1
+
+
+@pytest.mark.django_db
+def test_list_expired_events_as_anonymous_user(default_client, event):
+    """
+    An anonymous user should be able to list all expired events.
+    """
+
+    two_days_ago = now() - timedelta(days=1)
+    event.end_date = two_days_ago
+    event.save()
+
+    response = default_client.get(f"{API_EVENTS_BASE_URL}?expired=true")
+
+    assert response.status_code == 200
+    assert response.json().get("count") == 1
+
+
+@pytest.mark.django_db
+def test_list_expired_activities_as_anonymous_user(default_client, event):
+    """
+    An anonymous user should be able to list all expired activities.
+    """
+
+    two_days_ago = now() - timedelta(days=1)
+    category = Category.objects.create(text="Aktivitet")
+    event.end_date = two_days_ago
+    event.category = category
+    event.save()
+
+    response = default_client.get(f"{API_EVENTS_BASE_URL}?expired=true")
 
     assert response.status_code == 200
     assert response.json().get("count") == 1

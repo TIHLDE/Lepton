@@ -43,6 +43,7 @@ class Groups(ChoiceEnum):
     JUBKOM = "JubKom"
     REDAKSJONEN = "Redaksjonen"
     FONDET = "Forvaltningsgruppen"
+    PLASK = "Plask"
 
 
 class AppModel(ChoiceEnum):
