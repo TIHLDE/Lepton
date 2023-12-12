@@ -76,7 +76,11 @@ class EventViewSet(BaseViewSet, ActionMixin):
 
         if category and activity.lower() == "false":
             if expired:
-                return self.queryset.filter(end_date__lt=time).filter(~Q(category=category)).order_by("-start_date")
+                return (
+                    self.queryset.filter(end_date__lt=time)
+                    .filter(~Q(category=category))
+                    .order_by("-start_date")
+                )
             return self.queryset.filter(~Q(category=category))
 
         return self.queryset.filter(end_date__gte=time)
