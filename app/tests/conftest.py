@@ -117,6 +117,12 @@ def jubkom_member(member):
 
 
 @pytest.fixture()
+def plask_member(member):
+    add_user_to_group_with_name(member, Groups.PLASK)
+    return member
+
+
+@pytest.fixture()
 def member_client(member):
     return get_api_client(user=member)
 
