@@ -24,6 +24,10 @@ from app.content.factories import (
     UserFactory,
 )
 from app.content.factories.toddel_factory import ToddelFactory
+from app.emoji.factories.reaction_factory import (
+    EventReactionFactory,
+    NewsReactionFactory,
+)
 from app.forms.tests.form_factories import FormFactory, SubmissionFactory
 from app.group.factories import GroupFactory, MembershipFactory
 from app.group.factories.fine_factory import FineFactory
@@ -231,6 +235,16 @@ def banner():
 @pytest.fixture()
 def toddel():
     return ToddelFactory()
+
+
+@pytest.fixture()
+def news_reaction(member, news):
+    return NewsReactionFactory(user=member, content_object=news)
+
+
+@pytest.fixture()
+def event_reaction(member, event):
+    return EventReactionFactory(user=member, content_object=event)
 
 
 @pytest.fixture()
