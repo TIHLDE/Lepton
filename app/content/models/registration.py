@@ -42,6 +42,7 @@ class Registration(BaseModel, BasePermissionModel):
     has_attended = models.BooleanField(default=False)
     allow_photo = models.BooleanField(default=True)
     payment_expiredate = models.DateTimeField(null=True, default=None)
+    created_by_admin = models.BooleanField(default=False)
 
     class Meta:
         ordering = ("event", "created_at", "is_on_wait")
@@ -145,7 +146,14 @@ class Registration(BaseModel, BasePermissionModel):
         return registration
 
     def admin_unregister(self, *args, **kwargs):
-        return super().delete(*args, **kwargs)
+        moved_registration = self.move_from_waiting_list_to_queue()
+        self.delete_submission_if_exists()
+        self.send_unregistered_notification_and_mail()
+
+        super().delete(*args, **kwargs)
+
+        if moved_registration:
+            moved_registration.save()
 
     def save(self, *args, **kwargs):
 
@@ -163,11 +171,12 @@ class Registration(BaseModel, BasePermissionModel):
         return super().save(*args, **kwargs)
 
     def create(self):
-        if self.event.enforces_previous_strikes:
+        if self.event.enforces_previous_strikes and not self.created_by_admin:
             self._abort_for_unanswered_evaluations()
             self.strike_handler()
 
         self.clean()
+
         self.is_on_wait = self.event.is_full
 
         if self.should_swap_with_non_prioritized_user():
@@ -196,6 +205,21 @@ class Registration(BaseModel, BasePermissionModel):
         form = EventForm.objects.filter(event=self.event, type=EventFormType.SURVEY)
         submission = self.get_submissions(type=EventFormType.SURVEY)
         return not form.exists() or submission.exists()
+
+    def send_unregistered_notification_and_mail(self):
+        Notify(
+            [self.user],
+            f'Du har blitt meldt av "{self.event.title}"',
+            UserNotificationSettingType.UNREGISTRATION,
+        ).add_paragraph(f"Hei, {self.user.first_name}!").add_paragraph(
+            "Den ansvarlige for dette arrangementet har fjernet påmeldingen din."
+        ).add_paragraph(
+            "Det kan være flere årsaker til dette. Dersom du har spørsmål kan du kontakte den ansvarlige for arrangementet."
+        ).add_paragraph(
+            "Husk at du må melde deg på igjen hvis du ønsker plass på ventelisten."
+        ).add_event_link(
+            self.event.pk
+        ).send()
 
     def send_notification_and_mail(self):
         has_not_attended = not self.has_attended
@@ -249,6 +273,9 @@ class Registration(BaseModel, BasePermissionModel):
 
     @property
     def is_prioritized(self):
+        if self.created_by_admin:
+            return True
+
         if self.user.number_of_strikes >= 3 and self.event.enforces_previous_strikes:
             return False
 
@@ -263,6 +290,23 @@ class Registration(BaseModel, BasePermissionModel):
                 return True
 
         return False
+
+    @property
+    def wait_queue_number(self):
+        """
+        Returns the number of people in front of the user in the waiting list.
+        """
+        waiting_list_count = (
+            self.event.get_waiting_list()
+            .order_by("-created_at")
+            .filter(created_at__lte=self.created_at)
+            .count()
+        )
+
+        if waiting_list_count == 0 or not self.is_on_wait:
+            return None
+
+        return waiting_list_count
 
     def swap_users(self):
         """Swaps a user with a spot with a prioritized user, if such user exists"""
@@ -298,21 +342,36 @@ class Registration(BaseModel, BasePermissionModel):
 
             return registration_move_to_queue
 
+    def move_from_queue_to_waiting_list(self):
+        registrations_in_queue = self.event.get_participants().order_by("-created_at")
+
+        if registrations_in_queue:
+            registration_move_to_waiting_list = next(
+                (
+                    registration
+                    for registration in registrations_in_queue
+                    if not registration.is_prioritized
+                ),
+                registrations_in_queue[0],
+            )
+            registration_move_to_waiting_list.is_on_wait = True
+            return registration_move_to_waiting_list
+
     def clean(self):
         """
         Validates model fields. Is called upon instance save.
 
         :raises ValidationError if the event or queue is closed.
         """
-        if self.event.closed:
+        if self.event.closed and not self.created_by_admin:
             raise ValidationError(
                 "Dette arrangementet er stengt du kan derfor ikke melde deg på"
             )
         if not self.event.sign_up:
             raise ValidationError("Påmelding er ikke mulig")
-        if not self.registration_id:
+        if not self.registration_id and not self.created_by_admin:
             self.validate_start_and_end_registration_time()
-        if not self.check_answered_submission():
+        if not self.check_answered_submission() and not self.created_by_admin:
             raise ValidationError(
                 "Du må svare på spørreskjemaet før du kan melde deg på arrangementet"
             )

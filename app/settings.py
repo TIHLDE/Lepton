@@ -51,6 +51,7 @@ WEBSITE_URL = (
 )
 
 AZURE_BLOB_STORAGE_NAME = "tihldestorage.blob.core.windows.net"
+AZURE_STORAGE_CONNECTION_STRING = os.environ.get("AZURE_STORAGE_CONNECTION_STRING")
 
 # Application definition
 sentry_sdk.init(
@@ -98,6 +99,7 @@ INSTALLED_APPS = [
     "app.gallery",
     "app.badge",
     "app.payment",
+    "app.emoji",
 ]
 
 # Django rest framework
@@ -282,6 +284,9 @@ LOGGING = {
 
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
-CELERY_BROKER_URL = "amqp://guest:guest@rabbitmq:5672"
+CELERY_BROKER_URL = (
+    os.environ.get("CELERY_BROKER_URL") or "amqp://guest:guest@rabbitmq:5672"
+)
+
 if ENVIRONMENT == EnvironmentOptions.LOCAL:
     CELERY_TASK_ALWAYS_EAGER = False

@@ -12,6 +12,7 @@ from app.content.serializers.priority_pool import (
     PriorityPoolSerializer,
 )
 from app.content.serializers.user import DefaultUserSerializer
+from app.emoji.serializers.reaction import ReactionSerializer
 from app.group.models.group import Group
 from app.group.serializers.group import SimpleGroupSerializer
 from app.payment.models.paid_event import PaidEvent
@@ -29,6 +30,7 @@ class EventSerializer(serializers.ModelSerializer):
         required=False, allow_null=True
     )
     contact_person = DefaultUserSerializer(read_only=True, required=False)
+    reactions = ReactionSerializer(required=False, many=True)
 
     class Meta:
         model = Event
@@ -63,6 +65,8 @@ class EventSerializer(serializers.ModelSerializer):
             "paid_information",
             "is_paid_event",
             "contact_person",
+            "reactions",
+            "emojis_allowed",
         )
 
     def get_paid_information(self, obj):
@@ -150,6 +154,7 @@ class EventCreateAndUpdateSerializer(BaseModelSerializer):
             "paid_information",
             "is_paid_event",
             "contact_person",
+            "emojis_allowed",
         )
 
     def to_internal_value(self, data):
@@ -170,6 +175,11 @@ class EventCreateAndUpdateSerializer(BaseModelSerializer):
     def update(self, instance, validated_data):
         priority_pools_data = validated_data.pop("priority_pools", None)
         paid_information_data = validated_data.pop("paid_information", None)
+        limit = validated_data.get("limit")
+        limit_difference = 0
+        if limit:
+            limit_difference = limit - instance.limit
+
         event = super().update(instance, validated_data)
 
         if event.is_paid_event:
@@ -180,6 +190,12 @@ class EventCreateAndUpdateSerializer(BaseModelSerializer):
             if paid_event:
                 paid_event.delete()
                 event.paid_information = None
+            
+        if limit_difference > 0 and event.waiting_list_count > 0:
+            event.move_users_from_waiting_list_to_queue(limit_difference)
+
+        if limit_difference < 0:
+            event.move_users_from_queue_to_waiting_list(abs(limit_difference))
 
         if paid_information_data and not event.is_paid_event:
             PaidEvent.objects.create(

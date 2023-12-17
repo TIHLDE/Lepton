@@ -7,7 +7,7 @@ import pytest
 
 from app.common.enums import AdminGroup, Groups, GroupType, MembershipType
 from app.content.factories import EventFactory, RegistrationFactory, UserFactory
-from app.content.models import Event
+from app.content.models import Category, Event
 from app.forms.enums import EventFormType
 from app.forms.tests.form_factories import EventFormFactory
 from app.group.factories import GroupFactory
@@ -27,7 +27,11 @@ def get_events_url_detail(event=None):
 
 
 def get_event_data(
-    title="New Title", location="New Location", organizer=None, contact_person=None
+    title="New Title",
+    location="New Location",
+    organizer=None,
+    contact_person=None,
+    limit=0,
 ):
     start_date = timezone.now() + timedelta(days=10)
     end_date = timezone.now() + timedelta(days=11)
@@ -37,6 +41,7 @@ def get_event_data(
         "start_date": start_date,
         "end_date": end_date,
         "is_paid_event": False,
+        "limit": limit,
     }
     if organizer:
         data["organizer"] = organizer
@@ -165,10 +170,84 @@ def permission_test_util(
 
 
 @pytest.mark.django_db
-def test_list_as_anonymous_user(default_client):
-    """An anonymous user should be able to list all events."""
+def test_list_as_anonymous_user(default_client, event):
+    """An anonymous user should be able to list all events. Activities should included."""
+
+    category = Category.objects.create(text="Aktivitet")
+    EventFactory(category=category)
+
+    event.category = None
+    event.save()
+
     response = default_client.get(API_EVENTS_BASE_URL)
     assert response.status_code == 200
+    assert response.json().get("count") == 2
+
+
+@pytest.mark.django_db
+def test_list_events_as_anonymous_user(default_client, event):
+    """An anonymous user should be able to list all events. Activities should not be included."""
+
+    category = Category.objects.create(text="Aktivitet")
+    EventFactory(category=category)
+
+    event.category = None
+    event.save()
+
+    response = default_client.get(f"{API_EVENTS_BASE_URL}?activity=false")
+
+    assert response.status_code == 200
+    assert response.json().get("count") == 1
+
+
+@pytest.mark.django_db
+def test_list_activities_as_anonymous_user(default_client, event):
+    """An anonymous user should be able to list all activities."""
+
+    category = Category.objects.create(text="Aktivitet")
+    EventFactory(category=category)
+
+    event.category = None
+    event.save()
+
+    response = default_client.get(f"{API_EVENTS_BASE_URL}?activity=true")
+
+    assert response.status_code == 200
+    assert response.json().get("count") == 1
+
+
+@pytest.mark.django_db
+def test_list_expired_events_as_anonymous_user(default_client, event):
+    """
+    An anonymous user should be able to list all expired events.
+    """
+
+    two_days_ago = now() - timedelta(days=1)
+    event.end_date = two_days_ago
+    event.save()
+
+    response = default_client.get(f"{API_EVENTS_BASE_URL}?expired=true")
+
+    assert response.status_code == 200
+    assert response.json().get("count") == 1
+
+
+@pytest.mark.django_db
+def test_list_expired_activities_as_anonymous_user(default_client, event):
+    """
+    An anonymous user should be able to list all expired activities.
+    """
+
+    two_days_ago = now() - timedelta(days=1)
+    category = Category.objects.create(text="Aktivitet")
+    event.end_date = two_days_ago
+    event.category = category
+    event.save()
+
+    response = default_client.get(f"{API_EVENTS_BASE_URL}?expired=true")
+
+    assert response.status_code == 200
+    assert response.json().get("count") == 1
 
 
 @pytest.mark.django_db
@@ -224,13 +303,94 @@ def test_update_event_as_admin(permission_test_util):
 
     client = get_api_client(user=user)
     url = get_events_url_detail(event)
-    data = get_event_data(title=expected_title, organizer=new_organizer)
+    data = get_event_data(
+        title=expected_title, organizer=new_organizer, limit=event.limit
+    )
 
     response = client.put(url, data)
     event.refresh_from_db()
 
     assert response.status_code == expected_status_code
     assert event.title == expected_title
+
+
+@pytest.mark.django_db
+def test_update_event_with_increased_limit(admin_user, event):
+    """
+    Admins should be able to update the limit of an event.
+    Then the first person on the waiting list should be moved to the queue.
+    Priorities should be respected.
+    """
+
+    event.limit = 1
+    event.save()
+
+    registration = RegistrationFactory(event=event)
+    waiting_registration = RegistrationFactory(event=event)
+
+    assert not registration.is_on_wait
+    assert waiting_registration.is_on_wait
+    assert event.waiting_list_count == 1
+
+    client = get_api_client(user=admin_user)
+    url = get_events_url_detail(event)
+    data = get_event_data(limit=2)
+
+    response = client.put(url, data)
+    event.refresh_from_db()
+    registration.refresh_from_db()
+    waiting_registration.refresh_from_db()
+
+    assert response.status_code == status.HTTP_200_OK
+    assert event.limit == 2
+    assert event.waiting_list_count == 0
+    assert not waiting_registration.is_on_wait
+
+
+@pytest.mark.django_db
+def test_update_event_with_decreased_limit(
+    admin_user, event_with_priority_pool, user_in_priority_pool
+):
+    """
+    Admins should be able to update the limit of an event.
+    Then the first person on the queue should be moved to the waiting list.
+    Priorities should be respected.
+    """
+
+    event_with_priority_pool.limit = 4
+    event_with_priority_pool.save()
+
+    registration = RegistrationFactory(event=event_with_priority_pool)
+    first_queue_registration = RegistrationFactory(event=event_with_priority_pool)
+    second_queue_registration = RegistrationFactory(event=event_with_priority_pool)
+    third_queue_registration = RegistrationFactory(
+        event=event_with_priority_pool, user=user_in_priority_pool
+    )
+
+    assert not registration.is_on_wait
+    assert not first_queue_registration.is_on_wait
+    assert not second_queue_registration.is_on_wait
+    assert not third_queue_registration.is_on_wait
+    assert event_with_priority_pool.waiting_list_count == 0
+
+    client = get_api_client(user=admin_user)
+    url = get_events_url_detail(event_with_priority_pool)
+    data = get_event_data(limit=1)
+
+    response = client.put(url, data)
+    event_with_priority_pool.refresh_from_db()
+    registration.refresh_from_db()
+    first_queue_registration.refresh_from_db()
+    second_queue_registration.refresh_from_db()
+    third_queue_registration.refresh_from_db()
+
+    assert response.status_code == status.HTTP_200_OK
+    assert event_with_priority_pool.limit == 1
+    assert event_with_priority_pool.waiting_list_count == 3
+    assert registration.is_on_wait
+    assert first_queue_registration.is_on_wait
+    assert second_queue_registration.is_on_wait
+    assert not third_queue_registration.is_on_wait
 
 
 @pytest.mark.django_db

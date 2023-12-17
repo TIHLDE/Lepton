@@ -1,6 +1,7 @@
-import os
 import re
 import uuid
+
+from django.conf import settings
 
 from azure.storage.blob import BlobServiceClient, ContentSettings
 
@@ -17,7 +18,7 @@ class AzureFileHandler(FileHandler):
             self.blobName = data[1]
 
     def get_or_create_container(self, name="default"):
-        connection_string = os.environ.get("AZURE_STORAGE_CONNECTION_STRING")
+        connection_string = settings.AZURE_STORAGE_CONNECTION_STRING
         blob_service_client = BlobServiceClient.from_connection_string(
             connection_string
         )
@@ -46,13 +47,17 @@ class AzureFileHandler(FileHandler):
         container = self.get_or_create_container(containerName)
 
         blob_name = f"{uuid.uuid4()}{self.getBlobName()}"
+
         content_settings = ContentSettings(
             content_type=self.blob.content_type if self.blob.content_type else None,
             cache_control="public,max-age=2592000",
         )
 
         blob_client = container.get_blob_client(blob_name)
-        blob_client.upload_blob(data=self.blob, content_settings=content_settings)
+        blob_client.upload_blob(
+            data=self.blob.data if hasattr(self.blob, "data") else self.blob,
+            content_settings=content_settings,
+        )
         if blob_client.url:
             return blob_client.url
         raise ValueError("Noe gikk galt under filopplastningen")
