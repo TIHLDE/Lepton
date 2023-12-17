@@ -5,6 +5,7 @@ from app.content.models import Registration
 from app.payment.enums import OrderStatus
 from app.payment.factories import OrderFactory
 from app.payment.tasks import check_if_has_paid
+from app.payment.util.order_utils import check_if_order_is_paid
 
 
 @pytest.fixture()
@@ -87,7 +88,7 @@ def test_keep_registration_if_has_reserved_order(event, registration):
     second_order = OrderFactory(event=event, user=registration.user)
     third_order = OrderFactory(event=event, user=registration.user)
 
-    first_order.status = OrderStatus.RESERVE
+    first_order.status = OrderStatus.RESERVED
     first_order.save()
     second_order.status = OrderStatus.CANCEL
     second_order.save()
@@ -121,3 +122,34 @@ def test_keep_registration_if_has_captured_order(event, registration):
     registration.refresh_from_db()
 
     assert registration
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "order_status", [OrderStatus.CAPTURE, OrderStatus.SALE, OrderStatus.RESERVED]
+)
+def test_if_order_is_paid(order_status):
+    """Should return true if order is paid."""
+
+    order = OrderFactory()
+
+    order.status = order_status
+    order.save()
+
+    assert check_if_order_is_paid(order)
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "order_status",
+    [OrderStatus.INITIATE, OrderStatus.VOID, OrderStatus.CANCEL, OrderStatus.REFUND],
+)
+def test_if_order_is_not_paid(order_status):
+    """Should return false if order is not paid."""
+
+    order = OrderFactory()
+
+    order.status = order_status
+    order.save()
+
+    assert not check_if_order_is_paid(order)

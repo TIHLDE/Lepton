@@ -190,7 +190,7 @@ class EventCreateAndUpdateSerializer(BaseModelSerializer):
             if paid_event:
                 paid_event.delete()
                 event.paid_information = None
-            
+
         if limit_difference > 0 and event.waiting_list_count > 0:
             event.move_users_from_waiting_list_to_queue(limit_difference)
 

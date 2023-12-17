@@ -4,8 +4,6 @@ from datetime import datetime
 from sentry_sdk import capture_exception
 
 from app.content.exceptions import RefundFailedError
-from app.payment.enums import OrderStatus
-from app.payment.models import Order
 from app.payment.tasks import check_if_has_paid
 from app.payment.util.payment_utils import (
     get_new_access_token,
@@ -76,7 +74,7 @@ def refund_vipps_order(order_id, event, transaction_text):
         os.environ.update({"PAYMENT_ACCESS_TOKEN": access_token})
         os.environ.update({"PAYMENT_ACCESS_TOKEN_EXPIRES_AT": str(expires_at)})
 
-    event_price = int(event.paid_information.price * 100)
+    event_price = int(event.paid_information.price) * 100
 
     try:
         refund_payment(
