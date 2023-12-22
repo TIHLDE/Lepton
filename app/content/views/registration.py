@@ -23,8 +23,8 @@ from app.content.mixins import APIRegistrationErrorsMixin
 from app.content.models import Event, Registration, User
 from app.content.serializers import RegistrationSerializer
 from app.content.util.event_utils import start_payment_countdown
+from app.payment.enums import OrderStatus
 from app.payment.models.order import Order
-from app.payment.views.vipps_callback import vipps_callback
 
 
 class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
@@ -174,8 +174,7 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
                     user=user,
                     event=event,
                     payment_link=f"https://tihlde.org/arrangementer/{event_id}/",
-                    expire_date=datetime.now(),
-                    status=OrderStatus.SALE,
+                    status=OrderStatus.SALE
                 )
         except Exception as e:
             capture_exception(e)

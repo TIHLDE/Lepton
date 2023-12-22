@@ -1,4 +1,6 @@
 import json
+import os
+from datetime import datetime
 
 from django.conf import settings
 
@@ -25,6 +27,44 @@ def get_new_access_token():
     response = response.json()
 
     return (response["expires_on"], response["access_token"])
+
+
+def check_access_token():
+    """
+    Checks for access token.
+    Updates acces token if expired.
+    Returns new access token.
+    """
+    access_token = os.environ.get("PAYMENT_ACCESS_TOKEN")
+    expires_at = os.environ.get("PAYMENT_ACCESS_TOKEN_EXPIRES_AT")
+
+    if not access_token or datetime.now() >= datetime.fromtimestamp(int(expires_at)):
+        (expires_at, access_token) = get_new_access_token()
+        os.environ.update({"PAYMENT_ACCESS_TOKEN": access_token})
+        os.environ.update({"PAYMENT_ACCESS_TOKEN_EXPIRES_AT": str(expires_at)})
+
+    return access_token
+
+
+def get_payment_order_status(order_id):
+    """
+    Returns status of payment order.
+    """
+
+    access_token = check_access_token()
+
+    url = f"{settings.VIPPS_ORDER_URL}{order_id}/details"
+    headers = {
+        "Content-Type": "application/json",
+        "Ocp-Apim-Subscription-Key": settings.VIPPS_SUBSCRIPTION_KEY,
+        "Authorization": "Bearer " + access_token,
+        "Merchant-Serial-Number": settings.VIPPS_MERCHANT_SERIAL_NUMBER,
+    }
+
+    res = requests.get(url, headers=headers)
+    json = res.json()
+
+    return json["transactionLogHistory"][0]["operation"]
 
 
 def initiate_payment(amount, order_id, access_token, transaction_text, fallback):

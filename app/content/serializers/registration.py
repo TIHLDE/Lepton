@@ -10,6 +10,7 @@ from app.content.util.registration_utils import get_payment_expiredate
 from app.forms.enums import EventFormType
 from app.forms.serializers.submission import SubmissionInRegistrationSerializer
 from app.payment.util.order_utils import has_paid_order
+from app.payment.util.payment_utils import get_payment_order_status
 
 
 class RegistrationSerializer(BaseModelSerializer):
@@ -45,6 +46,12 @@ class RegistrationSerializer(BaseModelSerializer):
 
     def get_has_paid_order(self, obj):
         orders = obj.event.orders.filter(user=obj.user)
+
+        if orders:
+            order = orders.first()
+            order_status = get_payment_order_status(order.order_id)
+            order.status = order_status
+            order.save()
 
         return has_paid_order(orders)
 

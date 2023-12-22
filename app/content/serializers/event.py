@@ -5,7 +5,7 @@ from sentry_sdk import capture_exception
 
 from app.common.enums import GroupType
 from app.common.serializers import BaseModelSerializer
-from app.content.exceptions import APIPaidEventCantBeChangedToFreeEventException
+from app.content.exceptions import APIPaidEventCantBeChangedToFreeEventException, APIEventCantBeChangedToPaidEventException
 from app.content.models import Event, PriorityPool
 from app.content.serializers.priority_pool import (
     PriorityPoolCreateSerializer,
@@ -183,7 +183,7 @@ class EventCreateAndUpdateSerializer(BaseModelSerializer):
         event = super().update(instance, validated_data)
 
         if event.is_paid_event:
-            if not len(paid_information_data) and event.list_count > 0:
+            if not len(paid_information_data) and event.has_participants:
                 raise APIPaidEventCantBeChangedToFreeEventException()
 
             paid_event = PaidEvent.objects.get(event=event)
@@ -198,6 +198,8 @@ class EventCreateAndUpdateSerializer(BaseModelSerializer):
             event.move_users_from_queue_to_waiting_list(abs(limit_difference))
 
         if paid_information_data and not event.is_paid_event:
+            if event.has_participants:
+                raise APIEventCantBeChangedToPaidEventException()
             PaidEvent.objects.create(
                 event=event,
                 price=paid_information_data["price"],

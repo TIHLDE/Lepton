@@ -108,6 +108,7 @@ class Registration(BaseModel, BasePermissionModel):
                         event=self.event,
                         transaction_text=f"Refund for {self.event.title} - {self.user.first_name} {self.user.last_name}",
                     )
+                    self.send_notification_and_mail_for_refund(order)
 
     def delete(self, *args, **kwargs):
         from app.content.util.event_utils import start_payment_countdown
@@ -125,7 +126,8 @@ class Registration(BaseModel, BasePermissionModel):
 
         self.delete_submission_if_exists()
 
-        self.refund_payment_if_exist()
+        # TODO: Add this for refund
+        # self.refund_payment_if_exist()
 
         registration = super().delete(*args, **kwargs)
         if moved_registration:

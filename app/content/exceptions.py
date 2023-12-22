@@ -7,6 +7,11 @@ class APIPaidEventCantBeChangedToFreeEventException(APIException):
     default_detail = "Arrangementet er et betalt arrangement med påmeldte deltagere, og kan ikke endres til et gratis arrangement"
 
 
+class APIEventCantBeChangedToPaidEventException(APIException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_detail = "Arrangementet er et gratis arrangement med påmeldte deltagere, og kan ikke endres til et betalt arrangement"
+
+
 class APIUserAlreadyAttendedEvent(APIException):
     status_code = status.HTTP_400_BAD_REQUEST
     default_detail = "Brukeren har allerede ankommet"

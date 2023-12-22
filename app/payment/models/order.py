@@ -33,7 +33,3 @@ class Order(BaseModel, BasePermissionModel):
 
     def __str__(self):
         return f"{self.user} - {self.event.title} - {self.status} - {self.created_at}"
-
-    @property
-    def expired(self):
-        return now() >= self.expire_date

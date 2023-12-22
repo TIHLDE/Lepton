@@ -49,6 +49,35 @@ def get_event_data(
         data["contact_person"] = contact_person
     return data
 
+def get_paid_event_data(
+    price,
+    paytime,
+    title="New Title",
+    location="New Location",
+    organizer=None,
+    contact_person=None,
+    limit=0
+):
+    start_date = timezone.now() + timedelta(days=10)
+    end_date = timezone.now() + timedelta(days=11)
+    data = {
+        "title": title,
+        "location": location,
+        "start_date": start_date,
+        "end_date": end_date,
+        "is_paid_event": True,
+        "paid_information": {
+            "price": price,
+            "paytime": paytime
+        },
+        "limit": limit,
+    }
+    if organizer:
+        data["organizer"] = organizer
+    if contact_person:
+        data["contact_person"] = contact_person
+    return data
+
 
 # "event_current_organizer"/"event_new_organizer" should have one of 3 different values:
 # - None -> The event has no connected organizer/should remove connection to organizer
@@ -841,3 +870,33 @@ def test_jubkom_has_create_permission(api_client, jubkom_member):
     response = client.post(API_EVENTS_BASE_URL, data)
 
     assert response.status_code == status.HTTP_201_CREATED
+
+
+@pytest.mark.django_db
+def test_update_from_free_event_with_participants_to_paid_event(api_client, admin_user, event, paid_event, registration):
+    """
+    An admin should not be able to update a free event with participants to a paid event.
+    """
+    paid_event.event = event
+    paid_event.save()
+
+    registration.event = event
+    registration.is_on_wait = False
+    registration.save()
+
+    url = f"{API_EVENTS_BASE_URL}{event.id}/"
+    client = api_client(user=admin_user)
+    data = get_paid_event_data(price=paid_event.price, paytime="01:00", limit=1)
+
+    repsonse = client.put(url, data)
+    print(repsonse.data)
+
+    assert repsonse.status_code == status.HTTP_400_BAD_REQUEST
+
+
+@pytest.mark.django_db
+def test_update_from_paid_event_with_participants_to_free_event(api_client, admin_user, event, paid_event, registration):
+    """
+    An admin should not be able to update a paid event with participants to a free event.
+    """
+    pass
