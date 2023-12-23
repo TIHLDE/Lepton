@@ -947,7 +947,7 @@ def test_update_from_free_event_to_paid_event(api_client, admin_user, event):
     data = response.json()
 
     assert response.status_code == status.HTTP_200_OK
-    assert data["is_paid_event"] == True
+    assert data["is_paid_event"]
     assert data["paid_information"]["price"] == "200.00"
     assert data["paid_information"]["paytime"] == "01:00:00"
 
@@ -965,6 +965,6 @@ def test_create_paid_event(api_client, admin_user):
     data = response.json()
 
     assert response.status_code == status.HTTP_201_CREATED
-    assert data["is_paid_event"] == True
+    assert data["is_paid_event"]
     assert data["paid_information"]["price"] == "200.00"
     assert data["paid_information"]["paytime"] == "01:00:00"
