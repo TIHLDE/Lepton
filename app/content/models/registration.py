@@ -21,7 +21,6 @@ from app.content.models.strike import create_strike
 from app.content.models.user import User
 from app.content.util.registration_utils import get_payment_expiredate
 from app.forms.enums import EventFormType
-from app.payment.models import Order
 from app.payment.util.order_utils import check_if_order_is_paid, has_paid_order
 from app.util import now
 from app.util.models import BaseModel

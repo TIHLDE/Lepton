@@ -8,7 +8,6 @@ from app.content.models.event import Event
 from app.content.models.user import User
 from app.payment.enums import OrderStatus
 from app.util.models import BaseModel
-from app.util.utils import now
 
 
 class Order(BaseModel, BasePermissionModel):

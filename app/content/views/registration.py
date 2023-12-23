@@ -1,5 +1,4 @@
 import uuid
-from datetime import datetime
 
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
@@ -174,7 +173,7 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
                     user=user,
                     event=event,
                     payment_link=f"https://tihlde.org/arrangementer/{event_id}/",
-                    status=OrderStatus.SALE
+                    status=OrderStatus.SALE,
                 )
         except Exception as e:
             capture_exception(e)

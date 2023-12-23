@@ -10,8 +10,6 @@ from app.content.factories.priority_pool_factory import PriorityPoolFactory
 from app.forms.enums import EventFormType
 from app.forms.tests.form_factories import EventFormFactory, SubmissionFactory
 from app.group.factories import GroupFactory
-from app.payment.enums import OrderStatus
-from app.payment.models import Order
 from app.util.test_utils import add_user_to_group_with_name, get_api_client
 from app.util.utils import now
 

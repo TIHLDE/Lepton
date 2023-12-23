@@ -1,10 +1,8 @@
 from app.celery import app
 from app.content.models.event import Event
 from app.content.models.registration import Registration
-from app.payment.enums import OrderStatus
 from app.payment.models.order import Order
 from app.payment.util.order_utils import has_paid_order
-from app.payment.views.vipps_callback import vipps_callback
 from app.util.tasks import BaseTask
 
 
