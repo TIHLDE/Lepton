@@ -1,11 +1,7 @@
-import json
-
 from django.conf import settings
-from django.http import HttpResponse
 
 import requests
 
-from app.payment.models.order import Order
 from app.payment.util.payment_utils import get_new_access_token
 
 
