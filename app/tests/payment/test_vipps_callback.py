@@ -38,8 +38,8 @@ def test_update_order_status_by_vipps_callback(default_client, status):
     order_id = order.order_id
 
     data = get_callback_data(order_id, status)
-    res = default_client.post(f"/v2/payments/{order_id}/", data=data)
-    print(res.status_code)
+    response = default_client.post(f"/v2/payments/{order_id}/", data=data)
     order.refresh_from_db()
 
+    assert response.status_code == 200
     assert order.status == status
