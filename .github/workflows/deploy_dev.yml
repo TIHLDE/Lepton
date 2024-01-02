@@ -10,7 +10,7 @@ jobs:
   deploy:
     uses: TIHLDE/Lepton/.github/workflows/deploy_to_azure.yml@dev
     with:
-      registry_name: leptondevregistry
+      registry_name: leptonregistrydev
     secrets:
       registry_username: ${{ secrets.ACI_DEV_USERNAME }}
       registry_password: ${{ secrets.ACI_DEV_PASSWORD }}
