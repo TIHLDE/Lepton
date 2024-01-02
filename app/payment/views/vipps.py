@@ -38,5 +38,5 @@ class VippsViewSet(BaseViewSet):
             capture_exception(e)
             return Response(
                 {"detail": "Kunne ikke oppdatere ordre"},
-                status=status.HTTP_500_BAD_REQUEST,
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
