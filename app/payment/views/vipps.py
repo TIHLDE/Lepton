@@ -32,7 +32,7 @@ class VippsViewSet(BaseViewSet):
                 order.save()
 
             return Response(status=status.HTTP_200_OK)
-        except:
+        except Exception as e:
             return Response(
                 {"detail": "Kunne ikke oppdatere ordre"},
                 status=status.HTTP_500_BAD_REQUEST,
