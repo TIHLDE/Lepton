@@ -2,6 +2,8 @@ from django.conf import settings
 from rest_framework import status
 from rest_framework.response import Response
 
+from sentry_sdk import capture_exception
+
 from app.common.permissions import BasicViewPermission
 from app.common.viewsets import BaseViewSet
 from app.payment.models import Order
@@ -33,6 +35,7 @@ class VippsViewSet(BaseViewSet):
 
             return Response(status=status.HTTP_200_OK)
         except Exception as e:
+            capture_exception(e)
             return Response(
                 {"detail": "Kunne ikke oppdatere ordre"},
                 status=status.HTTP_500_BAD_REQUEST,
