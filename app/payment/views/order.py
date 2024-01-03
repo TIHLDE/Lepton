@@ -10,6 +10,7 @@ from app.common.viewsets import BaseViewSet
 from app.content.models import User
 from app.payment.models import Order
 from app.payment.serializers import OrderCreateSerializer, OrderSerializer
+from app.payment.util.order_utils import is_expired
 
 
 class OrderViewSet(BaseViewSet, ActionMixin):
@@ -36,6 +37,13 @@ class OrderViewSet(BaseViewSet, ActionMixin):
     def create(self, request, *args, **kwargs):
         try:
             user = get_object_or_404(User, user_id=request.id)
+            registration = user.registration
+
+            if is_expired(registration.expire_date):
+                return Response(
+                    {"detail": "Din betalingstid er utgått"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
             serializer = OrderCreateSerializer(
                 data=request.data,

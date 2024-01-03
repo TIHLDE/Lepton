@@ -1,3 +1,5 @@
+from django.utils import timezone
+
 import pytest
 
 from app.content.factories import EventFactory, RegistrationFactory
@@ -5,7 +7,7 @@ from app.content.models import Registration
 from app.payment.enums import OrderStatus
 from app.payment.factories import OrderFactory
 from app.payment.tasks import check_if_has_paid
-from app.payment.util.order_utils import check_if_order_is_paid
+from app.payment.util.order_utils import check_if_order_is_paid, is_expired
 
 
 @pytest.fixture()
@@ -153,3 +155,28 @@ def test_if_order_is_not_paid(order_status):
     order.save()
 
     assert not check_if_order_is_paid(order)
+
+
+@pytest.mark.django_db
+def test_if_registration_payment_date_is_expired(registration):
+    """Should return true if registration payment date is expired."""
+
+    registration.payment_expiredate = timezone.now() - timezone.timedelta(seconds=1)
+    registration.save()
+
+    assert is_expired(registration.payment_expiredate)
+
+    registration.payment_expiredate = timezone.now()
+    registration.save()
+
+    assert is_expired(registration.payment_expiredate)
+
+
+@pytest.mark.django_db
+def test_if_registration_payment_date_is_not_expired(registration):
+    """Should return false if registration payment date is not expired."""
+
+    registration.payment_expiredate = timezone.now() + timezone.timedelta(seconds=1)
+    registration.save()
+
+    assert not is_expired(registration.payment_expiredate)

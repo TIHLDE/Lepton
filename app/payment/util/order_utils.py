@@ -1,3 +1,5 @@
+from django.utils import timezone
+
 from app.payment.enums import OrderStatus
 
 
@@ -21,3 +23,7 @@ def check_if_order_is_paid(order):
         return True
 
     return False
+
+
+def is_expired(expire_date):
+    return expire_date <= timezone.now()
