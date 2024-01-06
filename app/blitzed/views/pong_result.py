@@ -59,9 +59,7 @@ class PongResultViewset(BaseViewSet):
         try:
             instance = self.get_object()
             super().destroy(request, *args, **kwargs)
-            self.update_match_tree(
-                instance.match, instance.match.team1, instance.match.team2
-            )
+            self._update_match_tree(instance.match)
             return Response(
                 {"detail": "Resultat ble slettet"}, status=status.HTTP_200_OK
             )
@@ -71,25 +69,32 @@ class PongResultViewset(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-    def update_match_tree(self, current_match, team1, team2):
-        if current_match.future_match is None:
+    def _update_match_tree(self, match):
+        if match.future_match is None:
             return
 
-        next_match = current_match.future_match
-        if not self.team_in_match(next_match, team1, team2):
-            return
+        team1 = match.team1
+        team2 = match.team2
+        stack = [match.future_match]
+        while stack:
+            current_match = stack.pop()
+            if current_match is None:
+                continue
+            if not self._team_in_match(current_match, team1, team2):
+                continue
 
-        if next_match.team1 in {team1, team2}:
-            next_match.team1 = None
-        else:
-            next_match.team2 = None
+            if current_match.team1 in {team1, team2}:
+                current_match.team1 = None
+            else:
+                current_match.team2 = None
 
-        self.update_match_tree(next_match, team1, team2)
-        if PongResult.objects.filter(match=next_match.id).exists():
-            PongResult.objects.get(match=next_match.id).delete()
-        next_match.save()
+            if PongResult.objects.filter(match=current_match.id).exists():
+                PongResult.objects.get(match=current_match.id).delete()
 
-    def team_in_match(self, match, team1, team2):
+            current_match.save()
+            stack.append(current_match.future_match)
+
+    def _team_in_match(self, match, team1, team2):
         return team1 in {match.team1, match.team2} or team2 in {
             match.team1,
             match.team2,
