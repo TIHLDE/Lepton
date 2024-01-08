@@ -50,7 +50,7 @@ resource "azurerm_container_app" "lepton-api" {
       }
       env {
         name  = "DATABASE_NAME"
-        value = "test"
+        value = azurerm_mysql_flexible_database.lepton-database.name
       }
       env {
         name  = "DATABASE_PASSWORD"
@@ -218,7 +218,7 @@ resource "azurerm_container_app" "celery" {
       }
       env {
         name  = "DATABASE_NAME"
-        value = "test"
+        value = azurerm_mysql_flexible_database.lepton-database.name
       }
       env {
         name  = "DATABASE_PASSWORD"
