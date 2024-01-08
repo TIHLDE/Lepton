@@ -1,28 +1,21 @@
 from django.shortcuts import render
-from models import Statistics, TimestampedEntry
-from content.models.event import Event
-from group.models.fine import Fine
+from app.content.models.registration import Registration
+from app.group.models.fine import Fine
+from django.db.models import Sum, Avg, Count, Case, When, IntegerField, Q
+from django.db.models.functions import Coalesce
+from app.wrapped.models import DataDistributions
+from app.badge.models.user_badge import UserBadge
+from rest_framework.authtoken.models import Token
+from app.content.models.user import User
+from app.badge.models.user_badge import UserBadge
 import numpy as np
-from scipy import stats
-from django.db.models import Sum, Avg
 
 
 # Create your views here.
 def get_statistics_for_user(user_id, year):
     statistics = None
 
-    try:
-        timestamp_id_key = TimestampedEntry.objects.filter(user=user_id).order_by(
-            "-year"
-        )
-        statistics = Statistics.objects.get(id=timestamp_id_key.first())
-    except Statistics.DoesNotExist:
-        pass
-
-    if not statistics:
-        # Run a request to the distributions table
-        statistics = calculate_statistics(user_id, year)
-        statistics.save()
+    statistics = calculate_statistics(user_id, year)
 
     return statistics
 
@@ -34,20 +27,53 @@ def get_statistics_for_user(user_id, year):
 
 
 def calculate_statistics(user_id, year):
-    events_count = Event.objects.filter(user=user_id, created_at__year=year).count()
+    try:
+        calculate_distributions(year)
+        token = Token.objects.get(key=user_id)
+        events_count = Registration.objects.filter(
+            user=token.user, created_at__year=year
+        ).count()
+        print(events_count)
 
-    fines_count = Event.objects.filter(user=user_id, created_at__year=year).count()
+        fines_count = Fine.objects.filter(
+            user=token.user, created_at__year=year
+        ).count()
 
-    badges_count = Event.objects.filter(user=user_id, created_at__year=year).count()
+        badges_count = UserBadge.objects.filter(user=token.user).count()
+    except Exception as e:
+        print(f"An error ocurred: {e}")
+        return None
 
-    timestamp_id_key = TimestampedEntry.objects.filter(user=user_id).order_by("-year")
-    statistics = Statistics.objects.get_or_create(id=timestamp_id_key.first())
-    statistics.events_attended = events_count
-    statistics.fines_received = fines_count
-    statistics.badges_unlocked = badges_count
+    try:
+        events_dist = (
+            DataDistributions.objects.filter(year=year)
+            .values_list("events_distribution", flat=True)
+            .first()
+        )
+        fines_dist = (
+            DataDistributions.objects.filter(year=year)
+            .values_list("fines_distribution", flat=True)
+            .first()
+        )
+        badges_dist = (
+            DataDistributions.objects.filter(year=year)
+            .values_list("badges_distribution", flat=True)
+            .first()
+        )
+    except Exception as e:
+        print(f"An error ocurred: {e}")
+        return None
 
-    statistics.save()
-    return statistics
+    print("Events distribution ", events_dist)
+
+    return {
+        "events_attended": events_count,
+        "badges_unlocked": fines_count,
+        "fines_received": badges_count,
+        "events_percentile": 0,
+        "badges_percentile": 0,
+        "fines_percentile": 0,
+    }
 
 
 """
@@ -58,17 +84,125 @@ def calculate_statistics(user_id, year):
 
 
 def calculate_distributions(year):
-    # Select all fines
-    a = 0
+    # Fetch total amount of users in database
+    user_count = User.objects.filter(is_active=True).count()
 
+    mean_event_no = mean_events(year, user_count)
+    print("Mean number of events this year per user: ", mean_event_no["mean_value"])
+    mean_fines_no = mean_fines(year, user_count)
+    print("Mean number of fines this year per user: ", mean_fines_no["mean_value"])
+    mean_badges_no = mean_badges(year, user_count)
+    print("Mean number of badges this year per user: ", mean_badges_no["mean_value"])
 
-def calculate_fine_stats(year):
-    # Select all relevant rows
-    fines = Fine.objects.filter(created_at__year=year)
-
-    # Group fines by receiving user
-    grouped_fines = fines.values("user").annotate(
-        total_fines=Sum("amount"), average_fines=Avg("amount")
+    event_dev = std_dev(
+        [dist["number_of_events"] for dist in mean_event_no["distributions"]]
+    )
+    fines_dev = std_dev(
+        [dist["number_of_fines"] for dist in mean_fines_no["distributions"]]
+    )
+    badges_dev = std_dev(
+        [dist["number_of_badges"] for dist in mean_badges_no["distributions"]]
     )
 
-    print(grouped_fines)
+    DataDistributions.objects.update_or_create(
+        year=year,
+        defaults={
+            "events_distribution": {
+                "std_dev": event_dev,
+                "mean": mean_event_no["mean_value"],
+            },
+            "fines_distribution": {
+                "std_dev": fines_dev,
+                "mean": mean_fines_no["mean_value"],
+            },
+            "badges_distribution": {
+                "std_dev": badges_dev,
+                "mean": mean_badges_no["mean_value"],
+            },
+        },
+    )
+
+
+def std_dev(values):
+    # Use numpy to calculate std devitation
+    std_dev = np.std(values, ddof=1)
+    return std_dev
+
+
+def mean_events(year, user_count):
+    result = User.objects.annotate(
+        number_of_events=Sum(
+            Case(
+                When(
+                    Q(registrations__event__start_date__year=year)
+                    & Q(registrations__has_attended=True),
+                    then=1,
+                ),
+                default=0,
+                output_field=IntegerField(),
+            )
+        )
+    ).values("user_id", "number_of_events")
+
+    total_events = 0
+    for entry in result:
+        number_of_events = entry["number_of_events"]
+        total_events += number_of_events
+
+    if user_count == 0:
+        return 0
+
+    return {"distributions": result, "mean_value": total_events / user_count}
+
+
+def mean_fines(year, user_count):
+    result = User.objects.annotate(
+        number_of_fines=Sum(
+            Case(
+                When(fines__created_at__year=year, then="fines__amount"),
+                default=0,
+                output_field=IntegerField(),
+            )
+        )
+    ).values("user_id", "number_of_fines")
+
+    total_fines = 0
+    for entry in result:
+        number_of_fines = entry["number_of_fines"]
+        total_fines += number_of_fines
+
+    if user_count == 0:
+        return 0
+
+    return {"distributions": result, "mean_value": total_fines / user_count}
+
+
+def mean_badges(year, user_count):
+    """valid_badges = UserBadge.objects.filter(created_at__year=year).count()
+
+    if user_count == 0:
+        return 0
+    return valid_badges / user_count"""
+
+    result = User.objects.annotate(
+        number_of_badges=Sum(
+            Case(
+                When(
+                    user_badges__created_at__year=year,
+                    then=1,
+                ),
+                default=0,
+                output_field=IntegerField(),
+            )
+        )
+    ).values("user_id", "number_of_badges")
+
+    total_badges = 0
+    for entry in result:
+        number_of_events = entry["number_of_badges"]
+        total_badges += number_of_events
+
+    if user_count == 0:
+        return 0
+
+    return {"distributions": result, "mean_value": total_badges / user_count}
