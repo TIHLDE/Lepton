@@ -26,20 +26,19 @@ def get_statistics_for_user(user_id, year):
 """
 
 
-def calculate_statistics(user_id, year):
+def calculate_statistics(user, year):
     try:
         calculate_distributions(year)
-        token = Token.objects.get(key=user_id)
         events_count = Registration.objects.filter(
-            user=token.user, created_at__year=year
+            user=user, created_at__year=year
         ).count()
         print(events_count)
 
         fines_count = Fine.objects.filter(
-            user=token.user, created_at__year=year
+            user=user, created_at__year=year
         ).count()
 
-        badges_count = UserBadge.objects.filter(user=token.user).count()
+        badges_count = UserBadge.objects.filter(user=user).count()
     except Exception as e:
         print(f"An error ocurred: {e}")
         return None

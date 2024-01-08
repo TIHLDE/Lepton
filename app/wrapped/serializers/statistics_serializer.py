@@ -9,11 +9,8 @@ class StatisticsSerializer(serializers.Serializer):
         pass
 
 
-class StatisticsGetSerializer(serializers.Serializer):
+class StatisticsCreateSerializer(serializers.Serializer):
     year = serializers.IntegerField()
-
-    class Meta:
-        pass
 
     def create(self, validated_data, **kwargs):
         user = self.context["request"].user

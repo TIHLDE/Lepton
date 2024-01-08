@@ -1,7 +1,6 @@
 from django.urls import include, path, re_path
 from rest_framework import routers
 
-from app.payment.views.order import OrderViewSet
 from app.wrapped.views.wrapped import WrappedStatsView
 
 router = routers.DefaultRouter()
