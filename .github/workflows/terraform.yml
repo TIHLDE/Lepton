@@ -22,6 +22,8 @@ jobs:
         with:
           # This will add both a CLI output to the console and create a results.sarif file
           output_format: sarif
+          framework: terraform
+          soft_fail: true
           output_file_path: results.sarif
         
       - name: Upload SARIF file
