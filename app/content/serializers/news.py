@@ -1,6 +1,7 @@
 from app.common.serializers import BaseModelSerializer
 from app.content.models import News, User
 from app.content.serializers.user import DefaultUserSerializer
+from app.emoji.serializers.reaction import ReactionSerializer
 
 
 class SimpleNewsSerializer(BaseModelSerializer):
@@ -19,12 +20,15 @@ class SimpleNewsSerializer(BaseModelSerializer):
 
 class NewsSerializer(SimpleNewsSerializer):
     creator = DefaultUserSerializer(read_only=True)
+    reactions = ReactionSerializer(required=False, many=True)
 
     class Meta:
         model = SimpleNewsSerializer.Meta.model
         fields = SimpleNewsSerializer.Meta.fields + (
             "creator",
             "body",
+            "reactions",
+            "emojis_allowed",
         )
 
     def create(self, validated_data):

@@ -27,10 +27,11 @@ class AdminGroup(ChoiceEnum):
     NOK = "Nok"
     PROMO = "Promo"
     SOSIALEN = "Sosialen"
+    KOK = "Kontkom"
 
     @classmethod
     def all(cls):
-        return (cls.HS, cls.INDEX, cls.NOK, cls.PROMO, cls.SOSIALEN)
+        return (cls.HS, cls.INDEX, cls.NOK, cls.PROMO, cls.SOSIALEN, cls.KOK)
 
     @classmethod
     def admin(cls):
@@ -39,8 +40,10 @@ class AdminGroup(ChoiceEnum):
 
 class Groups(ChoiceEnum):
     TIHLDE = "TIHLDE"
-    REDAKSJONEN = "redaksjonen"
     JUBKOM = "JubKom"
+    REDAKSJONEN = "Redaksjonen"
+    FONDET = "Forvaltningsgruppen"
+    PLASK = "Plask"
 
 
 class AppModel(ChoiceEnum):

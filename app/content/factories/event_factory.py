@@ -20,3 +20,4 @@ class EventFactory(DjangoModelFactory):
     start_registration_at = timezone.now() - timedelta(days=1)
     end_registration_at = timezone.now() + timedelta(days=9)
     sign_off_deadline = timezone.now() + timedelta(days=8)
+    emojis_allowed = True

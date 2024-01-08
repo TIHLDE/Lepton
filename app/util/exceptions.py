@@ -1,4 +1,5 @@
 import logging
+import traceback
 
 from django.conf import settings
 from django.db.utils import IntegrityError
@@ -21,7 +22,7 @@ def exception_handler(exc, context):
     if response:
         log_api_error(response, exc)
     else:
-        logger.error(f"Unhandled request exception: {exc}")
+        logger.error(traceback.format_traceback(exc)())
 
     if not settings.DEBUG and not response:
         response = Response(

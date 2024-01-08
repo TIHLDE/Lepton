@@ -1,5 +1,6 @@
 from datetime import timedelta
 
+from django.contrib.contenttypes.fields import GenericRelation
 from django.core.exceptions import ValidationError
 from django.db import models
 
@@ -11,6 +12,7 @@ from app.common.permissions import (
 )
 from app.content.models import Category
 from app.content.models.user import User
+from app.emoji.models.reaction import Reaction
 from app.forms.enums import EventFormType
 from app.group.models.group import Group
 from app.util.models import BaseModel, OptionalImage
@@ -36,6 +38,15 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
         default=None,
         on_delete=models.SET_NULL,
         related_name="events",
+    )
+
+    contact_person = models.ForeignKey(
+        User,
+        blank=True,
+        null=True,
+        default=None,
+        on_delete=models.SET_NULL,
+        related_name="contact_events",
     )
 
     favorite_users = models.ManyToManyField(
@@ -68,6 +79,10 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
     runned_sign_off_deadline_reminder = models.BooleanField(default=False)
     runned_sign_up_start_notifier = models.BooleanField(default=False)
 
+    """ Reactions """
+    emojis_allowed = models.BooleanField(default=False)
+    reactions = GenericRelation(Reaction)
+
     class Meta:
         ordering = ("start_date",)
 
@@ -83,6 +98,12 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
         return self.end_date <= yesterday()
 
     @property
+    def is_paid_event(self):
+        return hasattr(self, "paid_information") and (
+            self.paid_information is not None or not len(self.paid_information)
+        )
+
+    @property
     def list_count(self):
         """Number of users registered to attend the event"""
         return self.get_participants().count()
@@ -91,6 +112,20 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
     def waiting_list_count(self):
         """Number of users on the waiting list"""
         return self.get_waiting_list().count()
+
+    def move_users_from_waiting_list_to_queue(self, count):
+        """Moves the first x users from waiting list to queue"""
+        waiting_list = self.get_waiting_list().order_by("created_at")
+        for registration in waiting_list[:count]:
+            moved_registration = registration.move_from_waiting_list_to_queue()
+            moved_registration.save()
+
+    def move_users_from_queue_to_waiting_list(self, count):
+        """Moves the last created x users from queue to waiting list"""
+        queue = self.get_participants().order_by("-created_at")
+        for registration in queue[:count]:
+            moved_registration = registration.move_from_queue_to_waiting_list()
+            moved_registration.save()
 
     def get_has_attended(self):
         return self.get_participants().filter(has_attended=True)
@@ -104,6 +139,9 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
 
     def user_has_attended_event(self, user):
         return self.get_participants().filter(user=user, has_attended=True).exists()
+
+    def user_is_participant(self, user):
+        return self.get_participants().filter(user=user).exists()
 
     @property
     def is_past_sign_off_deadline(self):
