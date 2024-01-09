@@ -5,14 +5,10 @@ from rest_framework.views import APIView
 from rest_framework import status
 from datetime import datetime
 from rest_framework.decorators import action
-from app.wrapped.serializers.statistics_serializer import (
-    StatisticsCreateSerializer,
-    StatisticsSerializer,
-)
+from app.wrapped.serializers.statistics_serializer import StatisticsSerializer
 from django.shortcuts import get_object_or_404
 from app.common.permissions import BasicViewPermission
 from app.wrapped.util.statistics_util import calculate_statistics
-from app.content.models import User
 
 
 class WrappedStatsView(BaseViewSet):
@@ -30,7 +26,6 @@ class WrappedStatsView(BaseViewSet):
                     {"detail": "År må være mindre enn eller lik nåværende år"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-            
 
             user = request.user
 
