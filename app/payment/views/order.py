@@ -1,4 +1,3 @@
-from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.response import Response
 
@@ -7,7 +6,7 @@ from sentry_sdk import capture_exception
 from app.common.mixins import ActionMixin
 from app.common.permissions import BasicViewPermission
 from app.common.viewsets import BaseViewSet
-from app.content.models import User
+from app.content.models import Registration, User
 from app.payment.models import Order
 from app.payment.serializers import OrderCreateSerializer, OrderSerializer
 from app.payment.util.order_utils import is_expired
@@ -36,10 +35,11 @@ class OrderViewSet(BaseViewSet, ActionMixin):
 
     def create(self, request, *args, **kwargs):
         try:
-            user = get_object_or_404(User, user_id=request.id)
-            registration = user.registration
+            user = request.user
+            event = request.data.get("event")
+            registration = Registration.objects.get(user=user, event=event)
 
-            if is_expired(registration.expire_date):
+            if is_expired(registration.payment_expiredate):
                 return Response(
                     {"detail": "Din betalingstid er utgått"},
                     status=status.HTTP_400_BAD_REQUEST,
