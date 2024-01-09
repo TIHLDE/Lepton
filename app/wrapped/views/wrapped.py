@@ -17,7 +17,6 @@ class WrappedStatsView(BaseViewSet):
 
     # @action(detail=True, methods=["post"])
     def retrieve(self, request, pk, *args, **kwargs):
-        print(pk)
         try:
             year = int(pk)
             current_year = datetime.now().year
@@ -33,8 +32,7 @@ class WrappedStatsView(BaseViewSet):
 
             return Response(stats, status=status.HTTP_200_OK)
         except Exception as e:
-            print(e)
             return Response(
-                {"detail": "Noe gikk feil"},
+                {"detail": "Kunne ikke hente ut wrapped-statistikken"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
