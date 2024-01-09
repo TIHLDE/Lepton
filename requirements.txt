@@ -60,3 +60,4 @@ djangorestframework-csv==2.1.1
 
 # Numpy
 numpy == 1.26.3
+scipy == 1.11.4

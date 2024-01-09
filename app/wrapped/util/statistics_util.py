@@ -9,6 +9,8 @@ from rest_framework.authtoken.models import Token
 from app.content.models.user import User
 from app.badge.models.user_badge import UserBadge
 import numpy as np
+from scipy import stats
+import traceback
 
 
 # Create your views here.
@@ -30,20 +32,14 @@ def calculate_statistics(user, year):
     try:
         calculate_distributions(year)
         events_count = Registration.objects.filter(
-            user=user, created_at__year=year
+            user=user, event__start_date__year=year, has_attended=True
         ).count()
         print(events_count)
 
-        fines_count = Fine.objects.filter(
-            user=user, created_at__year=year
-        ).count()
+        fines_count = Fine.objects.filter(user=user, created_at__year=year).count()
 
-        badges_count = UserBadge.objects.filter(user=user).count()
-    except Exception as e:
-        print(f"An error ocurred: {e}")
-        return None
+        badges_count = UserBadge.objects.filter(user=user, created_at__year=year).count()
 
-    try:
         events_dist = (
             DataDistributions.objects.filter(year=year)
             .values_list("events_distribution", flat=True)
@@ -59,20 +55,46 @@ def calculate_statistics(user, year):
             .values_list("badges_distribution", flat=True)
             .first()
         )
+    except e:
+        print("An exception occured: {e}")
+        raise Exception(e)
+
+    statistics = None
+
+    try:
+        statistics = {
+            "events_attended": events_count,
+            "badges_unlocked": badges_count,
+            "fines_received": fines_count,
+            "events_percentile": None
+            if events_dist["std_dev"] == 0
+            else round(
+                stats.norm.cdf(
+                    events_count, events_dist["mean"], events_dist["std_dev"]
+                ),
+                2,
+            ),
+            "badges_percentile": None
+            if badges_dist["std_dev"] == 0
+            else round(
+                stats.norm.cdf(
+                    badges_count, badges_dist["mean"], badges_dist["std_dev"]
+                ),
+                2,
+            ),
+            "fines_percentile": None
+            if fines_dist["std_dev"] == 0
+            else round(
+                stats.norm.cdf(fines_count, fines_dist["mean"], fines_dist["std_dev"]),
+                2,
+            ),
+        }
     except Exception as e:
-        print(f"An error ocurred: {e}")
+        traceback.print_exception(e)
+        raise Exception(e)
         return None
 
-    print("Events distribution ", events_dist)
-
-    return {
-        "events_attended": events_count,
-        "badges_unlocked": fines_count,
-        "fines_received": badges_count,
-        "events_percentile": 0,
-        "badges_percentile": 0,
-        "fines_percentile": 0,
-    }
+    return statistics
 
 
 """
@@ -143,13 +165,25 @@ def mean_events(year, user_count):
         )
     ).values("user_id", "number_of_events")
 
+    """
+    total_events_attended = (
+        User.objects.all()
+        .filter(
+            Q(registrations__event__start_date__year=year)
+            & Q(registrations__has_attended=True)
+        )
+        .count()
+    )"""
+
+    print(result)
+    if user_count == 0:
+        return 0
+
+    # return total_events_attended / user_count
     total_events = 0
     for entry in result:
         number_of_events = entry["number_of_events"]
         total_events += number_of_events
-
-    if user_count == 0:
-        return 0
 
     return {"distributions": result, "mean_value": total_events / user_count}
 
