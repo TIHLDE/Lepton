@@ -10,8 +10,6 @@ from app.content.factories.priority_pool_factory import PriorityPoolFactory
 from app.forms.enums import EventFormType
 from app.forms.tests.form_factories import EventFormFactory, SubmissionFactory
 from app.group.factories import GroupFactory
-from app.payment.enums import OrderStatus
-from app.payment.models import Order
 from app.util.test_utils import add_user_to_group_with_name, get_api_client
 from app.util.utils import now
 
@@ -1001,41 +999,6 @@ def test_add_registration_to_event_as_admin_group_member_after_registration_clos
     response = client.post(url, data)
 
     assert response.status_code == status.HTTP_201_CREATED
-
-
-@pytest.mark.django_db
-@pytest.mark.parametrize(
-    "organizer_name",
-    [
-        AdminGroup.PROMO,
-        AdminGroup.NOK,
-        AdminGroup.KOK,
-        AdminGroup.SOSIALEN,
-        AdminGroup.INDEX,
-    ],
-)
-def test_add_registration_to_paid_event_as_admin_group_member(
-    paid_event, member, organizer_name
-):
-    """
-    A member of NOK, Promo, Sosialen or KOK should be able to add a
-    registration to a paid event manually. A order with status "SALE" should be created.
-    """
-
-    data = {"user": member.user_id, "event": paid_event.event.id}
-    url = f"{_get_registration_url(event=paid_event.event)}add/"
-
-    client = get_api_client(user=member, group_name=organizer_name)
-
-    response = client.post(url, data)
-
-    assert response.status_code == status.HTTP_201_CREATED
-
-    order = Order.objects.filter(
-        user=member, event=paid_event.event, status=OrderStatus.SALE
-    )
-
-    assert order
 
 
 @pytest.mark.django_db

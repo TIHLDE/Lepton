@@ -32,6 +32,7 @@ from app.forms.tests.form_factories import FormFactory, SubmissionFactory
 from app.group.factories import GroupFactory, MembershipFactory
 from app.group.factories.fine_factory import FineFactory
 from app.group.factories.membership_factory import MembershipHistoryFactory
+from app.payment.factories.order_factory import OrderFactory
 from app.payment.factories.paid_event_factory import PaidEventFactory
 from app.util.test_utils import add_user_to_group_with_name, get_api_client
 
@@ -140,6 +141,11 @@ def paid_event():
 @pytest.fixture()
 def group():
     return GroupFactory()
+
+
+@pytest.fixture()
+def order():
+    return OrderFactory()
 
 
 @pytest.fixture()

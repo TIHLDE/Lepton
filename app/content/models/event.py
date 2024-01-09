@@ -109,6 +109,11 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
         return self.get_participants().count()
 
     @property
+    def has_participants(self):
+        """Returns if the event has users registered to attend the event"""
+        return self.list_count > 0
+
+    @property
     def waiting_list_count(self):
         """Number of users on the waiting list"""
         return self.get_waiting_list().count()
