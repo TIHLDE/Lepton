@@ -861,13 +861,17 @@ def test_expired_filter_list(api_client, admin_user, expired, expected_count):
 
 
 @pytest.mark.django_db
-def test_jubkom_has_create_permission(api_client, jubkom_member):
+def test_jubkom_has_not_create_permission(api_client, jubkom_member):
+    """
+    A jubkom member should not be able to create an event.
+    """
+
     client = api_client(user=jubkom_member)
     organizer = Group.objects.get(name=Groups.JUBKOM).slug
     data = get_event_data(organizer=organizer)
     response = client.post(API_EVENTS_BASE_URL, data)
 
-    assert response.status_code == status.HTTP_201_CREATED
+    assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
 @pytest.mark.django_db
