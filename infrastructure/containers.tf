@@ -23,6 +23,10 @@ resource "azurerm_container_app" "lepton-api" {
   resource_group_name          = azurerm_resource_group.lepton.name
   revision_mode                = "Single"
 
+  lifecycle {
+    ignore_changes = [ ingress ] // Required to not delete the manually created custom domain since it is not possible to create a managed certificate for a custom domain with terraform
+  }
+  
   secret {
     name  = "reg-passwd"
     value = azurerm_container_registry.lepton.admin_password
@@ -139,6 +143,7 @@ resource "azurerm_container_app" "lepton-api" {
       }
     }
   }
+  
 
   ingress {
     target_port                = 8000
