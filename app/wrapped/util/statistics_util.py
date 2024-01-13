@@ -13,17 +13,8 @@ from scipy import stats
 import traceback
 
 
-# Create your views here.
-def get_statistics_for_user(user_id, year):
-    statistics = None
-
-    statistics = calculate_statistics(user_id, year)
-
-    return statistics
-
-
 """
-    Calculates the statistics for a single user. This method references the DataDistributions
+    Calculates the statistics for a single user. This function references the DataDistributions
     model.
 """
 
@@ -34,22 +25,25 @@ def calculate_statistics(user, year):
         events_count = Registration.objects.filter(
             user=user, event__start_date__year=year, has_attended=True
         ).count()
-        print(events_count)
 
         fines_count = Fine.objects.filter(user=user, created_at__year=year).count()
 
-        badges_count = UserBadge.objects.filter(user=user, created_at__year=year).count()
+        badges_count = UserBadge.objects.filter(
+            user=user, created_at__year=year
+        ).count()
 
         events_dist = (
             DataDistributions.objects.filter(year=year)
             .values_list("events_distribution", flat=True)
             .first()
         )
+
         fines_dist = (
             DataDistributions.objects.filter(year=year)
             .values_list("fines_distribution", flat=True)
             .first()
         )
+
         badges_dist = (
             DataDistributions.objects.filter(year=year)
             .values_list("badges_distribution", flat=True)
@@ -92,7 +86,6 @@ def calculate_statistics(user, year):
     except Exception as e:
         traceback.print_exception(e)
         raise Exception(e)
-        return None
 
     return statistics
 
@@ -114,6 +107,7 @@ def calculate_distributions(year):
     print("Mean number of fines this year per user: ", mean_fines_no["mean_value"])
     mean_badges_no = mean_badges(year, user_count)
     print("Mean number of badges this year per user: ", mean_badges_no["mean_value"])
+    print(mean_fines_no["distributions"])
 
     event_dev = std_dev(
         [dist["number_of_events"] for dist in mean_event_no["distributions"]]
@@ -144,10 +138,21 @@ def calculate_distributions(year):
     )
 
 
+"""
+    Calculates the standard deviation for a given series of numbers.
+"""
+
+
 def std_dev(values):
     # Use numpy to calculate std devitation
     std_dev = np.std(values, ddof=1)
     return std_dev
+
+
+"""
+    Calculates the mean amount of events for all users, and returns the data points as well as the mean
+    value in a dictionary
+"""
 
 
 def mean_events(year, user_count):
@@ -165,17 +170,6 @@ def mean_events(year, user_count):
         )
     ).values("user_id", "number_of_events")
 
-    """
-    total_events_attended = (
-        User.objects.all()
-        .filter(
-            Q(registrations__event__start_date__year=year)
-            & Q(registrations__has_attended=True)
-        )
-        .count()
-    )"""
-
-    print(result)
     if user_count == 0:
         return 0
 
@@ -210,13 +204,13 @@ def mean_fines(year, user_count):
     return {"distributions": result, "mean_value": total_fines / user_count}
 
 
+"""
+    Calculates the mean amount of badges for all users, and returns the data points as well as the mean
+    value in a dictionary
+"""
+
+
 def mean_badges(year, user_count):
-    """valid_badges = UserBadge.objects.filter(created_at__year=year).count()
-
-    if user_count == 0:
-        return 0
-    return valid_badges / user_count"""
-
     result = User.objects.annotate(
         number_of_badges=Sum(
             Case(

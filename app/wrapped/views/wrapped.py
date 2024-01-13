@@ -1,4 +1,4 @@
-from app.common.viewsets import BaseViewSet
+from app.common.viewsets import viewsets
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 from rest_framework.views import APIView
@@ -11,7 +11,7 @@ from app.common.permissions import BasicViewPermission
 from app.wrapped.util.statistics_util import calculate_statistics
 
 
-class WrappedStatsView(BaseViewSet):
+class WrappedStatsView(view):
     serializer_class = StatisticsSerializer
     permission_classes = [BasicViewPermission]
 
