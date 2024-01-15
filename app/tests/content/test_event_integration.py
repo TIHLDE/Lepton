@@ -50,6 +50,33 @@ def get_event_data(
     return data
 
 
+def get_paid_event_data(
+    price,
+    paytime,
+    title="New Title",
+    location="New Location",
+    organizer=None,
+    contact_person=None,
+    limit=0,
+):
+    start_date = timezone.now() + timedelta(days=10)
+    end_date = timezone.now() + timedelta(days=11)
+    data = {
+        "title": title,
+        "location": location,
+        "start_date": start_date,
+        "end_date": end_date,
+        "is_paid_event": True,
+        "paid_information": {"price": price, "paytime": paytime},
+        "limit": limit,
+    }
+    if organizer:
+        data["organizer"] = organizer
+    if contact_person:
+        data["contact_person"] = contact_person
+    return data
+
+
 # "event_current_organizer"/"event_new_organizer" should have one of 3 different values:
 # - None -> The event has no connected organizer/should remove connection to organizer
 # - "same" -> The event is connected to/should be connected to same organizer as user is member of
@@ -834,10 +861,114 @@ def test_expired_filter_list(api_client, admin_user, expired, expected_count):
 
 
 @pytest.mark.django_db
-def test_jubkom_has_create_permission(api_client, jubkom_member):
+def test_jubkom_has_not_create_permission(api_client, jubkom_member):
+    """
+    A jubkom member should not be able to create an event.
+    """
+
     client = api_client(user=jubkom_member)
     organizer = Group.objects.get(name=Groups.JUBKOM).slug
     data = get_event_data(organizer=organizer)
     response = client.post(API_EVENTS_BASE_URL, data)
 
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+@pytest.mark.django_db
+def test_update_from_free_event_with_participants_to_paid_event(
+    api_client, admin_user, event, registration
+):
+    """
+    An admin should not be able to update a free event with participants to a paid event.
+    """
+
+    registration.event = event
+    registration.is_on_wait = False
+    registration.save()
+
+    url = f"{API_EVENTS_BASE_URL}{event.id}/"
+    client = api_client(user=admin_user)
+    data = get_paid_event_data(price=200, paytime="01:00", limit=1)
+
+    response = client.put(url, data)
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
+@pytest.mark.django_db
+def test_update_from_paid_event_with_participants_to_free_event(
+    api_client, admin_user, event, paid_event, registration
+):
+    """
+    An admin should not be able to update a paid event with participants to a free event.
+    """
+    paid_event.event = event
+    paid_event.save()
+
+    registration.event = event
+    registration.is_on_wait = False
+    registration.save()
+
+    url = f"{API_EVENTS_BASE_URL}{event.id}/"
+    client = api_client(user=admin_user)
+    data = get_event_data(limit=1)
+
+    response = client.put(url, data)
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
+@pytest.mark.django_db
+def test_update_from_paid_event_to_free_event(
+    api_client, admin_user, event, paid_event
+):
+    """
+    An admin should be able to update a paid event with no participants to a free event.
+    """
+    paid_event.event = event
+    paid_event.save()
+
+    url = f"{API_EVENTS_BASE_URL}{event.id}/"
+    client = api_client(user=admin_user)
+    data = get_event_data(limit=0)
+
+    response = client.put(url, data)
+
+    assert response.status_code == status.HTTP_200_OK
+
+
+@pytest.mark.django_db
+def test_update_from_free_event_to_paid_event(api_client, admin_user, event):
+    """
+    An admin should be able to update a free event with no participants to a paid event.
+    """
+    url = f"{API_EVENTS_BASE_URL}{event.id}/"
+    client = api_client(user=admin_user)
+    data = get_paid_event_data(price=200, paytime="01:00", limit=1)
+
+    response = client.put(url, data)
+
+    data = response.json()
+
+    assert response.status_code == status.HTTP_200_OK
+    assert data["is_paid_event"]
+    assert data["paid_information"]["price"] == "200.00"
+    assert data["paid_information"]["paytime"] == "01:00:00"
+
+
+@pytest.mark.django_db
+def test_create_paid_event(api_client, admin_user):
+    """
+    An admin should be able to create a paid event.
+    """
+    client = api_client(user=admin_user)
+    data = get_paid_event_data(price=200, paytime="01:00", limit=1)
+
+    response = client.post(API_EVENTS_BASE_URL, data)
+
+    data = response.json()
+
     assert response.status_code == status.HTTP_201_CREATED
+    assert data["is_paid_event"]
+    assert data["paid_information"]["price"] == "200.00"
+    assert data["paid_information"]["paytime"] == "01:00:00"

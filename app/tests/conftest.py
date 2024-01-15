@@ -24,10 +24,15 @@ from app.content.factories import (
     UserFactory,
 )
 from app.content.factories.toddel_factory import ToddelFactory
+from app.emoji.factories.reaction_factory import (
+    EventReactionFactory,
+    NewsReactionFactory,
+)
 from app.forms.tests.form_factories import FormFactory, SubmissionFactory
 from app.group.factories import GroupFactory, MembershipFactory
 from app.group.factories.fine_factory import FineFactory
 from app.group.factories.membership_factory import MembershipHistoryFactory
+from app.payment.factories.order_factory import OrderFactory
 from app.payment.factories.paid_event_factory import PaidEventFactory
 from app.util.test_utils import add_user_to_group_with_name, get_api_client
 
@@ -139,6 +144,11 @@ def group():
 
 
 @pytest.fixture()
+def order():
+    return OrderFactory()
+
+
+@pytest.fixture()
 def membership():
     return MembershipFactory(membership_type=MembershipType.MEMBER)
 
@@ -231,6 +241,16 @@ def banner():
 @pytest.fixture()
 def toddel():
     return ToddelFactory()
+
+
+@pytest.fixture()
+def news_reaction(member, news):
+    return NewsReactionFactory(user=member, content_object=news)
+
+
+@pytest.fixture()
+def event_reaction(member, event):
+    return EventReactionFactory(user=member, content_object=event)
 
 
 @pytest.fixture()

@@ -8,7 +8,6 @@ from app.content.models.event import Event
 from app.content.models.user import User
 from app.payment.enums import OrderStatus
 from app.util.models import BaseModel
-from app.util.utils import now
 
 
 class Order(BaseModel, BasePermissionModel):
@@ -25,16 +24,11 @@ class Order(BaseModel, BasePermissionModel):
     status = models.CharField(
         choices=OrderStatus.choices, default=OrderStatus.INITIATE, max_length=16
     )
-    expire_date = models.DateTimeField()
     payment_link = models.URLField(max_length=2000)
 
     class Meta:
         verbose_name_plural = "Orders"
         ordering = ("-created_at",)
 
-        def __str__(self):
-            return f"{self.order_id} {self.user} {self.event} {self.status} {self.expire_date}"
-
-    @property
-    def expired(self):
-        return now() >= self.expire_date
+    def __str__(self):
+        return f"{self.user} - {self.event.title} - {self.status} - {self.created_at}"
