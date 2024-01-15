@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+## Versjon 2024.01.15
 
 ## Versjon 2023.01.15
 - ✨ **Reaksjoner** Brukere kan reagere med emojier på arrangementer og nyheter.
