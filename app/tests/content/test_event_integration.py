@@ -198,12 +198,6 @@ def permission_test_util(
 
 @pytest.mark.django_db
 def test_list_as_anonymous_user(default_client, event):
-<<<<<<< HEAD
-    """An anonymous user should be able to list all events. Activities should included."""
-
-    category = Category.objects.create(text="Aktivitet")
-    EventFactory(category=category)
-=======
     """An anonymous user should be able to list all events that are not activities."""
 
     category = Category.objects.create(text="Aktivitet")
@@ -211,32 +205,12 @@ def test_list_as_anonymous_user(default_client, event):
 
     activity.category = category
     activity.save()
->>>>>>> 651627dbfc9730141c95c3be6a6a3060318ece36
 
     event.category = None
     event.save()
 
     response = default_client.get(API_EVENTS_BASE_URL)
     assert response.status_code == 200
-<<<<<<< HEAD
-    assert response.json().get("count") == 2
-
-
-@pytest.mark.django_db
-def test_list_events_as_anonymous_user(default_client, event):
-    """An anonymous user should be able to list all events. Activities should not be included."""
-
-    category = Category.objects.create(text="Aktivitet")
-    EventFactory(category=category)
-
-    event.category = None
-    event.save()
-
-    response = default_client.get(f"{API_EVENTS_BASE_URL}?activity=false")
-
-    assert response.status_code == 200
-=======
->>>>>>> 651627dbfc9730141c95c3be6a6a3060318ece36
     assert response.json().get("count") == 1
 
 
@@ -245,14 +219,10 @@ def test_list_activities_as_anonymous_user(default_client, event):
     """An anonymous user should be able to list all activities."""
 
     category = Category.objects.create(text="Aktivitet")
-<<<<<<< HEAD
-    EventFactory(category=category)
-=======
     activity = EventFactory(category=category)
 
     activity.category = category
     activity.save()
->>>>>>> 651627dbfc9730141c95c3be6a6a3060318ece36
 
     event.category = None
     event.save()
@@ -261,7 +231,6 @@ def test_list_activities_as_anonymous_user(default_client, event):
 
     assert response.status_code == 200
     assert response.json().get("count") == 1
-<<<<<<< HEAD
 
 
 @pytest.mark.django_db
@@ -296,8 +265,6 @@ def test_list_expired_activities_as_anonymous_user(default_client, event):
 
     assert response.status_code == 200
     assert response.json().get("count") == 1
-=======
->>>>>>> 651627dbfc9730141c95c3be6a6a3060318ece36
 
 
 @pytest.mark.django_db
