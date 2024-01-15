@@ -3,7 +3,7 @@ from django.db.models import TextChoices
 
 class OrderStatus(TextChoices):
     INITIATE = "INITIATE"
-    RESERVE = "RESERVE"
+    RESERVED = "RESERVED"
     CAPTURE = "CAPTURE"
     REFUND = "REFUND"
     CANCEL = "CANCEL"
