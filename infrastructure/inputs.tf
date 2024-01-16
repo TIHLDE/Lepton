@@ -21,6 +21,20 @@ variable "vipps_fallback_url" {
   type = string
 }
 
+variable "vipps_force_payment_url" {
+  type      = string
+  sensitive = true
+}
+variable "vipps_order_url" {
+  type      = string
+  sensitive = true
+}
+
+variable "vipps_token_url" {
+  type      = string
+  sensitive = true
+}
+
 variable "centry_dsn" {
   type      = string
   sensitive = true

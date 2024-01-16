@@ -15,6 +15,8 @@ resource "azurerm_container_app_environment" "lepton" {
   log_analytics_workspace_id = azurerm_log_analytics_workspace.lepton.id
 
   infrastructure_subnet_id = azurerm_subnet.containers.id
+
+  tags = local.common_tags
 }
 
 resource "azurerm_container_app" "lepton-api" {
@@ -103,7 +105,7 @@ resource "azurerm_container_app" "lepton-api" {
       }
       env {
         name  = "VIPPS_TOKEN_URL"
-        value = "https://api.vipps.no/accessToken/get"
+        value = var.vipps_token_url
       }
       env {
         name  = "VIPPS_SUBSCRIPTION_KEY"
@@ -131,7 +133,7 @@ resource "azurerm_container_app" "lepton-api" {
       }
       env {
         name  = "VIPPS_FORCE_PAYMENT_URL"
-        value = "https://api.vipps.no/ecomm/v2/integration-test/payments/"
+        value = var.vipps_force_payment_url
       }
       env {
         name  = "VIPPS_MERCHANT_SERIAL_NUMBER"
@@ -139,7 +141,7 @@ resource "azurerm_container_app" "lepton-api" {
       }
       env {
         name  = "VIPPS_ORDER_URL"
-        value = "https://api.vipps.no/ecomm/v2/payments/"
+        value = var.vipps_order_url
       }
     }
   }
@@ -272,7 +274,7 @@ resource "azurerm_container_app" "celery" {
       }
       env {
         name  = "VIPPS_TOKEN_URL"
-        value = "https://api.vipps.no/accessToken/get"
+        value = var.vipps_token_url
       }
       env {
         name  = "VIPPS_SUBSCRIPTION_KEY"
@@ -300,7 +302,7 @@ resource "azurerm_container_app" "celery" {
       }
       env {
         name  = "VIPPS_FORCE_PAYMENT_URL"
-        value = "https://api.vipps.no/ecomm/v2/integration-test/payments/"
+        value = var.vipps_force_payment_url
       }
       env {
         name  = "VIPPS_MERCHANT_SERIAL_NUMBER"
@@ -308,7 +310,7 @@ resource "azurerm_container_app" "celery" {
       }
       env {
         name  = "VIPPS_ORDER_URL"
-        value = "https://api.vipps.no/ecomm/v2/payments/"
+        value = var.vipps_order_url
       }
     }
   }
