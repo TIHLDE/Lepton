@@ -81,7 +81,7 @@ class EventViewSet(BaseViewSet, ActionMixin):
                     .filter(~Q(category=category))
                     .order_by("-start_date")
                 )
-            return self.queryset.filter(~Q(category=category))
+            return self.queryset.filter(end_date__gte=time).filter(~Q(category=category))
 
         return self.queryset.filter(end_date__gte=time)
 
