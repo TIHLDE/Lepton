@@ -1,5 +1,7 @@
-from rest_framework import status
+from rest_framework import status, filters
 from rest_framework.response import Response
+
+from django_filters.rest_framework import DjangoFilterBackend
 
 from sentry_sdk import capture_exception
 
@@ -23,13 +25,22 @@ class OrderViewSet(BaseViewSet, ActionMixin):
     pagination_class = BasePagination
     queryset = Order.objects.all()
 
-    def list(self, request, *args, **kwargs):
-        if is_admin_user(request):
-            return super().list(request, *args, **kwargs)
-        return Response(
-            {"detail": "Du har ikke tilgang til å se disse ordrene."},
-            status=status.HTTP_403_FORBIDDEN,
-        )
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    search_fields = [
+        "order_id",
+        "event__title",
+        "user__first_name",
+        "user__last_name",
+        "user__user_id"
+    ]
+
+    # def list(self, request, *args, **kwargs):
+    #     if is_admin_user(request):
+    #         return super().list(request, *args, **kwargs)
+    #     return Response(
+    #         {"detail": "Du har ikke tilgang til å se disse ordrene."},
+    #         status=status.HTTP_403_FORBIDDEN,
+    #     )
 
     def retrieve(self, request, pk):
         try:
