@@ -16,6 +16,7 @@ from app.payment.serializers import (
     OrderSerializer,
     OrderListSerializer
 )
+from app.payment.filters.order import OrderFilter
 from app.payment.util.order_utils import is_expired
 
 
@@ -26,6 +27,7 @@ class OrderViewSet(BaseViewSet, ActionMixin):
     queryset = Order.objects.all()
 
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filterset_class = OrderFilter
     search_fields = [
         "order_id",
         "event__title",
