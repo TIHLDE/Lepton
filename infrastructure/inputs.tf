@@ -69,3 +69,7 @@ variable "enviroment" {
   description = "value is either dev or pro"
   default     = "dev"
 }
+
+variable "debug" {
+  default = "false"
+}

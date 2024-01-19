@@ -47,8 +47,8 @@ resource "azurerm_container_app" "lepton-api" {
     container {
       name   = "lepton-api"
       image  = "${azurerm_container_registry.lepton.login_server}/lepton:latest"
-      cpu    = 0.5
-      memory = "1Gi"
+      cpu    = 1.0
+      memory = "2Gi"
 
       env {
         name  = "DATABASE_HOST"
@@ -142,6 +142,10 @@ resource "azurerm_container_app" "lepton-api" {
       env {
         name  = "VIPPS_ORDER_URL"
         value = var.vipps_order_url
+      }
+      env {
+        name = "PROD"
+        value = var.debug
       }
     }
   }

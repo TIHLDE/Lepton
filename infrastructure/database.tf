@@ -7,7 +7,7 @@ resource "azurerm_mysql_flexible_server" "lepton-database-server" {
   delegated_subnet_id          = azurerm_subnet.database.id
   private_dns_zone_id          = azurerm_private_dns_zone.lepton.id
   backup_retention_days        = 7
-  sku_name                     = "B_Standard_B1s"
+  sku_name                     = local.database_sku[terraform.workspace]
   geo_redundant_backup_enabled = false
   version                      = "8.0.21"
   zone                         = "1"
@@ -42,4 +42,11 @@ resource "azurerm_mysql_flexible_database" "lepton-database" {
   server_name         = azurerm_mysql_flexible_server.lepton-database-server.name
   charset             = "utf8mb4"
   collation           = "utf8mb4_0900_ai_ci"
+}
+
+locals {
+  database_sku = {
+    dev = "B_Standard_B1s"
+    pro = "B_Standard_B2s"
+  }
 }
