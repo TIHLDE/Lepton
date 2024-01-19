@@ -81,9 +81,7 @@ class EventViewSet(BaseViewSet, ActionMixin):
                     .filter(~Q(category=category))
                     .order_by("-start_date")
                 )
-            return self.queryset.filter(end_date__gte=time).filter(
-                ~Q(category=category)
-            )
+            return self.queryset.filter(end_date__gte=time).filter(~Q(category=category))
 
         return self.queryset.filter(end_date__gte=time)
 
@@ -164,6 +162,7 @@ class EventViewSet(BaseViewSet, ActionMixin):
     def destroy(self, request, *args, **kwargs):
         event = Event.objects.get(pk=kwargs["pk"])
         if event.is_paid_event:
+            # TODO: Add refund for all paid orders by participants
             paid_event = PaidEvent.objects.get(event=kwargs["pk"])
             paid_event.delete()
 
