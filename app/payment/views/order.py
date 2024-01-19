@@ -4,15 +4,15 @@ from rest_framework.response import Response
 from sentry_sdk import capture_exception
 
 from app.common.mixins import ActionMixin
+from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission, is_admin_user
 from app.common.viewsets import BaseViewSet
 from app.content.models import Registration, User
 from app.payment.models import Order
-from app.common.pagination import BasePagination
 from app.payment.serializers import (
-    OrderCreateSerializer, 
+    OrderCreateSerializer,
+    OrderListSerializer,
     OrderSerializer,
-    OrderListSerializer
 )
 from app.payment.util.order_utils import is_expired
 
@@ -80,7 +80,7 @@ class OrderViewSet(BaseViewSet, ActionMixin):
                 {"detail": "Fant ikke bruker."},
                 status=status.HTTP_404_NOT_FOUND,
             )
-    
+
     def destroy(self, request, *args, **kwargs):
         if is_admin_user(request):
             return super().destroy(request, *args, **kwargs)
