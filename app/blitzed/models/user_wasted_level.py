@@ -13,8 +13,8 @@ class UserWastedLevel(BaseModel, BasePermissionModel):
     blood_alcohol_level = models.DecimalField(max_digits=5, decimal_places=2)
     timestamp = models.DateTimeField(auto_now=True)
 
-    write_access = [Groups.TIHLDE]
-    read_access = [Groups.TIHLDE]
-
     def __str__(self):
         return f"WastedLevel - User: {self.user}, Session: {self.session}, Level: {self.blood_alcohol_level}"
+
+    class Meta:
+        verbose_name_plural = "User Wasted Levels"

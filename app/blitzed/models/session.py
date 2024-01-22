@@ -12,8 +12,8 @@ class Session(BaseModel, BasePermissionModel):
     start_time = models.DateTimeField(auto_now_add=True)
     end_time = models.DateTimeField(null=True, blank=True)
 
-    write_access = [Groups.TIHLDE]
-    read_access = [Groups.TIHLDE]
-
     def __str__(self):
         return f"Session {self.session_id}"
+
+    class Meta:
+        verbose_name_plural = "Sessions"
