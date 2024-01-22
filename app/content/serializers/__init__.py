@@ -6,7 +6,8 @@ from app.content.serializers.comment import (CommentCreateSerializer,
 from app.content.serializers.event import (EventCreateAndUpdateSerializer,
                                            EventListSerializer,
                                            EventSerializer,
-                                           EventStatisticsSerializer)
+                                           EventStatisticsSerializer,
+                                           PublicEventSerializer)
 from app.content.serializers.news import NewsSerializer, SimpleNewsSerializer
 from app.content.serializers.page import (PageListSerializer, PageSerializer,
                                           PageTreeSerializer)

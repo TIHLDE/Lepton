@@ -27,6 +27,7 @@ from app.content.serializers import (
     EventSerializer,
     EventStatisticsSerializer,
     PublicRegistrationSerializer,
+    PublicEventSerializer
 )
 from app.group.models.group import Group
 from app.payment.models.paid_event import PaidEvent
@@ -35,7 +36,7 @@ from app.util.utils import midday, now, yesterday
 
 class EventViewSet(BaseViewSet, ActionMixin):
     serializer_class = EventSerializer
-    permission_classes = [BasicViewPermission]
+    permission_classes = []
     queryset = Event.objects.select_related("organizer")
     pagination_class = BasePagination
 
@@ -74,6 +75,13 @@ class EventViewSet(BaseViewSet, ActionMixin):
         """Return detailed information about the event with the specified pk."""
         try:
             event = self.get_object()
+            user = request.user
+            if not user:
+                serializer = PublicEventSerializer(
+                event, context={"request": request}, many=False  
+                )
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            
             serializer = EventSerializer(
                 event, context={"request": request}, many=False
             )

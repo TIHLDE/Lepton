@@ -13,6 +13,10 @@ class CommentSerializer(serializers.ModelSerializer):
         model = Comment
         fields = ("id", "body", "created_at", "updated_at", "author", "parent")
 
+class ChildCommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ("id", "body",  "created_at", "updated_at", "author", "children")
 
 class CommentCreateSerializer(serializers.ModelSerializer):
     content_type = serializers.CharField(max_length=25)

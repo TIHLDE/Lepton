@@ -681,3 +681,25 @@ def test_jubkom_has_create_permission(api_client, jubkom_member):
     response = client.post(API_EVENTS_BASE_URL, data)
 
     assert response.status_code == status.HTTP_201_CREATED
+
+@pytest.mark.django_db
+def test_get_public_event_info_as_anonymous_user(default_client, event):
+    '''This should return an event without comments'''
+    response = default_client.get(f"{API_EVENTS_BASE_URL}{event.id}/")
+    assert response.status_code == status.HTTP_200_OK
+    data = response.data
+    assert not 'comments' in data
+
+@pytest.mark.django_db
+def test_get_public_event_info_as_member(api_client, event, member):
+    '''This should return an event with comments'''
+    client = api_client(user=member)
+    response = client.get(f"{API_EVENTS_BASE_URL}{event.id}/")
+    assert response.status_code == status.HTTP_200_OK
+    data = response.data
+    print(data)
+    assert 'comments' in data 
+
+
+    
+

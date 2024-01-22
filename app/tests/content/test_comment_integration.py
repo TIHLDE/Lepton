@@ -108,3 +108,4 @@ def test_destroy_comment_as_admin(admin_user, comment):
     response = client.delete(f"{API_COMMENTS_BASE_URL}{comment.id}/")
 
     assert response.status_code == status.HTTP_200_OK
+

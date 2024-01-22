@@ -6,7 +6,7 @@ from sentry_sdk import capture_exception
 from app.common.enums import GroupType
 from app.common.serializers import BaseModelSerializer
 from app.content.models import Event, PriorityPool
-from app.content.serializers.comment import CommentSerializer
+from app.content.serializers.comment import ChildCommentSerializer, CommentSerializer
 from app.content.serializers.priority_pool import (
     PriorityPoolCreateSerializer,
     PriorityPoolSerializer,
@@ -29,7 +29,7 @@ class EventSerializer(serializers.ModelSerializer):
         required=False, allow_null=True
     )
     contact_person = DefaultUserSerializer(read_only=True, required=False)
-    comments = CommentSerializer(many=True, required=False)
+    comments = serializers.SerializerMethodField()
 
     class Meta:
         model = Event
@@ -65,6 +65,90 @@ class EventSerializer(serializers.ModelSerializer):
             "is_paid_event",
             "contact_person",
             "comments",
+        )
+
+    def get_comments(self, obj):
+        comments = obj.comments.filter(parent=None)
+        return ChildCommentSerializer(comments, many=True).data
+
+
+    def get_paid_information(self, obj):
+        if not obj.is_paid_event:
+            return None
+
+        paid_event = PaidEvent.objects.get(event=obj)
+        if paid_event:
+            return PaidEventCreateSerializer(paid_event).data
+        return None
+
+    def validate_limit(self, limit):
+        """
+        Validate that the event limit is greater or equal to 0 and
+        that the limit can not be lower than the number of registered users.
+        If the limit is already 0, then do not let that effect updating other fields
+        """
+        try:
+            if limit < 0:
+                raise serializers.ValidationError(
+                    "Event limit can not a negative integer"
+                )
+            elif (
+                limit < self.instance.registered_users_list.all().count()
+                and self.instance.limit != 0
+            ):
+                raise serializers.ValidationError(
+                    "Event limit can not be lower than number of registered users."
+                )
+        except AttributeError as attribute_error:
+            capture_exception(attribute_error)
+
+        return limit
+
+class PublicEventSerializer(serializers.ModelSerializer):
+    expired = serializers.BooleanField(read_only=True)
+    priority_pools = PriorityPoolSerializer(many=True, required=False)
+    evaluation = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
+    survey = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
+    organizer = SimpleGroupSerializer(read_only=True)
+    permissions = DRYPermissionsField(actions=["write", "read"], object_only=True)
+    paid_information = serializers.SerializerMethodField(
+        required=False, allow_null=True
+    )
+    contact_person = DefaultUserSerializer(read_only=True, required=False)
+
+    class Meta:
+        model = Event
+        fields = (
+            "id",
+            "title",
+            "start_date",
+            "end_date",
+            "location",
+            "description",
+            "sign_up",
+            "category",
+            "expired",
+            "limit",
+            "closed",
+            "list_count",
+            "waiting_list_count",
+            "organizer",
+            "image",
+            "image_alt",
+            "start_registration_at",
+            "end_registration_at",
+            "sign_off_deadline",
+            "only_allow_prioritized",
+            "evaluation",
+            "survey",
+            "updated_at",
+            "can_cause_strikes",
+            "enforces_previous_strikes",
+            "permissions",
+            "priority_pools",
+            "paid_information",
+            "is_paid_event",
+            "contact_person",
         )
 
     def get_paid_information(self, obj):
