@@ -15,24 +15,38 @@ class SessionAdmin(admin.ModelAdmin):
 
 @admin.register(PongTeam)
 class PongTeamAdmin(admin.ModelAdmin):
-    pass
+    search_fields = [
+        "team_name",
+        "members__first_name",
+        "members__last_name",
+        "anonymous_members__name",
+        "tournament__name",
+        ]
 
 
 @admin.register(PongMatch)
 class PongMatchAdmin(admin.ModelAdmin):
-    pass
+    search_fields = [
+        "team1__team_name",
+        "team2__team_name",
+        "tournament__name",
+        ]
 
 
 @admin.register(PongResult)
 class PongResultAdmin(admin.ModelAdmin):
-    pass
+    search_fields = [
+        "match__team1__team_name",
+        "match__team2__team_name",
+        "match__tournament__name",
+        ]
 
 
 @admin.register(AnonymousUser)
 class AnonymousUserAdmin(admin.ModelAdmin):
-    pass
+    search_fields = ["name"]
 
 
 @admin.register(BeerpongTournament)
 class BeerpongTournamentAdmin(admin.ModelAdmin):
-    pass
+    search_fields = ["name"]
