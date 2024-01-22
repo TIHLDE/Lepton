@@ -3,7 +3,7 @@ from rest_framework.response import Response
 
 from app.blitzed.models.pong_result import PongResult
 from app.blitzed.serializers.pong_result import (
-    PongMatchCreateSerializer,
+    PongResultCreateSerializer,
     PongResultSerializer,
     PongResultUpdateSerializer,
 )
@@ -18,7 +18,7 @@ class PongResultViewset(BaseViewSet):
 
     def create(self, request, *args, **kwargs):
         try:
-            serializer = PongMatchCreateSerializer(
+            serializer = PongResultCreateSerializer(
                 data=request.data, context={"request": request}
             )
             if serializer.is_valid():

@@ -18,7 +18,7 @@ class PongResultSerializer(BaseModelSerializer):
         fields = ("id", "match", "winner", "result")
 
 
-class PongMatchCreateSerializer(serializers.ModelSerializer):
+class PongResultCreateSerializer(serializers.ModelSerializer):
     winner = PongTeamSerializer(required=False)
 
     class Meta:
