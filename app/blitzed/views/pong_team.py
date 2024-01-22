@@ -27,40 +27,28 @@ class PongTeamViewset(BaseViewSet):
         return PongTeam.objects.all()
 
     def create(self, request, *args, **kwargs):
-        try:
-            serializer = PongTeamCreateAndUpdateSerializer(
-                data=request.data, context={"request": request}
-            )
-            if serializer.is_valid():
-                super().perform_create(serializer)
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
+        serializer = PongTeamCreateAndUpdateSerializer(
+            data=request.data, context={"request": request}
+        )
+        if serializer.is_valid():
+            super().perform_create(serializer)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-            return Response(
-                {"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST
-            )
-        except Exception:
-            return Response(
-                {"detail": "Noe gikk galt ved lagring av lag."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        return Response(
+            {"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST
+        )
 
     def update(self, request, *args, **kwargs):
-        try:
-            serializer = PongTeamCreateAndUpdateSerializer(
-                data=request.data, partial=True, context={"request": request}
-            )
-            if serializer.is_valid():
-                super().update(serializer)
-                return Response(serializer.data, status=status.HTTP_200_OK)
+        serializer = PongTeamCreateAndUpdateSerializer(
+            data=request.data, partial=True, context={"request": request}
+        )
+        if serializer.is_valid():
+            super().update(serializer)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
-            return Response(
-                {"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST
-            )
-        except Exception:
-            return Response(
-                {"detail": "Noe gikk galt ved oppdatering."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        return Response(
+            {"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST
+        )
 
     def destroy(self, request, *args, **kwargs):
         team = self.get_object()
