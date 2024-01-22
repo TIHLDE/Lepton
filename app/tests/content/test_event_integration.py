@@ -972,3 +972,25 @@ def test_create_paid_event(api_client, admin_user):
     assert data["is_paid_event"]
     assert data["paid_information"]["price"] == "200.00"
     assert data["paid_information"]["paytime"] == "01:00:00"
+
+@pytest.mark.django_db
+def test_get_public_event_info_as_anonymous_user(default_client, event):
+    '''This should return an event without comments'''
+    response = default_client.get(f"{API_EVENTS_BASE_URL}{event.id}/")
+    assert response.status_code == status.HTTP_200_OK
+    data = response.data
+    assert not 'comments' in data
+
+@pytest.mark.django_db
+def test_get_public_event_info_as_member(api_client, event, member):
+    '''This should return an event with comments'''
+    client = api_client(user=member)
+    response = client.get(f"{API_EVENTS_BASE_URL}{event.id}/")
+    assert response.status_code == status.HTTP_200_OK
+    data = response.data
+    print(data)
+    assert 'comments' in data 
+
+
+    
+

@@ -1,8 +1,10 @@
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
+from django.contrib.contenttypes.fields import GenericRelation
 
 from app.common.enums import AdminGroup, Groups
+from app.content.models.comment import Comment
 from app.common.permissions import BasePermissionModel
 from app.emoji.models.reaction import Reaction
 from app.util.models import BaseModel, OptionalImage
@@ -23,6 +25,9 @@ class News(BaseModel, OptionalImage, BasePermissionModel):
     reactions = GenericRelation(Reaction)
 
     write_access = [*AdminGroup.all(), Groups.FONDET]
+
+    allow_comments = models.BooleanField(default=True)
+    comments = GenericRelation(Comment)
 
     class Meta:
         verbose_name_plural = "News"

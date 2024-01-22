@@ -22,6 +22,7 @@ from app.content.factories import (
     RegistrationFactory,
     ShortLinkFactory,
     UserFactory,
+    CommentFactory
 )
 from app.content.factories.toddel_factory import ToddelFactory
 from app.emoji.factories.reaction_factory import (
@@ -244,6 +245,10 @@ def toddel():
 
 
 @pytest.fixture()
+def comment():
+    return CommentFactory()
+
+
 def news_reaction(member, news):
     return NewsReactionFactory(user=member, content_object=news)
 

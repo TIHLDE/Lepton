@@ -10,6 +10,9 @@ class UserClass(models.IntegerChoices):
     FORTH = 4
     FIFTH = 5
 
+class ContentType(models.TextChoices):
+    EVENT = "event"
+    NEWS = "news"
 
 class CategoryEnum(ChoiceEnum):
     ACTIVITY = "Aktivitet"
