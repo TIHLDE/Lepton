@@ -1,11 +1,12 @@
+from django.db import models
 from app.common.enums import Groups
 from app.common.permissions import BasePermissionModel
 from app.content.models import User
 from app.util.models import BaseModel
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from app.common.permissions import is_admin_user
 
-from django.db import models
 
 class Comment(BaseModel, BasePermissionModel):
     write_access = (Groups.TIHLDE,)
@@ -44,4 +45,6 @@ class Comment(BaseModel, BasePermissionModel):
             return f"Comment by deleted user - Created at {self.created_at}"
         
     def has_object_write_permission(self, request):
-        return
+        if request.method == "DELETE":
+            return(self.has_write_permission(request) and self.author == request.user) or is_admin_user(request)
+        return self.has_write_permission(request) and self.author == request.User

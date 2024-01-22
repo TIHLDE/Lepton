@@ -20,6 +20,7 @@ from app.group.models.group import Group
 from app.group.serializers.group import SimpleGroupSerializer
 from app.payment.models.paid_event import PaidEvent
 from app.payment.serializers.paid_event import PaidEventCreateSerializer
+from app.content.serializers.comment import ChildCommentSerializer
 
 
 class EventSerializer(serializers.ModelSerializer):
@@ -34,6 +35,7 @@ class EventSerializer(serializers.ModelSerializer):
     )
     contact_person = DefaultUserSerializer(read_only=True, required=False)
     reactions = ReactionSerializer(required=False, many=True)
+    comments = serializers.SerializerMethodField()
 
     class Meta:
         model = Event
@@ -70,7 +72,12 @@ class EventSerializer(serializers.ModelSerializer):
             "contact_person",
             "reactions",
             "emojis_allowed",
+            "comments",
         )
+
+    def get_comments(self, obj):
+        comments = obj.comments.filter(parent=None)
+        return ChildCommentSerializer(comments, many=True).data
 
     def get_paid_information(self, obj):
         if not obj.is_paid_event:

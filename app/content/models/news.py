@@ -24,6 +24,9 @@ class News(BaseModel, OptionalImage, BasePermissionModel):
 
     write_access = [*AdminGroup.all(), Groups.FONDET]
 
+    comments_allowed = models.BooleanField(default=False)
+    comments = GenericRelation("Comment")
+
     class Meta:
         verbose_name_plural = "News"
 

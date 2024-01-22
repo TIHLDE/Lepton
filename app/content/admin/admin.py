@@ -250,3 +250,10 @@ class LogEntryAdmin(admin.ModelAdmin):
 
     object_link.admin_order_field = "object_repr"
     object_link.short_description = "object"
+
+@admin.register(models.Comment)
+class CommentAdmin(admin.ModelAdmin):
+    search_fields = [
+        "user__first_name",
+        "user__last_name",
+    ]

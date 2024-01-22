@@ -18,3 +18,8 @@ class CategoryEnum(ChoiceEnum):
     KURS = "Kurs"
     ANNET = "Annet"
     FADDERUKA = "Fadderuka"
+
+
+class ContentType(ChoiceEnum):
+    NEWS = "News"
+    EVENT = "Event"
