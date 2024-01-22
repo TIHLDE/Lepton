@@ -10,7 +10,7 @@ class DrinkingGame(BaseModel, OptionalImage, BasePermissionModel):
     description = models.TextField()
     icon = models.URLField(max_length=600, blank=True, null=True)
 
-    write_access = [*AdminGroup.all()]
+    write_access = AdminGroup.all()
 
     def __str__(self):
         return self.name
