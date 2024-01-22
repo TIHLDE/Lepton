@@ -75,12 +75,12 @@ class EventViewSet(BaseViewSet, ActionMixin):
         """Return detailed information about the event with the specified pk."""
         try:
             event = self.get_object()
-            user = request.user
-            if not user:
-                serializer = PublicEventSerializer(
-                event, context={"request": request}, many=False  
-                )
-                return Response(serializer.data, status=status.HTTP_200_OK)
+            # user = request.user
+            # if not user:
+            #     serializer = PublicEventSerializer(
+            #         event, context={"request": request}, many=False  
+            #     )
+            #     return Response(serializer.data, status=status.HTTP_200_OK)
             
             serializer = EventSerializer(
                 event, context={"request": request}, many=False

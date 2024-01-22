@@ -29,7 +29,7 @@ class EventSerializer(serializers.ModelSerializer):
         required=False, allow_null=True
     )
     contact_person = DefaultUserSerializer(read_only=True, required=False)
-    comments = serializers.SerializerMethodField()
+    # comments = serializers.SerializerMethodField()
 
     class Meta:
         model = Event
@@ -64,12 +64,14 @@ class EventSerializer(serializers.ModelSerializer):
             "paid_information",
             "is_paid_event",
             "contact_person",
-            "comments",
+            # "comments",
         )
 
-    def get_comments(self, obj):
-        comments = obj.comments.filter(parent=None)
-        return ChildCommentSerializer(comments, many=True).data
+    # def get_comments(self, obj):
+    #     comments = obj.comments.filter(parent=None)
+    #     print(comments)
+    #     serializer = ChildCommentSerializer(comments, many=True)
+    #     return ChildCommentSerializer(comments, many=True).data
 
 
     def get_paid_information(self, obj):
