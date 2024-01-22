@@ -186,6 +186,7 @@ def test_create_wasted_level_with_invalid_blood_alcohol_level():
 
 @pytest.mark.django_db
 def test_add_wasted_level_to_session():
+    """A member should be able to add multiple wasted levels to a session"""
     sample_session = SessionFactory()
     user1 = UserFactory()
     add_user_to_group_with_name(user1, Groups.TIHLDE)
@@ -222,6 +223,7 @@ def test_add_wasted_level_to_session():
 
 @pytest.mark.django_db
 def test_create_session_user_and_wasted_level():
+    """A member should be able to create a session with a user and a wasted level"""
     session = SessionFactory()
     user = UserFactory()
     add_user_to_group_with_name(user, Groups.TIHLDE)
@@ -255,6 +257,7 @@ def test_create_session_user_and_wasted_level():
 
 @pytest.mark.django_db
 def test_create_session_users_and_wasted_levels():
+    """A member should be able to create a session with multiple users and wasted levels"""
     session = SessionFactory()
 
     user = UserFactory()
@@ -303,6 +306,7 @@ def test_create_session_users_and_wasted_levels():
 
 @pytest.mark.django_db
 def test_create_session_users_multiple_wasted_levels():
+    """A member should be able to create a session with multiple users and multiple wasted levels"""
     session = SessionFactory()
 
     user = UserFactory()
