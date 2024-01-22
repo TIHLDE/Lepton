@@ -1,49 +1,45 @@
-API_EVENT_BASE_URL = "/events/"
+from django.conf import settings
+
+import pytest
+
+from app.payment.enums import OrderStatus
+from app.payment.factories import OrderFactory
 
 
-def _get_registration_url(event):
-    return f"{API_EVENT_BASE_URL}{event.pk}/registrations/"
-
-
-def _get_registration_post_data(user, event):
+def get_callback_data(order_id, status):
     return {
-        "user_id": user.user_id,
-        "event": event.pk,
+        "merchantSerialNumber": settings.VIPPS_MERCHANT_SERIAL_NUMBER,
+        "orderId": order_id,
+        "transactionInfo": {
+            "amount": 20000,
+            "status": status,
+            "timeStamp": "2018-12-12T11:18:38.246Z",
+            "transactionId": "5001420062",
+        },
     }
 
 
-# these tests can not be tested because of celery
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "status",
+    [
+        OrderStatus.RESERVED,
+        OrderStatus.CAPTURE,
+        OrderStatus.REFUND,
+        OrderStatus.CANCEL,
+        OrderStatus.SALE,
+        OrderStatus.VOID,
+    ],
+)
+def test_update_order_status_by_vipps_callback(default_client, status):
+    """Should update order status."""
 
-# @pytest.mark.django_db
-# def test_if_order_gets_updated_by_vipps_callback(member, paid_event):
-#     """A member should be able to create a registration for themselves."""
-#     data = _get_registration_post_data(member, paid_event)
-#     client = get_api_client(user=member)
+    order = OrderFactory(status=OrderStatus.INITIATE)
+    order_id = order.order_id
 
-#     url = _get_registration_url(event=paid_event.event)
-#     response = client.post(url, data=data)
+    data = get_callback_data(order_id, status)
+    response = default_client.post(f"/v2/payments/{order_id}/", data=data)
+    order.refresh_from_db()
 
-#     assert response.status_code == status.HTTP_201_CREATED
-
-#     order = Order.objects.all()[0]
-#     order_id = order.order_id
-#     order_status = order.status
-#     new_status = vipps_callback({"orderId": order_id})
-
-#     assert order_status == new_status
-
-# @pytest.mark.django_db
-# def test_force_vipps_payment(member, paid_event):
-#     """A member should be able to create a registration for themselves."""
-#     data = _get_registration_post_data(member, paid_event)
-#     client = get_api_client(user=member)
-
-#     url = _get_registration_url(event=paid_event.event)
-#     response = client.post(url, data=data)
-
-#     assert response.status_code == status.HTTP_201_CREATED
-
-#     order = Order.objects.all()[0]
-#     json, status_code = force_payment(order.order_id)
-#     print(status_code)
-#     print(json)
+    assert response.status_code == 200
+    assert order.status == status

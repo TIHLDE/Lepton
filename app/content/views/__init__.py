@@ -12,3 +12,4 @@ from app.content.views.toddel import ToddelViewSet
 from app.content.views.upload import upload
 from app.content.views.user import UserViewSet
 from app.content.views.user_calendar_events import UserCalendarEvents
+from app.content.views.qr_code import QRCodeViewSet

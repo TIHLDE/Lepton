@@ -37,6 +37,12 @@ jobs:
       - name: Checkout Code Repository
         uses: actions/checkout@v2
 
+      - name: Set up .env file
+        run: |  
+          touch .env
+          echo "AZURE_STORAGE_CONNECTION_STRING=${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}" >> .env
+          echo "VIPPS_MERCHANT_SERIAL_NUMBER=${{ secrets.VIPPS_MERCHANT_SERIAL_NUMBER }}" >> .env
+ 
       - name: Build the Stack
         run:  docker-compose build
 

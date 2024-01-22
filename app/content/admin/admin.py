@@ -16,6 +16,7 @@ admin.site.register(models.Cheatsheet)
 admin.site.register(models.Page)
 admin.site.register(models.ShortLink)
 admin.site.register(models.Toddel)
+admin.site.register(models.QRCode)
 
 
 @admin.register(models.Strike)

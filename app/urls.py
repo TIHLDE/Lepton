@@ -31,4 +31,5 @@ urlpatterns = [
     path("forms/", include("app.forms.urls")),
     path("galleries/", include("app.gallery.urls")),
     path("badges/", include("app.badge.urls")),
+    path("emojis/", include("app.emoji.urls")),
 ]

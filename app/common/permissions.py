@@ -140,3 +140,14 @@ def is_admin_user(request):
         return False
 
     return check_has_access(AdminGroup.admin(), request)
+
+
+def is_admin_group_user(request):
+    set_user_id(request)
+    """Checks if user is in HS, Index, Nok, Promo, Sosialen or Kok"""
+    user_id = request.user
+
+    if user_id is None:
+        return False
+
+    return check_has_access(AdminGroup.all(), request)

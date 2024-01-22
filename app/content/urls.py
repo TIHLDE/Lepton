@@ -7,6 +7,23 @@ from app.content.views import (CategoryViewSet, CheatsheetViewSet,
 from django.urls import include, path, re_path
 from rest_framework import routers
 
+from app.content.views import (
+    CategoryViewSet,
+    CheatsheetViewSet,
+    EventViewSet,
+    NewsViewSet,
+    PageViewSet,
+    QRCodeViewSet,
+    RegistrationViewSet,
+    ShortLinkViewSet,
+    StrikeViewSet,
+    ToddelViewSet,
+    UserCalendarEvents,
+    UserViewSet,
+    accept_form,
+    upload,
+)
+
 router = routers.DefaultRouter()
 
 # Register content viewpoints here
@@ -16,6 +33,7 @@ router.register("events", EventViewSet, basename="event")
 router.register("comments", CommentViewSet, basename="comment")
 router.register("categories", CategoryViewSet)
 router.register("short-links", ShortLinkViewSet, basename="short-link")
+router.register("qr-codes", QRCodeViewSet, basename="qr-code")
 router.register("users", UserViewSet, basename="user")
 router.register(
     r"events/(?P<event_id>\d+)/registrations",
