@@ -14,15 +14,26 @@
 
 ## Neste versjon
 
+## Versjon 2023.01.15
+- ✨ **Reaksjoner** Brukere kan reagere med emojier på arrangementer og nyheter.
+- 🎨 **JubKom Rettigheter** Medlemmer av JubKom kan ikke lenger lage arrangementer.
+- 🦟 **KoK Rettigheter** Medlemmer av KoK kan nå lage arrangementer, nyheter og manuelt legge til medlemmer på arrangement.
+- 🦟 **Aktiviteter** Filterering av aktiviteter og arrangementer fungerer nå riktig. I visning av gruppe, vil nå også aktiviteter vises.
+- 🦟 **Manuell Registering** Man får nå en feilmelding om at man ikke kan legge til dobbel manuell registering for en bruker på et arrangement.
+- ⚡ **Mine Arrangementer** En bruker kan nå se alle sine tidligere arrangementer som de har deltatt på.
+- 🦟 **Vipps** En ny versjon av Vipps betaling har nå kommet.
+
 ## Versjon 2023.11.06
 - ✨ **Påmelding** Medlemmer av undergrupper kan nå manuelt legge til brukere på arrangementer.
 - ⚡ **Venteliste** Brukere på venteliste kan nå se sin egen plass på ventelisten.
 - ✨ **QR Kode** Brukere kan nå generere sine egne QR koder.
 - ⚡ **Endring av arrangement plasser** Venteliste og liste vil nå bli automatisk oppdatert hvis man endrer på antall plasser på et arrangement.
+- ✨ **Aktiviteter** Arrangementer kan nå filtreres på aktiviteter.
 
 ## Versjon 2023.10.23
 - ⚡ **Brukere** HS kan styre medlemmer
 - ✨ **Bannere** Filtrering på bannere
+- ✨ **emoji** Nyheter kan nå ha reaksjoner
 - ✨ **Spørreskjemaer** NOK medlemmer kan lage spørreskjema.
 - ⚡ **Bruker** Nå kan ikke HS lenger endre eller slette brukere.
 - ⚡ **Mails** Nå logger vi på eposttjeneren kun en gang per batch med epost som sendes.
@@ -30,6 +41,7 @@
 - ✨ **Betalte arrangementer med Vipps betaling**. Det kan nå opprettes arrangementer som krever betaling for å melde seg på. Denne betalingen betales via Vipps.
 - ⚡ **Nyheter** Fondesforvalere kan nå lage nyheter.
 - ⚡ **Arrangementer** Du kan nå se hvilken plass du har på ventelisten til et arrangement.
+- ✨ **Profil** Filtrere kommende og tidligere arrangementer
 
 ## Versjon 2022.10.13
 

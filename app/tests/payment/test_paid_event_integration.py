@@ -136,9 +136,11 @@ def test_update_paid_event_as_admin(admin_user):
 
 
 @pytest.mark.django_db
-def test_update_paid_event_to_free_event_as_admin(admin_user):
+def test_update_paid_event_to_free_event_with_registrations_as_admin(
+    admin_user, registration
+):
     """
-    HS and Index members should not be able to update a paid event to a free event.
+    HS and Index members should not be able to update a paid event with registrations to a free event.
     Other subgroup members can update paid events where event.organizer is their group or None.
     Leaders of committees and interest groups should be able to
     update events where event.organizer is their group or None.
@@ -146,6 +148,10 @@ def test_update_paid_event_to_free_event_as_admin(admin_user):
 
     paid_event = PaidEventFactory(price=100.00)
     event = paid_event.event
+
+    registration.event = event
+    registration.save()
+
     organizer = Group.objects.get_or_create(name="HS", type=GroupType.BOARD)[0]
     client = get_api_client(user=admin_user)
     url = get_events_url_detail(event)
@@ -156,3 +162,27 @@ def test_update_paid_event_to_free_event_as_admin(admin_user):
 
     assert response.status_code == 400
     assert event.is_paid_event
+
+
+@pytest.mark.django_db
+def test_update_paid_event_to_free_event_without_registrations_as_admin(admin_user):
+    """
+    HS and Index members should be able to update a paid event without registrations to a free event.
+    Other subgroup members can update paid events where event.organizer is their group or None.
+    Leaders of committees and interest groups should be able to
+    update events where event.organizer is their group or None.
+    """
+
+    paid_event = PaidEventFactory(price=100.00)
+    event = paid_event.event
+
+    organizer = Group.objects.get_or_create(name="HS", type=GroupType.BOARD)[0]
+    client = get_api_client(user=admin_user)
+    url = get_events_url_detail(event)
+    data = get_paid_event_data(organizer=organizer.slug, is_paid_event=False)
+
+    response = client.put(url, data)
+    event.refresh_from_db()
+
+    assert response.status_code == 200
+    assert not event.is_paid_event
