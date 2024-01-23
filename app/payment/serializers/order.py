@@ -1,8 +1,8 @@
 import uuid
 
 from app.common.serializers import BaseModelSerializer
-from app.content.serializers.user import DefaultUserSerializer
 from app.content.models import Event
+from app.content.serializers.user import DefaultUserSerializer
 from app.content.util.event_utils import create_vipps_order
 from app.payment.models.order import Order
 
@@ -10,10 +10,7 @@ from app.payment.models.order import Order
 class OrderEventSerializer(BaseModelSerializer):
     class Meta:
         model = Event
-        fields = (
-            "id",
-            "title"
-        )
+        fields = ("id", "title")
 
 
 class OrderListSerializer(BaseModelSerializer):
@@ -22,13 +19,7 @@ class OrderListSerializer(BaseModelSerializer):
 
     class Meta:
         model = Order
-        fields = (
-            "order_id",
-            "created_at",
-            "status",
-            "user",
-            "event"
-        )
+        fields = ("order_id", "created_at", "status", "user", "event")
 
 
 class OrderSerializer(BaseModelSerializer):
