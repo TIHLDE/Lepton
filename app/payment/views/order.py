@@ -46,11 +46,9 @@ class OrderViewSet(BaseViewSet, ActionMixin):
 
     def retrieve(self, request, pk):
         try:
-            user = request.query_params.get("user_id")
-            event = request.query_params.get("event")
-            orders = Order.objects.filter(user=user, event=event)
+            order = Order.objects.get(order_id=pk)
             serializer = OrderSerializer(
-                orders, context={"request": request}, many=True
+                order, context={"request": request}, many=False
             )
             return Response(serializer.data, status.HTTP_200_OK)
         except Order.DoesNotExist as order_not_exist:

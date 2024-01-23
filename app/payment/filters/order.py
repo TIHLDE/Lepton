@@ -7,7 +7,7 @@ class OrderFilter(FilterSet):
     """Filters orders by event"""
 
     ordering = OrderingFilter(
-        fields=("created_at", )
+        fields=("created_at", "status")
     )
 
     class Meta:
