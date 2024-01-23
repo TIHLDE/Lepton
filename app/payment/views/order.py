@@ -36,13 +36,13 @@ class OrderViewSet(BaseViewSet, ActionMixin):
         "user__user_id"
     ]
 
-    # def list(self, request, *args, **kwargs):
-    #     if is_admin_user(request):
-    #         return super().list(request, *args, **kwargs)
-    #     return Response(
-    #         {"detail": "Du har ikke tilgang til å se disse ordrene."},
-    #         status=status.HTTP_403_FORBIDDEN,
-    #     )
+    def list(self, request, *args, **kwargs):
+        if is_admin_user(request):
+            return super().list(request, *args, **kwargs)
+        return Response(
+            {"detail": "Du har ikke tilgang til å se disse ordrene."},
+            status=status.HTTP_403_FORBIDDEN,
+        )
 
     def retrieve(self, request, pk):
         try:
