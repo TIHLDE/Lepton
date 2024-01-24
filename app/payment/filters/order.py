@@ -4,13 +4,10 @@ from app.payment.models import Order
 
 
 class OrderFilter(FilterSet):
-    """Filters orders by event"""
+    """Filters orders"""
 
-    ordering = OrderingFilter(
-        fields=("created_at", "status")
-    )
+    ordering = OrderingFilter(fields=("created_at",))
 
     class Meta:
         model = Order
-        fields = ["event"]
-    
+        fields = ["event", "status"]

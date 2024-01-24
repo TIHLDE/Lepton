@@ -1,7 +1,6 @@
-from rest_framework import status, filters
-from rest_framework.response import Response
-
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters, status
+from rest_framework.response import Response
 
 from sentry_sdk import capture_exception
 
@@ -10,13 +9,13 @@ from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission, is_admin_user
 from app.common.viewsets import BaseViewSet
 from app.content.models import Registration, User
+from app.payment.filters.order import OrderFilter
 from app.payment.models import Order
 from app.payment.serializers import (
     OrderCreateSerializer,
     OrderListSerializer,
     OrderSerializer,
 )
-from app.payment.filters.order import OrderFilter
 from app.payment.util.order_utils import is_expired
 
 
@@ -33,7 +32,7 @@ class OrderViewSet(BaseViewSet, ActionMixin):
         "event__title",
         "user__first_name",
         "user__last_name",
-        "user__user_id"
+        "user__user_id",
     ]
 
     def list(self, request, *args, **kwargs):
