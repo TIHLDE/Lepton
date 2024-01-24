@@ -10,7 +10,7 @@ from app.payment.models.order import Order
 class OrderEventSerializer(BaseModelSerializer):
     class Meta:
         model = Event
-        fields = ("id", "title")
+        fields = ("id", "title", "image", "start_date", "end_date")
 
 
 class OrderListSerializer(BaseModelSerializer):
@@ -23,9 +23,12 @@ class OrderListSerializer(BaseModelSerializer):
 
 
 class OrderSerializer(BaseModelSerializer):
+    event = OrderEventSerializer(many=False)
+    user = DefaultUserSerializer(many=False)
+
     class Meta:
         model = Order
-        fields = ("order_id", "status", "payment_link")
+        fields = ("order_id", "status", "payment_link", "created_at", "event", "user")
 
 
 class VippsOrderSerialzer(BaseModelSerializer):

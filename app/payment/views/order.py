@@ -6,7 +6,11 @@ from sentry_sdk import capture_exception
 
 from app.common.mixins import ActionMixin
 from app.common.pagination import BasePagination
-from app.common.permissions import BasicViewPermission, is_admin_user
+from app.common.permissions import (
+    BasicViewPermission,
+    is_admin_user,
+    is_index_user
+)
 from app.common.viewsets import BaseViewSet
 from app.content.models import Registration, User
 from app.payment.filters.order import OrderFilter
@@ -92,7 +96,7 @@ class OrderViewSet(BaseViewSet, ActionMixin):
             )
 
     def destroy(self, request, *args, **kwargs):
-        if is_admin_user(request):
+        if is_index_user(request):
             return super().destroy(request, *args, **kwargs)
         return Response(
             {"detail": "Du har ikke tilgang til å slette denne ordren."},
