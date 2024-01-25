@@ -37,6 +37,12 @@ class VippsOrderSerialzer(BaseModelSerializer):
         fields = ("order_id",)
 
 
+class OrderUpdateSerializer(BaseModelSerializer):
+    class Meta:
+        model = Order
+        fields = ("status",)
+
+
 class OrderCreateSerializer(BaseModelSerializer):
     class Meta:
         model = Order

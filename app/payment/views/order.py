@@ -9,7 +9,7 @@ from app.common.pagination import BasePagination
 from app.common.permissions import (
     BasicViewPermission,
     is_admin_user,
-    is_index_user
+    is_index_user,
 )
 from app.common.viewsets import BaseViewSet
 from app.content.models import Registration, User
@@ -19,6 +19,7 @@ from app.payment.serializers import (
     OrderCreateSerializer,
     OrderListSerializer,
     OrderSerializer,
+    OrderUpdateSerializer,
 )
 from app.payment.util.order_utils import is_expired
 
@@ -49,11 +50,41 @@ class OrderViewSet(BaseViewSet, ActionMixin):
 
     def retrieve(self, request, pk):
         try:
+            if not is_admin_user(request):
+                return Response(
+                    {"detail": "Du har ikke tilgang til å se denne ordren."},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
             order = Order.objects.get(order_id=pk)
             serializer = OrderSerializer(
                 order, context={"request": request}, many=False
             )
             return Response(serializer.data, status.HTTP_200_OK)
+        except Order.DoesNotExist as order_not_exist:
+            capture_exception(order_not_exist)
+            return Response(
+                {"detail": "Fant ikke beatlingsordre."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+    def update(self, request, pk):
+        try:
+            if not is_admin_user(request):
+                return Response(
+                    {"detail": "Du har ikke tilgang til å oppdatere denne ordren."},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+            order = Order.objects.get(order_id=pk)
+            serializer = OrderUpdateSerializer(
+                order, data=request.data, context={"request": request}
+            )
+            if serializer.is_valid():
+                order = super().perform_update(serializer)
+                serializer = OrderSerializer(
+                    order, context={"request": request}, many=False
+                )
+                return Response(serializer.data, status.HTTP_200_OK)
+            return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
         except Order.DoesNotExist as order_not_exist:
             capture_exception(order_not_exist)
             return Response(
