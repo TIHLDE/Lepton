@@ -9,6 +9,7 @@ from app.common.pagination import BasePagination
 from app.common.permissions import (
     BasicViewPermission,
     is_admin_user,
+    is_admin_group_user,
     is_index_user,
 )
 from app.common.viewsets import BaseViewSet
@@ -41,7 +42,7 @@ class OrderViewSet(BaseViewSet, ActionMixin):
     ]
 
     def list(self, request, *args, **kwargs):
-        if is_admin_user(request):
+        if is_admin_group_user(request):
             return super().list(request, *args, **kwargs)
         return Response(
             {"detail": "Du har ikke tilgang til å se disse ordrene."},
@@ -50,7 +51,7 @@ class OrderViewSet(BaseViewSet, ActionMixin):
 
     def retrieve(self, request, pk):
         try:
-            if not is_admin_user(request):
+            if not is_admin_group_user(request):
                 return Response(
                     {"detail": "Du har ikke tilgang til å se denne ordren."},
                     status=status.HTTP_403_FORBIDDEN,

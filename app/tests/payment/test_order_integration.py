@@ -29,9 +29,9 @@ def test_list_orders_as_user(member):
 
 
 @pytest.mark.django_db
-@pytest.mark.parametrize("group_name", AdminGroup.admin())
+@pytest.mark.parametrize("group_name", AdminGroup.all())
 def test_list_orders_as_admin_user(member, group_name):
-    """An admin user should be able to list orders."""
+    """A member of an admin group should be able to list orders."""
     add_user_to_group_with_name(member, group_name)
     client = get_api_client(user=member)
     response = client.get(API_ORDERS_BASE_URL)
@@ -54,9 +54,9 @@ def test_retrieve_order_as_member(member, order):
 
 
 @pytest.mark.django_db
-@pytest.mark.parametrize("group_name", AdminGroup.admin())
+@pytest.mark.parametrize("group_name", AdminGroup.all())
 def test_retrieve_order_as_admin_user(member, order, group_name):
-    """An admin user should be able to retrieve an order."""
+    """A member of an adming group should be able to retrieve an order."""
     add_user_to_group_with_name(member, group_name)
     client = get_api_client(user=member)
     response = client.get(get_orders_url_detail(order.order_id))
