@@ -3,4 +3,5 @@ from app.payment.serializers.order import (
     OrderCreateSerializer,
     VippsOrderSerialzer,
     OrderListSerializer,
+    OrderUpdateSerializer,
 )
