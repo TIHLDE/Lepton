@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 from rest_framework.views import APIView
 from rest_framework import status
+from app.common.viewsets import BaseViewSet
 from datetime import datetime
 from rest_framework.decorators import action
 from app.wrapped.serializers.statistics_serializer import StatisticsSerializer
@@ -11,7 +12,7 @@ from app.common.permissions import BasicViewPermission
 from app.wrapped.util.statistics_util import calculate_statistics
 
 
-class WrappedStatsView(view):
+class WrappedStatsView(BaseViewSet):
     serializer_class = StatisticsSerializer
     permission_classes = [BasicViewPermission]
 
