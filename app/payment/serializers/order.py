@@ -1,20 +1,46 @@
 import uuid
 
 from app.common.serializers import BaseModelSerializer
+from app.content.models import Event
+from app.content.serializers.user import DefaultUserSerializer
 from app.content.util.event_utils import create_vipps_order
 from app.payment.models.order import Order
 
 
-class OrderSerializer(BaseModelSerializer):
+class OrderEventSerializer(BaseModelSerializer):
+    class Meta:
+        model = Event
+        fields = ("id", "title", "image", "start_date", "end_date")
+
+
+class OrderListSerializer(BaseModelSerializer):
+    event = OrderEventSerializer(many=False)
+    user = DefaultUserSerializer(many=False)
+
     class Meta:
         model = Order
-        fields = ("order_id", "status", "payment_link")
+        fields = ("order_id", "created_at", "status", "user", "event")
+
+
+class OrderSerializer(BaseModelSerializer):
+    event = OrderEventSerializer(many=False)
+    user = DefaultUserSerializer(many=False)
+
+    class Meta:
+        model = Order
+        fields = ("order_id", "status", "payment_link", "created_at", "event", "user")
 
 
 class VippsOrderSerialzer(BaseModelSerializer):
     class Meta:
         model = Order
         fields = ("order_id",)
+
+
+class OrderUpdateSerializer(BaseModelSerializer):
+    class Meta:
+        model = Order
+        fields = ("status",)
 
 
 class OrderCreateSerializer(BaseModelSerializer):
