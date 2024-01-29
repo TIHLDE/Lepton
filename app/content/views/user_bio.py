@@ -31,13 +31,19 @@ class UserBioViewset(BaseViewSet):
         )
 
         return Response(user_bio_serializer.data, status=status.HTTP_201_CREATED)
+    
 
-
+    def update(self, request, *args, **kwargs):
+        bio = self.get_object()
+        serializer = UserBioSerializer(
+            bio, data=request.data, context={"request": request}
+        )
+        if serializer.is_valid():
+            bio = super().perform_update(serializer)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 # todo
 # create update retrieve
 # test (post, put, get)
 # autentisering - bruker kan kun oppdatere sin egen bio
-# Kun admin kan endre andre bios
-# test
-# tester
-# Serializer
+# Kun admin kan endre andre bios + test
+# test alt
