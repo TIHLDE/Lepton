@@ -1,18 +1,21 @@
 from django.shortcuts import render
+from rest_framework import status
+from rest_framework.response import Response
+
 from app.common.viewsets import BaseViewSet
 from app.content.models.user_bio import UserBio
 from app.content.serializers.user_bio import UserBioSerializer
-from rest_framework.response import Response
-from rest_framework import status
 
 
 class UserBioViewset(BaseViewSet):
-    queryset = UserBio.objects.all() #Queryset = all data som tilhører denne klassen (alle objekter i userbio)
+    queryset = (
+        UserBio.objects.all()
+    )  # Queryset = all data som tilhører denne klassen (alle objekter i userbio)
     serializer_class = UserBioSerializer
 
-    def create(self, request, *args, **kwargs): 
+    def create(self, request, *args, **kwargs):
 
-        #Intiate base serializer from request data
+        # Intiate base serializer from request data
         serializer = self.get_serializer(data=request.data)
 
         if not serializer.is_valid():
@@ -20,22 +23,21 @@ class UserBioViewset(BaseViewSet):
                 {"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST
             )
 
-        #Create instance of user_bio
-        user_bio = super().perform_create(
-            serializer, user=request.user
-        )
+        # Create instance of user_bio
+        user_bio = super().perform_create(serializer, user=request.user)
 
         user_bio_serializer = UserBioSerializer(
             user_bio, context={"user": user_bio.user}
         )
 
-        return Response(
-            user_bio_serializer.data, status=status.HTTP_201_CREATED)
-#todo    
-    #create update retrieve
-        #test (post, put, get)
-    #autentisering - bruker kan kun oppdatere sin egen bio
-        #Kun admin kan endre andre bios
-        #test
-    #tester
-    #Serializer
+        return Response(user_bio_serializer.data, status=status.HTTP_201_CREATED)
+
+
+# todo
+# create update retrieve
+# test (post, put, get)
+# autentisering - bruker kan kun oppdatere sin egen bio
+# Kun admin kan endre andre bios
+# test
+# tester
+# Serializer

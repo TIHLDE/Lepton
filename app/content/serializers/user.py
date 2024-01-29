@@ -6,8 +6,8 @@ from dry_rest_permissions.generics import DRYGlobalPermissionsField
 from app.common.enums import GroupType
 from app.common.serializers import BaseModelSerializer
 from app.content.models import User
-from app.group.models import Group, Membership
 from app.content.serializers.user_bio import UserBioSerializer
+from app.group.models import Group, Membership
 
 
 class DefaultUserSerializer(BaseModelSerializer):

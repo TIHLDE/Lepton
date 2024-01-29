@@ -12,11 +12,11 @@ from app.content.views import (
     ShortLinkViewSet,
     StrikeViewSet,
     ToddelViewSet,
+    UserBioViewset,
     UserCalendarEvents,
     UserViewSet,
     accept_form,
     upload,
-    UserBioViewset,
 )
 
 router = routers.DefaultRouter()
