@@ -1,11 +1,10 @@
-from rest_framework import serializers
-from .models import UserBio
+from app.common.serializers import BaseModelSerializer
+from app.content.models.user_bio import UserBio
 
-class UserBioSerializer(serializers.HyperlinkedModelSerializer):
+class UserBioSerializer(BaseModelSerializer):
     class Meta:
         model = UserBio
         fields = [
-            'role',
             'description',
             'gitHub_link',
             'linkedIn_link'

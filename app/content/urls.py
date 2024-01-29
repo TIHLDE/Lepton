@@ -16,6 +16,7 @@ from app.content.views import (
     UserViewSet,
     accept_form,
     upload,
+    UserBioViewset,
 )
 
 router = routers.DefaultRouter()
@@ -28,6 +29,7 @@ router.register("categories", CategoryViewSet)
 router.register("short-links", ShortLinkViewSet, basename="short-link")
 router.register("qr-codes", QRCodeViewSet, basename="qr-code")
 router.register("users", UserViewSet, basename="user")
+router.register("user-bios", UserBioViewset, basename="user-bio")
 router.register(
     r"events/(?P<event_id>\d+)/registrations",
     RegistrationViewSet,
