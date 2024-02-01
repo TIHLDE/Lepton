@@ -26,7 +26,8 @@ def calculate_statistics(user, year):
             user=user, event__start_date__year=year, has_attended=True
         ).count()
 
-        fines_count = Fine.objects.filter(user=user, created_at__year=year).count()
+        fines_sum = Fine.objects.filter(user=user, created_at__year=year).aggregate(total_amount=Sum('amount'))['total_amount']
+        fines_count = fines_sum if fines_sum is not None else 0
 
         badges_count = UserBadge.objects.filter(
             user=user, created_at__year=year
@@ -82,7 +83,7 @@ def calculate_statistics(user, year):
                 stats.norm.cdf(fines_count, fines_dist["mean"], fines_dist["std_dev"]),
                 2,
             ),
-        }
+        }   
     except Exception as e:
         traceback.print_exception(e)
         raise Exception(e)
