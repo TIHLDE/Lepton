@@ -26,7 +26,8 @@ class Reservation(BaseModel, BasePermissionModel):
         choices=ReservationStateEnum.choices,
         default=ReservationStateEnum.PENDING,
     )
-    description = models.TextField(blank=True)
+    description = models.TextField(blank=True),
+    accepted_rules = models.BooleanField(default=True)
 
     def __str__(self):
         return f"{self.state} - Reservation request by {self.author.first_name} {self.author.last_name} to book {self.bookable_item.name}. Created at {self.created_at}"
