@@ -6,8 +6,10 @@ pytestmark = pytest.mark.django_db
 
 API_USER_BIO_BASE_URL = "/user-bios/"
 
+
 def _get_bio_detailed_url(user):
     return f"{API_USER_BIO_BASE_URL}{user.bio.id}/"
+
 
 def _get_user_bio_post_data():
     return {
@@ -15,6 +17,7 @@ def _get_user_bio_post_data():
         "gitHub_link": "https://www.github.com",
         "linkedIn_link": "https://www.linkedIn.com",
     }
+
 
 def _get_user_bio_put_data():
     return {

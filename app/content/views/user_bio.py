@@ -31,7 +31,6 @@ class UserBioViewset(BaseViewSet):
         )
 
         return Response(user_bio_serializer.data, status=status.HTTP_201_CREATED)
-    
 
     def update(self, request, *args, **kwargs):
         bio = self.get_object()
@@ -41,6 +40,8 @@ class UserBioViewset(BaseViewSet):
         if serializer.is_valid():
             bio = super().perform_update(serializer)
             return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 # todo
 # create update retrieve
 # test (post, put, get)

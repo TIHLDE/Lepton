@@ -5,7 +5,7 @@ from app.content.models.user import User
 
 class UserBio(models.Model):
 
-    description = models.CharField(max_length=50)
+    description = models.CharField(max_length=50, blank=True, null=True)
 
     gitHub_link = models.URLField(max_length=300, blank=True, null=True)
 

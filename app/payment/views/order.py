@@ -8,8 +8,8 @@ from app.common.mixins import ActionMixin
 from app.common.pagination import BasePagination
 from app.common.permissions import (
     BasicViewPermission,
-    is_admin_user,
     is_admin_group_user,
+    is_admin_user,
     is_index_user,
 )
 from app.common.viewsets import BaseViewSet

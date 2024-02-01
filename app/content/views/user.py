@@ -62,29 +62,22 @@ class UserViewSet(BaseViewSet, ActionMixin):
 
     def retrieve(self, request, pk, *args, **kwargs):
 
-        try: 
+        try:
             user = self._get_user(request, pk)
 
             self.check_object_permissions(self.request, user)
 
-            print("Before serializer")
             serializer = DefaultUserSerializer(user)
-            print("After 1st serializer")
 
             if is_admin_user(self.request) or user == request.user:
-                print("isnide admin")
                 serializer = UserSerializer(user, context={"request": self.request})
 
-                if not serializer.is_valid():
-                    print(serializer.errors)
-                print("lksfløjøls")
-
-            print("Beofre rsponse")
             return Response(serializer.data, status=status.HTTP_200_OK)
-        
-        except Exception as e: 
-            print(e)
-            return Response({"message": "Error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        except Exception as e:
+            return Response(
+                {"message": "Error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
     def create(self, request, *args, **kwargs):
         serializer = UserCreateSerializer(data=self.request.data)
