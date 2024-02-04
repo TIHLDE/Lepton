@@ -3,7 +3,6 @@ from rest_framework import status
 import pytest
 
 from app.common.permissions import AdminGroup
-from app.content.factories import QRCodeFactory
 from app.util.test_utils import add_user_to_group_with_name, get_api_client
 
 API_QR_CODE_BASE_URL = "/jobposts/"
