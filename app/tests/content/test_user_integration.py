@@ -598,3 +598,12 @@ def test_user_permissions_as_member(member, api_client):
     assert qrcode_permissions["update"]
     assert qrcode_permissions["destroy"]
     assert qrcode_permissions["write"]
+
+    """ Notifications """
+    notification_permissions = data["notification"]
+
+    assert notification_permissions["write"]
+    assert notification_permissions["read"]
+    assert notification_permissions["retrieve"]
+    assert notification_permissions["update"]
+    assert not notification_permissions["destroy"]
