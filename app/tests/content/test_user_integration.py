@@ -567,3 +567,34 @@ def test_list_expired_user_events_with_no_query_params(member, api_client):
     registrations = response.json().get("results")
     for registration in registrations:
         assert not registration.get("expired")
+
+
+@pytest.mark.django_db
+def test_user_permissions_as_member(member, api_client):
+    """A member should have the correct permissions."""
+
+    url = f"{API_USER_BASE_URL}me/permissions/"
+    client = api_client(user=member)
+    response = client.get(url)
+
+    data = response.data["permissions"]
+
+    assert response.status_code == status.HTTP_200_OK
+
+    """ Jobposts """
+    jobpost_permissions = data["jobpost"]
+
+    assert jobpost_permissions["read"]
+    assert jobpost_permissions["retrieve"]
+    assert not jobpost_permissions["update"]
+    assert not jobpost_permissions["destroy"]
+    assert not jobpost_permissions["write"]
+
+    """ QR Codes """
+    qrcode_permissions = data["qrcode"]
+
+    assert qrcode_permissions["read"]
+    assert qrcode_permissions["retrieve"]
+    assert qrcode_permissions["update"]
+    assert qrcode_permissions["destroy"]
+    assert qrcode_permissions["write"]

@@ -4,7 +4,7 @@ from rest_framework.test import APIRequestFactory
 import pytest
 
 from app.badge.factories import BadgeFactory, UserBadgeFactory
-from app.career.factories import WeeklyBusinessFactory
+from app.career.factories import JobPostFactory, WeeklyBusinessFactory
 from app.common.enums import AdminGroup, Groups, MembershipType
 from app.communication.factories import (
     BannerFactory,
@@ -270,3 +270,8 @@ def event_with_priority_pool(priority_group):
     event = EventFactory(limit=1)
     PriorityPoolFactory(event=event, groups=(priority_group,))
     return event
+
+
+@pytest.fixture()
+def job_post():
+    return JobPostFactory()
