@@ -17,7 +17,7 @@ class ReservationSerializer(serializers.ModelSerializer):
 
     def validate_start_time(self, start_time):
         if start_time < timezone.now():
-            raise serializers.ValidationError("The start time cannot be in the past.")
+            raise serializers.ValidationError("Start-tiden kan ikke være i fortiden.")
         return start_time
 
     def validate(self, data):
@@ -34,7 +34,7 @@ class ReservationSerializer(serializers.ModelSerializer):
                 if not (user and user.is_authenticated and user.is_HS_or_Index_member):
                     raise serializers.ValidationError(
                         {
-                            "state": "You do not have permission to change the state of the reservation."
+                            "state": "Du har ikke rettigheter til å endre reservasjonsstatusen."
                         }
                     )
 
@@ -46,7 +46,7 @@ class ReservationSerializer(serializers.ModelSerializer):
             "end_time", self.instance.end_time if self.instance else None
         )
         if start_time and end_time and end_time <= start_time:
-            raise serializers.ValidationError("end_time must be after start_time")
+            raise serializers.ValidationError("Slutt-tid må være etter start-tid")
 
         # Check for overlapping reservations only if necessary fields are present
         if bookable_item and start_time and end_time:
@@ -62,7 +62,7 @@ class ReservationSerializer(serializers.ModelSerializer):
             # Check for overlapping reservations
             if Reservation.objects.filter(overlapping_reservations_query).exists():
                 raise serializers.ValidationError(
-                    "There is an overlapping reservation for the selected time frame."
+                    "Det er en reservasjonsoverlapp for det gitte tidsrommet."
                 )
 
         return data
