@@ -221,7 +221,7 @@ class EventCreateAndUpdateSerializer(BaseModelSerializer):
         if event.is_paid_event:
             if event.has_participants:
                 return
-            
+
             if not len(paid_information_data):
                 paid_event = PaidEvent.objects.filter(event=event)
                 if paid_event:

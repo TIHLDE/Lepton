@@ -875,7 +875,9 @@ def test_jubkom_has_not_create_permission(api_client, jubkom_member):
 
 
 @pytest.mark.django_db
-@pytest.mark.skip(reason="This is handled in the frontend. Should be refactored in backend.")
+@pytest.mark.skip(
+    reason="This is handled in the frontend. Should be refactored in backend."
+)
 def test_update_from_free_event_with_participants_to_paid_event(
     api_client, admin_user, event, registration
 ):
@@ -897,7 +899,9 @@ def test_update_from_free_event_with_participants_to_paid_event(
 
 
 @pytest.mark.django_db
-@pytest.mark.skip(reason="This is handled in the frontend. Should be refactored in backend.")
+@pytest.mark.skip(
+    reason="This is handled in the frontend. Should be refactored in backend."
+)
 def test_update_from_paid_event_with_participants_to_free_event(
     api_client, admin_user, event, paid_event, registration
 ):

@@ -136,7 +136,9 @@ def test_update_paid_event_as_admin(admin_user):
 
 
 @pytest.mark.django_db
-@pytest.mark.skip(reason="This is handled in the frontend. Should be refactored in backend.")
+@pytest.mark.skip(
+    reason="This is handled in the frontend. Should be refactored in backend."
+)
 def test_update_paid_event_to_free_event_with_registrations_as_admin(
     admin_user, registration
 ):
