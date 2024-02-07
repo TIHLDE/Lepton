@@ -57,7 +57,9 @@ class Reservation(BaseModel, BasePermissionModel):
         allowed_groups = [AdminGroup.INDEX, AdminGroup.HS]
         is_admin = check_has_access(allowed_groups, request)
 
-        if (self.is_own_reservation(request) and "state" not in request.data) or is_admin:
+        if (
+            self.is_own_reservation(request) and "state" not in request.data
+        ) or is_admin:
             return True
 
         if self.state == ReservationStateEnum.CONFIRMED and not is_admin:

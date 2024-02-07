@@ -33,7 +33,7 @@ class ReservationViewSet(BaseViewSet):
         return Reservation.objects.all()
 
     def create(self, request, *args, **kwargs):
-        request.data['author'] = request.user.user_id
+        request.data["author"] = request.user.user_id
         serializer = ReservationSerializer(data=request.data)
         if serializer.is_valid():
             # Overriding the state to PENDING

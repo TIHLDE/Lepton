@@ -1,7 +1,10 @@
 from datetime import timedelta
+
 from django.utils import timezone
 from rest_framework import status
+
 import pytest
+
 from app.common.enums import AdminGroup
 from app.kontres.enums import ReservationStateEnum
 from app.kontres.factories.bookable_item_factory import BookableItemFactory
@@ -595,7 +598,3 @@ def test_admin_can_update_details_of_confirmed_reservation(admin_user, reservati
 
     assert response.status_code == 200
     assert response.data["description"] == new_description
-
-
-
-
