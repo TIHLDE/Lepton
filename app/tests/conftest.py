@@ -252,7 +252,7 @@ def bookable_item():
 @pytest.fixture()
 def reservation():
     return ReservationFactory()
- 
+
 
 @pytest.fixture()
 def news_reaction(member, news):

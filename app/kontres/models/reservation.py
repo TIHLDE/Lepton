@@ -26,7 +26,7 @@ class Reservation(BaseModel, BasePermissionModel):
         choices=ReservationStateEnum.choices,
         default=ReservationStateEnum.PENDING,
     )
-    description = models.TextField(blank=True),
+    description = (models.TextField(blank=True),)
     accepted_rules = models.BooleanField(default=True)
 
     def __str__(self):
