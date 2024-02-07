@@ -27,7 +27,7 @@ class AdminGroup(ChoiceEnum):
     NOK = "Nok"
     PROMO = "Promo"
     SOSIALEN = "Sosialen"
-    KOK = "Kok"
+    KOK = "Kontkom"
 
     @classmethod
     def all(cls):
@@ -43,6 +43,7 @@ class Groups(ChoiceEnum):
     JUBKOM = "JubKom"
     REDAKSJONEN = "Redaksjonen"
     FONDET = "Forvaltningsgruppen"
+    PLASK = "Plask"
 
 
 class AppModel(ChoiceEnum):

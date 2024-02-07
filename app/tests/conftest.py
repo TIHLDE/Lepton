@@ -24,11 +24,16 @@ from app.content.factories import (
     UserFactory,
 )
 from app.content.factories.toddel_factory import ToddelFactory
+from app.emoji.factories.reaction_factory import (
+    EventReactionFactory,
+    NewsReactionFactory,
+)
 from app.forms.tests.form_factories import FormFactory, SubmissionFactory
 from app.group.factories import GroupFactory, MembershipFactory
 from app.group.factories.fine_factory import FineFactory
 from app.group.factories.membership_factory import MembershipHistoryFactory
 from app.kontres.factories import BookableItemFactory, ReservationFactory
+from app.payment.factories.order_factory import OrderFactory
 from app.payment.factories.paid_event_factory import PaidEventFactory
 from app.util.test_utils import add_user_to_group_with_name, get_api_client
 
@@ -114,6 +119,12 @@ def jubkom_member(member):
 
 
 @pytest.fixture()
+def plask_member(member):
+    add_user_to_group_with_name(member, Groups.PLASK)
+    return member
+
+
+@pytest.fixture()
 def member_client(member):
     return get_api_client(user=member)
 
@@ -131,6 +142,11 @@ def paid_event():
 @pytest.fixture()
 def group():
     return GroupFactory()
+
+
+@pytest.fixture()
+def order():
+    return OrderFactory()
 
 
 @pytest.fixture()
@@ -236,6 +252,16 @@ def bookable_item():
 @pytest.fixture()
 def reservation():
     return ReservationFactory()
+ 
+
+@pytest.fixture()
+def news_reaction(member, news):
+    return NewsReactionFactory(user=member, content_object=news)
+
+
+@pytest.fixture()
+def event_reaction(member, event):
+    return EventReactionFactory(user=member, content_object=event)
 
 
 @pytest.fixture()

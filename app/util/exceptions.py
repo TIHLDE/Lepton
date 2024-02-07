@@ -22,7 +22,7 @@ def exception_handler(exc, context):
     if response:
         log_api_error(response, exc)
     else:
-        logger.error(traceback.format_exc())
+        logger.error(traceback.format_traceback(exc)())
 
     if not settings.DEBUG and not response:
         response = Response(

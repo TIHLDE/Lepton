@@ -62,17 +62,25 @@ class EventViewSet(BaseViewSet, ActionMixin):
         ):
             return self.queryset
 
-        activity = self.request.query_params.get("activity", "false").lower() == "true"
-        category = Category.objects.filter(text=CategoryEnum.ACTIVITY).first()
         expired = self.request.query_params.get("expired", "false").lower() == "true"
+        activity = self.request.query_params.get("activity", None)
 
-        if activity and category:
+        if activity is None:
+            if expired:
+                return self.queryset.filter(end_date__lt=time).order_by("-start_date")
+            return self.queryset.filter(end_date__gte=time)
+
+        category = Category.objects.filter(text=CategoryEnum.ACTIVITY).first()
+        if category and activity.lower() == "true":
             return self._list_activity_queryset(category, expired, time)
 
-        if expired:
-            return self.queryset.filter(end_date__lt=time).order_by("-start_date")
-
-        if category:
+        if category and activity.lower() == "false":
+            if expired:
+                return (
+                    self.queryset.filter(end_date__lt=time)
+                    .filter(~Q(category=category))
+                    .order_by("-start_date")
+                )
             return self.queryset.filter(end_date__gte=time).filter(
                 ~Q(category=category)
             )
@@ -156,6 +164,7 @@ class EventViewSet(BaseViewSet, ActionMixin):
     def destroy(self, request, *args, **kwargs):
         event = Event.objects.get(pk=kwargs["pk"])
         if event.is_paid_event:
+            # TODO: Add refund for all paid orders by participants
             paid_event = PaidEvent.objects.get(event=kwargs["pk"])
             paid_event.delete()
 

@@ -284,7 +284,7 @@ class UserViewSet(BaseViewSet, ActionMixin):
         events = [
             registration.event
             for registration in registrations
-            if registration.event.expired == event_has_ended
+            if registration.event.expired == event_has_ended.value
         ]
 
         return self.paginate_response(
