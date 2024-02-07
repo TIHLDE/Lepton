@@ -35,20 +35,6 @@ class ReservationViewSet(BaseViewSet):
 
         return Reservation.objects.all()
 
-    def retrieve(self, request, *args, **kwargs):
-        reservation = self.get_object()
-        serializer = ReservationSerializer(reservation)
-        return Response(serializer.data)
-
-    def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
-
-        if queryset.exists():
-            serializer = ReservationSerializer(queryset, many=True)
-            return Response({"reservations": serializer.data})
-        else:
-            return Response({"message": "No reservations found."})
-
     def create(self, request, *args, **kwargs):
         serializer = ReservationSerializer(data=request.data)
         if serializer.is_valid():
@@ -60,34 +46,7 @@ class ReservationViewSet(BaseViewSet):
 
     def update(self, request, *args, **kwargs):
         reservation = self.get_object()
-
-        # Check if 'state' is in the request and if it has been changed.
-        state_changed = (
-            "state" in request.data and request.data["state"] != reservation.state
-        )
-        if state_changed:
-            # If the user is not an HS or Index member, raise PermissionDenied.
-            if not request.user.is_HS_or_Index_member:
-                raise PermissionDenied(
-                    "Du har ikke tilgang til å endre reservasjonsstatus"
-                )
-            # Additionally, check if the new state is valid.
-            if request.data["state"] not in dict(ReservationStateEnum.choices).keys():
-                raise ValidationError("Ugyldig tilstand for reservasjon.")
-
         serializer = self.get_serializer(reservation, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
-
-    def destroy(self, request, *args, **kwargs):
-        try:
-            reservation = self.get_object()
-            reservation.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        except Exception as e:
-            print(f"Error occurred during deletion: {e}")
-            raise
-
-    def get_object(self):
-        return get_object_or_404(Reservation, pk=self.kwargs.get("pk"))
