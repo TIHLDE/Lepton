@@ -14,6 +14,9 @@
 
 ## Neste versjon
 
+## Versjon 2023.02.07
+- 🦟 **Vipps** Brukere kan nå oppdatere betalt arrangement, uten at det betalte arrangementet blir slettet.
+
 ## Versjon 2023.01.15
 - ✨ **Reaksjoner** Brukere kan reagere med emojier på arrangementer og nyheter.
 - 🎨 **JubKom Rettigheter** Medlemmer av JubKom kan ikke lenger lage arrangementer.
