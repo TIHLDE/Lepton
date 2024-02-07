@@ -26,3 +26,6 @@ mysite.log
 .coverage
 
 celerybeat-schedule
+
+.terraform
+*.tfvars

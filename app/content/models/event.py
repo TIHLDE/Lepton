@@ -1,9 +1,10 @@
 from datetime import timedelta
 
+from django.contrib.contenttypes.fields import GenericRelation
 from django.core.exceptions import ValidationError
 from django.db import models
 
-from app.common.enums import AdminGroup, Groups
+from app.common.enums import AdminGroup
 from app.common.permissions import (
     BasePermissionModel,
     check_has_access,
@@ -11,6 +12,7 @@ from app.common.permissions import (
 )
 from app.content.models import Category
 from app.content.models.user import User
+from app.emoji.models.reaction import Reaction
 from app.forms.enums import EventFormType
 from app.group.models.group import Group
 from app.util.models import BaseModel, OptionalImage
@@ -19,7 +21,7 @@ from app.util.utils import now, yesterday
 
 class Event(BaseModel, OptionalImage, BasePermissionModel):
 
-    write_access = (*AdminGroup.admin(), AdminGroup.PROMO, Groups.JUBKOM)
+    write_access = (*AdminGroup.admin(), AdminGroup.PROMO)
 
     title = models.CharField(max_length=200)
     start_date = models.DateTimeField()
@@ -77,6 +79,10 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
     runned_sign_off_deadline_reminder = models.BooleanField(default=False)
     runned_sign_up_start_notifier = models.BooleanField(default=False)
 
+    """ Reactions """
+    emojis_allowed = models.BooleanField(default=False)
+    reactions = GenericRelation(Reaction)
+
     class Meta:
         ordering = ("start_date",)
 
@@ -101,6 +107,11 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
     def list_count(self):
         """Number of users registered to attend the event"""
         return self.get_participants().count()
+
+    @property
+    def has_participants(self):
+        """Returns if the event has users registered to attend the event"""
+        return self.list_count > 0
 
     @property
     def waiting_list_count(self):
@@ -133,6 +144,9 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
 
     def user_has_attended_event(self, user):
         return self.get_participants().filter(user=user, has_attended=True).exists()
+
+    def user_is_participant(self, user):
+        return self.get_participants().filter(user=user).exists()
 
     @property
     def is_past_sign_off_deadline(self):

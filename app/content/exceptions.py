@@ -4,7 +4,12 @@ from rest_framework.exceptions import APIException
 
 class APIPaidEventCantBeChangedToFreeEventException(APIException):
     status_code = status.HTTP_400_BAD_REQUEST
-    default_detail = "Arrangementet er et betalt arrangement, og kan ikke endres til et gratis arrangement"
+    default_detail = "Arrangementet er et betalt arrangement med påmeldte deltagere, og kan ikke endres til et gratis arrangement"
+
+
+class APIEventCantBeChangedToPaidEventException(APIException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_detail = "Arrangementet er et gratis arrangement med påmeldte deltagere, og kan ikke endres til et betalt arrangement"
 
 
 class APIUserAlreadyAttendedEvent(APIException):
@@ -47,4 +52,8 @@ class UnansweredFormError(ValueError):
 
 
 class EventIsFullError(ValueError):
+    pass
+
+
+class RefundFailedError(ValueError):
     pass
