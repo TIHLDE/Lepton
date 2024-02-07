@@ -165,6 +165,9 @@ def test_admin_can_edit_reservation_to_cancelled(reservation, admin_user):
 
 @pytest.mark.django_db
 def test_updating_reservation_with_valid_times(member, reservation):
+
+    reservation.author = member
+    reservation.save()
     client = get_api_client(user=member)
 
     start_time = timezone.now() + timedelta(hours=1)
@@ -214,18 +217,13 @@ def test_user_can_fetch_all_reservations(reservation, member):
     response = client.get("/kontres/reservations/", format="json")
 
     assert response.status_code == 200
-    assert len(response.data["reservations"]) == 3
+    assert len(response.data) == 3
 
     first_reservation = Reservation.objects.first()
-    assert str(response.data["reservations"][0]["id"]) == str(first_reservation.id)
-    assert (
-        response.data["reservations"][0]["author"] == first_reservation.author.user_id
-    )
-    assert (
-        response.data["reservations"][0]["bookable_item"]
-        == first_reservation.bookable_item.id
-    )
-    assert response.data["reservations"][0]["state"] == "PENDING"
+    assert str(response.data[0]["id"]) == str(first_reservation.id)
+    assert response.data[0]["author"] == first_reservation.author.user_id
+    assert response.data[0]["bookable_item"] == first_reservation.bookable_item.id
+    assert response.data[0]["state"] == "PENDING"
 
 
 @pytest.mark.django_db
@@ -326,6 +324,8 @@ def test_admin_cannot_set_invalid_reservation_state(member, reservation):
 
 @pytest.mark.django_db
 def test_member_cannot_set_own_reservation_to_invalid_state(member, reservation):
+    reservation.author = member
+    reservation.save()
     client = get_api_client(user=member)
     reservation_id = str(reservation.id)
     response = client.put(
@@ -356,6 +356,8 @@ def test_user_cannot_create_reservation_with_end_time_before_start_time(
 
 @pytest.mark.django_db
 def test_user_can_update_own_reservation_details(member, reservation):
+    reservation.author = member
+    reservation.save()
     client = get_api_client(user=member)
     reservation_id = str(reservation.id)
     new_description = "Updated Description"
@@ -443,10 +445,7 @@ def test_retrieve_specific_reservation_within_its_date_range(member, bookable_it
     print("Response data:", response.data)
 
     assert response.status_code == status.HTTP_200_OK
-    assert any(
-        res["id"] == str(reservation.id)
-        for res in response.data.get("reservations", [])
-    )
+    assert any(res["id"] == str(reservation.id) for res in response.data)
 
 
 @pytest.mark.django_db
@@ -502,4 +501,4 @@ def test_retrieve_subset_of_reservations(member, bookable_item):
     )
 
     assert response.status_code == status.HTTP_200_OK
-    assert len(response.data["reservations"]) == 2
+    assert len(response.data) == 2
