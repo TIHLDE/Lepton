@@ -440,9 +440,6 @@ def test_retrieve_specific_reservation_within_its_date_range(member, bookable_it
     response = client.get(
         f"/kontres/reservations/?start_date={start_time_iso}&end_date={end_time_iso}"
     )
-    print("Start date from request:", start_time_iso)
-    print("End date from request:", end_time_iso)
-    print("Response data:", response.data)
 
     assert response.status_code == status.HTTP_200_OK
     assert any(res["id"] == str(reservation.id) for res in response.data)
