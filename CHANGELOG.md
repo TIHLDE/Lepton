@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+## Versjon 2024.02.07
 
 ## Versjon 2023.02.07
 - 🦟 **Vipps** Brukere kan nå oppdatere betalt arrangement, uten at det betalte arrangementet blir slettet.
