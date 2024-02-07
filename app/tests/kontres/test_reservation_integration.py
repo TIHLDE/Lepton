@@ -21,7 +21,6 @@ def test_member_can_create_reservation(member, bookable_item):
     response = client.post(
         "/kontres/reservations/",
         {
-            "author": member.user_id,
             "bookable_item": bookable_item.id,
             "start_time": "2030-10-10T10:00:00Z",
             "end_time": "2030-10-10T11:00:00Z",
@@ -31,6 +30,34 @@ def test_member_can_create_reservation(member, bookable_item):
 
     assert response.status_code == 201
     assert response.data["author"] == member.user_id
+    assert response.data["bookable_item"] == bookable_item.id
+    assert response.data["state"] == "PENDING"
+
+
+@pytest.mark.django_db
+def test_member_cannot_set_different_author_in_reservation(member, bookable_item):
+    client = get_api_client(user=member)
+
+    # Attempt to create a reservation with a different author specified in the request body
+    response = client.post(
+        "/kontres/reservations/",
+        {
+            "author": "different_user_id",  # Attempt to set a different author
+            "bookable_item": bookable_item.id,
+            "start_time": "2030-10-10T10:00:00Z",
+            "end_time": "2030-10-10T11:00:00Z",
+        },
+        format="json",
+    )
+
+    # Check that the reservation is created successfully
+    assert response.status_code == 201
+
+    # Check that the author of the reservation is actually the requesting user
+    assert response.data["author"] == member.user_id
+    assert response.data["author"] != "different_user_id"
+
+    # Check other attributes of the reservation
     assert response.data["bookable_item"] == bookable_item.id
     assert response.data["state"] == "PENDING"
 
