@@ -54,13 +54,18 @@ class Reservation(BaseModel, BasePermissionModel):
         return check_has_access(cls.write_access, request)
 
     def has_object_update_permission(self, request):
-        if self.is_own_reservation(request) and "state" not in request.data:
+        allowed_groups = [AdminGroup.INDEX, AdminGroup.HS]
+        is_admin = check_has_access(allowed_groups, request)
+
+        if (self.is_own_reservation(request) and "state" not in request.data) or is_admin:
             return True
+
+        if self.state == ReservationStateEnum.CONFIRMED and not is_admin:
+            return False
 
         # If trying to change the state, then check for admin permissions.
         if "state" in request.data:
             if request.data["state"] != self.state:
-                allowed_groups = [AdminGroup.INDEX, AdminGroup.HS]
                 return check_has_access(allowed_groups, request)
 
         return False
