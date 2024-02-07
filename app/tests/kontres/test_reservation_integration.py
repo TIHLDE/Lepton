@@ -1,10 +1,7 @@
 from datetime import timedelta
-
 from django.utils import timezone
 from rest_framework import status
-
 import pytest
-
 from app.common.enums import AdminGroup
 from app.kontres.enums import ReservationStateEnum
 from app.kontres.factories.bookable_item_factory import BookableItemFactory
@@ -526,3 +523,79 @@ def test_retrieve_subset_of_reservations(member, bookable_item):
 
     assert response.status_code == status.HTTP_200_OK
     assert len(response.data) == 2
+
+
+@pytest.mark.django_db
+def test_admin_can_update_confirmed_reservation_state(admin_user, reservation):
+    client = get_api_client(user=admin_user)
+    # Set the reservation state to CONFIRMED and save
+    reservation.state = ReservationStateEnum.CONFIRMED
+    reservation.save()
+
+    new_state = "CANCELLED"
+
+    response = client.put(
+        f"/kontres/reservations/{reservation.id}/",
+        {"state": new_state},
+        format="json",
+    )
+
+    assert response.status_code == 200
+    assert response.data["state"] == new_state
+
+
+@pytest.mark.django_db
+def test_user_cannot_update_confirmed_reservation(member, reservation):
+    client = get_api_client(user=member)
+    # Confirm the reservation before the test
+    reservation.state = ReservationStateEnum.CONFIRMED
+    reservation.save()
+
+    response = client.patch(
+        f"/kontres/reservations/{reservation.id}/",
+        {"description": "Updated description"},
+        format="json",
+    )
+
+    # Assuming 403 is the status code for a forbidden action
+    assert response.status_code == 403
+
+
+@pytest.mark.django_db
+def test_member_can_update_own_reservation(member, reservation):
+    client = get_api_client(user=member)
+
+    reservation.author = member
+    reservation.save()
+
+    new_description = "Updated description"
+    response = client.patch(
+        f"/kontres/reservations/{reservation.id}/",
+        {"description": new_description},
+        format="json",
+    )
+
+    assert response.status_code == 200
+    assert response.data["description"] == new_description
+
+
+@pytest.mark.django_db
+def test_admin_can_update_details_of_confirmed_reservation(admin_user, reservation):
+    client = get_api_client(user=admin_user)
+
+    reservation.state = ReservationStateEnum.CONFIRMED
+    reservation.save()
+
+    new_description = "New details after confirmation"
+    response = client.patch(
+        f"/kontres/reservations/{reservation.id}/",
+        {"description": new_description},
+        format="json",
+    )
+
+    assert response.status_code == 200
+    assert response.data["description"] == new_description
+
+
+
+
