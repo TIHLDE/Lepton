@@ -21,4 +21,4 @@ class PaidEvent(BaseModel):
         verbose_name_plural = "Paid_events"
 
     def __str__(self):
-        return f"Price: {self.price}"
+        return f"Event: {self.event.title} - Price: {self.price} - Paytime: {self.paytime}"
