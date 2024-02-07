@@ -2,8 +2,8 @@ import uuid
 
 from django.db import models
 
-from app.common.enums import Groups
-from app.common.permissions import BasePermissionModel
+from app.common.enums import AdminGroup, Groups
+from app.common.permissions import BasePermissionModel, check_has_access
 from app.content.models import User
 from app.kontres.enums import ReservationStateEnum
 from app.kontres.models.bookable_item import BookableItem
@@ -12,6 +12,7 @@ from app.util.models import BaseModel
 
 class Reservation(BaseModel, BasePermissionModel):
     read_access = [Groups.TIHLDE]
+    write_access = [Groups.TIHLDE]
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     author = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="reservations"
@@ -33,35 +34,36 @@ class Reservation(BaseModel, BasePermissionModel):
         return f"{self.state} - Reservation request by {self.author.first_name} {self.author.last_name} to book {self.bookable_item.name}. Created at {self.created_at}"
 
     @classmethod
-    def has_write_permission(cls, request):
-        return cls.has_reservation_permission(request)
-
-    def has_object_destroy_permission(self, request):
-        return (
-            self.is_own_reservation(request)
-            or self.has_reservation_permission(request)
-            or request.user.is_HS_or_Index_member
-        )
+    def has_read_permission(cls, request):
+        return check_has_access(cls.read_access, request)
 
     @classmethod
-    def has_reservation_permission(cls, request):
-        # Any authenticated TIHLDE member can create a reservation.
-        return (
-            request.user
-            and request.user.is_authenticated
-            and request.user.is_TIHLDE_member
-        )
+    def has_retrieve_permission(cls, request):
+        return check_has_access(cls.read_access, request)
+
+    @classmethod
+    def has_write_permission(cls, request):
+        return check_has_access(cls.write_access, request)
+
+    @classmethod
+    def has_destroy_permission(cls, request):
+        return check_has_access(cls.write_access, request)
+
+    @classmethod
+    def has_create_permission(cls, request):
+        return check_has_access(cls.write_access, request)
 
     def has_object_update_permission(self, request):
-        # Users can update their own reservations, but cannot change the state
-        # Admins can update any reservation and change the state
-        if not self.is_own_reservation(request):
-            return False
+        if self.is_own_reservation(request) and "state" not in request.data:
+            return True
 
-        if "state" in request.data and request.data["state"] != self.state:
-            # If the user is trying to change the state, check if they are allowed to.
-            return request.user and request.user.is_HS_or_Index_member
-        return True
+        # If trying to change the state, then check for admin permissions.
+        if "state" in request.data:
+            if request.data["state"] != self.state:
+                allowed_groups = [AdminGroup.INDEX, AdminGroup.HS]
+                return check_has_access(allowed_groups, request)
+
+        return False
 
     def is_own_reservation(self, request):
         return self.author == request.user
