@@ -1,13 +1,10 @@
 from django.db.models import Q
-from django.shortcuts import get_object_or_404
 from django.utils.dateparse import parse_datetime
 from rest_framework import status
-from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.response import Response
 
 from app.common.permissions import BasicViewPermission
 from app.common.viewsets import BaseViewSet
-from app.kontres.enums import ReservationStateEnum
 from app.kontres.models.reservation import Reservation
 from app.kontres.serializer.reservation_seralizer import ReservationSerializer
 
