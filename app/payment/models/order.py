@@ -2,12 +2,13 @@ import uuid
 
 from django.db import models
 
-from app.common.enums import AdminGroup
+from app.common.enums import AdminGroup, Groups
 from app.common.permissions import (
     BasePermissionModel,
     is_admin_group_user,
     is_admin_user,
     is_index_user,
+    check_has_access
 )
 from app.content.models.event import Event
 from app.content.models.user import User
@@ -37,6 +38,10 @@ class Order(BaseModel, BasePermissionModel):
 
     def __str__(self):
         return f"{self.user} - {self.event.title if self.event else ['slettet']} - {self.status} - {self.created_at}"
+
+    @classmethod
+    def has_create_permission(cls, request):
+        return check_has_access([Groups.TIHLDE], request)
 
     @classmethod
     def has_update_permission(cls, request):
