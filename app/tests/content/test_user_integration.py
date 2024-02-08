@@ -617,3 +617,12 @@ def test_user_permissions_as_member(member, api_client):
     assert not user_permissions["destroy"]
     assert not user_permissions["write"]
     assert not user_permissions["get_user_detail_strikes"]
+
+    """ Cheatsheet """
+    cheatsheet_permissions = data["cheatsheet"]
+
+    assert cheatsheet_permissions["read"]
+    assert cheatsheet_permissions["retrieve"]
+    assert not cheatsheet_permissions["update"]
+    assert not cheatsheet_permissions["destroy"]
+    assert not cheatsheet_permissions["write"]
