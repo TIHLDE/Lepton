@@ -177,27 +177,36 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
             cls.read_access,
             request,
         )
-
+    
     @classmethod
-    def has_write_permission(cls, request):
-        if not request.user:
-            return False
-        user_id = request.parser_context.get("kwargs", {}).get("pk", None)
-        if user_id == "me":
-            return bool(request.user)
-        if user_id:
-            return request.user.user_id == user_id or check_has_access(
-                cls.write_access,
-                request,
-            )
+    def has_retrieve_permission(cls, request):
         return check_has_access(
-            cls.write_access,
+            cls.read_access,
             request,
         )
 
     @classmethod
+    def has_write_permission(cls, request):
+        return cls.has_write_permissions(cls, request)
+
+    @classmethod
+    def has_update_permission(cls, request):
+        return cls.has_write_permissions(cls, request)
+
+    @classmethod
+    def has_destroy_permission(cls, request):
+        return cls.has_write_permissions(cls, request)
+
+    @classmethod
     def has_create_permission(cls, request):
         return True
+
+    @classmethod
+    def has_get_user_detail_strikes_permission(cls, request):
+        return check_has_access(
+            [AdminGroup.NOK, AdminGroup.INDEX, AdminGroup.HS, AdminGroup.SOSIALEN],
+            request,
+        )
 
     def has_object_write_permission(self, request):
         return self == request.user or check_has_access(
@@ -214,9 +223,19 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
     def has_object_read_permission(self, request):
         return self.has_object_retrieve_permission(request)
 
-    def has_object_get_user_detail_strikes_permission(self, request):
+    def has_write_permissions(self, request):
+        if not request.user:
+            return False
+        user_id = request.parser_context.get("kwargs", {}).get("pk", None)
+        if user_id == "me":
+            return bool(request.user)
+        if user_id:
+            return request.user.user_id == user_id or check_has_access(
+                self.write_access,
+                request,
+            )
         return check_has_access(
-            [AdminGroup.NOK, AdminGroup.INDEX, AdminGroup.HS, AdminGroup.SOSIALEN],
+            self.write_access,
             request,
         )
 

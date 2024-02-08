@@ -607,3 +607,14 @@ def test_user_permissions_as_member(member, api_client):
     assert notification_permissions["retrieve"]
     assert notification_permissions["update"]
     assert not notification_permissions["destroy"]
+
+    """ User """
+    user_permissions = data["user"]
+
+    assert user_permissions["read"]
+    assert user_permissions["retrieve"]
+    assert not user_permissions["update"]
+    assert not user_permissions["destroy"]
+    assert not user_permissions["write"]
+    assert not user_permissions["get_user_detail_strikes"]
+    
