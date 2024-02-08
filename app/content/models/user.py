@@ -177,7 +177,7 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
             cls.read_access,
             request,
         )
-    
+
     @classmethod
     def has_retrieve_permission(cls, request):
         return check_has_access(

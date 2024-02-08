@@ -41,7 +41,7 @@ class Order(BaseModel, BasePermissionModel):
 
     @classmethod
     def has_create_permission(cls, request):
-        return check_has_access([Groups.TIHLDE], request)
+        return True
 
     @classmethod
     def has_update_permission(cls, request):

@@ -617,4 +617,3 @@ def test_user_permissions_as_member(member, api_client):
     assert not user_permissions["destroy"]
     assert not user_permissions["write"]
     assert not user_permissions["get_user_detail_strikes"]
-    
