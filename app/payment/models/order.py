@@ -36,7 +36,7 @@ class Order(BaseModel, BasePermissionModel):
         ordering = ("-created_at",)
 
     def __str__(self):
-        return f"{self.user} - {self.event.title} - {self.status} - {self.created_at}"
+        return f"{self.user} - {self.event.title if self.event else ['slettet']} - {self.status} - {self.created_at}"
 
     @classmethod
     def has_update_permission(cls, request):

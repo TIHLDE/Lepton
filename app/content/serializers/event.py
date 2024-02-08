@@ -5,10 +5,6 @@ from sentry_sdk import capture_exception
 
 from app.common.enums import GroupType
 from app.common.serializers import BaseModelSerializer
-from app.content.exceptions import (
-    APIEventCantBeChangedToPaidEventException,
-    APIPaidEventCantBeChangedToFreeEventException,
-)
 from app.content.models import Event, PriorityPool
 from app.content.serializers.priority_pool import (
     PriorityPoolCreateSerializer,
@@ -210,10 +206,10 @@ class EventCreateAndUpdateSerializer(BaseModelSerializer):
         if limit_difference < 0:
             event.move_users_from_queue_to_waiting_list(abs(limit_difference))
 
-    def update_from_paid_to_free(self, event, paid_information_data):
+    def update_from_free_to_paid(self, event, paid_information_data):
         if paid_information_data and not event.is_paid_event:
             if event.has_participants:
-                raise APIEventCantBeChangedToPaidEventException()
+                return
 
             PaidEvent.objects.create(
                 event=event,
@@ -221,15 +217,16 @@ class EventCreateAndUpdateSerializer(BaseModelSerializer):
                 paytime=paid_information_data["paytime"],
             )
 
-    def update_from_free_to_paid(self, event, paid_information_data):
+    def update_from_paid_to_free(self, event, paid_information_data):
         if event.is_paid_event:
-            if not len(paid_information_data) and event.has_participants:
-                raise APIPaidEventCantBeChangedToFreeEventException()
+            if event.has_participants:
+                return
 
-            paid_event = PaidEvent.objects.filter(event=event)
-            if paid_event:
-                paid_event.first().delete()
-                event.paid_information = None
+            if not len(paid_information_data):
+                paid_event = PaidEvent.objects.filter(event=event)
+                if paid_event:
+                    paid_event.first().delete()
+                    event.paid_information = None
 
     def update_priority_pools(self, event, priority_pools_data):
         event.priority_pools.all().delete()
