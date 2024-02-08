@@ -2,10 +2,9 @@ import uuid
 
 from django.db import models
 
-from app.common.enums import AdminGroup, Groups
+from app.common.enums import AdminGroup
 from app.common.permissions import (
     BasePermissionModel,
-    check_has_access,
     is_admin_group_user,
     is_admin_user,
     is_index_user,
