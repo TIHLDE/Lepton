@@ -32,7 +32,7 @@ class Warning(BaseModel, BasePermissionModel):
         return check_has_access(cls.write_access, request)
 
     @classmethod
-    def has_delete_permission(cls, request):
+    def has_destroy_permission(cls, request):
         return check_has_access(cls.write_access, request)
 
     @classmethod

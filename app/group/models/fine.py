@@ -60,6 +60,18 @@ class Fine(BaseModel, OptionalImage, BasePermissionModel):
                 Group.get_group_from_permission_context(request)
             )
         )
+    
+    @classmethod
+    def has_retrieve_permission(cls, request):
+        return cls.has_read_permission(request)
+
+    @classmethod
+    def has_write_permission(cls, request):
+        if not Group.check_context(request):
+            return check_has_access(cls.access, request)
+        return check_has_access(cls.access, request) or request.user.is_member_of(
+            Group.get_group_from_permission_context(request)
+        )
 
     @classmethod
     def has_create_permission(cls, request):
