@@ -12,6 +12,7 @@ from app.communication.factories import (
     UserNotificationSettingFactory,
 )
 from app.content.factories import (
+    CategoryFactory,
     CheatsheetFactory,
     EventFactory,
     NewsFactory,
@@ -22,7 +23,6 @@ from app.content.factories import (
     RegistrationFactory,
     ShortLinkFactory,
     UserFactory,
-    CategoryFactory,
 )
 from app.content.factories.toddel_factory import ToddelFactory
 from app.emoji.factories.reaction_factory import (

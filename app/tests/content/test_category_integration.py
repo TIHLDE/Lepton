@@ -1,17 +1,14 @@
-import pytest
-
 from rest_framework import status
 
-from app.util.test_utils import get_api_client
+import pytest
 
+from app.util.test_utils import get_api_client
 
 API_CATEGORY_BASE_URL = "/categories/"
 
 
 def get_category_data():
-    return {
-        "text": "test"
-    }
+    return {"text": "test"}
 
 
 @pytest.mark.django_db
@@ -87,7 +84,9 @@ def test_create_category_as_admin(admin_user):
 @pytest.mark.django_db
 def test_update_category_as_anonymous_user(default_client, category):
     """An anonymous user should not be able to update a category entity."""
-    response = default_client.put(f"{API_CATEGORY_BASE_URL}{category.id}/", get_category_data())
+    response = default_client.put(
+        f"{API_CATEGORY_BASE_URL}{category.id}/", get_category_data()
+    )
 
     assert response.status_code == status.HTTP_403_FORBIDDEN
 

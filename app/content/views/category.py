@@ -16,6 +16,5 @@ class CategoryViewSet(BaseViewSet):
     def destroy(self, request, *args, **kwargs):
         super().destroy(request, *args, **kwargs)
         return Response(
-            { "details": "Kategorien ble slettet" },
-            status=status.HTTP_200_OK
+            {"details": "Kategorien ble slettet"}, status=status.HTTP_200_OK
         )

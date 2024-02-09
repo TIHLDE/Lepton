@@ -1,5 +1,4 @@
 import factory
-
 from factory.django import DjangoModelFactory
 
 from app.content.models import Category
