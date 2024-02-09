@@ -136,8 +136,24 @@ class Strike(BaseModel, BasePermissionModel):
         return expired_date.astimezone(getTimezone())
 
     @classmethod
+    def has_write_permission(cls, request):
+        return check_has_access(cls.write_access, request)
+
+    @classmethod
     def has_destroy_permission(cls, request):
         return check_has_access(AdminGroup.admin(), request)
+    
+    @classmethod
+    def has_read_permission(cls, request):
+        return check_has_access(cls.read_access, request)
+    
+    @classmethod
+    def has_retrieve_permission(cls, request):
+        return check_has_access(cls.read_access, request)
+    
+    @classmethod
+    def has_update_permission(cls, request):
+        return check_has_access(cls.write_access, request)
 
     def has_object_read_permission(self, request):
         return self.user.user_id == request.id or check_has_access(
