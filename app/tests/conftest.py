@@ -22,6 +22,7 @@ from app.content.factories import (
     RegistrationFactory,
     ShortLinkFactory,
     UserFactory,
+    CategoryFactory,
 )
 from app.content.factories.toddel_factory import ToddelFactory
 from app.emoji.factories.reaction_factory import (
@@ -286,3 +287,8 @@ def event_with_priority_pool(priority_group):
 @pytest.fixture()
 def job_post():
     return JobPostFactory()
+
+
+@pytest.fixture()
+def category():
+    return CategoryFactory()
