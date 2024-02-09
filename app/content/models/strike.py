@@ -142,15 +142,15 @@ class Strike(BaseModel, BasePermissionModel):
     @classmethod
     def has_destroy_permission(cls, request):
         return check_has_access(AdminGroup.admin(), request)
-    
+
     @classmethod
     def has_read_permission(cls, request):
         return check_has_access(cls.read_access, request)
-    
+
     @classmethod
     def has_retrieve_permission(cls, request):
         return check_has_access(cls.read_access, request)
-    
+
     @classmethod
     def has_update_permission(cls, request):
         return check_has_access(cls.write_access, request)
