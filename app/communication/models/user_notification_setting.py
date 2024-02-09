@@ -54,3 +54,15 @@ class UserNotificationSetting(BaseModel):
         if request.user is None:
             return False
         return self.user == request.user
+
+    @classmethod
+    def has_retrieve_permission(cls, request):
+        return request.user is not None
+
+    @classmethod
+    def has_update_permission(cls, request):
+        return request.user is not None
+
+    @classmethod
+    def has_destroy_permission(cls, request):
+        return request.user is not None
