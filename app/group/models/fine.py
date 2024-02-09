@@ -60,7 +60,7 @@ class Fine(BaseModel, OptionalImage, BasePermissionModel):
                 Group.get_group_from_permission_context(request)
             )
         )
-    
+
     @classmethod
     def has_retrieve_permission(cls, request):
         return cls.has_read_permission(request)
