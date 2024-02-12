@@ -33,13 +33,27 @@ class UserBioViewset(BaseViewSet):
         return Response(user_bio_serializer.data, status=status.HTTP_201_CREATED)
 
     def update(self, request, *args, **kwargs):
+        print("inside update")
+        if self.get_object() is None: 
+            print("is none")
+
         bio = self.get_object()
         serializer = UserBioSerializer(
             bio, data=request.data, context={"request": request}
         )
+        print("Created serializer")
         if serializer.is_valid():
-            bio = super().perform_update(serializer)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            try: 
+                print(serializer.data)
+                bio = super().perform_update(serializer)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            except Exception: 
+                print(Exception)
+        
+        print("Invalid")
+        return Response(
+            {"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST
+        )
 
 
 # todo

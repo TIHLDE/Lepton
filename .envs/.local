@@ -5,3 +5,29 @@ DATABASE_NAME=nettside-dev
 DATABASE_PASSWORD=password
 DATABASE_PORT=3306
 DATABASE_USER=root
+
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_USER=no-reply@tihlde.org
+EMAIL_PASSWORD=cr0fLc@?Dr35aM&bR*ME
+app_key=hnglaealstnyhfct
+
+# Ny epost-konto 19.04.2022
+EMAIL_USER=noreply@tihlde.org
+EMAIL_PASSWORD=GjVGr8XtnKwy<65Q
+
+app_key_1=thcejodyrwofypbu
+app_key_2=owcvweuqaflhgqqb
+
+# testnøkler, disse må endres til produksjonsnøkler. 
+# Må logge inn i Vipps portalen for å få tilgang til produksjosnøkler.
+VIPPS_CLIENT_ID=b763e7af-4b20-4769-9c30-c777d96ceb8b
+VIPPS_CLIENT_SECRET=gMka4krI7MURziy2XjP3fw==
+VIPPS_SUBSCRIPTION_KEY=3dc75c066b9942d7bf579ab6b7c19f82
+VIPPS_MERCHANT_SERIAL_NUMBER=214629
+VIPPS_CALLBACK_PREFIX=https://api-dev.tihlde.org
+VIPPS_FALLBACK=https://tihlde.org
+VIPPS_TOKEN_URL=https://apitest.vipps.no/accessToken/get
+VIPPS_ORDER_URL=https://apitest.vipps.no/ecomm/v2/payments/
+VIPPS_FORCE_PAYMENT_URL=https://apitest.vipps.no/ecomm/v2/integration-test/payments/
+VIPPS_COOKIE=fpc=AqiUsXVZL3NFr4JO1-F_-NRQ2zIJAQAAAGhUfNsOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd
