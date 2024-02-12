@@ -15,6 +15,8 @@ from app.blitzed.serializers.pong_match import (
 )
 from app.common.permissions import BasicViewPermission
 from app.common.viewsets import BaseViewSet
+from app.blitzed.enums import TournamentAccess
+from app.blitzed.enums import TournamentStatus
 
 
 class BeerpongTournamentViewset(BaseViewSet):
@@ -24,15 +26,41 @@ class BeerpongTournamentViewset(BaseViewSet):
 
     def get_queryset(self):
         tournament_name = self.request.query_params.get("name", None)
+        pin = self.request.query_params.get("pin", None)
+        user = self.request.user
+
         if tournament_name is not None:
-            return BeerpongTournament.objects.filter(name=tournament_name)
-        return BeerpongTournament.objects.all()
+            if user is None:
+                return self.queryset.filter(
+                    access=TournamentAccess.PUBLIC, 
+                    name=tournament_name
+                )
+            return self.queryset.filter(
+                Q(access=TournamentAccess.PUBLIC) | 
+                Q(creator=user),
+                name=tournament_name,
+            )
+        if pin is not None:
+            if user is None:
+                return self.queryset.filter(
+                    Q(access=TournamentAccess.PUBLIC) | 
+                    Q(access=TournamentAccess.PIN), 
+                    pin_code=pin
+                )
+            return self.queryset.filter(pin_code=pin)
+
+        return self.queryset.filter(access=TournamentAccess.PUBLIC)
 
     @action(detail=True, methods=["GET"], url_path="generate")
     def generate_tournament_matches_and_return_matches(self, request, *args, **kwargs):
         try:
             tournament = self.get_object()
-            matches = self.generate_tournament(tournament)
+            matches = self._generate_tournament(tournament)
+            if tournament.status == TournamentStatus.FINISHED:
+                return Response(
+                    {"detail": "Turneringen er allerede ferdig."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
             for i, match in enumerate(matches):
                 serializer = PongMatchCreateAndUpdateSerializer(
@@ -42,6 +70,9 @@ class BeerpongTournamentViewset(BaseViewSet):
                 )
                 if serializer.is_valid(raise_exception=True):
                     super().perform_update(serializer)
+            
+            tournament.status = TournamentStatus.ACTIVE
+            tournament.save()
             serializer = BeerpongTournamentSerializer(tournament)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception:
@@ -51,13 +82,13 @@ class BeerpongTournamentViewset(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-    def generate_tournament(self, tournament):
+    def _generate_tournament(self, tournament):
         PongMatch.objects.filter(tournament=tournament).delete()
-        matches = self.create_matches(tournament)
-        self.create_match_tree(matches=matches, at=len(matches) - 1, n=1, round=1)
+        matches = self._create_matches(tournament)
+        self._create_match_tree(matches=matches, at=len(matches) - 1, n=1, round=1)
         return matches
 
-    def create_match_tree(self, matches, at, n, round):
+    def _create_match_tree(self, matches, at, n, round):
         node1 = at - n
         n *= 2
 
@@ -76,7 +107,7 @@ class BeerpongTournamentViewset(BaseViewSet):
         self.create_match_tree(matches, node1, n, round + 1)
         self.create_match_tree(matches, node2, n + 1, round + 1)
 
-    def create_matches(self, tournament):
+    def _create_matches(self, tournament):
         teams = list(PongTeam.objects.filter(tournament=tournament))
         nr_of_matches = len(teams) - 1
         random.shuffle(teams)

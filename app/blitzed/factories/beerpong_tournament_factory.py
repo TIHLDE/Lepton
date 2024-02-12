@@ -2,6 +2,7 @@ import factory
 from factory.django import DjangoModelFactory
 
 from app.blitzed.models.beerpong_tournament import BeerpongTournament
+from app.blitzed.enums import TournamentAccess, TournamentStatus
 
 
 class BeerpongTournamentFactory(DjangoModelFactory):
@@ -9,3 +10,6 @@ class BeerpongTournamentFactory(DjangoModelFactory):
         model = BeerpongTournament
 
     name = factory.Faker("sentence", nb_words=3)
+    status = TournamentStatus.PENDING
+    access = TournamentAccess.PUBLIC
+    pin_code = "1234"

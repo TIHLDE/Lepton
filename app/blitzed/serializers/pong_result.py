@@ -8,6 +8,7 @@ from app.blitzed.serializers.pong_team import (
     SimplePongTeamSerializer,
 )
 from app.common.serializers import BaseModelSerializer
+from app.blitzed.enums import TournamentStatus
 
 
 class PongResultSerializer(BaseModelSerializer):
@@ -37,6 +38,10 @@ class PongResultCreateSerializer(serializers.ModelSerializer):
             elif next_match.team2 is None:
                 next_match.team2 = winner
             next_match.save()
+        else:
+            tournament = match.tournament
+            tournament.status = TournamentStatus.FINISHED
+            tournament.save()
 
         return PongResult.objects.create(
             match=match,

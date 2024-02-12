@@ -1,5 +1,6 @@
 from rest_framework import status
 from rest_framework.response import Response
+from rest_framework.exceptions import ValidationError
 
 from app.blitzed.models.pong_team import PongTeam
 from app.blitzed.serializers.pong_team import (
@@ -27,28 +28,38 @@ class PongTeamViewset(BaseViewSet):
         return PongTeam.objects.all()
 
     def create(self, request, *args, **kwargs):
-        serializer = PongTeamCreateAndUpdateSerializer(
-            data=request.data, context={"request": request}
-        )
-        if serializer.is_valid():
-            super().perform_create(serializer)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        try:
+            serializer = PongTeamCreateAndUpdateSerializer(
+                data=request.data, context={"request": request}
+            )
+            if serializer.is_valid():
+                super().perform_create(serializer)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-        return Response(
-            {"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST
-        )
+            return Response(
+                {"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST
+            )
+        except ValidationError as e:
+            return Response(
+                {"detail": f"Feilmelding: {e.detail}"}, status=status.HTTP_400_BAD_REQUEST
+            )
 
     def update(self, request, *args, **kwargs):
-        serializer = PongTeamCreateAndUpdateSerializer(
-            data=request.data, partial=True, context={"request": request}
-        )
-        if serializer.is_valid():
-            super().update(serializer)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+        try:
+            serializer = PongTeamCreateAndUpdateSerializer(
+                data=request.data, partial=True, context={"request": request}
+            )
+            if serializer.is_valid():
+                super().update(serializer)
+                return Response(serializer.data, status=status.HTTP_200_OK)
 
-        return Response(
-            {"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST
-        )
+            return Response(
+                {"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST
+            )
+        except ValidationError as e:
+            return Response(
+                {"detail": f"Feilmelding: {e.detail}"}, status=status.HTTP_400_BAD_REQUEST
+            )
 
     def destroy(self, request, *args, **kwargs):
         team = self.get_object()

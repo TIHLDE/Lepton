@@ -38,6 +38,11 @@ class PongResultViewset(BaseViewSet):
     def update(self, request, *args, **kwargs):
         try:
             result = self.get_object()
+            if result.match.tournament.status == "FINISHED":
+                return Response(
+                    {"detail": "Turneringen er allerede ferdig."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
             serializer = PongResultUpdateSerializer(
                 result, data=request.data, context={"request": request}
             )
@@ -58,6 +63,11 @@ class PongResultViewset(BaseViewSet):
     def destroy(self, request, *args, **kwargs):
         try:
             instance = self.get_object()
+            if instance.match.tournament.status == "FINISHED":
+                return Response(
+                    {"detail": "Turneringen er allerede ferdig."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
             super().destroy(request, *args, **kwargs)
             self._update_match_tree(instance.match)
             return Response(
