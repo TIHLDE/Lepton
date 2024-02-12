@@ -3,7 +3,9 @@ import random
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from django.db.models import Q
 
+from app.blitzed.enums import TournamentAccess, TournamentStatus
 from app.blitzed.models.beerpong_tournament import BeerpongTournament
 from app.blitzed.models.pong_match import PongMatch
 from app.blitzed.models.pong_team import PongTeam
@@ -15,8 +17,6 @@ from app.blitzed.serializers.pong_match import (
 )
 from app.common.permissions import BasicViewPermission
 from app.common.viewsets import BaseViewSet
-from app.blitzed.enums import TournamentAccess
-from app.blitzed.enums import TournamentStatus
 
 
 class BeerpongTournamentViewset(BaseViewSet):
@@ -32,20 +32,17 @@ class BeerpongTournamentViewset(BaseViewSet):
         if tournament_name is not None:
             if user is None:
                 return self.queryset.filter(
-                    access=TournamentAccess.PUBLIC, 
-                    name=tournament_name
+                    access=TournamentAccess.PUBLIC, name=tournament_name
                 )
             return self.queryset.filter(
-                Q(access=TournamentAccess.PUBLIC) | 
-                Q(creator=user),
+                Q(access=TournamentAccess.PUBLIC) | Q(creator=user),
                 name=tournament_name,
             )
         if pin is not None:
             if user is None:
                 return self.queryset.filter(
-                    Q(access=TournamentAccess.PUBLIC) | 
-                    Q(access=TournamentAccess.PIN), 
-                    pin_code=pin
+                    Q(access=TournamentAccess.PUBLIC) | Q(access=TournamentAccess.PIN),
+                    pin_code=pin,
                 )
             return self.queryset.filter(pin_code=pin)
 
@@ -70,7 +67,7 @@ class BeerpongTournamentViewset(BaseViewSet):
                 )
                 if serializer.is_valid(raise_exception=True):
                     super().perform_update(serializer)
-            
+
             tournament.status = TournamentStatus.ACTIVE
             tournament.save()
             serializer = BeerpongTournamentSerializer(tournament)

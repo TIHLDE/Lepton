@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from app.blitzed.enums import TournamentStatus
 from app.blitzed.exceptions import APIDrawMatch
 from app.blitzed.models.pong_match import PongMatch
 from app.blitzed.models.pong_result import PongResult
@@ -8,7 +9,6 @@ from app.blitzed.serializers.pong_team import (
     SimplePongTeamSerializer,
 )
 from app.common.serializers import BaseModelSerializer
-from app.blitzed.enums import TournamentStatus
 
 
 class PongResultSerializer(BaseModelSerializer):

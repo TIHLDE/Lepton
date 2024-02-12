@@ -1,6 +1,6 @@
 from rest_framework import status
-from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
+from rest_framework.response import Response
 
 from app.blitzed.models.pong_team import PongTeam
 from app.blitzed.serializers.pong_team import (
@@ -41,7 +41,8 @@ class PongTeamViewset(BaseViewSet):
             )
         except ValidationError as e:
             return Response(
-                {"detail": f"Feilmelding: {e.detail}"}, status=status.HTTP_400_BAD_REQUEST
+                {"detail": f"Feilmelding: {e.detail}"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
     def update(self, request, *args, **kwargs):
@@ -58,7 +59,8 @@ class PongTeamViewset(BaseViewSet):
             )
         except ValidationError as e:
             return Response(
-                {"detail": f"Feilmelding: {e.detail}"}, status=status.HTTP_400_BAD_REQUEST
+                {"detail": f"Feilmelding: {e.detail}"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
     def destroy(self, request, *args, **kwargs):

@@ -1,11 +1,12 @@
 from django.db import models
 from django.utils.safestring import mark_safe
 
+from enumchoicefield import EnumChoiceField
+
+from app.blitzed.enums import TournamentAccess, TournamentStatus
 from app.common.permissions import BasePermissionModel
 from app.content.models.user import User
 from app.util.models import BaseModel
-from enumchoicefield import EnumChoiceField
-from app.blitzed.enums import (TournamentStatus, TournamentAccess)
 
 
 class BeerpongTournament(BaseModel, BasePermissionModel):

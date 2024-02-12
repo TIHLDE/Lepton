@@ -1,10 +1,10 @@
 from rest_framework import serializers
 
+from app.blitzed.enums import TournamentStatus
 from app.blitzed.models.anonymous_user import AnonymousUser
 from app.blitzed.models.pong_team import PongTeam
 from app.blitzed.serializers.anonymous_user import AnonymousUserSerializer
 from app.common.serializers import BaseModelSerializer
-from app.blitzed.enums import TournamentStatus
 
 
 class PongTeamSerializer(BaseModelSerializer):
@@ -38,9 +38,7 @@ class PongTeamCreateAndUpdateSerializer(serializers.ModelSerializer):
         """Create a pong team"""
         tournament = validated_data.get("tournament")
         if tournament.status == TournamentStatus.FINISHED:
-            raise serializers.ValidationError(
-                "Turneringen er ferdig."
-            )
+            raise serializers.ValidationError("Turneringen er ferdig.")
 
         anonymous_members = validated_data.pop("anonymous_members", [])
         members = validated_data.pop("members", [])
@@ -55,9 +53,7 @@ class PongTeamCreateAndUpdateSerializer(serializers.ModelSerializer):
         """Update a pong team"""
         tournament = validated_data.get("tournament")
         if tournament.status == TournamentStatus.FINISHED:
-            raise serializers.ValidationError(
-                "Turneringen er ferdig."
-            )
+            raise serializers.ValidationError("Turneringen er ferdig.")
 
         anonymous_members = validated_data.pop("anonymous_members", [])
         members = validated_data.pop("members", [])

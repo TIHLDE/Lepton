@@ -1,8 +1,8 @@
 import factory
 from factory.django import DjangoModelFactory
 
-from app.blitzed.models.beerpong_tournament import BeerpongTournament
 from app.blitzed.enums import TournamentAccess, TournamentStatus
+from app.blitzed.models.beerpong_tournament import BeerpongTournament
 
 
 class BeerpongTournamentFactory(DjangoModelFactory):

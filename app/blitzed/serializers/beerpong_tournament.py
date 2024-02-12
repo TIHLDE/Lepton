@@ -1,12 +1,12 @@
 import random
 import string
+
 from rest_framework import serializers
 
+from app.blitzed.enums import TournamentAccess, TournamentStatus
 from app.blitzed.models.beerpong_tournament import BeerpongTournament
 from app.blitzed.serializers.pong_match import PongMatchSerializer
 from app.common.serializers import BaseModelSerializer
-from enumchoicefield import EnumChoiceField
-from app.blitzed.enums import (TournamentStatus, TournamentAccess)
 from app.content.serializers.user import UserSerializer
 
 
@@ -23,7 +23,7 @@ class BeerpongTournamentSerializer(BaseModelSerializer):
 
     def create(self, validated_data):
         name = validated_data.pop("name")
-        user = self.context['request'].user
+        user = self.context["request"].user
 
         access_str = validated_data.pop("access")
         access = None
@@ -31,7 +31,7 @@ class BeerpongTournamentSerializer(BaseModelSerializer):
             access = TournamentAccess[access_str]
         else:
             access = TournamentAccess.PIN
-        
+
         status = TournamentStatus.PENDING
         pin_code = self._generate_pin_code()
         return BeerpongTournament.objects.create(
@@ -43,4 +43,4 @@ class BeerpongTournamentSerializer(BaseModelSerializer):
         )
 
     def _generate_pin_code(self):
-        return ''.join(random.choices(string.digits, k=4))
+        return "".join(random.choices(string.digits, k=4))
