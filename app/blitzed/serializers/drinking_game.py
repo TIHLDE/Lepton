@@ -7,7 +7,7 @@ from app.common.serializers import BaseModelSerializer
 
 class DrinkingGameSerializer(BaseModelSerializer):
     questions = serializers.PrimaryKeyRelatedField(
-        queryset=Question.objects.all(), many=True
+        queryset=Question.objects.all(), required=False, many=True
     )
 
     class Meta:
