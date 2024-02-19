@@ -23,12 +23,14 @@ def _get_match_post_data(tournament, team1, team2, future_match):
             "team2": team2.id,
             "future_match": future_match.id,
             "tournament": tournament.id,
+            "round": "1",
         }
     return {
         "team1": team1.id,
         "team2": team2.id,
         "future_match": None,
         "tournament": tournament.id,
+        "round": "1",
     }
 
 
@@ -38,6 +40,7 @@ def _get_match_put_data(match, tournament):
         "team2": PongTeamFactory(tournament=tournament).id,
         "future_match": PongMatchFactory(tournament=tournament).id,
         "tournament": tournament.id,
+        "round": "1",
     }
 
 

@@ -12,13 +12,13 @@ class PongTeamSerializer(BaseModelSerializer):
 
     class Meta:
         model = PongTeam
-        fields = ("id", "team_name", "members", "anonymous_members")
+        fields = ("id", "team_name", "members", "anonymous_members", "icon_id")
 
 
 class SimplePongTeamSerializer(BaseModelSerializer):
     class Meta:
         model = PongTeam
-        fields = ("id", "team_name")
+        fields = ("id", "team_name", "icon_id")
 
 
 class PongTeamCreateAndUpdateSerializer(serializers.ModelSerializer):
@@ -26,7 +26,14 @@ class PongTeamCreateAndUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PongTeam
-        fields = ("id", "team_name", "members", "anonymous_members", "tournament")
+        fields = (
+            "id",
+            "team_name",
+            "members",
+            "anonymous_members",
+            "tournament",
+            "icon_id",
+        )
 
     def _get_or_create_anonymous_users(self, team, anonymous_members):
         """Get or create anonymous users"""

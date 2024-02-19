@@ -17,6 +17,7 @@ class PongTeam(BaseModel, BasePermissionModel):
     tournament = models.ForeignKey(
         BeerpongTournament, on_delete=models.CASCADE, related_name="teams"
     )
+    icon_id = models.CharField(max_length=60, blank=True, null=True)
 
     class Meta:
         verbose_name = "Pong team"

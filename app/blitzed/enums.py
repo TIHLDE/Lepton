@@ -8,6 +8,5 @@ class TournamentStatus(ChoiceEnum):
 
 
 class TournamentAccess(ChoiceEnum):
-    USER_ONLY = ("USER_ONLY",)
     PUBLIC = ("PUBLIC",)
     PIN = ("PIN",)

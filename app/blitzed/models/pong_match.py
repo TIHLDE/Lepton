@@ -20,6 +20,7 @@ class PongMatch(BaseModel, BasePermissionModel):
     tournament = models.ForeignKey(
         BeerpongTournament, on_delete=models.CASCADE, related_name="matches"
     )
+    round = models.PositiveIntegerField(default=1)
 
     class Meta:
         verbose_name_plural = "Matches"

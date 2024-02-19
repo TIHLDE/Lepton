@@ -24,6 +24,7 @@ def _get_team_post_data(beerpong_tournament, members, anonymous_members):
         "members": members,
         "anonymous_members": anonymous_members,
         "tournament": beerpong_tournament.id,
+        "icon_id": "crown",
     }
 
 
@@ -39,6 +40,7 @@ def _get_team_put_data(team, beerpong_tournament):
             {"id": member.id, "name": member.name} for member in anonymous_members
         ],
         "tournament": beerpong_tournament.id,
+        "icon_id": "princess crown",
     }
 
 

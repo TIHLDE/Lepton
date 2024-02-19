@@ -13,6 +13,7 @@ class PongTeamFactory(DjangoModelFactory):
 
     team_name = factory.Faker("sentence", nb_words=3)
     tournament = factory.SubFactory(BeerpongTournamentFactory)
+    icon_id = "shark"
 
     @factory.post_generation
     def members(self, create, extracted, **kwargs):
