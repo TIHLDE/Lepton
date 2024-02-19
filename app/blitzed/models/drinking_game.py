@@ -1,7 +1,6 @@
 from django.db import models
 
 from app.blitzed.models.question import Question
-from app.common.enums import AdminGroup
 from app.common.permissions import BasePermissionModel
 from app.util.models import BaseModel, OptionalImage
 
