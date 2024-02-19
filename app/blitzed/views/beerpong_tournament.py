@@ -1,9 +1,9 @@
 import random
 
+from django.db.models import Q
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from django.db.models import Q
 
 from app.blitzed.enums import TournamentAccess, TournamentStatus
 from app.blitzed.models.beerpong_tournament import BeerpongTournament
