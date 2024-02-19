@@ -40,6 +40,7 @@ class Migration(migrations.Migration):
                 ('description', models.TextField(blank=True)),
                 ('author', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='reservations', to=settings.AUTH_USER_MODEL)),
                 ('bookable_item', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='reservations', to='kontres.bookableitem')),
+                ('accepted_rules', models.BooleanField(default=True)),
             ],
             options={
                 'abstract': False,
