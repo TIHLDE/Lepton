@@ -1,3 +1,4 @@
+import math
 import random
 
 from django.db.models import Q
@@ -26,27 +27,38 @@ class BeerpongTournamentViewset(BaseViewSet):
 
     def get_queryset(self):
         tournament_name = self.request.query_params.get("name", None)
+        active = self.request.query_params.get("active", True)
         pin = self.request.query_params.get("pin", None)
         user = self.request.user
 
-        if tournament_name is not None:
-            if user is None:
-                return self.queryset.filter(
-                    access=TournamentAccess.PUBLIC, name=tournament_name
-                )
+        if self.action == "generate_tournament_matches_and_return_matches":
+            return self.queryset
+
+        if pin is not None and active:
             return self.queryset.filter(
+                Q(status=TournamentStatus.ACTIVE) | Q(status=TournamentStatus.PENDING),
+                access=TournamentAccess.PIN,
+                pin_code=pin,
+            )
+
+        filter = self.queryset.filter(
+            Q(status=TournamentStatus.ACTIVE) | Q(status=TournamentStatus.PENDING)
+        )
+        if not active:
+            filter = self.queryset.filter(status=TournamentStatus.FINISHED)
+
+        if user is not None:
+            filter = filter.filter(
                 Q(access=TournamentAccess.PUBLIC) | Q(creator=user),
+            )
+        else:
+            filter = filter.filter(access=TournamentAccess.PUBLIC)
+
+        if tournament_name is not None:
+            return filter.filter(
                 name=tournament_name,
             )
-        if pin is not None:
-            if user is None:
-                return self.queryset.filter(
-                    Q(access=TournamentAccess.PUBLIC) | Q(access=TournamentAccess.PIN),
-                    pin_code=pin,
-                )
-            return self.queryset.filter(pin_code=pin)
-
-        return self.queryset.filter(access=TournamentAccess.PUBLIC)
+        return filter
 
     @action(detail=True, methods=["GET"], url_path="generate")
     def generate_tournament_matches_and_return_matches(self, request, *args, **kwargs):
@@ -70,7 +82,7 @@ class BeerpongTournamentViewset(BaseViewSet):
 
             tournament.status = TournamentStatus.ACTIVE
             tournament.save()
-            serializer = BeerpongTournamentSerializer(tournament)
+            serializer = self.get_serializer_class()(tournament)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception:
             PongMatch.objects.filter(tournament=tournament).delete()
@@ -82,7 +94,13 @@ class BeerpongTournamentViewset(BaseViewSet):
     def _generate_tournament(self, tournament):
         PongMatch.objects.filter(tournament=tournament).delete()
         matches = self._create_matches(tournament)
-        self._create_match_tree(matches=matches, at=len(matches) - 1, n=1, round=1)
+        if len(matches) < 1:
+            return matches
+        round = math.floor(math.log2(len(matches)) + 1)
+        matches[-1].round = round
+        self._create_match_tree(
+            matches=matches, at=len(matches) - 1, n=1, round=round - 1
+        )
         return matches
 
     def _create_match_tree(self, matches, at, n, round):
@@ -95,18 +113,23 @@ class BeerpongTournamentViewset(BaseViewSet):
             return
         match1 = matches[node1]
         match1.future_match = root
+        match1.round = round
 
         if node2 < 0:
             return
         match2 = matches[node2]
         match2.future_match = root
+        match2.round = round
 
-        self.create_match_tree(matches, node1, n, round + 1)
-        self.create_match_tree(matches, node2, n + 1, round + 1)
+        self._create_match_tree(matches, node1, n, round - 1)
+        self._create_match_tree(matches, node2, n + 1, round - 1)
 
     def _create_matches(self, tournament):
         teams = list(PongTeam.objects.filter(tournament=tournament))
         nr_of_matches = len(teams) - 1
+        if nr_of_matches < 1:
+            return []
+
         random.shuffle(teams)
         matches = []
         while len(teams) > 0:
@@ -121,6 +144,7 @@ class BeerpongTournamentViewset(BaseViewSet):
                     team2=team2,
                     future_match=None,
                     tournament=tournament,
+                    round=1,
                 )
             )
         for i in range(nr_of_matches - len(matches)):
@@ -130,6 +154,7 @@ class BeerpongTournamentViewset(BaseViewSet):
                     team2=None,
                     future_match=None,
                     tournament=tournament,
+                    round=1,
                 )
             )
         return matches

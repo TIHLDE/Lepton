@@ -13,10 +13,10 @@ class PongMatchSerializer(BaseModelSerializer):
 
     class Meta:
         model = PongMatch
-        fields = ("id", "team1", "team2", "result", "future_match")
+        fields = ("id", "team1", "team2", "result", "future_match", "round")
 
 
 class PongMatchCreateAndUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = PongMatch
-        fields = ("id", "team1", "team2", "future_match", "tournament")
+        fields = ("id", "team1", "team2", "future_match", "tournament", "round")

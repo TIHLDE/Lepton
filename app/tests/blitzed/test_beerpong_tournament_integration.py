@@ -2,6 +2,10 @@ from rest_framework import status
 
 import pytest
 
+from app.blitzed.enums import TournamentAccess
+from app.blitzed.factories.beerpong_tournament_factory import (
+    BeerpongTournamentFactory,
+)
 from app.blitzed.factories.pong_match_factory import PongMatchFactory
 from app.blitzed.factories.pong_team_factory import PongTeamFactory
 from app.blitzed.models.pong_match import PongMatch
@@ -22,6 +26,14 @@ def _get_tournament_by_name_url(tournament):
     return f"{API_TOURNAMENT_BASE_URL}?name={tournament.name}"
 
 
+def _get_tournament_by_pin_url(tournament):
+    return f"{API_TOURNAMENT_BASE_URL}?pin={tournament.pin_code}"
+
+
+def _get_tournament_by_active_url(tournament, active=True):
+    return f"{API_TOURNAMENT_BASE_URL}?active={active}"
+
+
 def _get_detailed_tournament_url(tournament):
     return f"{API_TOURNAMENT_BASE_URL}{tournament.id}/"
 
@@ -32,7 +44,12 @@ def _get_tournament_post_data():
     }
 
 
-def _get_tournament_put_data():
+def _get_tournament_put_data(access=None):
+    if access is not None:
+        return {
+            "name": "Beerolympics-2",
+            "access": access,
+        }
     return {
         "name": "Beerolympics-2",
     }
@@ -92,6 +109,17 @@ def test_that_a_tournament_can_be_retrieved_by_name(
 ):
     """A tournament should be able to be retrieved by name"""
     url = _get_tournament_by_name_url(beerpong_tournament)
+    response = default_client.get(url)
+
+    assert response.status_code == status.HTTP_200_OK
+    assert response.data[0]["id"] == beerpong_tournament.id
+
+
+@pytest.mark.django_db
+def test_that_a_tournament_can_be_retrieved_by_pin(default_client):
+    """A tournament should be able to be retrieved by pin"""
+    beerpong_tournament = BeerpongTournamentFactory(access=TournamentAccess.PIN)
+    url = _get_tournament_by_pin_url(beerpong_tournament)
     response = default_client.get(url)
 
     assert response.status_code == status.HTTP_200_OK
