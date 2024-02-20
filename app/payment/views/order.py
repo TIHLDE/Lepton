@@ -6,9 +6,7 @@ from sentry_sdk import capture_exception
 
 from app.common.mixins import ActionMixin
 from app.common.pagination import BasePagination
-from app.common.permissions import (
-    BasicViewPermission,
-)
+from app.common.permissions import BasicViewPermission
 from app.common.viewsets import BaseViewSet
 from app.content.models import Registration, User
 from app.payment.filters.order import OrderFilter
