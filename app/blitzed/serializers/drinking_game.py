@@ -10,12 +10,9 @@ class DrinkingGameSerializer(BaseModelSerializer):
         queryset=Question.objects.all(), required=False, many=True
     )
 
+    def update(self, instance, validated_data):
+        return super().update(instance, validated_data)
+
     class Meta:
         model = DrinkingGame
-        fields = (
-            "id",
-            "name",
-            "description",
-            "questions",
-            "image",
-        )
+        fields = ("id", "name", "description", "questions", "image", "image_alt")
