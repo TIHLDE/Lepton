@@ -177,7 +177,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
 
 class UserPermissionsSerializer(serializers.ModelSerializer):
     permissions = DRYGlobalPermissionsField(
-        actions=["write", "write_all", "read", "destroy"]
+        actions=["write", "write_all", "read", "destroy", "update", "retrieve"]
     )
 
     class Meta:

@@ -12,6 +12,7 @@ from app.common.permissions import (
     is_admin_user,
     is_index_user,
 )
+from app.common.permissions import BasicViewPermission
 from app.common.viewsets import BaseViewSet
 from app.content.models import Registration, User
 from app.payment.filters.order import OrderFilter
@@ -41,21 +42,8 @@ class OrderViewSet(BaseViewSet, ActionMixin):
         "user__user_id",
     ]
 
-    def list(self, request, *args, **kwargs):
-        if is_admin_group_user(request):
-            return super().list(request, *args, **kwargs)
-        return Response(
-            {"detail": "Du har ikke tilgang til å se disse ordrene."},
-            status=status.HTTP_403_FORBIDDEN,
-        )
-
     def retrieve(self, request, pk):
         try:
-            if not is_admin_group_user(request):
-                return Response(
-                    {"detail": "Du har ikke tilgang til å se denne ordren."},
-                    status=status.HTTP_403_FORBIDDEN,
-                )
             order = Order.objects.get(order_id=pk)
             serializer = OrderSerializer(
                 order, context={"request": request}, many=False
@@ -70,11 +58,6 @@ class OrderViewSet(BaseViewSet, ActionMixin):
 
     def update(self, request, pk):
         try:
-            if not is_admin_user(request):
-                return Response(
-                    {"detail": "Du har ikke tilgang til å oppdatere denne ordren."},
-                    status=status.HTTP_403_FORBIDDEN,
-                )
             order = Order.objects.get(order_id=pk)
             serializer = OrderUpdateSerializer(
                 order, data=request.data, context={"request": request}
@@ -126,11 +109,3 @@ class OrderViewSet(BaseViewSet, ActionMixin):
                 {"detail": "Fant ikke bruker."},
                 status=status.HTTP_404_NOT_FOUND,
             )
-
-    def destroy(self, request, *args, **kwargs):
-        if is_index_user(request):
-            return super().destroy(request, *args, **kwargs)
-        return Response(
-            {"detail": "Du har ikke tilgang til å slette denne ordren."},
-            status=status.HTTP_403_FORBIDDEN,
-        )
