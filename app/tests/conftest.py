@@ -42,6 +42,7 @@ from app.forms.tests.form_factories import FormFactory, SubmissionFactory
 from app.group.factories import GroupFactory, MembershipFactory
 from app.group.factories.fine_factory import FineFactory
 from app.group.factories.membership_factory import MembershipHistoryFactory
+from app.kontres.factories import BookableItemFactory, ReservationFactory
 from app.payment.factories.order_factory import OrderFactory
 from app.payment.factories.paid_event_factory import PaidEventFactory
 from app.util.test_utils import add_user_to_group_with_name, get_api_client
@@ -251,6 +252,16 @@ def banner():
 @pytest.fixture()
 def toddel():
     return ToddelFactory()
+
+
+@pytest.fixture()
+def bookable_item():
+    return BookableItemFactory()
+
+
+@pytest.fixture()
+def reservation():
+    return ReservationFactory()
 
 
 @pytest.fixture()
