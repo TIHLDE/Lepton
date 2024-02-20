@@ -2,9 +2,7 @@ from rest_framework import status
 
 import pytest
 
-from app.content.factories.user_bio_factory import UserBioFactory
 from app.content.models.user_bio import UserBio
-from app.tests.conftest import user_bio
 from app.util.test_utils import get_api_client
 
 pytestmark = pytest.mark.django_db

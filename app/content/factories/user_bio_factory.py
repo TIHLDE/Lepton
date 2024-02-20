@@ -1,5 +1,3 @@
-from django.contrib.contenttypes.models import ContentType
-
 import factory
 from factory.django import DjangoModelFactory
 
