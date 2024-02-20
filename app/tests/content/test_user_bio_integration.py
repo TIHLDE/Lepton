@@ -123,4 +123,4 @@ def test_destroy_other_bios(member, user_bio):
     response = client.delete(url)
 
     assert response.status_code == status.HTTP_403_FORBIDDEN
-    assert not len(UserBio.objects.filter(id=user_bio.id))
+    assert len(UserBio.objects.filter(id=user_bio.id))
