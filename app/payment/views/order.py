@@ -12,7 +12,6 @@ from app.common.permissions import (
     is_admin_user,
     is_index_user,
 )
-from app.common.permissions import BasicViewPermission
 from app.common.viewsets import BaseViewSet
 from app.content.models import Registration, User
 from app.payment.filters.order import OrderFilter
