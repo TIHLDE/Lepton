@@ -44,6 +44,9 @@ class BasicViewPermission(DRYPermissions):
 
 
 def check_has_access(groups_with_access, request):
+    if not len(groups_with_access):
+        return True
+
     set_user_id(request)
     user = request.user
 
