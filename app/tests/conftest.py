@@ -22,6 +22,7 @@ from app.content.factories import (
     RegistrationFactory,
     ShortLinkFactory,
     UserFactory,
+    CommentFactory,
 )
 from app.content.factories.toddel_factory import ToddelFactory
 from app.emoji.factories.reaction_factory import (
@@ -270,3 +271,8 @@ def event_with_priority_pool(priority_group):
     event = EventFactory(limit=1)
     PriorityPoolFactory(event=event, groups=(priority_group,))
     return event
+
+
+@pytest.fixture()
+def comment():
+    return CommentFactory()

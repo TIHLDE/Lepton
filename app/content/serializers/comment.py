@@ -20,7 +20,7 @@ class ChildCommentSerializer(serializers.ModelSerializer):
     
 class CommentCreateSerializer(serializers.ModelSerializer):
     content_type = serializers.CharField(max_length=25)
-    content_id = serializers.floatField()
+    content_id = serializers.FloatField()
 
     class Meta:
         model = Comment
@@ -34,5 +34,21 @@ class CommentCreateSerializer(serializers.ModelSerializer):
         author = validated_data.pop("user")
 
         if content_type.lower() == ContentType.EVENT:
-            pass
+            event = Event.objects.get(id=int(content_id))
+            created_comment = event.comments.create(
+                body=body, author=author, parent=parent
+            )
+            return created_comment
+        
+        if content_type.lower() == ContentType.NEWS:
+            news = News.objects.get(id=int(content_id))
+            created_comment = news.comments.create(
+                body=body, author=author, parent=parent
+            )
+            return created_comment
+        
+class CommentUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ("body",)
 

@@ -31,3 +31,8 @@ from app.content.serializers.user import (
     DefaultUserSerializer,
     UserPermissionsSerializer,
 )
+from app.content.serializers.comment import (
+    ChildCommentSerializer,
+    CommentCreateSerializer,
+    CommentUpdateSerializer
+)

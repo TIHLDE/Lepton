@@ -14,6 +14,7 @@ from app.content.views import (
     ToddelViewSet,
     UserCalendarEvents,
     UserViewSet,
+    CommentViewSet,
     accept_form,
     upload,
 )
@@ -28,6 +29,7 @@ router.register("categories", CategoryViewSet)
 router.register("short-links", ShortLinkViewSet, basename="short-link")
 router.register("qr-codes", QRCodeViewSet, basename="qr-code")
 router.register("users", UserViewSet, basename="user")
+router.register("comments", CommentViewSet, basename="comments")
 router.register(
     r"events/(?P<event_id>\d+)/registrations",
     RegistrationViewSet,
