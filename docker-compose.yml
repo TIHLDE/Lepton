@@ -32,7 +32,7 @@ services:
       dockerfile: compose/Dockerfile
       target: dev
     env_file:
-      - ./.envs/.local
+      - ./.env
     image: web
     container_name: web
     restart: on-failure
