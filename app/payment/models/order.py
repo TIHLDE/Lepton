@@ -3,7 +3,12 @@ import uuid
 from django.db import models
 
 from app.common.enums import AdminGroup
-from app.common.permissions import BasePermissionModel
+from app.common.permissions import (
+    BasePermissionModel,
+    is_admin_group_user,
+    is_admin_user,
+    is_index_user,
+)
 from app.content.models.event import Event
 from app.content.models.user import User
 from app.payment.enums import OrderStatus
@@ -31,4 +36,32 @@ class Order(BaseModel, BasePermissionModel):
         ordering = ("-created_at",)
 
     def __str__(self):
-        return f"{self.user} - {self.event.title} - {self.status} - {self.created_at}"
+        return f"{self.user} - {self.event.title if self.event else ['slettet']} - {self.status} - {self.created_at}"
+
+    @classmethod
+    def has_update_permission(cls, request):
+        return is_admin_user(request)
+
+    @classmethod
+    def has_destroy_permission(cls, request):
+        return is_index_user(request)
+
+    @classmethod
+    def has_retrieve_permission(cls, request):
+        return is_admin_group_user(request)
+
+    @classmethod
+    def has_read_permission(cls, request):
+        return is_admin_group_user(request)
+
+    def has_object_read_permission(self, request):
+        return self.has_read_permission(request)
+
+    def has_object_update_permission(self, request):
+        return self.has_update_permission(request)
+
+    def has_object_destroy_permission(self, request):
+        return self.has_destroy_permission(request)
+
+    def has_object_retrieve_permission(self, request):
+        return self.has_retrieve_permission(request)
