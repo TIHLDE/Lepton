@@ -18,6 +18,16 @@ class UserBio(BaseModel, BasePermissionModel):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bio")
 
+    def __str__(self):
+        bio_str = f"{self.user}"
+        if self.description:
+            bio_str += f" - {self.description}"
+        if self.gitHub_link:
+            bio_str += f" - {self.gitHub_link}"
+        if self.linkedIn_link:
+            bio_str += f" - {self.linkedIn_link}"
+        return bio_str
+
     @classmethod
     def has_update_permission(cls, request):
         return check_has_access(cls.write_access, request)
