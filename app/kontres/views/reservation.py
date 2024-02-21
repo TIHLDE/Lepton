@@ -34,7 +34,9 @@ class ReservationViewSet(BaseViewSet):
 
     def create(self, request, *args, **kwargs):
         request.data["author"] = request.user.user_id
-        serializer = ReservationSerializer(data=request.data)
+        serializer = ReservationSerializer(
+            data=request.data, context={"request": request}
+        )
         if serializer.is_valid():
             # Overriding the state to PENDING
             serializer.validated_data["state"] = "PENDING"
@@ -48,3 +50,7 @@ class ReservationViewSet(BaseViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def destroy(self, request, *args, **kwargs):
+        super().destroy(self, request, *args, **kwargs)
+        return Response(status=status.HTTP_204_NO_CONTENT)
