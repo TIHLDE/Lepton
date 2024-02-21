@@ -48,3 +48,13 @@ class ReservationViewSet(BaseViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def delete(self, request, *args, **kwargs):
+        reservation = self.get_object()
+
+        if not reservation.has_object_destroy_permission(request):
+            return Response({"melding": "Du har ikke tilgang til å slette denne reservasjonen."},
+                            status=status.HTTP_403_FORBIDDEN)
+
+        reservation.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

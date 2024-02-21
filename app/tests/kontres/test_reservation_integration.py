@@ -99,9 +99,27 @@ def test_creating_reservation_with_past_start_time(member, bookable_item):
 
 @pytest.mark.django_db
 def test_member_deleting_own_reservation(member, reservation):
+    reservation.author = member
+    reservation.save()
     client = get_api_client(user=member)
     response = client.delete(f"/kontres/reservations/{reservation.id}/", format="json")
     assert response.status_code == status.HTTP_204_NO_CONTENT
+
+
+@pytest.mark.django_db
+def test_member_cannot_update_random_reservation(member, reservation):
+    client = get_api_client(user=member)
+
+    new_description = "Updated description"
+    response = client.patch(
+        f"/kontres/reservations/{reservation.id}/",
+        {"description": new_description},
+        format="json",
+    )
+
+    assert response.status_code == 403
+    assert "description" not in response.data
+
 
 
 @pytest.mark.django_db

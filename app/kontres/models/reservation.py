@@ -45,9 +45,10 @@ class Reservation(BaseModel, BasePermissionModel):
     def has_update_permission(cls, request):
         return check_has_access(cls.write_access, request)
 
-    @classmethod
-    def has_destroy_permission(cls, request):
-        return check_has_access(cls.write_access, request)
+    def has_object_destroy_permission(self, request):
+        is_owner = self.author == request.user
+        is_admin = check_has_access([AdminGroup.INDEX, AdminGroup.HS], request)
+        return is_owner or is_admin
 
     @classmethod
     def has_create_permission(cls, request):
