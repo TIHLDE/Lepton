@@ -73,8 +73,8 @@ def test_non_tihlde_cannot_create_reservation(user, bookable_item):
         {
             "author": user.user_id,
             "bookable_item": bookable_item.id,
-            "start_time": "2023-10-10T10:00:00Z",
-            "end_time": "2023-10-10T11:00:00Z",
+            "start_time": "2025-10-10T10:00:00Z",
+            "end_time": "2025-10-10T11:00:00Z",
         },
         format="json",
     )
@@ -123,7 +123,6 @@ def test_member_cannot_update_random_reservation(member, reservation):
     assert "description" not in response.data
 
 
-
 @pytest.mark.django_db
 def test_user_cannot_create_confirmed_reservation(bookable_item, member):
     client = get_api_client(user=member)
@@ -150,14 +149,16 @@ def test_user_cannot_create_confirmed_reservation(bookable_item, member):
 
 
 @pytest.mark.django_db
-def test_user_cannot_create_reservation_without_author(member, bookable_item):
+def test_user_cannot_create_reservation_without_author(
+    member, bookable_item
+):  # TODO: check
     client = get_api_client(user=member)
     response = client.post(
         "/kontres/reservations/",
         {
             "bookable_item_id": bookable_item.id,
-            "start_time": "2023-10-10T10:00:00Z",
-            "end_time": "2023-10-10T11:00:00Z",
+            "start_time": "2025-10-10T10:00:00Z",
+            "end_time": "2025-10-10T11:00:00Z",
         },
         format="json",
     )
@@ -393,7 +394,7 @@ def test_user_cannot_create_reservation_with_end_time_before_start_time(
         {
             "author": member.user_id,
             "bookable_item": bookable_item.id,
-            "start_time": "2023-10-10T12:00:00Z",
+            "start_time": "2025-10-10T12:00:00Z",
             "end_time": "2023-10-10T11:00:00Z",
         },
         format="json",
@@ -424,8 +425,8 @@ def test_unauthenticated_request_cannot_create_reservation(bookable_item):
         "/kontres/reservations/",
         {
             "bookable_item": bookable_item.id,
-            "start_time": "2023-10-10T10:00:00Z",
-            "end_time": "2023-10-10T11:00:00Z",
+            "start_time": "2025-10-10T10:00:00Z",
+            "end_time": "2025-10-10T11:00:00Z",
         },
         format="json",
     )
@@ -646,11 +647,15 @@ def test_user_can_change_reservation_group(member, reservation):
 
     # Verify the response
     assert response.status_code == status.HTTP_200_OK, response.data
-    assert response.data["group"] == new_group.slug, "Group should be updated to the new group"
+    assert (
+        response.data["group"] == new_group.slug
+    ), "Group should be updated to the new group"
 
     # Optionally, fetch the reservation again from the database to assert the change was persisted
     reservation.refresh_from_db()
-    assert reservation.group.slug == new_group.slug, "Reservation's group should be updated in the database"
+    assert (
+        reservation.group.slug == new_group.slug
+    ), "Reservation's group should be updated in the database"
 
 
 @pytest.mark.django_db
@@ -674,7 +679,9 @@ def test_user_can_create_reservation_for_group(member, bookable_item, group):
 
 
 @pytest.mark.django_db
-def test_user_cannot_create_reservation_for_group_if_not_member_of_group(member, bookable_item, group):
+def test_user_cannot_create_reservation_for_group_if_not_member_of_group(
+    member, bookable_item, group
+):
     client = get_api_client(user=member)
 
     response = client.post(
@@ -741,7 +748,9 @@ def test_user_can_change_reservation_group_if_state_is_pending(member, reservati
 
 
 @pytest.mark.django_db
-def test_user_cannot_change_reservation_group_if_state_is_not_pending(member, reservation):
+def test_user_cannot_change_reservation_group_if_state_is_not_pending(
+    member, reservation
+):
     original_group = GroupFactory()
     new_group = GroupFactory()
     _add_user_to_group(member, original_group)
