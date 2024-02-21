@@ -1,5 +1,6 @@
 from django.db.models import Q
 from django.utils import timezone
+from app.kontres.serializer.bookable_item_serializer import BookableItemSerializer
 from rest_framework import serializers
 
 from app.group.models import Group
@@ -9,9 +10,7 @@ from app.kontres.models.reservation import Reservation
 
 
 class ReservationSerializer(serializers.ModelSerializer):
-    bookable_item = serializers.PrimaryKeyRelatedField(
-        queryset=BookableItem.objects.all()
-    )
+    bookable_item = BookableItemSerializer()
     group = serializers.SlugRelatedField(
         slug_field="slug", queryset=Group.objects.all(), required=False, allow_null=True
     )
