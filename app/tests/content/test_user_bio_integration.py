@@ -48,7 +48,7 @@ def test_create_duplicate_user_bio(member, api_client, user_bio):
     client = api_client(user=member)
     response = client.post(API_USER_BIO_BASE_URL, data)
 
-    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert response.status_code == status.HTTP_409_CONFLICT
 
 
 @pytest.mark.django_db
