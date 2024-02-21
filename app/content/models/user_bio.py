@@ -16,7 +16,9 @@ class UserBio(BaseModel, BasePermissionModel):
 
     linkedIn_link = models.URLField(max_length=300, blank=True, null=True)
 
-    user = models.OneToOneField(User, on_delete=models.CASCADE, unique=True, related_name="bio")
+    user = models.OneToOneField(
+        User, on_delete=models.CASCADE, unique=True, related_name="bio"
+    )
 
     def __str__(self):
         bio_str = f"{self.user}"
