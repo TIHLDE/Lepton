@@ -15,7 +15,7 @@ class ReservationFactory(DjangoModelFactory):
 
     author = SubFactory(UserFactory)
     bookable_item = SubFactory(BookableItemFactory)
-    start_time = timezone.now()
-    end_time = timezone.now() + timezone.timedelta(hours=1)
+    start_time = timezone.now() + timezone.timedelta(hours=1)
+    end_time = timezone.now() + timezone.timedelta(hours=2)
     state = ReservationStateEnum.PENDING
     description = Faker("text")

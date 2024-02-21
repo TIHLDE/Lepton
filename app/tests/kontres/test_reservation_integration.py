@@ -6,11 +6,13 @@ from rest_framework import status
 import pytest
 
 from app.common.enums import AdminGroup
+from app.group.factories import GroupFactory
 from app.kontres.enums import ReservationStateEnum
 from app.kontres.factories.bookable_item_factory import BookableItemFactory
 from app.kontres.factories.reservation_factory import ReservationFactory
 from app.kontres.models.bookable_item import BookableItem
 from app.kontres.models.reservation import Reservation
+from app.tests.conftest import _add_user_to_group
 from app.util.test_utils import get_api_client
 
 
@@ -71,8 +73,8 @@ def test_non_tihlde_cannot_create_reservation(user, bookable_item):
         {
             "author": user.user_id,
             "bookable_item": bookable_item.id,
-            "start_time": "2023-10-10T10:00:00Z",
-            "end_time": "2023-10-10T11:00:00Z",
+            "start_time": "2025-10-10T10:00:00Z",
+            "end_time": "2025-10-10T11:00:00Z",
         },
         format="json",
     )
@@ -99,9 +101,26 @@ def test_creating_reservation_with_past_start_time(member, bookable_item):
 
 @pytest.mark.django_db
 def test_member_deleting_own_reservation(member, reservation):
+    reservation.author = member
+    reservation.save()
     client = get_api_client(user=member)
     response = client.delete(f"/kontres/reservations/{reservation.id}/", format="json")
     assert response.status_code == status.HTTP_204_NO_CONTENT
+
+
+@pytest.mark.django_db
+def test_member_cannot_update_random_reservation(member, reservation):
+    client = get_api_client(user=member)
+
+    new_description = "Updated description"
+    response = client.patch(
+        f"/kontres/reservations/{reservation.id}/",
+        {"description": new_description},
+        format="json",
+    )
+
+    assert response.status_code == 403
+    assert "description" not in response.data
 
 
 @pytest.mark.django_db
@@ -130,29 +149,13 @@ def test_user_cannot_create_confirmed_reservation(bookable_item, member):
 
 
 @pytest.mark.django_db
-def test_user_cannot_create_reservation_without_author(member, bookable_item):
-    client = get_api_client(user=member)
-    response = client.post(
-        "/kontres/reservations/",
-        {
-            "bookable_item_id": bookable_item.id,
-            "start_time": "2023-10-10T10:00:00Z",
-            "end_time": "2023-10-10T11:00:00Z",
-        },
-        format="json",
-    )
-
-    assert response.status_code == 400
-
-
-@pytest.mark.django_db
 def test_user_cannot_create_reservation_with_invalid_date_format(member, bookable_item):
     client = get_api_client(user=member)
     response = client.post(
         "/kontres/reservations/",
         {
             "author": member.user_id,
-            "bookable_item_id": bookable_item.id,
+            "bookable_item": bookable_item.id,
             "start_time": "invalid_date_format",
             "end_time": "2023-10-10T11:00:00Z",
         },
@@ -373,7 +376,7 @@ def test_user_cannot_create_reservation_with_end_time_before_start_time(
         {
             "author": member.user_id,
             "bookable_item": bookable_item.id,
-            "start_time": "2023-10-10T12:00:00Z",
+            "start_time": "2025-10-10T12:00:00Z",
             "end_time": "2023-10-10T11:00:00Z",
         },
         format="json",
@@ -404,8 +407,8 @@ def test_unauthenticated_request_cannot_create_reservation(bookable_item):
         "/kontres/reservations/",
         {
             "bookable_item": bookable_item.id,
-            "start_time": "2023-10-10T10:00:00Z",
-            "end_time": "2023-10-10T11:00:00Z",
+            "start_time": "2025-10-10T10:00:00Z",
+            "end_time": "2025-10-10T11:00:00Z",
         },
         format="json",
     )
@@ -598,3 +601,150 @@ def test_admin_can_update_details_of_confirmed_reservation(admin_user, reservati
 
     assert response.status_code == 200
     assert response.data["description"] == new_description
+
+
+@pytest.mark.django_db
+def test_user_can_change_reservation_group(member, reservation):
+    # Setup: Create two groups and add the user to both
+    original_group = GroupFactory()
+    new_group = GroupFactory()
+    _add_user_to_group(member, original_group)
+    _add_user_to_group(member, new_group)
+
+    # Assign the original group to the reservation and save
+    reservation.group = original_group
+    reservation.author = member
+    reservation.save()
+
+    # Prepare the client and attempt to update the reservation's group
+    client = get_api_client(user=member)
+    reservation_id = str(reservation.id)
+    response = client.put(
+        f"/kontres/reservations/{reservation_id}/",
+        {
+            "group": new_group.slug,
+        },
+        format="json",
+    )
+
+    # Verify the response
+    assert response.status_code == status.HTTP_200_OK, response.data
+    assert (
+        response.data["group"] == new_group.slug
+    ), "Group should be updated to the new group"
+
+
+@pytest.mark.django_db
+def test_user_can_create_reservation_for_group(member, bookable_item, group):
+    client = get_api_client(user=member)
+
+    _add_user_to_group(member, group)
+
+    response = client.post(
+        "/kontres/reservations/",
+        {
+            "group": group.slug,
+            "bookable_item": bookable_item.id,
+            "start_time": "2030-10-10T10:00:00Z",
+            "end_time": "2030-10-10T11:00:00Z",
+        },
+        format="json",
+    )
+
+    assert response.status_code == 201
+
+
+@pytest.mark.django_db
+def test_user_cannot_create_reservation_for_group_if_not_member_of_group(
+    member, bookable_item, group
+):
+    client = get_api_client(user=member)
+
+    response = client.post(
+        "/kontres/reservations/",
+        {
+            "group": group.slug,
+            "bookable_item": bookable_item.id,
+            "start_time": "2030-10-10T10:00:00Z",
+            "end_time": "2030-10-10T11:00:00Z",
+        },
+        format="json",
+    )
+
+    assert response.status_code == 400
+
+
+@pytest.mark.django_db
+def test_user_cannot_create_reservation_for_another_group(member, bookable_item):
+    client = get_api_client(user=member)
+
+    group1 = GroupFactory()
+    group2 = GroupFactory()
+
+    _add_user_to_group(member, group1)
+
+    response = client.post(
+        "/kontres/reservations/",
+        {
+            "group": group2.slug,
+            "bookable_item": bookable_item.id,
+            "start_time": "2030-10-10T10:00:00Z",
+            "end_time": "2030-10-10T11:00:00Z",
+        },
+        format="json",
+    )
+
+    assert response.status_code == 400
+
+
+@pytest.mark.django_db
+def test_user_can_change_reservation_group_if_state_is_pending(member, reservation):
+    original_group = GroupFactory()
+    new_group = GroupFactory()
+    _add_user_to_group(member, original_group)
+    _add_user_to_group(member, new_group)
+
+    reservation.group = original_group
+    reservation.author = member
+    reservation.save()
+
+    client = get_api_client(user=member)
+    reservation_id = str(reservation.id)
+    response = client.put(
+        f"/kontres/reservations/{reservation_id}/",
+        {
+            "group": new_group.slug,
+        },
+        format="json",
+    )
+
+    # Verify the response
+    assert response.status_code == status.HTTP_200_OK, response.data
+    assert response.data["group"] == new_group.slug
+
+
+@pytest.mark.django_db
+def test_user_cannot_change_reservation_group_if_state_is_not_pending(
+    member, reservation
+):
+    original_group = GroupFactory()
+    new_group = GroupFactory()
+    _add_user_to_group(member, original_group)
+    _add_user_to_group(member, new_group)
+
+    reservation.group = original_group
+    reservation.author = member
+    reservation.state = ReservationStateEnum.CONFIRMED
+    reservation.save()
+
+    client = get_api_client(user=member)
+    reservation_id = str(reservation.id)
+    response = client.put(
+        f"/kontres/reservations/{reservation_id}/",
+        {
+            "group": new_group.slug,
+        },
+        format="json",
+    )
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
