@@ -57,8 +57,3 @@ class EventIsFullError(ValueError):
 
 class RefundFailedError(ValueError):
     pass
-
-
-class APIUserBioDuplicate(APIException):
-    status_code = status.HTTP_400_BAD_REQUEST
-    default_detail = "Du kan ikke opprette en duplikat brukerbio."
