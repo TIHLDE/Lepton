@@ -34,7 +34,9 @@ class ReservationViewSet(BaseViewSet):
 
     def create(self, request, *args, **kwargs):
         request.data["author"] = request.user.user_id
-        serializer = ReservationSerializer(data=request.data, context={'request': request})
+        serializer = ReservationSerializer(
+            data=request.data, context={"request": request}
+        )
         if serializer.is_valid():
             # Overriding the state to PENDING
             serializer.validated_data["state"] = "PENDING"
@@ -53,8 +55,10 @@ class ReservationViewSet(BaseViewSet):
         reservation = self.get_object()
 
         if not reservation.has_object_destroy_permission(request):
-            return Response({"melding": "Du har ikke tilgang til å slette denne reservasjonen."},
-                            status=status.HTTP_403_FORBIDDEN)
+            return Response(
+                {"melding": "Du har ikke tilgang til å slette denne reservasjonen."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
         reservation.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
