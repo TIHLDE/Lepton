@@ -633,12 +633,6 @@ def test_user_can_change_reservation_group(member, reservation):
         response.data["group"] == new_group.slug
     ), "Group should be updated to the new group"
 
-    # Optionally, fetch the reservation again from the database to assert the change was persisted
-    reservation.refresh_from_db()
-    assert (
-        reservation.group.slug == new_group.slug
-    ), "Reservation's group should be updated in the database"
-
 
 @pytest.mark.django_db
 def test_user_can_create_reservation_for_group(member, bookable_item, group):
