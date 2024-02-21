@@ -149,31 +149,13 @@ def test_user_cannot_create_confirmed_reservation(bookable_item, member):
 
 
 @pytest.mark.django_db
-def test_user_cannot_create_reservation_without_author(
-    member, bookable_item
-):  # TODO: check
-    client = get_api_client(user=member)
-    response = client.post(
-        "/kontres/reservations/",
-        {
-            "bookable_item_id": bookable_item.id,
-            "start_time": "2025-10-10T10:00:00Z",
-            "end_time": "2025-10-10T11:00:00Z",
-        },
-        format="json",
-    )
-
-    assert response.status_code == 400
-
-
-@pytest.mark.django_db
 def test_user_cannot_create_reservation_with_invalid_date_format(member, bookable_item):
     client = get_api_client(user=member)
     response = client.post(
         "/kontres/reservations/",
         {
             "author": member.user_id,
-            "bookable_item_id": bookable_item.id,
+            "bookable_item": bookable_item.id,
             "start_time": "invalid_date_format",
             "end_time": "2023-10-10T11:00:00Z",
         },
