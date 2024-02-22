@@ -34,6 +34,10 @@ def test_member_can_create_reservation(member, bookable_item):
     assert response.data["author_detail"]["user_id"] == str(member.user_id)
     assert response.data["bookable_item_detail"]["id"] == str(bookable_item.id)
     assert response.data["author_detail"]["user_id"] == str(member.user_id)
+    assert response.data["author_detail"]["user_id"] == str(member.user_id)
+    assert response.data["bookable_item_detail"]["id"] == str(bookable_item.id)
+    assert response.data["author_detail"]["user_id"] == str(
+        member.user_id)
     assert response.data["bookable_item_detail"]["id"] == str(bookable_item.id)
     assert response.data["state"] == "PENDING"
 
