@@ -31,20 +31,22 @@ def test_member_can_create_reservation(member, bookable_item):
     )
 
     assert response.status_code == 201
-    assert response.data["author"] == member.user_id
-    assert response.data["bookable_item"] == bookable_item.id
+    assert response.data["author_detail"]["user_id"] == str(member.user_id)
+    assert response.data["bookable_item_detail"]["id"] == str(bookable_item.id)
     assert response.data["state"] == "PENDING"
 
 
 @pytest.mark.django_db
-def test_member_cannot_set_different_author_in_reservation(member, bookable_item):
+def test_member_cannot_set_different_author_in_reservation(
+    member, bookable_item, sosialen_user
+):
     client = get_api_client(user=member)
 
     # Attempt to create a reservation with a different author specified in the request body
     response = client.post(
         "/kontres/reservations/",
         {
-            "author": "different_user_id",  # Attempt to set a different author
+            "author": sosialen_user.user_id,
             "bookable_item": bookable_item.id,
             "start_time": "2030-10-10T10:00:00Z",
             "end_time": "2030-10-10T11:00:00Z",
@@ -56,11 +58,11 @@ def test_member_cannot_set_different_author_in_reservation(member, bookable_item
     assert response.status_code == 201
 
     # Check that the author of the reservation is actually the requesting user
-    assert response.data["author"] == member.user_id
-    assert response.data["author"] != "different_user_id"
+    assert response.data["author_detail"]["user_id"] == member.user_id
+    assert response.data["author_detail"]["user_id"] != "different_user_id"
 
     # Check other attributes of the reservation
-    assert response.data["bookable_item"] == bookable_item.id
+    assert response.data["bookable_item_detail"]["id"] == str(bookable_item.id)
     assert response.data["state"] == "PENDING"
 
 
@@ -137,7 +139,6 @@ def test_user_cannot_create_confirmed_reservation(bookable_item, member):
         {
             "author": member.user_id,
             "bookable_item": bookable_item.id,
-            # Format start_time and end_time to ISO format for the POST request
             "start_time": start_time.isoformat(),
             "end_time": end_time.isoformat(),
             "state": "CONFIRMED",
@@ -251,8 +252,12 @@ def test_user_can_fetch_all_reservations(reservation, member):
 
     first_reservation = Reservation.objects.first()
     assert str(response.data[0]["id"]) == str(first_reservation.id)
-    assert response.data[0]["author"] == first_reservation.author.user_id
-    assert response.data[0]["bookable_item"] == first_reservation.bookable_item.id
+    assert (
+        response.data[0]["author_detail"]["user_id"] == first_reservation.author.user_id
+    )
+    assert response.data[0]["bookable_item_detail"]["id"] == str(
+        first_reservation.bookable_item.id
+    )
     assert response.data[0]["state"] == "PENDING"
 
 
@@ -290,8 +295,8 @@ def test_can_fetch_single_reservation(reservation, member):
 
     assert response.status_code == 200
     assert str(response.data["id"]) == str(reservation.id)
-    assert response.data["author"] == reservation.author.user_id
-    assert str(response.data["bookable_item"]) == str(
+    assert response.data["author_detail"]["user_id"] == reservation.author.user_id
+    assert str(response.data["bookable_item_detail"]["id"]) == str(
         reservation.bookable_item.id
     )  # Convert both to string
     assert response.data["state"] == "PENDING"
@@ -627,11 +632,8 @@ def test_user_can_change_reservation_group(member, reservation):
         format="json",
     )
 
-    # Verify the response
     assert response.status_code == status.HTTP_200_OK, response.data
-    assert (
-        response.data["group"] == new_group.slug
-    ), "Group should be updated to the new group"
+    assert response.data["group_detail"]["slug"] == new_group.slug
 
 
 @pytest.mark.django_db
@@ -720,7 +722,7 @@ def test_user_can_change_reservation_group_if_state_is_pending(member, reservati
 
     # Verify the response
     assert response.status_code == status.HTTP_200_OK, response.data
-    assert response.data["group"] == new_group.slug
+    assert response.data["group_detail"]["slug"] == new_group.slug
 
 
 @pytest.mark.django_db

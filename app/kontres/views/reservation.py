@@ -5,6 +5,7 @@ from rest_framework.response import Response
 
 from app.common.permissions import BasicViewPermission
 from app.common.viewsets import BaseViewSet
+from app.kontres.enums import ReservationStateEnum
 from app.kontres.models.reservation import Reservation
 from app.kontres.serializer.reservation_seralizer import ReservationSerializer
 
@@ -33,16 +34,16 @@ class ReservationViewSet(BaseViewSet):
         return Reservation.objects.all()
 
     def create(self, request, *args, **kwargs):
-        request.data["author"] = request.user.user_id
         serializer = ReservationSerializer(
             data=request.data, context={"request": request}
         )
         if serializer.is_valid():
-            # Overriding the state to PENDING
-            serializer.validated_data["state"] = "PENDING"
+            serializer.validated_data["author"] = request.user
+            serializer.validated_data["state"] = ReservationStateEnum.PENDING
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def update(self, request, *args, **kwargs):
         reservation = self.get_object()
