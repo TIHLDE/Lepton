@@ -2,19 +2,30 @@ from django.db.models import Q
 from django.utils import timezone
 from rest_framework import serializers
 
+from app.content.models import User
+from app.content.serializers import UserSerializer
 from app.group.models import Group
+from app.group.serializers import GroupSerializer
 from app.kontres.enums import ReservationStateEnum
 from app.kontres.models.bookable_item import BookableItem
 from app.kontres.models.reservation import Reservation
+from app.kontres.serializer.bookable_item_serializer import BookableItemSerializer
 
 
 class ReservationSerializer(serializers.ModelSerializer):
     bookable_item = serializers.PrimaryKeyRelatedField(
-        queryset=BookableItem.objects.all()
+        queryset=BookableItem.objects.all(), write_only=True, required=False
     )
-    group = serializers.SlugRelatedField(
-        slug_field="slug", queryset=Group.objects.all(), required=False, allow_null=True
+    bookable_item_detail = BookableItemSerializer(source='bookable_item', read_only=True)
+    group = serializers.PrimaryKeyRelatedField(
+        queryset=Group.objects.all(), write_only=True, required=False
     )
+    group_detail = GroupSerializer(source='group', read_only=True)
+
+    author = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), write_only=True, required=False
+    )
+    author_detail = UserSerializer(source='author', read_only=True)
 
     class Meta:
         model = Reservation
