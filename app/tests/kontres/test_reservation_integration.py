@@ -33,6 +33,9 @@ def test_member_can_create_reservation(member, bookable_item):
     assert response.status_code == 201
     assert response.data["author_detail"]["user_id"] == str(member.user_id)
     assert response.data["bookable_item_detail"]["id"] == str(bookable_item.id)
+    assert response.data["author_detail"]["user_id"] == str(
+        member.user_id)
+    assert response.data["bookable_item_detail"]["id"] == str(bookable_item.id)
     assert response.data["state"] == "PENDING"
 
 
@@ -53,8 +56,6 @@ def test_member_cannot_set_different_author_in_reservation(
         },
         format="json",
     )
-
-    print(response.data)
 
     # Check that the reservation is created successfully
     assert response.status_code == 201
@@ -147,7 +148,6 @@ def test_user_cannot_create_confirmed_reservation(bookable_item, member):
         },
         format="json",
     )
-    print(response.data)
     assert response.status_code == status.HTTP_201_CREATED
     assert response.data["state"] == "PENDING"
 
