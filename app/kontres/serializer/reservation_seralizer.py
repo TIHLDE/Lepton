@@ -64,18 +64,28 @@ class ReservationSerializer(serializers.ModelSerializer):
 
     def validate_time_and_overlapping(self, data):
 
-        # Validate that the end time is after the start time
+        # Check if this is an update operation and if start_time is being modified.
+        is_update_operation = self.instance is not None
+        start_time_being_modified = "start_time" in data
+
+        # Retrieve the start and end times from the data if provided, else from the instance.
         start_time = data.get(
             "start_time", self.instance.start_time if self.instance else None
         )
-        if start_time < timezone.now():
-            raise serializers.ValidationError("Start-tiden kan ikke være i fortiden.")
         end_time = data.get(
             "end_time", self.instance.end_time if self.instance else None
         )
+
+        # Skip the past start time check if this is an update and the start time isn't being modified.
+        if not (is_update_operation and not start_time_being_modified):
+            if start_time < timezone.now():
+                raise serializers.ValidationError(
+                    "Start-tiden kan ikke være i fortiden."
+                )
+
+        # Ensure the end time is after the start time for all operations.
         if start_time and end_time and end_time <= start_time:
             raise serializers.ValidationError("Slutt-tid må være etter start-tid")
-        # Extract the bookable_item, start_time, and end_time, accounting for the possibility they may not be provided
         bookable_item = data.get(
             "bookable_item", self.instance.bookable_item if self.instance else None
         )
