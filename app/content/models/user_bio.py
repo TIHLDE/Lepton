@@ -10,7 +10,7 @@ class UserBio(BaseModel, BasePermissionModel):
     read_access = (Groups.TIHLDE,)
     write_access = (Groups.TIHLDE,)
 
-    description = models.CharField(max_length=50, blank=True, null=True)
+    description = models.CharField(max_length=500, blank=True, null=True)
 
     gitHub_link = models.URLField(max_length=300, blank=True, null=True)
 
