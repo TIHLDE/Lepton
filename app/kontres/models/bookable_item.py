@@ -13,6 +13,7 @@ class BookableItem(BaseModel, BasePermissionModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=20)
     description = models.TextField(blank=True)
+    allows_alcohol = models.BooleanField(default=False)
 
     @classmethod
     def has_read_permission(cls, request):

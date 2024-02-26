@@ -38,14 +38,37 @@ class ReservationSerializer(serializers.ModelSerializer):
     def validate(self, data):
         user = self.context["request"].user
         group = data.get("group", None)
+
         if group:
-            self.validate_group(group)
+            self.validate_group(group, user)
+
+        if self.bookable_item_detail.allows_alcohol:
+            self.validate_alcohol_agreement(data)
+
         self.validate_state_change(data, user)
         self.validate_time_and_overlapping(data)
         return data
 
-    def validate_group(self, value):
-        user = self.context["request"].user
+    def validate_alcohol_agreement(self, data):
+        allows_alcohol = data.get("allows_alcohol", False)
+        if allows_alcohol:
+            if not data.get(
+                "alcohol_agreement",
+                self.instance.alcohol_agreement if self.instance else False,
+            ):
+                raise serializers.ValidationError(
+                    "Du må godta at dere vil følge reglene for alkoholbruk."
+                )
+            sober_watch = data.get(
+                "sober_watch", self.instance.sober_watch if self.instance else None
+            )
+            if not sober_watch or not User.objects.filter(id=sober_watch).exists():
+                raise serializers.ValidationError(
+                    "Du må velge en edruvakt for reservasjonen."
+                )
+        pass
+
+    def validate_group(self, value, user):
         group = value
 
         if self.instance and group != self.instance.group:

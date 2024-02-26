@@ -37,6 +37,14 @@ class Reservation(BaseModel, BasePermissionModel):
         null=True,
         blank=True,
     )
+    alcohol_agreement = models.BooleanField(default=False)
+    sober_watch = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="sober_watch_reservations",
+        null=True,
+        blank=True,
+    )
 
     def __str__(self):
         return f"{self.state} - Reservation request by {self.author.first_name} {self.author.last_name} to book {self.bookable_item.name}. Created at {self.created_at}"
