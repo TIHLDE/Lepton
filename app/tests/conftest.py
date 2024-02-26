@@ -13,6 +13,7 @@ from app.communication.factories import (
 )
 from app.content.factories import (
     CheatsheetFactory,
+    CommentFactory,
     EventFactory,
     NewsFactory,
     PageFactory,
@@ -22,7 +23,6 @@ from app.content.factories import (
     RegistrationFactory,
     ShortLinkFactory,
     UserFactory,
-    CommentFactory,
 )
 from app.content.factories.toddel_factory import ToddelFactory
 from app.emoji.factories.reaction_factory import (

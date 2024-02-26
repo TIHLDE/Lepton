@@ -1,7 +1,6 @@
 from rest_framework import serializers
-from app.content.models import Comment
-from app.content.models import News
-from app.content.models import Event
+
+from app.content.models import Comment, Event, News
 from app.content.serializers.user import DefaultUserSerializer
 
 
@@ -16,7 +15,8 @@ class ChildCommentSerializer(serializers.ModelSerializer):
     def get_children(self, obj):
         children = Comment.objects.filter(parent=obj)
         return ChildCommentSerializer(children, many=True).data
-    
+
+
 class CommentCreateSerializer(serializers.ModelSerializer):
     content_type = serializers.CharField(max_length=25)
     content_id = serializers.FloatField()
@@ -38,16 +38,16 @@ class CommentCreateSerializer(serializers.ModelSerializer):
                 body=body, author=author, parent=parent
             )
             return created_comment
-        
+
         if content_type.lower() == "news":
             news = News.objects.get(id=int(content_id))
             created_comment = news.comments.create(
                 body=body, author=author, parent=parent
             )
             return created_comment
-        
+
+
 class CommentUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = ("body",)
-

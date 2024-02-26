@@ -4,6 +4,7 @@ from rest_framework import routers
 from app.content.views import (
     CategoryViewSet,
     CheatsheetViewSet,
+    CommentViewSet,
     EventViewSet,
     LogEntryViewSet,
     NewsViewSet,
@@ -15,7 +16,6 @@ from app.content.views import (
     ToddelViewSet,
     UserCalendarEvents,
     UserViewSet,
-    CommentViewSet,
     accept_form,
     upload,
 )
