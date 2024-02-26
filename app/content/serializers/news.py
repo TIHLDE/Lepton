@@ -33,6 +33,8 @@ class NewsSerializer(SimpleNewsSerializer):
             "body",
             "reactions",
             "emojis_allowed",
+            "comments_allowed",
+            "comments",
         )
 
     def get_comments(self, obj):
