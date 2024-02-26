@@ -25,9 +25,11 @@ class CommentViewSet(BaseViewSet, ActionMixin):
         if create_serializer.is_valid():
             comment = super().perform_create(create_serializer, user=user)
             serializer = ChildCommentSerializer(comment, context={"request": request})
-            return Response(
-                {"detail": create_serializer.errors}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            
+        return Response(
+            {"detail": create_serializer.errors}, status=status.HTTP_400_BAD_REQUEST
+        )
         
     def update(self, request, pk):
         data = request.data

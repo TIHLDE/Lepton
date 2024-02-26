@@ -21,5 +21,5 @@ class CategoryEnum(ChoiceEnum):
 
 
 class ContentType(ChoiceEnum):
-    NEWS = "News"
-    EVENT = "Event"
+    NEWS = "news"
+    EVENT = "event"
