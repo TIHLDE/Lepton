@@ -19,7 +19,7 @@ class Reservation(BaseModel, BasePermissionModel):
         User, on_delete=models.CASCADE, related_name="reservations"
     )
     bookable_item = models.ForeignKey(
-        BookableItem, on_delete=models.PROTECT, related_name="reservations"
+        BookableItem, on_delete=models.CASCADE, related_name="reservations"
     )
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
