@@ -4,7 +4,9 @@ from rest_framework import routers
 from app.content.views import (
     CategoryViewSet,
     CheatsheetViewSet,
+    CommentViewSet,
     EventViewSet,
+    LogEntryViewSet,
     NewsViewSet,
     PageViewSet,
     QRCodeViewSet,
@@ -14,7 +16,6 @@ from app.content.views import (
     ToddelViewSet,
     UserCalendarEvents,
     UserViewSet,
-    CommentViewSet,
     accept_form,
     upload,
 )
@@ -42,6 +43,7 @@ router.register(
 )
 router.register("pages", PageViewSet)
 router.register("strikes", StrikeViewSet, basename="strikes")
+router.register("log-entries", LogEntryViewSet, basename="log-entries")
 
 urlpatterns = [
     re_path(r"", include(router.urls)),

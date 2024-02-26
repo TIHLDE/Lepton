@@ -25,6 +25,7 @@ from app.content.models import Category, Event, User
 from app.content.serializers import (
     EventCreateAndUpdateSerializer,
     EventListSerializer,
+    EventPublicSerializer,
     EventSerializer,
     EventStatisticsSerializer,
     PublicRegistrationSerializer,
@@ -97,6 +98,7 @@ class EventViewSet(BaseViewSet, ActionMixin):
         return self.queryset.filter(end_date__gte=time).filter(category=category)
 
     def get_serializer_class(self):
+        print(self.request.user)
         if hasattr(self, "action") and self.action == "list":
             return EventListSerializer
         return super().get_serializer_class()
@@ -105,7 +107,13 @@ class EventViewSet(BaseViewSet, ActionMixin):
         """Return detailed information about the event with the specified pk."""
         try:
             event = self.get_object()
-            serializer = EventSerializer(
+            if request.user:
+                serializer = EventSerializer(
+                    event, context={"request": request}, many=False
+                )
+                return Response(serializer.data, status=status.HTTP_200_OK)
+
+            serializer = EventPublicSerializer(
                 event, context={"request": request}, many=False
             )
             return Response(serializer.data, status=status.HTTP_200_OK)

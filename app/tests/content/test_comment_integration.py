@@ -1,22 +1,24 @@
+from rest_framework import status
+
 import pytest
 
 from app.util.test_utils import get_api_client
-from rest_framework import status
 
 API_COMMENTS_BASE_URL = "/comments/"
+
 
 def get_comment_data(content_id):
     return {
         "body": "Hei lol",
         "parent": None,
         "content_type": "event",
-        "content_id": content_id
+        "content_id": content_id,
     }
 
+
 def get_comment_update_data(body):
-    return {
-        "body": body
-    }
+    return {"body": body}
+
 
 @pytest.mark.django_db
 def test_create_comment_as_member(member, event):
@@ -65,6 +67,7 @@ def test_update_own_comment_as_member(member, comment):
     assert response.status_code == status.HTTP_200_OK
     comment.refresh_from_db()
     assert comment.body == NEW_BODY
+
 
 @pytest.mark.django_db
 def test_update_others_comment_as_member(member, comment):
