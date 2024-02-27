@@ -113,3 +113,17 @@ def test_reservation_requires_author():
             end_time=timezone.now() + timezone.timedelta(hours=1),
             bookable_item=bookable_item,
         )
+
+
+@pytest.mark.django_db
+def test_reservation_with_group(group):
+    user = User.objects.create(user_id="test_user")
+    bookable_item = BookableItem.objects.create(name="Test Item")
+    reservation = Reservation.objects.create(
+        author=user,
+        bookable_item=bookable_item,
+        start_time=timezone.now(),
+        end_time=timezone.now() + timezone.timedelta(hours=1),
+        group=group,
+    )
+    assert reservation.group == group
