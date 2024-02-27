@@ -1,25 +1,24 @@
-from sentry_sdk import capture_exception
-
 from app.celery import app
+from app.content.models.event import Event
 from app.content.models.registration import Registration
-from app.payment.enums import OrderStatus
 from app.payment.models.order import Order
-from app.payment.views.vipps_callback import vipps_callback
+from app.payment.util.order_utils import has_paid_order
 from app.util.tasks import BaseTask
 
 
 @app.task(bind=True, base=BaseTask)
-def check_if_has_paid(self, order_id, registration_id):
-    try:
-        vipps_callback(None, order_id)
-        order = Order.objects.get(order_id=order_id)
-        order_status = order.status
-        if (
-            order_status != OrderStatus.CAPTURE
-            and order_status != OrderStatus.RESERVE
-            and order_status != OrderStatus.SALE
-        ):
-            Registration.objects.filter(registration_id=registration_id).delete()
+def check_if_has_paid(self, event_id, registration_id):
+    registration = Registration.objects.filter(registration_id=registration_id).first()
+    event = Event.objects.filter(id=event_id).first()
 
-    except Order.DoesNotExist as order_not_exist:
-        capture_exception(order_not_exist)
+    if not registration or not event:
+        return
+
+    user_orders = Order.objects.filter(event=event, user=registration.user)
+
+    if not user_orders:
+        registration.delete()
+        return
+
+    if not has_paid_order(user_orders):
+        registration.delete()
