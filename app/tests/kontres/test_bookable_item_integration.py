@@ -1,0 +1,79 @@
+from rest_framework import status
+
+import pytest
+
+from app.util.test_utils import get_api_client
+
+
+@pytest.mark.django_db
+def test_unauthenticated_request_cannot_create_bookable_item():
+    client = get_api_client()
+    response = client.post("/kontres/bookable_items/", {"name": "test"}, format="json")
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+@pytest.mark.django_db
+def test_admin_can_delete_bookable_item(admin_user, bookable_item):
+    client = get_api_client(user=admin_user)
+    response = client.delete(
+        f"/kontres/bookable_items/{bookable_item.id}/", format="json"
+    )
+    assert response.status_code == status.HTTP_204_NO_CONTENT
+
+
+@pytest.mark.django_db
+def test_member_cannot_delete_bookable_item(member, bookable_item):
+    client = get_api_client(user=member)
+    response = client.delete(
+        f"/kontres/bookable_items/{bookable_item.id}/", format="json"
+    )
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+@pytest.mark.django_db
+def test_cannot_delete_bookable_item_with_reservation(
+    admin_user, bookable_item, reservation
+):
+    # Assume the bookable_item is part of reservation
+    reservation.bookable_item = bookable_item
+    reservation.save()
+
+    client = get_api_client(user=admin_user)
+    response = client.delete(
+        f"/kontres/bookable_items/{bookable_item.id}/", format="json"
+    )
+
+    print(bookable_item)
+    print(reservation)
+
+    print(response.data)
+    assert response.status_code == status.HTTP_409_CONFLICT
+    assert (
+        "Cannot delete a bookable item that is part of an existing reservation."
+        in response.data["detail"]
+    )
+
+
+@pytest.mark.django_db
+def test_delete_bookable_item_with_invalid_id(admin_user):
+    client = get_api_client(user=admin_user)
+    invalid_id = 99999
+    response = client.delete(f"/kontres/bookable_items/{invalid_id}/", format="json")
+    assert response.status_code == status.HTTP_404_NOT_FOUND
+
+
+@pytest.mark.django_db
+def test_member_cannot_edit_bookable_item(member, bookable_item):
+    client = get_api_client(user=member)
+    response = client.put("/kontres/bookable_items/", {"name": "test"}, format="json")
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+@pytest.mark.django_db
+def test_admin_can_edit_bookable_item(admin_user, bookable_item):
+    client = get_api_client(user=admin_user)
+    response = client.put(
+        f"/kontres/bookable_items/{bookable_item.id}/", {"name": "test"}, format="json"
+    )
+    assert response.status_code == status.HTTP_200_OK
+    assert response.data["name"] == "test"
