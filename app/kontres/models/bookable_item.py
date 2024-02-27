@@ -34,5 +34,14 @@ class BookableItem(BaseModel, BasePermissionModel):
     def has_update_permission(cls, request):
         return check_has_access(cls.write_access, request)
 
+    def has_object_destroy_permission(self, request):
+        return self.check_has_admin_permission(request)
+
+    def has_object_update_permission(self, request):
+        return self.check_has_admin_permission(request)
+
+    def check_has_admin_permission(self, request):
+        return check_has_access([AdminGroup.INDEX, AdminGroup.HS], request)
+
     def __str__(self):
         return self.name
