@@ -72,7 +72,7 @@ def test_that_a_tournament_can_be_retrieved(default_client, beerpong_tournament)
     response = default_client.get(url)
 
     assert response.status_code == status.HTTP_200_OK
-    assert response.data["id"] == beerpong_tournament.id
+    assert response.data["id"] == str(beerpong_tournament.id)
 
 
 @pytest.mark.django_db
@@ -112,7 +112,7 @@ def test_that_a_tournament_can_be_retrieved_by_name(
     response = default_client.get(url)
 
     assert response.status_code == status.HTTP_200_OK
-    assert response.data[0]["id"] == beerpong_tournament.id
+    assert response.data[0]["id"] == str(beerpong_tournament.id)
 
 
 @pytest.mark.django_db
@@ -123,7 +123,7 @@ def test_that_a_tournament_can_be_retrieved_by_pin(default_client):
     response = default_client.get(url)
 
     assert response.status_code == status.HTTP_200_OK
-    assert response.data[0]["id"] == beerpong_tournament.id
+    assert response.data[0]["id"] == str(beerpong_tournament.id)
 
 
 @pytest.mark.django_db

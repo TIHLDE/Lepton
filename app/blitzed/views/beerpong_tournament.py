@@ -62,6 +62,7 @@ class BeerpongTournamentViewset(BaseViewSet):
 
     @action(detail=True, methods=["GET"], url_path="generate")
     def generate_tournament_matches_and_return_matches(self, request, *args, **kwargs):
+        tournament = None
         try:
             tournament = self.get_object()
             matches = self._generate_tournament(tournament)
@@ -85,6 +86,11 @@ class BeerpongTournamentViewset(BaseViewSet):
             serializer = self.get_serializer_class()(tournament)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception:
+            if tournament is None:
+                return Response(
+                    {"detail": "Turneringen finnes ikke."},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
             PongMatch.objects.filter(tournament=tournament).delete()
             return Response(
                 {"detail": "Noe gikk galt ved generering av turneringen."},
@@ -92,39 +98,47 @@ class BeerpongTournamentViewset(BaseViewSet):
             )
 
     def _generate_tournament(self, tournament):
+        """Creates the matches for a tournament"""
         PongMatch.objects.filter(tournament=tournament).delete()
         matches = self._create_matches(tournament)
         if len(matches) < 1:
             return matches
         round = math.floor(math.log2(len(matches)) + 1)
         matches[-1].round = round
-        self._create_match_tree(
-            matches=matches, at=len(matches) - 1, n=1, round=round - 1
-        )
+
+        self._create_match_tree(matches, round)
         return matches
 
-    def _create_match_tree(self, matches, at, n, round):
-        node1 = at - n
-        n *= 2
+    def _create_match_tree(self, matches, round):
+        """Links the matches together in a tree structure"""
+        stack = [
+            {
+                "at": len(matches) - 1,
+                "round": round - 1,
+                "n": 1,
+            }
+        ]
+        while len(stack) > 0:
+            info = stack.pop()
+            parent = matches[info["at"]]
 
-        node2 = node1 - 1
-        root = matches[at]
-        if node1 < 0:
-            return
-        match1 = matches[node1]
-        match1.future_match = root
-        match1.round = round
+            for i in range(0, 2):
+                child = info["at"] - info["n"] - i
+                if child < 0:
+                    continue
+                child_match = matches[child]
+                child_match.future_match = parent
+                child_match.round = info["round"]
 
-        if node2 < 0:
-            return
-        match2 = matches[node2]
-        match2.future_match = root
-        match2.round = round
-
-        self._create_match_tree(matches, node1, n, round - 1)
-        self._create_match_tree(matches, node2, n + 1, round - 1)
+                next = {
+                    "at": child,
+                    "round": info["round"] - 1,
+                    "n": info["n"] * 2 + i,
+                }
+                stack.append(next)
 
     def _create_matches(self, tournament):
+        """Creates all the matches for the tournament"""
         teams = list(PongTeam.objects.filter(tournament=tournament))
         nr_of_matches = len(teams) - 1
         if nr_of_matches < 1:
@@ -161,4 +175,6 @@ class BeerpongTournamentViewset(BaseViewSet):
 
     def destroy(self, request, *args, **kwargs):
         super().destroy(request, *args, **kwargs)
-        return Response({"detail": "Turnering ble slettet"}, status=status.HTTP_200_OK)
+        return Response(
+            {"detail": "Turneringen ble slettet"}, status=status.HTTP_200_OK
+        )

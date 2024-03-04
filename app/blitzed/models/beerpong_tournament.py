@@ -1,3 +1,5 @@
+import uuid
+
 from django.db import models
 from django.utils.safestring import mark_safe
 
@@ -10,6 +12,12 @@ from app.util.models import BaseModel
 
 
 class BeerpongTournament(BaseModel, BasePermissionModel):
+    id = models.UUIDField(
+        auto_created=True,
+        primary_key=True,
+        default=uuid.uuid4,
+        serialize=False,
+    )
     status = EnumChoiceField(TournamentStatus, default=TournamentStatus.PENDING)
     access = EnumChoiceField(TournamentAccess, default=TournamentAccess.PUBLIC)
     creator = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
