@@ -10,7 +10,7 @@ class DrinkingGame(BaseModel, OptionalImage, BasePermissionModel):
     name = models.CharField(max_length=200)
     description = models.TextField(max_length=500)
     questions = models.ManyToManyField(
-        Question, blank=True, related_name="drinking_games"
+        Question, blank=True, null=True, related_name="drinking_games"
     )
 
     write_access = AdminGroup.all()

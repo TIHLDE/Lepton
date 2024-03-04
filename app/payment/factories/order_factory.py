@@ -1,5 +1,3 @@
-import random
-
 import factory
 from factory.django import DjangoModelFactory
 
@@ -15,5 +13,5 @@ class OrderFactory(DjangoModelFactory):
 
     user = factory.SubFactory(UserFactory)
     event = factory.SubFactory(EventFactory)
-    status = random.choice([e.value for e in OrderStatus])
+    status = OrderStatus.INITIATE
     payment_link = factory.Faker("url")

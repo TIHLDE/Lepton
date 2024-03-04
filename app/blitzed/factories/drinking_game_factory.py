@@ -10,4 +10,3 @@ class DrinkingGameFactory(DjangoModelFactory):
 
     name = factory.Faker("sentence", nb_words=5)
     description = factory.Faker("text")
-    icon = factory.Faker("uri")

@@ -1,3 +1,4 @@
+from django.utils import timezone
 from rest_framework import status
 
 import pytest
@@ -34,8 +35,8 @@ def test_that_a_member_can_create_a_session(member):
     client = get_api_client(user=member)
 
     data = {
-        "start_time": "2023-10-30T12:00:00Z",
-        "end_time": "2023-10-30T18:00:00Z",
+        "start_time": timezone.datetime(2023, 10, 30, 12, 0, 0).isoformat(),
+        "end_time": timezone.datetime(2023, 10, 30, 18, 0, 0).isoformat(),
     }
     response = client.post(url, data)
 
@@ -50,8 +51,8 @@ def test_create_session_specified_creator(member):
 
     data = {
         "creator": member.user_id,
-        "start_time": "2023-10-30T12:00:00Z",
-        "end_time": "2023-10-30T18:00:00Z",
+        "start_time": timezone.datetime(2023, 10, 30, 12, 0, 0).isoformat(),
+        "end_time": timezone.datetime(2023, 10, 30, 18, 0, 0).isoformat(),
     }
     response = client.post(url, data)
 
@@ -69,8 +70,8 @@ def test_create_session_as_user():
     client = get_api_client(user=user)
 
     data = {
-        "start_time": "2023-10-30T12:00:00Z",
-        "end_time": "2023-10-30T18:00:00Z",
+        "start_time": timezone.datetime(2023, 10, 30, 12, 0, 0).isoformat(),
+        "end_time": timezone.datetime(2023, 10, 30, 18, 0, 0).isoformat(),
     }
     response = client.post(url, data)
 
@@ -231,8 +232,8 @@ def test_create_session_user_and_wasted_level():
     session_url = _get_session_url(session.id)
     session_data = {
         "users": [user.user_id],
-        "start_time": "2023-10-30T12:00:00Z",
-        "end_time": "2023-10-30T18:00:00Z",
+        "start_time": timezone.datetime(2023, 10, 30, 12, 0, 0).isoformat(),
+        "end_time": timezone.datetime(2023, 10, 30, 18, 0, 0).isoformat(),
     }
     session_response = client.put(session_url, session_data)
 
@@ -267,8 +268,8 @@ def test_create_session_users_and_wasted_levels():
     session_url = _get_session_url(session.id)
     session_data = {
         "users": [user.user_id, user2.user_id],
-        "start_time": "2023-10-30T12:00:00Z",
-        "end_time": "2023-10-30T18:00:00Z",
+        "start_time": timezone.datetime(2023, 10, 30, 12, 0, 0).isoformat(),
+        "end_time": timezone.datetime(2023, 10, 30, 18, 0, 0).isoformat(),
     }
     session_response = client.put(session_url, session_data)
 
@@ -315,8 +316,8 @@ def test_create_session_users_multiple_wasted_levels():
     session_url = _get_session_url(session.id)
     session_data = {
         "users": [user.user_id, user2.user_id],
-        "start_time": "2023-10-30T12:00:00Z",
-        "end_time": "2023-10-30T18:00:00Z",
+        "start_time": timezone.datetime(2023, 10, 30, 12, 0, 0).isoformat(),
+        "end_time": timezone.datetime(2023, 10, 30, 18, 0, 0).isoformat(),
     }
     session_response = client.put(session_url, session_data)
 
@@ -367,8 +368,8 @@ def test_create_session_with_invalid_creator(member):
 
     data = {
         "creator": 999,
-        "start_time": "2023-10-30T12:00:00Z",
-        "end_time": "2023-10-30T18:00:00Z",
+        "start_time": timezone.datetime(2023, 10, 30, 12, 0, 0).isoformat(),
+        "end_time": timezone.datetime(2023, 10, 30, 18, 0, 0).isoformat(),
     }
 
     response = client.post(url, data)
@@ -388,8 +389,8 @@ def test_create_session_with_invalid_users():
     data = {
         "creator": user.user_id,
         "users": [999],
-        "start_time": "2023-10-30T12:00:00Z",
-        "end_time": "2023-10-30T18:00:00Z",
+        "start_time": timezone.datetime(2023, 10, 30, 12, 0, 0).isoformat(),
+        "end_time": timezone.datetime(2023, 10, 30, 18, 0, 0).isoformat(),
     }
 
     response = client.post(url, data)

@@ -26,6 +26,7 @@ def _get_drinking_game_post_data():
     return {
         "name": "New Drinking Game",
         "description": "This is a new drinking game.",
+        "questions": [],
     }
 
 
