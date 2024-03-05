@@ -31,10 +31,10 @@ def test_member_cannot_delete_bookable_item(member, bookable_item):
 
 
 @pytest.mark.django_db
-def test_cannot_delete_bookable_item_with_reservation(
+def test_delete_bookable_item_sets_reservation_bookable_item_to_null(
     admin_user, bookable_item, reservation
 ):
-    # Assume the bookable_item is part of reservation
+    # Ensure the bookable_item is part of the reservation
     reservation.bookable_item = bookable_item
     reservation.save()
 
@@ -43,15 +43,16 @@ def test_cannot_delete_bookable_item_with_reservation(
         f"/kontres/bookable_items/{bookable_item.id}/", format="json"
     )
 
-    print(bookable_item)
-    print(reservation)
+    # Refresh the reservation from the database to check the updated state
+    reservation.refresh_from_db()
 
-    print(response.data)
-    assert response.status_code == status.HTTP_409_CONFLICT
+    # The deletion should succeed
+    assert response.status_code == 204, "Expected successful deletion of bookable item."
+
+    # After deletion, the reservation's bookable_item should be set to null
     assert (
-        "Cannot delete a bookable item that is part of an existing reservation."
-        in response.data["detail"]
-    )
+        reservation.bookable_item is None
+    ), "Expected reservation.bookable_item to be set to null after bookable item deletion."
 
 
 @pytest.mark.django_db
