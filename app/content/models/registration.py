@@ -294,20 +294,41 @@ class Registration(BaseModel, BasePermissionModel):
 
     @property
     def wait_queue_number(self):
-        """
-        Returns the number of people in front of the user in the waiting list.
-        """
-        waiting_list_count = (
-            self.event.get_waiting_list()
-            .order_by("-created_at")
-            .filter(created_at__lte=self.created_at)
-            .count()
-        )
-
-        if waiting_list_count == 0 or not self.is_on_wait:
+        # Return None if the user is not on the waitlist to indicate they are not waiting for a spot.
+        if not self.is_on_wait:
             return None
 
-        return waiting_list_count
+        # Retrieve all registrations for the event that are on the waitlist and order them by creation time.
+        waiting_list_registrations = self.event.registrations.filter(
+            is_on_wait=True
+        ).order_by("created_at")
+
+        # Separate the waiting list registrations into prioritized and non-prioritized groups.
+        prioritized_registrations = [
+            reg for reg in waiting_list_registrations if reg.is_prioritized
+        ]
+        non_prioritized_registrations = [
+            reg for reg in waiting_list_registrations if not reg.is_prioritized
+        ]
+
+        # If the registration is prioritized, calculate its queue position among other prioritized registrations.
+        if self.is_prioritized:
+            if self in prioritized_registrations:
+                queue_position = prioritized_registrations.index(self) + 1
+            else:
+                return None
+        else:
+            # For non-prioritized registrations, calculate queue position considering all prioritized registrations first.
+            if self in non_prioritized_registrations:
+                queue_position = (
+                    len(prioritized_registrations)
+                    + non_prioritized_registrations.index(self)
+                    + 1
+                )
+            else:
+                return None
+
+        return queue_position
 
     def swap_users(self):
         """Swaps a user with a spot with a prioritized user, if such user exists"""
