@@ -37,6 +37,84 @@ def test_member_can_create_reservation(member, bookable_item):
 
 
 @pytest.mark.django_db
+def test_member_can_create_reservation_with_alcohol_agreement(member, bookable_item):
+    client = get_api_client(user=member)
+
+    bookable_item.allows_alcohol = True
+    bookable_item.save()
+
+    response = client.post(
+        "/kontres/reservations/",
+        {
+            "bookable_item": bookable_item.id,
+            "start_time": "2030-10-10T10:00:00Z",
+            "end_time": "2030-10-10T11:00:00Z",
+            "alcohol_agreement": True,
+            "sober_watch": member.user_id,
+        },
+        format="json",
+    )
+
+    assert response.status_code == 201, response.data
+    assert response.data.get("alcohol_agreement") is True
+    assert response.data.get("sober_watch") == str(member.user_id)
+
+
+@pytest.mark.django_db
+def test_reservation_creation_fails_without_alcohol_agreement(member, bookable_item):
+    client = get_api_client(user=member)
+
+    bookable_item.allows_alcohol = True
+    bookable_item.save()
+
+    response = client.post(
+        "/kontres/reservations/",
+        {
+            "bookable_item": bookable_item.id,
+            "start_time": "2030-10-10T10:00:00Z",
+            "end_time": "2030-10-10T11:00:00Z",
+            # Notice the absence of "alcohol_agreement": True,
+            "sober_watch": member.user_id,
+        },
+        format="json",
+    )
+
+    assert response.status_code == 400
+    expected_error_message = "Du må godta at dere vil følge reglene for alkoholbruk."
+    actual_error_messages = response.data.get("non_field_errors", [])
+    assert any(
+        expected_error_message in error for error in actual_error_messages
+    ), f"Expected specific alcohol agreement validation error: {expected_error_message}"
+
+
+@pytest.mark.django_db
+def test_reservation_creation_fails_without_sober_watch(member, bookable_item):
+    client = get_api_client(user=member)
+
+    bookable_item.allows_alcohol = True
+    bookable_item.save()
+
+    response = client.post(
+        "/kontres/reservations/",
+        {
+            "bookable_item": bookable_item.id,
+            "start_time": "2030-10-10T10:00:00Z",
+            "end_time": "2030-10-10T11:00:00Z",
+            "alcohol_agreement": True,
+            # Notice the absence of "sober_watch",
+        },
+        format="json",
+    )
+
+    assert response.status_code == 400
+    expected_error_message = "Du må  velge en edruvakt for reservasjonen."
+    actual_error_messages = response.data.get("non_field_errors", [])
+    assert any(
+        expected_error_message in error for error in actual_error_messages
+    ), f"Expected specific alcohol agreement validation error: {expected_error_message}"
+
+
+@pytest.mark.django_db
 def test_member_cannot_set_different_author_in_reservation(
     member, bookable_item, sosialen_user
 ):

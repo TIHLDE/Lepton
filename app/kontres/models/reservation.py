@@ -16,10 +16,18 @@ class Reservation(BaseModel, BasePermissionModel):
     write_access = [Groups.TIHLDE]
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     author = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="reservations"
+        User,
+        on_delete=models.SET_NULL,
+        related_name="reservations",
+        null=True,
+        blank=False,
     )
     bookable_item = models.ForeignKey(
-        BookableItem, on_delete=models.PROTECT, related_name="reservations"
+        BookableItem,
+        on_delete=models.SET_NULL,
+        related_name="reservations",
+        null=True,
+        blank=False,
     )
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
@@ -34,6 +42,14 @@ class Reservation(BaseModel, BasePermissionModel):
         Group,
         on_delete=models.SET_NULL,
         related_name="reservations",
+        null=True,
+        blank=True,
+    )
+    alcohol_agreement = models.BooleanField(default=False)
+    sober_watch = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        related_name="sober_watch_reservations",
         null=True,
         blank=True,
     )
