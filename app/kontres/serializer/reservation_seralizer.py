@@ -38,18 +38,47 @@ class ReservationSerializer(serializers.ModelSerializer):
     def validate(self, data):
         user = self.context["request"].user
         group = data.get("group", None)
+
+        bookable_item = (
+            data.get("bookable_item")
+            if "bookable_item" in data
+            else self.instance.bookable_item
+        )
+
         if group:
             self.validate_group(group)
+
+        if bookable_item.allows_alcohol:
+            self.validate_alcohol(data)
+
         self.validate_state_change(data, user)
         self.validate_time_and_overlapping(data)
         return data
+
+    def validate_alcohol(self, data):
+        if not data.get(
+            "alcohol_agreement",
+            self.instance.alcohol_agreement if self.instance else False,
+        ):
+            raise serializers.ValidationError(
+                "Du må godta at dere vil følge reglene for alkoholbruk."
+            )
+        sober_watch = data.get(
+            "sober_watch", self.instance.sober_watch if self.instance else None
+        )
+        if (
+            not sober_watch
+            or not User.objects.filter(user_id=sober_watch.user_id).exists()
+        ):
+            raise serializers.ValidationError(
+                "Du må  velge en edruvakt for reservasjonen."
+            )
 
     def validate_group(self, value):
         user = self.context["request"].user
         group = value
 
         if self.instance and group != self.instance.group:
-            # Assuming your model logic and permissions are correctly implemented in is_HS_or_Index_member
             if (
                 not user.is_HS_or_Index_member
                 and self.instance.state != ReservationStateEnum.PENDING

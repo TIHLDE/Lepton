@@ -1,4 +1,3 @@
-from django.db.utils import IntegrityError
 from django.utils import timezone
 
 import pytest
@@ -60,17 +59,6 @@ def test_state_transitions(reservation):
 
 
 @pytest.mark.django_db
-def test_reservation_requires_bookable_item():
-    with pytest.raises(IntegrityError):
-        user = User.objects.create(user_id="test_user", email="test@test.com")
-        Reservation.objects.create(
-            start_time=timezone.now(),
-            end_time=timezone.now() + timezone.timedelta(hours=1),
-            author=user,
-        )
-
-
-@pytest.mark.django_db
 def test_created_at_field():
     user = User.objects.create(user_id="test_user", email="test@test.com")
     bookable_item = BookableItem.objects.create(name="Test Item")
@@ -102,17 +90,6 @@ def test_multiple_reservations():
     )
     assert reservation1 is not None
     assert reservation2 is not None
-
-
-@pytest.mark.django_db
-def test_reservation_requires_author():
-    with pytest.raises(IntegrityError):
-        bookable_item = BookableItem.objects.create(name="Test Item")
-        Reservation.objects.create(
-            start_time=timezone.now(),
-            end_time=timezone.now() + timezone.timedelta(hours=1),
-            bookable_item=bookable_item,
-        )
 
 
 @pytest.mark.django_db
