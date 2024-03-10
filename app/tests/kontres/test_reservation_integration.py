@@ -851,8 +851,6 @@ def test_user_can_fetch_own_reservations(member, reservation):
 
     response = client.get("/users/me/reservations/")
 
-    print(response.data)
-
     assert response.status_code == 200
     assert all(
         reservation["author_detail"]["user_id"] == str(member.user_id)
