@@ -840,3 +840,50 @@ def test_user_cannot_change_reservation_group_if_state_is_not_pending(
     )
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
+@pytest.mark.django_db
+def test_user_can_fetch_own_reservations(member, reservation):
+    client = get_api_client(user=member)
+
+    reservation.author = member
+    reservation.save()
+
+    response = client.get("/users/me/reservations/")
+
+    print(response.data)
+
+    assert response.status_code == 200
+    assert all(
+        reservation["author_detail"]["user_id"] == str(member.user_id)
+        for reservation in response.data
+    )
+
+
+@pytest.mark.django_db
+def test_user_reservations_endpoint_returns_correct_reservations(
+    member, bookable_item, reservation
+):
+    client = get_api_client(user=member)
+
+    Reservation.objects.bulk_create(
+        [
+            Reservation(
+                author=member,
+                bookable_item=bookable_item,
+                start_time=f"2030-10-10T1{num}:00:00Z",
+                end_time=f"2030-10-10T1{num + 1}:00:00Z",
+                description=f"Test reservation {num}",
+            )
+            for num in range(3)
+        ]
+    )
+
+    response = client.get("/users/me/reservations/")
+
+    assert response.status_code == 200
+    assert len(response.data) == 3
+
+    fixture_reservation_id = str(reservation.id)
+    returned_reservation_ids = [res["id"] for res in response.data]
+    assert fixture_reservation_id not in returned_reservation_ids
