@@ -4,6 +4,16 @@ from rest_framework.test import APIRequestFactory
 import pytest
 
 from app.badge.factories import BadgeFactory, UserBadgeFactory
+from app.blitzed.factories.anonymous_user_factory import AnonymousUserFactory
+from app.blitzed.factories.beerpong_tournament_factory import (
+    BeerpongTournamentFactory,
+)
+from app.blitzed.factories.drinking_game_factory import DrinkingGameFactory
+from app.blitzed.factories.pong_match_factory import PongMatchFactory
+from app.blitzed.factories.session_factory import SessionFactory
+from app.blitzed.factories.user_wasted_level_factory import (
+    UserWastedLevelFactory,
+)
 from app.career.factories import WeeklyBusinessFactory
 from app.common.enums import AdminGroup, Groups, MembershipType
 from app.communication.factories import (
@@ -281,3 +291,33 @@ def event_with_priority_pool(priority_group):
     event = EventFactory(limit=1)
     PriorityPoolFactory(event=event, groups=(priority_group,))
     return event
+
+
+@pytest.fixture()
+def drinking_game():
+    return DrinkingGameFactory()
+
+
+@pytest.fixture()
+def wasted_level():
+    return UserWastedLevelFactory()
+
+
+@pytest.fixture()
+def beerpong_tournament():
+    return BeerpongTournamentFactory()
+
+
+@pytest.fixture()
+def pong_match():
+    return PongMatchFactory()
+
+
+@pytest.fixture()
+def anonymous_user():
+    return AnonymousUserFactory()
+
+
+@pytest.fixture()
+def session():
+    return SessionFactory()
