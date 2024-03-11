@@ -132,10 +132,7 @@ class Registration(BaseModel, BasePermissionModel):
         if moved_registration:
             moved_registration.save()
 
-            if (
-                moved_registration.event.is_paid_event
-                and not moved_registration.is_on_wait
-            ):
+            if moved_registration.event.is_paid_event:
                 try:
                     start_payment_countdown(
                         moved_registration.event, moved_registration
