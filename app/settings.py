@@ -99,6 +99,7 @@ INSTALLED_APPS = [
     "app.gallery",
     "app.badge",
     "app.payment",
+    "app.kontres",
     "app.emoji",
 ]
 
@@ -271,12 +272,13 @@ LOGGING = {
             "formatter": "verbose",
         },
     },
-    "loggers": {
-        "django": {
-            "propagate": True,
-            "level": "DEBUG",
-        },
-    },
+    # REMOVE COMMENTS TO ADD SQL LOGGING
+    # "loggers": {
+    #     "django": {
+    #         "propagate": True,
+    #         "level": "DEBUG",
+    #     },
+    # },
     "root": {
         "handlers": ["file"],
     },
