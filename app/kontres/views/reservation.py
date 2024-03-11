@@ -1,6 +1,7 @@
 from django.db.models import Q
 from django.utils.dateparse import parse_datetime
 from rest_framework import status
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 
 from app.common.permissions import BasicViewPermission
@@ -17,21 +18,29 @@ class ReservationViewSet(BaseViewSet):
     def get_queryset(self):
         start_date = self.request.GET.get("start_date")
         end_date = self.request.GET.get("end_date")
+        user_id = self.request.query_params.get("user_id")
+        queryset = Reservation.objects.all()
 
-        # Convert string dates to datetime objects
         if start_date:
             start_date = parse_datetime(start_date)
         if end_date:
             end_date = parse_datetime(end_date)
 
-        # Adjusted filter to capture overlapping reservations
         if start_date and end_date:
             queryset = Reservation.objects.filter(
                 Q(start_time__lt=end_date) & Q(end_time__gt=start_date)
             )
             return queryset
 
-        return Reservation.objects.all()
+        if user_id:
+            if self.request.user.is_HS_or_Index_member:
+                queryset = queryset.filter(author__user_id=user_id)
+            else:
+                raise PermissionDenied(
+                    "Du har ikke tilgang til å se andres reservasjoner."
+                )
+
+        return queryset
 
     def create(self, request, *args, **kwargs):
         serializer = ReservationSerializer(
