@@ -31,6 +31,11 @@ class ReservationSerializer(serializers.ModelSerializer):
     )
     author_detail = UserSerializer(source="author", read_only=True)
 
+    sober_watch = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), write_only=True, required=False
+    )
+    sober_watch_detail = UserSerializer(source="sober_watch", read_only=True)
+
     class Meta:
         model = Reservation
         fields = "__all__"
