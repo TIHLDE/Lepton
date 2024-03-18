@@ -149,4 +149,3 @@ class ReservationSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(
                     "Det er en reservasjonsoverlapp for det gitte tidsrommet."
                 )
-

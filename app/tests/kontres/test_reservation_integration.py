@@ -501,7 +501,9 @@ def test_unauthenticated_request_cannot_create_reservation(bookable_item):
 
 
 @pytest.mark.django_db
-def test_creating_overlapping_reservation_should_not_work_when_confirmed(member, bookable_item, admin_user):
+def test_creating_overlapping_reservation_should_not_work_when_confirmed(
+    member, bookable_item, admin_user
+):
     # Create a confirmed reservation using the ReservationFactory
     existing_confirmed_reservation = ReservationFactory(
         bookable_item=bookable_item,
@@ -533,7 +535,9 @@ def test_creating_overlapping_reservation_should_not_work_when_confirmed(member,
 
 
 @pytest.mark.django_db
-def test_creating_overlapping_reservation_should_work_when_cancelled(member, bookable_item, admin_user):
+def test_creating_overlapping_reservation_should_work_when_cancelled(
+    member, bookable_item, admin_user
+):
     existing_confirmed_reservation = ReservationFactory(
         bookable_item=bookable_item,
         start_time=timezone.now() + timezone.timedelta(hours=1),
@@ -563,7 +567,9 @@ def test_creating_overlapping_reservation_should_work_when_cancelled(member, boo
 
 
 @pytest.mark.django_db
-def test_creating_overlapping_reservation_should_work_when_pending(member, bookable_item, admin_user):
+def test_creating_overlapping_reservation_should_work_when_pending(
+    member, bookable_item, admin_user
+):
     # Create a confirmed reservation using the ReservationFactory
     existing_confirmed_reservation = ReservationFactory(
         bookable_item=bookable_item,
@@ -591,6 +597,7 @@ def test_creating_overlapping_reservation_should_work_when_pending(member, booka
     )
 
     assert response.status_code == status.HTTP_201_CREATED
+
 
 @pytest.mark.django_db
 def test_retrieve_specific_reservation_within_its_date_range(member, bookable_item):
