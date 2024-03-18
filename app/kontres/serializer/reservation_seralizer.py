@@ -104,7 +104,6 @@ class ReservationSerializer(serializers.ModelSerializer):
                             "state": "Du har ikke rettigheter til å endre reservasjonsstatusen."
                         }
                     )
-        pass
 
     def validate_time_and_overlapping(self, data):
 
@@ -140,6 +139,7 @@ class ReservationSerializer(serializers.ModelSerializer):
                 bookable_item=bookable_item,
                 end_time__gt=start_time,
                 start_time__lt=end_time,
+                state=ReservationStateEnum.CONFIRMED,
             )
             # Exclude the current instance if updating
             if self.instance:
@@ -149,4 +149,4 @@ class ReservationSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(
                     "Det er en reservasjonsoverlapp for det gitte tidsrommet."
                 )
-        pass
+
