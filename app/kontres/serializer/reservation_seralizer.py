@@ -56,23 +56,20 @@ class ReservationSerializer(serializers.ModelSerializer):
         return data
 
     def validate_alcohol(self, data):
-        if not data.get(
-            "alcohol_agreement",
-            self.instance.alcohol_agreement if self.instance else False,
+        if data.get(
+            "serves_alcohol",
+            self.instance.serves_alcohol if self.instance else False,
         ):
-            raise serializers.ValidationError(
-                "Du må godta at dere vil følge reglene for alkoholbruk."
+            sober_watch = data.get(
+                "sober_watch", self.instance.sober_watch if self.instance else None
             )
-        sober_watch = data.get(
-            "sober_watch", self.instance.sober_watch if self.instance else None
-        )
-        if (
-            not sober_watch
-            or not User.objects.filter(user_id=sober_watch.user_id).exists()
-        ):
-            raise serializers.ValidationError(
-                "Du må  velge en edruvakt for reservasjonen."
-            )
+            if (
+                not sober_watch
+                or not User.objects.filter(user_id=sober_watch.user_id).exists()
+            ):
+                raise serializers.ValidationError(
+                    "Du må velge en edruvakt for reservasjonen."
+                )
 
     def validate_group(self, value):
         user = self.context["request"].user
