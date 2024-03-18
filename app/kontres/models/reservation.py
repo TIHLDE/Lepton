@@ -45,7 +45,7 @@ class Reservation(BaseModel, BasePermissionModel):
         null=True,
         blank=True,
     )
-    alcohol_agreement = models.BooleanField(default=False)
+    serves_alcohol = models.BooleanField(default=False)
     sober_watch = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
