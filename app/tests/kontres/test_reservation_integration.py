@@ -37,7 +37,9 @@ def test_member_can_create_reservation(member, bookable_item):
 
 
 @pytest.mark.django_db
-def test_member_can_create_reservation_with_alcohol(member, bookable_item):
+def test_member_can_create_reservation_with_alcohol_and_sober_watch(
+    member, bookable_item
+):
     client = get_api_client(user=member)
 
     bookable_item.allows_alcohol = True
@@ -57,7 +59,7 @@ def test_member_can_create_reservation_with_alcohol(member, bookable_item):
 
     assert response.status_code == 201, response.data
     assert response.data.get("serves_alcohol") is True
-    assert response.data.get("sober_watch") == str(member.user_id)
+    assert response.data["sober_watch_detail"]["user_id"] == str(member.user_id)
 
 
 @pytest.mark.django_db
