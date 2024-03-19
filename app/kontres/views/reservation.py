@@ -63,4 +63,6 @@ class ReservationViewSet(BaseViewSet):
 
     def destroy(self, request, *args, **kwargs):
         super().destroy(self, request, *args, **kwargs)
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(
+            {"detail": "Reservasjonen ble slettet."}, status=status.HTTP_204_NO_CONTENT
+        )

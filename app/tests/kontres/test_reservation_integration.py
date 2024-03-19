@@ -37,7 +37,9 @@ def test_member_can_create_reservation(member, bookable_item):
 
 
 @pytest.mark.django_db
-def test_member_can_create_reservation_with_alcohol_agreement(member, bookable_item):
+def test_member_can_create_reservation_with_alcohol_and_sober_watch(
+    member, bookable_item
+):
     client = get_api_client(user=member)
 
     bookable_item.allows_alcohol = True
@@ -49,42 +51,15 @@ def test_member_can_create_reservation_with_alcohol_agreement(member, bookable_i
             "bookable_item": bookable_item.id,
             "start_time": "2030-10-10T10:00:00Z",
             "end_time": "2030-10-10T11:00:00Z",
-            "alcohol_agreement": True,
+            "serves_alcohol": True,
             "sober_watch": member.user_id,
         },
         format="json",
     )
 
     assert response.status_code == 201, response.data
-    assert response.data.get("alcohol_agreement") is True
-    assert response.data.get("sober_watch") == str(member.user_id)
-
-
-@pytest.mark.django_db
-def test_reservation_creation_fails_without_alcohol_agreement(member, bookable_item):
-    client = get_api_client(user=member)
-
-    bookable_item.allows_alcohol = True
-    bookable_item.save()
-
-    response = client.post(
-        "/kontres/reservations/",
-        {
-            "bookable_item": bookable_item.id,
-            "start_time": "2030-10-10T10:00:00Z",
-            "end_time": "2030-10-10T11:00:00Z",
-            # Notice the absence of "alcohol_agreement": True,
-            "sober_watch": member.user_id,
-        },
-        format="json",
-    )
-
-    assert response.status_code == 400
-    expected_error_message = "Du må godta at dere vil følge reglene for alkoholbruk."
-    actual_error_messages = response.data.get("non_field_errors", [])
-    assert any(
-        expected_error_message in error for error in actual_error_messages
-    ), f"Expected specific alcohol agreement validation error: {expected_error_message}"
+    assert response.data.get("serves_alcohol") is True
+    assert response.data["sober_watch_detail"]["user_id"] == str(member.user_id)
 
 
 @pytest.mark.django_db
@@ -100,14 +75,15 @@ def test_reservation_creation_fails_without_sober_watch(member, bookable_item):
             "bookable_item": bookable_item.id,
             "start_time": "2030-10-10T10:00:00Z",
             "end_time": "2030-10-10T11:00:00Z",
-            "alcohol_agreement": True,
+            "serves_alcohol": True,
             # Notice the absence of "sober_watch",
         },
         format="json",
     )
 
     assert response.status_code == 400
-    expected_error_message = "Du må  velge en edruvakt for reservasjonen."
+    print(response.data)
+    expected_error_message = "Du må velge en edruvakt for reservasjonen."
     actual_error_messages = response.data.get("non_field_errors", [])
     assert any(
         expected_error_message in error for error in actual_error_messages
@@ -186,6 +162,7 @@ def test_member_deleting_own_reservation(member, reservation):
     client = get_api_client(user=member)
     response = client.delete(f"/kontres/reservations/{reservation.id}/", format="json")
     assert response.status_code == status.HTTP_204_NO_CONTENT
+    assert response.data["detail"] == "Reservasjonen ble slettet."
 
 
 @pytest.mark.django_db
@@ -501,7 +478,9 @@ def test_unauthenticated_request_cannot_create_reservation(bookable_item):
 
 
 @pytest.mark.django_db
-def test_creating_overlapping_reservation(member, bookable_item, admin_user):
+def test_creating_overlapping_reservation_should_not_work_when_confirmed(
+    member, bookable_item, admin_user
+):
     # Create a confirmed reservation using the ReservationFactory
     existing_confirmed_reservation = ReservationFactory(
         bookable_item=bookable_item,
@@ -530,6 +509,105 @@ def test_creating_overlapping_reservation(member, bookable_item, admin_user):
 
     # The system should not allow this, as it overlaps with a confirmed reservation
     assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
+@pytest.mark.django_db
+def test_updating_to_overlapping_reservation_should_not_work_when_confirmed(
+    member, bookable_item, admin_user
+):
+    # Create two initial reservations, one confirmed and one pending
+    confirmed_reservation = ReservationFactory(
+        bookable_item=bookable_item,
+        start_time=timezone.now() + timezone.timedelta(hours=1),
+        end_time=timezone.now() + timezone.timedelta(hours=2),
+        state=ReservationStateEnum.CONFIRMED,
+    )
+
+    pending_reservation = ReservationFactory(
+        bookable_item=bookable_item,
+        start_time=confirmed_reservation.start_time
+        + timezone.timedelta(minutes=30),  # Overlapping time
+        end_time=confirmed_reservation.end_time + timezone.timedelta(minutes=30),
+        state=ReservationStateEnum.PENDING,
+    )
+
+    # Now attempt to update the pending reservation to confirmed, which should overlap with the confirmed_reservation
+    client = get_api_client(user=member)
+    response = client.put(
+        f"/kontres/reservations/{pending_reservation.id}/",
+        {"state": ReservationStateEnum.CONFIRMED},
+        format="json",
+    )
+
+    # The system should not allow this, as it would overlap with another confirmed reservation
+    assert (
+        response.status_code == status.HTTP_400_BAD_REQUEST
+    ), "Should not update reservation to confirmed due to overlap"
+
+
+@pytest.mark.django_db
+def test_creating_overlapping_reservation_should_work_when_cancelled(
+    member, bookable_item, admin_user
+):
+    existing_confirmed_reservation = ReservationFactory(
+        bookable_item=bookable_item,
+        start_time=timezone.now() + timezone.timedelta(hours=1),
+        end_time=timezone.now() + timezone.timedelta(hours=2),
+        state=ReservationStateEnum.CANCELLED,  # Set the reservation as declined
+    )
+
+    # Now attempt to create an overlapping reservation
+    client = get_api_client(user=member)
+    overlapping_start_time = (
+        existing_confirmed_reservation.start_time + timezone.timedelta(minutes=30)
+    )
+    response = client.post(
+        "/kontres/reservations/",
+        {
+            "author": member.user_id,
+            "bookable_item": bookable_item.id,
+            "start_time": overlapping_start_time,
+            "end_time": existing_confirmed_reservation.end_time
+            + timezone.timedelta(hours=1),
+            "state": ReservationStateEnum.PENDING,
+        },
+        format="json",
+    )
+
+    assert response.status_code == status.HTTP_201_CREATED
+
+
+@pytest.mark.django_db
+def test_creating_overlapping_reservation_should_work_when_pending(
+    member, bookable_item, admin_user
+):
+    # Create a confirmed reservation using the ReservationFactory
+    existing_confirmed_reservation = ReservationFactory(
+        bookable_item=bookable_item,
+        start_time=timezone.now() + timezone.timedelta(hours=1),
+        end_time=timezone.now() + timezone.timedelta(hours=2),
+        state=ReservationStateEnum.PENDING,  # Set the reservation as declined
+    )
+
+    # Now attempt to create an overlapping reservation
+    client = get_api_client(user=member)
+    overlapping_start_time = (
+        existing_confirmed_reservation.start_time + timezone.timedelta(minutes=30)
+    )
+    response = client.post(
+        "/kontres/reservations/",
+        {
+            "author": member.user_id,
+            "bookable_item": bookable_item.id,
+            "start_time": overlapping_start_time,
+            "end_time": existing_confirmed_reservation.end_time
+            + timezone.timedelta(hours=1),
+            "state": ReservationStateEnum.PENDING,
+        },
+        format="json",
+    )
+
+    assert response.status_code == status.HTTP_201_CREATED
 
 
 @pytest.mark.django_db
