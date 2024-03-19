@@ -2,7 +2,6 @@ from rest_framework import status
 
 import pytest
 
-from app.kontres.models.bookable_item import BookableItem
 from app.util.test_utils import get_api_client
 
 
@@ -20,6 +19,7 @@ def test_admin_can_delete_bookable_item(admin_user, bookable_item):
         f"/kontres/bookable_items/{bookable_item.id}/", format="json"
     )
     assert response.status_code == status.HTTP_204_NO_CONTENT
+    assert response.data["detail"] == "Gjenstanden ble slettet."
 
 
 @pytest.mark.django_db
@@ -90,28 +90,3 @@ def test_get_returns_empty_list_when_no_bookable_items(member):
     assert (
         response.data == []
     ), "Expected an empty list when there are no bookable items"
-
-
-@pytest.mark.django_db
-def admin_can_delete_bookable_item(member, bookable_item):
-    client = get_api_client(user=member)
-
-    # Verify the item exists before deletion
-    exists_before_delete = BookableItem.objects.filter(id=bookable_item.id).exists()
-    assert (
-        exists_before_delete is True
-    ), "The bookable item should exist in the database before deletion."
-
-    # Perform the deletion request
-    response = client.delete(
-        f"/kontres/bookable_items/{bookable_item.id}/", format="json"
-    )
-
-    # Check the response status code to ensure the request was processed as expected
-    assert response.status_code == status.HTTP_200_OK
-
-    # Verify the item does not exist after deletion
-    exists_after_delete = BookableItem.objects.filter(id=bookable_item.id).exists()
-    assert (
-        exists_after_delete is True
-    ), "The bookable item should not exist in the database after deletion."
