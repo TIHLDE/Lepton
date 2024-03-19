@@ -161,7 +161,8 @@ def test_member_deleting_own_reservation(member, reservation):
     reservation.save()
     client = get_api_client(user=member)
     response = client.delete(f"/kontres/reservations/{reservation.id}/", format="json")
-    assert response.status_code == status.HTTP_200_OK
+    assert response.status_code == status.HTTP_204_NO_CONTENT
+    assert response.data["detail"] == "Reservasjonen ble slettet."
 
 
 @pytest.mark.django_db
@@ -375,7 +376,7 @@ def test_admin_can_delete_any_reservation(admin_user, reservation):
         f"/kontres/reservations/{reservation.id}/",
         format="json",
     )
-    assert response.status_code == status.HTTP_200_OK
+    assert response.status_code == status.HTTP_204_NO_CONTENT
 
 
 @pytest.mark.django_db
