@@ -567,3 +567,62 @@ def test_list_expired_user_events_with_no_query_params(member, api_client):
     registrations = response.json().get("results")
     for registration in registrations:
         assert not registration.get("expired")
+
+
+@pytest.mark.django_db
+def test_user_permissions_as_member(member, api_client):
+    """A member should have the correct permissions."""
+
+    url = f"{API_USER_BASE_URL}me/permissions/"
+    client = api_client(user=member)
+    response = client.get(url)
+
+    data = response.data["permissions"]
+
+    assert response.status_code == status.HTTP_200_OK
+
+    """ Jobposts """
+    jobpost_permissions = data["jobpost"]
+
+    assert jobpost_permissions["read"]
+    assert jobpost_permissions["retrieve"]
+    assert not jobpost_permissions["update"]
+    assert not jobpost_permissions["destroy"]
+    assert not jobpost_permissions["write"]
+
+    """ QR Codes """
+    qrcode_permissions = data["qrcode"]
+
+    assert qrcode_permissions["read"]
+    assert qrcode_permissions["retrieve"]
+    assert qrcode_permissions["update"]
+    assert qrcode_permissions["destroy"]
+    assert qrcode_permissions["write"]
+
+    """ Notifications """
+    notification_permissions = data["notification"]
+
+    assert notification_permissions["write"]
+    assert notification_permissions["read"]
+    assert notification_permissions["retrieve"]
+    assert notification_permissions["update"]
+    assert not notification_permissions["destroy"]
+
+    """ User """
+    user_permissions = data["user"]
+
+    assert user_permissions["read"]
+    assert user_permissions["retrieve"]
+    assert not user_permissions["update"]
+    assert not user_permissions["destroy"]
+    assert not user_permissions["write"]
+    assert not user_permissions["get_user_detail_strikes"]
+
+    """ Cheatsheet """
+    cheatsheet_permissions = data["cheatsheet"]
+
+    assert cheatsheet_permissions["read"]
+    assert cheatsheet_permissions["retrieve"]
+    assert not cheatsheet_permissions["update"]
+    assert not cheatsheet_permissions["destroy"]
+    assert not cheatsheet_permissions["write"]

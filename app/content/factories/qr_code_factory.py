@@ -11,4 +11,4 @@ class QRCodeFactory(DjangoModelFactory):
 
     name = factory.Sequence(lambda n: f"QRCode {n}")
     user = factory.SubFactory(UserFactory)
-    image = "https://tihldestorage.blob.core.windows.net/imagepng/0331423a-11b3-4e6b-a505-f84e0991b696TestCode"
+    content = "https://tihlde.org"

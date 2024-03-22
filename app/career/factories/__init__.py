@@ -1,1 +1,2 @@
 from app.career.factories.weekly_business_factory import WeeklyBusinessFactory
+from app.career.factories.job_post_factory import JobPostFactory
