@@ -5,8 +5,13 @@ from app.content.serializers.event import (
     EventListSerializer,
     EventSerializer,
     EventStatisticsSerializer,
+    EventPublicSerializer,
 )
-from app.content.serializers.news import NewsSerializer, SimpleNewsSerializer
+from app.content.serializers.news import (
+    NewsSerializer,
+    SimpleNewsSerializer,
+    NewsPublicSerializer,
+)
 from app.content.serializers.page import (
     PageSerializer,
     PageTreeSerializer,
@@ -30,4 +35,9 @@ from app.content.serializers.user import (
     UserSerializer,
     DefaultUserSerializer,
     UserPermissionsSerializer,
+)
+from app.content.serializers.comment import (
+    ChildCommentSerializer,
+    CommentCreateSerializer,
+    CommentUpdateSerializer,
 )

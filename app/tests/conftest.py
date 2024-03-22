@@ -13,6 +13,7 @@ from app.communication.factories import (
 )
 from app.content.factories import (
     CheatsheetFactory,
+    CommentFactory,
     EventFactory,
     NewsFactory,
     PageFactory,
@@ -281,3 +282,8 @@ def event_with_priority_pool(priority_group):
     event = EventFactory(limit=1)
     PriorityPoolFactory(event=event, groups=(priority_group,))
     return event
+
+
+@pytest.fixture()
+def comment():
+    return CommentFactory()

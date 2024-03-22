@@ -83,6 +83,10 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
     emojis_allowed = models.BooleanField(default=False)
     reactions = GenericRelation(Reaction)
 
+    """ Comments """
+    comments_allowed = models.BooleanField(default=False)
+    comments = GenericRelation("Comment")
+
     class Meta:
         ordering = ("start_date",)
 
