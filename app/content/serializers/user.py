@@ -6,6 +6,7 @@ from dry_rest_permissions.generics import DRYGlobalPermissionsField
 from app.common.enums import GroupType
 from app.common.serializers import BaseModelSerializer
 from app.content.models import User
+from app.content.serializers.user_bio import UserBioSerializer
 from app.group.models import Group, Membership
 
 
@@ -50,6 +51,7 @@ class DefaultUserSerializer(BaseModelSerializer):
 class UserSerializer(DefaultUserSerializer):
     unread_notifications = serializers.SerializerMethodField()
     unanswered_evaluations_count = serializers.SerializerMethodField()
+    bio = UserBioSerializer(read_only=True, required=False)
 
     class Meta:
         model = User
@@ -63,6 +65,7 @@ class UserSerializer(DefaultUserSerializer):
             "slack_user_id",
             "allows_photo_by_default",
             "accepts_event_rules",
+            "bio",
         )
         read_only_fields = ("user_id",)
 
