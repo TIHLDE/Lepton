@@ -31,6 +31,11 @@ class ReservationSerializer(serializers.ModelSerializer):
     )
     author_detail = UserSerializer(source="author", read_only=True)
 
+    sober_watch = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), write_only=True, required=False
+    )
+    sober_watch_detail = UserSerializer(source="sober_watch", read_only=True)
+
     class Meta:
         model = Reservation
         fields = "__all__"
@@ -56,23 +61,20 @@ class ReservationSerializer(serializers.ModelSerializer):
         return data
 
     def validate_alcohol(self, data):
-        if not data.get(
-            "alcohol_agreement",
-            self.instance.alcohol_agreement if self.instance else False,
+        if data.get(
+            "serves_alcohol",
+            self.instance.serves_alcohol if self.instance else False,
         ):
-            raise serializers.ValidationError(
-                "Du må godta at dere vil følge reglene for alkoholbruk."
+            sober_watch = data.get(
+                "sober_watch", self.instance.sober_watch if self.instance else None
             )
-        sober_watch = data.get(
-            "sober_watch", self.instance.sober_watch if self.instance else None
-        )
-        if (
-            not sober_watch
-            or not User.objects.filter(user_id=sober_watch.user_id).exists()
-        ):
-            raise serializers.ValidationError(
-                "Du må  velge en edruvakt for reservasjonen."
-            )
+            if (
+                not sober_watch
+                or not User.objects.filter(user_id=sober_watch.user_id).exists()
+            ):
+                raise serializers.ValidationError(
+                    "Du må velge en edruvakt for reservasjonen."
+                )
 
     def validate_group(self, value):
         user = self.context["request"].user
@@ -104,7 +106,6 @@ class ReservationSerializer(serializers.ModelSerializer):
                             "state": "Du har ikke rettigheter til å endre reservasjonsstatusen."
                         }
                     )
-        pass
 
     def validate_time_and_overlapping(self, data):
 
@@ -140,6 +141,7 @@ class ReservationSerializer(serializers.ModelSerializer):
                 bookable_item=bookable_item,
                 end_time__gt=start_time,
                 start_time__lt=end_time,
+                state=ReservationStateEnum.CONFIRMED,
             )
             # Exclude the current instance if updating
             if self.instance:
@@ -149,4 +151,3 @@ class ReservationSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(
                     "Det er en reservasjonsoverlapp for det gitte tidsrommet."
                 )
-        pass
