@@ -179,7 +179,9 @@ class UserPermissionsSerializer(serializers.ModelSerializer):
             "write_all",
             "read",
             "destroy",
+            "destroy_all",
             "update",
+            "update_all",
             "retrieve",
             "get_user_detail_strikes",
         ]
