@@ -251,12 +251,11 @@ def test_admin_can_approve_reservation_and_approved_by_is_set(reservation, admin
 
     reservation.refresh_from_db()
 
-    print(response.data)
     assert response.status_code == 200
     assert reservation.state == ReservationStateEnum.CONFIRMED
     assert response.data["approved_by_detail"]["user_id"] == str(
         admin_user.user_id
-    ), "The 'approved_by_detail' should contain the correct user ID."
+    )
 
 
 @pytest.mark.django_db
