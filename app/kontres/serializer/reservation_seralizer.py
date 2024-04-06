@@ -36,9 +36,6 @@ class ReservationSerializer(serializers.ModelSerializer):
     )
     sober_watch_detail = UserSerializer(source="sober_watch", read_only=True)
 
-    approved_by = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(), write_only=True, required=False
-    )
     approved_by_detail = UserSerializer(source="approved_by", read_only=True)
 
     class Meta:
