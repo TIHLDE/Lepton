@@ -35,4 +35,5 @@ from app.content.serializers.minute import (
     MinuteCreateSerializer,
     MinuteSerializer,
     MinuteUpdateSerializer,
+    MinuteListSerializer,
 )

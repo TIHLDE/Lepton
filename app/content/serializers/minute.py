@@ -12,7 +12,7 @@ class SimpleUserSerializer(serializers.ModelSerializer):
 class MinuteCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Minute
-        fields = ("title", "content")
+        fields = ("title", "content", "tag")
 
     def create(self, validated_data):
         author = self.context["request"].user
@@ -25,13 +25,21 @@ class MinuteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Minute
-        fields = ("id", "title", "content", "author", "created_at", "updated_at")
+        fields = ("id", "title", "content", "author", "created_at", "updated_at", "tag")
 
 
 class MinuteUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Minute
-        fields = ("id", "title", "content")
+        fields = ("id", "title", "content", "tag")
 
     def update(self, instance, validated_data):
         return super().update(instance, validated_data)
+
+
+class MinuteListSerializer(serializers.ModelSerializer):
+    author = SimpleUserSerializer(read_only=True)
+
+    class Meta:
+        model = Minute
+        fields = ("id", "title", "author", "created_at", "updated_at", "tag")
