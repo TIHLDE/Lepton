@@ -2,7 +2,6 @@ from rest_framework import status
 
 import pytest
 
-from app.content.models import Minute
 from app.util.test_utils import get_api_client
 
 API_MINUTE_BASE_URL = "/minutes/"
