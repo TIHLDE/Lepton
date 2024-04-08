@@ -2,6 +2,7 @@ from django.db import models
 
 from app.common.enums import AdminGroup
 from app.common.permissions import BasePermissionModel
+from app.content.enums import MinuteTagEnum
 from app.content.models.user import User
 from app.util.models import BaseModel
 
@@ -12,6 +13,9 @@ class Minute(BaseModel, BasePermissionModel):
 
     title = models.CharField(max_length=200)
     content = models.TextField(default="", blank=True)
+    tag = models.CharField(
+        max_length=50, choices=MinuteTagEnum.choices, default=MinuteTagEnum.MINUTE
+    )
     author = models.ForeignKey(
         User,
         blank=True,

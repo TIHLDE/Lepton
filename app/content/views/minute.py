@@ -1,12 +1,15 @@
-from rest_framework import status
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters, status
 from rest_framework.response import Response
 
 from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission
 from app.common.viewsets import BaseViewSet
+from app.content.filters import MinuteFilter
 from app.content.models import Minute
 from app.content.serializers import (
     MinuteCreateSerializer,
+    MinuteListSerializer,
     MinuteSerializer,
     MinuteUpdateSerializer,
 )
@@ -17,6 +20,20 @@ class MinuteViewSet(BaseViewSet):
     permission_classes = [BasicViewPermission]
     pagination_class = BasePagination
     queryset = Minute.objects.all()
+
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filterset_class = MinuteFilter
+    search_fields = [
+        "title",
+        "author__first_name",
+        "author__last_name",
+        "author__user_id",
+    ]
+
+    def get_serializer_class(self):
+        if hasattr(self, "action") and self.action == "list":
+            return MinuteListSerializer
+        return super().get_serializer_class()
 
     def create(self, request, *args, **kwargs):
         data = request.data

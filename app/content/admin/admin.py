@@ -17,7 +17,6 @@ admin.site.register(models.Page)
 admin.site.register(models.ShortLink)
 admin.site.register(models.Toddel)
 admin.site.register(models.QRCode)
-admin.site.register(models.Minute)
 
 
 @admin.register(models.Strike)

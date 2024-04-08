@@ -18,3 +18,8 @@ class CategoryEnum(ChoiceEnum):
     KURS = "Kurs"
     ANNET = "Annet"
     FADDERUKA = "Fadderuka"
+
+
+class MinuteTagEnum(models.TextChoices):
+    MINUTE = "Møtereferat"
+    DOCUMENT = "Dokument"
