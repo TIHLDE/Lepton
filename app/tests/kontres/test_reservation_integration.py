@@ -238,6 +238,25 @@ def test_admin_can_edit_reservation_to_confirmed(reservation, admin_user):
 
 
 @pytest.mark.django_db
+def test_admin_can_approve_reservation_and_approved_by_is_set(reservation, admin_user):
+    client = get_api_client(user=admin_user)
+    assert reservation.state == ReservationStateEnum.PENDING
+    assert reservation.approved_by is None
+
+    response = client.put(
+        f"/kontres/reservations/{reservation.id}/",
+        {"state": "CONFIRMED"},
+        format="json",
+    )
+
+    reservation.refresh_from_db()
+
+    assert response.status_code == 200
+    assert reservation.state == ReservationStateEnum.CONFIRMED
+    assert response.data["approved_by_detail"]["user_id"] == str(admin_user.user_id)
+
+
+@pytest.mark.django_db
 def test_admin_can_edit_reservation_to_cancelled(reservation, admin_user):
     client = get_api_client(user=admin_user)
 

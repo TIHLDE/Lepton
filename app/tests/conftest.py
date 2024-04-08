@@ -14,6 +14,7 @@ from app.communication.factories import (
 from app.content.factories import (
     CheatsheetFactory,
     EventFactory,
+    MinuteFactory,
     NewsFactory,
     PageFactory,
     ParentPageFactory,
@@ -121,6 +122,12 @@ def jubkom_member(member):
 @pytest.fixture()
 def plask_member(member):
     add_user_to_group_with_name(member, Groups.PLASK)
+    return member
+
+
+@pytest.fixture()
+def index_member(member):
+    add_user_to_group_with_name(member, AdminGroup.INDEX)
     return member
 
 
@@ -281,3 +288,8 @@ def event_with_priority_pool(priority_group):
     event = EventFactory(limit=1)
     PriorityPoolFactory(event=event, groups=(priority_group,))
     return event
+
+
+@pytest.fixture()
+def minute(user):
+    return MinuteFactory(author=user)
