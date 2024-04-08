@@ -22,7 +22,8 @@ class MinuteViewSet(BaseViewSet):
         data = request.data
         serializer = MinuteCreateSerializer(data=data, context={"request": request})
         if serializer.is_valid():
-            super().perform_create(serializer)
+            minute = super().perform_create(serializer)
+            serializer = MinuteSerializer(minute)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(
@@ -36,6 +37,7 @@ class MinuteViewSet(BaseViewSet):
         )
         if serializer.is_valid():
             minute = super().perform_update(serializer)
+            serializer = MinuteSerializer(minute)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         return Response(
