@@ -6,7 +6,7 @@ from sentry_sdk import capture_exception
 
 from app.common.enums import UserClass, UserStudy
 from app.common.pagination import BasePagination
-from app.common.permissions import BasicViewPermission, is_admin_user
+from app.common.permissions import BasicViewPermission
 from app.common.viewsets import BaseViewSet
 from app.content.filters import CheatsheetFilter
 from app.content.models import Cheatsheet
@@ -57,16 +57,12 @@ class CheatsheetViewSet(BaseViewSet):
 
     def create(self, request, *args, **kwargs):
         """Creates a new cheatsheet"""
-        if is_admin_user(request):
-            serializer = CheatsheetSerializer(
-                data=self.request.data, context={"request": request}
-            )
-            if serializer.is_valid():
-                super().perform_create(serializer)
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-            return Response(
-                {"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST
-            )
+        serializer = CheatsheetSerializer(
+            data=self.request.data, context={"request": request}
+        )
+        if serializer.is_valid():
+            super().perform_create(serializer)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(
             {"detail": "Du har ikke tillatelse til å lage en oppskrift"},
             status=status.HTTP_403_FORBIDDEN,
@@ -76,17 +72,12 @@ class CheatsheetViewSet(BaseViewSet):
         """Updates a cheatsheet retrieved by UserClass and UserStudy and pk"""
         try:
             cheatsheet = self.get_object()
-            if is_admin_user(request):
-                serializer = CheatsheetSerializer(
-                    cheatsheet, data=request.data, context={"request": request}
-                )
-                if serializer.is_valid():
-                    super().perform_update(serializer)
-                    return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(
-                {"detail": "Du har ikke tillatelse til å oppdatere oppskriften"},
-                status=status.HTTP_400_BAD_REQUEST,
+            serializer = CheatsheetSerializer(
+                cheatsheet, data=request.data, context={"request": request}
             )
+            if serializer.is_valid():
+                super().perform_update(serializer)
+                return Response(serializer.data, status=status.HTTP_200_OK)
         except Cheatsheet.DoesNotExist as cheatsheet_not_exist:
             capture_exception(cheatsheet_not_exist)
             return Response(
@@ -97,15 +88,10 @@ class CheatsheetViewSet(BaseViewSet):
     def destroy(self, request, *args, **kwargs):
         """Deletes a cheatsheet retrieved by UserClass and UserStudy"""
         try:
-            if is_admin_user(request):
-                super().destroy(request, *args, **kwargs)
-                return Response(
-                    {"detail": "Oppskriften har blitt slettet"},
-                    status=status.HTTP_200_OK,
-                )
+            super().destroy(request, *args, **kwargs)
             return Response(
-                {"detail": "Du har ikke riktig tilatelser for å slette en oppskrift"},
-                status=status.HTTP_403_FORBIDDEN,
+                {"detail": "Oppskriften har blitt slettet"},
+                status=status.HTTP_200_OK,
             )
         except Cheatsheet.DoesNotExist as cheatsheet_not_exist:
             capture_exception(cheatsheet_not_exist)

@@ -21,6 +21,14 @@ def _get_notification_put_data(notification):
     }
 
 
+def _get_notification_post_data():
+    return {
+        "title": "Test notification",
+        "description": "Test description",
+        "link": "https://tihlde.org",
+    }
+
+
 @pytest.mark.django_db
 def test_list_notifications_as_anonymous_user_fails(default_client):
     """Tests if an anonymous user can list notifications"""
@@ -32,10 +40,10 @@ def test_list_notifications_as_anonymous_user_fails(default_client):
 
 
 @pytest.mark.django_db
-def test_list_notifications_as_user(user):
-    """Tests if an logged in user can list notifications"""
+def test_list_notifications_as_member_self(member):
+    """Tests if a member can list their own notifications"""
 
-    client = get_api_client(user=user)
+    client = get_api_client(user=member)
     url = _get_notification_url()
     response = client.get(url)
 
@@ -53,10 +61,10 @@ def test_retrieve_notification_as_anonymous_user(default_client, notification):
 
 
 @pytest.mark.django_db
-def test_retrieve_notification_as_user(notification, user):
+def test_retrieve_notification_as_member(notification, member):
     """Tests if a logged in user can retrieve another user's notification"""
 
-    client = get_api_client(user=user)
+    client = get_api_client(user=member)
     url = _get_notification_url(notification)
     response = client.get(url)
 
@@ -64,10 +72,13 @@ def test_retrieve_notification_as_user(notification, user):
 
 
 @pytest.mark.django_db
-def test_retrieve_notification_as_owner(notification):
+def test_retrieve_notification_as_owner(notification, member):
     """Tests if a logged in user can retrieve it's own notification"""
 
-    client = get_api_client(user=notification.user)
+    notification.user = member
+    notification.save()
+
+    client = get_api_client(user=member)
     url = _get_notification_url(notification)
     response = client.get(url)
 
@@ -83,10 +94,11 @@ def test_create_notification_as_anonymous(default_client):
 
 
 @pytest.mark.django_db
-def test_create_notification_as_user(user):
+def test_create_notification_as_user(member):
     """A logged in user should not be able to create a notification."""
-    client = get_api_client(user=user)
-    response = client.post(_get_notification_url())
+    client = get_api_client(user=member)
+    data = _get_notification_post_data()
+    response = client.post(_get_notification_url(), data)
 
     assert response.status_code == status.HTTP_403_FORBIDDEN
 
@@ -113,9 +125,13 @@ def test_update_notification_as_user(user, notification):
 
 
 @pytest.mark.django_db
-def test_update_notification_as_owner(notification):
+def test_update_notification_as_owner(notification, member):
     """The owner should be able to update a notification"""
-    client = get_api_client(user=notification.user)
+
+    notification.user = member
+    notification.save()
+
+    client = get_api_client(user=member)
     url = _get_notification_url(notification)
     data = _get_notification_put_data(notification=notification)
     response = client.put(url, data)

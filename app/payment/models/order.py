@@ -39,6 +39,10 @@ class Order(BaseModel, BasePermissionModel):
         return f"{self.user} - {self.event.title if self.event else ['slettet']} - {self.status} - {self.created_at}"
 
     @classmethod
+    def has_create_permission(cls, request):
+        return True
+
+    @classmethod
     def has_update_permission(cls, request):
         return is_admin_user(request)
 

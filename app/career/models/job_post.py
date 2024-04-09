@@ -2,7 +2,7 @@ from django.db import models
 
 from app.career.enums import JobPostType
 from app.common.enums import AdminGroup
-from app.common.permissions import BasePermissionModel
+from app.common.permissions import BasePermissionModel, check_has_access
 from app.content.enums import UserClass
 from app.util.models import BaseModel, OptionalImage
 from app.util.utils import yesterday
@@ -31,13 +31,33 @@ class JobPost(BaseModel, OptionalImage, BasePermissionModel):
 
     write_access = [AdminGroup.HS, AdminGroup.INDEX, AdminGroup.NOK]
 
-    @property
-    def expired(self):
-        return self.deadline <= yesterday()
-
     def __str__(self):
         return f"JobPost: {self.company}  - {self.title}"
 
     @property
+    def expired(self):
+        return self.deadline <= yesterday()
+
+    @property
     def website_url(self):
         return f"/karriere/{self.id}/"
+
+    @classmethod
+    def has_read_permission(cls, request):
+        return True
+
+    @classmethod
+    def has_retrieve_permission(cls, request):
+        return True
+
+    @classmethod
+    def has_update_permission(cls, request):
+        return check_has_access(cls.write_access, request)
+
+    @classmethod
+    def has_destroy_permission(cls, request):
+        return check_has_access(cls.write_access, request)
+
+    @classmethod
+    def has_create_permission(cls, request):
+        return check_has_access(cls.write_access, request)

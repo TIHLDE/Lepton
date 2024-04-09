@@ -17,3 +17,9 @@ class UpdateNotificationSerializer(BaseModelSerializer):
         is_read = validated_data.get("read", instance.read)
 
         return super().update(instance, dict(read=is_read))
+
+
+class CreateNotificationSerializer(BaseModelSerializer):
+    class Meta:
+        model = Notification
+        fields = ["title", "description", "link"]
