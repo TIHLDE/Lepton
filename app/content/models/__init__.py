@@ -14,3 +14,4 @@ from app.content.models.strike import (
     get_strike_strike_size,
 )
 from app.content.models.qr_code import QRCode
+from app.content.models.minute import Minute

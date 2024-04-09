@@ -15,6 +15,7 @@ from app.content.factories import (
     CategoryFactory,
     CheatsheetFactory,
     EventFactory,
+    MinuteFactory,
     NewsFactory,
     PageFactory,
     ParentPageFactory,
@@ -122,6 +123,12 @@ def jubkom_member(member):
 @pytest.fixture()
 def plask_member(member):
     add_user_to_group_with_name(member, Groups.PLASK)
+    return member
+
+
+@pytest.fixture()
+def index_member(member):
+    add_user_to_group_with_name(member, AdminGroup.INDEX)
     return member
 
 
@@ -292,3 +299,7 @@ def job_post():
 @pytest.fixture()
 def category():
     return CategoryFactory()
+
+def minute(user):
+    return MinuteFactory(author=user)
+
