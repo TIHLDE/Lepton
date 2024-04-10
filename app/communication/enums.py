@@ -15,3 +15,6 @@ class UserNotificationSettingType(models.TextChoices):
     FINE = "FINE", "Grupper - bot"
     GROUP_MEMBERSHIP = "GROUP_MEMBERSHIP", "Grupper - medlemsskap"
     OTHER = "OTHER", "Andre"
+    RESERVATION_NEW = "RESERVATION NEW", "Ny reservasjon"
+    RESERVATION_APPROVED = "RESERVATION APPROVED", "Godkjent reservasjon"
+    RESERVATION_CANCELLED = "RESERVATION CANCELLED", "Avslått reservasjon"
