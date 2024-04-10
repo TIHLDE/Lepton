@@ -59,17 +59,28 @@ class ReservationViewSet(BaseViewSet):
         serializer = self.get_serializer(reservation, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
 
-        # Check if the state is being updated to CONFIRMED and set approved_by
-        if (
-            "state" in serializer.validated_data
-            and serializer.validated_data["state"] == ReservationStateEnum.CONFIRMED
-            and reservation.state != ReservationStateEnum.CONFIRMED
-        ):
-            serializer.save(approved_by=request.user)
-        else:
-            serializer.save()
+        if serializer.is_valid():
+            previous_state = reservation.state
+            new_state = serializer.validated_data.get("state")
 
-        return Response(serializer.data, status=status.HTTP_200_OK)
+            # Check if the state is being updated to CONFIRMED and set approved_by
+            if (
+                new_state == ReservationStateEnum.CONFIRMED
+                and previous_state != ReservationStateEnum.CONFIRMED
+            ):
+                serializer.save(approved_by=request.user)
+            else:
+                serializer.save()
+
+            if new_state and new_state != previous_state:
+                if new_state == ReservationStateEnum.CONFIRMED:
+                    serializer.instance.notify_approved()
+                elif new_state == ReservationStateEnum.CANCELLED:
+                    serializer.instance.notify_denied()
+
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def destroy(self, request, *args, **kwargs):
         super().destroy(self, request, *args, **kwargs)
