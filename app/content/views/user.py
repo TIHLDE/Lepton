@@ -181,6 +181,20 @@ class UserViewSet(BaseViewSet, ActionMixin):
             context={"request": request},
         )
 
+    @action(detail=True, methods=["get"], url_path="memberships-with-fines")
+    def get_user_memberships_with_fines(self, request, pk, *args, **kwargs):
+        user = self._get_user(request, pk)
+        self.check_object_permissions(self.request, user)
+
+        memberships = user.memberships.filter(
+            group__type__in=GroupType.public_groups(), group__fines_activated=True
+        ).order_by("-created_at")
+        return self.paginate_response(
+            data=memberships,
+            serializer=MembershipSerializer,
+            context={"request": request},
+        )
+
     @action(detail=True, methods=["get"], url_path="membership-histories")
     def get_user_membership_histories(self, request, pk, *args, **kwargs):
         user = self._get_user(request, pk)

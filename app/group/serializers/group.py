@@ -22,6 +22,7 @@ class SimpleGroupSerializer(BaseModelSerializer):
             "viewer_is_member",
             "image",
             "image_alt",
+            "fines_activated",
         )
 
     def get_viewer_is_member(self, obj):
