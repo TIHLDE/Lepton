@@ -66,7 +66,7 @@ class BeerpongTournamentViewset(BaseViewSet):
         try:
             tournament = self.get_object()
             matches = self._generate_tournament(tournament)
-            if tournament.status == TournamentStatus.FINISHED:
+            if tournament.status != TournamentStatus.PENDING:
                 return Response(
                     {"detail": "Turneringen er allerede ferdig."},
                     status=status.HTTP_400_BAD_REQUEST,
@@ -80,9 +80,6 @@ class BeerpongTournamentViewset(BaseViewSet):
                 )
                 if serializer.is_valid(raise_exception=True):
                     super().perform_update(serializer)
-
-            tournament.status = TournamentStatus.ACTIVE
-            tournament.save()
             serializer = self.get_serializer_class()(tournament)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception:
