@@ -20,5 +20,5 @@ class UserWastedLevelViewset(ModelViewSet):
         print("Debugging - After calling super().destroy()")
 
         return Response(
-            {"detail": "The wasted level was deleted"}, status=status.HTTP_200_OK
+            {"detail": "Promillenivået ble slettet"}, status=status.HTTP_200_OK
         )

@@ -16,5 +16,5 @@ class DrinkingGameViewSet(ModelViewSet):
         instance = self.get_object()
         self.perform_destroy(instance)
         return Response(
-            {"detail": "The drinking game was deleted"}, status=status.HTTP_200_OK
+            {"detail": "Drikkespillet ble slettet"}, status=status.HTTP_200_OK
         )

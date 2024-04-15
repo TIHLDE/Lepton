@@ -43,6 +43,20 @@ def test_that_a_pong_result_can_be_created(default_client, pong_match):
 
 
 @pytest.mark.django_db
+def test_that_a_pong_result_raises_exception_on_invalid_result(
+    default_client, pong_match
+):
+    """A pong result should raise exception on invalid result"""
+    url = _get_result_url()
+    data = _get_result_post_data(pong_match)
+    data["result"] = "w - l"
+    response = default_client.post(url, data)
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert response.data["detail"] == "Noe gikk galt ved lagring av resultat."
+
+
+@pytest.mark.django_db
 def test_that_only_one_pong_result_can_be_created_for_a_match(
     default_client, pong_match
 ):

@@ -20,6 +20,8 @@ class SessionSerializer(BaseModelSerializer):
         start_time = value
 
         if start_time >= end_time:
-            raise serializers.ValidationError("Start time must be before end time.")
+            raise serializers.ValidationError(
+                "Starttidspunktet må være før sluttidspunktet."
+            )
 
         return value

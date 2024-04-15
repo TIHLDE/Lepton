@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from app.blitzed.enums import TournamentStatus
-from app.blitzed.exceptions import APIDrawMatch
+from app.blitzed.exceptions import APIDrawMatch, APIInvalidResult
 from app.blitzed.models.pong_match import PongMatch
 from app.blitzed.models.pong_result import PongResult
 from app.blitzed.serializers.pong_team import (
@@ -103,11 +103,14 @@ class PongResultUpdateSerializer(serializers.ModelSerializer):
 
 
 def _get_winner(result, match_id):
-    team1_score, team2_score = map(int, result.split("-"))
-    if team1_score > team2_score:
-        winner = PongMatch.objects.get(id=match_id).team1
-    elif team2_score > team1_score:
-        winner = PongMatch.objects.get(id=match_id).team2
-    else:
-        raise APIDrawMatch()
+    try:
+        team1_score, team2_score = map(int, result.split("-"))
+        if team1_score > team2_score:
+            winner = PongMatch.objects.get(id=match_id).team1
+        elif team2_score > team1_score:
+            winner = PongMatch.objects.get(id=match_id).team2
+        else:
+            raise APIDrawMatch()
+    except ValueError:
+        raise APIInvalidResult()
     return winner
