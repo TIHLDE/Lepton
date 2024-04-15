@@ -37,11 +37,11 @@ class PongTeamViewset(BaseViewSet):
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
 
             return Response(
-                {"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST
+                {"detail": "Validerings feil ved oppretting av laget"}, status=status.HTTP_400_BAD_REQUEST
             )
-        except ValidationError as e:
+        except ValidationError:
             return Response(
-                {"detail": f"Feilmelding: {e.detail}"},
+                {"detail": "Noe gikk galt under oppretting av laget"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -55,11 +55,11 @@ class PongTeamViewset(BaseViewSet):
                 return Response(serializer.data, status=status.HTTP_200_OK)
 
             return Response(
-                {"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST
+                {"detail": "Validerings feil ved oppdatering"}, status=status.HTTP_400_BAD_REQUEST
             )
-        except ValidationError as e:
+        except ValidationError:
             return Response(
-                {"detail": f"Feilmelding: {e.detail}"},
+                {"detail": "Noe gikk galt under oppdatering av laget"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
