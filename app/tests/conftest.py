@@ -22,6 +22,7 @@ from app.content.factories import (
     QRCodeFactory,
     RegistrationFactory,
     ShortLinkFactory,
+    UserBioFactory,
     UserFactory,
 )
 from app.content.factories.toddel_factory import ToddelFactory
@@ -288,6 +289,11 @@ def event_with_priority_pool(priority_group):
     event = EventFactory(limit=1)
     PriorityPoolFactory(event=event, groups=(priority_group,))
     return event
+
+
+@pytest.fixture()
+def user_bio():
+    return UserBioFactory()
 
 
 @pytest.fixture()

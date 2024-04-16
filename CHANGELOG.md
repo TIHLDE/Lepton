@@ -14,6 +14,9 @@
 
 ## Neste versjon
 
+## Versjon 2024.04.16
+- ✨ **Brukerbio**. Bruker kan nå opprette bio.
+
 ## Versjon 2023.04.08
 - ✨ **Codex** Index brukere kan nå opprette dokumenter og møtereferater i Codex.
 
