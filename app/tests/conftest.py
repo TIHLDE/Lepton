@@ -295,6 +295,6 @@ def event_with_priority_pool(priority_group):
 def user_bio():
     return UserBioFactory()
 
- 
+
 def minute(user):
     return MinuteFactory(author=user)
