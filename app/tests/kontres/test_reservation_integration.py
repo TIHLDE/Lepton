@@ -659,6 +659,9 @@ def test_retrieve_specific_reservation_within_its_date_range(member, bookable_it
 
 @pytest.mark.skip
 @pytest.mark.django_db
+@pytest.mark.skip(
+    "This test is only working sometimes, needs to be fixed. Kontres backend team's responsibility."
+)
 def test_retrieve_subset_of_reservations(member, bookable_item):
     client = get_api_client(user=member)
 
