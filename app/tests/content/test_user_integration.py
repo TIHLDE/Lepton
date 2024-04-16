@@ -180,6 +180,7 @@ def test_filter_only_users_with_active_strikes(
     [
         ("/", status.HTTP_200_OK),
         ("/memberships/", status.HTTP_200_OK),
+        ("/memberships-with-fines/", status.HTTP_200_OK),
         ("/membership-histories/", status.HTTP_200_OK),
         ("/badges/", status.HTTP_200_OK),
         ("/events/", status.HTTP_200_OK),

@@ -12,6 +12,7 @@ from app.forms.enums import EventFormType
 from app.forms.tests.form_factories import EventFormFactory
 from app.group.factories import GroupFactory
 from app.group.models import Group
+from app.tests.conftest import _add_user_to_group
 from app.util import now
 from app.util.test_utils import (
     add_user_to_group_with_name,
@@ -978,3 +979,110 @@ def test_create_paid_event(api_client, admin_user):
     assert data["is_paid_event"]
     assert data["paid_information"]["price"] == "200.00"
     assert data["paid_information"]["paytime"] == "01:00:00"
+
+
+@pytest.mark.django_db
+def test_wait_queue_number_for_prioritized_registration(
+    event_with_priority_pool, user_in_priority_pool, member, priority_group
+):
+    prioritized_user_1 = UserFactory()
+    _add_user_to_group(prioritized_user_1, priority_group)
+
+    prioritized_user_2 = UserFactory()
+    _add_user_to_group(prioritized_user_2, priority_group)
+
+    prioritized_user_3 = UserFactory()
+    _add_user_to_group(prioritized_user_3, priority_group)
+
+    RegistrationFactory(
+        event=event_with_priority_pool, user=prioritized_user_1, is_on_wait=True
+    )
+    second_prioritized_registration = RegistrationFactory(
+        event=event_with_priority_pool, user=prioritized_user_2, is_on_wait=True
+    )
+    third_prioritized_registration = RegistrationFactory(
+        event=event_with_priority_pool, user=prioritized_user_3, is_on_wait=True
+    )
+
+    assert second_prioritized_registration.wait_queue_number == 1
+    assert third_prioritized_registration.wait_queue_number == 2
+
+
+@pytest.mark.django_db
+def test_wait_queue_number_respects_priority_pools(
+    event_with_priority_pool, user_in_priority_pool, member, priority_group
+):
+    prioritized_user_0 = UserFactory()
+    _add_user_to_group(prioritized_user_0, priority_group)
+    RegistrationFactory(
+        event=event_with_priority_pool, user=prioritized_user_0, is_on_wait=False
+    )
+
+    non_prioritized_registration = RegistrationFactory(
+        event=event_with_priority_pool, user=member, is_on_wait=True
+    )
+
+    prioritized_user_2 = UserFactory()
+    _add_user_to_group(prioritized_user_2, priority_group)
+    prioritized_user_3 = UserFactory()
+    _add_user_to_group(prioritized_user_3, priority_group)
+
+    second_prioritized_registration = RegistrationFactory(
+        event=event_with_priority_pool, user=prioritized_user_2, is_on_wait=True
+    )
+    third_prioritized_registration = RegistrationFactory(
+        event=event_with_priority_pool, user=prioritized_user_3, is_on_wait=True
+    )
+
+    assert second_prioritized_registration.wait_queue_number == 1
+    assert third_prioritized_registration.wait_queue_number == 2
+    assert non_prioritized_registration.wait_queue_number == 3
+
+
+@pytest.mark.django_db
+def test_prioritized_users_always_ahead_of_non_prioritized(
+    event_with_priority_pool, priority_group
+):
+    non_prioritized_users = [
+        UserFactory() for _ in range(2)
+    ]  # Create 2 non-prioritized users
+    prioritized_users = [UserFactory() for _ in range(2)]  # Create 2 prioritized users
+
+    # simulate the event being filled
+    prioritized_user_0 = UserFactory()
+    _add_user_to_group(prioritized_user_0, priority_group)
+    RegistrationFactory(
+        event=event_with_priority_pool, user=prioritized_user_0, is_on_wait=False
+    )
+
+    # Assign users to priority group and register them
+    for user in prioritized_users:
+        _add_user_to_group(user, priority_group)
+
+    # Non-prioritized users register first and are placed on the waitlist
+    for user in non_prioritized_users:
+        RegistrationFactory(event=event_with_priority_pool, user=user, is_on_wait=True)
+
+    # Prioritized users register after and are also placed on the waitlist
+    for user in prioritized_users:
+        RegistrationFactory(event=event_with_priority_pool, user=user, is_on_wait=True)
+
+    # Fetch registrations that are specifically on the waitlist and prioritize accordingly
+    waitlist_registrations = event_with_priority_pool.registrations.filter(
+        is_on_wait=True
+    ).order_by("created_at")
+
+    # Extract wait queue numbers for prioritized and non-prioritized users on the waitlist
+    prioritized_wait_numbers = [
+        reg.wait_queue_number for reg in waitlist_registrations if reg.is_prioritized
+    ]
+    non_prioritized_wait_numbers = [
+        reg.wait_queue_number
+        for reg in waitlist_registrations
+        if not reg.is_prioritized
+    ]
+
+    # Ensure all prioritized users have lower wait queue numbers than any non-prioritized user
+    assert all(
+        p_num < min(non_prioritized_wait_numbers) for p_num in prioritized_wait_numbers
+    ), "Prioritized users do not all precede non-prioritized users in the wait queue"

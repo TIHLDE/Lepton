@@ -12,3 +12,4 @@ from app.content.factories.priority_pool_factory import PriorityPoolFactory
 from app.content.factories.qr_code_factory import QRCodeFactory
 from app.content.factories.user_bio_factory import UserBioFactory
 from app.content.factories.logentry_factory import LogEntryFactory
+from app.content.factories.minute_factory import MinuteFactory

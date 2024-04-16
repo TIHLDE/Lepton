@@ -31,20 +31,76 @@ def test_member_can_create_reservation(member, bookable_item):
     )
 
     assert response.status_code == 201
-    assert response.data["author"] == member.user_id
-    assert response.data["bookable_item"] == bookable_item.id
+    assert response.data["author_detail"]["user_id"] == str(member.user_id)
+    assert response.data["bookable_item_detail"]["id"] == str(bookable_item.id)
     assert response.data["state"] == "PENDING"
 
 
 @pytest.mark.django_db
-def test_member_cannot_set_different_author_in_reservation(member, bookable_item):
+def test_member_can_create_reservation_with_alcohol_and_sober_watch(
+    member, bookable_item
+):
+    client = get_api_client(user=member)
+
+    bookable_item.allows_alcohol = True
+    bookable_item.save()
+
+    response = client.post(
+        "/kontres/reservations/",
+        {
+            "bookable_item": bookable_item.id,
+            "start_time": "2030-10-10T10:00:00Z",
+            "end_time": "2030-10-10T11:00:00Z",
+            "serves_alcohol": True,
+            "sober_watch": member.user_id,
+        },
+        format="json",
+    )
+
+    assert response.status_code == 201, response.data
+    assert response.data.get("serves_alcohol") is True
+    assert response.data["sober_watch_detail"]["user_id"] == str(member.user_id)
+
+
+@pytest.mark.django_db
+def test_reservation_creation_fails_without_sober_watch(member, bookable_item):
+    client = get_api_client(user=member)
+
+    bookable_item.allows_alcohol = True
+    bookable_item.save()
+
+    response = client.post(
+        "/kontres/reservations/",
+        {
+            "bookable_item": bookable_item.id,
+            "start_time": "2030-10-10T10:00:00Z",
+            "end_time": "2030-10-10T11:00:00Z",
+            "serves_alcohol": True,
+            # Notice the absence of "sober_watch",
+        },
+        format="json",
+    )
+
+    assert response.status_code == 400
+    print(response.data)
+    expected_error_message = "Du må velge en edruvakt for reservasjonen."
+    actual_error_messages = response.data.get("non_field_errors", [])
+    assert any(
+        expected_error_message in error for error in actual_error_messages
+    ), f"Expected specific alcohol agreement validation error: {expected_error_message}"
+
+
+@pytest.mark.django_db
+def test_member_cannot_set_different_author_in_reservation(
+    member, bookable_item, sosialen_user
+):
     client = get_api_client(user=member)
 
     # Attempt to create a reservation with a different author specified in the request body
     response = client.post(
         "/kontres/reservations/",
         {
-            "author": "different_user_id",  # Attempt to set a different author
+            "author": sosialen_user.user_id,
             "bookable_item": bookable_item.id,
             "start_time": "2030-10-10T10:00:00Z",
             "end_time": "2030-10-10T11:00:00Z",
@@ -56,11 +112,11 @@ def test_member_cannot_set_different_author_in_reservation(member, bookable_item
     assert response.status_code == 201
 
     # Check that the author of the reservation is actually the requesting user
-    assert response.data["author"] == member.user_id
-    assert response.data["author"] != "different_user_id"
+    assert response.data["author_detail"]["user_id"] == member.user_id
+    assert response.data["author_detail"]["user_id"] != "different_user_id"
 
     # Check other attributes of the reservation
-    assert response.data["bookable_item"] == bookable_item.id
+    assert response.data["bookable_item_detail"]["id"] == str(bookable_item.id)
     assert response.data["state"] == "PENDING"
 
 
@@ -106,6 +162,7 @@ def test_member_deleting_own_reservation(member, reservation):
     client = get_api_client(user=member)
     response = client.delete(f"/kontres/reservations/{reservation.id}/", format="json")
     assert response.status_code == status.HTTP_204_NO_CONTENT
+    assert response.data["detail"] == "Reservasjonen ble slettet."
 
 
 @pytest.mark.django_db
@@ -137,7 +194,6 @@ def test_user_cannot_create_confirmed_reservation(bookable_item, member):
         {
             "author": member.user_id,
             "bookable_item": bookable_item.id,
-            # Format start_time and end_time to ISO format for the POST request
             "start_time": start_time.isoformat(),
             "end_time": end_time.isoformat(),
             "state": "CONFIRMED",
@@ -169,6 +225,8 @@ def test_user_cannot_create_reservation_with_invalid_date_format(member, bookabl
 def test_admin_can_edit_reservation_to_confirmed(reservation, admin_user):
     client = get_api_client(user=admin_user)
 
+    assert reservation.state == ReservationStateEnum.PENDING
+
     response = client.put(
         f"/kontres/reservations/{reservation.id}/",
         {"state": "CONFIRMED"},
@@ -176,7 +234,26 @@ def test_admin_can_edit_reservation_to_confirmed(reservation, admin_user):
     )
 
     assert response.status_code == 200
-    assert response.data["state"] == "CONFIRMED"
+    assert response.data["state"] == ReservationStateEnum.CONFIRMED
+
+
+@pytest.mark.django_db
+def test_admin_can_approve_reservation_and_approved_by_is_set(reservation, admin_user):
+    client = get_api_client(user=admin_user)
+    assert reservation.state == ReservationStateEnum.PENDING
+    assert reservation.approved_by is None
+
+    response = client.put(
+        f"/kontres/reservations/{reservation.id}/",
+        {"state": "CONFIRMED"},
+        format="json",
+    )
+
+    reservation.refresh_from_db()
+
+    assert response.status_code == 200
+    assert reservation.state == ReservationStateEnum.CONFIRMED
+    assert response.data["approved_by_detail"]["user_id"] == str(admin_user.user_id)
 
 
 @pytest.mark.django_db
@@ -251,8 +328,12 @@ def test_user_can_fetch_all_reservations(reservation, member):
 
     first_reservation = Reservation.objects.first()
     assert str(response.data[0]["id"]) == str(first_reservation.id)
-    assert response.data[0]["author"] == first_reservation.author.user_id
-    assert response.data[0]["bookable_item"] == first_reservation.bookable_item.id
+    assert (
+        response.data[0]["author_detail"]["user_id"] == first_reservation.author.user_id
+    )
+    assert response.data[0]["bookable_item_detail"]["id"] == str(
+        first_reservation.bookable_item.id
+    )
     assert response.data[0]["state"] == "PENDING"
 
 
@@ -290,8 +371,8 @@ def test_can_fetch_single_reservation(reservation, member):
 
     assert response.status_code == 200
     assert str(response.data["id"]) == str(reservation.id)
-    assert response.data["author"] == reservation.author.user_id
-    assert str(response.data["bookable_item"]) == str(
+    assert response.data["author_detail"]["user_id"] == reservation.author.user_id
+    assert str(response.data["bookable_item_detail"]["id"]) == str(
         reservation.bookable_item.id
     )  # Convert both to string
     assert response.data["state"] == "PENDING"
@@ -416,7 +497,9 @@ def test_unauthenticated_request_cannot_create_reservation(bookable_item):
 
 
 @pytest.mark.django_db
-def test_creating_overlapping_reservation(member, bookable_item, admin_user):
+def test_creating_overlapping_reservation_should_not_work_when_confirmed(
+    member, bookable_item, admin_user
+):
     # Create a confirmed reservation using the ReservationFactory
     existing_confirmed_reservation = ReservationFactory(
         bookable_item=bookable_item,
@@ -448,6 +531,105 @@ def test_creating_overlapping_reservation(member, bookable_item, admin_user):
 
 
 @pytest.mark.django_db
+def test_updating_to_overlapping_reservation_should_not_work_when_confirmed(
+    member, bookable_item, admin_user
+):
+    # Create two initial reservations, one confirmed and one pending
+    confirmed_reservation = ReservationFactory(
+        bookable_item=bookable_item,
+        start_time=timezone.now() + timezone.timedelta(hours=1),
+        end_time=timezone.now() + timezone.timedelta(hours=2),
+        state=ReservationStateEnum.CONFIRMED,
+    )
+
+    pending_reservation = ReservationFactory(
+        bookable_item=bookable_item,
+        start_time=confirmed_reservation.start_time
+        + timezone.timedelta(minutes=30),  # Overlapping time
+        end_time=confirmed_reservation.end_time + timezone.timedelta(minutes=30),
+        state=ReservationStateEnum.PENDING,
+    )
+
+    # Now attempt to update the pending reservation to confirmed, which should overlap with the confirmed_reservation
+    client = get_api_client(user=member)
+    response = client.put(
+        f"/kontres/reservations/{pending_reservation.id}/",
+        {"state": ReservationStateEnum.CONFIRMED},
+        format="json",
+    )
+
+    # The system should not allow this, as it would overlap with another confirmed reservation
+    assert (
+        response.status_code == status.HTTP_400_BAD_REQUEST
+    ), "Should not update reservation to confirmed due to overlap"
+
+
+@pytest.mark.django_db
+def test_creating_overlapping_reservation_should_work_when_cancelled(
+    member, bookable_item, admin_user
+):
+    existing_confirmed_reservation = ReservationFactory(
+        bookable_item=bookable_item,
+        start_time=timezone.now() + timezone.timedelta(hours=1),
+        end_time=timezone.now() + timezone.timedelta(hours=2),
+        state=ReservationStateEnum.CANCELLED,  # Set the reservation as declined
+    )
+
+    # Now attempt to create an overlapping reservation
+    client = get_api_client(user=member)
+    overlapping_start_time = (
+        existing_confirmed_reservation.start_time + timezone.timedelta(minutes=30)
+    )
+    response = client.post(
+        "/kontres/reservations/",
+        {
+            "author": member.user_id,
+            "bookable_item": bookable_item.id,
+            "start_time": overlapping_start_time,
+            "end_time": existing_confirmed_reservation.end_time
+            + timezone.timedelta(hours=1),
+            "state": ReservationStateEnum.PENDING,
+        },
+        format="json",
+    )
+
+    assert response.status_code == status.HTTP_201_CREATED
+
+
+@pytest.mark.django_db
+def test_creating_overlapping_reservation_should_work_when_pending(
+    member, bookable_item, admin_user
+):
+    # Create a confirmed reservation using the ReservationFactory
+    existing_confirmed_reservation = ReservationFactory(
+        bookable_item=bookable_item,
+        start_time=timezone.now() + timezone.timedelta(hours=1),
+        end_time=timezone.now() + timezone.timedelta(hours=2),
+        state=ReservationStateEnum.PENDING,  # Set the reservation as declined
+    )
+
+    # Now attempt to create an overlapping reservation
+    client = get_api_client(user=member)
+    overlapping_start_time = (
+        existing_confirmed_reservation.start_time + timezone.timedelta(minutes=30)
+    )
+    response = client.post(
+        "/kontres/reservations/",
+        {
+            "author": member.user_id,
+            "bookable_item": bookable_item.id,
+            "start_time": overlapping_start_time,
+            "end_time": existing_confirmed_reservation.end_time
+            + timezone.timedelta(hours=1),
+            "state": ReservationStateEnum.PENDING,
+        },
+        format="json",
+    )
+
+    assert response.status_code == status.HTTP_201_CREATED
+
+
+@pytest.mark.django_db
 def test_retrieve_specific_reservation_within_its_date_range(member, bookable_item):
     client = get_api_client(user=member)
 
@@ -475,6 +657,7 @@ def test_retrieve_specific_reservation_within_its_date_range(member, bookable_it
     assert any(res["id"] == str(reservation.id) for res in response.data)
 
 
+@pytest.mark.skip
 @pytest.mark.django_db
 @pytest.mark.skip(
     "This test is only working sometimes, needs to be fixed. Kontres backend team's responsibility."
@@ -517,13 +700,22 @@ def test_retrieve_subset_of_reservations(member, bookable_item):
             format="json",
         )
 
-    # Define the query date range to include only the first two reservations
-    query_start_date = current_time.replace(
-        hour=9, minute=0, second=0, microsecond=0
-    ).isoformat()
-    query_end_date = current_time.replace(
-        hour=9, minute=0, second=0, microsecond=0, day=current_time.day + 2
-    ).isoformat()
+    from django.utils.timezone import get_current_timezone
+
+    # Example of formatting the datetime with timezone information
+    query_start_date = (
+        current_time.replace(hour=9, minute=0, second=0, microsecond=0)
+        .astimezone(get_current_timezone())
+        .isoformat()
+    )
+
+    query_end_date = (
+        current_time.replace(
+            hour=9, minute=0, second=0, microsecond=0, day=current_time.day + 1
+        )
+        .astimezone(get_current_timezone())
+        .isoformat()
+    )
 
     # Retrieve reservations for the specific date range
     response = client.get(
@@ -630,11 +822,8 @@ def test_user_can_change_reservation_group(member, reservation):
         format="json",
     )
 
-    # Verify the response
     assert response.status_code == status.HTTP_200_OK, response.data
-    assert (
-        response.data["group"] == new_group.slug
-    ), "Group should be updated to the new group"
+    assert response.data["group_detail"]["slug"] == new_group.slug
 
 
 @pytest.mark.django_db
@@ -723,7 +912,7 @@ def test_user_can_change_reservation_group_if_state_is_pending(member, reservati
 
     # Verify the response
     assert response.status_code == status.HTTP_200_OK, response.data
-    assert response.data["group"] == new_group.slug
+    assert response.data["group_detail"]["slug"] == new_group.slug
 
 
 @pytest.mark.django_db
@@ -751,3 +940,91 @@ def test_user_cannot_change_reservation_group_if_state_is_not_pending(
     )
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
+@pytest.mark.django_db
+def test_user_can_fetch_own_reservations(member, reservation):
+    client = get_api_client(user=member)
+
+    reservation.author = member
+    reservation.save()
+
+    response = client.get("/users/me/reservations/")
+
+    assert response.status_code == 200
+    assert all(
+        reservation["author_detail"]["user_id"] == str(member.user_id)
+        for reservation in response.data
+    )
+
+
+@pytest.mark.django_db
+def test_user_reservations_endpoint_returns_correct_reservations(
+    member, bookable_item, reservation
+):
+    client = get_api_client(user=member)
+
+    Reservation.objects.bulk_create(
+        [
+            Reservation(
+                author=member,
+                bookable_item=bookable_item,
+                start_time=f"2030-10-10T1{num}:00:00Z",
+                end_time=f"2030-10-10T1{num + 1}:00:00Z",
+                description=f"Test reservation {num}",
+            )
+            for num in range(3)
+        ]
+    )
+
+    response = client.get("/users/me/reservations/")
+
+    assert response.status_code == 200
+    assert len(response.data) == 3
+
+    fixture_reservation_id = str(reservation.id)
+    returned_reservation_ids = [res["id"] for res in response.data]
+    assert fixture_reservation_id not in returned_reservation_ids
+
+
+@pytest.mark.django_db
+def test_admin_can_fetch_reservations_for_specific_user(
+    admin_user, member, bookable_item
+):
+    client = get_api_client(user=admin_user)
+
+    Reservation.objects.bulk_create(
+        [
+            Reservation(
+                author=member,
+                bookable_item=bookable_item,
+                start_time=f"2030-10-{10 + num}T10:00:00Z",
+                end_time=f"2030-10-{10 + num}T11:00:00Z",
+                description=f"Member's reservation {num}",
+            )
+            for num in range(3)  # Create 3 reservations for the member
+        ]
+    )
+
+    created_reservations = Reservation.objects.filter(author=member).order_by(
+        "start_time"
+    )
+    created_reservation_ids = {str(res.id) for res in created_reservations}
+
+    response = client.get(f"/kontres/reservations/?user_id={member.user_id}")
+
+    assert response.status_code == 200
+    assert len(response.data) == 3
+
+    response_reservation_ids = {res["id"] for res in response.data}
+
+    assert created_reservation_ids == response_reservation_ids
+
+
+@pytest.mark.django_db
+def test_member_cannot_fetch_reservations_for_specific_user(member):
+    client = get_api_client(user=member)
+
+    response = client.get(f"/kontres/reservations/?user_id={member.user_id}")
+
+    assert response.status_code == 403

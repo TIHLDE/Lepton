@@ -37,6 +37,8 @@ from app.group.serializers.membership import (
     MembershipHistorySerializer,
     MembershipSerializer,
 )
+from app.kontres.models.reservation import Reservation
+from app.kontres.serializer.reservation_seralizer import ReservationSerializer
 from app.util.export_user_data import export_user_data
 from app.util.utils import CaseInsensitiveBooleanQueryParam
 
@@ -180,6 +182,20 @@ class UserViewSet(BaseViewSet, ActionMixin):
 
         memberships = user.memberships.filter(
             group__type__in=GroupType.public_groups()
+        ).order_by("-created_at")
+        return self.paginate_response(
+            data=memberships,
+            serializer=MembershipSerializer,
+            context={"request": request},
+        )
+
+    @action(detail=True, methods=["get"], url_path="memberships-with-fines")
+    def get_user_memberships_with_fines(self, request, pk, *args, **kwargs):
+        user = self._get_user(request, pk)
+        self.check_object_permissions(self.request, user)
+
+        memberships = user.memberships.filter(
+            group__type__in=GroupType.public_groups(), group__fines_activated=True
         ).order_by("-created_at")
         return self.paginate_response(
             data=memberships,
@@ -386,3 +402,12 @@ class UserViewSet(BaseViewSet, ActionMixin):
             {"detail": "Noe gikk galt, prøv igjen senere eller kontakt Index"},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
+
+    @action(detail=False, methods=["get"], url_path="me/reservations")
+    def get_user_reservations(self, request, *args, **kwargs):
+        user = request.user
+        reservations = Reservation.objects.filter(author=user).order_by("start_time")
+        serializer = ReservationSerializer(
+            reservations, many=True, context={"request": request}
+        )
+        return Response(serializer.data, status=status.HTTP_200_OK)
