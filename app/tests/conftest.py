@@ -296,5 +296,6 @@ def user_bio():
     return UserBioFactory()
 
 
+@pytest.fixture()
 def minute(user):
     return MinuteFactory(author=user)
