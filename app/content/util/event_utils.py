@@ -12,7 +12,7 @@ from app.payment.util.payment_utils import (
 )
 
 
-def start_payment_countdown(event, registration):
+def start_payment_countdown(event, registration, from_wait_list=False):
     """
     Checks if event is a paid event
     and starts the countdown for payment for an user.
@@ -24,13 +24,18 @@ def start_payment_countdown(event, registration):
     try:
         check_if_has_paid.apply_async(
             args=(event.id, registration.registration_id),
-            countdown=get_countdown_time(event),
+            countdown=get_countdown_time(event, from_wait_list),
         )
     except Exception as payment_countdown_error:
         capture_exception(payment_countdown_error)
 
 
-def get_countdown_time(event):
+def get_countdown_time(event, from_wait_list=False):
+    if from_wait_list:
+        # 12 hours and 10 minutes as seconds
+        return (12 * 60 * 60) + (10 * 60)
+
+    # paytime as seconds
     paytime = event.paid_information.paytime
     return (paytime.hour * 60 + paytime.minute + 10) * 60 + paytime.second
 
