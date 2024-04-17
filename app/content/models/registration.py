@@ -135,7 +135,9 @@ class Registration(BaseModel, BasePermissionModel):
             if moved_registration.event.is_paid_event:
                 try:
                     start_payment_countdown(
-                        moved_registration.event, moved_registration
+                        moved_registration.event,
+                        moved_registration,
+                        from_wait_list=True,
                     )
                 except Exception as countdown_error:
                     capture_exception(countdown_error)
