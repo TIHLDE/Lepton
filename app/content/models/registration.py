@@ -357,9 +357,7 @@ class Registration(BaseModel, BasePermissionModel):
             registration_move_to_queue.is_on_wait = False
 
             if self.event.is_paid_event:
-                registration_move_to_queue.payment_expiredate = get_payment_expiredate(
-                    self.event
-                )
+                registration_move_to_queue.payment_expiredate = get_payment_expiredate()
 
             return registration_move_to_queue
 
