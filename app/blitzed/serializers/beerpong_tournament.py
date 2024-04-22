@@ -4,8 +4,8 @@ import string
 from rest_framework import serializers
 
 from app.blitzed.enums import TournamentAccess, TournamentStatus
-from app.blitzed.models.pong_team import PongTeam
 from app.blitzed.models.beerpong_tournament import BeerpongTournament
+from app.blitzed.models.pong_team import PongTeam
 from app.blitzed.serializers.pong_match import PongMatchSerializer
 from app.common.serializers import BaseModelSerializer
 from app.content.serializers.user import UserSerializer
@@ -22,18 +22,32 @@ class BeerpongTournamentSerializer(BaseModelSerializer):
 
     class Meta:
         model = BeerpongTournament
-        fields = ("id", "name", "matches", "status", "pin_code", "creator", "access", "team_count", "player_count")
+        fields = (
+            "id",
+            "name",
+            "matches",
+            "status",
+            "pin_code",
+            "creator",
+            "access",
+            "team_count",
+            "player_count",
+        )
 
     def to_representation(self, instance):
-        representation = super(BeerpongTournamentSerializer, self).to_representation(instance)
-        
+        representation = super(BeerpongTournamentSerializer, self).to_representation(
+            instance
+        )
+
         teams = PongTeam.objects.filter(tournament=instance)
         team_count = teams.count()
-        player_count = sum([team.members.count() for team in teams]) + sum([team.anonymous_members.count() for team in teams])
-        
-        representation['team_count'] = team_count
-        representation['player_count'] = player_count
-        
+        player_count = sum([team.members.count() for team in teams]) + sum(
+            [team.anonymous_members.count() for team in teams]
+        )
+
+        representation["team_count"] = team_count
+        representation["player_count"] = player_count
+
         return representation
 
     def create(self, validated_data):
