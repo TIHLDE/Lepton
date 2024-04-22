@@ -34,6 +34,9 @@ class BeerpongTournamentViewset(BaseViewSet):
         if self.action == "generate_tournament_matches_and_return_matches":
             return self.queryset
 
+        if self.kwargs.get("pk") is not None:
+            return self.queryset.filter(id=self.kwargs.get("pk"))
+
         if pin is not None and active:
             return self.queryset.filter(
                 Q(status=TournamentStatus.ACTIVE) | Q(status=TournamentStatus.PENDING),
