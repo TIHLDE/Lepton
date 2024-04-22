@@ -12,4 +12,6 @@ from app.content.views.upload import upload
 from app.content.views.strike import StrikeViewSet
 from app.content.views.toddel import ToddelViewSet
 from app.content.views.qr_code import QRCodeViewSet
+from app.content.views.user_bio import UserBioViewset
 from app.content.views.logentry import LogEntryViewSet
+from app.content.views.minute import MinuteViewSet

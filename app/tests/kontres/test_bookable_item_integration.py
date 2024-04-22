@@ -19,6 +19,7 @@ def test_admin_can_delete_bookable_item(admin_user, bookable_item):
         f"/kontres/bookable_items/{bookable_item.id}/", format="json"
     )
     assert response.status_code == status.HTTP_204_NO_CONTENT
+    assert response.data["detail"] == "Gjenstanden ble slettet."
 
 
 @pytest.mark.django_db
@@ -78,3 +79,14 @@ def test_admin_can_edit_bookable_item(admin_user, bookable_item):
     )
     assert response.status_code == status.HTTP_200_OK
     assert response.data["name"] == "test"
+
+
+@pytest.mark.django_db
+def test_get_returns_empty_list_when_no_bookable_items(member):
+    client = get_api_client(user=member)
+    response = client.get("/kontres/bookable_items/", format="json")
+
+    assert response.status_code == status.HTTP_200_OK
+    assert (
+        response.data == []
+    ), "Expected an empty list when there are no bookable items"

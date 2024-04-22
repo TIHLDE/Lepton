@@ -20,6 +20,10 @@ class UserFilter(FilterSet):
     )
     in_group = CharFilter(method="filter_is_in_group", label="Only list users in group")
 
+    has_allowed_photo = BooleanFilter(
+        method="filter_has_allowed_photo", label="Has allowed photo"
+    )
+
     class Meta:
         model: User
         fields = [
@@ -52,3 +56,6 @@ class UserFilter(FilterSet):
         if value is False:
             return queryset.exclude(strikes__in=Strike.objects.active()).distinct()
         return queryset.filter(strikes__in=Strike.objects.active()).distinct()
+
+    def filter_has_allowed_photo(self, queryset, name, value):
+        return queryset.filter(allows_photo_by_default=value)
