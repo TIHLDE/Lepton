@@ -3,7 +3,6 @@ from rest_framework import status
 
 import pytest
 
-from app.blitzed.factories.drinking_game_factory import DrinkingGameFactory
 from app.blitzed.models.drinking_game import DrinkingGame
 from app.common.enums import AdminGroup, Groups
 from app.util.test_utils import get_api_client
@@ -15,11 +14,6 @@ def _get_drinking_game_url(drinking_game_id=None):
     if drinking_game_id is not None:
         return f"{API_DRINKING_GAME_BASE_URL}{drinking_game_id}/"
     return API_DRINKING_GAME_BASE_URL
-
-
-@pytest.fixture
-def sample_drinking_game():
-    return DrinkingGameFactory()
 
 
 def _get_drinking_game_post_data():
@@ -56,17 +50,13 @@ def test_create_drinking_game(member, group_name, expected_status_code):
     data = _get_drinking_game_post_data()
     response = client.post(url, data, format="json")
 
-    print(
-        f"Group: {group_name}, Expected: {expected_status_code}, Actual: {response.status_code}"
-    )
-
     assert response.status_code == expected_status_code
     assert DrinkingGame.objects.count() == 1
     assert DrinkingGame.objects.get().name == "New Drinking Game"
 
 
 @pytest.mark.django_db
-def test_list_drinking_games(sample_drinking_game, member):
+def test_list_drinking_games(drinking_game, member):
     """A user should be able to retrieve drinking games."""
     url = _get_drinking_game_url()
     client = get_api_client(user=member)
@@ -76,7 +66,7 @@ def test_list_drinking_games(sample_drinking_game, member):
 
     drinking_games = response.data
     assert len(drinking_games) == 1
-    assert drinking_games[0]["name"] == sample_drinking_game.name
+    assert drinking_games[0]["name"] == drinking_game.name
 
 
 @pytest.mark.django_db
@@ -93,9 +83,9 @@ def test_list_as_anonymous(default_client):
     "group_name",
     list(AdminGroup.all()),
 )
-def test_update_drinking_game(member, sample_drinking_game, group_name):
+def test_update_drinking_game(member, drinking_game, group_name):
     """A member of an admin group user should be able to update a drinking game."""
-    url = _get_drinking_game_url(sample_drinking_game.id)
+    url = _get_drinking_game_url(drinking_game.id)
     client = get_api_client(user=member, group_name=group_name)
     data = {
         "name": "Updated Drinking Game",
@@ -104,8 +94,8 @@ def test_update_drinking_game(member, sample_drinking_game, group_name):
     response = client.put(url, data, format="json")
 
     assert response.status_code == status.HTTP_200_OK
-    sample_drinking_game.refresh_from_db()
-    assert sample_drinking_game.name == "Updated Drinking Game"
+    drinking_game.refresh_from_db()
+    assert drinking_game.name == "Updated Drinking Game"
 
 
 @pytest.mark.django_db
@@ -134,9 +124,9 @@ def test_update_as_member(member, drinking_game):
     "group_name",
     list(AdminGroup.all()),
 )
-def test_delete_drinking_game_as_admin(member, sample_drinking_game, group_name):
+def test_delete_drinking_game_as_admin(member, drinking_game, group_name):
     """Only members of admin groups should be able to delete a drinking game."""
-    url = _get_drinking_game_url(sample_drinking_game.id)
+    url = _get_drinking_game_url(drinking_game.id)
     client = get_api_client(user=member, group_name=group_name)
     response = client.delete(url)
 
@@ -155,10 +145,10 @@ def test_delete_drinking_game_as_admin(member, sample_drinking_game, group_name)
     ],
 )
 def test_delete_drinking_game_as_non_admin(
-    member, sample_drinking_game, group_name, expected_status_code
+    member, drinking_game, group_name, expected_status_code
 ):
     """Only members of admin groups should be able to delete a drinking game."""
-    url = _get_drinking_game_url(sample_drinking_game.id)
+    url = _get_drinking_game_url(drinking_game.id)
     client = get_api_client(user=member, group_name=group_name)
     response = client.delete(url)
 
@@ -167,9 +157,9 @@ def test_delete_drinking_game_as_non_admin(
 
 
 @pytest.mark.django_db
-def test_delete_drinking_game_as_member(member, sample_drinking_game):
+def test_delete_drinking_game_as_member(member, drinking_game):
     """Only members of admin groups should be able to delete a drinking game."""
-    url = _get_drinking_game_url(sample_drinking_game.id)
+    url = _get_drinking_game_url(drinking_game.id)
     client = get_api_client(user=member)
     response = client.delete(url)
 
@@ -178,9 +168,9 @@ def test_delete_drinking_game_as_member(member, sample_drinking_game):
 
 
 @pytest.mark.django_db
-def test_delete_drinking_game_as_non_member(default_client, sample_drinking_game):
+def test_delete_drinking_game_as_non_member(default_client, drinking_game):
     """Only members of admin groups should be able to delete a drinking game."""
-    url = _get_drinking_game_url(sample_drinking_game.id)
+    url = _get_drinking_game_url(drinking_game.id)
     response = default_client.delete(url)
 
     assert response.status_code == status.HTTP_403_FORBIDDEN

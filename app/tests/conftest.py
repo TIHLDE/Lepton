@@ -10,6 +10,7 @@ from app.blitzed.factories.beerpong_tournament_factory import (
 )
 from app.blitzed.factories.drinking_game_factory import DrinkingGameFactory
 from app.blitzed.factories.pong_match_factory import PongMatchFactory
+from app.blitzed.factories.question_factory import QuestionFactory
 from app.blitzed.factories.session_factory import SessionFactory
 from app.blitzed.factories.user_wasted_level_factory import (
     UserWastedLevelFactory,
@@ -321,3 +322,8 @@ def anonymous_user():
 @pytest.fixture()
 def session():
     return SessionFactory()
+
+
+@pytest.fixture()
+def question():
+    return QuestionFactory()

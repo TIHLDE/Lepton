@@ -8,4 +8,5 @@ class QuestionSerializer(BaseModelSerializer):
         fields = (
             "id",
             "text",
+            "drinking_game",
         )
