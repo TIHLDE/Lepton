@@ -10,6 +10,7 @@ from app.content.factories.priority_pool_factory import PriorityPoolFactory
 from app.forms.enums import EventFormType
 from app.forms.tests.form_factories import EventFormFactory, SubmissionFactory
 from app.group.factories import GroupFactory
+from app.payment.enums import OrderStatus
 from app.util.test_utils import add_user_to_group_with_name, get_api_client
 from app.util.utils import now
 
@@ -1031,3 +1032,40 @@ def test_add_registration_to_event_as_member(member, event):
     response = client.post(url, data)
 
     assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    ("order_status", "status_code"),
+    [
+        (OrderStatus.SALE, status.HTTP_400_BAD_REQUEST),
+        (OrderStatus.CAPTURE, status.HTTP_400_BAD_REQUEST),
+        (OrderStatus.RESERVED, status.HTTP_400_BAD_REQUEST),
+        (OrderStatus.CANCEL, status.HTTP_200_OK),
+        (OrderStatus.INITIATE, status.HTTP_200_OK),
+        (OrderStatus.REFUND, status.HTTP_200_OK),
+        (OrderStatus.VOID, status.HTTP_200_OK),
+    ],
+)
+def test_delete_registration_with_paid_order_as_self(
+    member, event, order, paid_event, order_status, status_code
+):
+    """
+    A member should not be able to delete their registration if they have a paid order.
+    """
+
+    order.status = order_status
+    order.event = event
+    order.user = member
+    order.save()
+
+    paid_event.event = event
+    paid_event.save()
+
+    registration = RegistrationFactory(user=member, event=event)
+    client = get_api_client(user=member)
+
+    url = _get_registration_detail_url(registration)
+    response = client.delete(url)
+
+    assert response.status_code == status_code
