@@ -24,6 +24,7 @@ from app.content.serializers import RegistrationSerializer
 from app.content.util.event_utils import start_payment_countdown
 from app.payment.enums import OrderStatus
 from app.payment.models.order import Order
+from app.payment.util.order_utils import has_paid_order
 
 
 class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
@@ -121,10 +122,26 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
 
     def _unregister(self, registration):
         self._log_on_destroy(registration)
+
+        if self._registration_is_paid(registration):
+            return Response(
+                {
+                    "detail": "Du kan ikke melde deg av et arrangement du har betalt for."
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         registration.delete()
         return Response(
             {"detail": "Du har blitt meldt av arrangementet"}, status=status.HTTP_200_OK
         )
+
+    def _registration_is_paid(self, registration):
+        event = registration.event
+        if event.is_paid_event:
+            orders = event.orders.filter(user=registration.user)
+            return has_paid_order(orders)
+        return False
 
     def _admin_unregister(self, registration):
         self._log_on_destroy(registration)
