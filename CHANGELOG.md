@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+## Versjon 2024.05.01
 
 ## Versjon 2024.04.16
 - ✨ **Brukerbio**. Bruker kan nå opprette bio.
