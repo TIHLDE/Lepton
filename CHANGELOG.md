@@ -14,6 +14,9 @@
 
 ## Neste versjon
 
+## Versjon 2024.05.01
+- ⚡**Påmelding**. En bruker som har betalt for en påmelding på et arrangement kan ikke lenger melde seg av.
+
 ## Versjon 2024.04.16
 - ✨ **Brukerbio**. Bruker kan nå opprette bio.
 
