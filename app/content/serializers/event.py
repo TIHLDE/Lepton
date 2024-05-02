@@ -6,6 +6,7 @@ from sentry_sdk import capture_exception
 from app.common.enums import GroupType
 from app.common.serializers import BaseModelSerializer
 from app.content.models import Event, PriorityPool
+from app.content.serializers.category import SimpleCategorySerializer
 from app.content.serializers.priority_pool import (
     PriorityPoolCreateSerializer,
     PriorityPoolSerializer,
@@ -30,6 +31,7 @@ class EventSerializer(serializers.ModelSerializer):
     )
     contact_person = DefaultUserSerializer(read_only=True, required=False)
     reactions = ReactionSerializer(required=False, many=True)
+    category = SimpleCategorySerializer(read_only=True)
 
     class Meta:
         model = Event
@@ -104,6 +106,7 @@ class EventSerializer(serializers.ModelSerializer):
 class EventListSerializer(serializers.ModelSerializer):
     expired = serializers.BooleanField(read_only=True)
     organizer = SimpleGroupSerializer(read_only=True)
+    category = SimpleCategorySerializer(read_only=True)
 
     class Meta:
         model = Event
