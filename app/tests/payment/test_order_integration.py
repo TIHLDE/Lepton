@@ -2,8 +2,11 @@ from rest_framework import status
 
 import pytest
 
-from app.common.enums import AdminGroup
+from app.common.enums import AdminGroup, Groups
 from app.payment.enums import OrderStatus
+from app.payment.factories import OrderFactory
+from app.group.models import Group
+from app.group.factories import GroupFactory
 from app.util.test_utils import add_user_to_group_with_name, get_api_client
 
 API_ORDERS_BASE_URL = "/payments/"
@@ -116,3 +119,53 @@ def test_update_order_as_admin_user(member, order, group_name):
     order.refresh_from_db()
 
     assert order.status == OrderStatus.SALE
+
+
+@pytest.mark.django_db
+def test_list_all_orders_for_event_as_organizer(member, event):
+    """
+    A member of an organizer group should be able to list all orders for an event.
+    """
+    add_user_to_group_with_name(member, AdminGroup.SOSIALEN)
+    organizer = Group.objects.get(name=AdminGroup.SOSIALEN)
+
+    event.organizer = organizer
+    event.save()
+
+    orders = [
+        OrderFactory(event=event)
+        for _ in range(3)
+    ]
+
+    url = f"{API_ORDERS_BASE_URL}event/{event.id}/"
+    client = get_api_client(user=member)
+
+    response = client.get(url)
+
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.data) == len(orders)
+
+
+@pytest.mark.django_db
+def test_list_all_orders_for_event_as_non_organizer(member, event):
+    """
+    A member of a group that is not the organizer should not be able to list all orders for an event.
+    """
+    add_user_to_group_with_name(member, AdminGroup.NOK)
+    GroupFactory(name=AdminGroup.KOK)
+    organizer = Group.objects.get(name=AdminGroup.KOK)
+
+    event.organizer = organizer
+    event.save()
+
+    [
+        OrderFactory(event=event)
+        for _ in range(3)
+    ]
+
+    url = f"{API_ORDERS_BASE_URL}event/{event.id}/"
+    client = get_api_client(user=member)
+
+    response = client.get(url)
+
+    assert response.status_code == status.HTTP_403_FORBIDDEN
