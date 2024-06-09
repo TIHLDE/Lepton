@@ -3,7 +3,7 @@ from rest_framework.response import Response
 
 from app.common.permissions import BasicViewPermission
 from app.common.viewsets import BaseViewSet
-from app.content.models import QRCode, User
+from app.content.models import QRCode
 from app.content.serializers.qr_code import (
     QRCodeCreateSerializer,
     QRCodeSerializer,
