@@ -1,10 +1,9 @@
 from django.db import models
 
 from app.common.enums import Groups
-from app.common.permissions import BasePermissionModel
+from app.common.permissions import BasePermissionModel, check_has_access
 from app.content.models import User
 from app.util.models import BaseModel, OptionalImage
-from app.common.permissions import check_has_access
 
 
 class QRCode(BaseModel, OptionalImage, BasePermissionModel):
@@ -25,7 +24,7 @@ class QRCode(BaseModel, OptionalImage, BasePermissionModel):
     @classmethod
     def has_read_permission(cls, request):
         return check_has_access(cls.read_access, request)
-    
+
     @classmethod
     def has_retrieve_permission(cls, request):
         return check_has_access(cls.read_access, request)
