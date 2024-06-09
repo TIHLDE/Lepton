@@ -19,11 +19,11 @@ class QRCodeViewSet(BaseViewSet):
     def get_queryset(self):
         if hasattr(self, "action") and self.action == "retrieve":
             return super().get_queryset()
-        user = get_object_or_404(User, user_id=self.request.id)
+        user = self.request.user
         return super().get_queryset().filter(user=user)
 
     def create(self, request, *args, **kwargs):
-        user = get_object_or_404(User, user_id=request.id)
+        user = request.user
         data = request.data
 
         serializer = QRCodeCreateSerializer(data=data, context={"request": request})
