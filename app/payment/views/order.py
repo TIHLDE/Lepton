@@ -105,7 +105,7 @@ class OrderViewSet(BaseViewSet, ActionMixin):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-    @action(detail=False, methods=["GET"], url_path="event/(?P<event_id>\d+)")
+    @action(detail=False, methods=["GET"], url_path=r"event/(?P<event_id>\d+)")
     def event_orders(self, request, event_id):
         try:
             if is_admin_user(request):
@@ -152,5 +152,5 @@ class OrderViewSet(BaseViewSet, ActionMixin):
         except Exception:
             return Response(
                 {"detail": "Det skjedde en feil på serveren."},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
