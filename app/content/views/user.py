@@ -170,10 +170,16 @@ class UserViewSet(BaseViewSet, ActionMixin):
 
     @action(detail=False, methods=["get"], url_path="me/permissions")
     def get_user_permissions(self, request, *args, **kwargs):
-        serializer = UserPermissionsSerializer(
-            request.user, context={"request": request}
-        )
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        try:
+            serializer = UserPermissionsSerializer(
+                request.user, context={"request": request}
+            )
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception:
+            return Response(
+                {"detail": "Kunne ikke hente brukerens tillatelser"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
     @action(detail=True, methods=["get"], url_path="memberships")
     def get_user_memberships(self, request, pk, *args, **kwargs):

@@ -2,11 +2,11 @@ from rest_framework import status
 
 import pytest
 
-from app.common.enums import AdminGroup, Groups
+from app.common.enums import AdminGroup
+from app.group.factories import GroupFactory
+from app.group.models import Group
 from app.payment.enums import OrderStatus
 from app.payment.factories import OrderFactory
-from app.group.models import Group
-from app.group.factories import GroupFactory
 from app.util.test_utils import add_user_to_group_with_name, get_api_client
 
 API_ORDERS_BASE_URL = "/payments/"
@@ -32,9 +32,9 @@ def test_list_orders_as_user(member):
 
 
 @pytest.mark.django_db
-@pytest.mark.parametrize("group_name", AdminGroup.all())
+@pytest.mark.parametrize("group_name", AdminGroup.admin())
 def test_list_orders_as_admin_user(member, group_name):
-    """A member of an admin group should be able to list orders."""
+    """An admin or index user should be able to list orders."""
     add_user_to_group_with_name(member, group_name)
     client = get_api_client(user=member)
     response = client.get(API_ORDERS_BASE_URL)
@@ -57,9 +57,19 @@ def test_retrieve_order_as_member(member, order):
 
 
 @pytest.mark.django_db
-@pytest.mark.parametrize("group_name", AdminGroup.all())
+def test_retrieve_own_order_as_member(member, order):
+    """A user should be able to retrieve their own order."""
+    order.user = member
+    order.save()
+    client = get_api_client(user=member)
+    response = client.get(get_orders_url_detail(order.order_id))
+    assert response.status_code == status.HTTP_200_OK
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("group_name", AdminGroup.admin())
 def test_retrieve_order_as_admin_user(member, order, group_name):
-    """A member of an adming group should be able to retrieve an order."""
+    """An admin or member of Index should be able to retrieve an order."""
     add_user_to_group_with_name(member, group_name)
     client = get_api_client(user=member)
     response = client.get(get_orders_url_detail(order.order_id))
@@ -84,11 +94,11 @@ def test_delete_order_as_member(member, order):
 @pytest.mark.django_db
 @pytest.mark.parametrize("group_name", [AdminGroup.INDEX])
 def test_delete_order_as_index_user(member, order, group_name):
-    """An index user should be able to delete an order."""
+    """An index user should not be able to delete an order."""
     add_user_to_group_with_name(member, group_name)
     client = get_api_client(user=member)
     response = client.delete(get_orders_url_detail(order.order_id))
-    assert response.status_code == status.HTTP_204_NO_CONTENT
+    assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
 @pytest.mark.django_db
@@ -109,16 +119,12 @@ def test_update_order_as_member(member, order):
 @pytest.mark.django_db
 @pytest.mark.parametrize("group_name", [*AdminGroup.admin()])
 def test_update_order_as_admin_user(member, order, group_name):
-    """An index and HS user should be able to update an order."""
+    """An index and HS user should not be able to update an order."""
     add_user_to_group_with_name(member, group_name)
     client = get_api_client(user=member)
     data = {"status": OrderStatus.SALE}
     response = client.put(get_orders_url_detail(order.order_id), data=data)
-    assert response.status_code == status.HTTP_200_OK
-
-    order.refresh_from_db()
-
-    assert order.status == OrderStatus.SALE
+    assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
 @pytest.mark.django_db
@@ -132,10 +138,7 @@ def test_list_all_orders_for_event_as_organizer(member, event):
     event.organizer = organizer
     event.save()
 
-    orders = [
-        OrderFactory(event=event)
-        for _ in range(3)
-    ]
+    orders = [OrderFactory(event=event) for _ in range(3)]
 
     url = f"{API_ORDERS_BASE_URL}event/{event.id}/"
     client = get_api_client(user=member)
@@ -158,10 +161,7 @@ def test_list_all_orders_for_event_as_non_organizer(member, event):
     event.organizer = organizer
     event.save()
 
-    [
-        OrderFactory(event=event)
-        for _ in range(3)
-    ]
+    [OrderFactory(event=event) for _ in range(3)]
 
     url = f"{API_ORDERS_BASE_URL}event/{event.id}/"
     client = get_api_client(user=member)

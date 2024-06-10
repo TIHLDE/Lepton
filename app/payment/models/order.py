@@ -2,11 +2,11 @@ import uuid
 
 from django.db import models
 
-from app.common.enums import AdminGroup, Groups
+from app.common.enums import Groups
 from app.common.permissions import (
     BasePermissionModel,
+    check_has_access,
     is_admin_user,
-    check_has_access
 )
 from app.content.models.event import Event
 from app.content.models.user import User
@@ -15,8 +15,7 @@ from app.util.models import BaseModel
 
 
 class Order(BaseModel, BasePermissionModel):
-    read_access = AdminGroup.admin
-    write_access = (Groups.TIHLDE, )
+    read_access = (Groups.TIHLDE,)
 
     order_id = models.UUIDField(
         auto_created=True, default=uuid.uuid4, primary_key=True, serialize=False
@@ -38,7 +37,6 @@ class Order(BaseModel, BasePermissionModel):
 
     def __str__(self):
         return f"{self.user} - {self.event.title if self.event else ['slettet']} - {self.status} - {self.created_at}"
-    
 
     @classmethod
     def has_update_permission(cls, request):
@@ -50,33 +48,32 @@ class Order(BaseModel, BasePermissionModel):
 
     @classmethod
     def has_retrieve_permission(cls, request):
+        if not request.user:
+            return False
+
         return (
-            (
-                check_has_access(cls.read_access, request)
-                or request.user.memberships_with_events_access.exists()
-            )
+            check_has_access(cls.read_access, request)
+            or is_admin_user(request)
+            or request.user.memberships_with_events_access.exists()
         )
-    
-    @classmethod
-    def has_retrieve_all_permission(cls, request):
-        return is_admin_user(request)
 
     @classmethod
     def has_read_permission(cls, request):
+        if not request.user:
+            return False
+
         return (
-            (
-                check_has_access(cls.read_access, request)
-                or request.user.memberships_with_events_access.exists()
-            )
+            check_has_access(cls.read_access, request)
+            or request.user.memberships_with_events_access.exists()
         )
+
+    @classmethod
+    def has_list_permission(cls, request):
+        return is_admin_user(request)
 
     @classmethod
     def has_read_all_permission(cls, request):
         return is_admin_user(request)
-    
-    @classmethod
-    def has_create_permission(cls, request):
-        return cls.has_write_permission(request)
 
     def has_object_update_permission(self, request):
         return False
@@ -85,12 +82,22 @@ class Order(BaseModel, BasePermissionModel):
         return False
 
     def has_object_retrieve_permission(self, request):
-        organizer = self.event.organizer
-        if not organizer:
+        if not request.user:
             return False
-        
-        return self.check_request_user_has_access_through_organizer(request.user, organizer) or check_has_access(self.read_access, request)
-    
+
+        organizer = self.event.organizer
+
+        return (
+            self.check_request_user_has_access_through_organizer(
+                request.user, organizer
+            )
+            or is_admin_user(request)
+            or self.user == request.user
+        )
+
     def check_request_user_has_access_through_organizer(self, user, organizer):
         # All memberships that have access to events will also have access to orders
+        if not organizer:
+            return False
+
         return user.memberships_with_events_access.filter(group=organizer).exists()

@@ -47,6 +47,9 @@ def check_has_access(groups_with_access, request):
     set_user_id(request)
     user = request.user
 
+    if not user:
+        return False
+
     try:
         groups = map(str, groups_with_access)
         return (
