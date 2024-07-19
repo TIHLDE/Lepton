@@ -94,6 +94,15 @@ class UserViewSet(BaseViewSet, ActionMixin):
         return Response(
             {"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST
         )
+    
+    @action(
+        detail=True,
+        methods=["post"],
+        url_path="/feide"
+    )
+    def register_with_feide(self, request, *args, **kwargs):
+        """Register user with Feide credentials"""
+
 
     def update(self, request, pk, *args, **kwargs):
         """Updates fields passed in request"""
