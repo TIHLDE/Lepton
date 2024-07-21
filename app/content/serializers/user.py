@@ -3,11 +3,21 @@ from rest_framework.exceptions import ValidationError
 
 from dry_rest_permissions.generics import DRYGlobalPermissionsField
 
-from app.common.enums import GroupType
+from app.communication.notifier import Notify
+from app.communication.enums import UserNotificationSettingType
+from app.common.enums import GroupType, Groups
 from app.common.serializers import BaseModelSerializer
 from app.content.models import User
 from app.content.serializers.user_bio import UserBioSerializer
 from app.group.models import Group, Membership
+from app.content.util.feide_utils import (
+    get_feide_tokens,
+    get_feide_user_groups,
+    parse_feide_groups,
+    get_feide_user_info,
+    generate_random_password,
+    get_study_year
+)
 
 
 class DefaultUserSerializer(BaseModelSerializer):
@@ -116,6 +126,73 @@ class SimpleUserSerializer(serializers.ModelSerializer):
             "last_name",
         )
 
+
+class FeideUserCreateSerializer(serializers.ModelSerializer):
+    code = serializers.CharField()
+    study = serializers.SlugRelatedField(
+        slug_field="slug",
+        allow_null=True,
+        queryset=Group.objects.filter(type=GroupType.STUDY),
+    )
+
+    def create(self, validated_data):
+        code = validated_data["code"]
+
+        access_token, jwt_token = get_feide_tokens(code)
+        full_name, username = get_feide_user_info(access_token)
+        groups = get_feide_user_groups(access_token)
+        group_slugs = parse_feide_groups(groups)
+        password = generate_random_password()
+
+        user_info = {
+            "user_id": username,
+            "password": password,
+            "first_name": full_name.split()[0],
+            "last_name": " ".join(full_name.split()[1:]),
+            "email": f"{username}@stud.ntnu.no"
+        }
+
+        user = User.objects.create_user(**user_info)
+
+        self.make_TIHLDE_member(user, password)
+
+        for slug in group_slugs:
+            self.add_user_to_study(user, slug)
+
+        return user
+    
+    def add_user_to_study(self, user, slug):
+        study = Group.objects.filter(type=GroupType.STUDY, slug=slug).first()
+        class_ = Group.objects.filter(
+            type=GroupType.STUDYYEAR,
+            slug=get_study_year()
+        ).first()
+
+        if not study or not class_:
+            return
+
+        Membership.objects.create(user=user, group=study)
+        Membership.objects.create(user=user, group=class_)
+
+    def make_TIHLDE_member(self, user, password):
+        TIHLDE = Group.objects.get_or_create(slug=Groups.TIHLDE)
+        Membership.objects.get_or_create(user=self, group=TIHLDE)
+
+        Notify(
+            [user], "Velkommen til TIHLDE", UserNotificationSettingType.OTHER
+        ).add_paragraph(
+            f"Hei, {user.first_name}!"
+        ).add_paragraph(
+            f"Din bruker har nå blitt automatisk generert ved hjelp av Feide. Ditt brukernavn er dermed ditt brukernavn fra Feide: {user.user_id}. Du kan nå logge inn og ta i bruk våre sider."
+        ).add_paragraph(
+            f"Ditt autogenererte passord: {password}"
+        ).add_paragraph(
+            "Vi anbefaler at du bytter passord ved å følge lenken under:"
+        ).add_link(
+            "Bytt passord", "/glemt-passord/"
+        ).add_link(
+            "Logg inn", "/logg-inn/"
+        ).send()
 
 class UserCreateSerializer(serializers.ModelSerializer):
     study = serializers.SlugRelatedField(

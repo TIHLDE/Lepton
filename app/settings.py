@@ -250,6 +250,15 @@ VIPPS_ORDER_URL = os.environ.get("VIPPS_ORDER_URL")
 VIPPS_FORCE_PAYMENT_URL = os.environ.get("VIPPS_FORCE_PAYMENT_URL")
 VIPPS_COOKIE = os.environ.get("VIPPS_COOKIE")
 
+# Feide
+FEIDE_CLIENT_ID = os.environ.get("FEIDE_CLIENT_ID")
+FEIDE_CLIENT_SECRET = os.environ.get("FEIDE_CLIENT_SECRET")
+FEIDE_AUTH_URL = os.environ.get("FEIDE_AUTH_URL")
+FEIDE_TOKEN_URL = os.environ.get("FEIDE_TOKEN_URL")
+FEIDE_USER_GROUPS_INFO_URL = os.environ.get("FEIDE_USER_GROUPS_INFO_URL")
+FEIDE_REDIRECT_URL = os.environ.get("FEIDE_REDIRECT_URL")
+FEIDE_USER_INFO_URL = os.environ.get("FEIDE_USER_INFO_URL")
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
