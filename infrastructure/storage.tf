@@ -1,3 +1,4 @@
+// This is where the images/pdf/uploads is stored for lepton
 resource "azurerm_storage_account" "lepton" {
   name                     = "leptonstorage${var.enviroment}"
   resource_group_name      = azurerm_resource_group.lepton.name
