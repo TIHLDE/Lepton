@@ -30,6 +30,10 @@ resource "azurerm_mysql_flexible_server" "lepton-database-server" {
   tags = local.common_tags
 
   depends_on = [azurerm_private_dns_zone_virtual_network_link.lepton]
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 // This setting was off when we moved to terraform 
@@ -58,6 +62,10 @@ resource "azurerm_mysql_flexible_database" "lepton-database" {
   server_name         = azurerm_mysql_flexible_server.lepton-database-server.name
   charset             = "utf8mb4"
   collation           = local.database_collation[var.enviroment]
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 locals {
