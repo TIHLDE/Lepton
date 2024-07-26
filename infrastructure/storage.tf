@@ -8,4 +8,8 @@ resource "azurerm_storage_account" "lepton" {
   min_tls_version          = "TLS1_2"
 
   tags = local.common_tags
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
