@@ -6,7 +6,7 @@ import string
 from requests.auth import HTTPBasicAuth
 from datetime import datetime
 
-from settings import (
+from app.settings import (
     FEIDE_CLIENT_ID,
     FEIDE_CLIENT_SECRET,
     FEIDE_REDIRECT_URL,

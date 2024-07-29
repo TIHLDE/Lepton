@@ -100,7 +100,7 @@ class UserViewSet(BaseViewSet, ActionMixin, APIFeideUserErrorsMixin):
     @action(
         detail=True,
         methods=["post"],
-        url_path="/feide"
+        url_path="/feide",
     )
     def register_with_feide(self, request, *args, **kwargs):
         """Register user with Feide credentials"""

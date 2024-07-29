@@ -16,7 +16,8 @@ from app.content.util.feide_utils import (
     parse_feide_groups,
     get_feide_user_info,
     generate_random_password,
-    get_study_year
+    get_study_year,
+    get_feide_user_info_from_jwt
 )
 
 
@@ -139,7 +140,7 @@ class FeideUserCreateSerializer(serializers.ModelSerializer):
         code = validated_data["code"]
 
         access_token, jwt_token = get_feide_tokens(code)
-        full_name, username = get_feide_user_info(access_token)
+        full_name, username = get_feide_user_info_from_jwt(jwt_token)
         groups = get_feide_user_groups(access_token)
         group_slugs = parse_feide_groups(groups)
         password = generate_random_password()
