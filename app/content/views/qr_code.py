@@ -1,10 +1,9 @@
-from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.response import Response
 
 from app.common.permissions import BasicViewPermission
 from app.common.viewsets import BaseViewSet
-from app.content.models import QRCode, User
+from app.content.models import QRCode
 from app.content.serializers.qr_code import (
     QRCodeCreateSerializer,
     QRCodeSerializer,
@@ -19,11 +18,11 @@ class QRCodeViewSet(BaseViewSet):
     def get_queryset(self):
         if hasattr(self, "action") and self.action == "retrieve":
             return super().get_queryset()
-        user = get_object_or_404(User, user_id=self.request.id)
+        user = self.request.user
         return super().get_queryset().filter(user=user)
 
     def create(self, request, *args, **kwargs):
-        user = get_object_or_404(User, user_id=request.id)
+        user = request.user
         data = request.data
 
         serializer = QRCodeCreateSerializer(data=data, context={"request": request})

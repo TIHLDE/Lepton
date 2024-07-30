@@ -47,6 +47,9 @@ def check_has_access(groups_with_access, request):
     set_user_id(request)
     user = request.user
 
+    if not user:
+        return False
+
     try:
         groups = map(str, groups_with_access)
         return (
@@ -61,6 +64,12 @@ def check_has_access(groups_with_access, request):
 
 
 def set_user_id(request):
+    # If the id and user of the request is already set, return
+    if (hasattr(request, "id") and request.id) and (
+        hasattr(request, "user") and request.user
+    ):
+        return
+
     token = request.META.get("HTTP_X_CSRF_TOKEN")
     request.id = None
     request.user = None

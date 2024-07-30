@@ -1,14 +1,15 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status
+from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from sentry_sdk import capture_exception
 
 from app.common.mixins import ActionMixin
 from app.common.pagination import BasePagination
-from app.common.permissions import BasicViewPermission
+from app.common.permissions import BasicViewPermission, is_admin_user
 from app.common.viewsets import BaseViewSet
-from app.content.models import Registration, User
+from app.content.models import Event, Registration, User
 from app.payment.filters.order import OrderFilter
 from app.payment.models import Order
 from app.payment.serializers import (
@@ -38,7 +39,7 @@ class OrderViewSet(BaseViewSet, ActionMixin):
 
     def retrieve(self, request, pk):
         try:
-            order = Order.objects.get(order_id=pk)
+            order = self.get_object()
             serializer = OrderSerializer(
                 order, context={"request": request}, many=False
             )
@@ -102,4 +103,54 @@ class OrderViewSet(BaseViewSet, ActionMixin):
             return Response(
                 {"detail": "Fant ikke bruker."},
                 status=status.HTTP_404_NOT_FOUND,
+            )
+
+    @action(detail=False, methods=["GET"], url_path=r"event/(?P<event_id>\d+)")
+    def event_orders(self, request, event_id):
+        try:
+            if is_admin_user(request):
+                orders = Order.objects.filter(event=event_id)
+                serializer = OrderListSerializer(
+                    orders, context={"request": request}, many=True
+                )
+                return Response(serializer.data, status.HTTP_200_OK)
+
+            event = Event.objects.filter(id=event_id).first()
+
+            if not event:
+                return Response(
+                    {"detail": "Fant ikke arrangement."},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
+
+            organizer = event.organizer
+
+            if not organizer:
+                return Response(
+                    {"detail": "Du har ikke tilgang til disse betalingsordrene."},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+
+            has_access_through_organizer = (
+                request.user.memberships_with_events_access.filter(
+                    group=organizer
+                ).exists()
+            )
+
+            if not has_access_through_organizer:
+                return Response(
+                    {"detail": "Du har ikke tilgang til disse betalingsordrene."},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+
+            orders = Order.objects.filter(event=event)
+
+            serializer = OrderListSerializer(
+                orders, context={"request": request}, many=True
+            )
+            return Response(serializer.data, status.HTTP_200_OK)
+        except Exception:
+            return Response(
+                {"detail": "Det skjedde en feil på serveren."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
