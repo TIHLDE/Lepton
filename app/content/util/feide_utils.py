@@ -12,7 +12,6 @@ from app.settings import (
     FEIDE_REDIRECT_URL,
     FEIDE_TOKEN_URL,
     FEIDE_USER_GROUPS_INFO_URL,
-    FEIDE_USER_INFO_URL,
 )
 
 from app.content.exceptions import (
@@ -20,7 +19,6 @@ from app.content.exceptions import (
     FeideGetTokenError,
     FeideUserInfoNotFoundError,
     FeideUsernameNotFoundError,
-    FeideGetUserInfoError,
     FeideUserGroupsNotFoundError,
     FeideParseGroupsError,
     FeideGetUserGroupsError,
@@ -52,7 +50,7 @@ def get_feide_tokens(code: str) -> tuple[str, str]:
 
     json = response.json()
 
-    if not "access_token" in json or not "id_token" in json:
+    if "access_token" not in json or "id_token" not in json:
         raise FeideTokenNotFoundError()
 
     return (json["access_token"], json["id_token"])
@@ -63,8 +61,8 @@ def get_feide_user_info_from_jwt(jwt_token: str) -> tuple[str, str]:
     user_info = jwt.decode(jwt_token, options={"verify_signature": False})
 
     if (
-        not "name" in user_info
-        or not "https://n.feide.no/claims/userid_sec" in user_info
+        "name" not in user_info
+        or "https://n.feide.no/claims/userid_sec" not in user_info
     ):
         raise FeideUserInfoNotFoundError()
 
@@ -77,35 +75,6 @@ def get_feide_user_info_from_jwt(jwt_token: str) -> tuple[str, str]:
         raise FeideUsernameNotFoundError()
 
     return (user_info["name"], feide_username)
-
-
-def get_feide_user_info(access_token: str):
-    """Get Feide user info from request"""
-
-    try:
-        response = requests.get(
-            url=FEIDE_USER_INFO_URL, headers={"Authorization": f"Bearer {access_token}"}
-        )
-
-        user_info = response.json()
-
-        if (
-            not "name" in user_info
-            or not "https://n.feide.no/claims/userid_sec" in user_info
-        ):
-            raise FeideUserInfoNotFoundError()
-
-        feide_username = None
-        for id in user_info["https://n.feide.no/claims/userid_sec"]:
-            if "feide:" in id:
-                feide_username = id.split(":")[1].split("@")[0]
-
-        if not feide_username:
-            raise FeideUsernameNotFoundError()
-
-        return (user_info["name"], feide_username)
-    except Exception:
-        raise FeideGetUserInfoError()
 
 
 def get_feide_user_groups(access_token: str) -> list[str]:

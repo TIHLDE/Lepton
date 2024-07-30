@@ -125,17 +125,6 @@ class FeideUsedUserCode(FeideError):
         super().__init__(self.message, status_code=status.HTTP_409_CONFLICT)
 
 
-class FeideGetUserInfoError(FeideError):
-    def __init__(
-        self,
-        message="Fikk ikke tilgang til Feide sitt API for å hente ut din brukerinfo. Prøv igjen eller registrer deg manuelt.",
-    ):
-        self.message = message
-        super().__init__(
-            self.message, status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
-        )
-
-
 class FeideGetUserGroupsError(FeideError):
     def __init__(
         self,
