@@ -39,4 +39,10 @@ module "infrastructure" {
 
   lepton_api_min_replicas = var.lepton_api_min_replicas
   lepton_api_max_replicas = var.lepton_api_max_replicas
+
+  feide_client_id            = var.feide_client_id
+  feide_client_secret        = var.feide_client_secret
+  feide_token_url            = var.feide_token_url
+  feide_user_groups_info_url = var.feide_user_groups_info_url
+  feide_redirect_url         = var.feide_redirect_url
 }
