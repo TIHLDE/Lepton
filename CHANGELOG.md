@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+## Versjon 2024.07.30
 
 ## Versjon 2024.05.01
 - ⚡**Arrangement**. Et arrangement vil nå få kategori sendt som navn på kategori istedenfor kun id.
