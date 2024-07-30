@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
+from django.contrib.auth.hashers import make_password
+
 from dry_rest_permissions.generics import DRYGlobalPermissionsField
 
 from app.communication.notifier import Notify
@@ -14,11 +16,11 @@ from app.content.util.feide_utils import (
     get_feide_tokens,
     get_feide_user_groups,
     parse_feide_groups,
-    get_feide_user_info,
     generate_random_password,
     get_study_year,
-    get_feide_user_info_from_jwt
+    get_feide_user_info_from_jwt,
 )
+from app.content.exceptions import FeideUserExistsError
 
 
 class DefaultUserSerializer(BaseModelSerializer):
@@ -128,32 +130,32 @@ class SimpleUserSerializer(serializers.ModelSerializer):
         )
 
 
-class FeideUserCreateSerializer(serializers.ModelSerializer):
-    code = serializers.CharField()
-    study = serializers.SlugRelatedField(
-        slug_field="slug",
-        allow_null=True,
-        queryset=Group.objects.filter(type=GroupType.STUDY),
-    )
+class FeideUserCreateSerializer(serializers.Serializer):
+    code = serializers.CharField(max_length=36)
 
     def create(self, validated_data):
         code = validated_data["code"]
 
         access_token, jwt_token = get_feide_tokens(code)
         full_name, username = get_feide_user_info_from_jwt(jwt_token)
+
+        existing_user = User.objects.filter(user_id=username).first()
+        if existing_user:
+            raise FeideUserExistsError()
+
         groups = get_feide_user_groups(access_token)
         group_slugs = parse_feide_groups(groups)
         password = generate_random_password()
 
         user_info = {
             "user_id": username,
-            "password": password,
+            "password": make_password(password),
             "first_name": full_name.split()[0],
             "last_name": " ".join(full_name.split()[1:]),
-            "email": f"{username}@stud.ntnu.no"
+            "email": f"{username}@stud.ntnu.no",
         }
 
-        user = User.objects.create_user(**user_info)
+        user = User.objects.create(**user_info)
 
         self.make_TIHLDE_member(user, password)
 
@@ -161,29 +163,26 @@ class FeideUserCreateSerializer(serializers.ModelSerializer):
             self.add_user_to_study(user, slug)
 
         return user
-    
+
     def add_user_to_study(self, user, slug):
         study = Group.objects.filter(type=GroupType.STUDY, slug=slug).first()
-        class_ = Group.objects.filter(
-            type=GroupType.STUDYYEAR,
-            slug=get_study_year()
-        ).first()
+        class_ = Group.objects.get_or_create(
+            name=get_study_year(), type=GroupType.STUDYYEAR, slug=get_study_year()
+        )
 
         if not study or not class_:
             return
 
         Membership.objects.create(user=user, group=study)
-        Membership.objects.create(user=user, group=class_)
+        Membership.objects.create(user=user, group=class_[0])
 
     def make_TIHLDE_member(self, user, password):
-        TIHLDE = Group.objects.get_or_create(slug=Groups.TIHLDE)
-        Membership.objects.get_or_create(user=self, group=TIHLDE)
+        TIHLDE = Group.objects.get(slug=Groups.TIHLDE)
+        Membership.objects.get_or_create(user=user, group=TIHLDE)
 
         Notify(
             [user], "Velkommen til TIHLDE", UserNotificationSettingType.OTHER
-        ).add_paragraph(
-            f"Hei, {user.first_name}!"
-        ).add_paragraph(
+        ).add_paragraph(f"Hei, {user.first_name}!").add_paragraph(
             f"Din bruker har nå blitt automatisk generert ved hjelp av Feide. Ditt brukernavn er dermed ditt brukernavn fra Feide: {user.user_id}. Du kan nå logge inn og ta i bruk våre sider."
         ).add_paragraph(
             f"Ditt autogenererte passord: {password}"
@@ -193,7 +192,10 @@ class FeideUserCreateSerializer(serializers.ModelSerializer):
             "Bytt passord", "/glemt-passord/"
         ).add_link(
             "Logg inn", "/logg-inn/"
-        ).send()
+        ).send(
+            website=False, slack=False
+        )
+
 
 class UserCreateSerializer(serializers.ModelSerializer):
     study = serializers.SlugRelatedField(

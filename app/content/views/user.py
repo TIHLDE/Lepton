@@ -29,9 +29,7 @@ from app.content.serializers import (
     UserMemberSerializer,
     UserPermissionsSerializer,
     UserSerializer,
-    FeideUserCreateSerializer
 )
-from app.content.mixins import APIFeideUserErrorsMixin
 from app.content.serializers.strike import UserInfoStrikeSerializer
 from app.forms.serializers import FormPolymorphicSerializer
 from app.group.models import Group, Membership
@@ -45,7 +43,7 @@ from app.util.export_user_data import export_user_data
 from app.util.utils import CaseInsensitiveBooleanQueryParam
 
 
-class UserViewSet(BaseViewSet, ActionMixin, APIFeideUserErrorsMixin):
+class UserViewSet(BaseViewSet, ActionMixin):
     """API endpoint to display one user"""
 
     serializer_class = UserSerializer
@@ -65,7 +63,6 @@ class UserViewSet(BaseViewSet, ActionMixin, APIFeideUserErrorsMixin):
         return super().get_serializer_class()
 
     def retrieve(self, request, pk, *args, **kwargs):
-
         try:
             user = self._get_user(request, pk)
 
@@ -96,35 +93,6 @@ class UserViewSet(BaseViewSet, ActionMixin, APIFeideUserErrorsMixin):
         return Response(
             {"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST
         )
-    
-    @action(
-        detail=True,
-        methods=["post"],
-        url_path="/feide",
-    )
-    def register_with_feide(self, request, *args, **kwargs):
-        """Register user with Feide credentials"""
-        try:
-            serializer = FeideUserCreateSerializer(data=request.data)
-
-            if serializer.is_valid():
-                user = super().perform_create(serializer)
-                return Response(
-                    {"detail": DefaultUserSerializer(user).data},
-                    status=status.HTTP_201_CREATED,
-                )
-            
-            return Response(
-                {"detail": serializer.errors},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
-        except Exception:
-            return Response(
-                {"detail": "Det skjedde en feil på serveren"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            )
-
 
     def update(self, request, pk, *args, **kwargs):
         """Updates fields passed in request"""

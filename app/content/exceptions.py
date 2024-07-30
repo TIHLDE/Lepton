@@ -39,46 +39,6 @@ class APIEventIsFullException(APIException):
     default_detail = "Du kan ikke flytte opp en fra ventelisten når arrangementet er fullt. Flytt en bruker ned først."
 
 
-class APIFeideTokenNotFoundException(APIException):
-    status_code = status.HTTP_404_NOT_FOUND
-    default_detail = "Fikk ikke tak i Feide token for din bruker. Prøv igjen eller registrer deg manuelt."
-
-
-class APIFeideUserInfoNotFoundException(APIException):
-    status_code = status.HTTP_404_NOT_FOUND
-    default_detail = "Fikk ikke tak i brukerinformasjon om deg fra Feide. Prøv igjen eller registrer deg manuelt."
-
-
-class APIFeideUserNameNotFoundException(APIException):
-    status_code = status.HTTP_404_NOT_FOUND
-    default_detail = "Fikk ikke tak i brukernavn fra Feide. Prøv igjen eller registrer deg manuelt."
-
-
-class APIFeideUserGroupsNotFoundException(APIException):
-    status_code = status.HTTP_404_NOT_FOUND
-    default_detail = "Fikk ikke tak i dine gruppetilhørigheter fra Feide. Prøv igjen eller registrer deg manuelt."
-
-
-class APIFeideGetTokenException(APIException):
-    status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
-    default_detail = "Fikk ikke tilgang til Feide sitt API for å hente ut din token. Prøv igjen eller registrer deg manuelt."
-
-
-class APIFeideGetUserInfoException(APIException):
-    status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
-    default_detail = "Fikk ikke tilgang til Feide sitt API for å hente ut din brukerinfo. Prøv igjen eller registrer deg manuelt."
-
-
-class APIFeideGetUserGroupsException(APIException):
-    status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
-    default_detail = "Fikk ikke tilgang til Feide sitt API for å hente ut dine utdanninger. Prøv igjen eller registrer deg manuelt."
-
-
-class APIFeideParseGroupsException(APIException):
-    status_code = status.HTTP_403_FORBIDDEN
-    default_detail = "Vi fant ingen utdanningen du tilhører som er en del av TIHLDE. Hvis du mener dette er feil så kan du opprette en bruker manuelt og sende mail til hs@tihlde.org for å den godkjent."
-
-
 class EventSignOffDeadlineHasPassed(ValueError):
     pass
 
@@ -99,33 +59,104 @@ class RefundFailedError(ValueError):
     pass
 
 
-class FeideTokenNotFoundError(ValueError):
-    pass
+class FeideError(ValueError):
+    def __init__(
+        self,
+        message="Det skjedde en feil under registrering av din bruker ved hjelp av Feide.",
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+    ):
+        self.message = message
+        self.status_code = status_code
 
 
-class FeideUserInfoNotFoundError(ValueError):
-    pass
+class FeideTokenNotFoundError(FeideError):
+    def __init__(
+        self,
+        message="Fikk ikke tak i Feide token for din bruker. Prøv igjen eller registrer deg manuelt.",
+    ):
+        self.message = message
+        super().__init__(self.message, status_code=status.HTTP_404_NOT_FOUND)
 
 
-class FeideUsernameNotFoundError(ValueError):
-    pass
+class FeideUserInfoNotFoundError(FeideError):
+    def __init__(
+        self,
+        message="Fikk ikke tak i brukerinformasjon om deg fra Feide. Prøv igjen eller registrer deg manuelt.",
+    ):
+        self.message = message
+        super().__init__(self.message, status_code=status.HTTP_404_NOT_FOUND)
 
 
-class FeideUserGroupsNotFoundError(ValueError):
-    pass
+class FeideUsernameNotFoundError(FeideError):
+    def __init__(
+        self,
+        message="Fikk ikke tak i brukernavn fra Feide. Prøv igjen eller registrer deg manuelt.",
+    ):
+        self.message = message
+        super().__init__(self.message, status_code=status.HTTP_404_NOT_FOUND)
 
 
-class FeideGetTokenError(ValueError):
-    pass
+class FeideUserGroupsNotFoundError(FeideError):
+    def __init__(
+        self,
+        message="Fikk ikke tak i dine gruppetilhørigheter fra Feide. Prøv igjen eller registrer deg manuelt.",
+    ):
+        self.message = message
+        super().__init__(self.message, status_code=status.HTTP_404_NOT_FOUND)
 
 
-class FeideGetUserInfoError(ValueError):
-    pass
+class FeideGetTokenError(FeideError):
+    def __init__(
+        self,
+        message="Fikk ikke tilgang til Feide sitt API for å hente ut din token. Prøv igjen eller registrer deg manuelt.",
+    ):
+        self.message = message
+        super().__init__(
+            self.message, status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
 
 
-class FeideGetUserGroupsError(ValueError):
-    pass
+class FeideUsedUserCode(FeideError):
+    def __init__(
+        self,
+        message="Feide innloggings kode har allerede blitt brukt. Prøv å registrere deg på nytt.",
+    ):
+        self.message = message
+        super().__init__(self.message, status_code=status.HTTP_409_CONFLICT)
 
 
-class FeideParseGroupsError(ValueError):
-    pass
+class FeideGetUserInfoError(FeideError):
+    def __init__(
+        self,
+        message="Fikk ikke tilgang til Feide sitt API for å hente ut din brukerinfo. Prøv igjen eller registrer deg manuelt.",
+    ):
+        self.message = message
+        super().__init__(
+            self.message, status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+
+class FeideGetUserGroupsError(FeideError):
+    def __init__(
+        self,
+        message="Fikk ikke tilgang til Feide sitt API for å hente ut dine utdanninger. Prøv igjen eller registrer deg manuelt.",
+    ):
+        self.message = message
+        super().__init__(
+            self.message, status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+
+class FeideParseGroupsError(FeideError):
+    def __init__(
+        self,
+        message="Vi fant ingen utdanningen du tilhører som er en del av TIHLDE. Hvis du mener dette er feil så kan du opprette en bruker manuelt og sende mail til hs@tihlde.org for å den godkjent.",
+    ):
+        self.message = message
+        super().__init__(self.message, status_code=status.HTTP_404_NOT_FOUND)
+
+
+class FeideUserExistsError(FeideError):
+    def __init__(self, message="Det finnes allerede en bruker med dette brukernavnet."):
+        self.message = message
+        super().__init__(self.message, status_code=status.HTTP_409_CONFLICT)

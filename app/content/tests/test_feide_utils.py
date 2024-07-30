@@ -26,8 +26,7 @@ def test_parse_feide_groups():
         "digital-infrastruktur-og-cybersikkerhet",
         "digital-samhandling",
         "drift-studie",
-        "informasjonsbehandling"
+        "informasjonsbehandling",
     ]
 
     assert sorted(slugs) == sorted(correct_slugs)
-
