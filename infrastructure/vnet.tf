@@ -19,7 +19,10 @@ resource "azurerm_subnet" "database" {
   name                 = "database-subnet"
   resource_group_name  = azurerm_resource_group.lepton.name
   virtual_network_name = azurerm_virtual_network.lepton.name
-  address_prefixes     = ["10.0.8.0/21"]
+
+  // We don't need this large network space for our databse
+  // but it made segmentation easier.
+  address_prefixes = ["10.0.8.0/21"]
 
   delegation {
     name = "fs"

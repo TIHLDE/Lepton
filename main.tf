@@ -33,9 +33,9 @@ module "infrastructure" {
   vipps_client_secret          = var.vipps_client_secret
   vipps_merchant_serial_number = var.vipps_merchant_serial_number
   vipps_fallback_url           = var.vipps_fallback_url
-  vipps_token_url = var.vipps_token_url
-  vipps_force_payment_url = var.vipps_force_payment_url
-  vipps_order_url = var.vipps_order_url
+  vipps_token_url              = var.vipps_token_url
+  vipps_force_payment_url      = var.vipps_force_payment_url
+  vipps_order_url              = var.vipps_order_url
 
   lepton_api_min_replicas = var.lepton_api_min_replicas
   lepton_api_max_replicas = var.lepton_api_max_replicas

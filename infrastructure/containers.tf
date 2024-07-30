@@ -1,3 +1,9 @@
+/*
+We host Lepton in Azure Container Apps. TLDR: This is a simple service
+that autoscales containers, manages network, sertificates and logging.
+This was the cheapest service on azure for our usecase when it was created.
+*/
+
 resource "azurerm_log_analytics_workspace" "lepton" {
   name                = "logspace"
   location            = azurerm_resource_group.lepton.location
@@ -19,16 +25,30 @@ resource "azurerm_container_app_environment" "lepton" {
   tags = local.common_tags
 }
 
+locals {
+  lepton_cpu = {
+    dev = 0.5
+    pro = 1
+  }
+  lepton_mem = {
+    dev = "1Gi"
+    pro = "2Gi"
+  }
+}
+
 resource "azurerm_container_app" "lepton-api" {
   name                         = "lepton-api"
   container_app_environment_id = azurerm_container_app_environment.lepton.id
   resource_group_name          = azurerm_resource_group.lepton.name
   revision_mode                = "Single"
 
+  // Required to not delete the manually created custom domain since 
+  // it is not possible to create a managed certificate for a custom domain 
+  // with terraform (2023)
   lifecycle {
-    ignore_changes = [ ingress ] // Required to not delete the manually created custom domain since it is not possible to create a managed certificate for a custom domain with terraform
+    ignore_changes = [ingress[0].custom_domain]
   }
-  
+
   secret {
     name  = "reg-passwd"
     value = azurerm_container_registry.lepton.admin_password
@@ -45,10 +65,11 @@ resource "azurerm_container_app" "lepton-api" {
     max_replicas = var.lepton_api_max_replicas
 
     container {
-      name   = "lepton-api"
-      image  = "${azurerm_container_registry.lepton.login_server}/lepton:latest"
-      cpu    = 1.0
-      memory = "2Gi"
+      name  = "lepton-api"
+      image = "${azurerm_container_registry.lepton.login_server}/lepton:latest"
+
+      cpu    = local.lepton_cpu[var.enviroment]
+      memory = local.lepton_mem[var.enviroment]
 
       env {
         name  = "DATABASE_HOST"
@@ -144,17 +165,17 @@ resource "azurerm_container_app" "lepton-api" {
         value = var.vipps_order_url
       }
       env {
-        name = "PROD"
-        value = var.debug
+        name  = var.enviroment == "pro" ? "PROD" : "DEV"
+        value = "true"
       }
     }
   }
-  
 
   ingress {
     target_port                = 8000
-    allow_insecure_connections = true
+    allow_insecure_connections = false
     external_enabled           = true
+
     traffic_weight {
       percentage      = 100
       latest_revision = true

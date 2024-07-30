@@ -1,3 +1,4 @@
+// This is where the images/pdf/uploads is stored for lepton
 resource "azurerm_storage_account" "lepton" {
   name                     = "leptonstorage${var.enviroment}"
   resource_group_name      = azurerm_resource_group.lepton.name
@@ -7,4 +8,8 @@ resource "azurerm_storage_account" "lepton" {
   min_tls_version          = "TLS1_2"
 
   tags = local.common_tags
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
