@@ -166,8 +166,11 @@ class FeideUserCreateSerializer(serializers.Serializer):
 
     def add_user_to_study(self, user, slug):
         study = Group.objects.filter(type=GroupType.STUDY, slug=slug).first()
+        study_year = get_study_year(slug)
         class_ = Group.objects.get_or_create(
-            name=get_study_year(), type=GroupType.STUDYYEAR, slug=get_study_year()
+            name=study_year,
+            type=GroupType.STUDYYEAR,
+            slug=study_year
         )
 
         if not study or not class_:

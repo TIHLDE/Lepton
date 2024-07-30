@@ -144,12 +144,15 @@ def generate_random_password(length=12):
     return password
 
 
-def get_study_year() -> str:
+def get_study_year(slug: str) -> str:
     today = datetime.today()
     current_year = today.year
 
     # Check if today's date is before July 20th
     if today < datetime(current_year, 7, 20):
         current_year -= 1
+
+    if slug == "digital-samhandling":
+        return str(current_year - 3)
 
     return str(current_year)
