@@ -14,6 +14,9 @@
 
 ## Neste versjon
 
+## Versjon 2024.07.30
+- ✨ **Feide**. Man kan nå registrere bruker automatisk med Feide.
+
 ## Versjon 2024.05.01
 - ⚡**Arrangement**. Et arrangement vil nå få kategori sendt som navn på kategori istedenfor kun id.
 - ⚡**Påmelding**. En bruker som har betalt for en påmelding på et arrangement kan ikke lenger melde seg av.
