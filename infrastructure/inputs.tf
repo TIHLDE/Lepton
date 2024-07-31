@@ -64,6 +64,30 @@ variable "lepton_api_max_replicas" {
   default = 1
 }
 
+variable "feide_client_id" {
+  type      = string
+  sensitive = true
+}
+
+variable "feide_client_secret" {
+  type      = string
+  sensitive = true
+}
+
+variable "feide_token_url" {
+  type      = string
+  default = "https://auth.dataporten.no/oauth/token"
+}
+
+variable "feide_user_groups_info_url" {
+  type = string
+  default = "https://groups-api.dataporten.no/groups/me/groups"
+}
+
+variable "feide_redirect_url" {
+  type = string
+}
+
 variable "enviroment" {
   type        = string
   description = "value is either dev or pro"

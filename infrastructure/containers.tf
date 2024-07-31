@@ -165,6 +165,26 @@ resource "azurerm_container_app" "lepton-api" {
         value = var.vipps_order_url
       }
       env {
+        name  = "FEIDE_CLIENT_ID"
+        value = var.feide_client_id
+      }
+      env {
+        name  = "FEIDE_CLIENT_SECRET"
+        value = var.feide_client_secret
+      }
+      env {
+        name  = "FEIDE_TOKEN_URL"
+        value = var.feide_token_url
+      }
+      env {
+        name  = "FEIDE_USER_GROUPS_INFO_URL"
+        value = var.feide_user_groups_info_url
+      }
+      env {
+        name  = "FEIDE_REDIRECT_URL"
+        value = var.feide_redirect_url
+      }
+      env {
         name  = var.enviroment == "pro" ? "PROD" : "DEV"
         value = "true"
       }
@@ -336,6 +356,26 @@ resource "azurerm_container_app" "celery" {
       env {
         name  = "VIPPS_ORDER_URL"
         value = var.vipps_order_url
+      }
+      env {
+        name  = "FEIDE_CLIENT_ID"
+        value = var.feide_client_id
+      }
+      env {
+        name  = "FEIDE_CLIENT_SECRET"
+        value = var.feide_client_secret
+      }
+      env {
+        name  = "FEIDE_TOKEN_URL"
+        value = var.feide_token_url
+      }
+      env {
+        name  = "FEIDE_USER_GROUPS_INFO_URL"
+        value = var.feide_user_groups_info_url
+      }
+      env {
+        name  = "FEIDE_REDIRECT_URL"
+        value = var.feide_redirect_url
       }
     }
   }
