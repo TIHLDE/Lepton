@@ -21,7 +21,6 @@ from app.content.views import (
     delete,
     register_with_feide,
     upload,
-    register_with_feide,
 )
 
 router = routers.DefaultRouter()
