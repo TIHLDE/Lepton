@@ -1,28 +1,27 @@
-import jwt
-import requests
 import secrets
 import string
-
-from requests.auth import HTTPBasicAuth
 from datetime import datetime
 
+import jwt
+import requests
+from requests.auth import HTTPBasicAuth
+
+from app.content.exceptions import (
+    FeideGetTokenError,
+    FeideGetUserGroupsError,
+    FeideParseGroupsError,
+    FeideTokenNotFoundError,
+    FeideUsedUserCode,
+    FeideUserGroupsNotFoundError,
+    FeideUserInfoNotFoundError,
+    FeideUsernameNotFoundError,
+)
 from app.settings import (
     FEIDE_CLIENT_ID,
     FEIDE_CLIENT_SECRET,
     FEIDE_REDIRECT_URL,
     FEIDE_TOKEN_URL,
     FEIDE_USER_GROUPS_INFO_URL,
-)
-
-from app.content.exceptions import (
-    FeideTokenNotFoundError,
-    FeideGetTokenError,
-    FeideUserInfoNotFoundError,
-    FeideUsernameNotFoundError,
-    FeideUserGroupsNotFoundError,
-    FeideParseGroupsError,
-    FeideGetUserGroupsError,
-    FeideUsedUserCode,
 )
 
 

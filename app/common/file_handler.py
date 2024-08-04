@@ -21,7 +21,7 @@ class FileHandler(ABC):
         return (
             "".join(e for e in self.blob.content_type if e.isalnum())
             if self.blob.content_type
-            else None
+            else "default"
         )
 
     def checkBlobSize(self):
