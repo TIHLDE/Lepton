@@ -2,6 +2,8 @@ from django.contrib.auth.hashers import make_password
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
+from django.contrib.auth.hashers import make_password
+
 from dry_rest_permissions.generics import DRYGlobalPermissionsField
 
 from app.common.enums import Groups, GroupType
@@ -20,6 +22,15 @@ from app.content.util.feide_utils import (
     parse_feide_groups,
 )
 from app.group.models import Group, Membership
+from app.content.util.feide_utils import (
+    get_feide_tokens,
+    get_feide_user_groups,
+    parse_feide_groups,
+    generate_random_password,
+    get_study_year,
+    get_feide_user_info_from_jwt,
+)
+from app.content.exceptions import FeideUserExistsError
 
 
 class DefaultUserSerializer(BaseModelSerializer):
