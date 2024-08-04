@@ -1,26 +1,25 @@
+from django.contrib.auth.hashers import make_password
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
-from django.contrib.auth.hashers import make_password
-
 from dry_rest_permissions.generics import DRYGlobalPermissionsField
 
-from app.communication.notifier import Notify
-from app.communication.enums import UserNotificationSettingType
-from app.common.enums import GroupType, Groups
+from app.common.enums import Groups, GroupType
 from app.common.serializers import BaseModelSerializer
+from app.communication.enums import UserNotificationSettingType
+from app.communication.notifier import Notify
+from app.content.exceptions import FeideUserExistsError
 from app.content.models import User
 from app.content.serializers.user_bio import UserBioSerializer
-from app.group.models import Group, Membership
 from app.content.util.feide_utils import (
+    generate_random_password,
     get_feide_tokens,
     get_feide_user_groups,
-    parse_feide_groups,
-    generate_random_password,
-    get_study_year,
     get_feide_user_info_from_jwt,
+    get_study_year,
+    parse_feide_groups,
 )
-from app.content.exceptions import FeideUserExistsError
+from app.group.models import Group, Membership
 
 
 class DefaultUserSerializer(BaseModelSerializer):
@@ -168,9 +167,7 @@ class FeideUserCreateSerializer(serializers.Serializer):
         study = Group.objects.filter(type=GroupType.STUDY, slug=slug).first()
         study_year = get_study_year(slug)
         class_ = Group.objects.get_or_create(
-            name=study_year,
-            type=GroupType.STUDYYEAR,
-            slug=study_year
+            name=study_year, type=GroupType.STUDYYEAR, slug=study_year
         )
 
         if not study or not class_:
