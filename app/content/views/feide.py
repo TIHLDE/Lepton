@@ -1,9 +1,12 @@
-from rest_framework.decorators import api_view
 from rest_framework import status
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from app.content.serializers import FeideUserCreateSerializer, DefaultUserSerializer
 from app.content.exceptions import FeideError
+from app.content.serializers import (
+    DefaultUserSerializer,
+    FeideUserCreateSerializer,
+)
 
 
 @api_view(["POST"])
