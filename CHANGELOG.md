@@ -16,6 +16,7 @@
 
 ## Versjon 2024.07.30
 - ✨ **Feide**. Man kan nå registrere bruker automatisk med Feide.
+- ✨ **Fillagring**. Man kan nå slette en fil fra Azure basert på container navn og fil navn.
 
 ## Versjon 2024.05.01
 - ⚡**Arrangement**. Et arrangement vil nå få kategori sendt som navn på kategori istedenfor kun id.
