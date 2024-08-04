@@ -16,7 +16,7 @@ jobs:
     steps:
 
       - name: Checkout Code Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set up Python 3.9
         uses: actions/setup-python@v2
@@ -35,7 +35,7 @@ jobs:
     steps:
 
       - name: Checkout Code Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set up .env file
         run: |  
@@ -63,7 +63,7 @@ jobs:
     steps:
 
       - name: Checkout Code Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Build the Stack
         run:  docker-compose build
