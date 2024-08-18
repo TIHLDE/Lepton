@@ -5,7 +5,14 @@ from django.http.response import HttpResponse
 
 
 class SubmissionsCsvWriter:
-    field_names = ["first_name", "last_name", "email"]
+    field_names = [
+        "first_name",
+        "last_name",
+        "full_name",
+        "email",
+        "study",
+        "studyyear",
+    ]
 
     def __init__(self, queryset=None):
         if queryset is None:
@@ -27,7 +34,12 @@ class SubmissionsCsvWriter:
     def create_row(self, result, submission):
         user = submission.user
         row = OrderedDict(
-            first_name=user.first_name, last_name=user.last_name, email=user.email
+            first_name=user.first_name,
+            last_name=user.last_name,
+            full_name=f"{user.first_name} {user.last_name}",
+            email=user.email,
+            study=user.study.group.name,
+            studyyear=user.studyyear.group.name,
         )
         for answer in submission.answers.all().prefetch_related(
             "selected_options", "field"
