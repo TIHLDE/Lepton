@@ -1,7 +1,6 @@
+from django.contrib.auth.hashers import make_password
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
-
-from django.contrib.auth.hashers import make_password
 
 from dry_rest_permissions.generics import DRYGlobalPermissionsField
 

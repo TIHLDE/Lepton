@@ -154,6 +154,12 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
             group=group, membership_type=MembershipType.LEADER
         ).exists()
 
+    @property
+    def is_leader_of_committee(self):
+        return self.memberships.filter(
+            group__type=GroupType.COMMITTEE, membership_type=MembershipType.LEADER
+        ).exists()
+
     def has_unanswered_evaluations(self):
         return self.get_unanswered_evaluations().exists()
 
