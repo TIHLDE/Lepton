@@ -179,8 +179,10 @@ class GroupForm(Form):
             form = GroupForm.objects.filter(id=form_id).first()
             group = form.group if form else None
         return (
-            group and group.has_object_group_form_permission(request)
-        ) or check_has_access(cls.write_access, request)
+            (group and group.has_object_group_form_permission(request))
+            or check_has_access(cls.write_access, request)
+            or request.user.is_leader_of_committee
+        )
 
     @classmethod
     def has_list_permission(cls, request):
