@@ -2,10 +2,10 @@ from rest_framework import status
 
 import pytest
 
-from app.common.enums import AdminGroup, Groups
+from app.common.enums import AdminGroup, Groups, GroupType, MembershipType
 from app.content.factories.news_factory import NewsFactory
 from app.content.factories.user_factory import UserFactory
-from app.util.test_utils import get_api_client
+from app.util.test_utils import add_user_to_group_with_name, get_api_client
 
 API_NEWS_BASE_URL = "/news/"
 
@@ -310,3 +310,20 @@ def test_destroy_returns_detail_in_response(news):
     response = client.delete(url)
 
     assert response.json().get("detail")
+
+
+@pytest.mark.django_db
+def test_create_news_as_leader_of_committee(member):
+    """A leader of a committee should be able to create news."""
+    add_user_to_group_with_name(
+        member,
+        "Committee",
+        group_type=GroupType.COMMITTEE,
+        membership_type=MembershipType.LEADER,
+    )
+    client = get_api_client(user=member)
+    response = client.post(
+        _get_news_url(), {"title": "title", "header": "header", "body": "body"}
+    )
+
+    assert response.status_code == status.HTTP_201_CREATED
