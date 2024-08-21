@@ -14,6 +14,10 @@
 
 ## Neste versjon
 
+## Versjon 2024.08.21
+- ⚡**Nyheter**. Ledere av komiteer kan nå opprette nyheter.
+- ⚡**Forms**. Alle ledere av grupper kan nå opprette gruppe spørreskjemaer.
+
 ## Versjon 2024.07.30
 - ✨ **Feide**. Man kan nå registrere bruker automatisk med Feide.
 - ✨ **Fillagring**. Man kan nå slette en fil fra Azure basert på container navn og fil navn.

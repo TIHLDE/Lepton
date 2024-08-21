@@ -181,7 +181,7 @@ class GroupForm(Form):
         return (
             (group and group.has_object_group_form_permission(request))
             or check_has_access(cls.write_access, request)
-            or request.user.is_leader_of_committee
+            or request.user.is_leader
         )
 
     @classmethod
