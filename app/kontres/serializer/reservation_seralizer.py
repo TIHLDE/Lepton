@@ -116,7 +116,6 @@ class ReservationSerializer(serializers.ModelSerializer):
         start_time_being_modified = "start_time" in data
         end_time_being_modified = "end_time" in data
 
-
         # Retrieve the start and end times from the data if provided, else from the instance.
         start_time = data.get(
             "start_time", self.instance.start_time if self.instance else None
