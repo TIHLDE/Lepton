@@ -206,7 +206,8 @@ class StrikesOverviewAdmin(UserAdmin):
 class LogEntryAdmin(admin.ModelAdmin):
     actions = None
 
-    date_hierarchy = "action_time"
+    # This breaks the admin panel becaause of the new DB is not configured
+    # date_hierarchy = "action_time"
 
     list_filter = ["user", "content_type", "action_flag"]
 
@@ -250,3 +251,10 @@ class LogEntryAdmin(admin.ModelAdmin):
 
     object_link.admin_order_field = "object_repr"
     object_link.short_description = "object"
+
+
+@admin.register(models.Minute)
+class MinuteAdmin(admin.ModelAdmin):
+    list_display = ("title", "author", "created_at", "updated_at")
+    search_fields = ("title", "content", "author__user_id")
+    list_filter = ("author",)

@@ -3,7 +3,7 @@ from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 
 from app.common.enums import AdminGroup, Groups
-from app.common.permissions import BasePermissionModel
+from app.common.permissions import BasePermissionModel, check_has_access
 from app.emoji.models.reaction import Reaction
 from app.util.models import BaseModel, OptionalImage
 
@@ -33,3 +33,11 @@ class News(BaseModel, OptionalImage, BasePermissionModel):
     @property
     def website_url(self):
         return f"/nyheter/{self.id}/"
+
+    @classmethod
+    def has_write_permission(cls, request):
+        if not request.user:
+            return False
+        return request.user.is_leader_of_committee or check_has_access(
+            cls.write_access, request
+        )

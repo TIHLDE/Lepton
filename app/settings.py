@@ -99,6 +99,7 @@ INSTALLED_APPS = [
     "app.gallery",
     "app.badge",
     "app.payment",
+    "app.kontres",
     "app.emoji",
     "app.wrapped",
 ]
@@ -250,6 +251,13 @@ VIPPS_ORDER_URL = os.environ.get("VIPPS_ORDER_URL")
 VIPPS_FORCE_PAYMENT_URL = os.environ.get("VIPPS_FORCE_PAYMENT_URL")
 VIPPS_COOKIE = os.environ.get("VIPPS_COOKIE")
 
+# Feide
+FEIDE_CLIENT_ID = os.environ.get("FEIDE_CLIENT_ID")
+FEIDE_CLIENT_SECRET = os.environ.get("FEIDE_CLIENT_SECRET")
+FEIDE_TOKEN_URL = os.environ.get("FEIDE_TOKEN_URL")
+FEIDE_USER_GROUPS_INFO_URL = os.environ.get("FEIDE_USER_GROUPS_INFO_URL")
+FEIDE_REDIRECT_URL = os.environ.get("FEIDE_REDIRECT_URL")
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
@@ -272,12 +280,13 @@ LOGGING = {
             "formatter": "verbose",
         },
     },
-    "loggers": {
-        "django": {
-            "propagate": True,
-            "level": "DEBUG",
-        },
-    },
+    # REMOVE COMMENTS TO ADD SQL LOGGING
+    # "loggers": {
+    #     "django": {
+    #         "propagate": True,
+    #         "level": "DEBUG",
+    #     },
+    # },
     "root": {
         "handlers": ["file"],
     },

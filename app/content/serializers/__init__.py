@@ -30,4 +30,11 @@ from app.content.serializers.user import (
     UserSerializer,
     DefaultUserSerializer,
     UserPermissionsSerializer,
+    FeideUserCreateSerializer,
+)
+from app.content.serializers.minute import (
+    MinuteCreateSerializer,
+    MinuteSerializer,
+    MinuteUpdateSerializer,
+    MinuteListSerializer,
 )

@@ -5,8 +5,8 @@ from sentry_sdk import capture_exception
 
 from app.common.enums import GroupType
 from app.common.serializers import BaseModelSerializer
-from app.content.exceptions import APIPaidEventCantBeChangedToFreeEventException
 from app.content.models import Event, PriorityPool
+from app.content.serializers.category import SimpleCategorySerializer
 from app.content.serializers.priority_pool import (
     PriorityPoolCreateSerializer,
     PriorityPoolSerializer,
@@ -31,6 +31,7 @@ class EventSerializer(serializers.ModelSerializer):
     )
     contact_person = DefaultUserSerializer(read_only=True, required=False)
     reactions = ReactionSerializer(required=False, many=True)
+    category = SimpleCategorySerializer(read_only=True)
 
     class Meta:
         model = Event
@@ -105,6 +106,7 @@ class EventSerializer(serializers.ModelSerializer):
 class EventListSerializer(serializers.ModelSerializer):
     expired = serializers.BooleanField(read_only=True)
     organizer = SimpleGroupSerializer(read_only=True)
+    category = SimpleCategorySerializer(read_only=True)
 
     class Meta:
         model = Event
@@ -176,27 +178,15 @@ class EventCreateAndUpdateSerializer(BaseModelSerializer):
         priority_pools_data = validated_data.pop("priority_pools", None)
         paid_information_data = validated_data.pop("paid_information", None)
         limit = validated_data.get("limit")
-        limit_difference = 0
-        if limit:
-            limit_difference = limit - instance.limit
+        instance_limit = instance.limit
 
         event = super().update(instance, validated_data)
 
-        if limit_difference > 0 and event.waiting_list_count > 0:
-            event.move_users_from_waiting_list_to_queue(limit_difference)
+        self.update_queue(event, limit, instance_limit)
 
-        if limit_difference < 0:
-            event.move_users_from_queue_to_waiting_list(abs(limit_difference))
+        self.update_from_free_to_paid(event, paid_information_data)
 
-        if paid_information_data and not event.is_paid_event:
-            PaidEvent.objects.create(
-                event=event,
-                price=paid_information_data["price"],
-                paytime=paid_information_data["paytime"],
-            )
-
-        if event.is_paid_event and not len(paid_information_data):
-            raise APIPaidEventCantBeChangedToFreeEventException()
+        self.update_from_paid_to_free(event, paid_information_data)
 
         if len(paid_information_data):
             self.update_paid_information(event, paid_information_data)
@@ -206,6 +196,40 @@ class EventCreateAndUpdateSerializer(BaseModelSerializer):
 
         event.save()
         return event
+
+    def update_queue(self, event, limit, instance_limit):
+        if not limit:
+            return
+
+        limit_difference = limit - instance_limit
+
+        if limit_difference > 0 and event.waiting_list_count > 0:
+            event.move_users_from_waiting_list_to_queue(limit_difference)
+
+        if limit_difference < 0:
+            event.move_users_from_queue_to_waiting_list(abs(limit_difference))
+
+    def update_from_free_to_paid(self, event, paid_information_data):
+        if paid_information_data and not event.is_paid_event:
+            if event.has_participants:
+                return
+
+            PaidEvent.objects.create(
+                event=event,
+                price=paid_information_data["price"],
+                paytime=paid_information_data["paytime"],
+            )
+
+    def update_from_paid_to_free(self, event, paid_information_data):
+        if event.is_paid_event:
+            if event.has_participants:
+                return
+
+            if not len(paid_information_data):
+                paid_event = PaidEvent.objects.filter(event=event)
+                if paid_event:
+                    paid_event.first().delete()
+                    event.paid_information = None
 
     def update_priority_pools(self, event, priority_pools_data):
         event.priority_pools.all().delete()

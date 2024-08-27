@@ -27,7 +27,7 @@ class AdminGroup(ChoiceEnum):
     NOK = "Nok"
     PROMO = "Promo"
     SOSIALEN = "Sosialen"
-    KOK = "Kok"
+    KOK = "Kontkom"
 
     @classmethod
     def all(cls):

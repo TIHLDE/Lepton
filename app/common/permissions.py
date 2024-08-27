@@ -47,6 +47,9 @@ def check_has_access(groups_with_access, request):
     set_user_id(request)
     user = request.user
 
+    if not user:
+        return False
+
     try:
         groups = map(str, groups_with_access)
         return (
@@ -61,6 +64,12 @@ def check_has_access(groups_with_access, request):
 
 
 def set_user_id(request):
+    # If the id and user of the request is already set, return
+    if (hasattr(request, "id") and request.id) and (
+        hasattr(request, "user") and request.user
+    ):
+        return
+
     token = request.META.get("HTTP_X_CSRF_TOKEN")
     request.id = None
     request.user = None
@@ -140,6 +149,17 @@ def is_admin_user(request):
         return False
 
     return check_has_access(AdminGroup.admin(), request)
+
+
+def is_index_user(request):
+    set_user_id(request)
+    """Checks if user is in Index"""
+    user_id = request.user
+
+    if user_id is None:
+        return False
+
+    return check_has_access([AdminGroup.INDEX], request)
 
 
 def is_admin_group_user(request):

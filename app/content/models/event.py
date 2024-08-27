@@ -4,7 +4,7 @@ from django.contrib.contenttypes.fields import GenericRelation
 from django.core.exceptions import ValidationError
 from django.db import models
 
-from app.common.enums import AdminGroup, Groups
+from app.common.enums import AdminGroup
 from app.common.permissions import (
     BasePermissionModel,
     check_has_access,
@@ -21,7 +21,7 @@ from app.util.utils import now, yesterday
 
 class Event(BaseModel, OptionalImage, BasePermissionModel):
 
-    write_access = (*AdminGroup.admin(), AdminGroup.PROMO, Groups.JUBKOM)
+    write_access = (*AdminGroup.admin(), AdminGroup.PROMO)
 
     title = models.CharField(max_length=200)
     start_date = models.DateTimeField()
@@ -107,6 +107,11 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
     def list_count(self):
         """Number of users registered to attend the event"""
         return self.get_participants().count()
+
+    @property
+    def has_participants(self):
+        """Returns if the event has users registered to attend the event"""
+        return self.list_count > 0
 
     @property
     def waiting_list_count(self):

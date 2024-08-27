@@ -14,6 +14,7 @@ from app.communication.factories import (
 from app.content.factories import (
     CheatsheetFactory,
     EventFactory,
+    MinuteFactory,
     NewsFactory,
     PageFactory,
     ParentPageFactory,
@@ -21,6 +22,7 @@ from app.content.factories import (
     QRCodeFactory,
     RegistrationFactory,
     ShortLinkFactory,
+    UserBioFactory,
     UserFactory,
 )
 from app.content.factories.toddel_factory import ToddelFactory
@@ -32,6 +34,8 @@ from app.forms.tests.form_factories import FormFactory, SubmissionFactory
 from app.group.factories import GroupFactory, MembershipFactory
 from app.group.factories.fine_factory import FineFactory
 from app.group.factories.membership_factory import MembershipHistoryFactory
+from app.kontres.factories import BookableItemFactory, ReservationFactory
+from app.payment.factories.order_factory import OrderFactory
 from app.payment.factories.paid_event_factory import PaidEventFactory
 from app.util.test_utils import add_user_to_group_with_name, get_api_client
 
@@ -123,6 +127,12 @@ def plask_member(member):
 
 
 @pytest.fixture()
+def index_member(member):
+    add_user_to_group_with_name(member, AdminGroup.INDEX)
+    return member
+
+
+@pytest.fixture()
 def member_client(member):
     return get_api_client(user=member)
 
@@ -140,6 +150,11 @@ def paid_event():
 @pytest.fixture()
 def group():
     return GroupFactory()
+
+
+@pytest.fixture()
+def order():
+    return OrderFactory()
 
 
 @pytest.fixture()
@@ -238,6 +253,16 @@ def toddel():
 
 
 @pytest.fixture()
+def bookable_item():
+    return BookableItemFactory()
+
+
+@pytest.fixture()
+def reservation():
+    return ReservationFactory()
+
+
+@pytest.fixture()
 def news_reaction(member, news):
     return NewsReactionFactory(user=member, content_object=news)
 
@@ -264,3 +289,13 @@ def event_with_priority_pool(priority_group):
     event = EventFactory(limit=1)
     PriorityPoolFactory(event=event, groups=(priority_group,))
     return event
+
+
+@pytest.fixture()
+def user_bio():
+    return UserBioFactory()
+
+
+@pytest.fixture()
+def minute(user):
+    return MinuteFactory(author=user)

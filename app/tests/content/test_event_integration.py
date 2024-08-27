@@ -12,6 +12,7 @@ from app.forms.enums import EventFormType
 from app.forms.tests.form_factories import EventFormFactory
 from app.group.factories import GroupFactory
 from app.group.models import Group
+from app.tests.conftest import _add_user_to_group
 from app.util import now
 from app.util.test_utils import (
     add_user_to_group_with_name,
@@ -41,6 +42,33 @@ def get_event_data(
         "start_date": start_date,
         "end_date": end_date,
         "is_paid_event": False,
+        "limit": limit,
+    }
+    if organizer:
+        data["organizer"] = organizer
+    if contact_person:
+        data["contact_person"] = contact_person
+    return data
+
+
+def get_paid_event_data(
+    price,
+    paytime,
+    title="New Title",
+    location="New Location",
+    organizer=None,
+    contact_person=None,
+    limit=0,
+):
+    start_date = timezone.now() + timedelta(days=10)
+    end_date = timezone.now() + timedelta(days=11)
+    data = {
+        "title": title,
+        "location": location,
+        "start_date": start_date,
+        "end_date": end_date,
+        "is_paid_event": True,
+        "paid_information": {"price": price, "paytime": paytime},
         "limit": limit,
     }
     if organizer:
@@ -834,10 +862,227 @@ def test_expired_filter_list(api_client, admin_user, expired, expected_count):
 
 
 @pytest.mark.django_db
-def test_jubkom_has_create_permission(api_client, jubkom_member):
+def test_jubkom_has_not_create_permission(api_client, jubkom_member):
+    """
+    A jubkom member should not be able to create an event.
+    """
+
     client = api_client(user=jubkom_member)
     organizer = Group.objects.get(name=Groups.JUBKOM).slug
     data = get_event_data(organizer=organizer)
     response = client.post(API_EVENTS_BASE_URL, data)
 
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+@pytest.mark.django_db
+@pytest.mark.skip(
+    reason="This is handled in the frontend. Should be refactored in backend."
+)
+def test_update_from_free_event_with_participants_to_paid_event(
+    api_client, admin_user, event, registration
+):
+    """
+    An admin should not be able to update a free event with participants to a paid event.
+    """
+
+    registration.event = event
+    registration.is_on_wait = False
+    registration.save()
+
+    url = f"{API_EVENTS_BASE_URL}{event.id}/"
+    client = api_client(user=admin_user)
+    data = get_paid_event_data(price=200, paytime="01:00", limit=1)
+
+    response = client.put(url, data)
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
+@pytest.mark.django_db
+@pytest.mark.skip(
+    reason="This is handled in the frontend. Should be refactored in backend."
+)
+def test_update_from_paid_event_with_participants_to_free_event(
+    api_client, admin_user, event, paid_event, registration
+):
+    """
+    An admin should not be able to update a paid event with participants to a free event.
+    """
+    paid_event.event = event
+    paid_event.save()
+
+    registration.event = event
+    registration.is_on_wait = False
+    registration.save()
+
+    url = f"{API_EVENTS_BASE_URL}{event.id}/"
+    client = api_client(user=admin_user)
+    data = get_event_data(limit=1)
+
+    response = client.put(url, data)
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
+@pytest.mark.django_db
+def test_update_from_paid_event_to_free_event(
+    api_client, admin_user, event, paid_event
+):
+    """
+    An admin should be able to update a paid event with no participants to a free event.
+    """
+    paid_event.event = event
+    paid_event.save()
+
+    url = f"{API_EVENTS_BASE_URL}{event.id}/"
+    client = api_client(user=admin_user)
+    data = get_event_data(limit=0)
+
+    response = client.put(url, data)
+
+    assert response.status_code == status.HTTP_200_OK
+
+
+@pytest.mark.django_db
+def test_update_from_free_event_to_paid_event(api_client, admin_user, event):
+    """
+    An admin should be able to update a free event with no participants to a paid event.
+    """
+    url = f"{API_EVENTS_BASE_URL}{event.id}/"
+    client = api_client(user=admin_user)
+    data = get_paid_event_data(price=200, paytime="01:00", limit=1)
+
+    response = client.put(url, data)
+
+    data = response.json()
+
+    assert response.status_code == status.HTTP_200_OK
+    assert data["is_paid_event"]
+    assert data["paid_information"]["price"] == "200.00"
+    assert data["paid_information"]["paytime"] == "01:00:00"
+
+
+@pytest.mark.django_db
+def test_create_paid_event(api_client, admin_user):
+    """
+    An admin should be able to create a paid event.
+    """
+    client = api_client(user=admin_user)
+    data = get_paid_event_data(price=200, paytime="01:00", limit=1)
+
+    response = client.post(API_EVENTS_BASE_URL, data)
+
+    data = response.json()
+
     assert response.status_code == status.HTTP_201_CREATED
+    assert data["is_paid_event"]
+    assert data["paid_information"]["price"] == "200.00"
+    assert data["paid_information"]["paytime"] == "01:00:00"
+
+
+@pytest.mark.django_db
+def test_wait_queue_number_for_prioritized_registration(
+    event_with_priority_pool, user_in_priority_pool, member, priority_group
+):
+    prioritized_user_1 = UserFactory()
+    _add_user_to_group(prioritized_user_1, priority_group)
+
+    prioritized_user_2 = UserFactory()
+    _add_user_to_group(prioritized_user_2, priority_group)
+
+    prioritized_user_3 = UserFactory()
+    _add_user_to_group(prioritized_user_3, priority_group)
+
+    RegistrationFactory(
+        event=event_with_priority_pool, user=prioritized_user_1, is_on_wait=True
+    )
+    second_prioritized_registration = RegistrationFactory(
+        event=event_with_priority_pool, user=prioritized_user_2, is_on_wait=True
+    )
+    third_prioritized_registration = RegistrationFactory(
+        event=event_with_priority_pool, user=prioritized_user_3, is_on_wait=True
+    )
+
+    assert second_prioritized_registration.wait_queue_number == 1
+    assert third_prioritized_registration.wait_queue_number == 2
+
+
+@pytest.mark.django_db
+def test_wait_queue_number_respects_priority_pools(
+    event_with_priority_pool, user_in_priority_pool, member, priority_group
+):
+    prioritized_user_0 = UserFactory()
+    _add_user_to_group(prioritized_user_0, priority_group)
+    RegistrationFactory(
+        event=event_with_priority_pool, user=prioritized_user_0, is_on_wait=False
+    )
+
+    non_prioritized_registration = RegistrationFactory(
+        event=event_with_priority_pool, user=member, is_on_wait=True
+    )
+
+    prioritized_user_2 = UserFactory()
+    _add_user_to_group(prioritized_user_2, priority_group)
+    prioritized_user_3 = UserFactory()
+    _add_user_to_group(prioritized_user_3, priority_group)
+
+    second_prioritized_registration = RegistrationFactory(
+        event=event_with_priority_pool, user=prioritized_user_2, is_on_wait=True
+    )
+    third_prioritized_registration = RegistrationFactory(
+        event=event_with_priority_pool, user=prioritized_user_3, is_on_wait=True
+    )
+
+    assert second_prioritized_registration.wait_queue_number == 1
+    assert third_prioritized_registration.wait_queue_number == 2
+    assert non_prioritized_registration.wait_queue_number == 3
+
+
+@pytest.mark.django_db
+def test_prioritized_users_always_ahead_of_non_prioritized(
+    event_with_priority_pool, priority_group
+):
+    non_prioritized_users = [
+        UserFactory() for _ in range(2)
+    ]  # Create 2 non-prioritized users
+    prioritized_users = [UserFactory() for _ in range(2)]  # Create 2 prioritized users
+
+    # simulate the event being filled
+    prioritized_user_0 = UserFactory()
+    _add_user_to_group(prioritized_user_0, priority_group)
+    RegistrationFactory(
+        event=event_with_priority_pool, user=prioritized_user_0, is_on_wait=False
+    )
+
+    # Assign users to priority group and register them
+    for user in prioritized_users:
+        _add_user_to_group(user, priority_group)
+
+    # Non-prioritized users register first and are placed on the waitlist
+    for user in non_prioritized_users:
+        RegistrationFactory(event=event_with_priority_pool, user=user, is_on_wait=True)
+
+    # Prioritized users register after and are also placed on the waitlist
+    for user in prioritized_users:
+        RegistrationFactory(event=event_with_priority_pool, user=user, is_on_wait=True)
+
+    # Fetch registrations that are specifically on the waitlist and prioritize accordingly
+    waitlist_registrations = event_with_priority_pool.registrations.filter(
+        is_on_wait=True
+    ).order_by("created_at")
+
+    # Extract wait queue numbers for prioritized and non-prioritized users on the waitlist
+    prioritized_wait_numbers = [
+        reg.wait_queue_number for reg in waitlist_registrations if reg.is_prioritized
+    ]
+    non_prioritized_wait_numbers = [
+        reg.wait_queue_number
+        for reg in waitlist_registrations
+        if not reg.is_prioritized
+    ]
+
+    # Ensure all prioritized users have lower wait queue numbers than any non-prioritized user
+    assert all(
+        p_num < min(non_prioritized_wait_numbers) for p_num in prioritized_wait_numbers
+    ), "Prioritized users do not all precede non-prioritized users in the wait queue"

@@ -4,6 +4,8 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q
 
+from sentry_sdk import capture_exception
+
 from app.common.enums import StrikeEnum
 from app.common.permissions import BasePermissionModel
 from app.communication.enums import UserNotificationSettingType
@@ -17,7 +19,9 @@ from app.content.exceptions import (
 from app.content.models.event import Event
 from app.content.models.strike import create_strike
 from app.content.models.user import User
+from app.content.util.registration_utils import get_payment_expiredate
 from app.forms.enums import EventFormType
+from app.payment.util.order_utils import check_if_order_is_paid, has_paid_order
 from app.util import now
 from app.util.models import BaseModel
 from app.util.utils import datetime_format
@@ -36,6 +40,7 @@ class Registration(BaseModel, BasePermissionModel):
     is_on_wait = models.BooleanField(default=False, verbose_name="waiting list")
     has_attended = models.BooleanField(default=False)
     allow_photo = models.BooleanField(default=True)
+    payment_expiredate = models.DateTimeField(null=True, default=None)
     created_by_admin = models.BooleanField(default=False)
 
     class Meta:
@@ -86,7 +91,27 @@ class Registration(BaseModel, BasePermissionModel):
         )[:1]
         Submission.objects.filter(form=event_form, user=self.user).delete()
 
+    def refund_payment_if_exist(self):
+        from app.content.util.event_utils import refund_vipps_order
+
+        if not self.event.is_paid_event:
+            return
+
+        orders = self.event.orders.filter(user=self.user)
+
+        if has_paid_order(orders):
+            for order in orders:
+                if check_if_order_is_paid(order):
+                    refund_vipps_order(
+                        order_id=order.order_id,
+                        event=self.event,
+                        transaction_text=f"Refund for {self.event.title} - {self.user.first_name} {self.user.last_name}",
+                    )
+                    self.send_notification_and_mail_for_refund(order)
+
     def delete(self, *args, **kwargs):
+        from app.content.util.event_utils import start_payment_countdown
+
         moved_registration = None
         if not self.is_on_wait:
             if self.event.is_past_sign_off_deadline:
@@ -99,9 +124,25 @@ class Registration(BaseModel, BasePermissionModel):
             moved_registration = self.move_from_waiting_list_to_queue()
 
         self.delete_submission_if_exists()
+
+        # TODO: Add this for refund
+        # self.refund_payment_if_exist()
+
         registration = super().delete(*args, **kwargs)
         if moved_registration:
             moved_registration.save()
+
+            if moved_registration.event.is_paid_event:
+                try:
+                    start_payment_countdown(
+                        moved_registration.event,
+                        moved_registration,
+                        from_wait_list=True,
+                    )
+                except Exception as countdown_error:
+                    capture_exception(countdown_error)
+                    moved_registration.delete()
+
         return registration
 
     def admin_unregister(self, *args, **kwargs):
@@ -115,6 +156,7 @@ class Registration(BaseModel, BasePermissionModel):
             moved_registration.save()
 
     def save(self, *args, **kwargs):
+
         if not self.registration_id:
             self.create()
 
@@ -208,6 +250,19 @@ class Registration(BaseModel, BasePermissionModel):
                 self.event.pk
             ).send()
 
+    def send_notification_and_mail_for_refund(self, order):
+        Notify(
+            [self.user],
+            f'Du har blitt meldt av "{self.event.title}" og vil bli refundert',
+            UserNotificationSettingType.UNREGISTRATION,
+        ).add_paragraph(f"Hei, {self.user.first_name}!").add_paragraph(
+            f"Du har blitt meldt av {self.event.title} og vil bli refundert."
+        ).add_paragraph(
+            "Du vil få pengene tilbake på kontoen din innen 2 til 3 virkedager. I enkelte tilfeller, avhengig av bank, tar det inntil 10 virkedager."
+        ).add_paragraph(
+            f"Hvis det skulle oppstå noen problemer så kontakt oss på hs@tihlde.org. Ditt ordrenummer er {order.order_id}."
+        ).send()
+
     def should_swap_with_non_prioritized_user(self):
         return (
             self.is_on_wait
@@ -238,20 +293,41 @@ class Registration(BaseModel, BasePermissionModel):
 
     @property
     def wait_queue_number(self):
-        """
-        Returns the number of people in front of the user in the waiting list.
-        """
-        waiting_list_count = (
-            self.event.get_waiting_list()
-            .order_by("-created_at")
-            .filter(created_at__lte=self.created_at)
-            .count()
-        )
-
-        if waiting_list_count == 0 or not self.is_on_wait:
+        # Return None if the user is not on the waitlist to indicate they are not waiting for a spot.
+        if not self.is_on_wait:
             return None
 
-        return waiting_list_count
+        # Retrieve all registrations for the event that are on the waitlist and order them by creation time.
+        waiting_list_registrations = self.event.registrations.filter(
+            is_on_wait=True
+        ).order_by("created_at")
+
+        # Separate the waiting list registrations into prioritized and non-prioritized groups.
+        prioritized_registrations = [
+            reg for reg in waiting_list_registrations if reg.is_prioritized
+        ]
+        non_prioritized_registrations = [
+            reg for reg in waiting_list_registrations if not reg.is_prioritized
+        ]
+
+        # If the registration is prioritized, calculate its queue position among other prioritized registrations.
+        if self.is_prioritized:
+            if self in prioritized_registrations:
+                queue_position = prioritized_registrations.index(self) + 1
+            else:
+                return None
+        else:
+            # For non-prioritized registrations, calculate queue position considering all prioritized registrations first.
+            if self in non_prioritized_registrations:
+                queue_position = (
+                    len(prioritized_registrations)
+                    + non_prioritized_registrations.index(self)
+                    + 1
+                )
+            else:
+                return None
+
+        return queue_position
 
     def swap_users(self):
         """Swaps a user with a spot with a prioritized user, if such user exists"""
@@ -279,6 +355,10 @@ class Registration(BaseModel, BasePermissionModel):
                 registrations_in_waiting_list[0],
             )
             registration_move_to_queue.is_on_wait = False
+
+            if self.event.is_paid_event:
+                registration_move_to_queue.payment_expiredate = get_payment_expiredate()
+
             return registration_move_to_queue
 
     def move_from_queue_to_waiting_list(self):

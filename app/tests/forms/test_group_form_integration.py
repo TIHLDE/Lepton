@@ -5,7 +5,8 @@ import pytest
 from app.common.enums import AdminGroup, GroupType, MembershipType
 from app.forms.tests.form_factories import GroupFormFactory
 from app.group.factories import GroupFactory, MembershipFactory
-from app.util.test_utils import add_user_to_group_with_name
+from app.group.models import Group
+from app.util.test_utils import add_user_to_group_with_name, get_api_client
 
 pytestmark = pytest.mark.django_db
 
@@ -234,3 +235,27 @@ def test_retrieve_specific_group_form(
     response = client.get(url)
 
     assert response.status_code == status_code
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    ("group_name", "group_type"),
+    (
+        ("Committee", GroupType.COMMITTEE),
+        ("Subgroup", GroupType.SUBGROUP),
+        ("Board", GroupType.BOARD),
+        ("Interestgroup", GroupType.INTERESTGROUP),
+    ),
+)
+def test_create_group_form_as_leader(member, group_name, group_type):
+    """Test that leaders of a group can create a group form"""
+    add_user_to_group_with_name(
+        member, group_name, group_type=group_type, membership_type=MembershipType.LEADER
+    )
+    group = Group.objects.get(name=group_name)
+    client = get_api_client(user=member)
+    data = _get_form_post_data(group=group)
+
+    response = client.post(FORMS_URL, data)
+
+    assert response.status_code == status.HTTP_201_CREATED

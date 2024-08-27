@@ -14,6 +14,42 @@
 
 ## Neste versjon
 
+## Versjon 2024.08.21
+- ⚡**Nyheter**. Ledere av komiteer kan nå opprette nyheter.
+- ⚡**Forms**. Alle ledere av grupper kan nå opprette gruppe spørreskjemaer.
+
+## Versjon 2024.07.30
+- ✨ **Feide**. Man kan nå registrere bruker automatisk med Feide.
+- ✨ **Fillagring**. Man kan nå slette en fil fra Azure basert på container navn og fil navn.
+
+## Versjon 2024.05.01
+- ⚡**Arrangement**. Et arrangement vil nå få kategori sendt som navn på kategori istedenfor kun id.
+- ⚡**Påmelding**. En bruker som har betalt for en påmelding på et arrangement kan ikke lenger melde seg av.
+
+## Versjon 2024.04.16
+- ✨ **Brukerbio**. Bruker kan nå opprette bio.
+
+## Versjon 2023.04.08
+- ✨ **Codex** Index brukere kan nå opprette dokumenter og møtereferater i Codex.
+
+## Versjon 2023.03.11
+- 🦟 **Vipps** Brukere som kommer fra venteliste vil nå få en payment countdown startet, slik at de blir kastet ut hvis de ikke betaler.
+- ⚡ **Venteliste** Brukere vil nå se sin reelle ventelisteplass som tar hensyn til prioriteringer.
+- 🎨 **Logging** SQL Debug for pytest er skrudd av.
+- ✨ **Kontres** Endepunkter for reservasjoner av utstyr og kontor.
+
+## Versjon 2023.02.07
+- 🦟 **Vipps** Brukere kan nå oppdatere betalt arrangement, uten at det betalte arrangementet blir slettet.
+
+## Versjon 2023.01.15
+- ✨ **Reaksjoner** Brukere kan reagere med emojier på arrangementer og nyheter.
+- 🎨 **JubKom Rettigheter** Medlemmer av JubKom kan ikke lenger lage arrangementer.
+- 🦟 **KoK Rettigheter** Medlemmer av KoK kan nå lage arrangementer, nyheter og manuelt legge til medlemmer på arrangement.
+- 🦟 **Aktiviteter** Filterering av aktiviteter og arrangementer fungerer nå riktig. I visning av gruppe, vil nå også aktiviteter vises.
+- 🦟 **Manuell Registering** Man får nå en feilmelding om at man ikke kan legge til dobbel manuell registering for en bruker på et arrangement.
+- ⚡ **Mine Arrangementer** En bruker kan nå se alle sine tidligere arrangementer som de har deltatt på.
+- 🦟 **Vipps** En ny versjon av Vipps betaling har nå kommet.
+
 ## Versjon 2023.11.06
 - ✨ **Påmelding** Medlemmer av undergrupper kan nå manuelt legge til brukere på arrangementer.
 - ⚡ **Venteliste** Brukere på venteliste kan nå se sin egen plass på ventelisten.

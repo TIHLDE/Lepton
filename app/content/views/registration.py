@@ -1,5 +1,4 @@
 import uuid
-from datetime import datetime
 
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
@@ -22,9 +21,10 @@ from app.content.filters.registration import RegistrationFilter
 from app.content.mixins import APIRegistrationErrorsMixin
 from app.content.models import Event, Registration, User
 from app.content.serializers import RegistrationSerializer
-from app.content.util.event_utils import create_payment_order
+from app.content.util.event_utils import start_payment_countdown
 from app.payment.enums import OrderStatus
-from app.payment.models import Order
+from app.payment.models.order import Order
+from app.payment.util.order_utils import has_paid_order
 
 
 class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
@@ -64,6 +64,7 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
         request.data["allow_photo"] = request.user.allows_photo_by_default
 
         serializer = self.get_serializer(data=request.data)
+
         serializer.is_valid(raise_exception=True)
 
         event_id = self.kwargs.get("event_id", None)
@@ -74,13 +75,13 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
         )
 
         try:
-            create_payment_order(event, request, registration)
-        except Exception as order_error:
-            capture_exception(order_error)
+            start_payment_countdown(event, registration)
+        except Exception as countdown_error:
+            capture_exception(countdown_error)
             registration.delete()
             return Response(
                 {
-                    "detail": "Det skjedde en feil med opprettelse av betalingsordre. Påmeldingen ble ikke fullført."
+                    "detail": "Det skjedde en feil med oppstart av betalingsfrist. Påmeldingen ble ikke fullført."
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
@@ -121,10 +122,26 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
 
     def _unregister(self, registration):
         self._log_on_destroy(registration)
+
+        if self._registration_is_paid(registration):
+            return Response(
+                {
+                    "detail": "Du kan ikke melde deg av et arrangement du har betalt for."
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         registration.delete()
         return Response(
             {"detail": "Du har blitt meldt av arrangementet"}, status=status.HTTP_200_OK
         )
+
+    def _registration_is_paid(self, registration):
+        event = registration.event
+        if event.is_paid_event:
+            orders = event.orders.filter(user=registration.user)
+            return has_paid_order(orders)
+        return False
 
     def _admin_unregister(self, registration):
         self._log_on_destroy(registration)
@@ -173,7 +190,6 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
                     user=user,
                     event=event,
                     payment_link=f"https://tihlde.org/arrangementer/{event_id}/",
-                    expire_date=datetime.now(),
                     status=OrderStatus.SALE,
                 )
         except Exception as e:

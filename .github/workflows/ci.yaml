@@ -16,7 +16,7 @@ jobs:
     steps:
 
       - name: Checkout Code Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set up Python 3.9
         uses: actions/setup-python@v2
@@ -35,43 +35,44 @@ jobs:
     steps:
 
       - name: Checkout Code Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set up .env file
         run: |  
           touch .env
           echo "AZURE_STORAGE_CONNECTION_STRING=${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}" >> .env
+          echo "VIPPS_MERCHANT_SERIAL_NUMBER=${{ secrets.VIPPS_MERCHANT_SERIAL_NUMBER }}" >> .env
  
       - name: Build the Stack
-        run:  docker-compose build
+        run:  docker compose build
 
       - name: Run the Stack
-        run:  docker-compose up -d
+        run:  docker compose up -d
 
       - name: Make DB Migrations
-        run:  docker-compose run --rm web python manage.py migrate
+        run:  docker compose run --rm web python manage.py migrate
 
       - name: Run Django Tests
-        run:  docker-compose run --rm web pytest --cov=app
+        run:  docker compose run --rm web pytest --cov=app
 
       - name: Tear down the Stack
-        run:  docker-compose down
+        run:  docker compose down
 
   check-migrations:
     runs-on: ubuntu-latest
     steps:
 
       - name: Checkout Code Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Build the Stack
-        run:  docker-compose build
+        run:  docker compose build
 
       - name: Run the Stack
-        run:  docker-compose up -d
+        run:  docker compose up -d
 
       - name: Check for unstaged migrations
-        run:  docker-compose run --rm web python manage.py makemigrations --check --no-input
+        run:  docker compose run --rm web python manage.py makemigrations --check --no-input
 
       - name: Tear down the Stack
-        run:  docker-compose down
+        run:  docker compose down
