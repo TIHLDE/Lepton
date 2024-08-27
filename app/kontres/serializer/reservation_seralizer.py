@@ -110,10 +110,10 @@ class ReservationSerializer(serializers.ModelSerializer):
                     )
 
     def validate_time_and_overlapping(self, data):
-
         # Check if this is an update operation and if start_time is being modified.
         is_update_operation = self.instance is not None
         start_time_being_modified = "start_time" in data
+        state_being_modified = "state_change" in data
 
         # Retrieve the start and end times from the data if provided, else from the instance.
         start_time = data.get(
@@ -137,7 +137,7 @@ class ReservationSerializer(serializers.ModelSerializer):
             "bookable_item", self.instance.bookable_item if self.instance else None
         )
         # Check for overlapping reservations only if necessary fields are present
-        if bookable_item and start_time and end_time:
+        if bookable_item and start_time and end_time and not state_being_modified:
             # Build the query for overlapping reservations
             overlapping_reservations_query = Q(
                 bookable_item=bookable_item,
