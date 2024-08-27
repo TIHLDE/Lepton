@@ -136,7 +136,6 @@ class ReservationSerializer(serializers.ModelSerializer):
         bookable_item = data.get(
             "bookable_item", self.instance.bookable_item if self.instance else None
         )
-        
         # Check for overlapping reservations only if necessary fields are present
         if bookable_item and start_time and end_time and not state_being_modified:
             # Build the query for overlapping reservations
