@@ -160,7 +160,7 @@ def test_member_deleting_own_reservation(member, reservation):
     reservation.save()
     client = get_api_client(user=member)
     response = client.delete(f"/kontres/reservations/{reservation.id}/", format="json")
-    assert response.status_code == status.HTTP_204_NO_CONTENT
+    assert response.status_code == status.HTTP_200_OK
     assert response.data["detail"] == "Reservasjonen ble slettet."
 
 
