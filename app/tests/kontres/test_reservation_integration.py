@@ -394,7 +394,7 @@ def test_admin_can_delete_any_reservation(admin_user, reservation):
         f"/kontres/reservations/{reservation.id}/",
         format="json",
     )
-    assert response.status_code == status.HTTP_204_NO_CONTENT
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db
