@@ -2,13 +2,15 @@ from rest_framework import status
 from app.common.viewsets import BaseViewSet
 from rest_framework.response import Response
 from app.common.permissions import BasicViewPermission
-from app.kontresv2.serializers import BookableItemSerializer, BookableItemCreateSerializer 
+from app.kontres.serializer import BookableItemSerializer, BookableItemCreateSerializer 
 from app.common.pagination import BasePagination
+from app.kontres.filters import BookableItemListFilter
 
 class BookableItem(BaseViewSet):
     serializer_class = BookableItemSerializer
     permission_classes = [BasicViewPermission]
     pagination_class = BasePagination
+    filter_class = BookableItemListFilter 
 
     def get_queryset(self):
         return None

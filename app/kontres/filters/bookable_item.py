@@ -5,7 +5,7 @@ from django_filters.rest_framework import (
     OrderingFilter,
 )
 
-from app.kontresv2.models import BookableItem
+from app.kontres.models import BookableItem
 
 
 class BookableItemListFilter(FilterSet):
