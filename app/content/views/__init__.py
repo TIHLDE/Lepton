@@ -8,10 +8,11 @@ from app.content.views.accept_form import accept_form
 from app.content.views.news import NewsViewSet
 from app.content.views.page import PageViewSet
 from app.content.views.short_link import ShortLinkViewSet
-from app.content.views.upload import upload
+from app.content.views.upload import upload, delete
 from app.content.views.strike import StrikeViewSet
 from app.content.views.toddel import ToddelViewSet
 from app.content.views.qr_code import QRCodeViewSet
 from app.content.views.user_bio import UserBioViewset
 from app.content.views.logentry import LogEntryViewSet
 from app.content.views.minute import MinuteViewSet
+from app.content.views.feide import register_with_feide

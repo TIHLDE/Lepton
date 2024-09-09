@@ -38,3 +38,25 @@ def upload(request):
             {"detail": str(value_error)},
             status=status.HTTP_400_BAD_REQUEST,
         )
+
+
+@api_view(["DELETE"])
+@permission_classes([IsMember])
+def delete(request, container_name, blob_name):
+    """Method for deleting files from Azure Blob Storage, only allowed for members"""
+    try:
+        handler = AzureFileHandler()
+        handler.blobName = blob_name
+        handler.containerName = container_name
+
+        handler.deleteBlob()
+        return Response(
+            {"detail": "Filen ble slettet"},
+            status=status.HTTP_200_OK,
+        )
+
+    except ValueError as value_error:
+        return Response(
+            {"detail": str(value_error)},
+            status=status.HTTP_400_BAD_REQUEST,
+        )

@@ -82,7 +82,6 @@ def test_reservation_creation_fails_without_sober_watch(member, bookable_item):
     )
 
     assert response.status_code == 400
-    print(response.data)
     expected_error_message = "Du må velge en edruvakt for reservasjonen."
     actual_error_messages = response.data.get("non_field_errors", [])
     assert any(
