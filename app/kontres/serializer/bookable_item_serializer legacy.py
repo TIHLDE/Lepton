@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from app.kontresv2.models.bookable_item import BookableItem
+from app.kontres.models.bookable_item import BookableItem
 
 
 class BookableItemSerializer(serializers.ModelSerializer):

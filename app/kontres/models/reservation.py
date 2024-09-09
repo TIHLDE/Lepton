@@ -1,21 +1,21 @@
 import uuid
-
 from django.db import models
 
 from app.common.enums import AdminGroup, Groups, MembershipType
 from app.common.permissions import BasePermissionModel, check_has_access
-from app.communication.enums import UserNotificationSettingType
-from app.communication.notifier import Notify
+from app.util.models import BaseModel
+from app.kontresv2.enums import ReservationStateEnum
+from app.kontresv2.models import BookableItem
 from app.content.models import User
 from app.group.models import Group, Membership
-from app.kontres.enums import ReservationStateEnum
-from app.kontres.models.bookable_item import BookableItem
-from app.util.models import BaseModel
+from app.communication.notifier import Notify
+from app.communication.enums import UserNotificationSettingType
 
 
 class Reservation(BaseModel, BasePermissionModel):
-    read_access = [Groups.TIHLDE]
     write_access = [Groups.TIHLDE]
+    read_access = [Groups.TIHLDE]
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     author = models.ForeignKey(
         User,
@@ -38,6 +38,7 @@ class Reservation(BaseModel, BasePermissionModel):
         choices=ReservationStateEnum.choices,
         default=ReservationStateEnum.PENDING,
     )
+    reason = models.TextField(blank=True)
     description = models.TextField(blank=True)
     accepted_rules = models.BooleanField(default=True)
     group = models.ForeignKey(
@@ -63,55 +64,32 @@ class Reservation(BaseModel, BasePermissionModel):
         blank=True,
     )
 
-    def __str__(self):
-        return f"{self.state} - Reservation request by {self.author.first_name} {self.author.last_name} to book {self.bookable_item.name}. Created at {self.created_at}"
-
-    @classmethod
-    def has_read_permission(cls, request):
-        return check_has_access(cls.read_access, request)
-
-    @classmethod
-    def has_retrieve_permission(cls, request):
-        return check_has_access(cls.read_access, request)
-
-    @classmethod
-    def has_update_permission(cls, request):
-        return check_has_access(cls.write_access, request)
-
-    @classmethod
-    def has_destroy_permission(cls, request):
-        return check_has_access(cls.write_access, request)
-
-    def has_object_destroy_permission(self, request):
-        is_owner = self.author == request.user
-        is_admin = check_has_access([AdminGroup.INDEX, AdminGroup.HS], request)
-        return is_owner or is_admin
-
-    @classmethod
-    def has_create_permission(cls, request):
-        return check_has_access(cls.write_access, request)
-
     def has_object_update_permission(self, request):
         allowed_groups = [AdminGroup.INDEX, AdminGroup.HS]
         is_admin = check_has_access(allowed_groups, request)
+        is_author = self.author == request.user
 
-        if (
-            self.is_own_reservation(request) and "state" not in request.data
-        ) or is_admin:
-            return True
+        if 'state' in request.data:
+            if not is_admin:
+                return False
 
-        if self.state == ReservationStateEnum.CONFIRMED and not is_admin:
+        if not is_admin and self.state == ReservationStateEnum.CONFIRMED:
             return False
 
-        # If trying to change the state, then check for admin permissions.
-        if "state" in request.data:
-            if request.data["state"] != self.state:
-                return check_has_access(allowed_groups, request)
+        if is_admin or is_author:
+            return True
 
         return False
 
-    def is_own_reservation(self, request):
-        return self.author == request.user
+    def has_object_destroy_permission(self, request):
+        allowed_groups = [AdminGroup.INDEX, AdminGroup.HS]
+        is_admin = check_has_access(allowed_groups, request)
+        is_author = self.author == request.user
+
+        if not is_admin and self.state == ReservationStateEnum.CONFIRMED:
+            return False
+
+        return is_admin or is_author
 
     def notify_admins_new_reservation(self):
         formatted_start_time = self.start_time.strftime("%d/%m %H:%M")
@@ -141,7 +119,8 @@ class Reservation(BaseModel, BasePermissionModel):
             f'Reservasjonssøknad for "{self.bookable_item.name} er godkjent."',
             UserNotificationSettingType.RESERVATION_APPROVED,
         ).add_paragraph(
-            f"Hei, {self.author.first_name}! Din søknad for å reservere {self.bookable_item.name}, den {formatted_date_time} har blitt godkjent."
+            f"Hei, {self.author.first_name}! Din søknad for å reservere {
+                self.bookable_item.name}, den {formatted_date_time} har blitt godkjent."
         ).send()
 
     def notify_denied(self):
@@ -151,5 +130,6 @@ class Reservation(BaseModel, BasePermissionModel):
             f'Reservasjonssøknad for "{self.bookable_item.name}" er avslått.',
             UserNotificationSettingType.RESERVATION_CANCELLED,
         ).add_paragraph(
-            f"Hei, {self.author.first_name}! Din søknad for å reservere {self.bookable_item.name}, den {formatted_date_time} har blitt avslått. Du kan ta kontakt med Kontor og Kiosk dersom du lurer på noe ifm. dette."
+            f"Hei, {self.author.first_name}! Din søknad for å reservere {self.bookable_item.name}, den {
+                formatted_date_time} har blitt avslått. Du kan ta kontakt med Kontor og Kiosk dersom du lurer på noe ifm. dette."
         ).send()
