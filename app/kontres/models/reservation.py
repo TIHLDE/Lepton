@@ -4,8 +4,8 @@ from django.db import models
 from app.common.enums import AdminGroup, Groups, MembershipType
 from app.common.permissions import BasePermissionModel, check_has_access
 from app.util.models import BaseModel
-from app.kontresv2.enums import ReservationStateEnum
-from app.kontresv2.models import BookableItem
+from app.kontres.enums import ReservationStateEnum
+from app.kontres.models import BookableItem
 from app.content.models import User
 from app.group.models import Group, Membership
 from app.communication.notifier import Notify
@@ -119,8 +119,8 @@ class Reservation(BaseModel, BasePermissionModel):
             f'Reservasjonssøknad for "{self.bookable_item.name} er godkjent."',
             UserNotificationSettingType.RESERVATION_APPROVED,
         ).add_paragraph(
-            f"Hei, {self.author.first_name}! Din søknad for å reservere {
-                self.bookable_item.name}, den {formatted_date_time} har blitt godkjent."
+            f"Hei, {self.author.first_name}! Din søknad for å reservere "
+            f"{self.bookable_item.name}, den {formatted_date_time} har blitt godkjent."
         ).send()
 
     def notify_denied(self):
@@ -130,6 +130,8 @@ class Reservation(BaseModel, BasePermissionModel):
             f'Reservasjonssøknad for "{self.bookable_item.name}" er avslått.',
             UserNotificationSettingType.RESERVATION_CANCELLED,
         ).add_paragraph(
-            f"Hei, {self.author.first_name}! Din søknad for å reservere {self.bookable_item.name}, den {
-                formatted_date_time} har blitt avslått. Du kan ta kontakt med Kontor og Kiosk dersom du lurer på noe ifm. dette."
+        (
+            f'Hei, {self.author.first_name}! Din søknad for å reservere {self.bookable_item.name}, den '
+            f'{formatted_date_time} har blitt avslått. Du kan ta kontakt med Kontor og Kiosk dersom du lurer på noe ifm. dette.'
+        )
         ).send()

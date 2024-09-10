@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
-from app.kontresv2.models import Reservation, BookableItem
-from app.kontresv2.serializers import BookableItemSerializer
+from app.kontres.models import Reservation, BookableItem
+from app.kontres.serializer import BookableItemSerializer
 from app.group.models import Group
 from app.group.serializers import GroupSerializer
 from app.content.models import User

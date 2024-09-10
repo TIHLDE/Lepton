@@ -38,7 +38,7 @@ from app.group.serializers.membership import (
     MembershipSerializer,
 )
 from app.kontres.models.reservation import Reservation
-from app.kontres.serializer.reservation_seralizer import ReservationSerializer
+from app.kontres.serializer import ReservationSerializer
 from app.util.export_user_data import export_user_data
 from app.util.utils import CaseInsensitiveBooleanQueryParam
 

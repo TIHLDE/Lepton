@@ -1,0 +1,1 @@
+from app.kontres.views.bookable_item import BookableItemViewSet

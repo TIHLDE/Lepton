@@ -6,7 +6,7 @@ from app.kontres.serializer import BookableItemSerializer, BookableItemCreateSer
 from app.common.pagination import BasePagination
 from app.kontres.filters import BookableItemListFilter
 
-class BookableItem(BaseViewSet):
+class BookableItemViewSet(BaseViewSet):
     serializer_class = BookableItemSerializer
     permission_classes = [BasicViewPermission]
     pagination_class = BasePagination

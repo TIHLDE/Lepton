@@ -2,7 +2,7 @@ from rest_framework.decorators import action
 
 from app.common.viewsets import BaseViewSet
 from app.common.permissions import BasicViewPermission
-from app.kontresv2.serializers import ReservationSerializer
+from app.kontres.serializer import ReservationSerializer
 
 
 class ReservationViewSet(BaseViewSet):
