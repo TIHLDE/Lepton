@@ -8,6 +8,7 @@ from app.common.permissions import BasePermissionModel, set_user_id
 from app.communication.enums import UserNotificationSettingType
 from app.content.models.user import User
 from app.util.models import BaseModel, OptionalImage
+from app.kontres.models import BookableItem
 
 
 class Group(OptionalImage, BaseModel, BasePermissionModel):

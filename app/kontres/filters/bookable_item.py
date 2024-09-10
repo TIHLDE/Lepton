@@ -18,6 +18,5 @@ class BookableItemListFilter(FilterSet):
     )
 
     class Meta:
-    
         model = BookableItem
         fields = ["name", "allows_alcohol"]

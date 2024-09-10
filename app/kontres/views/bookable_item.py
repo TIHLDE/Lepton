@@ -10,7 +10,9 @@ class BookableItem(BaseViewSet):
     serializer_class = BookableItemSerializer
     permission_classes = [BasicViewPermission]
     pagination_class = BasePagination
-    filter_class = BookableItemListFilter 
+    filter_class = BookableItemListFilter
+
+
 
     def get_queryset(self):
         return None
