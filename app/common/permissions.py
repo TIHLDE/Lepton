@@ -63,6 +63,24 @@ def check_has_access(groups_with_access, request):
     return False
 
 
+def check_has_full_access(groups_with_access: list[str], request):
+    """Check if user has access to all groups"""
+    set_user_id(request)
+    user = request.user
+
+    if not user:
+        return False
+
+    try:
+        groups = map(str, groups_with_access)
+        return user and user.memberships.filter(
+            group__slug__iregex=r"(" + "|".join(groups) + ")"
+        ).count() == len(groups_with_access)
+    except Exception as e:
+        capture_exception(e)
+    return False
+
+
 def set_user_id(request):
     # If the id and user of the request is already set, return
     if (hasattr(request, "id") and request.id) and (
