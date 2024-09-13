@@ -56,6 +56,23 @@ def test_create_minute_as_codex_member(member, codex_group):
 
 
 @pytest.mark.django_db
+@pytest.mark.parametrize(
+    ("codex_group", "swap"), (CodexGroups.all(), CodexGroups.reverse())
+)
+def test_create_to_another_group_as_codex_member(member, codex_group, swap):
+    """A codex member should not be able to create a minute to another group"""
+    add_user_to_group_with_name(member, codex_group)
+
+    url = API_MINUTE_BASE_URL
+    client = get_api_client(user=member)
+    group = Group.objects.get_or_create(slug=swap, name=swap)[0]
+    data = get_minute_post_data(group)
+    response = client.post(url, data)
+
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+@pytest.mark.django_db
 def test_update_minute_as_member(member, minute):
     """A member should not be able to update a minute"""
     url = get_minute_detail_url(minute)

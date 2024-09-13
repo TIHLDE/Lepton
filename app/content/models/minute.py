@@ -36,6 +36,13 @@ class Minute(BaseModel, BasePermissionModel):
     )
 
     @classmethod
+    def has_create_permission(cls, request):
+        data = request.data
+        if "group" in data:
+            return check_has_access([data["group"]], request)
+        return False
+
+    @classmethod
     def has_update_permission(cls, request):
         return cls.has_write_permission(request)
 
