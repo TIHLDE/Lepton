@@ -14,7 +14,7 @@
 
 ## Neste versjon
 
-## Verson 2024.09.14
+## Versjon 2024.09.14
 - ⚡**Codex**. Det er nå et skille mellom dokumenter opprettet av Drift og Index.
 
 ## Versjon 2024.08.21
