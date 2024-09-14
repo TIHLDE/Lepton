@@ -14,6 +14,9 @@
 
 ## Neste versjon
 
+## Versjon 2024.09.14
+- ⚡**Codex**. Det er nå et skille mellom dokumenter opprettet av Drift og Index.
+
 ## Versjon 2024.08.21
 - ⚡**Nyheter**. Ledere av komiteer kan nå opprette nyheter.
 - ⚡**Forms**. Alle ledere av grupper kan nå opprette gruppe spørreskjemaer.
