@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+## Versjon 2024.09.14
 
 ## Versjon 2024.08.21
 - ⚡**Nyheter**. Ledere av komiteer kan nå opprette nyheter.
