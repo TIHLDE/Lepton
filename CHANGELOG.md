@@ -14,6 +14,8 @@
 
 ## Neste versjon
 
+- ⚡**Profil**. Endret rekkefølge på tidligere arrangementer slik at nyeste kommer først.
+
 ## Versjon 2024.08.21
 - ⚡**Nyheter**. Ledere av komiteer kan nå opprette nyheter.
 - ⚡**Forms**. Alle ledere av grupper kan nå opprette gruppe spørreskjemaer.
