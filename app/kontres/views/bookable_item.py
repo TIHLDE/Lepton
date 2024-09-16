@@ -5,14 +5,12 @@ from app.common.permissions import BasicViewPermission
 from app.kontres.serializer import BookableItemSerializer, BookableItemCreateSerializer 
 from app.common.pagination import BasePagination
 from app.kontres.filters import BookableItemListFilter
-
+    
 class BookableItemViewSet(BaseViewSet):
     serializer_class = BookableItemSerializer
     permission_classes = [BasicViewPermission]
     pagination_class = BasePagination
     filter_class = BookableItemListFilter
-
-
 
     def get_queryset(self):
         return None
