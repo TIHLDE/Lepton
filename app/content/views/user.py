@@ -316,6 +316,9 @@ class UserViewSet(BaseViewSet, ActionMixin):
             if registration.event.expired == event_has_ended.value
         ]
 
+        if filter_field == "true":
+            events = sorted(events, key=lambda x: x.start_date, reverse=True)
+
         return self.paginate_response(
             data=events, serializer=EventListSerializer, context={"request": request}
         )
