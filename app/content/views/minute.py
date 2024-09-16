@@ -1,9 +1,15 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status
+from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
+from app.common.enums import CodexGroups
 from app.common.pagination import BasePagination
-from app.common.permissions import BasicViewPermission
+from app.common.permissions import (
+    BasicViewPermission,
+    check_has_access,
+    check_has_full_access,
+)
 from app.common.viewsets import BaseViewSet
 from app.content.filters import MinuteFilter
 from app.content.models import Minute
@@ -29,6 +35,16 @@ class MinuteViewSet(BaseViewSet):
         "author__last_name",
         "author__user_id",
     ]
+
+    def get_queryset(self):
+        if check_has_full_access(CodexGroups.all(), self.request):
+            return self.queryset
+        elif check_has_access([CodexGroups.DRIFT], self.request):
+            return self.queryset.filter(group=CodexGroups.DRIFT)
+        elif check_has_access([CodexGroups.INDEX], self.request):
+            return self.queryset.filter(group=CodexGroups.INDEX)
+
+        raise NotFound()
 
     def get_serializer_class(self):
         if hasattr(self, "action") and self.action == "list":
