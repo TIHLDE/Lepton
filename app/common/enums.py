@@ -1,7 +1,5 @@
 from enum import Enum
 
-from django.db import models
-
 from enumchoicefield import ChoiceEnum
 
 
@@ -109,16 +107,3 @@ class StrikeEnum(ChoiceEnum):
     LATE = "LATE"
     BAD_BEHAVIOR = "BAD_BEHAVIOR"
     EVAL_FORM = "EVAL_FORM"
-
-
-class CodexGroups(models.TextChoices):
-    DRIFT = "Drift"
-    INDEX = "Index"
-
-    @classmethod
-    def all(cls) -> list:
-        return [cls.DRIFT, cls.INDEX]
-
-    @classmethod
-    def reverse(cls) -> list:
-        return [cls.INDEX, cls.DRIFT]

@@ -1,0 +1,1 @@
+from app.codex.views.course import CourseViewSet
