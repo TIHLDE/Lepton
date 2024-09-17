@@ -1,5 +1,6 @@
 from django.db import IntegrityError
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status
 from rest_framework.decorators import action
@@ -21,6 +22,7 @@ from app.communication.enums import UserNotificationSettingType
 from app.communication.notifier import Notify
 from app.content.filters import UserFilter
 from app.content.models import User
+from app.content.models.event import Event
 from app.content.serializers import (
     DefaultUserSerializer,
     EventListSerializer,
@@ -304,20 +306,19 @@ class UserViewSet(BaseViewSet, ActionMixin):
 
     @action(detail=False, methods=["get"], url_path="me/events")
     def get_user_events(self, request, *args, **kwargs):
-        registrations = request.user.registrations.all()
-
-        # Apply the filter
         filter_field = self.request.query_params.get("expired")
-        event_has_ended = CaseInsensitiveBooleanQueryParam(filter_field)
+        event_has_ended = CaseInsensitiveBooleanQueryParam(filter_field).value
 
-        events = [
-            registration.event
-            for registration in registrations
-            if registration.event.expired == event_has_ended.value
-        ]
+        now = timezone.now()
 
-        if filter_field == "true":
-            events = sorted(events, key=lambda x: x.start_date, reverse=True)
+        if event_has_ended:
+            events = Event.objects.filter(
+                registered_users_list=request.user, end_date__lte=now
+            ).order_by("-start_date")
+        else:
+            events = Event.objects.filter(
+                registered_users_list=request.user, end_date__gt=now
+            ).order_by("start_date")
 
         return self.paginate_response(
             data=events, serializer=EventListSerializer, context={"request": request}
