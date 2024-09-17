@@ -14,6 +14,8 @@
 
 ## Neste versjon
 
+- ⚡**Profil**. Endret rekkefølge på tidligere arrangementer slik at nyeste kommer først.
+
 ## Versjon 2024.09.14
 - ⚡**Codex**. Det er nå et skille mellom dokumenter opprettet av Drift og Index.
 
