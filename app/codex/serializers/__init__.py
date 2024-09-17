@@ -4,4 +4,7 @@ from app.codex.serializers.course import (
     CourseCreateSerializer,
     CourseUpdateSerializer,
 )
-from app.codex.serializers.registration import RegistrationListSerializer
+from app.codex.serializers.registration import (
+    RegistrationListSerializer,
+    RegistrationCreateSerializer,
+)

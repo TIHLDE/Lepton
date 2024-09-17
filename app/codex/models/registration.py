@@ -29,22 +29,23 @@ class CourseRegistration(BaseModel, BasePermissionModel):
 
     @classmethod
     def has_update_permission(cls, request):
-        user = request.user
-        return user_is_leader_of_codex_group(user)
+        return cls.has_write_permission(request)
 
     @classmethod
     def has_destroy_permission(cls, request):
-        return cls.has_update_permission(request)
+        return cls.has_write_permission(request)
 
     @classmethod
     def has_retrieve_permission(cls, request):
-        return cls.has_update_permission(request)
+        return cls.has_read_permission(request)
 
     def has_object_update_permission(self, request):
-        return self.has_update_permission(request)
+        user = request.user
+        return user == self.user or user_is_leader_of_codex_group(user)
 
     def has_object_destroy_permission(self, request):
-        return self.has_destroy_permission(request)
+        user = request.user
+        return user == self.user or user_is_leader_of_codex_group(user)
 
     def has_object_retrieve_permission(self, request):
         return self.has_retrieve_permission(request)

@@ -59,7 +59,7 @@ class CourseViewSet(BaseViewSet):
                 {"detail": serializer.errors},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        except:
+        except Exception:
             return Response(
                 {"detail": "Kunne ikke opprette arrangementet"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -83,7 +83,7 @@ class CourseViewSet(BaseViewSet):
                 {"detail": serializer.errors},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        except:
+        except Exception:
             return Response(
                 {"detail": "Kunne ikke oppdatere arrangementet"},
                 status=status.HTTP_400_BAD_REQUEST,
