@@ -5,6 +5,7 @@ import pytest
 
 from app.badge.factories import BadgeFactory, UserBadgeFactory
 from app.career.factories import WeeklyBusinessFactory
+from app.codex.factories import CourseFactory
 from app.common.enums import AdminGroup, Groups, MembershipType
 from app.communication.factories import (
     BannerFactory,
@@ -38,7 +39,6 @@ from app.kontres.factories import BookableItemFactory, ReservationFactory
 from app.payment.factories.order_factory import OrderFactory
 from app.payment.factories.paid_event_factory import PaidEventFactory
 from app.util.test_utils import add_user_to_group_with_name, get_api_client
-from app.codex.factories import CourseFactory
 
 
 def _add_user_to_group(user, group):
@@ -300,6 +300,7 @@ def user_bio():
 @pytest.fixture()
 def minute(user):
     return MinuteFactory(author=user)
+
 
 @pytest.fixture()
 def codex_course():

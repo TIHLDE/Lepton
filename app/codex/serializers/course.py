@@ -2,9 +2,10 @@ from rest_framework import serializers
 
 from dry_rest_permissions.generics import DRYPermissionsField
 
-from app.common.serializers import BaseModelSerializer
 from app.codex.models.course import Course
 from app.codex.serializers.registration import RegistrationListSerializer
+from app.codex.util import validate_course_dates
+from app.common.serializers import BaseModelSerializer
 from app.content.serializers.user import UserListSerializer
 from app.group.serializers.group import SimpleGroupSerializer
 
@@ -19,7 +20,7 @@ class CourseSerializer(BaseModelSerializer):
             "update",
             "destroy",
         ],
-        object_only=True
+        object_only=True,
     )
 
     class Meta:
@@ -84,6 +85,10 @@ class CourseCreateSerializer(BaseModelSerializer):
             "lecturer",
         )
 
+    def create(self, validated_data):
+        validate_course_dates(validated_data)
+        return super().create(validated_data)
+
 
 class CourseUpdateSerializer(BaseModelSerializer):
     class Meta:
@@ -102,3 +107,7 @@ class CourseUpdateSerializer(BaseModelSerializer):
             "organizer",
             "lecturer",
         )
+
+    def update(self, instance, validated_data):
+        validate_course_dates(validated_data)
+        return super().update(instance, validated_data)

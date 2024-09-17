@@ -1,9 +1,9 @@
-import factory
-from factory.django import DjangoModelFactory
-
 from datetime import timedelta
 
 from django.utils import timezone
+
+import factory
+from factory.django import DjangoModelFactory
 
 from app.codex.models.course import Course
 

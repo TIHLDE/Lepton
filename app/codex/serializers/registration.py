@@ -1,6 +1,6 @@
+from app.codex.models.registration import CourseRegistration
 from app.common.serializers import BaseModelSerializer
 from app.content.serializers.user import UserListSerializer
-from app.codex.models.registration import CourseRegistration
 
 
 class RegistrationListSerializer(BaseModelSerializer):
@@ -8,7 +8,4 @@ class RegistrationListSerializer(BaseModelSerializer):
 
     class Meta:
         model = CourseRegistration
-        fields = (
-            "user",
-            "order"
-        )
+        fields = ("user", "order")
