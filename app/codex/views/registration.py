@@ -1,7 +1,6 @@
-from rest_framework import filters, status
+from rest_framework import status
 from rest_framework.response import Response
 
-from app.codex.models.course import Course
 from app.codex.models.registration import CourseRegistration
 from app.codex.serializers import (
     RegistrationCreateSerializer,

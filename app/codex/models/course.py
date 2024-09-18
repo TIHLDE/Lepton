@@ -6,7 +6,6 @@ from app.common.permissions import BasePermissionModel
 from app.content.models import User
 from app.group.models import Group
 from app.util.models import BaseModel
-from app.util.utils import now, yesterday
 
 
 class Course(BaseModel, BasePermissionModel):

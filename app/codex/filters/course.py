@@ -1,12 +1,10 @@
 from django_filters.rest_framework import (
-    BooleanFilter,
     DateTimeFilter,
     FilterSet,
     OrderingFilter,
 )
 
 from app.codex.models.course import Course
-from app.util.utils import now
 
 
 class CourseFilter(FilterSet):
