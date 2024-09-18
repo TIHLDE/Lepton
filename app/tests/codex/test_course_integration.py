@@ -19,19 +19,15 @@ def get_course_data(
     organizer: str = None,
     lecturer: str = None,
     start_date: str = timezone.now() + timedelta(days=10),
-    end_date: str = timezone.now() + timedelta(days=11),
     registration_start_at: str = timezone.now() + timedelta(days=1),
     registration_end_at: str = timezone.now() + timedelta(days=9),
-    sign_off_deadline: str = timezone.now() + timedelta(days=8),
 ):
     data = {
         "title": title,
         "description": description,
         "start_date": start_date,
-        "end_date": end_date,
         "start_registration_at": registration_start_at,
         "end_registration_at": registration_end_at,
-        "sign_off_deadline": sign_off_deadline,
         "location": "Test Location",
         "maxemap_link": "https://example.com",
     }
@@ -139,27 +135,6 @@ def test_create_codex_course_as_codex_group_leader(member, codex_group):
 
 @pytest.mark.django_db
 @pytest.mark.parametrize("codex_group", CodexGroups.all())
-def test_create_codex_course_with_end_date_before_start_date(member, codex_group):
-    """A codex group leader should not be able to create a codex course with end date before start date"""
-    add_user_to_group_with_name(
-        member, codex_group, membership_type=MembershipType.LEADER
-    )
-
-    url = CODEX_COURSE_BASE_URL
-    data = get_course_data(
-        organizer=codex_group,
-        lecturer=member.user_id,
-        start_date=timezone.now() + timedelta(days=10),
-        end_date=timezone.now() + timedelta(days=9),
-    )
-    client = get_api_client(user=member)
-    response = client.post(url, data=data)
-
-    assert response.status_code == status.HTTP_400_BAD_REQUEST
-
-
-@pytest.mark.django_db
-@pytest.mark.parametrize("codex_group", CodexGroups.all())
 def test_create_codex_course_with_end_registration_before_start_registration(
     member, codex_group
 ):
@@ -196,33 +171,8 @@ def test_create_codex_course_with_end_registration_before_start_date(
         organizer=codex_group,
         lecturer=member.user_id,
         start_date=timezone.now() + timedelta(days=10),
-        end_date=timezone.now() + timedelta(days=11),
         registration_start_at=timezone.now() + timedelta(days=9),
         registration_end_at=timezone.now() + timedelta(days=8),
-    )
-    client = get_api_client(user=member)
-    response = client.post(url, data=data)
-
-    assert response.status_code == status.HTTP_400_BAD_REQUEST
-
-
-@pytest.mark.django_db
-@pytest.mark.parametrize("codex_group", CodexGroups.all())
-def test_create_codex_course_with_sign_off_deadline_after_start_date(
-    member, codex_group
-):
-    """A codex group leader should not be able to create a codex course with sign off deadline after start date"""
-    add_user_to_group_with_name(
-        member, codex_group, membership_type=MembershipType.LEADER
-    )
-
-    url = CODEX_COURSE_BASE_URL
-    data = get_course_data(
-        organizer=codex_group,
-        lecturer=member.user_id,
-        start_date=timezone.now() + timedelta(days=10),
-        end_date=timezone.now() + timedelta(days=11),
-        sign_off_deadline=timezone.now() + timedelta(days=11),
     )
     client = get_api_client(user=member)
     response = client.post(url, data=data)

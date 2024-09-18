@@ -17,11 +17,9 @@ class Course(BaseModel, BasePermissionModel):
     description = models.TextField(blank=True, default="")
 
     start_date = models.DateTimeField()
-    end_date = models.DateTimeField()
 
     start_registration_at = models.DateTimeField(blank=True, null=True, default=None)
     end_registration_at = models.DateTimeField(blank=True, null=True, default=None)
-    sign_off_deadline = models.DateTimeField(blank=True, null=True, default=None)
 
     tag = models.CharField(
         max_length=50, choices=CodexCourseTags.choices, default=CodexCourseTags.LECTURE
@@ -63,20 +61,8 @@ class Course(BaseModel, BasePermissionModel):
         return f"{self.title} - starting {self.start_date} at {self.location}"
 
     @property
-    def expired(self):
-        return self.end_date <= yesterday()
-
-    @property
     def list_count(self):
         return self.registrations.count()
-
-    @property
-    def event_has_ended(self):
-        return now() >= self.end_date
-
-    @property
-    def is_past_sign_off_deadline(self):
-        return now() >= self.sign_off_deadline
 
     @classmethod
     def has_write_permission(cls, request):
