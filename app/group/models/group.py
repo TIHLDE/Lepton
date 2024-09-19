@@ -8,10 +8,11 @@ from app.common.permissions import BasePermissionModel, set_user_id
 from app.communication.enums import UserNotificationSettingType
 from app.content.models.user import User
 from app.util.models import BaseModel, OptionalImage
+from app.common.permissions import check_has_access
 
 
 class Group(OptionalImage, BaseModel, BasePermissionModel):
-
+    read_access = []
     write_access = AdminGroup.admin()
 
     name = models.CharField(max_length=50)
@@ -127,11 +128,13 @@ class Group(OptionalImage, BaseModel, BasePermissionModel):
         from app.group.models import Membership
 
         try:
-            return cls.check_request_user_is_leader(
-                request
-            ) or super().has_write_permission(request)
+            return cls.check_request_user_is_leader(request) or super().has_write_permission(request)
         except (Membership.DoesNotExist, KeyError, AssertionError):
             return super().has_write_permission(request)
+
+    @classmethod
+    def has_create_permission(cls, request):
+        return check_has_access(cls.write_access, request)
 
     def has_object_write_permission(self, request):
         from app.group.models import Membership

@@ -14,12 +14,12 @@ class GroupFilter(FilterSet):
         model: Group
         fields = ["type", "overview"]
 
-    def filter_type(self, queryset, name, value):
+    def filter_type(self, queryset, _, value):
         """Django Rest does not know hot to convert incoming string values into EnumChoiceField values and we must do this manually."""
         mapped = list(GroupType[v] for v in value)
         return queryset.filter(type__in=mapped)
 
-    def filter_overview(self, queryset, name, value):
+    def filter_overview(self, queryset, _):
         if is_admin_user(self.request):
             return queryset
         return queryset.filter(type__in=GroupType.public_groups())

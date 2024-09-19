@@ -1,12 +1,12 @@
-from rest_framework import serializers
-
 from dry_rest_permissions.generics import DRYPermissionsField
+from rest_framework import serializers
 
 from app.common.enums import GroupType, MembershipType
 from app.common.serializers import BaseModelSerializer
 from app.content.models.user import User
 from app.content.serializers.user import DefaultUserSerializer
 from app.group.models import Group, Membership
+from app.group.exceptions import GroupTypeNotInPublicGroups
 
 
 class SimpleGroupSerializer(BaseModelSerializer):
@@ -33,7 +33,6 @@ class SimpleGroupSerializer(BaseModelSerializer):
 
 
 class GroupListSerializer(SimpleGroupSerializer):
-
     leader = serializers.SerializerMethodField()
 
     class Meta:
@@ -56,7 +55,6 @@ class GroupListSerializer(SimpleGroupSerializer):
 
 
 class GroupSerializer(GroupListSerializer):
-
     permissions = DRYPermissionsField(
         actions=["write", "read", "group_form"], object_only=True
     )
@@ -85,10 +83,6 @@ class GroupSerializer(GroupListSerializer):
     def update(self, instance, validated_data):
         instance.fines_admin = self.get_fine_admin_user()
         return super().update(instance, validated_data)
-
-    def create(self, validated_data):
-        fines_admin = self.get_fine_admin_user()
-        return Group.objects.create(fines_admin=fines_admin, **validated_data)
 
 
 class GroupStatisticsSerializer(BaseModelSerializer):
@@ -126,3 +120,23 @@ class GroupStatisticsSerializer(BaseModelSerializer):
                 Group.objects.filter(type=GroupType.STUDY),
             ),
         )
+
+
+class GroupCreateSerializer(BaseModelSerializer, ):
+    class Meta:
+        model = Group
+        fields = (
+            "name",
+            "slug",
+            "type",
+        )
+
+    def create(self, validated_data):
+        group_type = validated_data["type"]
+        print(group_type)
+
+        if str(group_type) not in ("Styre", "Undergruppe", "Komité", "Interesse Gruppe"):
+            print("invalid")
+            raise GroupTypeNotInPublicGroups()
+
+        return super().create(validated_data)
