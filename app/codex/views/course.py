@@ -4,6 +4,7 @@ from rest_framework.response import Response
 
 from app.codex.filters import CourseFilter
 from app.codex.models.course import Course
+from app.codex.mixins import APICodexCourseErrorsMixin
 from app.codex.serializers import (
     CourseCreateSerializer,
     CourseListSerializer,
@@ -15,7 +16,7 @@ from app.common.permissions import BasicViewPermission
 from app.common.viewsets import BaseViewSet
 
 
-class CourseViewSet(BaseViewSet):
+class CourseViewSet(BaseViewSet, APICodexCourseErrorsMixin):
     serializer_class = CourseSerializer
     permission_classes = [BasicViewPermission]
     queryset = Course.objects.all()
