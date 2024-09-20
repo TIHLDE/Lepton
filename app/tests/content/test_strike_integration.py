@@ -4,7 +4,11 @@ from rest_framework import status
 
 import pytest
 
-from app.common.enums import AdminGroup, Groups, NativeStrikeEnum as StrikeEnum
+from app.common.enums import (
+    AdminGroup,
+    Groups,
+    NativeStrikeEnum as StrikeEnum
+)
 from app.content.factories import StrikeFactory
 from app.content.factories.event_factory import EventFactory
 from app.content.factories.user_factory import UserFactory

@@ -5,7 +5,10 @@ from django.db import models, transaction
 from ordered_model.models import OrderedModel
 from polymorphic.models import PolymorphicModel
 
-from app.common.enums import AdminGroup, Groups
+from app.common.enums import (
+    AdminGroup,
+    Groups
+)
 from app.common.permissions import BasePermissionModel, check_has_access
 from app.content.models.event import Event
 from app.content.models.user import User

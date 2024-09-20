@@ -67,13 +67,17 @@ class AdminGroup(models.TextChoices):
         return (cls.HS, cls.INDEX)
 
 
-class Groups(ChoiceEnum):
+class Groups(models.TextChoices):
     TIHLDE = "TIHLDE"
     JUBKOM = "JubKom"
     REDAKSJONEN = "Redaksjonen"
     FONDET = "Forvaltningsgruppen"
     PLASK = "Plask"
     DRIFT = "Drift"
+
+    @classmethod
+    def all(cls):
+        return (cls.TIHLDE, cls.JUBKOM, cls.REDAKSJONEN, cls.FONDET, cls.PLASK, cls.DRIFT)
 
 
 class AppModel(ChoiceEnum):
