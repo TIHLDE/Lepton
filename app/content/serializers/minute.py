@@ -4,7 +4,7 @@ from app.content.models import Minute, User
 from app.group.serializers import SimpleGroupSerializer
 
 
-class SimpleUserSerializer(serializers.ModelSerializer):
+class SimpleMinuteUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ("user_id", "first_name", "last_name", "image")
@@ -22,7 +22,7 @@ class MinuteCreateSerializer(serializers.ModelSerializer):
 
 
 class MinuteSerializer(serializers.ModelSerializer):
-    author = SimpleUserSerializer(read_only=True)
+    author = SimpleMinuteUserSerializer(read_only=True)
     group = SimpleGroupSerializer(read_only=True)
 
     class Meta:
@@ -49,7 +49,7 @@ class MinuteUpdateSerializer(serializers.ModelSerializer):
 
 
 class MinuteListSerializer(serializers.ModelSerializer):
-    author = SimpleUserSerializer(read_only=True)
+    author = SimpleMinuteUserSerializer(read_only=True)
     group = SimpleGroupSerializer(read_only=True)
 
     class Meta:

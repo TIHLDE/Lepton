@@ -100,7 +100,7 @@ def test_list_form_templates_data(admin_user):
                             "order": option.order,
                         }
                     ],
-                    "type": field.type.name,
+                    "type": field.type,
                     "required": field.required,
                     "order": field.order,
                 }

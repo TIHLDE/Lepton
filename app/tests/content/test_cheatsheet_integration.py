@@ -2,18 +2,24 @@ from rest_framework import status
 
 import pytest
 
-from app.common.enums import AdminGroup, UserClass, UserStudy
+from app.common.enums import (
+    AdminGroup,
+    NativeUserStudy as UserStudy,
+    NativeUserClass as UserClass,
+    get_user_class_number
+)
 from app.util.test_utils import get_api_client
 
 API_CHEATSHEET_BASE_URL = "/cheatsheets/"
 
 
 def get_study(study):
-    return UserStudy(study).name
+    return UserStudy(study)
 
 
 def get_grade(grade):
-    return UserClass(grade).value
+    user_class = UserClass(grade)
+    return get_user_class_number(user_class)
 
 
 def _get_cheatsheet_url(cheatsheet):
@@ -115,7 +121,7 @@ def test_delete_as_user(user, cheatsheet):
 
 
 @pytest.mark.django_db
-def test_delete_as_admin_user(user, cheatsheet, admin_user):
+def test_delete_as_admin_user(cheatsheet, admin_user):
     """A user should be able to to delete an cheatsheet entity."""
 
     client = get_api_client(user=admin_user)

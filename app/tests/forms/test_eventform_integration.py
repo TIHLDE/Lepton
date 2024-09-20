@@ -2,10 +2,14 @@ from rest_framework import status
 
 import pytest
 
-from app.common.enums import AdminGroup, GroupType, MembershipType
+from app.common.enums import (
+    AdminGroup,
+    NativeGroupType as GroupType,
+    NativeMembershipType as MembershipType
+)
 from app.content.factories import EventFactory, RegistrationFactory
 from app.content.serializers import EventListSerializer
-from app.forms.enums import EventFormType
+from app.forms.enums import NativeEventFormType as EventFormType
 from app.forms.tests.form_factories import EventFormFactory
 from app.group.factories import GroupFactory
 from app.util.test_utils import add_user_to_group_with_name, get_api_client
@@ -134,7 +138,7 @@ def test_list_forms_data(admin_user):
             "resource_type": "EventForm",
             "title": form.title,
             "event": EventListSerializer(form.event).data,
-            "type": form.type.name,
+            "type": form.type,
             "viewer_has_answered": False,
             "fields": [
                 {
@@ -147,7 +151,7 @@ def test_list_forms_data(admin_user):
                             "order": option.order,
                         }
                     ],
-                    "type": field.type.name,
+                    "type": field.type,
                     "required": field.required,
                     "order": field.order,
                 }

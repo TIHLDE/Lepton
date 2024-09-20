@@ -2,9 +2,9 @@ from rest_framework import status
 
 import pytest
 
-from app.common.enums import MembershipType
+from app.common.enums import NativeMembershipType as MembershipType
 from app.content.factories import RegistrationFactory
-from app.forms.enums import EventFormType
+from app.forms.enums import NativeEventFormType as EventFormType
 from app.forms.tests.form_factories import (
     AnswerFactory,
     EventFormFactory,

@@ -4,7 +4,11 @@ from rest_framework import status
 
 import pytest
 
-from app.common.enums import AdminGroup, Groups, StrikeEnum
+from app.common.enums import (
+    AdminGroup,
+    Groups,
+    NativeStrikeEnum as StrikeEnum
+)
 from app.content.factories import StrikeFactory
 from app.content.factories.event_factory import EventFactory
 from app.content.factories.user_factory import UserFactory
@@ -98,7 +102,7 @@ def test_all_strike_enums_are_valid(
     admin_user, strike_enum, expected_status_code, strike_post_data
 ):
     """If a strike enum is not recognized, a 404 is returned"""
-    strike_post_data["enum"] = str(strike_enum)
+    strike_post_data["enum"] = strike_enum
 
     client = get_api_client(user=admin_user)
     response = client.post(API_STRIKE_BASE_URL, strike_post_data)

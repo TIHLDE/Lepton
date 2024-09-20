@@ -1,7 +1,5 @@
 from django.db import models
 
-from enumchoicefield import ChoiceEnum
-
 
 class UserClass(models.IntegerChoices):
     FIRST = 1
@@ -11,7 +9,7 @@ class UserClass(models.IntegerChoices):
     FIFTH = 5
 
 
-class CategoryEnum(ChoiceEnum):
+class CategoryEnum(models.TextChoices):
     ACTIVITY = "Aktivitet"
     SOSIALT = "Sosialt"
     BEDPRES = "Bedpres"

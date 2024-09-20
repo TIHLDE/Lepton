@@ -4,7 +4,10 @@ from rest_framework.exceptions import ValidationError
 
 from dry_rest_permissions.generics import DRYGlobalPermissionsField
 
-from app.common.enums import Groups, GroupType
+from app.common.enums import (
+    Groups,
+    NativeGroupType as GroupType
+)
 from app.common.serializers import BaseModelSerializer
 from app.communication.enums import UserNotificationSettingType
 from app.communication.notifier import Notify

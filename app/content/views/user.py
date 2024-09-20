@@ -8,7 +8,10 @@ from rest_framework.response import Response
 
 from app.badge.models import Badge, UserBadge
 from app.badge.serializers import BadgeSerializer, UserBadgeSerializer
-from app.common.enums import Groups, GroupType
+from app.common.enums import (
+    Groups,
+    NativeGroupType as GroupType
+)
 from app.common.mixins import ActionMixin
 from app.common.pagination import BasePagination
 from app.common.permissions import (
