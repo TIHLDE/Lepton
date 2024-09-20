@@ -5,7 +5,7 @@ from rest_framework.test import APIClient
 from app.common.enums import (
     AdminGroup,
     NativeGroupType as GroupType,
-    MembershipType
+    NativeMembershipType as MembershipType
 )
 from app.group.models import Group, Membership
 

@@ -9,7 +9,7 @@ from app.common.enums import (
     AdminGroup,
     Groups,
     NativeGroupType as GroupType,
-    MembershipType
+    NativeMembershipType as MembershipType
 )
 from app.content.factories import EventFactory, RegistrationFactory, UserFactory
 from app.content.models import Category, Event

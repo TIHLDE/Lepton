@@ -3,7 +3,7 @@ import pytest
 from app.common.enums import (
     AdminGroup,
     NativeGroupType as GroupType,
-    MembershipType
+    NativeMembershipType as MembershipType
 )
 from app.group.factories import MembershipFactory
 from app.group.factories.group_factory import GroupFactory

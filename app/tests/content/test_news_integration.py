@@ -6,7 +6,7 @@ from app.common.enums import (
     AdminGroup,
     Groups,
     NativeGroupType as GroupType,
-    MembershipType
+    NativeMembershipType as MembershipType
 )
 from app.content.factories.news_factory import NewsFactory
 from app.content.factories.user_factory import UserFactory

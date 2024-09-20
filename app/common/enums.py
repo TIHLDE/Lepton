@@ -5,6 +5,7 @@ from django.db import models
 from enumchoicefield import ChoiceEnum
 
 
+# This can't be removed because it is used in the migrations. It is not used in the code.
 class UserClass(ChoiceEnum):
     FIRST = "1. Klasse"
     SECOND = "2. Klasse"
@@ -14,7 +15,23 @@ class UserClass(ChoiceEnum):
     ALUMNI = "Alumni"
 
 
-# TODO: This is only used in the cheatsheet model. This model will be refactored
+class NativeUserClass(models.TextChoices):
+    FIRST = "FIRST", "1. Klasse"
+    SECOND = "SECOND", "2. Klasse"
+    THIRD = "THIRD", "3. Klasse"
+    FOURTH = "FOURTH", "4. Klasse"
+    FIFTH = "FIFTH", "5. Klasse"
+    ALUMNI = "ALUMNI", "Alumni"
+
+
+def get_user_class_number(user_class: NativeUserClass) -> int:
+    _class = user_class.label
+    if user_class == NativeUserClass.ALUMNI:
+        return 6
+    return int(_class.split(".")[0])
+
+
+# This can't be removed because it is used in the migrations. It is not used in the code
 class UserStudy(ChoiceEnum):
     DATAING = "Dataingeniør"
     DIGFOR = "Digital forretningsutvikling"
@@ -22,6 +39,15 @@ class UserStudy(ChoiceEnum):
     DIGSAM = "Digital samhandling"
     DRIFT = "Drift"
     INFO = "Informasjonsbehandling"
+
+
+class NativeUserStudy(models.TextChoices):
+    DATAING = "DATAING", "Dataingeniør"
+    DIGFOR = "DIGFOR", "Digital forretningsutvikling"
+    DIGINC = "DIGINC", "Digital infrastruktur og cybersikkerhet"
+    DIGSAM = "DIGSAM", "Digital samhandling"
+    DRIFT = "DRIFT", "Drift"
+    INFO = "INFO", "Informasjonsbehandling"
 
 
 class AdminGroup(models.TextChoices):
@@ -74,10 +100,6 @@ class GroupType(ChoiceEnum):
     def public_groups(cls):
         return [cls.BOARD, cls.SUBGROUP, cls.COMMITTEE, cls.INTERESTGROUP]
 
-    @classmethod
-    def all(cls):
-        return list(map(lambda c: (c.name, c.value), cls))
-
 
 class NativeGroupType(models.TextChoices):
     TIHLDE = "TIHLDE", "TIHLDE"
@@ -100,6 +122,7 @@ class EnvironmentOptions(Enum):
     PRODUCTION = "PRODUCTION"
 
 
+# This can't be removed because it is used in the migrations. It is not used in the code
 class CheatsheetType(ChoiceEnum):
     FILE = "Fil"
     GITHUB = "GitHub"
@@ -107,6 +130,14 @@ class CheatsheetType(ChoiceEnum):
     OTHER = "Annet"
 
 
+class NativeCheatsheetType(models.TextChoices):
+    FILE = "FILE", "Fil"
+    GITHUB = "GITHUB", "GitHub"
+    LINK = "LINK", "Link"
+    OTHER = "OTHER", "Annet"
+
+
+# This can't be removed because it is used in the migrations. It is not used in the code
 class MembershipType(ChoiceEnum):
     LEADER = "Leader"
     MEMBER = "Member"
@@ -118,6 +149,15 @@ class MembershipType(ChoiceEnum):
     @classmethod
     def all(cls):
         return tuple((i.name, i.value) for i in cls)
+
+
+class NativeMembershipType(models.TextChoices):
+    LEADER = "LEADER", "Leader"
+    MEMBER = "MEMBER", "Member"
+
+    @classmethod
+    def board_members(cls):
+        return (cls.LEADER,)
 
 
 class StrikeEnum(ChoiceEnum):

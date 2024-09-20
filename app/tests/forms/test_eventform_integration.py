@@ -5,7 +5,7 @@ import pytest
 from app.common.enums import (
     AdminGroup,
     NativeGroupType as GroupType,
-    MembershipType
+    NativeMembershipType as MembershipType
 )
 from app.content.factories import EventFactory, RegistrationFactory
 from app.content.serializers import EventListSerializer

@@ -5,7 +5,7 @@ import pytest
 from app.common.enums import (
     AdminGroup,
     NativeGroupType as GroupType,
-    MembershipType
+    NativeMembershipType as MembershipType
 )
 from app.forms.tests.form_factories import GroupFormFactory
 from app.group.factories import GroupFactory, MembershipFactory

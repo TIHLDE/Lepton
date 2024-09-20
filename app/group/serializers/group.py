@@ -4,7 +4,7 @@ from dry_rest_permissions.generics import DRYPermissionsField
 
 from app.common.enums import (
     NativeGroupType as GroupType,
-    MembershipType
+    NativeMembershipType as MembershipType
 )
 from app.common.serializers import BaseModelSerializer
 from app.content.models.user import User

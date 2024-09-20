@@ -6,7 +6,7 @@ from rest_framework.response import Response
 
 from app.common.enums import (
     NativeGroupType as GroupType,
-    MembershipType
+    NativeMembershipType as MembershipType
 )
 from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission, IsLeader, is_admin_user

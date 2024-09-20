@@ -7,7 +7,7 @@ import pytest
 from app.common.enums import (
     AdminGroup,
     NativeGroupType as GroupType,
-    MembershipType
+    NativeMembershipType as MembershipType
 )
 from app.content.factories import EventFactory, RegistrationFactory, UserFactory
 from app.content.factories.priority_pool_factory import PriorityPoolFactory

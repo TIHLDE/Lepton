@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 
 import pytest
 
-from app.common.enums import MembershipType
+from app.common.enums import NativeMembershipType as MembershipType
 from app.content.factories import (
     EventFactory,
     PriorityPoolFactory,

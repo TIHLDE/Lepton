@@ -17,7 +17,7 @@ from app.common.enums import (
     AdminGroup,
     Groups,
     NativeGroupType as GroupType,
-    MembershipType
+    NativeMembershipType as MembershipType
 )
 from app.common.permissions import check_has_access
 from app.util.models import BaseModel, OptionalImage
