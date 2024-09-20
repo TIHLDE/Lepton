@@ -7,7 +7,7 @@ import pytest
 
 from app.codex.enums import CodexGroups
 from app.codex.factories import CourseFactory
-from app.common.enums import MembershipType
+from app.common.enums import NativeMembershipType as MembershipType
 from app.util.test_utils import add_user_to_group_with_name, get_api_client
 
 CODEX_COURSE_BASE_URL = "/codex/courses/"
@@ -152,6 +152,7 @@ def test_create_codex_course_with_end_registration_before_start_registration(
     )
     client = get_api_client(user=member)
     response = client.post(url, data=data)
+    print(response.data)
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
 

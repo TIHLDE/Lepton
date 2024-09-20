@@ -3,7 +3,7 @@ from rest_framework import status
 import pytest
 
 from app.codex.enums import CodexGroups
-from app.common.enums import MembershipType
+from app.common.enums import NativeMembershipType as MembershipType
 from app.util.test_utils import add_user_to_group_with_name, get_api_client
 
 CODEX_COURSE_BASE_URL = "/codex/courses/"

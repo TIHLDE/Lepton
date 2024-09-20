@@ -2,10 +2,8 @@ from rest_framework import serializers
 
 from dry_rest_permissions.generics import DRYPermissionsField
 
-from app.common.enums import (
-    NativeGroupType as GroupType,
-    NativeMembershipType as MembershipType
-)
+from app.common.enums import NativeGroupType as GroupType
+from app.common.enums import NativeMembershipType as MembershipType
 from app.common.serializers import BaseModelSerializer
 from app.content.models.user import User
 from app.content.serializers.user import DefaultUserSerializer

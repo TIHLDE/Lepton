@@ -1,5 +1,6 @@
-from enumchoicefield import ChoiceEnum
 from django.db import models
+
+from enumchoicefield import ChoiceEnum
 
 
 # This must be here because of the migrations files

@@ -6,7 +6,11 @@ from app.codex.exceptions import (
 
 def validate_course_dates(data: dict):
     if data["end_registration_at"] > data["start_date"]:
-        raise CodexCourseEndRegistrationDateAfterStartDate()
+        raise CodexCourseEndRegistrationDateAfterStartDate(
+            "Påmeldingsslutt kan ikke være etter kursstart"
+        )
 
     if data["end_registration_at"] < data["start_registration_at"]:
-        raise CodexCourseEndRegistrationDateBeforeStartRegistrationDate()
+        raise CodexCourseEndRegistrationDateBeforeStartRegistrationDate(
+            "Påmeldingsslutt kan ikke være før påmeldingsstart"
+        )

@@ -6,10 +6,8 @@ from rest_framework import status
 
 import pytest
 
-from app.common.enums import (
-    AdminGroup,
-    NativeGroupType as GroupType
-)
+from app.common.enums import AdminGroup
+from app.common.enums import NativeGroupType as GroupType
 from app.content.factories.event_factory import EventFactory
 from app.content.factories.registration_factory import RegistrationFactory
 from app.content.factories.strike_factory import StrikeFactory

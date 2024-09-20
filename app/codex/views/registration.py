@@ -36,28 +36,22 @@ class RegistrationViewSet(BaseViewSet):
             )
 
     def create(self, request, *args, **kwargs):
-        try:
-            data = request.data
-            serializer = RegistrationCreateSerializer(
-                data=data, context={"request": request}
-            )
+        data = request.data
+        serializer = RegistrationCreateSerializer(
+            data=data, context={"request": request}
+        )
 
-            if serializer.is_valid():
-                registration = super().perform_create(serializer, user=request.user)
-                serializer = RegistrationListSerializer(
-                    registration, context={"request": request}, many=False
-                )
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
+        if serializer.is_valid():
+            registration = super().perform_create(serializer, user=request.user)
+            serializer = RegistrationListSerializer(
+                registration, context={"request": request}, many=False
+            )
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-            return Response(
-                {"detail": serializer.errors},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        except Exception:
-            return Response(
-                {"detail": "Kunne ikke opprette påmeldingen for kurset"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            )
+        return Response(
+            {"detail": serializer.errors},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     def destroy(self, request, *args, **kwargs):
         super().destroy(request, *args, **kwargs)

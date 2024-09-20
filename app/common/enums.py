@@ -1,8 +1,8 @@
 from enum import Enum
 
-from enumchoicefield import ChoiceEnum
-
 from django.db import models
+
+from enumchoicefield import ChoiceEnum
 
 
 # This can't be removed because it is used in the migrations. It is not used in the code.
@@ -77,7 +77,14 @@ class Groups(models.TextChoices):
 
     @classmethod
     def all(cls):
-        return (cls.TIHLDE, cls.JUBKOM, cls.REDAKSJONEN, cls.FONDET, cls.PLASK, cls.DRIFT)
+        return (
+            cls.TIHLDE,
+            cls.JUBKOM,
+            cls.REDAKSJONEN,
+            cls.FONDET,
+            cls.PLASK,
+            cls.DRIFT,
+        )
 
 
 # This can't be removed because it is used in the migrations. It is not used in the code.
@@ -173,7 +180,13 @@ class NativeStrikeEnum(models.TextChoices):
 
     @classmethod
     def all(cls):
-        return [cls.PAST_DEADLINE, cls.NO_SHOW, cls.LATE, cls.BAD_BEHAVIOR, cls.EVAL_FORM]
+        return [
+            cls.PAST_DEADLINE,
+            cls.NO_SHOW,
+            cls.LATE,
+            cls.BAD_BEHAVIOR,
+            cls.EVAL_FORM,
+        ]
 
 
 class CodexGroups(models.TextChoices):

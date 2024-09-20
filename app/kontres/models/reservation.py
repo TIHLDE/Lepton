@@ -2,11 +2,8 @@ import uuid
 
 from django.db import models
 
-from app.common.enums import (
-    AdminGroup,
-    Groups,
-    NativeMembershipType as MembershipType
-)
+from app.common.enums import AdminGroup, Groups
+from app.common.enums import NativeMembershipType as MembershipType
 from app.common.permissions import BasePermissionModel, check_has_access
 from app.communication.enums import UserNotificationSettingType
 from app.communication.notifier import Notify
