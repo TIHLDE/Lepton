@@ -3,7 +3,7 @@ from rest_framework import serializers
 from dry_rest_permissions.generics import DRYPermissionsField
 from sentry_sdk import capture_exception
 
-from app.common.enums import GroupType
+from app.common.enums import NativeGroupType as GroupType
 from app.common.serializers import BaseModelSerializer
 from app.content.models import Event, PriorityPool
 from app.content.serializers.category import SimpleCategorySerializer

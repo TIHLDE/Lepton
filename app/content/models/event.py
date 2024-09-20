@@ -13,7 +13,7 @@ from app.common.permissions import (
 from app.content.models import Category
 from app.content.models.user import User
 from app.emoji.models.reaction import Reaction
-from app.forms.enums import EventFormType
+from app.forms.enums import NativeEventFormType
 from app.group.models.group import Group
 from app.util.models import BaseModel, OptionalImage
 from app.util.utils import now, yesterday
@@ -174,11 +174,11 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
 
     @property
     def evaluation(self):
-        return self.forms.filter(type=EventFormType.EVALUATION).first()
+        return self.forms.filter(type=NativeEventFormType.EVALUATION).first()
 
     @property
     def survey(self):
-        return self.forms.filter(type=EventFormType.SURVEY).first()
+        return self.forms.filter(type=NativeEventFormType.SURVEY).first()
 
     def check_request_user_has_access_through_organizer(self, user, organizer):
         return user.memberships_with_events_access.filter(group=organizer).exists()

@@ -14,6 +14,7 @@ class UserClass(ChoiceEnum):
     ALUMNI = "Alumni"
 
 
+# TODO: This is only used in the cheatsheet model. This model will be refactored
 class UserStudy(ChoiceEnum):
     DATAING = "Dataingeniør"
     DIGFOR = "Digital forretningsutvikling"
@@ -23,7 +24,7 @@ class UserStudy(ChoiceEnum):
     INFO = "Informasjonsbehandling"
 
 
-class AdminGroup(ChoiceEnum):
+class AdminGroup(models.TextChoices):
     HS = "HS"
     INDEX = "Index"
     NOK = "Nok"
@@ -58,6 +59,7 @@ class AppModel(ChoiceEnum):
     WEEKLY_BUSINESS = "Weekly Business"
 
 
+# This can't be removed because it is used in the migrations. It is not used in the code.
 class GroupType(ChoiceEnum):
     TIHLDE = "TIHLDE"
     BOARD = "Styre"
@@ -75,6 +77,21 @@ class GroupType(ChoiceEnum):
     @classmethod
     def all(cls):
         return list(map(lambda c: (c.name, c.value), cls))
+
+
+class NativeGroupType(models.TextChoices):
+    TIHLDE = "TIHLDE", "TIHLDE"
+    BOARD = "BOARD", "Styre"
+    SUBGROUP = "SUBGROUP", "Undergruppe"
+    COMMITTEE = "COMMITTEE", "Komité"
+    STUDYYEAR = "STUDYYEAR", "Studieår"
+    STUDY = "STUDY", "Studie"
+    INTERESTGROUP = "INTERESTGROUP", "Interesse Gruppe"
+    OTHER = "OTHER", "Annet"
+
+    @classmethod
+    def public_groups(cls):
+        return [cls.BOARD, cls.SUBGROUP, cls.COMMITTEE, cls.INTERESTGROUP]
 
 
 class EnvironmentOptions(Enum):

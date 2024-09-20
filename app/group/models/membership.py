@@ -3,7 +3,11 @@ from django.db.transaction import atomic
 
 from enumchoicefield import EnumChoiceField
 
-from app.common.enums import AdminGroup, GroupType, MembershipType
+from app.common.enums import (
+    AdminGroup,
+    NativeGroupType as GroupType,
+    MembershipType
+)
 from app.common.permissions import BasePermissionModel
 from app.content.models.user import User
 from app.group.models.group import Group

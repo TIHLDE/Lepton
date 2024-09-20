@@ -4,7 +4,10 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
 from rest_framework.response import Response
 
-from app.common.enums import GroupType, MembershipType
+from app.common.enums import (
+    NativeGroupType as GroupType,
+    MembershipType
+)
 from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission, IsLeader, is_admin_user
 from app.common.viewsets import BaseViewSet

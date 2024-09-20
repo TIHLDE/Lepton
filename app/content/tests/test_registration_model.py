@@ -12,7 +12,7 @@ from app.content.factories import (
     StrikeFactory,
     UserFactory,
 )
-from app.forms.enums import EventFormType
+from app.forms.enums import NativeEventFormType as EventFormType
 from app.forms.models.forms import Submission
 from app.forms.tests.form_factories import EventFormFactory, SubmissionFactory
 from app.group.factories import GroupFactory, MembershipFactory
