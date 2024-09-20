@@ -91,22 +91,7 @@ jobs:
         run:  docker compose up -d
 
       - name: Make HTTP Request to Swagger
-        run: |
-          for i in {1..10}; do
-            STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8000/swagger/)
-            if [ "$STATUS_CODE" -eq 200 ]; then
-              echo "Swagger endpoint is up and returned status code $STATUS_CODE"
-              break
-            else
-              echo "Attempt $i: Swagger endpoint not ready, returned status code $STATUS_CODE"
-              sleep 5
-            fi
-          done
-
-          if [ "$STATUS_CODE" -ne 200 ]; then
-            echo "Swagger endpoint failed after retries with status code $STATUS_CODE"
-            exit 1
-          fi
+        run: curl http://localhost:8000/swagger/ | grep -q 'swagger-ui' && echo 'Swagger UI is up' || exit 1
 
       - name: Tear down the Stack
         run:  docker compose down
