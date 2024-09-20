@@ -1,6 +1,9 @@
 from django.db import models
 
-from app.common.enums import AdminGroup, Groups
+from app.common.enums import (
+    AdminGroup,
+    Groups
+)
 from app.common.permissions import BasePermissionModel
 from app.util.models import BaseModel
 from app.util.utils import datetime_format

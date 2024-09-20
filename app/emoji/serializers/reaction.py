@@ -15,14 +15,14 @@ from app.emoji.exception import (
 from app.emoji.models.reaction import Reaction
 
 
-class SimpleUserSerializer(serializers.ModelSerializer):
+class SimpleReactionUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ("user_id", "first_name", "last_name", "image")
 
 
 class ReactionSerializer(BaseModelSerializer):
-    user = SimpleUserSerializer(read_only=True)
+    user = SimpleReactionUserSerializer(read_only=True)
 
     class Meta:
         model = Reaction

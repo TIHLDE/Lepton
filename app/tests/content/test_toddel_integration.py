@@ -2,7 +2,10 @@ from rest_framework import status
 
 import pytest
 
-from app.common.enums import AdminGroup, Groups
+from app.common.enums import (
+    AdminGroup,
+    Groups
+)
 from app.content.factories import ToddelFactory
 from app.util.test_utils import get_api_client
 

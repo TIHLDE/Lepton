@@ -1,7 +1,7 @@
 import factory
 from factory.django import DjangoModelFactory
 
-from app.common.enums import GroupType
+from app.common.enums import NativeGroupType as GroupType
 from app.content.factories.user_factory import UserFactory
 from app.group.models import Group
 

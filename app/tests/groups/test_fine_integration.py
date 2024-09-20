@@ -2,7 +2,10 @@ from rest_framework import status
 
 import pytest
 
-from app.common.enums import AdminGroup, MembershipType
+from app.common.enums import (
+    AdminGroup,
+    NativeMembershipType as MembershipType
+)
 from app.content.factories.user_factory import UserFactory
 from app.group.factories.fine_factory import FineFactory
 from app.group.factories.group_factory import GroupFactory
