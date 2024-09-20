@@ -6,7 +6,7 @@ from django.db.models import Q
 
 from sentry_sdk import capture_exception
 
-from app.common.enums import StrikeEnum
+from app.common.enums import NativeStrikeEnum as StrikeEnum
 from app.common.permissions import BasePermissionModel
 from app.communication.enums import UserNotificationSettingType
 from app.communication.notifier import Notify

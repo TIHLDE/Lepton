@@ -160,12 +160,25 @@ class NativeMembershipType(models.TextChoices):
         return (cls.LEADER,)
 
 
+# This can't be removed because it is used in the migrations. It is not used in the code
 class StrikeEnum(ChoiceEnum):
     PAST_DEADLINE = "PAST_DEADLINE"
     NO_SHOW = "NO_SHOW"
     LATE = "LATE"
     BAD_BEHAVIOR = "BAD_BEHAVIOR"
     EVAL_FORM = "EVAL_FORM"
+
+
+class NativeStrikeEnum(models.TextChoices):
+    PAST_DEADLINE = "PAST_DEADLINE"
+    NO_SHOW = "NO_SHOW"
+    LATE = "LATE"
+    BAD_BEHAVIOR = "BAD_BEHAVIOR"
+    EVAL_FORM = "EVAL_FORM"
+
+    @classmethod
+    def all(cls):
+        return [cls.PAST_DEADLINE, cls.NO_SHOW, cls.LATE, cls.BAD_BEHAVIOR, cls.EVAL_FORM]
 
 
 class CodexGroups(models.TextChoices):
