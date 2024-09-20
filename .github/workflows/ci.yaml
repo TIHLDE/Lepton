@@ -76,3 +76,27 @@ jobs:
 
       - name: Tear down the Stack
         run:  docker compose down
+  
+  swagger:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout Code Repository
+        uses: actions/checkout@v4
+
+      - name: Build the Stack
+        run:  docker compose build
+
+      - name: Run the Stack
+        run:  docker compose up -d
+
+      - name: Make HTTP Request to Swagger
+        run: |
+          STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8000/swagger/)
+          if [ "$STATUS_CODE" -ne 200 ]; then
+            echo "Swagger endpoint returned status code $STATUS_CODE"
+            exit 1
+          fi
+
+      - name: Tear down the Stack
+        run:  docker compose down
