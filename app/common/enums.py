@@ -80,15 +80,6 @@ class Groups(models.TextChoices):
         return (cls.TIHLDE, cls.JUBKOM, cls.REDAKSJONEN, cls.FONDET, cls.PLASK, cls.DRIFT)
 
 
-class AppModel(ChoiceEnum):
-    EVENT = "Event"
-    JOBPOST = "Jobpost"
-    NEWS = "News"
-    USER = "User"
-    CHEATSHEET = "Cheatsheet"
-    WEEKLY_BUSINESS = "Weekly Business"
-
-
 # This can't be removed because it is used in the migrations. It is not used in the code.
 class GroupType(ChoiceEnum):
     TIHLDE = "TIHLDE"
