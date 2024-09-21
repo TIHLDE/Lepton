@@ -21,7 +21,7 @@ from app.payment.serializers.paid_event import PaidEventCreateSerializer
 
 class EventSerializer(serializers.ModelSerializer):
     expired = serializers.BooleanField(read_only=True)
-    priority_pools = PriorityPoolSerializer(many=True, required=False)
+    priority_pools = PriorityPoolSerializer(many=True, read_only=True, required=False)
     evaluation = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
     survey = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
     organizer = SimpleGroupSerializer(read_only=True)
