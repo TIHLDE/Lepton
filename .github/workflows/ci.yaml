@@ -101,7 +101,7 @@ jobs:
 
       - name: Make HTTP Request to Swagger
         run: |
-          status_code=$(curl -o /dev/null -s -w "%{http_code}" http://localhost:8000/swagger/)
+          status_code=$(curl -o /dev/null -s -w "%{http_code}" http://localhost:8000/swagger/?format=openapi)
           if [ "$status_code" -eq 200 ]; then
             echo "Swagger UI is up"
           else
