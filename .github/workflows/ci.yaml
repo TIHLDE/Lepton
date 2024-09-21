@@ -89,6 +89,15 @@ jobs:
 
       - name: Run the Stack
         run:  docker compose up -d
+      
+      - name: Wait for Docker container to be up
+        run: |
+          retries=10
+          until docker compose exec web curl -f http://localhost:8000/ || [ $retries -eq 0 ]; do
+            echo "Waiting for container to be up..."
+            retries=$((retries - 1))
+            sleep 5
+          done
 
       - name: Make HTTP Request to Swagger
         run: curl http://localhost:8000/swagger/ | grep -q 'swagger-ui' && echo 'Swagger UI is up' || exit 1
