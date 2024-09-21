@@ -100,7 +100,14 @@ jobs:
           done
 
       - name: Make HTTP Request to Swagger
-        run: curl http://localhost:8000/swagger/ | grep -q 'swagger-ui' && echo 'Swagger UI is up' || exit 1
+        run: |
+          status_code=$(curl -o /dev/null -s -w "%{http_code}" http://localhost:8000/swagger/)
+          if [ "$status_code" -eq 200 ]; then
+            echo "Swagger UI is up"
+          else
+            echo "Failed to reach Swagger UI, status code: $status_code"
+            exit 1
+          fi
 
       - name: Tear down the Stack
         run:  docker compose down
