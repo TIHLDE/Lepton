@@ -6,15 +6,15 @@ from app.codex.enums import CodexGroups
 from app.common.enums import NativeMembershipType as MembershipType
 from app.util.test_utils import add_user_to_group_with_name, get_api_client
 
-CODEX_COURSE_BASE_URL = "/codex/courses/"
+CODEX_EVENT_BASE_URL = "/codex/events/"
 
 
 def get_registration_url(course_id):
-    return f"{CODEX_COURSE_BASE_URL}{course_id}/registrations/"
+    return f"{CODEX_EVENT_BASE_URL}{course_id}/registrations/"
 
 
 def get_registration_detail_url(course_id, registration_id):
-    return f"{CODEX_COURSE_BASE_URL}{course_id}/registrations/{registration_id}/"
+    return f"{CODEX_EVENT_BASE_URL}{course_id}/registrations/{registration_id}/"
 
 
 def get_registration_data(course):

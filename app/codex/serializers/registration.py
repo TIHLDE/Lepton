@@ -1,26 +1,28 @@
-from app.codex.models.registration import CourseRegistration
+from rest_framework import serializers
+
+from app.codex.models.registration import CodexEventRegistration
 from app.common.serializers import BaseModelSerializer
 from app.content.serializers.user import UserListSerializer
 
 
 class RegistrationListSerializer(BaseModelSerializer):
-    user = UserListSerializer()
+    user_info = UserListSerializer(source="user", read_only=True)
 
     class Meta:
-        model = CourseRegistration
-        fields = ("user", "order", "course")
+        model = CodexEventRegistration
+        fields = ("registration_id", "user_info", "order")
 
 
 class RegistrationCreateSerializer(BaseModelSerializer):
     class Meta:
-        model = CourseRegistration
-        fields = ("course",)
+        model = CodexEventRegistration
+        fields = ("event",)
 
     def create(self, validated_data):
         last_order = (
-            CourseRegistration.objects.filter(course=validated_data["course"]).count()
+            CodexEventRegistration.objects.filter(event=validated_data["event"]).count()
             - 1
         )
         validated_data["order"] = last_order + 1
 
-        return CourseRegistration.objects.create(**validated_data)
+        return CodexEventRegistration.objects.create(**validated_data)

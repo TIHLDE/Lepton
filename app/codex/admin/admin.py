@@ -1,7 +1,7 @@
 from django.contrib import admin
 
-from app.codex.models.course import Course
-from app.codex.models.registration import CourseRegistration
+from app.codex.models.event import CodexEvent
+from app.codex.models.registration import CodexEventRegistration
 
-admin.site.register(Course)
-admin.site.register(CourseRegistration)
+admin.site.register(CodexEvent)
+admin.site.register(CodexEventRegistration)

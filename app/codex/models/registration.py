@@ -1,31 +1,32 @@
 from django.db import models
 
 from app.codex.enums import CodexGroups
-from app.codex.models.course import Course
+from app.codex.models.event import CodexEvent
 from app.codex.util import user_is_leader_of_codex_group
 from app.common.permissions import BasePermissionModel
 from app.content.models import User
 from app.util.models import BaseModel
 
 
-class CourseRegistration(BaseModel, BasePermissionModel):
+class CodexEventRegistration(BaseModel, BasePermissionModel):
     read_access = CodexGroups.all()
     write_access = CodexGroups.all()
 
+    registration_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="codex_course_registrations"
+        User, on_delete=models.CASCADE, related_name="codex_event_registrations"
     )
-    course = models.ForeignKey(
-        Course, on_delete=models.CASCADE, related_name="codex_course_registrations"
+    event = models.ForeignKey(
+        CodexEvent, on_delete=models.CASCADE, related_name="codex_event_registrations"
     )
     order = models.IntegerField(default=0)
 
     class Meta:
         ordering = ("order", "created_at")
-        unique_together = ("user", "course")
+        unique_together = ("user", "event")
 
     def __str__(self):
-        return f"{self.user} - {self.course.title} - {self.created_at}"
+        return f"{self.user} - {self.event.title} - {self.created_at}"
 
     @classmethod
     def has_update_permission(cls, request):

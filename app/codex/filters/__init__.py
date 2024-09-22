@@ -1,1 +1,1 @@
-from app.codex.filters.course import CourseFilter
+from app.codex.filters.course import CodexEventFilter

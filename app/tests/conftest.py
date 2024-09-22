@@ -5,7 +5,7 @@ import pytest
 
 from app.badge.factories import BadgeFactory, UserBadgeFactory
 from app.career.factories import WeeklyBusinessFactory
-from app.codex.factories import CourseFactory, CourseRegistrationFactory
+from app.codex.factories import CodexEventFactory, CourseRegistrationFactory
 from app.common.enums import AdminGroup, Groups
 from app.common.enums import NativeMembershipType as MembershipType
 from app.communication.factories import (
@@ -305,7 +305,7 @@ def minute(user):
 
 @pytest.fixture()
 def codex_course():
-    return CourseFactory()
+    return CodexEventFactory()
 
 
 @pytest.fixture()

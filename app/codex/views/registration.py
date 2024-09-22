@@ -1,7 +1,7 @@
 from rest_framework import status
 from rest_framework.response import Response
 
-from app.codex.models.registration import CourseRegistration
+from app.codex.models.registration import CodexEventRegistration
 from app.codex.serializers import (
     RegistrationCreateSerializer,
     RegistrationListSerializer,
@@ -17,8 +17,8 @@ class RegistrationViewSet(BaseViewSet):
     pagination_class = BasePagination
 
     def get_queryset(self):
-        course_id = self.kwargs.get("course_id")
-        return CourseRegistration.objects.filter(course__pk=course_id).select_related(
+        event_id = self.kwargs.get("event_id")
+        return CodexEventRegistration.objects.filter(event__pk=event_id).select_related(
             "user"
         )
 
@@ -29,9 +29,9 @@ class RegistrationViewSet(BaseViewSet):
                 registration, context={"request": request}, many=False
             )
             return Response(serializer.data)
-        except CourseRegistration.DoesNotExist:
+        except CodexEventRegistration.DoesNotExist:
             return Response(
-                {"detail": "Fant ikke påmeldingen for kurset"},
+                {"detail": "Fant ikke påmeldingen for arrangementet"},
                 status=status.HTTP_404_NOT_FOUND,
             )
 
@@ -56,5 +56,5 @@ class RegistrationViewSet(BaseViewSet):
     def destroy(self, request, *args, **kwargs):
         super().destroy(request, *args, **kwargs)
         return Response(
-            {"detail": "Påmeldingen for kurset ble slettet"}, status=status.HTTP_200_OK
+            {"detail": "Påmeldingen for arrangementet ble slettet"}, status=status.HTTP_200_OK
         )

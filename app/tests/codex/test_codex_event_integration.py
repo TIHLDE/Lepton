@@ -6,14 +6,14 @@ from rest_framework import status
 import pytest
 
 from app.codex.enums import CodexGroups
-from app.codex.factories import CourseFactory
+from app.codex.factories import CodexEventFactory
 from app.common.enums import NativeMembershipType as MembershipType
 from app.util.test_utils import add_user_to_group_with_name, get_api_client
 
-CODEX_COURSE_BASE_URL = "/codex/courses/"
+CODEX_EVENT_BASE_URL = "/codex/events/"
 
 
-def get_course_data(
+def get_event_data(
     title: str = "Test Course",
     description: str = "Test Description",
     organizer: str = None,
@@ -46,9 +46,9 @@ def test_list_codex_courses_as_codex_member(member, codex_group):
     """A codex member should be able to list all codex courses"""
     add_user_to_group_with_name(member, codex_group)
 
-    CourseFactory.create_batch(5)
+    CodexEventFactory.create_batch(5)
 
-    url = CODEX_COURSE_BASE_URL
+    url = CODEX_EVENT_BASE_URL
     client = get_api_client(user=member)
     response = client.get(url)
 
@@ -61,7 +61,7 @@ def test_list_codex_courses_as_codex_member(member, codex_group):
 @pytest.mark.django_db
 def test_list_codex_course_as_member(member):
     """A member should not be able to list codex courses"""
-    url = CODEX_COURSE_BASE_URL
+    url = CODEX_EVENT_BASE_URL
     client = get_api_client(user=member)
     response = client.get(url)
 
@@ -71,7 +71,7 @@ def test_list_codex_course_as_member(member):
 @pytest.mark.django_db
 def test_retrieve_codex_course_as_member(member, codex_course):
     """A member should not be able to retrieve a codex course"""
-    url = f"{CODEX_COURSE_BASE_URL}{codex_course.id}/"
+    url = f"{CODEX_EVENT_BASE_URL}{codex_course.id}/"
     client = get_api_client(user=member)
     response = client.get(url)
 
@@ -84,7 +84,7 @@ def test_retrieve_codex_course_as_codex_member(member, codex_group, codex_course
     """A codex member should be able to retrieve a codex course"""
     add_user_to_group_with_name(member, codex_group)
 
-    url = f"{CODEX_COURSE_BASE_URL}{codex_course.id}/"
+    url = f"{CODEX_EVENT_BASE_URL}{codex_course.id}/"
     client = get_api_client(user=member)
     response = client.get(url)
 
@@ -95,8 +95,8 @@ def test_retrieve_codex_course_as_codex_member(member, codex_group, codex_course
 @pytest.mark.django_db
 def test_create_codex_course_as_member(member):
     """A member should not be able to create a codex course"""
-    url = CODEX_COURSE_BASE_URL
-    data = get_course_data()
+    url = CODEX_EVENT_BASE_URL
+    data = get_event_data()
     client = get_api_client(user=member)
     response = client.post(url, data=data)
 
@@ -109,8 +109,8 @@ def test_create_codex_course_as_codex_member(member, codex_group):
     """A normal codex member should not be able to create a codex course"""
     add_user_to_group_with_name(member, codex_group)
 
-    url = CODEX_COURSE_BASE_URL
-    data = get_course_data(organizer=codex_group, lecturer=member.user_id)
+    url = CODEX_EVENT_BASE_URL
+    data = get_event_data(organizer=codex_group, lecturer=member.user_id)
     client = get_api_client(user=member)
     response = client.post(url, data=data)
 
@@ -125,8 +125,8 @@ def test_create_codex_course_as_codex_group_leader(member, codex_group):
         member, codex_group, membership_type=MembershipType.LEADER
     )
 
-    url = CODEX_COURSE_BASE_URL
-    data = get_course_data(organizer=codex_group, lecturer=member.user_id)
+    url = CODEX_EVENT_BASE_URL
+    data = get_event_data(organizer=codex_group, lecturer=member.user_id)
     client = get_api_client(user=member)
     response = client.post(url, data=data)
 
@@ -143,8 +143,8 @@ def test_create_codex_course_with_end_registration_before_start_registration(
         member, codex_group, membership_type=MembershipType.LEADER
     )
 
-    url = CODEX_COURSE_BASE_URL
-    data = get_course_data(
+    url = CODEX_EVENT_BASE_URL
+    data = get_event_data(
         organizer=codex_group,
         lecturer=member.user_id,
         registration_start_at=timezone.now() + timedelta(days=10),
@@ -167,8 +167,8 @@ def test_create_codex_course_with_end_registration_before_start_date(
         member, codex_group, membership_type=MembershipType.LEADER
     )
 
-    url = CODEX_COURSE_BASE_URL
-    data = get_course_data(
+    url = CODEX_EVENT_BASE_URL
+    data = get_event_data(
         organizer=codex_group,
         lecturer=member.user_id,
         start_date=timezone.now() + timedelta(days=10),
@@ -184,8 +184,8 @@ def test_create_codex_course_with_end_registration_before_start_date(
 @pytest.mark.django_db
 def test_update_codex_course_as_member(member, codex_course):
     """A member should not be able to update a codex course"""
-    url = f"{CODEX_COURSE_BASE_URL}{codex_course.id}/"
-    data = get_course_data()
+    url = f"{CODEX_EVENT_BASE_URL}{codex_course.id}/"
+    data = get_event_data()
     client = get_api_client(user=member)
     response = client.put(url, data=data)
 
@@ -198,8 +198,8 @@ def test_update_codex_course_as_codex_member(member, codex_group, codex_course):
     """A codex member should not be able to update a codex course"""
     add_user_to_group_with_name(member, codex_group)
 
-    url = f"{CODEX_COURSE_BASE_URL}{codex_course.id}/"
-    data = get_course_data()
+    url = f"{CODEX_EVENT_BASE_URL}{codex_course.id}/"
+    data = get_event_data()
     client = get_api_client(user=member)
     response = client.put(url, data=data)
 
@@ -214,8 +214,8 @@ def test_update_codex_course_as_codex_group_leader(member, codex_group, codex_co
         member, codex_group, membership_type=MembershipType.LEADER
     )
 
-    url = f"{CODEX_COURSE_BASE_URL}{codex_course.id}/"
-    data = get_course_data()
+    url = f"{CODEX_EVENT_BASE_URL}{codex_course.id}/"
+    data = get_event_data()
     client = get_api_client(user=member)
     response = client.put(url, data=data)
 
@@ -226,7 +226,7 @@ def test_update_codex_course_as_codex_group_leader(member, codex_group, codex_co
 @pytest.mark.django_db
 def test_destroy_codex_course_as_member(member, codex_course):
     """A member should not be able to destroy a codex course"""
-    url = f"{CODEX_COURSE_BASE_URL}{codex_course.id}/"
+    url = f"{CODEX_EVENT_BASE_URL}{codex_course.id}/"
     client = get_api_client(user=member)
     response = client.delete(url)
 
@@ -239,7 +239,7 @@ def test_destroy_codex_course_as_codex_member(member, codex_group, codex_course)
     """A codex member should not be able to destroy a codex course"""
     add_user_to_group_with_name(member, codex_group)
 
-    url = f"{CODEX_COURSE_BASE_URL}{codex_course.id}/"
+    url = f"{CODEX_EVENT_BASE_URL}{codex_course.id}/"
     client = get_api_client(user=member)
     response = client.delete(url)
 
@@ -254,7 +254,7 @@ def test_destroy_codex_course_as_codex_group_leader(member, codex_group, codex_c
         member, codex_group, membership_type=MembershipType.LEADER
     )
 
-    url = f"{CODEX_COURSE_BASE_URL}{codex_course.id}/"
+    url = f"{CODEX_EVENT_BASE_URL}{codex_course.id}/"
     client = get_api_client(user=member)
     response = client.delete(url)
 

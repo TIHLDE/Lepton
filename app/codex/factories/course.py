@@ -5,12 +5,12 @@ from django.utils import timezone
 import factory
 from factory.django import DjangoModelFactory
 
-from app.codex.models.course import Course
+from app.codex.models.event import CodexEvent
 
 
-class CourseFactory(DjangoModelFactory):
+class CodexEventFactory(DjangoModelFactory):
     class Meta:
-        model = Course
+        model = CodexEvent
 
     title = factory.Sequence(lambda n: f"Course {n}")
     description = factory.Faker("text")

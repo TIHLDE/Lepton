@@ -2,18 +2,16 @@ from rest_framework import serializers
 
 from dry_rest_permissions.generics import DRYPermissionsField
 
-from app.codex.models.course import Course
-from app.codex.serializers.registration import RegistrationListSerializer
-from app.codex.util import validate_course_dates
+from app.codex.models.event import CodexEvent
+from app.codex.util import validate_event_dates
 from app.common.serializers import BaseModelSerializer
 from app.content.serializers.user import UserListSerializer
 from app.group.serializers.group import SimpleGroupSerializer
 
 
-class CourseSerializer(BaseModelSerializer):
+class CodexEventSerializer(BaseModelSerializer):
     lecturer = UserListSerializer()
     organizer = SimpleGroupSerializer()
-    registrations = RegistrationListSerializer(many=True)
     permissions = DRYPermissionsField(
         actions=[
             "write",
@@ -22,9 +20,10 @@ class CourseSerializer(BaseModelSerializer):
         ],
         object_only=True,
     )
+    viewer_is_registered = serializers.SerializerMethodField()
 
     class Meta:
-        model = Course
+        model = CodexEvent
         fields = (
             "id",
             "title",
@@ -36,19 +35,23 @@ class CourseSerializer(BaseModelSerializer):
             "mazemap_link",
             "organizer",
             "lecturer",
-            "registrations",
             "tag",
             "permissions",
+            "viewer_is_registered",
         )
+    
+    def get_viewer_is_registered(self, obj):
+        request = self.context.get("request")
+        return obj.registrations.filter(user_id=request.user.user_id).exists()
 
 
-class CourseListSerializer(BaseModelSerializer):
+class CodexEventListSerializer(BaseModelSerializer):
     number_of_registrations = serializers.SerializerMethodField()
     lecturer = UserListSerializer()
     organizer = SimpleGroupSerializer()
 
     class Meta:
-        model = Course
+        model = CodexEvent
         fields = (
             "id",
             "title",
@@ -64,9 +67,9 @@ class CourseListSerializer(BaseModelSerializer):
         return obj.registrations.count()
 
 
-class CourseCreateSerializer(BaseModelSerializer):
+class CodexEventCreateSerializer(BaseModelSerializer):
     class Meta:
-        model = Course
+        model = CodexEvent
         fields = (
             "title",
             "description",
@@ -81,13 +84,13 @@ class CourseCreateSerializer(BaseModelSerializer):
         )
 
     def create(self, validated_data):
-        validate_course_dates(validated_data)
+        validate_event_dates(validated_data)
         return super().create(validated_data)
 
 
-class CourseUpdateSerializer(BaseModelSerializer):
+class CodexEventUpdateSerializer(BaseModelSerializer):
     class Meta:
-        model = Course
+        model = CodexEvent
         fields = (
             "title",
             "description",
@@ -102,5 +105,5 @@ class CourseUpdateSerializer(BaseModelSerializer):
         )
 
     def update(self, instance, validated_data):
-        validate_course_dates(validated_data)
+        validate_event_dates(validated_data)
         return super().update(instance, validated_data)

@@ -2,43 +2,43 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status
 from rest_framework.response import Response
 
-from app.codex.filters import CourseFilter
-from app.codex.mixins import APICodexCourseErrorsMixin
-from app.codex.models.course import Course
+from app.codex.filters import CodexEventFilter
+from app.codex.mixins import APICodexEventErrorsMixin
+from app.codex.models.event import CodexEvent
 from app.codex.serializers import (
-    CourseCreateSerializer,
-    CourseListSerializer,
-    CourseSerializer,
-    CourseUpdateSerializer,
-)
+    CodexEventCreateSerializer,
+    CodexEventUpdateSerializer,
+    CodexEventListSerializer,
+    CodexEventSerializer
+) 
 from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission
 from app.common.viewsets import BaseViewSet
 
 
-class CourseViewSet(APICodexCourseErrorsMixin, BaseViewSet):
-    serializer_class = CourseSerializer
+class CodexEventViewSet(APICodexEventErrorsMixin, BaseViewSet):
+    serializer_class = CodexEventSerializer
     permission_classes = [BasicViewPermission]
-    queryset = Course.objects.all()
+    queryset = CodexEvent.objects.all()
     pagination_class = BasePagination
 
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
-    filterset_class = CourseFilter
+    filterset_class = CodexEventFilter
     search_fields = ["title"]
 
     def get_serializer_class(self):
         if hasattr(self, "action") and self.action == "list":
-            return CourseListSerializer
+            return CodexEventListSerializer
         return super().get_serializer_class()
 
     def retrieve(self, request, *args, **kwargs):
         try:
-            course = self.get_object()
-            serializer = CourseSerializer(
-                course, context={"request": request}, many=False
+            event = self.get_object()
+            serializer = CodexEventSerializer(
+                event, context={"request": request}, many=False
             )
             return Response(serializer.data)
-        except Course.DoesNotExist:
+        except CodexEvent.DoesNotExist:
             return Response(
                 {"detail": "Fant ikke arrangementet"},
                 status=status.HTTP_404_NOT_FOUND,
@@ -46,12 +46,12 @@ class CourseViewSet(APICodexCourseErrorsMixin, BaseViewSet):
 
     def create(self, request, *args, **kwargs):
         data = request.data
-        serializer = CourseCreateSerializer(data=data, context={"request": request})
+        serializer = CodexEventCreateSerializer(data=data, context={"request": request})
 
         if serializer.is_valid():
-            course = super().perform_create(serializer)
-            serializer = CourseSerializer(
-                course, context={"request": request}, many=False
+            event = super().perform_create(serializer)
+            serializer = CodexEventSerializer(
+                event, context={"request": request}, many=False
             )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -61,15 +61,15 @@ class CourseViewSet(APICodexCourseErrorsMixin, BaseViewSet):
         )
 
     def update(self, request, *args, **kwargs):
-        course = self.get_object()
-        serializer = CourseUpdateSerializer(
-            course, data=request.data, context={"request": request}
+        event = self.get_object()
+        serializer = CodexEventUpdateSerializer(
+            event, data=request.data, context={"request": request}
         )
 
         if serializer.is_valid():
-            course = super().perform_update(serializer)
-            serializer = CourseSerializer(
-                course, context={"request": request}, many=False
+            event = super().perform_update(serializer)
+            serializer = CodexEventSerializer(
+                event, context={"request": request}, many=False
             )
             return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -80,4 +80,4 @@ class CourseViewSet(APICodexCourseErrorsMixin, BaseViewSet):
 
     def destroy(self, request, *args, **kwargs):
         super().destroy(request, *args, **kwargs)
-        return Response({"detail": "Kurset ble slettet"}, status=status.HTTP_200_OK)
+        return Response({"detail": "Arrangementet ble slettet"}, status=status.HTTP_200_OK)

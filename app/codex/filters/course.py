@@ -4,11 +4,11 @@ from django_filters.rest_framework import (
     OrderingFilter,
 )
 
-from app.codex.models.course import Course
+from app.codex.models.event import CodexEvent
 
 
-class CourseFilter(FilterSet):
-    """Filters courses by tag and expired. Works with search query"""
+class CodexEventFilter(FilterSet):
+    """Filters events by tag and expired. Works with search query"""
 
     end_range = DateTimeFilter(field_name="start_date", lookup_expr="lte")
     start_range = DateTimeFilter(field_name="end_date", lookup_expr="gte")
@@ -16,5 +16,5 @@ class CourseFilter(FilterSet):
     ordering = OrderingFilter("start_date", "tag")
 
     class Meta:
-        model = Course
+        model = CodexEvent
         fields = ["tag", "end_range", "start_range", "organizer"]

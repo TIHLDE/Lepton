@@ -8,7 +8,7 @@ from app.group.models import Group
 from app.util.models import BaseModel
 
 
-class Course(BaseModel, BasePermissionModel):
+class CodexEvent(BaseModel, BasePermissionModel):
     read_access = CodexGroups.all()
     write_access = CodexGroups.all()
 
@@ -33,7 +33,7 @@ class Course(BaseModel, BasePermissionModel):
         null=True,
         default=None,
         on_delete=models.SET_NULL,
-        related_name="codex_courses",
+        related_name="codex_events",
     )
     lecturer = models.ForeignKey(
         User,
@@ -41,19 +41,19 @@ class Course(BaseModel, BasePermissionModel):
         null=True,
         default=None,
         on_delete=models.SET_NULL,
-        related_name="codex_courses",
+        related_name="codex_events",
     )
 
     registrations = models.ManyToManyField(
         User,
-        through="CourseRegistration",
-        through_fields=("course", "user"),
+        through="CodexEventRegistration",
+        through_fields=("event", "user"),
         blank=True,
         default=None,
     )
 
     class Meta:
-        verbose_name_plural = "Courses"
+        verbose_name_plural = "Events"
         ordering = ("start_date",)
 
     def __str__(self):

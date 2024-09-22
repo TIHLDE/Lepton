@@ -1,13 +1,13 @@
 from django.urls import include, re_path
 from rest_framework import routers
 
-from app.codex.views import CourseViewSet, RegistrationViewSet
+from app.codex.views import CodexEventViewSet, RegistrationViewSet
 
 router = routers.DefaultRouter()
 
-router.register("courses", CourseViewSet)
+router.register("events", CodexEventViewSet)
 router.register(
-    r"courses/(?P<course_id>\d+)/registrations",
+    r"events/(?P<event_id>\d+)/registrations",
     RegistrationViewSet,
     basename="registration",
 )
