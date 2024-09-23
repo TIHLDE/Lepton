@@ -11,7 +11,11 @@ from app.common.viewsets import BaseViewSet
 from app.group.filters.group import GroupFilter
 from app.group.models import Group
 from app.group.serializers import GroupSerializer, GroupStatisticsSerializer
-from app.group.serializers.group import GroupListSerializer, GroupCreateSerializer, SimpleGroupSerializer
+from app.group.serializers.group import (
+    GroupListSerializer,
+    GroupCreateSerializer,
+    SimpleGroupSerializer,
+)
 from app.group.mixins import APIGroupErrorsMixin
 
 
