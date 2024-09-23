@@ -2,7 +2,9 @@ from rest_framework import status
 
 import pytest
 
-from app.common.enums import AdminGroup, GroupType, MembershipType
+from app.common.enums import AdminGroup
+from app.common.enums import NativeGroupType as GroupType
+from app.common.enums import NativeMembershipType as MembershipType
 from app.forms.tests.form_factories import GroupFormFactory
 from app.group.factories import GroupFactory, MembershipFactory
 from app.group.models import Group

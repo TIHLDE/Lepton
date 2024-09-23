@@ -4,7 +4,7 @@ from django.utils import timezone
 
 import pytest
 
-from app.common.enums import GroupType
+from app.common.enums import NativeGroupType as GroupType
 from app.content.models.event import Event
 from app.group.models.group import Group
 from app.payment.factories.paid_event_factory import PaidEventFactory

@@ -87,6 +87,7 @@ INSTALLED_APPS = [
     "dj_rest_auth",
     "dry_rest_permissions",
     "polymorphic",
+    "drf_yasg",
     # Our apps
     "app.common",
     "app.communication",
@@ -112,17 +113,18 @@ REST_FRAMEWORK = {
     "EXCEPTION_HANDLER": "app.util.exceptions.exception_handler",
     "TEST_REQUEST_DEFAULT_FORMAT": "json",
 }
-SWAGGER_SETTINGS = {
-    "SECURITY_DEFINITIONS": {
-        "DRF Token": {
-            "type": "apiKey",
-            "description": "Auth token to be passed as a header as custom authentication. "
-            "Can be found in the django admin panel.",
-            "name": "X-CSRF-Token",
-            "in": "header",
-        }
-    }
-}
+# SWAGGER_SETTINGS = {
+#     "SECURITY_DEFINITIONS": {
+#         "DRF Token": {
+#             "type": "apiKey",
+#             "description": "Auth token to be passed as a header as custom authentication. "
+#             "Can be found in the django admin panel.",
+#             "name": "X-CSRF-Token",
+#             "in": "header",
+#         }
+#     }
+# }
+SWAGGER_SETTINGS = {"SECURITY_DEFINITIONS": {"Basic": {"type": "basic"}}}
 # Django rest auth framework
 REST_AUTH_SERIALIZERS = {
     "PASSWORD_RESET_SERIALIZER": "app.authentication.serializers.reset_password.PasswordResetSerializer",

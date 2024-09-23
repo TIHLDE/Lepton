@@ -1,3 +1,4 @@
+
 # CHANGELOG
 
 ## Tegnforklaring
@@ -14,6 +15,8 @@
 
 ## Neste versjon
 
+- ⚡**Swagger**. La til en GitHub Action for å verifisere at Swagger er oppe og går.
+- ✨**Swagger**. API dokumentasjon er nå tilgjengelig med Swagger.
 - ⚡**Profil**. Endret rekkefølge på tidligere arrangementer slik at nyeste kommer først.
 
 ## Versjon 2024.09.14

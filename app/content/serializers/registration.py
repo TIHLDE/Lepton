@@ -7,7 +7,7 @@ from app.content.serializers.user import (
     UserListSerializer,
 )
 from app.content.util.registration_utils import get_payment_expiredate
-from app.forms.enums import EventFormType
+from app.forms.enums import NativeEventFormType as EventFormType
 from app.forms.serializers.submission import SubmissionInRegistrationSerializer
 from app.payment.enums import OrderStatus
 from app.payment.util.order_utils import has_paid_order

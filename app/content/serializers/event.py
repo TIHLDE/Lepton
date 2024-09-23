@@ -3,7 +3,7 @@ from rest_framework import serializers
 from dry_rest_permissions.generics import DRYPermissionsField
 from sentry_sdk import capture_exception
 
-from app.common.enums import GroupType
+from app.common.enums import NativeGroupType as GroupType
 from app.common.serializers import BaseModelSerializer
 from app.content.models import Event, PriorityPool
 from app.content.serializers.category import SimpleCategorySerializer
@@ -21,16 +21,18 @@ from app.payment.serializers.paid_event import PaidEventCreateSerializer
 
 class EventSerializer(serializers.ModelSerializer):
     expired = serializers.BooleanField(read_only=True)
-    priority_pools = PriorityPoolSerializer(many=True, required=False)
+    priority_pools = PriorityPoolSerializer(many=True, read_only=True, required=False)
     evaluation = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
     survey = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
     organizer = SimpleGroupSerializer(read_only=True)
-    permissions = DRYPermissionsField(actions=["write", "read"], object_only=True)
+    permissions = DRYPermissionsField(
+        actions=["write", "read"], object_only=True, read_only=True
+    )
     paid_information = serializers.SerializerMethodField(
         required=False, allow_null=True
     )
     contact_person = DefaultUserSerializer(read_only=True, required=False)
-    reactions = ReactionSerializer(required=False, many=True)
+    reactions = ReactionSerializer(read_only=True, many=True)
     category = SimpleCategorySerializer(read_only=True)
 
     class Meta:

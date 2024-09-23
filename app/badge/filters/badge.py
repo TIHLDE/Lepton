@@ -4,7 +4,7 @@ from django_filters.rest_framework.filterset import FilterSet
 
 from app.badge.models import BadgeCategory, UserBadge
 from app.badge.models.badge import Badge
-from app.common.enums import GroupType
+from app.common.enums import NativeGroupType as GroupType
 from app.content.models import User
 from app.group.models.membership import Membership
 

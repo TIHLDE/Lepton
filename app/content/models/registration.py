@@ -6,7 +6,7 @@ from django.db.models import Q
 
 from sentry_sdk import capture_exception
 
-from app.common.enums import StrikeEnum
+from app.common.enums import NativeStrikeEnum as StrikeEnum
 from app.common.permissions import BasePermissionModel
 from app.communication.enums import UserNotificationSettingType
 from app.communication.notifier import Notify
@@ -20,7 +20,7 @@ from app.content.models.event import Event
 from app.content.models.strike import create_strike
 from app.content.models.user import User
 from app.content.util.registration_utils import get_payment_expiredate
-from app.forms.enums import EventFormType
+from app.forms.enums import NativeEventFormType as EventFormType
 from app.payment.util.order_utils import check_if_order_is_paid, has_paid_order
 from app.util import now
 from app.util.models import BaseModel

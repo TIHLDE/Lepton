@@ -3,7 +3,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status
 from rest_framework.response import Response
 
-from app.common.enums import StrikeEnum
+from app.common.enums import NativeStrikeEnum as StrikeEnum
 from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission
 from app.common.viewsets import BaseViewSet
@@ -42,7 +42,7 @@ class StrikeViewSet(BaseViewSet):
     def create(self, request):
         if "enum" in request.data:
             enum = request.data["enum"]
-            if enum not in StrikeEnum._member_names_:
+            if enum not in StrikeEnum.all():
                 return Response(
                     {"detail": "Fant ikke Enum"}, status=status.HTTP_404_NOT_FOUND
                 )

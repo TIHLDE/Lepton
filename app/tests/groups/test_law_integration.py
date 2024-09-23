@@ -4,7 +4,8 @@ from rest_framework import status
 
 import pytest
 
-from app.common.enums import AdminGroup, MembershipType
+from app.common.enums import AdminGroup
+from app.common.enums import NativeMembershipType as MembershipType
 from app.group.factories.group_factory import GroupFactory
 from app.group.factories.law_factory import LawFactory
 from app.group.factories.membership_factory import MembershipFactory

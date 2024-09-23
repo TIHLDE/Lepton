@@ -6,13 +6,14 @@ from rest_framework import status
 
 import pytest
 
-from app.common.enums import AdminGroup, GroupType
+from app.common.enums import AdminGroup
+from app.common.enums import NativeGroupType as GroupType
 from app.content.factories.event_factory import EventFactory
 from app.content.factories.registration_factory import RegistrationFactory
 from app.content.factories.strike_factory import StrikeFactory
 from app.content.factories.user_factory import UserFactory
 from app.content.models import User
-from app.forms.enums import EventFormType
+from app.forms.enums import NativeEventFormType as EventFormType
 from app.forms.tests.form_factories import EventFormFactory, SubmissionFactory
 from app.group.models import Group
 from app.util.test_utils import add_user_to_group_with_name

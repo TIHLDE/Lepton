@@ -12,6 +12,8 @@ RUN apt-get update \
   && apt-get install -y build-essential \
   # mysqlclient dependencies
   && apt-get install -y default-libmysqlclient-dev \
+  # curl for making HTTP requests
+  && apt-get install -y curl \
   # cleaning up unused files
   && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
   && rm -rf /var/lib/apt/lists/*

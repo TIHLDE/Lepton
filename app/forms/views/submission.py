@@ -10,7 +10,7 @@ from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission
 from app.common.viewsets import BaseViewSet
 from app.forms.csv_writer import SubmissionsCsvWriter
-from app.forms.enums import EventFormType
+from app.forms.enums import NativeEventFormType as EventFormType
 from app.forms.mixins import APIFormErrorsMixin
 from app.forms.models.forms import EventForm, Form, Submission
 from app.forms.serializers.submission import SubmissionSerializer

@@ -1,7 +1,7 @@
 import pytest
 
 from app.content.factories import RegistrationFactory, UserFactory
-from app.forms.enums import EventFormType
+from app.forms.enums import NativeEventFormType as EventFormType
 from app.forms.tests.form_factories import EventFormFactory, SubmissionFactory
 
 pytestmark = pytest.mark.django_db
