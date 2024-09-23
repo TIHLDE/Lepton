@@ -164,5 +164,4 @@ def test_create_new_group_with_invalid_group_type_as_index(group_type, index_mem
 
     response = client.post(url, data=data)
 
-    print(response)
     assert response.status_code == status.HTTP_400_BAD_REQUEST

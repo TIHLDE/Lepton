@@ -19,7 +19,7 @@ from app.group.serializers.group import (
 from app.group.mixins import APIGroupErrorsMixin
 
 
-class GroupViewSet(BaseViewSet, ActionMixin, APIGroupErrorsMixin):
+class GroupViewSet(APIGroupErrorsMixin, BaseViewSet, ActionMixin):
     serializer_class = GroupSerializer
     permission_classes = [BasicViewPermission]
     filter_backends = [DjangoFilterBackend]
