@@ -102,6 +102,7 @@ INSTALLED_APPS = [
     "app.payment",
     "app.kontres",
     "app.emoji",
+    "app.index",
 ]
 
 # Django rest framework
