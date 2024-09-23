@@ -5,6 +5,7 @@ from django.db import models
 from enumchoicefield import ChoiceEnum
 
 
+# This can't be removed because it is used in the migrations. It is not used in the code.
 class UserClass(ChoiceEnum):
     FIRST = "1. Klasse"
     SECOND = "2. Klasse"
@@ -14,6 +15,23 @@ class UserClass(ChoiceEnum):
     ALUMNI = "Alumni"
 
 
+class NativeUserClass(models.TextChoices):
+    FIRST = "FIRST", "1. Klasse"
+    SECOND = "SECOND", "2. Klasse"
+    THIRD = "THIRD", "3. Klasse"
+    FOURTH = "FOURTH", "4. Klasse"
+    FIFTH = "FIFTH", "5. Klasse"
+    ALUMNI = "ALUMNI", "Alumni"
+
+
+def get_user_class_number(user_class: NativeUserClass) -> int:
+    _class = user_class.label
+    if user_class == NativeUserClass.ALUMNI:
+        return 6
+    return int(_class.split(".")[0])
+
+
+# This can't be removed because it is used in the migrations. It is not used in the code
 class UserStudy(ChoiceEnum):
     DATAING = "Dataingeniør"
     DIGFOR = "Digital forretningsutvikling"
@@ -23,7 +41,16 @@ class UserStudy(ChoiceEnum):
     INFO = "Informasjonsbehandling"
 
 
-class AdminGroup(ChoiceEnum):
+class NativeUserStudy(models.TextChoices):
+    DATAING = "DATAING", "Dataingeniør"
+    DIGFOR = "DIGFOR", "Digital forretningsutvikling"
+    DIGINC = "DIGINC", "Digital infrastruktur og cybersikkerhet"
+    DIGSAM = "DIGSAM", "Digital samhandling"
+    DRIFT = "DRIFT", "Drift"
+    INFO = "INFO", "Informasjonsbehandling"
+
+
+class AdminGroup(models.TextChoices):
     HS = "HS"
     INDEX = "Index"
     NOK = "Nok"
@@ -40,7 +67,7 @@ class AdminGroup(ChoiceEnum):
         return (cls.HS, cls.INDEX)
 
 
-class Groups(ChoiceEnum):
+class Groups(models.TextChoices):
     TIHLDE = "TIHLDE"
     JUBKOM = "JubKom"
     REDAKSJONEN = "Redaksjonen"
@@ -48,16 +75,12 @@ class Groups(ChoiceEnum):
     PLASK = "Plask"
     DRIFT = "Drift"
 
-
-class AppModel(ChoiceEnum):
-    EVENT = "Event"
-    JOBPOST = "Jobpost"
-    NEWS = "News"
-    USER = "User"
-    CHEATSHEET = "Cheatsheet"
-    WEEKLY_BUSINESS = "Weekly Business"
+    @classmethod
+    def all(cls):
+        return (cls.TIHLDE, cls.JUBKOM, cls.REDAKSJONEN, cls.FONDET, cls.PLASK, cls.DRIFT)
 
 
+# This can't be removed because it is used in the migrations. It is not used in the code.
 class GroupType(ChoiceEnum):
     TIHLDE = "TIHLDE"
     BOARD = "Styre"
@@ -72,9 +95,20 @@ class GroupType(ChoiceEnum):
     def public_groups(cls):
         return [cls.BOARD, cls.SUBGROUP, cls.COMMITTEE, cls.INTERESTGROUP]
 
+
+class NativeGroupType(models.TextChoices):
+    TIHLDE = "TIHLDE", "TIHLDE"
+    BOARD = "BOARD", "Styre"
+    SUBGROUP = "SUBGROUP", "Undergruppe"
+    COMMITTEE = "COMMITTEE", "Komité"
+    STUDYYEAR = "STUDYYEAR", "Studieår"
+    STUDY = "STUDY", "Studie"
+    INTERESTGROUP = "INTERESTGROUP", "Interesse Gruppe"
+    OTHER = "OTHER", "Annet"
+
     @classmethod
-    def all(cls):
-        return list(map(lambda c: (c.name, c.value), cls))
+    def public_groups(cls):
+        return [cls.BOARD, cls.SUBGROUP, cls.COMMITTEE, cls.INTERESTGROUP]
 
 
 class EnvironmentOptions(Enum):
@@ -83,6 +117,7 @@ class EnvironmentOptions(Enum):
     PRODUCTION = "PRODUCTION"
 
 
+# This can't be removed because it is used in the migrations. It is not used in the code
 class CheatsheetType(ChoiceEnum):
     FILE = "Fil"
     GITHUB = "GitHub"
@@ -90,6 +125,14 @@ class CheatsheetType(ChoiceEnum):
     OTHER = "Annet"
 
 
+class NativeCheatsheetType(models.TextChoices):
+    FILE = "FILE", "Fil"
+    GITHUB = "GITHUB", "GitHub"
+    LINK = "LINK", "Link"
+    OTHER = "OTHER", "Annet"
+
+
+# This can't be removed because it is used in the migrations. It is not used in the code
 class MembershipType(ChoiceEnum):
     LEADER = "Leader"
     MEMBER = "Member"
@@ -103,12 +146,34 @@ class MembershipType(ChoiceEnum):
         return tuple((i.name, i.value) for i in cls)
 
 
+class NativeMembershipType(models.TextChoices):
+    LEADER = "LEADER", "Leader"
+    MEMBER = "MEMBER", "Member"
+
+    @classmethod
+    def board_members(cls):
+        return (cls.LEADER,)
+
+
+# This can't be removed because it is used in the migrations. It is not used in the code
 class StrikeEnum(ChoiceEnum):
     PAST_DEADLINE = "PAST_DEADLINE"
     NO_SHOW = "NO_SHOW"
     LATE = "LATE"
     BAD_BEHAVIOR = "BAD_BEHAVIOR"
     EVAL_FORM = "EVAL_FORM"
+
+
+class NativeStrikeEnum(models.TextChoices):
+    PAST_DEADLINE = "PAST_DEADLINE"
+    NO_SHOW = "NO_SHOW"
+    LATE = "LATE"
+    BAD_BEHAVIOR = "BAD_BEHAVIOR"
+    EVAL_FORM = "EVAL_FORM"
+
+    @classmethod
+    def all(cls):
+        return [cls.PAST_DEADLINE, cls.NO_SHOW, cls.LATE, cls.BAD_BEHAVIOR, cls.EVAL_FORM]
 
 
 class CodexGroups(models.TextChoices):

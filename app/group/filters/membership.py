@@ -1,7 +1,7 @@
 from django_filters.filters import BooleanFilter
 from django_filters.rest_framework import FilterSet
 
-from app.common.enums import MembershipType
+from app.common.enums import NativeMembershipType as MembershipType
 from app.group.models import Membership
 
 

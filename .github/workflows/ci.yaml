@@ -76,3 +76,38 @@ jobs:
 
       - name: Tear down the Stack
         run:  docker compose down
+  
+  swagger:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout Code Repository
+        uses: actions/checkout@v4
+
+      - name: Build the Stack
+        run:  docker compose build
+
+      - name: Run the Stack
+        run:  docker compose up -d
+      
+      - name: Wait for Docker container to be up
+        run: |
+          retries=10
+          until docker compose exec web curl -f http://localhost:8000/ || [ $retries -eq 0 ]; do
+            echo "Waiting for container to be up..."
+            retries=$((retries - 1))
+            sleep 5
+          done
+
+      - name: Make HTTP Request to Swagger
+        run: |
+          status_code=$(curl -o /dev/null -s -w "%{http_code}" http://localhost:8000/swagger/?format=openapi)
+          if [ "$status_code" -eq 200 ]; then
+            echo "Swagger UI is up"
+          else
+            echo "Failed to reach Swagger UI, status code: $status_code"
+            exit 1
+          fi
+
+      - name: Tear down the Stack
+        run:  docker compose down
