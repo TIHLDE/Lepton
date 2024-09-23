@@ -3,7 +3,7 @@ from rest_framework import serializers
 
 from app.common.enums import (
     NativeGroupType as GroupType,
-    NativeMembershipType as MembershipType
+    NativeMembershipType as MembershipType,
 )
 from app.common.serializers import BaseModelSerializer
 from app.content.models.user import User
@@ -125,7 +125,7 @@ class GroupStatisticsSerializer(BaseModelSerializer):
         )
 
 
-class GroupCreateSerializer(BaseModelSerializer, ):
+class GroupCreateSerializer(BaseModelSerializer):
     class Meta:
         model = Group
         fields = (
@@ -136,10 +136,9 @@ class GroupCreateSerializer(BaseModelSerializer, ):
 
     def create(self, validated_data):
         group_type = validated_data["type"]
-        print(group_type)
 
-        if str(group_type) not in ("Styre", "Undergruppe", "Komité", "Interesse Gruppe"):
-            print("invalid")
-            raise GroupTypeNotInPublicGroups()
+        print([group.value for group in GroupType.public_groups()])
+        if str(group_type) not in [group.value for group in GroupType.public_groups()]:
+            raise GroupTypeNotInPublicGroups("Ikke gyldig gruppetype")
 
         return super().create(validated_data)

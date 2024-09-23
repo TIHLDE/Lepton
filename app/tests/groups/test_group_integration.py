@@ -23,11 +23,7 @@ def _get_group_put_data(group):
 
 
 def get_group_post_data(type):
-    return {
-        "name": "navn",
-        "slug": "slug",
-        "type": type
-    }
+    return {"name": "navn", "slug": "slug", "type": type}
 
 
 @pytest.mark.django_db
@@ -94,11 +90,11 @@ def test_update_as_user(group, user):
     ],
 )
 def test_update_as_group_user(
-        group,
-        user,
-        group_name,
-        expected_status_code,
-        new_description,
+    group,
+    user,
+    group_name,
+    expected_status_code,
+    new_description,
 ):
     """Tests if diffierent groups ability to update a group"""
     expected_description = new_description if new_description else group.description
@@ -115,8 +111,7 @@ def test_update_as_group_user(
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
-    "group_type",
-    ("BOARD", "SUBGROUP", "COMMITTEE", "INTERESTGROUP")
+    "group_type", ("BOARD", "SUBGROUP", "COMMITTEE", "INTERESTGROUP")
 )
 def test_create_new_group_as_member(member, group_type):
     """Member should not be able to create a new group"""
@@ -131,8 +126,7 @@ def test_create_new_group_as_member(member, group_type):
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
-    "group_type",
-    ("BOARD", "SUBGROUP", "COMMITTEE", "INTERESTGROUP")
+    "group_type", ("BOARD", "SUBGROUP", "COMMITTEE", "INTERESTGROUP")
 )
 def test_create_new_group_as_hs(group_type, admin_user):
     """HS members should be allowed to create a new group"""
@@ -147,8 +141,7 @@ def test_create_new_group_as_hs(group_type, admin_user):
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
-    "group_type",
-    ("BOARD", "SUBGROUP", "COMMITTEE", "INTERESTGROUP")
+    "group_type", ("BOARD", "SUBGROUP", "COMMITTEE", "INTERESTGROUP")
 )
 def test_create_new_group_as_index(group_type, index_member):
     """Index members should be allowed to create a new group"""
@@ -162,10 +155,7 @@ def test_create_new_group_as_index(group_type, index_member):
 
 
 @pytest.mark.django_db
-@pytest.mark.parametrize(
-    "group_type",
-    ("TIHLDE", "STUDYYEAR", "STUDY", "OTHER")
-)
+@pytest.mark.parametrize("group_type", ("TIHLDE", "STUDYYEAR", "STUDY", "OTHER"))
 def test_create_new_group_with_invalid_group_type_as_index(group_type, index_member):
     """Index members with invalid group type should not be allowed to create a new group"""
     client = get_api_client(user=index_member)
@@ -174,4 +164,5 @@ def test_create_new_group_with_invalid_group_type_as_index(group_type, index_mem
 
     response = client.post(url, data=data)
 
+    print(response)
     assert response.status_code == status.HTTP_400_BAD_REQUEST
