@@ -4,8 +4,6 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.status import HTTP_201_CREATED
 
-from sentry_sdk import capture_exception
-
 from app.common.mixins import ActionMixin
 from app.common.permissions import BasicViewPermission
 from app.common.viewsets import BaseViewSet
