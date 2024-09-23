@@ -2,7 +2,10 @@ import uuid
 
 from django.db import models
 
-from app.common.enums import AdminGroup, Groups
+from app.common.enums import (
+    AdminGroup,
+    Groups
+)
 from app.common.permissions import BasePermissionModel, check_has_access
 from app.util.models import BaseModel, OptionalImage
 

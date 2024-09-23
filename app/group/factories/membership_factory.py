@@ -5,7 +5,7 @@ from django.utils import timezone
 import factory
 from factory.django import DjangoModelFactory
 
-from app.common.enums import MembershipType
+from app.common.enums import NativeMembershipType as MembershipType
 from app.content.factories import UserFactory
 from app.group.factories import GroupFactory
 from app.group.models import Membership, MembershipHistory

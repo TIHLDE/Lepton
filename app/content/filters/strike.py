@@ -2,7 +2,7 @@ from django.db.models import Exists, OuterRef
 from django_filters import filters
 from django_filters.rest_framework.filterset import FilterSet
 
-from app.common.enums import GroupType
+from app.common.enums import NativeGroupType as GroupType
 from app.content.models import Strike
 from app.group.models.membership import Membership
 

@@ -1,6 +1,10 @@
 import pytest
 
-from app.common.enums import AdminGroup, GroupType, MembershipType
+from app.common.enums import (
+    AdminGroup,
+    NativeGroupType as GroupType,
+    NativeMembershipType as MembershipType
+)
 from app.group.factories import MembershipFactory
 from app.group.factories.group_factory import GroupFactory
 from app.group.models.membership import Membership, MembershipHistory

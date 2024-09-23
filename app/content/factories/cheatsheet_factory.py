@@ -3,7 +3,11 @@ import uuid
 import factory
 from factory.django import DjangoModelFactory
 
-from app.common.enums import CheatsheetType, UserClass, UserStudy
+from app.common.enums import (
+    NativeCheatsheetType as CheatsheetType,
+    NativeUserClass as UserClass,
+    NativeUserStudy as UserStudy
+)
 from app.content.models import Cheatsheet
 
 
