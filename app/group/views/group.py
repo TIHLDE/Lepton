@@ -15,7 +15,7 @@ from app.group.serializers.group import GroupListSerializer, GroupCreateSerializ
 from app.group.mixins import APIGroupErrorsMixin
 
 
-class GroupViewSet(BaseViewSet, ActionMixin, APIGroupErrorsMixin):
+class GroupViewSet(APIGroupErrorsMixin, BaseViewSet, ActionMixin):
     serializer_class = GroupSerializer
     permission_classes = [BasicViewPermission]
     filter_backends = [DjangoFilterBackend]
@@ -64,23 +64,15 @@ class GroupViewSet(BaseViewSet, ActionMixin, APIGroupErrorsMixin):
 
     def create(self, request, *args, **kwargs):
         """Creates a group if it does not exist"""
-        try:
-            serializer = GroupCreateSerializer(data=request.data, context={"request": request})
-            if serializer.is_valid():
-                group = super().perform_create(serializer)
-                return_serializer = SimpleGroupSerializer(group)
-                return Response(data=return_serializer.data, status=HTTP_201_CREATED)
-            return Response(
-                {"detail": serializer.errors},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        except Exception as e:
-            print(e)
-            capture_exception(e)
-            return Response(
-                {"detail": "Det har skjedd en feil"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            )
+        serializer = GroupCreateSerializer(data=request.data, context={"request": request})
+        if serializer.is_valid():
+            group = super().perform_create(serializer)
+            return_serializer = SimpleGroupSerializer(group)
+            return Response(data=return_serializer.data, status=HTTP_201_CREATED)
+        return Response(
+            {"detail": serializer.errors},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     @action(detail=True, methods=["get"], url_path="statistics")
     def statistics(self, request, *args, **kwargs):

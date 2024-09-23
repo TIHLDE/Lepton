@@ -1,15 +1,14 @@
-from dry_rest_permissions.generics import DRYPermissionsField
 from rest_framework import serializers
 
-from app.common.enums import (
-    NativeGroupType as GroupType,
-    NativeMembershipType as MembershipType
-)
+from dry_rest_permissions.generics import DRYPermissionsField
+
+from app.common.enums import NativeGroupType as GroupType
+from app.common.enums import NativeMembershipType as MembershipType
 from app.common.serializers import BaseModelSerializer
 from app.content.models.user import User
 from app.content.serializers.user import DefaultUserSerializer
-from app.group.models import Group, Membership
 from app.group.exceptions import GroupTypeNotInPublicGroups
+from app.group.models import Group, Membership
 
 
 class SimpleGroupSerializer(BaseModelSerializer):
@@ -125,7 +124,9 @@ class GroupStatisticsSerializer(BaseModelSerializer):
         )
 
 
-class GroupCreateSerializer(BaseModelSerializer, ):
+class GroupCreateSerializer(
+    BaseModelSerializer,
+):
     class Meta:
         model = Group
         fields = (
@@ -136,10 +137,8 @@ class GroupCreateSerializer(BaseModelSerializer, ):
 
     def create(self, validated_data):
         group_type = validated_data["type"]
-        print(group_type)
 
-        if str(group_type) not in ("Styre", "Undergruppe", "Komité", "Interesse Gruppe"):
-            print("invalid")
+        if group_type not in GroupType.public_groups():
             raise GroupTypeNotInPublicGroups()
 
         return super().create(validated_data)

@@ -1,7 +1,7 @@
 import pytest
 from rest_framework import status
 
-from app.common.enums import AdminGroup
+from app.common.enums import AdminGroup, NativeGroupType as GroupType
 from app.util.test_utils import get_api_client
 
 GROUP_URL = "/groups/"
@@ -116,7 +116,7 @@ def test_update_as_group_user(
 @pytest.mark.django_db
 @pytest.mark.parametrize(
     "group_type",
-    ("BOARD", "SUBGROUP", "COMMITTEE", "INTERESTGROUP")
+    GroupType.public_groups()
 )
 def test_create_new_group_as_member(member, group_type):
     """Member should not be able to create a new group"""
@@ -132,7 +132,7 @@ def test_create_new_group_as_member(member, group_type):
 @pytest.mark.django_db
 @pytest.mark.parametrize(
     "group_type",
-    ("BOARD", "SUBGROUP", "COMMITTEE", "INTERESTGROUP")
+    GroupType.public_groups()
 )
 def test_create_new_group_as_hs(group_type, admin_user):
     """HS members should be allowed to create a new group"""
@@ -148,7 +148,7 @@ def test_create_new_group_as_hs(group_type, admin_user):
 @pytest.mark.django_db
 @pytest.mark.parametrize(
     "group_type",
-    ("BOARD", "SUBGROUP", "COMMITTEE", "INTERESTGROUP")
+    GroupType.public_groups()
 )
 def test_create_new_group_as_index(group_type, index_member):
     """Index members should be allowed to create a new group"""
@@ -164,7 +164,7 @@ def test_create_new_group_as_index(group_type, index_member):
 @pytest.mark.django_db
 @pytest.mark.parametrize(
     "group_type",
-    ("TIHLDE", "STUDYYEAR", "STUDY", "OTHER")
+    GroupType.non_public_groups()
 )
 def test_create_new_group_with_invalid_group_type_as_index(group_type, index_member):
     """Index members with invalid group type should not be allowed to create a new group"""
