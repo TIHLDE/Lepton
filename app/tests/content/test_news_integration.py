@@ -2,12 +2,9 @@ from rest_framework import status
 
 import pytest
 
-from app.common.enums import (
-    AdminGroup,
-    Groups,
-    NativeGroupType as GroupType,
-    NativeMembershipType as MembershipType
-)
+from app.common.enums import AdminGroup, Groups
+from app.common.enums import NativeGroupType as GroupType
+from app.common.enums import NativeMembershipType as MembershipType
 from app.content.factories.news_factory import NewsFactory
 from app.content.factories.user_factory import UserFactory
 from app.util.test_utils import add_user_to_group_with_name, get_api_client

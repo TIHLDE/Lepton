@@ -1,4 +1,9 @@
-from app.group.exceptions import APIUserIsNotInGroupException, APIGroupTypeNotInPublicGroupsException, UserIsNotInGroup, GroupTypeNotInPublicGroups
+from app.group.exceptions import (
+    APIGroupTypeNotInPublicGroupsException,
+    APIUserIsNotInGroupException,
+    GroupTypeNotInPublicGroups,
+    UserIsNotInGroup,
+)
 from app.util.mixins import APIErrorsMixin
 
 
@@ -16,5 +21,5 @@ class APIGroupErrorsMixin(APIErrorsMixin):
     def expected_exceptions(self):
         return {
             **super().expected_exceptions,
-            GroupTypeNotInPublicGroups: APIGroupTypeNotInPublicGroupsException
+            GroupTypeNotInPublicGroups: APIGroupTypeNotInPublicGroupsException,
         }

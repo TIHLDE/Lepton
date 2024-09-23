@@ -2,10 +2,7 @@ from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 
-from app.common.enums import (
-    AdminGroup,
-    Groups
-)
+from app.common.enums import AdminGroup, Groups
 from app.common.permissions import BasePermissionModel, check_has_access
 from app.emoji.models.reaction import Reaction
 from app.util.models import BaseModel, OptionalImage

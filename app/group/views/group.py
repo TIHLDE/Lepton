@@ -3,20 +3,21 @@ from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.status import HTTP_201_CREATED
+
 from sentry_sdk import capture_exception
 
 from app.common.mixins import ActionMixin
 from app.common.permissions import BasicViewPermission
 from app.common.viewsets import BaseViewSet
 from app.group.filters.group import GroupFilter
+from app.group.mixins import APIGroupErrorsMixin
 from app.group.models import Group
 from app.group.serializers import GroupSerializer, GroupStatisticsSerializer
 from app.group.serializers.group import (
-    GroupListSerializer,
     GroupCreateSerializer,
+    GroupListSerializer,
     SimpleGroupSerializer,
 )
-from app.group.mixins import APIGroupErrorsMixin
 
 
 class GroupViewSet(APIGroupErrorsMixin, BaseViewSet, ActionMixin):
@@ -68,7 +69,9 @@ class GroupViewSet(APIGroupErrorsMixin, BaseViewSet, ActionMixin):
 
     def create(self, request, *args, **kwargs):
         """Creates a group if it does not exist"""
-        serializer = GroupCreateSerializer(data=request.data, context={"request": request})
+        serializer = GroupCreateSerializer(
+            data=request.data, context={"request": request}
+        )
         if serializer.is_valid():
             group = super().perform_create(serializer)
             return_serializer = SimpleGroupSerializer(group)
