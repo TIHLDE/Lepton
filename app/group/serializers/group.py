@@ -2,13 +2,12 @@ from rest_framework import serializers
 
 from dry_rest_permissions.generics import DRYPermissionsField
 
-from app.common.enums import (
-    NativeGroupType as GroupType,
-    NativeMembershipType as MembershipType
-)
+from app.common.enums import NativeGroupType as GroupType
+from app.common.enums import NativeMembershipType as MembershipType
 from app.common.serializers import BaseModelSerializer
 from app.content.models.user import User
 from app.content.serializers.user import DefaultUserSerializer
+from app.group.exceptions import GroupTypeNotInPublicGroups
 from app.group.models import Group, Membership
 
 
@@ -36,7 +35,6 @@ class SimpleGroupSerializer(BaseModelSerializer):
 
 
 class GroupListSerializer(SimpleGroupSerializer):
-
     leader = serializers.SerializerMethodField()
 
     class Meta:
@@ -59,7 +57,6 @@ class GroupListSerializer(SimpleGroupSerializer):
 
 
 class GroupSerializer(GroupListSerializer):
-
     permissions = DRYPermissionsField(
         actions=["write", "read", "group_form"], object_only=True
     )
@@ -88,10 +85,6 @@ class GroupSerializer(GroupListSerializer):
     def update(self, instance, validated_data):
         instance.fines_admin = self.get_fine_admin_user()
         return super().update(instance, validated_data)
-
-    def create(self, validated_data):
-        fines_admin = self.get_fine_admin_user()
-        return Group.objects.create(fines_admin=fines_admin, **validated_data)
 
 
 class GroupStatisticsSerializer(BaseModelSerializer):
@@ -129,3 +122,23 @@ class GroupStatisticsSerializer(BaseModelSerializer):
                 Group.objects.filter(type=GroupType.STUDY),
             ),
         )
+
+
+class GroupCreateSerializer(
+    BaseModelSerializer,
+):
+    class Meta:
+        model = Group
+        fields = (
+            "name",
+            "slug",
+            "type",
+        )
+
+    def create(self, validated_data):
+        group_type = validated_data["type"]
+
+        if group_type not in GroupType.public_groups():
+            raise GroupTypeNotInPublicGroups()
+
+        return super().create(validated_data)

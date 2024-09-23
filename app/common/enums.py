@@ -77,7 +77,14 @@ class Groups(models.TextChoices):
 
     @classmethod
     def all(cls):
-        return (cls.TIHLDE, cls.JUBKOM, cls.REDAKSJONEN, cls.FONDET, cls.PLASK, cls.DRIFT)
+        return (
+            cls.TIHLDE,
+            cls.JUBKOM,
+            cls.REDAKSJONEN,
+            cls.FONDET,
+            cls.PLASK,
+            cls.DRIFT,
+        )
 
 
 # This can't be removed because it is used in the migrations. It is not used in the code.
@@ -109,6 +116,10 @@ class NativeGroupType(models.TextChoices):
     @classmethod
     def public_groups(cls):
         return [cls.BOARD, cls.SUBGROUP, cls.COMMITTEE, cls.INTERESTGROUP]
+
+    @classmethod
+    def non_public_groups(cls):
+        return [cls.TIHLDE, cls.STUDYYEAR, cls.STUDY, cls.OTHER]
 
 
 class EnvironmentOptions(Enum):
@@ -173,7 +184,13 @@ class NativeStrikeEnum(models.TextChoices):
 
     @classmethod
     def all(cls):
-        return [cls.PAST_DEADLINE, cls.NO_SHOW, cls.LATE, cls.BAD_BEHAVIOR, cls.EVAL_FORM]
+        return [
+            cls.PAST_DEADLINE,
+            cls.NO_SHOW,
+            cls.LATE,
+            cls.BAD_BEHAVIOR,
+            cls.EVAL_FORM,
+        ]
 
 
 class CodexGroups(models.TextChoices):

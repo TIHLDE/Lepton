@@ -5,11 +5,8 @@ import pytest
 
 from app.badge.factories import BadgeFactory, UserBadgeFactory
 from app.career.factories import WeeklyBusinessFactory
-from app.common.enums import (
-    AdminGroup,
-    Groups,
-    NativeMembershipType as MembershipType
-)
+from app.common.enums import AdminGroup, Groups
+from app.common.enums import NativeMembershipType as MembershipType
 from app.communication.factories import (
     BannerFactory,
     NotificationFactory,

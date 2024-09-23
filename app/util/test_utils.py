@@ -2,11 +2,9 @@ from django.db.transaction import atomic
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
 
-from app.common.enums import (
-    AdminGroup,
-    NativeGroupType as GroupType,
-    NativeMembershipType as MembershipType
-)
+from app.common.enums import AdminGroup
+from app.common.enums import NativeGroupType as GroupType
+from app.common.enums import NativeMembershipType as MembershipType
 from app.group.models import Group, Membership
 
 
