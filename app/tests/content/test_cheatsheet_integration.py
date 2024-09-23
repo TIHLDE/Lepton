@@ -2,12 +2,10 @@ from rest_framework import status
 
 import pytest
 
-from app.common.enums import (
-    AdminGroup,
-    NativeUserStudy as UserStudy,
-    NativeUserClass as UserClass,
-    get_user_class_number
-)
+from app.common.enums import AdminGroup
+from app.common.enums import NativeUserClass as UserClass
+from app.common.enums import NativeUserStudy as UserStudy
+from app.common.enums import get_user_class_number
 from app.util.test_utils import get_api_client
 
 API_CHEATSHEET_BASE_URL = "/cheatsheets/"

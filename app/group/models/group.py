@@ -1,7 +1,8 @@
 from django.db import models
 from django.utils.text import slugify
 
-from app.common.enums import AdminGroup, NativeGroupType as GroupType
+from app.common.enums import AdminGroup
+from app.common.enums import NativeGroupType as GroupType
 from app.common.permissions import BasePermissionModel, set_user_id
 from app.communication.enums import UserNotificationSettingType
 from app.content.models.user import User
@@ -17,7 +18,9 @@ class Group(OptionalImage, BaseModel, BasePermissionModel):
     description = models.TextField(max_length=1000, null=True, blank=True)
     contact_email = models.EmailField(max_length=200, null=True, blank=True)
     fine_info = models.TextField(default="", blank=True)
-    type = models.CharField(max_length=50, choices=GroupType.choices, default=GroupType.OTHER)
+    type = models.CharField(
+        max_length=50, choices=GroupType.choices, default=GroupType.OTHER
+    )
     fines_activated = models.BooleanField(default=False)
     members = models.ManyToManyField(
         User,

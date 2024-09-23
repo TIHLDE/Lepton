@@ -1,0 +1,1 @@
+from app.index.models.bug import Bug
