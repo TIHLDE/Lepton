@@ -117,6 +117,10 @@ class NativeGroupType(models.TextChoices):
     def public_groups(cls):
         return [cls.BOARD, cls.SUBGROUP, cls.COMMITTEE, cls.INTERESTGROUP]
 
+    @classmethod
+    def non_public_groups(cls):
+        return [cls.TIHLDE, cls.STUDYYEAR, cls.STUDY, cls.OTHER]
+
 
 class EnvironmentOptions(Enum):
     LOCAL = "LOCAL"

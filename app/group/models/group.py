@@ -3,14 +3,18 @@ from django.utils.text import slugify
 
 from app.common.enums import AdminGroup
 from app.common.enums import NativeGroupType as GroupType
-from app.common.permissions import BasePermissionModel, set_user_id
+from app.common.permissions import (
+    BasePermissionModel,
+    check_has_access,
+    set_user_id,
+)
 from app.communication.enums import UserNotificationSettingType
 from app.content.models.user import User
 from app.util.models import BaseModel, OptionalImage
 
 
 class Group(OptionalImage, BaseModel, BasePermissionModel):
-
+    read_access = []
     write_access = AdminGroup.admin()
 
     name = models.CharField(max_length=50)
@@ -133,6 +137,10 @@ class Group(OptionalImage, BaseModel, BasePermissionModel):
             ) or super().has_write_permission(request)
         except (Membership.DoesNotExist, KeyError, AssertionError):
             return super().has_write_permission(request)
+
+    @classmethod
+    def has_create_permission(cls, request):
+        return check_has_access(cls.write_access, request)
 
     def has_object_write_permission(self, request):
         from app.group.models import Membership
