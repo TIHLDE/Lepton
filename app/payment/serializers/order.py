@@ -68,3 +68,9 @@ class OrderCreateSerializer(BaseModelSerializer):
         )
 
         return order
+
+
+class OrderEventRegistrationSerializer(BaseModelSerializer):
+    class Meta:
+        model = Order
+        fields = ("order_id", "status", "created_at")
