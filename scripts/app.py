@@ -29,6 +29,7 @@ def create_app():
         init_dir(app_path, "tests")
         init_dir(app_path, "util")
         init_dir(app_path, "views")
+        init_dir(app_path, "serializers")
 
         # Create the app's files
         init_app_file(app_path, "__init__.py")
