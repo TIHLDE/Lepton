@@ -373,6 +373,7 @@ def test_update_other_user_as_index_user(member, user, api_client):
     assert user.first_name == data["first_name"]
     assert user.last_name == data["last_name"]
 
+
 @pytest.mark.skip(reason="Must be refactored")
 def test_create_as_anonymous(default_client):
     """An anonymous user should be able to create a new user."""
