@@ -2,7 +2,7 @@ requests
 logzero
 aiohttp-cors
 wheel
-mysqlclient == 2.1.1
+mysqlclient == 2.2.4
 sentry-sdk == 2.8.0
 celery == 5.4.0
 azure-storage-blob == 12.13.1
