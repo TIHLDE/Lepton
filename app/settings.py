@@ -37,17 +37,21 @@ DEBUG = os.environ.get("PROD") == None
 ENVIRONMENT = (
     EnvironmentOptions.PRODUCTION
     if os.environ.get("PROD")
-    else EnvironmentOptions.DEVELOPMENT
-    if os.environ.get("DEV")
-    else EnvironmentOptions.LOCAL
+    else (
+        EnvironmentOptions.DEVELOPMENT
+        if os.environ.get("DEV")
+        else EnvironmentOptions.LOCAL
+    )
 )
 
 WEBSITE_URL = (
     "https://tihlde.org"
     if ENVIRONMENT == EnvironmentOptions.PRODUCTION
-    else "https://dev.tihlde.org"
-    if ENVIRONMENT == EnvironmentOptions.DEVELOPMENT
-    else "http://localhost:3000"
+    else (
+        "https://dev.tihlde.org"
+        if ENVIRONMENT == EnvironmentOptions.DEVELOPMENT
+        else "http://localhost:3000"
+    )
 )
 
 AZURE_BLOB_STORAGE_NAME = "tihldestorage.blob.core.windows.net"
@@ -102,6 +106,7 @@ INSTALLED_APPS = [
     "app.payment",
     "app.kontres",
     "app.emoji",
+    "app.codex",
 ]
 
 # Django rest framework

@@ -2,7 +2,7 @@ from rest_framework import status
 
 import pytest
 
-from app.common.enums import CodexGroups
+from app.codex.enums import CodexGroups
 from app.content.factories import MinuteFactory
 from app.group.models import Group
 from app.util.test_utils import add_user_to_group_with_name, get_api_client

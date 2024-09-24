@@ -98,7 +98,8 @@ def test_create_user_badge_for_different_active_dates(
 ):
     """Tests several arguments for active_from and active_to dates and checks whether response is expected.
     Badge is not active if active_from is later than now or active_to is earlier than now.
-    If active_to/from is None, it is treated as infinitly far in the past for active_from and in the future for active_to."""
+    If active_to/from is None, it is treated as infinitly far in the past for active_from and in the future for active_to.
+    """
 
     badge = BadgeFactory(active_to=active_to, active_from=active_from)
     url = _get_user_badges_url()
