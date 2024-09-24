@@ -1,5 +1,3 @@
-from rest_framework import serializers
-
 from app.codex.models.registration import CodexEventRegistration
 from app.common.serializers import BaseModelSerializer
 from app.content.serializers.user import UserListSerializer
