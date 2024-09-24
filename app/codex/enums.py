@@ -14,7 +14,7 @@ class CodexGroups(models.TextChoices):
         return [cls.INDEX, cls.DRIFT]
 
 
-class CodexCourseTags(models.TextChoices):
+class CodexEventTags(models.TextChoices):
     WORKSHOP = "Workshop"
     LECTURE = "Lecture"
 

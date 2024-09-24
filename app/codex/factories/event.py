@@ -12,7 +12,7 @@ class CodexEventFactory(DjangoModelFactory):
     class Meta:
         model = CodexEvent
 
-    title = factory.Sequence(lambda n: f"Course {n}")
+    title = factory.Sequence(lambda n: f"Event {n}")
     description = factory.Faker("text")
     start_date = timezone.now() + timedelta(days=10)
 

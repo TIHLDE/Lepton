@@ -1,6 +1,6 @@
 from django.db import models
 
-from app.codex.enums import CodexCourseTags, CodexGroups
+from app.codex.enums import CodexEventTags, CodexGroups
 from app.codex.util import user_is_leader_of_codex_group
 from app.common.permissions import BasePermissionModel
 from app.content.models import User
@@ -21,7 +21,7 @@ class CodexEvent(BaseModel, BasePermissionModel):
     end_registration_at = models.DateTimeField(blank=True, null=True, default=None)
 
     tag = models.CharField(
-        max_length=50, choices=CodexCourseTags.choices, default=CodexCourseTags.LECTURE
+        max_length=50, choices=CodexEventTags.choices, default=CodexEventTags.LECTURE
     )
 
     location = models.CharField(max_length=200, null=True)

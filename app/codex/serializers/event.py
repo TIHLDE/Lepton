@@ -39,7 +39,7 @@ class CodexEventSerializer(BaseModelSerializer):
             "permissions",
             "viewer_is_registered",
         )
-    
+
     def get_viewer_is_registered(self, obj):
         request = self.context.get("request")
         return obj.registrations.filter(user_id=request.user.user_id).exists()

@@ -7,10 +7,10 @@ from app.codex.mixins import APICodexEventErrorsMixin
 from app.codex.models.event import CodexEvent
 from app.codex.serializers import (
     CodexEventCreateSerializer,
-    CodexEventUpdateSerializer,
     CodexEventListSerializer,
-    CodexEventSerializer
-) 
+    CodexEventSerializer,
+    CodexEventUpdateSerializer,
+)
 from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission
 from app.common.viewsets import BaseViewSet
@@ -80,4 +80,6 @@ class CodexEventViewSet(APICodexEventErrorsMixin, BaseViewSet):
 
     def destroy(self, request, *args, **kwargs):
         super().destroy(request, *args, **kwargs)
-        return Response({"detail": "Arrangementet ble slettet"}, status=status.HTTP_200_OK)
+        return Response(
+            {"detail": "Arrangementet ble slettet"}, status=status.HTTP_200_OK
+        )

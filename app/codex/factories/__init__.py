@@ -1,2 +1,2 @@
-from app.codex.factories.course import CodexEventFactory
-from app.codex.factories.registration import CourseRegistrationFactory
+from app.codex.factories.event import CodexEventFactory
+from app.codex.factories.registration import CodexEventRegistrationFactory

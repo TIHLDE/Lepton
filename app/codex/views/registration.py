@@ -56,5 +56,6 @@ class RegistrationViewSet(BaseViewSet):
     def destroy(self, request, *args, **kwargs):
         super().destroy(request, *args, **kwargs)
         return Response(
-            {"detail": "Påmeldingen for arrangementet ble slettet"}, status=status.HTTP_200_OK
+            {"detail": "Påmeldingen for arrangementet ble slettet"},
+            status=status.HTTP_200_OK,
         )
