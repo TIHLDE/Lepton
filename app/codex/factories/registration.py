@@ -1,15 +1,15 @@
 import factory
 from factory.django import DjangoModelFactory
 
-from app.codex.factories.course import CourseFactory
-from app.codex.models.registration import CourseRegistration
+from app.codex.factories.course import CodexEventFactory
+from app.codex.models.registration import CodexEventRegistration
 from app.content.factories.user_factory import UserFactory
 
 
 class CourseRegistrationFactory(DjangoModelFactory):
     class Meta:
-        model = CourseRegistration
+        model = CodexEventRegistration
 
     user = factory.SubFactory(UserFactory)
-    course = factory.SubFactory(CourseFactory)
+    course = factory.SubFactory(CodexEventFactory)
     order = 0
