@@ -125,7 +125,7 @@ def test_create_makes_group_if_not_found(group, user):
 @pytest.mark.django_db
 def test_create_return_group_if_found(group, user):
 
-    """Tests if that a group is returned if it does exits when trying to create  a group"""
+    """Tests if that a group is returned if it does exits when trying to create a group"""
 
     name = group.name
 

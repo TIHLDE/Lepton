@@ -1,104 +1,138 @@
+from unittest.mock import patch
+
+from rest_framework import status
+
+import pytest
+
+from app.communication.enums import UserNotificationSettingType
+from app.communication.notifier import Notify
+from app.content.factories import UserFactory
+from app.util.test_utils import get_api_client
+
+EMAIL_URL = "/send-email/"
+
+
+def _get_email_url():
+    return f"{EMAIL_URL}"
+
+
 @pytest.mark.django_db
-class TestSendEmailEndpoint:
-    @pytest.fixture(autouse=True)
-    def setup(self):
-        self.client = APIClient()
-        self.url = reverse("send_email")  # Make sure the URL name is correctly set in your `urls.py`
-        self.api_key = API_KEY  # Correct API key
-        self.user = UserFactory()  # Create a test user
-        self.headers = {"HTTP_EMAIL_API_KEY": self.api_key}
+@patch.object(Notify, "send", return_value=None)
+def test_send_email_success(mock_send):
+    """
+    Test that the send_email endpoint sends an email successfully.
+    """
+    test_user = UserFactory()
 
-    @patch("app.communication.notifier.Notify.send")
-    def test_send_email_success(self, mock_notify_send):
-        """
-        Test case for successfully sending an email via the send-email/ endpoint.
-        """
-        data = {
-            "user_id": self.user.id,
-            "notification_type": "EVENT_INFO",  # Adjust this to match your enum values
-            "title": "Test Notification",
-            "paragraphs": ["Paragraph 1", "Paragraph 2"],
-        }
+    data = {
+        "user_id": test_user.user_id,
+        "notification_type": "KONTRES",
+        "title": "Test Notification",
+        "paragraphs": ["This is a test paragraph.", "This is another paragraph."],
+    }
 
-        response = self.client.post(self.url, data, format="json", **self.headers)
+    client = get_api_client(user=test_user)
+    url = _get_email_url()
+    headers = {"EMAIL_API_KEY": "your_api_key"}
+    response = client.post(url, data, format="json", **headers)
 
-        # Assert that the request was successful
-        assert response.status_code == 200
-        assert response.data["detail"] == "Notification sent successfully."
+    assert response.status_code == status.HTTP_200_OK
+    mock_send.assert_called_once()
 
-        # Ensure that the Notify.send() method was called
-        mock_notify_send.assert_called_once()
 
-    def test_invalid_api_key(self):
-        """
-        Test case for invalid API key resulting in a 403 Forbidden response.
-        """
-        data = {
-            "user_id": self.user.id,
-            "notification_type": "EVENT_INFO",
-            "title": "Test Notification",
-            "paragraphs": ["Paragraph 1", "Paragraph 2"],
-        }
+@pytest.mark.django_db
+@patch.object(Notify, "send", return_value=None)
+def test_send_email_fails_when_field_missing(mock_send):
+    """
+    Test that the send_email endpoint returns 400 when one of the fields is missing.
+    """
+    test_user = UserFactory()
 
-        # Use an incorrect API key
-        headers = {"HTTP_EMAIL_API_KEY": "wrong_api_key"}
+    data = {
+        "user_id": test_user.user_id,
+        "title": "Test Notification",
+        "paragraphs": ["This is a test paragraph.", "This is another paragraph."],
+    }
 
-        response = self.client.post(self.url, data, format="json", **headers)
+    client = get_api_client(user=test_user)
+    url = _get_email_url()
+    headers = {"EMAIL_API_KEY": "your_api_key"}
+    response = client.post(url, data, format="json", **headers)
 
-        # Assert that the response is Forbidden
-        assert response.status_code == 403
-        assert response.data["detail"] == "Invalid API key"
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    mock_send.assert_not_called()
 
-    def test_missing_required_fields(self):
-        """
-        Test case for missing required fields (e.g., user_id, paragraphs).
-        """
-        data = {
-            "title": "Test Notification",
-            "notification_type": "EVENT_INFO",
-        }
 
-        response = self.client.post(self.url, data, format="json", **self.headers)
+@pytest.mark.django_db
+@patch.object(Notify, "send", return_value=None)
+def test_send_email_fails_when_wrong_api_key(mock_send):
+    """
+    Test that the send_email endpoint returns 403 when the API key is invalid.
+    """
+    test_user = UserFactory()
 
-        # Assert that the response is a Bad Request
-        assert response.status_code == 400
-        assert "user_id" in response.data["detail"]
+    data = {
+        "user_id": test_user.user_id,
+        "notification_type": "KONTRES",
+        "title": "Test Notification",
+        "paragraphs": ["This is a test paragraph.", "This is another paragraph."],
+    }
 
-    def test_user_not_found(self):
-        """
-        Test case for when a non-existent user ID is provided.
-        """
-        data = {
-            "user_id": 9999,  # Non-existent user ID
-            "notification_type": "EVENT_INFO",
-            "title": "Test Notification",
-            "paragraphs": ["Paragraph 1"]
-        }
+    client = get_api_client(user=test_user)
+    url = _get_email_url()
+    headers = {"EMAIL_API_KEY": "wrong_api_key"}
+    response = client.post(url, data, format="json", **headers)
 
-        response = self.client.post(self.url, data, format="json", **self.headers)
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+    mock_send.assert_not_called()
 
-        # Assert that the response is Not Found
-        assert response.status_code == 404
-        assert response.data["detail"] == "User not found."
 
-    @patch("app.communication.notifier.Notify.send")
-    def test_email_created_in_db(self, mock_notify_send):
-        """
-        Test case to ensure that an email is created in the database for the user who has opted in.
-        """
-        # UserFactory is used to create test users, and you could use UserNotificationSettingFactory if settings need to be considered
-        data = {
-            "user_id": self.user.id,
-            "notification_type": "EVENT_INFO",
-            "title": "Test Notification",
-            "paragraphs": ["Paragraph 1", "Paragraph 2"]
-        }
+@pytest.mark.django_db
+@patch.object(Notify, "send", return_value=None)
+def test_send_email_fails_when_user_id_invalid(mock_send):
+    """
+    Test that the send_email endpoint returns 404 when the user id is invalid.
+    """
+    test_user = UserFactory()
 
-        response = self.client.post(self.url, data, format="json", **self.headers)
+    data = {
+        "user_id": 999,
+        "notification_type": "KONTRES",
+        "title": "Test Notification",
+        "paragraphs": ["This is a test paragraph.", "This is another paragraph."],
+    }
 
-        # Assert that the response was successful
-        assert response.status_code == 200
+    client = get_api_client(user=test_user)
+    url = _get_email_url()
+    headers = {"EMAIL_API_KEY": "your_api_key"}
+    response = client.post(url, data, format="json", **headers)
 
-        # Check if Mail was created in the database
-        assert Mail.objects.count() == 1
-        mock_notify_send.assert_called_once()
+    assert response.status_code == status.HTTP_404_NOT_FOUND
+    mock_send.assert_not_called()
+
+
+@pytest.mark.django_db
+@patch.object(Notify, "send", return_value=None)
+@pytest.mark.parametrize(
+    "notification_type", UserNotificationSettingType.get_kontres_and_blitzed()
+)
+def test_email_success_with_kontres_and_blitzed(mock_send, notification_type):
+    """
+    Tests that the send_email endpoint works with both KONTRES and BLITZED notification types.
+    """
+    test_user = UserFactory()
+
+    data = {
+        "user_id": test_user.user_id,
+        "notification_type": notification_type,
+        "title": "Test Notification",
+        "paragraphs": ["This is a test paragraph.", "This is another paragraph."],
+    }
+
+    client = get_api_client(user=test_user)
+    url = _get_email_url()
+    headers = {"EMAIL_API_KEY": "your_api_key"}
+    response = client.post(url, data, format="json", **headers)
+
+    assert response.status_code == status.HTTP_200_OK
+    mock_send.assert_called_once()

@@ -1,12 +1,14 @@
+from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework import status
-from django.contrib.auth.models import User
-from app.communication.notifier import Notify
-from app.communication.enums import UserNotificationSettingType
 
-#Temporary fake api key, will be changed to a proper api key in prod
+from app.communication.enums import UserNotificationSettingType
+from app.communication.notifier import Notify
+from app.content.models import User
+
+# Temporary fake api key, will be changed to a proper api key in prod
 API_KEY = "your_api_key"
+
 
 @api_view(["POST"])
 def send_email(request):
@@ -40,30 +42,32 @@ def send_email(request):
 
         if not user_id or not notification_type or not paragraphs or not title:
             return Response(
-                {"detail": "user_id, event_id, paragraphs and title are required fields."},
+                {
+                    "detail": "user_id, event_id, paragraphs and title are required fields."
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         try:
-            user = User.objects.get(pk=user_id)
+            user = User.objects.get(user_id=user_id)
         except User.DoesNotExist:
             return Response(
                 {"detail": "User not found."},
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        notification = Notify(
+        email = Notify(
             [user],
             f"{title}",
             UserNotificationSettingType(notification_type),
         ).add_paragraph(f"Hei, {user.first_name}!")
 
         for paragraph in paragraphs:
-            notification.add_paragraph(paragraph)
+            email.add_paragraph(paragraph)
 
-        notification.send()
+        email.send()
         return Response(
-            {"detail": "Notification sent successfully."},
+            {"detail": "Email sent successfully."},
             status=status.HTTP_200_OK,
         )
     except Exception as e:
