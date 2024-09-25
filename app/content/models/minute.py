@@ -1,6 +1,6 @@
 from django.db import models
 
-from app.codex.enums import CodexGroups
+from app.common.enums import CodexGroups
 from app.common.permissions import BasePermissionModel, check_has_access
 from app.content.enums import MinuteTagEnum
 from app.content.models.user import User
