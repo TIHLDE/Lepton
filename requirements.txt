@@ -5,7 +5,7 @@ wheel
 mysqlclient == 2.1.1
 sentry-sdk == 2.8.0
 celery == 5.4.0
-azure-storage-blob == 12.13.1
+azure-storage-blob == 12.23.0
 python-dotenv ~= 1.0.1
 gunicorn == 23.0.0
 uvicorn == 0.30.6
