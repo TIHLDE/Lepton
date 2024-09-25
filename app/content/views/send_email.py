@@ -1,7 +1,9 @@
+import logging
+
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-import logging
+
 from app.communication.enums import UserNotificationSettingType
 from app.communication.notifier import Notify
 from app.content.models import User

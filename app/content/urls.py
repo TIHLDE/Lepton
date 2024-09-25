@@ -20,8 +20,8 @@ from app.content.views import (
     accept_form,
     delete,
     register_with_feide,
-    upload,
     send_email,
+    upload,
 )
 
 router = routers.DefaultRouter()

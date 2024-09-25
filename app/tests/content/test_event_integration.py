@@ -5,12 +5,9 @@ from rest_framework import status
 
 import pytest
 
-from app.common.enums import (
-    AdminGroup,
-    Groups,
-    NativeGroupType as GroupType,
-    NativeMembershipType as MembershipType
-)
+from app.common.enums import AdminGroup, Groups
+from app.common.enums import NativeGroupType as GroupType
+from app.common.enums import NativeMembershipType as MembershipType
 from app.content.factories import EventFactory, RegistrationFactory, UserFactory
 from app.content.models import Category, Event
 from app.forms.enums import NativeEventFormType as EventFormType
