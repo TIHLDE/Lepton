@@ -1,7 +1,7 @@
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-
+import logging
 from app.communication.enums import UserNotificationSettingType
 from app.communication.notifier import Notify
 from app.content.models import User
@@ -71,7 +71,8 @@ def send_email(request):
             status=status.HTTP_200_OK,
         )
     except Exception as e:
+        logging.error("An error occurred while sending email: %s", str(e))
         return Response(
-            {"detail": f"An unknown error {e} has occurred."},
+            {"detail": "An internal error has occurred."},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
