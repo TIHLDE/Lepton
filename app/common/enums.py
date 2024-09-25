@@ -31,22 +31,19 @@ def get_user_class_number(user_class: NativeUserClass) -> int:
     return int(_class.split(".")[0])
 
 
-def get_user_class_name(user_class: int) -> NativeUserClass:
-    match user_class:
-        case 1:
-            return NativeUserClass.FIRST
-        case 2:
-            return NativeUserClass.SECOND
-        case 3:
-            return NativeUserClass.THIRD
-        case 4:
-            return NativeUserClass.FOURTH
-        case 5:
-            return NativeUserClass.FIFTH
-        case 6:
-            return NativeUserClass.ALUMNI
-        case _:
-            raise ValueError("Invalid user class")
+def get_user_class_name(user_class: int):
+    if user_class == 1:
+        return NativeUserClass.FIRST
+    elif user_class == 2:
+        return NativeUserClass.SECOND
+    elif user_class == 3:
+        return NativeUserClass.THIRD
+    elif user_class == 4:
+        return NativeUserClass.FOURTH
+    elif user_class == 5:
+        return NativeUserClass.FIFTH
+    else:
+        return NativeUserClass.ALUMNI
 
 
 # This can't be removed because it is used in the migrations. It is not used in the code
