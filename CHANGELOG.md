@@ -14,6 +14,7 @@
 ---
 
 ## Neste versjon
+## Versjon 2024.09.25
 
 ## Versjon 2024.09.25
 
