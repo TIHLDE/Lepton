@@ -13,7 +13,9 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 
-from app.common.enums import AdminGroup, Groups, GroupType, MembershipType
+from app.common.enums import AdminGroup, Groups
+from app.common.enums import NativeGroupType as GroupType
+from app.common.enums import NativeMembershipType as MembershipType
 from app.common.permissions import check_has_access
 from app.util.models import BaseModel, OptionalImage
 from app.util.utils import disable_for_loaddata, now
@@ -171,7 +173,8 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
         return self.get_unanswered_evaluations().filter(event=event).exists()
 
     def get_unanswered_evaluations(self):
-        from app.forms.models.forms import EventForm, EventFormType
+        from app.forms.enums import NativeEventFormType as EventFormType
+        from app.forms.models.forms import EventForm
 
         date_30_days_ago = now() - timedelta(days=30)
         registrations = self.registrations.filter(has_attended=True)

@@ -7,9 +7,10 @@ from app.content.serializers.user import (
     UserListSerializer,
 )
 from app.content.util.registration_utils import get_payment_expiredate
-from app.forms.enums import EventFormType
+from app.forms.enums import NativeEventFormType as EventFormType
 from app.forms.serializers.submission import SubmissionInRegistrationSerializer
 from app.payment.enums import OrderStatus
+from app.payment.serializers.order import OrderEventRegistrationSerializer
 from app.payment.util.order_utils import has_paid_order
 from app.payment.util.payment_utils import get_payment_order_status
 
@@ -20,6 +21,7 @@ class RegistrationSerializer(BaseModelSerializer):
     has_unanswered_evaluation = serializers.SerializerMethodField()
     has_paid_order = serializers.SerializerMethodField(required=False)
     wait_queue_number = serializers.SerializerMethodField(required=False)
+    payment_orders = serializers.SerializerMethodField(required=False)
 
     class Meta:
         model = Registration
@@ -36,6 +38,7 @@ class RegistrationSerializer(BaseModelSerializer):
             "has_paid_order",
             "wait_queue_number",
             "created_by_admin",
+            "payment_orders",
         )
 
     def get_survey_submission(self, obj):
@@ -54,6 +57,10 @@ class RegistrationSerializer(BaseModelSerializer):
             order.save()
 
         return has_paid_order(orders)
+
+    def get_payment_orders(self, obj):
+        orders = obj.event.orders.filter(user=obj.user)
+        return OrderEventRegistrationSerializer(orders, many=True, read_only=True).data
 
     def create(self, validated_data):
         event = validated_data["event"]

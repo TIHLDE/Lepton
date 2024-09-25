@@ -1,9 +1,9 @@
 from django.db import models
 from django.db.transaction import atomic
 
-from enumchoicefield import EnumChoiceField
-
-from app.common.enums import AdminGroup, GroupType, MembershipType
+from app.common.enums import AdminGroup
+from app.common.enums import NativeGroupType as GroupType
+from app.common.enums import NativeMembershipType as MembershipType
 from app.common.permissions import BasePermissionModel
 from app.content.models.user import User
 from app.group.models.group import Group
@@ -22,7 +22,9 @@ class MembershipHistory(BaseModel):
     group = models.ForeignKey(
         Group, on_delete=models.CASCADE, related_name="membership_histories"
     )
-    membership_type = EnumChoiceField(MembershipType, default=MembershipType.MEMBER)
+    membership_type = models.CharField(
+        max_length=50, choices=MembershipType.choices, default=MembershipType.MEMBER
+    )
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
 
@@ -69,7 +71,9 @@ class Membership(BaseModel, BasePermissionModel):
     group = models.ForeignKey(
         Group, on_delete=models.CASCADE, related_name="memberships"
     )
-    membership_type = EnumChoiceField(MembershipType, default=MembershipType.MEMBER)
+    membership_type = models.CharField(
+        max_length=50, choices=MembershipType.choices, default=MembershipType.MEMBER
+    )
     expiration_date = models.DateField(null=True, blank=True)
 
     class Meta:
@@ -109,7 +113,7 @@ class Membership(BaseModel, BasePermissionModel):
         return self.membership_type == MembershipType.LEADER
 
     def is_board_member(self):
-        return self.membership_type in MembershipType.board_members
+        return self.membership_type in MembershipType.board_members()
 
     def clean(self):
         if (

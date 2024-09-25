@@ -3,6 +3,7 @@ from rest_framework import status
 import pytest
 
 from app.common.enums import AdminGroup
+from app.common.enums import NativeGroupType as GroupType
 from app.util.test_utils import get_api_client
 
 GROUP_URL = "/groups/"
@@ -21,6 +22,10 @@ def _get_group_post_data(group):
 
 def _get_group_put_data(group):
     return {**_get_group_post_data(group), "description": "New Description"}
+
+
+def get_group_post_data(type):
+    return {"name": "navn", "slug": "slug", "type": type}
 
 
 @pytest.mark.django_db
@@ -107,33 +112,53 @@ def test_update_as_group_user(
 
 
 @pytest.mark.django_db
-def test_create_makes_group_if_not_found(group, user):
-    """Tests if that a group is created if it doesn't exits"""
+@pytest.mark.parametrize("group_type", GroupType.public_groups())
+def test_create_new_group_as_member(member, group_type):
+    """Member should not be able to create a new group"""
+    client = get_api_client(user=member)
+    url = GROUP_URL
+    data = get_group_post_data(group_type)
 
-    name = group.name
-
-    client = get_api_client(user=user, group_name=AdminGroup.HS)
-    url = _get_group_url()
-    data = _get_group_post_data(group=group)
     response = client.post(url, data=data)
-    group.refresh_from_db()
 
-    assert group.name == name
-    assert response.status_code == status.HTTP_200_OK
+    assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
 @pytest.mark.django_db
-def test_create_return_group_if_found(group, user):
+@pytest.mark.parametrize("group_type", GroupType.public_groups())
+def test_create_new_group_as_hs(group_type, admin_user):
+    """HS members should be allowed to create a new group"""
+    client = get_api_client(user=admin_user)
+    url = GROUP_URL
+    data = get_group_post_data(group_type)
 
-    """Tests if that a group is returned if it does exits when trying to create  a group"""
-
-    name = group.name
-
-    client = get_api_client(user=user, group_name=AdminGroup.HS)
-    url = _get_group_url()
-    data = _get_group_post_data(group=group)
     response = client.post(url, data=data)
-    group.refresh_from_db()
 
-    assert group.name == name
-    assert response.status_code == status.HTTP_200_OK
+    assert response.status_code == status.HTTP_201_CREATED
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("group_type", GroupType.public_groups())
+def test_create_new_group_as_index(group_type, index_member):
+    """Index members should be allowed to create a new group"""
+    client = get_api_client(user=index_member)
+    url = GROUP_URL
+    data = get_group_post_data(group_type)
+
+    response = client.post(url, data=data)
+
+    assert response.status_code == status.HTTP_201_CREATED
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("group_type", GroupType.non_public_groups())
+def test_create_new_group_with_invalid_group_type_as_index(group_type, index_member):
+    """Index members with invalid group type should not be allowed to create a new group"""
+    client = get_api_client(user=index_member)
+    url = GROUP_URL
+    data = get_group_post_data(group_type)
+
+    response = client.post(url, data=data)
+
+    print(response)
+    assert response.status_code == status.HTTP_400_BAD_REQUEST

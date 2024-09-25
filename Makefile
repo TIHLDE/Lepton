@@ -33,7 +33,7 @@ createsuperuser: ## Create a new django superuser
 
 .PHONY: makemigrations
 makemigrations: ## Create migration files
-	docker compose run --rm web python manage.py makemigrations
+	docker compose run --rm web python manage.py makemigrations ${args}
 
 .PHONY: migrate
 migrate: ## Run django migrations
@@ -97,3 +97,7 @@ pr: ## Pull Request format and checks
 .PHONY: shell
 shell: ## Open an interactive Django shell
 	docker compose run --rm web python manage.py shell
+
+.PHONY: app
+app: ## Create a new Django app
+	python scripts/app.py

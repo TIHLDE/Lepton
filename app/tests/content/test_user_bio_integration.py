@@ -1,7 +1,13 @@
+from datetime import timedelta
+
+from django.utils import timezone
 from rest_framework import status
 
 import pytest
 
+from app.content.factories.event_factory import EventFactory
+from app.content.factories.registration_factory import RegistrationFactory
+from app.content.models.registration import Registration
 from app.content.models.user_bio import UserBio
 from app.util.test_utils import get_api_client
 
@@ -122,3 +128,67 @@ def test_destroy_other_bios(member, user_bio):
 
     assert response.status_code == status.HTTP_403_FORBIDDEN
     assert len(UserBio.objects.filter(id=user_bio.id))
+
+
+@pytest.mark.django_db
+def test_get_user_events_sorted_when_expired_true(member, api_client):
+    """When the expired filter is 'true', the events should be sorted by start_date in descending order"""
+    event1 = EventFactory(
+        start_date=timezone.now() - timedelta(days=5),
+        end_date=timezone.now() - timedelta(days=4),
+    )
+    event2 = EventFactory(
+        start_date=timezone.now() - timedelta(days=10),
+        end_date=timezone.now() - timedelta(days=9),
+    )
+    event3 = EventFactory(
+        start_date=timezone.now() - timedelta(days=2),
+        end_date=timezone.now() - timedelta(days=1),
+    )
+
+    RegistrationFactory(user=member, event=event1)
+    RegistrationFactory(user=member, event=event2)
+    RegistrationFactory(user=member, event=event3)
+
+    client = api_client(user=member)
+    response = client.get("/users/me/events/?page=1&expired=true")
+
+    assert response.status_code == status.HTTP_200_OK
+
+    event_ids = [event3.id, event1.id, event2.id]
+    returned_event_ids = [event["id"] for event in response.data["results"]]
+
+    assert returned_event_ids == event_ids
+
+
+@pytest.mark.django_db
+def test_get_user_events_unsorted_when_expired_false(member, api_client):
+    """When the expired filter is not 'true', the events should not be sorted by start_date"""
+    event1 = EventFactory(
+        start_date=timezone.now() + timedelta(days=5),
+        end_date=timezone.now() + timedelta(days=6),
+    )
+    event2 = EventFactory(
+        start_date=timezone.now() + timedelta(days=10),
+        end_date=timezone.now() + timedelta(days=11),
+    )
+    event3 = EventFactory(
+        start_date=timezone.now() + timedelta(days=1),
+        end_date=timezone.now() + timedelta(days=2),
+    )
+
+    RegistrationFactory(user=member, event=event1)
+    RegistrationFactory(user=member, event=event2)
+    RegistrationFactory(user=member, event=event3)
+
+    client = api_client(user=member)
+    response = client.get("/users/me/events/?page=1&expired=false")
+
+    assert response.status_code == status.HTTP_200_OK
+
+    registration_ids = Registration.objects.filter(user=member).values_list(
+        "event_id", flat=True
+    )
+    returned_event_ids = [event["id"] for event in response.data["results"]]
+
+    assert returned_event_ids == list(registration_ids)

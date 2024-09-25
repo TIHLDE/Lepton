@@ -5,7 +5,9 @@ import pytest
 
 from app.badge.factories import BadgeFactory, UserBadgeFactory
 from app.career.factories import WeeklyBusinessFactory
-from app.common.enums import AdminGroup, Groups, MembershipType
+from app.codex.factories import CodexEventFactory, CodexEventRegistrationFactory
+from app.common.enums import AdminGroup, Groups
+from app.common.enums import NativeMembershipType as MembershipType
 from app.communication.factories import (
     BannerFactory,
     NotificationFactory,
@@ -299,3 +301,13 @@ def user_bio():
 @pytest.fixture()
 def minute(user):
     return MinuteFactory(author=user)
+
+
+@pytest.fixture()
+def codex_event():
+    return CodexEventFactory()
+
+
+@pytest.fixture()
+def codex_event_registration():
+    return CodexEventRegistrationFactory()

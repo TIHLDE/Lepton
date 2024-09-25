@@ -9,3 +9,12 @@ class APIUserIsNotInGroupException(APIException):
 
 class UserIsNotInGroup(ValidationError):
     pass
+
+
+class APIGroupTypeNotInPublicGroupsException(APIException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_detail = "Ikke gylde gruppetype"
+
+
+class GroupTypeNotInPublicGroups(ValueError):
+    pass

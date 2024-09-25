@@ -5,7 +5,7 @@ from django.utils import timezone
 import factory
 from factory.django import DjangoModelFactory
 
-from app.common.enums import StrikeEnum
+from app.common.enums import NativeStrikeEnum as StrikeEnum
 from app.content.factories.event_factory import EventFactory
 from app.content.factories.user_factory import UserFactory
 from app.content.models.strike import Strike

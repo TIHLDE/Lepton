@@ -37,17 +37,21 @@ DEBUG = os.environ.get("PROD") == None
 ENVIRONMENT = (
     EnvironmentOptions.PRODUCTION
     if os.environ.get("PROD")
-    else EnvironmentOptions.DEVELOPMENT
-    if os.environ.get("DEV")
-    else EnvironmentOptions.LOCAL
+    else (
+        EnvironmentOptions.DEVELOPMENT
+        if os.environ.get("DEV")
+        else EnvironmentOptions.LOCAL
+    )
 )
 
 WEBSITE_URL = (
     "https://tihlde.org"
     if ENVIRONMENT == EnvironmentOptions.PRODUCTION
-    else "https://dev.tihlde.org"
-    if ENVIRONMENT == EnvironmentOptions.DEVELOPMENT
-    else "http://localhost:3000"
+    else (
+        "https://dev.tihlde.org"
+        if ENVIRONMENT == EnvironmentOptions.DEVELOPMENT
+        else "http://localhost:3000"
+    )
 )
 
 AZURE_BLOB_STORAGE_NAME = "tihldestorage.blob.core.windows.net"
@@ -87,6 +91,7 @@ INSTALLED_APPS = [
     "dj_rest_auth",
     "dry_rest_permissions",
     "polymorphic",
+    "drf_yasg",
     # Our apps
     "app.common",
     "app.communication",
@@ -101,6 +106,7 @@ INSTALLED_APPS = [
     "app.payment",
     "app.kontres",
     "app.emoji",
+    "app.codex",
 ]
 
 # Django rest framework
@@ -112,17 +118,18 @@ REST_FRAMEWORK = {
     "EXCEPTION_HANDLER": "app.util.exceptions.exception_handler",
     "TEST_REQUEST_DEFAULT_FORMAT": "json",
 }
-SWAGGER_SETTINGS = {
-    "SECURITY_DEFINITIONS": {
-        "DRF Token": {
-            "type": "apiKey",
-            "description": "Auth token to be passed as a header as custom authentication. "
-            "Can be found in the django admin panel.",
-            "name": "X-CSRF-Token",
-            "in": "header",
-        }
-    }
-}
+# SWAGGER_SETTINGS = {
+#     "SECURITY_DEFINITIONS": {
+#         "DRF Token": {
+#             "type": "apiKey",
+#             "description": "Auth token to be passed as a header as custom authentication. "
+#             "Can be found in the django admin panel.",
+#             "name": "X-CSRF-Token",
+#             "in": "header",
+#         }
+#     }
+# }
+SWAGGER_SETTINGS = {"SECURITY_DEFINITIONS": {"Basic": {"type": "basic"}}}
 # Django rest auth framework
 REST_AUTH_SERIALIZERS = {
     "PASSWORD_RESET_SERIALIZER": "app.authentication.serializers.reset_password.PasswordResetSerializer",

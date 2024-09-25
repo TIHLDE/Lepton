@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
 
-from app.common.enums import GroupType
+from app.common.enums import NativeGroupType as GroupType
 from app.content import models
 from app.group.models.membership import Membership
 
