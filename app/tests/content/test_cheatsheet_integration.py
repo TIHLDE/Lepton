@@ -47,16 +47,17 @@ def test_list_as_anonymous_user(default_client, cheatsheet):
 
 
 @pytest.mark.django_db
-def test_list_as_member(cheatsheet, member):
+def test_list_cheatsheets_as_member(cheatsheet, member):
     """
     A member of TIHLDE should be able to list all cheatsheets.
     """
     client = get_api_client(user=member)
     url = _get_cheatsheet_url(cheatsheet)
     response = client.get(url)
+    data = response.data
 
     assert response.status_code == status.HTTP_200_OK
-    assert len(response.json())
+    assert len(data.get("results"))
 
 
 @pytest.mark.django_db
