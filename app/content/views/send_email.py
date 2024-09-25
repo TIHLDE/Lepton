@@ -1,4 +1,5 @@
 import logging
+import os
 
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -8,9 +9,6 @@ from app.communication.enums import UserNotificationSettingType
 from app.communication.notifier import Notify
 from app.content.models import User
 
-# Temporary fake api key, will be changed to a proper api key in prod
-API_KEY = "your_api_key"
-
 
 @api_view(["POST"])
 def send_email(request):
@@ -18,7 +16,7 @@ def send_email(request):
     Endpoint for sending a notification and email to a user.
 
     Body should contain:
-    - 'user_id': The ID of the user to notify.
+    - 'user_id_list': A list of user ids to send the email to.
     - 'notification_type': KONTRES or BLITZED.
     - 'title': The title of the notification.
     - 'paragraphs': A list of paragraphs to include in the notification.
@@ -28,53 +26,60 @@ def send_email(request):
 
     """
     try:
-        # Validate API key
-        api_key = request.META.get("EMAIL_API_KEY")
-        if api_key != API_KEY:
+        EMAIL_API_KEY = os.environ.get("EMAIL_API_KEY")
+        api_key = request.META.get("api_key")
+        if api_key != EMAIL_API_KEY:
             return Response(
-                {"detail": "Invalid API key"},
+                {"detail": "Feil API nøkkel"},
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-        # Validate request data
-        user_id = request.data.get("user_id")
+        user_id_list = request.data.get("user_id_list")
         paragraphs = request.data.get("paragraphs")
         title = request.data.get("title")
         notification_type = request.data.get("notification_type")
 
-        if not user_id or not notification_type or not paragraphs or not title:
+        if not isinstance(user_id_list, list) or not user_id_list:
+            return Response(
+                {"detail": "En ikke-tom liste med bruker id-er må inkluderes"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if not isinstance(paragraphs, list) or not paragraphs:
+            return Response(
+                {"detail": "En ikke-tom liste med paragrafer må inkluderes"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if not notification_type or not title:
             return Response(
                 {
-                    "detail": "user_id, event_id, paragraphs and title are required fields."
+                    "detail": "Notifikasjonstype (KONTRES/BLITZED) og tittel må være satt"
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        try:
-            user = User.objects.get(user_id=user_id)
-        except User.DoesNotExist:
+        users = list(User.objects.filter(user_id__in=user_id_list))
+        if not users or len(users) != len(user_id_list):
             return Response(
-                {"detail": "User not found."},
+                {"detail": "En eller flere brukere ble ikke funnet"},
                 status=status.HTTP_404_NOT_FOUND,
             )
 
         email = Notify(
-            [user],
+            users,
             f"{title}",
             UserNotificationSettingType(notification_type),
-        ).add_paragraph(f"Hei, {user.first_name}!")
+        )
 
         for paragraph in paragraphs:
             email.add_paragraph(paragraph)
 
         email.send()
-        return Response(
-            {"detail": "Email sent successfully."},
-            status=status.HTTP_200_OK,
-        )
+        return Response({"detail": "Emailen ble sendt"}, status=status.HTTP_201_CREATED)
     except Exception as e:
-        logging.error("An error occurred while sending email: %s", str(e))
+        print(e)
         return Response(
-            {"detail": "An internal error has occurred."},
+            {"detail": "Det oppsto en feil under sending av email"},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )

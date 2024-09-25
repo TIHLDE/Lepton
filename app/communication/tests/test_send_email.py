@@ -1,3 +1,4 @@
+import os
 from unittest.mock import patch
 
 from rest_framework import status
@@ -10,6 +11,7 @@ from app.content.factories import UserFactory
 from app.util.test_utils import get_api_client
 
 EMAIL_URL = "/send-email/"
+EMAIL_API_KEY = os.environ.get("EMAIL_API_KEY")
 
 
 def _get_email_url():
@@ -25,7 +27,7 @@ def test_send_email_success(mock_send):
     test_user = UserFactory()
 
     data = {
-        "user_id": test_user.user_id,
+        "user_id_list": [test_user.user_id],
         "notification_type": "KONTRES",
         "title": "Test Notification",
         "paragraphs": ["This is a test paragraph.", "This is another paragraph."],
@@ -33,10 +35,10 @@ def test_send_email_success(mock_send):
 
     client = get_api_client(user=test_user)
     url = _get_email_url()
-    headers = {"EMAIL_API_KEY": "your_api_key"}
+    headers = {"api_key": EMAIL_API_KEY}
     response = client.post(url, data, format="json", **headers)
 
-    assert response.status_code == status.HTTP_200_OK
+    assert response.status_code == status.HTTP_201_CREATED
     mock_send.assert_called_once()
 
 
@@ -49,14 +51,14 @@ def test_send_email_fails_when_field_missing(mock_send):
     test_user = UserFactory()
 
     data = {
-        "user_id": test_user.user_id,
+        "user_id_list": [test_user.user_id],
         "title": "Test Notification",
         "paragraphs": ["This is a test paragraph.", "This is another paragraph."],
     }
 
     client = get_api_client(user=test_user)
     url = _get_email_url()
-    headers = {"EMAIL_API_KEY": "your_api_key"}
+    headers = {"api_key": EMAIL_API_KEY}
     response = client.post(url, data, format="json", **headers)
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
@@ -72,7 +74,7 @@ def test_send_email_fails_when_wrong_api_key(mock_send):
     test_user = UserFactory()
 
     data = {
-        "user_id": test_user.user_id,
+        "user_id_list": [test_user.user_id],
         "notification_type": "KONTRES",
         "title": "Test Notification",
         "paragraphs": ["This is a test paragraph.", "This is another paragraph."],
@@ -80,7 +82,7 @@ def test_send_email_fails_when_wrong_api_key(mock_send):
 
     client = get_api_client(user=test_user)
     url = _get_email_url()
-    headers = {"EMAIL_API_KEY": "wrong_api_key"}
+    headers = {"api_key": "wrong_key"}
     response = client.post(url, data, format="json", **headers)
 
     assert response.status_code == status.HTTP_403_FORBIDDEN
@@ -96,7 +98,7 @@ def test_send_email_fails_when_user_id_invalid(mock_send):
     test_user = UserFactory()
 
     data = {
-        "user_id": 999,
+        "user_id_list": [999],
         "notification_type": "KONTRES",
         "title": "Test Notification",
         "paragraphs": ["This is a test paragraph.", "This is another paragraph."],
@@ -104,7 +106,7 @@ def test_send_email_fails_when_user_id_invalid(mock_send):
 
     client = get_api_client(user=test_user)
     url = _get_email_url()
-    headers = {"EMAIL_API_KEY": "your_api_key"}
+    headers = {"api_key": EMAIL_API_KEY}
     response = client.post(url, data, format="json", **headers)
 
     assert response.status_code == status.HTTP_404_NOT_FOUND
@@ -123,7 +125,7 @@ def test_email_success_with_kontres_and_blitzed(mock_send, notification_type):
     test_user = UserFactory()
 
     data = {
-        "user_id": test_user.user_id,
+        "user_id_list": [test_user.user_id],
         "notification_type": notification_type,
         "title": "Test Notification",
         "paragraphs": ["This is a test paragraph.", "This is another paragraph."],
@@ -131,8 +133,8 @@ def test_email_success_with_kontres_and_blitzed(mock_send, notification_type):
 
     client = get_api_client(user=test_user)
     url = _get_email_url()
-    headers = {"EMAIL_API_KEY": "your_api_key"}
+    headers = {"api_key": EMAIL_API_KEY}
     response = client.post(url, data, format="json", **headers)
 
-    assert response.status_code == status.HTTP_200_OK
+    assert response.status_code == status.HTTP_201_CREATED
     mock_send.assert_called_once()
