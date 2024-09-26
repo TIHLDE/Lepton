@@ -40,6 +40,10 @@ from app.kontres.factories import BookableItemFactory, ReservationFactory
 from app.payment.factories.order_factory import OrderFactory
 from app.payment.factories.paid_event_factory import PaidEventFactory
 from app.util.test_utils import add_user_to_group_with_name, get_api_client
+from app.index.factories import (
+    BugFactory,
+    IdeaFactory
+)
 
 
 def _add_user_to_group(user, group):
@@ -311,3 +315,11 @@ def codex_event():
 @pytest.fixture()
 def codex_event_registration():
     return CodexEventRegistrationFactory()
+
+@pytest.fixture()
+def feedback_bug():
+    return BugFactory()
+
+@pytest.fixture()
+def feedback_idea():
+    return IdeaFactory()

@@ -1,12 +1,12 @@
 from app.common.serializers import BaseModelSerializer
-from app.index.models.bug import Bug
+from app.index.models.idea import Idea
 from app.content.serializers.user import SimpleUserSerializer
 
-class BugListSerializer(BaseModelSerializer):
+class IdeaListSerializer(BaseModelSerializer):
     author = SimpleUserSerializer(read_only = True)
 
     class Meta:
-        model = Bug
+        model = Idea
         fields = (
             "id", 
             "title",
@@ -14,3 +14,4 @@ class BugListSerializer(BaseModelSerializer):
             "created_at",
             "author",
         )
+        
