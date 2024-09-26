@@ -1,5 +1,6 @@
 from django.contrib import admin
 
-from app.index.models.bug import Bug
+from app.index import models
 
-admin.site.register(Bug)
+
+admin.site.register(models.Bug)
