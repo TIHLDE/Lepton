@@ -138,3 +138,79 @@ def test_email_success_with_kontres_and_blitzed(mock_send, notification_type):
 
     assert response.status_code == status.HTTP_201_CREATED
     mock_send.assert_called_once()
+
+
+@pytest.mark.django_db
+@patch.object(Notify, "send", return_value=None)
+def test_send_email_success_with_user_id_list(mock_send):
+    """
+    Test that the send_email endpoint sends an email successfully to a list of users.
+    """
+    test_user1 = UserFactory()
+    test_user2 = UserFactory()
+    test_user3 = UserFactory()
+
+    data = {
+        "user_id_list": [
+            test_user.user_id for test_user in [test_user1, test_user2, test_user3]
+        ],
+        "notification_type": "KONTRES",
+        "title": "Test Notification",
+        "paragraphs": ["This is a test paragraph.", "This is another paragraph."],
+    }
+
+    client = get_api_client(user=test_user1)
+    url = _get_email_url()
+    headers = {"api_key": EMAIL_API_KEY}
+    response = client.post(url, data, format="json", **headers)
+
+    assert response.status_code == status.HTTP_201_CREATED
+    mock_send.assert_called_once()
+
+
+@pytest.mark.django_db
+@patch.object(Notify, "send", return_value=None)
+def test_send_email_fails_when_user_id_list_is_empty(mock_send):
+    """
+    Test that the send_email endpoint returns 400 when the user id list is empty.
+    """
+    test_user = UserFactory()
+
+    data = {
+        "user_id_list": [],
+        "notification_type": "KONTRES",
+        "title": "Test Notification",
+        "paragraphs": ["This is a test paragraph.", "This is another paragraph."],
+    }
+
+    client = get_api_client(user=test_user)
+    url = _get_email_url()
+    headers = {"api_key": EMAIL_API_KEY}
+    response = client.post(url, data, format="json", **headers)
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    mock_send.assert_not_called()
+
+
+@pytest.mark.django_db
+@patch.object(Notify, "send", return_value=None)
+def test_send_email_fails_when_user_paragraph_list_is_empty(mock_send):
+    """
+    Test that the send_email endpoint returns 400 when the paragraph list is empty.
+    """
+    test_user = UserFactory()
+
+    data = {
+        "user_id_list": [test_user.user_id],
+        "notification_type": "KONTRES",
+        "title": "Test Notification",
+        "paragraphs": [],
+    }
+
+    client = get_api_client(user=test_user)
+    url = _get_email_url()
+    headers = {"api_key": EMAIL_API_KEY}
+    response = client.post(url, data, format="json", **headers)
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    mock_send.assert_not_called()
