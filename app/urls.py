@@ -54,4 +54,5 @@ urlpatterns = [
     path("badges/", include("app.badge.urls")),
     path("kontres/", include("app.kontres.urls")),
     path("emojis/", include("app.emoji.urls")),
+    path("codex/", include("app.codex.urls")),
 ]
