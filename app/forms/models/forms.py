@@ -63,7 +63,7 @@ class Form(PolymorphicModel, BasePermissionModel):
         return True
 
     @classmethod
-    def has_statistics_permission(cls, request):
+    def has_statistics_permission(cls, _request):
         return True
 
     def has_object_statistics_permission(self, request):

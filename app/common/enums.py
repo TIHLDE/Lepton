@@ -60,11 +60,11 @@ class AdminGroup(models.TextChoices):
 
     @classmethod
     def all(cls):
-        return (cls.HS, cls.INDEX, cls.NOK, cls.PROMO, cls.SOSIALEN, cls.KOK)
+        return cls.HS, cls.INDEX, cls.NOK, cls.PROMO, cls.SOSIALEN, cls.KOK
 
     @classmethod
     def admin(cls):
-        return (cls.HS, cls.INDEX)
+        return cls.HS, cls.INDEX
 
 
 class Groups(models.TextChoices):

@@ -50,5 +50,5 @@ class UserBioViewset(BaseViewSet):
     def destroy(self, request, *args, **kwargs):
         super().destroy(request, *args, **kwargs)
         return Response(
-            {"detail": ("Brukerbio ble slettet")}, status=status.HTTP_200_OK
+            {"detail": "Brukerbio ble slettet"}, status=status.HTTP_200_OK
         )

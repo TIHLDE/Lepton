@@ -155,10 +155,10 @@ def send_html_email(
     returns -> If the mails where sent successfully
     """
 
-    MAX_EMAILS_PER_SENDING = 100
+    max_emails_per_sending = 100
 
     is_success = True
-    for mails in chunk_list(to_mails, MAX_EMAILS_PER_SENDING):
+    for mails in chunk_list(to_mails, max_emails_per_sending):
         try:
             text_content = strip_tags(html)
             email_sender = os.environ.get("EMAIL_USER")
