@@ -13,9 +13,11 @@ def _get_user_notification_setting_post_data(user_notification_setting=None):
         "email": True,
         "website": True,
         "slack": True,
-        "notification_type": user_notification_setting.notification_type
-        if user_notification_setting
-        else UserNotificationSettingType.EVENT_SIGN_OFF_DEADLINE,
+        "notification_type": (
+            user_notification_setting.notification_type
+            if user_notification_setting
+            else UserNotificationSettingType.EVENT_SIGN_OFF_DEADLINE
+        ),
     }
 
 
