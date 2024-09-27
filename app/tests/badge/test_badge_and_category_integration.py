@@ -87,7 +87,8 @@ def test_no_badges_are_shown_when_none_are_public(api_client, admin_user):
 def test_completion_percentage_excludes_all_unregistered_users(badge, api_client):
     """Unregistered users are all users who do not have a membership in the TIHLDE group
     When calculating completing percentage, only members in this group are counted.
-    Creates 4 valid users plus one unregistered user. Result should be 25 == 1/4 * 100"""
+    Creates 4 valid users plus one unregistered user. Result should be 25 == 1/4 * 100
+    """
 
     member_with_badge = UserFactory()
 
