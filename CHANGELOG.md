@@ -15,6 +15,9 @@
 
 ## Neste versjon
 
+## Versjon 2024.09.25
+
+- ✨**Codex arrangementer**. Det kan nå opprettes arrangementer på Codex, som medlemmer av Codex kan melde seg på.
 - ⚡**Betalingsordre**. Man kan nå se historikk over betalingsordre for en påmelding til et arrangement.
 - ✨**Gruppe**. HS kan nå opprette en ny gruppe.
 - ⚡**Swagger**. La til en GitHub Action for å verifisere at Swagger er oppe og går.

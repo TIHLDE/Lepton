@@ -4,7 +4,8 @@ from rest_framework.response import Response
 
 from sentry_sdk import capture_exception
 
-from app.common.enums import UserClass, UserStudy
+from app.common.enums import NativeUserStudy as UserStudy
+from app.common.enums import get_user_class_name
 from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission, is_admin_user
 from app.common.viewsets import BaseViewSet
@@ -24,8 +25,9 @@ class CheatsheetViewSet(BaseViewSet):
 
     def get_object(self):
         if "pk" not in self.kwargs:
+            grade = get_user_class_name(int(self.kwargs["grade"]))
             return self.filter_queryset(self.queryset).filter(
-                grade=UserClass(int(self.kwargs["grade"])),
+                grade=grade,
                 study=UserStudy[self.kwargs["study"]],
             )
 
