@@ -278,21 +278,48 @@ def test_user_detail_strikes_as_user(user, api_client):
     assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
-def test_list_as_anonymous_user(user, api_client):
-    """An anonymous user should not be able to list all users."""
-    UserFactory()
-    client = api_client(user=user)
-    response = client.get(API_USER_BASE_URL)
+@pytest.mark.django_db
+def test_list_private_users_as_anonymous_user(default_client, member):
+    """An anonymous user should not be able to list all users that is private."""
+    member.public_profile = False
+    member.save()
 
-    assert response.status_code == status.HTTP_403_FORBIDDEN
+    response = default_client.get(API_USER_BASE_URL)
+
+    assert response.status_code == status.HTTP_200_OK
+    assert response.data["count"] == 0
 
 
-def test_list_as_member(member, api_client):
-    """A member should be able to list all users."""
+@pytest.mark.django_db
+def test_list_private_users_as_member(member, api_client):
+    """A member should not be able to list all users that is private."""
+    member.public_profile = False
+    member.save()
+
     client = api_client(user=member)
     response = client.get(API_USER_BASE_URL)
 
     assert response.status_code == status.HTTP_200_OK
+    assert response.data["count"] == 0
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "group",
+    (
+        AdminGroup.HS,
+        AdminGroup.INDEX,
+    )
+)
+def test_list_private_users_as_admin_user(member, api_client, group):
+    """An admin should be able to list all users that is private."""
+    add_user_to_group_with_name(member, group)
+
+    client = api_client(user=member)
+    response = client.get(API_USER_BASE_URL)
+
+    assert response.status_code == status.HTTP_200_OK
+    assert response.data["count"] == 1
 
 
 def test_list_as_member_of_admin_group(admin_user, api_client):

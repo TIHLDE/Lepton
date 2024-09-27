@@ -51,12 +51,17 @@ class UserViewSet(BaseViewSet, ActionMixin):
 
     serializer_class = UserSerializer
     permission_classes = [BasicViewPermission]
-    queryset = User.objects.all()
     pagination_class = BasePagination
 
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_class = UserFilter
     search_fields = ["user_id", "first_name", "last_name", "email"]
+
+    def get_queryset(self):
+        is_admin = is_admin_user(self.request)
+        if is_admin:
+            return User.objects.all()
+        return User.objects.filter(public_profile=True)
 
     def get_serializer_class(self):
         if hasattr(self, "action") and self.action == "list":

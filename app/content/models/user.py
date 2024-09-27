@@ -59,7 +59,7 @@ GENDER = (
 
 class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
     write_access = AdminGroup.admin()
-    read_access = [Groups.TIHLDE]
+    read_access = []
 
     user_id = models.CharField(max_length=15, primary_key=True)
     first_name = models.CharField(max_length=50)
@@ -72,6 +72,8 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
     allergy = models.CharField(max_length=250, blank=True)
 
     public_event_registrations = models.BooleanField(default=True)
+
+    public_profile = models.BooleanField(default=True)
 
     tool = models.CharField(max_length=100, blank=True)
 
