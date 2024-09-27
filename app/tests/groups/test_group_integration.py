@@ -4,6 +4,7 @@ import pytest
 
 from app.common.enums import AdminGroup
 from app.common.enums import NativeGroupType as GroupType
+from app.group.factories import GroupFactory
 from app.util.test_utils import get_api_client
 
 GROUP_URL = "/groups/"
@@ -11,6 +12,14 @@ GROUP_URL = "/groups/"
 
 def _get_group_url(group=None):
     return f"{GROUP_URL}{group.slug}/" if (group) else f"{GROUP_URL}"
+
+
+def _get_overview_group_url():
+    return f"{GROUP_URL}?overview=true"
+
+
+def _get_group_type_filtered_list(slug: str):
+    return f"{GROUP_URL}?type={slug}"
 
 
 def _get_group_post_data(group):
@@ -36,6 +45,32 @@ def test_list_as_anonymous_user(default_client):
     response = default_client.get(url)
 
     assert response.status_code == status.HTTP_200_OK
+
+
+@pytest.mark.django_db
+def test_list_overview_of_groups_as_member(member):
+    """Tests if a member can list an overview of groups"""
+
+    client = get_api_client(user=member)
+    url = _get_overview_group_url()
+    response = client.get(url)
+
+    assert response.status_code == status.HTTP_200_OK
+
+
+@pytest.mark.django_db
+def test_list_type_of_groups_as_member(member):
+    """Tests if a member can list a type of groups"""
+
+    GroupFactory(type=GroupType.BOARD)
+    GroupFactory(type=GroupType.COMMITTEE)
+
+    client = get_api_client(user=member)
+    url = _get_group_type_filtered_list(GroupType.BOARD.value)
+    response = client.get(url)
+
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.data) == 1
 
 
 @pytest.mark.django_db
