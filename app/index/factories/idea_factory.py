@@ -1,8 +1,9 @@
 import factory
 from factory.django import DjangoModelFactory
 
-from app.index.models.idea import Idea
 from app.content.factories import UserFactory
+from app.index.models.idea import Idea
+
 
 class IdeaFactory(DjangoModelFactory):
     class Meta:
