@@ -39,7 +39,7 @@ django-mptt == 0.16.0
 # Code quality
 # ------------------------------------------------------------------------------
 pylint
-black == 24.3.0
+black == 24.8.0
 isort
 flake8
 flake8-django
