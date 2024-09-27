@@ -16,7 +16,7 @@ from rest_framework.authtoken.models import Token
 from app.common.enums import AdminGroup, Groups
 from app.common.enums import NativeGroupType as GroupType
 from app.common.enums import NativeMembershipType as MembershipType
-from app.common.permissions import check_has_access
+from app.common.permissions import check_has_access, is_admin_user
 from app.util.models import BaseModel, OptionalImage
 from app.util.utils import disable_for_loaddata, now
 
@@ -221,10 +221,17 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
         )
 
     def has_object_retrieve_permission(self, request):
-        return self == request.user or check_has_access(
-            self.read_access,
-            request,
-        )
+        is_public = self.public_profile
+        is_user = self == request.user
+        is_admin = is_admin_user(request)
+
+        if is_public and check_has_access(self.read_access, request):
+            return True
+
+        if not is_public and (is_user or is_admin):
+            return True
+
+        return False
 
     def has_object_read_permission(self, request):
         return self.has_object_retrieve_permission(request)

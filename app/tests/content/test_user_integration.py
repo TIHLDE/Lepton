@@ -199,6 +199,30 @@ def test_user_actions_self(url, status_code, member, api_client):
     assert response.status_code == status_code
 
 
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    ("url", "status_code"),
+    [
+        ("/", status.HTTP_403_FORBIDDEN),
+        ("/memberships/", status.HTTP_403_FORBIDDEN),
+        ("/memberships-with-fines/", status.HTTP_403_FORBIDDEN),
+        ("/membership-histories/", status.HTTP_403_FORBIDDEN),
+        ("/badges/", status.HTTP_403_FORBIDDEN),
+        ("/events/", status.HTTP_403_FORBIDDEN),
+        ("/forms/", status.HTTP_403_FORBIDDEN),
+        ("/strikes/", status.HTTP_403_FORBIDDEN),
+        ("/data/", status.HTTP_403_FORBIDDEN),
+        ("/permissions/", status.HTTP_403_FORBIDDEN),
+    ],
+)
+def test_user_actions_self_as_anonymous_user(url, status_code, default_client):
+    """An anonymous user should not be able to access any user actions."""
+
+    url = f"{API_USER_BASE_URL}me{url}"
+    response = default_client.get(url)
+    assert response.status_code == status_code
+
+
 @pytest.mark.parametrize(
     ("url", "status_code"),
     [
@@ -246,10 +270,10 @@ def test_user_actions_get_user_as_member(url, status_code, user, member, api_cli
 @pytest.mark.parametrize(
     ("url", "status_code"),
     [
-        ("/", status.HTTP_403_FORBIDDEN),
-        ("/memberships/", status.HTTP_403_FORBIDDEN),
-        ("/membership-histories/", status.HTTP_403_FORBIDDEN),
-        ("/badges/", status.HTTP_403_FORBIDDEN),
+        ("/", status.HTTP_200_OK),
+        ("/memberships/", status.HTTP_200_OK),
+        ("/membership-histories/", status.HTTP_200_OK),
+        ("/badges/", status.HTTP_200_OK),
     ],
 )
 def test_user_actions_get_user_as_not_member(
@@ -309,7 +333,7 @@ def test_list_private_users_as_member(member, api_client):
     (
         AdminGroup.HS,
         AdminGroup.INDEX,
-    )
+    ),
 )
 def test_list_private_users_as_admin_user(member, api_client, group):
     """An admin should be able to list all users that is private."""
@@ -322,10 +346,66 @@ def test_list_private_users_as_admin_user(member, api_client, group):
     assert response.data["count"] == 1
 
 
-def test_list_as_member_of_admin_group(admin_user, api_client):
-    """An admin should be able to list all users."""
-    client = api_client(user=admin_user)
-    response = client.get(API_USER_BASE_URL)
+@pytest.mark.django_db
+def test_retrieve_private_user_as_anoymous_user(default_client, member):
+    """An anonymous user should not be able to retrieve a user that is private."""
+    member.public_profile = False
+    member.save()
+
+    url = _get_user_detail_url(member)
+    response = default_client.get(url)
+
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+@pytest.mark.django_db
+def test_retrieve_public_person_as_anonymous_user(member, api_client):
+    """An anonymous user should be able to retrieve a user that is public."""
+    url = _get_user_detail_url(member)
+    response = api_client().get(url)
+
+    assert response.status_code == status.HTTP_200_OK
+
+
+@pytest.mark.django_db
+def test_retrieve_private_user_as_member(member, api_client):
+    """A member should not be able to retrieve a user that is private."""
+    user = UserFactory(public_profile=False)
+
+    url = _get_user_detail_url(user)
+    response = api_client(user=member).get(url)
+
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "group",
+    (
+        AdminGroup.HS,
+        AdminGroup.INDEX,
+    ),
+)
+def test_retrieve_private_user_as_admin_user(member, api_client, group):
+    """An admin should be able to retrieve a user that is private."""
+    member.public_profile = False
+    member.save()
+    add_user_to_group_with_name(member, group)
+
+    url = _get_user_detail_url(member)
+    response = api_client(user=member).get(url)
+
+    assert response.status_code == status.HTTP_200_OK
+
+
+@pytest.mark.django_db
+def test_retrieve_own_private_user_as_me(member, api_client):
+    """A user should be able to retrieve self even if private, with the pk 'me'."""
+    member.public_profile = False
+    member.save()
+
+    url = f"{API_USER_BASE_URL}me/"
+    response = api_client(user=member).get(url)
 
     assert response.status_code == status.HTTP_200_OK
 
