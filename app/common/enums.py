@@ -31,6 +31,21 @@ def get_user_class_number(user_class: NativeUserClass) -> int:
     return int(_class.split(".")[0])
 
 
+def get_user_class_name(user_class: int):
+    if user_class == 1:
+        return NativeUserClass.FIRST
+    elif user_class == 2:
+        return NativeUserClass.SECOND
+    elif user_class == 3:
+        return NativeUserClass.THIRD
+    elif user_class == 4:
+        return NativeUserClass.FOURTH
+    elif user_class == 5:
+        return NativeUserClass.FIFTH
+    else:
+        return NativeUserClass.ALUMNI
+
+
 # This can't be removed because it is used in the migrations. It is not used in the code
 class UserStudy(ChoiceEnum):
     DATAING = "Dataingeniør"
