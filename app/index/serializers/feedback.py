@@ -22,3 +22,49 @@ class FeedbackListPolymorphicSerializer(PolymorphicSerializer, BaseModelSerializ
             "created_at",
             "author",
         )
+
+class IdeaCreateSerializer(BaseModelSerializer):
+    class Meta:
+        model = Idea
+        fields = (
+            "title",
+            "description",
+        )
+
+
+class BugCreateSerializer(BaseModelSerializer):
+    class Meta:
+        model = Bug
+        fields = (
+            "title",
+            "description",
+        )
+        
+class IdeaUpdateSerializer(BaseModelSerializer):
+    class Meta:
+        model = Feedback
+        fields = (
+            "title",
+            "description",
+            "status",
+        )
+
+        def update(self, instance, validated_data):
+            return super().update(instance, validated_data)
+        
+class BugUpdateSerializer(BaseModelSerializer):
+    class Meta:
+        model = Feedback
+        fields = (
+            "title",
+            "description",
+            "status",
+        )
+
+        def update(self, instance, validated_data):
+            
+            return super().update(instance, validated_data)
+        
+ 
+        
+
