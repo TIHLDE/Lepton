@@ -8,7 +8,6 @@ from app.content.views.accept_form import accept_form
 from app.content.views.news import NewsViewSet
 from app.content.views.page import PageViewSet
 from app.content.views.short_link import ShortLinkViewSet
-from app.content.views.upload import upload, delete
 from app.content.views.strike import StrikeViewSet
 from app.content.views.toddel import ToddelViewSet
 from app.content.views.qr_code import QRCodeViewSet
