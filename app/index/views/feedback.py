@@ -9,6 +9,8 @@ from app.index.serializers.feedback import (
     BugCreateSerializer,
     FeedbackListPolymorphicSerializer,
     IdeaCreateSerializer,
+    BugUpdateSerializer,
+    IdeaUpdateSerializer,
 )
 
 
@@ -42,3 +44,31 @@ class FeedbackViewSet(BaseViewSet):
                 data,
                 status=status.HTTP_201_CREATED,
             )
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    def update(self, request, *_args, **_kwargs):
+        instance = self.get_object()
+        data = request.data
+
+        feedback_type = instance.feedback_type
+
+        if feedback_type == "Idea":
+            serializer = IdeaUpdateSerializer(instance, data=data)
+
+        elif feedback_type == "Bug":
+            serializer = BugUpdateSerializer(instance, data=data)
+
+        if serializer.is_valid():
+            super().perform_update(serializer)
+            return Response(
+                serializer.data,
+                status=status.HTTP_200_OK,
+            )
+
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST,
+        )
