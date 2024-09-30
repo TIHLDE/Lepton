@@ -1,8 +1,15 @@
+from rest_framework import status
+from rest_framework.response import Response
+
 from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission
 from app.common.viewsets import BaseViewSet
 from app.index.models.feedback import Feedback
-from app.index.serializers.feedback import FeedbackListPolymorphicSerializer
+from app.index.serializers.feedback import (
+    BugCreateSerializer,
+    FeedbackListPolymorphicSerializer,
+    IdeaCreateSerializer,
+)
 
 
 class FeedbackViewSet(BaseViewSet):
@@ -11,27 +18,27 @@ class FeedbackViewSet(BaseViewSet):
     pagination_class = BasePagination
     permission_classes = [BasicViewPermission]
 
-    def create(self,request, *_args, **_kwargs):
+    def create(self, request, *_args, **_kwargs):
         data = request.data
 
         feedback_type = data.get("feedback_type")
 
-        if feedback_type == "Idea" :
+        if feedback_type == "Idea":
             serializer = IdeaCreateSerializer(data=data)
 
         elif feedback_type == "Bug":
             serializer = BugCreateSerializer(data=data)
 
+        else:
+            return Response(
+                {"detail": "Ugyldig type tilbakemelding"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         if serializer.is_valid():
             feedback = self.perform_create(serializer)
+            data = FeedbackListPolymorphicSerializer(feedback).data
             return Response(
-                FeedbackListPolymorphicSerializer(feedback).data,
+                data,
                 status=status.HTTP_201_CREATED,
             )
-        
-        return Response(
-            {"detail": "Ugyldig type tilbakemelding"},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-
-
