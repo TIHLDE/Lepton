@@ -51,6 +51,7 @@ class FormSerializer(BaseModelSerializer):
         fields = (
             "id",
             "title",
+            "description",
             "fields",
             "template",
             "resource_type",
