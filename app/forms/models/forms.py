@@ -5,17 +5,12 @@ from django.db import models, transaction
 from ordered_model.models import OrderedModel
 from polymorphic.models import PolymorphicModel
 
-from app.common.enums import (
-    AdminGroup,
-    Groups
-)
+from app.common.enums import AdminGroup, Groups
 from app.common.permissions import BasePermissionModel, check_has_access
 from app.content.models.event import Event
 from app.content.models.user import User
-from app.forms.enums import (
-    NativeFormFieldType as FormFieldType,
-    NativeEventFormType as EventFormType
-)
+from app.forms.enums import NativeEventFormType as EventFormType
+from app.forms.enums import NativeFormFieldType as FormFieldType
 from app.forms.exceptions import (
     DuplicateSubmission,
     FormNotOpenForSubmission,
@@ -29,6 +24,7 @@ class Form(PolymorphicModel, BasePermissionModel):
     write_access = (*AdminGroup.admin(), AdminGroup.NOK)
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=400)
+    description = models.TextField(blank=True, default="")
     template = models.BooleanField(default=False)
 
     viewer_has_answered = None
@@ -118,7 +114,9 @@ class Form(PolymorphicModel, BasePermissionModel):
 class EventForm(Form):
 
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name="forms")
-    type = models.CharField(max_length=40, choices=EventFormType.choices, default=EventFormType.SURVEY)
+    type = models.CharField(
+        max_length=40, choices=EventFormType.choices, default=EventFormType.SURVEY
+    )
 
     class Meta:
         unique_together = ("event", "type")
@@ -218,7 +216,9 @@ class Field(OrderedModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=400)
     form = models.ForeignKey(Form, on_delete=models.CASCADE, related_name="fields")
-    type = models.CharField(max_length=40, choices=FormFieldType.choices, default=FormFieldType.TEXT_ANSWER)
+    type = models.CharField(
+        max_length=40, choices=FormFieldType.choices, default=FormFieldType.TEXT_ANSWER
+    )
     required = models.BooleanField(default=False)
     order_with_respect_to = "form"
 

@@ -3,7 +3,7 @@ from rest_framework import filters, status
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
-from app.common.enums import CodexGroups
+from app.codex.enums import CodexGroups
 from app.common.pagination import BasePagination
 from app.common.permissions import (
     BasicViewPermission,
@@ -79,4 +79,4 @@ class MinuteViewSet(BaseViewSet):
 
     def destroy(self, request, *args, **kwargs):
         super().destroy(request, *args, **kwargs)
-        return Response({"detail": "The minute was deleted"}, status=status.HTTP_200_OK)
+        return Response({"detail": "Dokumentet ble slettet"}, status=status.HTTP_200_OK)

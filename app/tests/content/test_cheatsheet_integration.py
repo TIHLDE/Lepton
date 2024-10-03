@@ -2,12 +2,10 @@ from rest_framework import status
 
 import pytest
 
-from app.common.enums import (
-    AdminGroup,
-    NativeUserStudy as UserStudy,
-    NativeUserClass as UserClass,
-    get_user_class_number
-)
+from app.common.enums import AdminGroup
+from app.common.enums import NativeUserClass as UserClass
+from app.common.enums import NativeUserStudy as UserStudy
+from app.common.enums import get_user_class_number
 from app.util.test_utils import get_api_client
 
 API_CHEATSHEET_BASE_URL = "/cheatsheets/"
@@ -49,16 +47,17 @@ def test_list_as_anonymous_user(default_client, cheatsheet):
 
 
 @pytest.mark.django_db
-def test_list_as_member(cheatsheet, member):
+def test_list_cheatsheets_as_member(cheatsheet, member):
     """
     A member of TIHLDE should be able to list all cheatsheets.
     """
     client = get_api_client(user=member)
     url = _get_cheatsheet_url(cheatsheet)
     response = client.get(url)
+    data = response.data
 
     assert response.status_code == status.HTTP_200_OK
-    assert len(response.json())
+    assert len(data.get("results"))
 
 
 @pytest.mark.django_db

@@ -20,7 +20,6 @@ def create_app():
         os.makedirs(app_path, exist_ok=True)
 
         # Create the app's directories
-        init_dir(app_path, "admin")
         init_dir(app_path, "factories")
         init_dir(app_path, "filters")
         init_dir(app_path, "migrations")
@@ -29,9 +28,21 @@ def create_app():
         init_dir(app_path, "tests")
         init_dir(app_path, "util")
         init_dir(app_path, "views")
+        init_dir(app_path, "serializers")
+
+        # create tests directory
+        TESTS_PATH = os.path.join(BASE_PATH, "tests")
+
+        if app_name in os.listdir(TESTS_PATH):
+            print(f"App '{app_name}' already exists in 'tests'.")
+        else:
+            path = os.path.join(TESTS_PATH, app_name)
+            os.makedirs(os.path.join(TESTS_PATH, app_name), exist_ok=True)
+            init_app_file(path, "__init__.py")
 
         # Create the app's files
         init_app_file(app_path, "__init__.py")
+        init_app_file(app_path, "admin.py")
 
         config_content = f"""from django.apps import AppConfig
 

@@ -1,9 +1,7 @@
 from django_filters.rest_framework import BooleanFilter, CharFilter, FilterSet
 
-from app.common.enums import (
-    Groups,
-    NativeGroupType as GroupType
-)
+from app.common.enums import Groups
+from app.common.enums import NativeGroupType as GroupType
 from app.content.models import User
 from app.content.models.strike import Strike
 
