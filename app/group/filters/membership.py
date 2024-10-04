@@ -16,7 +16,7 @@ class MembershipFilter(FilterSet):
         model = Membership
         fields = ["onlyMembers"]
 
-    def filter_membership_type(self, queryset, name, value):
+    def filter_membership_type(self, queryset, _name, value):
         if value:
             return queryset.filter(membership_type=MembershipType.MEMBER)
         return queryset

@@ -29,7 +29,7 @@ class ShortLink(BaseModel, BasePermissionModel):
         return super().has_write_permission(request)
 
     @classmethod
-    def has_destroy_permission(cls, request):
+    def has_destroy_permission(cls, _request):
         return True
 
     def has_object_write_permission(self, request):

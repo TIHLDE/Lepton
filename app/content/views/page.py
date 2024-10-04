@@ -175,7 +175,7 @@ class PageViewSet(BaseViewSet):
             )
 
     @action(detail=False, methods=["get"])
-    def tree(self, request, *args, **kwargs):
+    def tree(self, _request, *_args, **_kwargs):
         root = Page.objects.get(parent=None)
         serializer = PageTreeSerializer(root)
         return Response(serializer.data, status=status.HTTP_200_OK)

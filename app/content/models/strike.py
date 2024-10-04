@@ -10,7 +10,7 @@ from app.common.permissions import BasePermissionModel, check_has_access
 from app.communication.enums import UserNotificationSettingType
 from app.content.models import Event
 from app.util.models import BaseModel
-from app.util.utils import getTimezone, now
+from app.util.utils import get_timezone, now
 
 
 class Holiday:
@@ -117,10 +117,10 @@ class Strike(BaseModel, BasePermissionModel):
             end = holiday.end
 
             start_date = datetime(
-                self.created_at.year, start[0], start[1], tzinfo=getTimezone()
+                self.created_at.year, start[0], start[1], tzinfo=get_timezone()
             )
             end_date = datetime(
-                self.created_at.year, end[0], end[1], tzinfo=getTimezone()
+                self.created_at.year, end[0], end[1], tzinfo=get_timezone()
             )
 
             if end_date < start_date:
@@ -133,7 +133,7 @@ class Strike(BaseModel, BasePermissionModel):
                 expired_date += smallest_difference + timedelta(days=1)
                 break
 
-        return expired_date.astimezone(getTimezone())
+        return expired_date.astimezone(get_timezone())
 
     @classmethod
     def has_destroy_permission(cls, request):

@@ -9,7 +9,7 @@ from pytz import timezone as pytz_timezone
 logger = logging.getLogger(__name__)
 
 
-def getTimezone():
+def get_timezone():
     return pytz_timezone(settings.TIME_ZONE)
 
 
@@ -18,7 +18,7 @@ def yesterday():
 
 
 def now():
-    return datetime.now(tz=getTimezone())
+    return datetime.now(tz=get_timezone())
 
 
 def tomorrow():

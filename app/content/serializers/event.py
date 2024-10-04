@@ -274,10 +274,10 @@ class EventStatisticsSerializer(BaseModelSerializer):
             "studies",
         )
 
-    def get_has_attended_count(self, obj, *args, **kwargs):
+    def get_has_attended_count(self, obj, *_args, **_kwargs):
         return obj.registrations.filter(is_on_wait=False, has_attended=True).count()
 
-    def get_studyyears(self, obj, *args, **kwargs):
+    def get_studyyears(self, obj, *_args, **_kwargs):
         return filter(
             lambda studyyear: studyyear["amount"] > 0,
             map(
@@ -291,7 +291,7 @@ class EventStatisticsSerializer(BaseModelSerializer):
             ),
         )
 
-    def get_studies(self, obj, *args, **kwargs):
+    def get_studies(self, obj, *_args, **_kwargs):
         return filter(
             lambda study: study["amount"] > 0,
             map(

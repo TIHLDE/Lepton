@@ -52,7 +52,7 @@ class FormViewSet(APIFormErrorsMixin, BaseViewSet):
         return Response({"detail": "Skjemaet ble slettet"}, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=["get"], url_path="statistics")
-    def statistics(self, request, *args, **kwargs):
+    def statistics(self, _request, *_args, **_kwargs):
         form = self.get_object()
         serializer = FormStatisticsSerializer(form)
         return Response(serializer.data, status=status.HTTP_200_OK)

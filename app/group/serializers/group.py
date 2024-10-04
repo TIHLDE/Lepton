@@ -95,7 +95,7 @@ class GroupStatisticsSerializer(BaseModelSerializer):
         model = Group
         fields = ("studyyears", "studies")
 
-    def get_studyyears(self, obj, *args, **kwargs):
+    def get_studyyears(self, obj, *_args, **_kwargs):
         return filter(
             lambda studyyear: studyyear["amount"] > 0,
             map(
@@ -109,7 +109,7 @@ class GroupStatisticsSerializer(BaseModelSerializer):
             ),
         )
 
-    def get_studies(self, obj, *args, **kwargs):
+    def get_studies(self, obj, *_args, **_kwargs):
         return filter(
             lambda study: study["amount"] > 0,
             map(

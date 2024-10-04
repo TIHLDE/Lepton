@@ -5,7 +5,7 @@ import pytest
 
 from app.content.factories import StrikeFactory
 from app.content.models.strike import STRIKE_DURATION_IN_DAYS
-from app.util.utils import getTimezone
+from app.util.utils import get_timezone
 
 
 @pytest.mark.django_db
@@ -30,8 +30,8 @@ def test_strike_is_active_or_not_with_freeze_through_winter_holiday(
     mock_now, today, created_at, expected_result
 ):
     """Strikes are frozen in winter from the 29th of November to the 1st of January."""
-    today = today.replace(tzinfo=getTimezone())
-    created_at = created_at.replace(tzinfo=getTimezone())
+    today = today.replace(tzinfo=get_timezone())
+    created_at = created_at.replace(tzinfo=get_timezone())
 
     mock_now.return_value = today
     strike = StrikeFactory.build(created_at=created_at)
@@ -63,8 +63,8 @@ def test_strike_is_active_or_not_with_freeze_through_summer_holiday(
     mock_now, today, created_at, expected_result
 ):
     """Strikes are frozen in summer from the 10th of May to 15th of August."""
-    today = today.replace(tzinfo=getTimezone())
-    created_at = created_at.replace(tzinfo=getTimezone())
+    today = today.replace(tzinfo=get_timezone())
+    created_at = created_at.replace(tzinfo=get_timezone())
 
     mock_now.return_value = today
     strike = StrikeFactory.build(created_at=created_at)
@@ -89,7 +89,7 @@ def test_strike_is_active_or_not_with_freeze_through_summer_holiday(
 )
 def test_active_days_of_a_strike_with_freeze_through_holidays(created_at, days_active):
     """Days active is the amount of days a strike is active which is at least 20 days"""
-    created_at = created_at.replace(tzinfo=getTimezone())
+    created_at = created_at.replace(tzinfo=get_timezone())
 
     strike = StrikeFactory.build(created_at=created_at)
 
@@ -117,7 +117,7 @@ def test_year_of_expire_date_different_than_created_year_with_freeze_through_win
 ):
     """A strike should have a different year of expired date
     if created less 20 days before the winter holiday"""
-    created_at = created_at.replace(tzinfo=getTimezone())
+    created_at = created_at.replace(tzinfo=get_timezone())
 
     strike = StrikeFactory.build(created_at=created_at)
 

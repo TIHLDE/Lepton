@@ -75,10 +75,10 @@ class Order(BaseModel, BasePermissionModel):
     def has_read_all_permission(cls, request):
         return is_admin_user(request)
 
-    def has_object_update_permission(self, request):
+    def has_object_update_permission(self, _request):
         return False
 
-    def has_object_destroy_permission(self, request):
+    def has_object_destroy_permission(self, _request):
         return False
 
     def has_object_retrieve_permission(self, request):

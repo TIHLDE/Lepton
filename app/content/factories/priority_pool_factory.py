@@ -12,7 +12,7 @@ class PriorityPoolFactory(DjangoModelFactory):
     event = factory.SubFactory(EventFactory)
 
     @factory.post_generation
-    def groups(self, create, extracted, **kwargs):
+    def groups(self, create, extracted, **_kwargs):
         if not create or not extracted:
             # Simple build, do nothing.
             return

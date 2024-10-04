@@ -23,15 +23,15 @@ class UserWithBadgesFilter(FilterSet):
         queryset=BadgeCategory.objects.all(),
     )
 
-    def filter_category(self, queryset, name, value):
+    def filter_category(self, queryset, _name, value):
         return queryset.filter(user_badges__badge__badge_category=value)
 
-    def filter_is_in_study(self, queryset, name, value):
+    def filter_is_in_study(self, queryset, _name, value):
         return queryset.filter(
             memberships__group__slug=value, memberships__group__type=GroupType.STUDY
         )
 
-    def filter_is_in_studyyear(self, queryset, name, value):
+    def filter_is_in_studyyear(self, queryset, _name, value):
         return queryset.filter(
             memberships__group__slug=value, memberships__group__type=GroupType.STUDYYEAR
         )
@@ -49,7 +49,7 @@ class UserWithSpecificBadgeFilter(FilterSet):
     study = filters.NumberFilter(method="filter_study")
     studyyear = filters.NumberFilter(method="filter_studyyear")
 
-    def filter_study(self, queryset, name, value):
+    def filter_study(self, queryset, _name, value):
         return queryset.filter(
             Exists(
                 Membership.objects.filter(
@@ -60,7 +60,7 @@ class UserWithSpecificBadgeFilter(FilterSet):
             )
         )
 
-    def filter_studyyear(self, queryset, name, value):
+    def filter_studyyear(self, queryset, _name, value):
         return queryset.filter(
             Exists(
                 Membership.objects.filter(

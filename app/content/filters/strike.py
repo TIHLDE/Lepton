@@ -11,7 +11,7 @@ class StrikeFilter(FilterSet):
     study = filters.NumberFilter(method="filter_study")
     studyyear = filters.NumberFilter(method="filter_studyyear")
 
-    def filter_study(self, queryset, name, value):
+    def filter_study(self, queryset, _name, value):
         return queryset.filter(
             Exists(
                 Membership.objects.filter(
@@ -22,7 +22,7 @@ class StrikeFilter(FilterSet):
             )
         )
 
-    def filter_studyyear(self, queryset, name, value):
+    def filter_studyyear(self, queryset, _name, value):
         return queryset.filter(
             Exists(
                 Membership.objects.filter(

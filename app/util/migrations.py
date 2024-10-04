@@ -22,7 +22,7 @@ class UpdateContentType(migrations.RunPython):
     def _update_contenttype_func(
         self, old_app: str, old_model: str, new_app: str, new_model: str
     ):
-        def func(apps, schema_editor):
+        def func(_apps, _schema_editor):
             ContentType.objects.filter(app_label=old_app, model=old_model).update(
                 app_label=new_app, model=new_model
             )

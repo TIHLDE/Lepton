@@ -9,6 +9,6 @@ def test_get_getContainerAndNameFromUrl():
     handler = AzureFileHandler(
         url=f"https://{settings.AZURE_BLOB_STORAGE_NAME}/{container_name}/{file_name}"
     )
-    data = handler.getContainerAndNameFromUrl()
+    data = handler.get_container_and_name_from_url()
     assert data[0] == container_name
     assert data[1] == file_name

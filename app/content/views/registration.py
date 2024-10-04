@@ -152,7 +152,7 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
         )
 
     @action(detail=False, methods=["post"], url_path="add")
-    def add_registration(self, request, *args, **kwargs):
+    def add_registration(self, request, *_args, **_kwargs):
         """Add registration to event for admins"""
 
         if not is_admin_group_user(request):

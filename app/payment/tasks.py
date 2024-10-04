@@ -7,7 +7,7 @@ from app.util.tasks import BaseTask
 
 
 @app.task(bind=True, base=BaseTask)
-def check_if_has_paid(self, event_id, registration_id):
+def check_if_has_paid(_self, event_id, registration_id):
     registration = Registration.objects.filter(registration_id=registration_id).first()
     event = Event.objects.filter(id=event_id).first()
 

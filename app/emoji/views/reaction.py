@@ -31,7 +31,7 @@ class ReactionViewSet(BaseViewSet):
             reaction, data=request.data, context={"request": request}
         )
         if serializer.is_valid():
-            reaction = super().perform_update(serializer)
+            super().perform_update(serializer)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
     def destroy(self, request, *args, **kwargs):

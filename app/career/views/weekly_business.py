@@ -30,7 +30,7 @@ class WeeklyBusinessViewSet(BaseViewSet):
         in_future_this_year_filter = Q(year=now().year) & Q(week__gte=week_nr(now()))
         next_year_filter = Q(year__gt=now().year)
         return WeeklyBusiness.objects.filter(
-            (in_future_this_year_filter) | next_year_filter
+            in_future_this_year_filter | next_year_filter
         ).order_by("year", "week")
 
     def list(self, request, *args, **kwargs):

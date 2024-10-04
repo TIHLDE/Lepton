@@ -15,6 +15,8 @@
 
 ## Neste versjon
 
+- 🎨**Overordnet**. Endret variabel og funksjonsnavn til å følge konvensjoner og andre små endringer.
+
 ## Versjon 2024.09.25
 
 - ✨**Codex arrangementer**. Det kan nå opprettes arrangementer på Codex, som medlemmer av Codex kan melde seg på.

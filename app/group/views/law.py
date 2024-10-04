@@ -32,4 +32,4 @@ class LawViewSet(BaseViewSet):
 
     def destroy(self, request, *args, **kwargs):
         super().destroy(request, *args, **kwargs)
-        return Response({"detail": ("Loven ble slettet")}, status=status.HTTP_200_OK)
+        return Response({"detail": "Loven ble slettet"}, status=status.HTTP_200_OK)

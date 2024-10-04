@@ -3,7 +3,7 @@ from app.util.tasks import BaseTask
 
 
 @app.task(bind=True, base=BaseTask)
-def delete_old_log_entries(self, *args, **kwargs):
+def delete_old_log_entries(self, *_args, **_kwargs):
     from datetime import timedelta
 
     from django.contrib.admin.models import LogEntry

@@ -21,12 +21,12 @@ class BannerFilter(FilterSet):
         model = Banner
         fields = ["is_visible", "is_expired"]
 
-    def filter_is_visible(self, queryset, name, value):
+    def filter_is_visible(self, queryset, _name, value):
         if value:
             return queryset.filter(visible_from__lte=now(), visible_until__gte=now())
         return queryset
 
-    def filter_is_expired(self, queryset, name, value):
+    def filter_is_expired(self, queryset, _name, value):
         if value:
             return queryset.filter(visible_until__lt=now())
         return queryset
