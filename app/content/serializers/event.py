@@ -302,3 +302,95 @@ class EventStatisticsSerializer(BaseModelSerializer):
                 Group.objects.filter(type=GroupType.STUDY),
             ),
         )
+    
+
+class EventCategoriesSerializer(BaseModelSerializer):
+    has_attended_count = serializers.SerializerMethodField()
+    studyyears = serializers.SerializerMethodField()
+    studies = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Event
+        fields = (
+            "has_attended_count",
+            "list_count",
+            "waiting_list_count",
+            "studyyears",
+            "studies",
+        )
+
+    def get_has_attended_count(self, obj, *args, **kwargs):
+        return obj.registrations.filter(is_on_wait=False, has_attended=True).count()
+
+    def get_studyyears(self, obj, *args, **kwargs):
+        return filter(
+            lambda studyyear: studyyear["amount"] > 0,
+            map(
+                lambda group: {
+                    "studyyear": group.name,
+                    "amount": obj.registrations.filter(
+                        user__memberships__group=group, is_on_wait=False
+                    ).count(),
+                },
+                Group.objects.filter(type=GroupType.STUDYYEAR),
+            ),
+        )
+
+    def get_studies(self, obj, *args, **kwargs):
+        return filter(
+            lambda study: study["amount"] > 0,
+            map(
+                lambda group: {
+                    "study": group.name,
+                    "amount": obj.registrations.filter(
+                        user__memberships__group=group, is_on_wait=False
+                    ).count(),
+                },
+                Group.objects.filter(type=GroupType.STUDY),
+            ),
+        )
+    
+class EventRegistrationSerializer(BaseModelSerializer):
+    has_attended_count = serializers.SerializerMethodField()
+    studyyears = serializers.SerializerMethodField()
+    studies = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Event
+        fields = (
+            "list_count",
+            "waiting_list_count",
+            "studyyears",
+            "studies",
+        )
+
+    def get_has_attended_count(self, obj, *args, **kwargs):
+        return obj.registrations.filter(is_on_wait=False, has_attended=True).all()
+
+    def get_studyyears(self, obj, *args, **kwargs):
+        return filter(
+            lambda studyyear: studyyear["amount"] > 0,
+            map(
+                lambda group: {
+                    "studyyear": group.name,
+                    "amount": obj.registrations.filter(
+                        user__memberships__group=group, is_on_wait=False
+                    ).count(),
+                },
+                Group.objects.filter(type=GroupType.STUDYYEAR),
+            ),
+        )
+
+    def get_studies(self, obj, *args, **kwargs):
+        return filter(
+            lambda study: study["amount"] > 0,
+            map(
+                lambda group: {
+                    "study": group.name,
+                    "amount": obj.registrations.filter(
+                        user__memberships__group=group, is_on_wait=False
+                    ).count(),
+                },
+                Group.objects.filter(type=GroupType.STUDY),
+            ),
+        )
