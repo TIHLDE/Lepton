@@ -25,7 +25,9 @@ class EventSerializer(serializers.ModelSerializer):
     evaluation = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
     survey = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
     organizer = SimpleGroupSerializer(read_only=True)
-    permissions = DRYPermissionsField(actions=["write", "read"], object_only=True, read_only=True)
+    permissions = DRYPermissionsField(
+        actions=["write", "read"], object_only=True, read_only=True
+    )
     paid_information = serializers.SerializerMethodField(
         required=False, allow_null=True
     )
