@@ -109,3 +109,67 @@ def test_create_feedback_with_both_bug_and_idea_as_member(member, type):
 
     assert response.status_code == status.HTTP_201_CREATED
     assert data["feedback_type"] == type
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "type",
+    ["Bug", "Idea"],
+)
+def test_destroy_feedback_as_index_user(index_member, type):
+    """An Index user should be able to delete other members feedback"""
+
+    url = FEEDBACK_BASE_URL
+    data = get_data(type)
+    client = get_api_client(user=index_member)
+
+    initial_response = client.post(url, data=data)
+
+    feedback_id = initial_response.data["id"]
+
+    url = f"{FEEDBACK_BASE_URL}{feedback_id}/"
+
+    response = client.delete(url)
+
+    assert response.status_code == status.HTTP_200_OK
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "type",
+    ["Bug", "Idea"],
+)
+def test_destroy_your_own_feedback_as_member(member, type):
+    """A user should be able to delete their own feedback as a member"""
+
+    url = FEEDBACK_BASE_URL
+    data = get_data(type)
+    client = get_api_client(user=member)
+
+    initial_response = client.post(url, data=data)
+
+    print(initial_response.data)
+    print(f"Author: {initial_response.data['author']}")
+
+    feedback_id = initial_response.data["id"]
+
+    url = f"{FEEDBACK_BASE_URL}{feedback_id}/"
+
+    response = client.delete(url)
+
+    assert response.status_code == status.HTTP_200_OK
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "type",
+    ["Bug", "Idea"],
+)
+def test_destroy_feedback_as_anonymous_user(default_client, type):
+    """Non TIHLDE users should not be able to delete feedbacks"""
+
+    url = FEEDBACK_BASE_URL
+    data = get_data(type)
+    response = default_client.delete(url, data=data)
+
+    assert response.status_code == status.HTTP_403_FORBIDDEN

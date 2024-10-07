@@ -7,9 +7,9 @@ from app.common.viewsets import BaseViewSet
 from app.index.models.feedback import Feedback
 from app.index.serializers.feedback import (
     BugCreateSerializer,
+    BugUpdateSerializer,
     FeedbackListPolymorphicSerializer,
     IdeaCreateSerializer,
-    BugUpdateSerializer,
     IdeaUpdateSerializer,
 )
 
@@ -26,10 +26,10 @@ class FeedbackViewSet(BaseViewSet):
         feedback_type = data.get("feedback_type")
 
         if feedback_type == "Idea":
-            serializer = IdeaCreateSerializer(data=data)
+            serializer = IdeaCreateSerializer(data=data, context={"request": request})
 
         elif feedback_type == "Bug":
-            serializer = BugCreateSerializer(data=data)
+            serializer = BugCreateSerializer(data=data, context={"request": request})
 
         else:
             return Response(
@@ -74,7 +74,7 @@ class FeedbackViewSet(BaseViewSet):
         )
 
     def destroy(self, request, *_args, **_kwargs):
-        super().perform_destroy(request, *_args, **_kwargs)
+        super().destroy(request, *_args, **_kwargs)
         return Response(
             {"detail": "Tilbakemeldingen ble slettet"},
             status=status.HTTP_200_OK,
