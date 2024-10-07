@@ -72,3 +72,10 @@ class FeedbackViewSet(BaseViewSet):
             serializer.errors,
             status=status.HTTP_400_BAD_REQUEST,
         )
+
+    def destroy(self, request, *_args, **_kwargs):
+        super().perform_destroy(request, *_args, **_kwargs)
+        return Response(
+            {"detail": "Tilbakemeldingen ble slettet"},
+            status=status.HTTP_200_OK,
+        )

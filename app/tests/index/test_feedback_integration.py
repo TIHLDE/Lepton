@@ -91,3 +91,21 @@ def test_create_feedback_as_anonymous_user(default_client, type):
     response = default_client.post(url, data=data)
 
     assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "type",
+    ["Bug", "Idea"],
+)
+def test_create_feedback_with_both_bug_and_idea_as_member(member, type):
+    """All members should be able to update their own bug and idea feedback"""
+
+    url = FEEDBACK_BASE_URL
+    data = get_data(type)
+    client = get_api_client(member)
+    response = client.post(url, data=data)
+    data = response.data
+
+    assert response.status_code == status.HTTP_201_CREATED
+    assert data["feedback_type"] == type
