@@ -278,9 +278,13 @@ class EventStatisticsSerializer(BaseModelSerializer):
 
     def get_has_attended_count(self, obj, *args, **kwargs):
         return obj.registrations.filter(is_on_wait=False, has_attended=True).count()
-    
+
     def get_has_allergy_count(self, obj, *args, **kwargs):
-        return obj.registrations.exclude(user__allergy__isnull=True).exclude(user__allergy__exact='').count()
+        return (
+            obj.registrations.exclude(user__allergy__isnull=True)
+            .exclude(user__allergy__exact="")
+            .count()
+        )
 
     def get_studyyears(self, obj, *args, **kwargs):
         return filter(
@@ -309,4 +313,3 @@ class EventStatisticsSerializer(BaseModelSerializer):
                 Group.objects.filter(type=GroupType.STUDY),
             ),
         )
-    

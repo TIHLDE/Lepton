@@ -15,15 +15,13 @@ class RegistrationFilter(FilterSet):
     )
 
     has_allergy = filters.BooleanFilter(
-        field_name="user__allergy",
-        method='filter_has_allergy'
+        field_name="user__allergy", method="filter_has_allergy"
     )
 
-    
     class Meta:
         model = Registration
         fields = ["has_attended", "is_on_wait", "study", "year", "has_allergy"]
-    
+
     def filter_study(self, queryset, name, value):
         return queryset.filter(
             user__memberships__group__name__icontains=value,
@@ -31,9 +29,16 @@ class RegistrationFilter(FilterSet):
         )
 
     def filter_year(self, queryset, name, value):
-        return queryset.filter(user__memberships__group__name__icontains=value, user__memberships__group__type=GroupType.STUDYYEAR)
+        return queryset.filter(
+            user__memberships__group__name__icontains=value,
+            user__memberships__group__type=GroupType.STUDYYEAR,
+        )
 
     def filter_has_allergy(self, queryset, name, value):
         if value:
-            return queryset.exclude(user__allergy__isnull=True).exclude(user__allergy__exact='')
-        return queryset.filter(user__allergy__isnull=True) | queryset.filter(user__allergy__exact='')
+            return queryset.exclude(user__allergy__isnull=True).exclude(
+                user__allergy__exact=""
+            )
+        return queryset.filter(user__allergy__isnull=True) | queryset.filter(
+            user__allergy__exact=""
+        )
