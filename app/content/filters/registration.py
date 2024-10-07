@@ -36,4 +36,4 @@ class RegistrationFilter(FilterSet):
     def filter_has_allergy(self, queryset, name, value):
         if value:
             return queryset.exclude(user__allergy__isnull=True).exclude(user__allergy__exact='')
-        return queryset
+        return queryset.filter(user__allergy__isnull=True) | queryset.filter(user__allergy__exact='')
