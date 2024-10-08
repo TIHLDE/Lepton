@@ -57,7 +57,6 @@ def test_create_feedback_with_both_bug_and_idea_as_member(member, type):
     url = FEEDBACK_BASE_URL
     client = get_api_client(member)
     data = get_data(type)
-    print(data)
     response = client.post(url, data=data)
     data = response.data
 
@@ -98,7 +97,7 @@ def test_create_feedback_as_anonymous_user(default_client, type):
     "type",
     ["Bug", "Idea"],
 )
-def test_create_feedback_with_both_bug_and_idea_as_member(member, type):
+def test_update_feedback_with_both_bug_and_idea_as_member(member, type):
     """All members should be able to update their own bug and idea feedback"""
 
     url = FEEDBACK_BASE_URL
