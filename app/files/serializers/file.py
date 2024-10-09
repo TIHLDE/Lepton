@@ -1,7 +1,7 @@
 from app.common.azure_file_handler import AzureFileHandler
 from app.common.serializers import BaseModelSerializer
 from app.files.models import File
-from app.files.models.gallery import Gallery
+from app.files.models.user_gallery import UserGallery
 
 
 class FileSerializer(BaseModelSerializer):
@@ -29,7 +29,10 @@ class CreateFileSerializer(BaseModelSerializer):
     def create(self, validated_data):
         user = self.context["request"].user
 
-        gallery = Gallery.objects.get(author=user)
+        gallery = UserGallery.objects.get(author=user)
+
+        if not gallery:
+            raise Exception("No gallery found for user.")
 
         validated_data["gallery"] = gallery
 

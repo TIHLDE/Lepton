@@ -107,6 +107,7 @@ INSTALLED_APPS = [
     "app.kontres",
     "app.emoji",
     "app.codex",
+    "app.files",
 ]
 
 # Django rest framework

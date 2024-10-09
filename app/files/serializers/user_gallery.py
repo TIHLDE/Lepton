@@ -1,13 +1,13 @@
 from app.common.serializers import BaseModelSerializer
 from app.content.serializers.user import DefaultUserSerializer
-from app.files.models.gallery import Gallery
+from app.files.models.user_gallery import UserGallery
 
 
-class GallerySerializer(BaseModelSerializer):
+class UserGallerySerializer(BaseModelSerializer):
     author = DefaultUserSerializer(read_only=True)
 
     class Meta:
-        model = Gallery
+        model = UserGallery
         fields = (
             "id",
             "created_at",
@@ -16,4 +16,4 @@ class GallerySerializer(BaseModelSerializer):
         )
 
     def create_gallery(self, user):
-        return Gallery.objects.create(author=user)
+        return UserGallery.objects.create(author=user)

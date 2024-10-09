@@ -7,11 +7,13 @@ from app.content.models.user import User
 from app.util.models import BaseModel
 
 
-class Gallery(BaseModel, BasePermissionModel):
-    read_access = [AdminGroup.admin()]
-    write_access = [AdminGroup.admin()]
+class UserGallery(BaseModel, BasePermissionModel):
+    read_access = AdminGroup.admin()
+    write_access = AdminGroup.admin()
 
-    author = models.OneToOneField(User, on_delete=PROTECT, related_name="galleries")
+    author = models.OneToOneField(
+        User, on_delete=PROTECT, related_name="user_galleries"
+    )
 
     class Meta:
         pass
@@ -58,14 +60,14 @@ class Gallery(BaseModel, BasePermissionModel):
 
     def has_object_update_permission(self, request):
         return (
-                check_has_access(groups_with_access=[AdminGroup.admin()], request=request)
-                or self.author == request.user
+            check_has_access(groups_with_access=[AdminGroup.admin()], request=request)
+            or self.author == request.user
         )
 
     def has_object_destroy_permission(self, request):
         return (
-                check_has_access(groups_with_access=[AdminGroup.admin()], request=request)
-                or self.author == request.user
+            check_has_access(groups_with_access=[AdminGroup.admin()], request=request)
+            or self.author == request.user
         )
 
     @classmethod

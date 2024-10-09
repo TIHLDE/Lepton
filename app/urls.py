@@ -47,6 +47,7 @@ urlpatterns = [
     path("", include("app.content.urls")),
     path("", include("app.group.urls")),
     path("", include("app.payment.urls")),
+    path("", include("app.files.urls")),
     path("auth/", include("app.authentication.urls")),
     path("badges/", include("app.badge.urls")),
     path("forms/", include("app.forms.urls")),

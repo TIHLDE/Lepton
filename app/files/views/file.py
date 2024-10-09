@@ -1,59 +1,59 @@
 from rest_framework import status
 from rest_framework.response import Response
 
-from app.common.permissions import IsMember
+from app.common.permissions import BasicViewPermission
 from app.common.viewsets import BaseViewSet
-from app.files.models import Gallery
-from files.serializers import FileSerializer, GallerySerializer, CreateFileSerializer
+from app.files.models.file import File
+from app.files.serializers.file import CreateFileSerializer, FileSerializer
 
 
-class FileView(BaseViewSet):
+class FileViewSet(BaseViewSet):
     serializer_class = FileSerializer
-    permission_classes = [IsMember]
+    permission_classes = [BasicViewPermission]
+    queryset = File.objects.all()
 
     def retrieve(self, request, *_args, **_kwargs):
+        """Retrieves a specific file by id"""
         try:
-            if not request.FILES or len(request.FILES) > 1 or len(request.FILES) == 0:
-                return Response(
-                    {"detail": "Du må sende én fil i FILE"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-            serializer = FileSerializer.get_file_url_from_file(request.FILES)
-
+            file = self.get_object()
+            serializer = FileSerializer(file, context={"request": request}, many=False)
+            return Response(data=serializer.data, status=status.HTTP_200_OK)
+        except File.DoesNotExist:
             return Response(
-                {"url": serializer.url},
-                status=status.HTTP_200_OK,
-            )
-        except ValueError as value_error:
-            return Response(
-                {"detail": str(value_error)},
-                status=status.HTTP_400_BAD_REQUEST,
+                {"detail": "Filen eksisterer ikke"},
+                status=status.HTTP_404_NOT_FOUND,
             )
 
     def update(self, request, *_args, **_kwargs):
         pass
 
-    def create(self, request, *_args, **_kwargs):
+    def create(self, request, *args, **kwargs):
+        """Creates a file"""
+        serializer = CreateFileSerializer(
+            data=request.data, context={"request": request}
+        )
+        if serializer.is_valid():
+            group = super().perform_create(serializer)
+            return_serializer = CreateFileSerializer(group)
+            return Response(data=return_serializer.data, status=status.HTTP_201_CREATED)
+        return Response(
+            {"detail": serializer.errors},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    def delete(self, request, *_args, **_kwargs):
+        """Deletes a specific file by id"""
         try:
-            if not Gallery.has_gallery(request.user):
-                GallerySerializer.create_gallery(request.user)
-
-            if not request.FILES or len(request.FILES) > 1 or len(request.FILES) == 0:
-                return Response(
-                    {"detail": "Du må sende én fil i FILE"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-            serializer = CreateFileSerializer.create_file(request.FILES, request.user)
-
+            file = self.get_object()
+            serializer = FileSerializer(file, context={"request": request}, many=False)
+            return Response(data=serializer.data, status=status.HTTP_200_OK)
+        except File.DoesNotExist:
             return Response(
-                serializer.data,
-                status=status.HTTP_201_CREATED
+                {"detail": "Filen eksisterer ikke"},
+                status=status.HTTP_404_NOT_FOUND,
             )
-        except ValueError as value_error:
+        except Exception as e:
             return Response(
-                {"detail": str(value_error)},
+                {"detail": str(e)},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-

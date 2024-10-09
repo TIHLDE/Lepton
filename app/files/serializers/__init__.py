@@ -1,2 +1,6 @@
-from app.files.serializers.gallery import GallerySerializer
-from app.files.serializers.file import FileSerializer, CreateFileSerializer, DeleteFileSerializer
+from app.files.serializers.user_gallery import UserGallerySerializer
+from app.files.serializers.file import (
+    FileSerializer,
+    CreateFileSerializer,
+    DeleteFileSerializer,
+)
