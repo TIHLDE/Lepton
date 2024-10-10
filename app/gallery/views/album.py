@@ -12,7 +12,7 @@ from app.gallery.serializers.album import AlbumSerializer
 
 class AlbumViewSet(BaseViewSet):
     serializer_class = AlbumSerializer
-    queryset = Album.objects.all()
+    queryset = Album.objects.all().order_by("-created_at")
     permission_classes = [BasicViewPermission]
     lookup_field = "id"
     pagination_class = BasePagination
