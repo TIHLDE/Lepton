@@ -14,6 +14,7 @@
 ---
 
 ## Neste versjon
+## Versjon 2024.10.11
 - ✨**Tilbakemelding-funksjon**. Man kan nå opprette tilbakemeldinger for bugs og idé.
 ## Versjon 2024.09.25
 
