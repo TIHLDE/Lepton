@@ -1,8 +1,8 @@
 from rest_polymorphic.serializers import PolymorphicSerializer
 
 from app.common.serializers import BaseModelSerializer
-from app.index.models import Bug, Feedback, Idea
-from app.index.serializers import BugListSerializer, IdeaListSerializer
+from app.feedback.models import Bug, Feedback, Idea
+from app.feedback.serializers import BugListSerializer, IdeaListSerializer
 
 
 class FeedbackListPolymorphicSerializer(PolymorphicSerializer, BaseModelSerializer):

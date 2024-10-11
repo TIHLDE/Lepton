@@ -5,7 +5,7 @@ from polymorphic.models import PolymorphicModel
 from app.common.enums import AdminGroup, Groups
 from app.common.permissions import BasePermissionModel, check_has_access
 from app.content.models.user import User
-from app.index.enums import Status
+from app.feedback.enums import Status
 from app.util.models import BaseModel
 
 

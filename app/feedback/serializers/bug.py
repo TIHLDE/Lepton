@@ -1,6 +1,6 @@
 from app.common.serializers import BaseModelSerializer
 from app.content.serializers.user import SimpleUserSerializer
-from app.index.models.bug import Bug
+from app.feedback.models.bug import Bug
 
 
 class BugListSerializer(BaseModelSerializer):
