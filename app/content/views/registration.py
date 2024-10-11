@@ -1,5 +1,6 @@
 import uuid
 
+from django.db import transaction
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status
@@ -48,6 +49,7 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
     def _is_not_own_registration(self):
         return not self._is_own_registration()
 
+    @transaction.atomic
     def create(self, request, *args, **kwargs):
         """Register the current user for the given event."""
 
