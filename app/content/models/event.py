@@ -136,7 +136,7 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
         return self.get_participants().filter(has_attended=True)
 
     def get_participants(self):
-        return self.registrations.select_for_update().filter(is_on_wait=False)
+        return self.registrations.filter(is_on_wait=False)
 
     def get_waiting_list(self):
         """Number of users on the waiting list"""
