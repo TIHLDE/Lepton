@@ -4,7 +4,7 @@ import pytest
 
 from app.util.test_utils import get_api_client
 
-FEEDBACK_BASE_URL = "/index/feedbacks/"
+FEEDBACK_BASE_URL = "/feedbacks/"
 
 
 def get_data(type):

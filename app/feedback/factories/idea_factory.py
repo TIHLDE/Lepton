@@ -2,12 +2,12 @@ import factory
 from factory.django import DjangoModelFactory
 
 from app.content.factories import UserFactory
-from app.index.models.bug import Bug
+from app.feedback.models.idea import Idea
 
 
-class BugFactory(DjangoModelFactory):
+class IdeaFactory(DjangoModelFactory):
     class Meta:
-        model = Bug
+        model = Idea
 
-    title = factory.Sequence(lambda n: f"Bug{n}")
+    title = factory.Sequence(lambda n: f"Idea{n}")
     author = factory.SubFactory(UserFactory)

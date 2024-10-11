@@ -1,6 +1,6 @@
 from app.common.serializers import BaseModelSerializer
 from app.content.serializers.user import SimpleUserSerializer
-from app.index.models.idea import Idea
+from app.feedback.models.idea import Idea
 
 
 class IdeaListSerializer(BaseModelSerializer):

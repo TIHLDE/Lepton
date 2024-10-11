@@ -4,8 +4,8 @@ from rest_framework.response import Response
 from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission
 from app.common.viewsets import BaseViewSet
-from app.index.models.feedback import Feedback
-from app.index.serializers.feedback import (
+from app.feedback.models.feedback import Feedback
+from app.feedback.serializers.feedback import (
     BugCreateSerializer,
     BugUpdateSerializer,
     FeedbackListPolymorphicSerializer,
