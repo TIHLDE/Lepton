@@ -32,6 +32,7 @@ from app.emoji.factories.reaction_factory import (
     EventReactionFactory,
     NewsReactionFactory,
 )
+from app.feedback.factories import BugFactory, IdeaFactory
 from app.forms.tests.form_factories import FormFactory, SubmissionFactory
 from app.group.factories import GroupFactory, MembershipFactory
 from app.group.factories.fine_factory import FineFactory
@@ -311,3 +312,13 @@ def codex_event():
 @pytest.fixture()
 def codex_event_registration():
     return CodexEventRegistrationFactory()
+
+
+@pytest.fixture()
+def feedback_bug():
+    return BugFactory()
+
+
+@pytest.fixture()
+def feedback_idea():
+    return IdeaFactory()
