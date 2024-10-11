@@ -55,4 +55,5 @@ urlpatterns = [
     path("kontres/", include("app.kontres.urls")),
     path("emojis/", include("app.emoji.urls")),
     path("codex/", include("app.codex.urls")),
+    path("index/", include("app.index.urls")),
 ]
