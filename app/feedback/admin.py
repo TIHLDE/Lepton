@@ -1,5 +1,5 @@
 from django.contrib import admin
 
-from app.index import models
+from app.feedback import models
 
 admin.site.register(models.Bug)
