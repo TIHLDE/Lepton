@@ -36,6 +36,7 @@ from app.forms.tests.form_factories import FormFactory, SubmissionFactory
 from app.group.factories import GroupFactory, MembershipFactory
 from app.group.factories.fine_factory import FineFactory
 from app.group.factories.membership_factory import MembershipHistoryFactory
+from app.index.factories import BugFactory, IdeaFactory
 from app.kontres.factories import BookableItemFactory, ReservationFactory
 from app.payment.factories.order_factory import OrderFactory
 from app.payment.factories.paid_event_factory import PaidEventFactory
@@ -311,3 +312,13 @@ def codex_event():
 @pytest.fixture()
 def codex_event_registration():
     return CodexEventRegistrationFactory()
+
+
+@pytest.fixture()
+def feedback_bug():
+    return BugFactory()
+
+
+@pytest.fixture()
+def feedback_idea():
+    return IdeaFactory()

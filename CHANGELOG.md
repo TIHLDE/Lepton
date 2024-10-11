@@ -14,7 +14,7 @@
 ---
 
 ## Neste versjon
-
+- ✨**Tilbakemelding-funksjon**. Man kan nå opprette tilbakemeldinger for bugs og idé.
 ## Versjon 2024.09.25
 
 - ✨**Codex arrangementer**. Det kan nå opprettes arrangementer på Codex, som medlemmer av Codex kan melde seg på.
