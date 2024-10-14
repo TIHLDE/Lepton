@@ -106,6 +106,7 @@ INSTALLED_APPS = [
     "app.payment",
     "app.kontres",
     "app.emoji",
+    "app.feedback",
     "app.codex",
     "app.files",
 ]

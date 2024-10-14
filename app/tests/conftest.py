@@ -32,6 +32,7 @@ from app.emoji.factories.reaction_factory import (
     EventReactionFactory,
     NewsReactionFactory,
 )
+from app.feedback.factories import BugFactory, IdeaFactory
 from app.files.models.user_gallery import UserGallery
 from app.forms.tests.form_factories import FormFactory, SubmissionFactory
 from app.group.factories import GroupFactory, MembershipFactory
@@ -331,3 +332,13 @@ def new_admin_user():
     admin = UserFactory()
     add_user_to_group_with_name(admin, AdminGroup.HS)
     return admin
+
+
+@pytest.fixture()
+def feedback_bug():
+    return BugFactory()
+
+
+@pytest.fixture()
+def feedback_idea():
+    return IdeaFactory()
