@@ -43,11 +43,11 @@ class File(BaseModel, BasePermissionModel):
 
     @classmethod
     def has_update_permission(cls, request):
-        return cls.gallery.author == request.user
+        return check_has_access(cls.write_access, request)
 
     @classmethod
     def has_destroy_permission(cls, request):
-        return cls.gallery.author == request.user
+        return check_has_access(cls.write_access, request)
 
     @classmethod
     def has_list_permission(cls, request):
@@ -64,12 +64,12 @@ class File(BaseModel, BasePermissionModel):
 
     def has_object_update_permission(self, request):
         return (
-            check_has_access(groups_with_access=[AdminGroup.admin()], request=request)
-            or self.gallery.author == request.user
+            check_has_access(self.write_access, request)
+            and self.gallery.author == request.user
         )
 
     def has_object_destroy_permission(self, request):
         return (
-            check_has_access(groups_with_access=[AdminGroup.admin()], request=request)
-            or self.gallery.author == request.user
+            check_has_access(self.write_access, request)
+            and self.gallery.author == request.user
         )

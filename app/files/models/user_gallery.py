@@ -19,7 +19,7 @@ class UserGallery(BaseModel, BasePermissionModel):
         pass
 
     def __str__(self):
-        return self.author
+        return f"Gallery by {self.author.first_name} {self.author.last_name}"
 
     @classmethod
     def has_read_permission(cls, request):
@@ -59,16 +59,10 @@ class UserGallery(BaseModel, BasePermissionModel):
         return self.has_object_read_permission(request)
 
     def has_object_update_permission(self, request):
-        return (
-            check_has_access(groups_with_access=[AdminGroup.admin()], request=request)
-            or self.author == request.user
-        )
+        return check_has_access(self.write_access) and self.author == request.user
 
     def has_object_destroy_permission(self, request):
-        return (
-            check_has_access(groups_with_access=[AdminGroup.admin()], request=request)
-            or self.author == request.user
-        )
+        return check_has_access(self.write_access) and self.author == request.user
 
     @classmethod
     def get_all_files(cls, user):
