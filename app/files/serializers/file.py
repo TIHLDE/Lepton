@@ -29,7 +29,7 @@ class CreateFileSerializer(BaseModelSerializer):
     def create(self, validated_data):
         user = self.context["request"].user
 
-        gallery = UserGallery.objects.get(author=user)
+        gallery = UserGallery.objects.filter(author=user).first()
 
         if not gallery:
             raise Exception("No gallery found for user.")
@@ -49,6 +49,5 @@ class DeleteFileSerializer(BaseModelSerializer):
         azure_handler = AzureFileHandler(url=instance.url)
         azure_handler.deleteBlob()
 
-        super().delete(instance)
+        return super().delete(instance)
 
-        return f"Fil: '{instance.title}' har blitt slettet."
