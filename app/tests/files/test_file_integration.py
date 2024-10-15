@@ -4,10 +4,10 @@ from rest_framework import status
 
 import pytest
 
-from app.common.enums import AdminGroup
+from app.common.enums import AdminGroup, Groups
 from app.files.models.file import File
 from app.files.models.user_gallery import UserGallery
-from app.util.test_utils import add_user_to_group_with_name, get_api_client
+from app.util.test_utils import add_user_to_group_with_name, get_api_client, remove_user_from_group_with_name
 
 FILE_URL = "/files/file/"
 
@@ -287,3 +287,20 @@ def test_update_file_with_new_file(admin_user, admin_gallery):
     assert response.status_code == status.HTTP_200_OK
     file.refresh_from_db()
     assert file.url == "https://example.com/newfile.pdf"
+
+
+@pytest.mark.django_db
+def test_create_file_as_admin_and_delete_as_tihlde_user(admin_user, admin_gallery):
+    """Tests if an admin can create a file and delete it after being removed as an admin."""
+    file = _create_file(admin_user, admin_gallery)
+    url = _get_file_url(file)
+
+    remove_user_from_group_with_name(admin_user, AdminGroup.HS)
+    add_user_to_group_with_name(admin_user, Groups.TIHLDE)
+
+    client = get_api_client(user=admin_user)
+
+    delete_response = client.delete(url)
+    
+    assert delete_response.status_code == status.HTTP_204_NO_CONTENT
+    

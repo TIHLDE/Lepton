@@ -1,7 +1,7 @@
 from django.db import models
 from django.db.models import PROTECT
 
-from app.common.enums import AdminGroup
+from app.common.enums import AdminGroup, Groups
 from app.common.permissions import BasePermissionModel, check_has_access
 from app.files.models.user_gallery import UserGallery
 from app.util.models import BaseModel
@@ -31,7 +31,7 @@ class File(BaseModel, BasePermissionModel):
 
     @classmethod
     def has_write_permission(cls, request):
-        return super().has_write_permission(request)
+        return check_has_access(Groups.TIHLDE, request)
 
     @classmethod
     def has_retrieve_permission(cls, request):
@@ -47,7 +47,7 @@ class File(BaseModel, BasePermissionModel):
 
     @classmethod
     def has_destroy_permission(cls, request):
-        return check_has_access(cls.write_access, request)
+        return check_has_access(Groups.TIHLDE, request)
 
     @classmethod
     def has_list_permission(cls, request):
@@ -70,6 +70,5 @@ class File(BaseModel, BasePermissionModel):
 
     def has_object_destroy_permission(self, request):
         return (
-            check_has_access(self.write_access, request)
-            and self.gallery.author == request.user
+            self.gallery.author == request.user
         )
