@@ -127,6 +127,7 @@ class SimpleUserSerializer(serializers.ModelSerializer):
             "user_id",
             "first_name",
             "last_name",
+            "image",
         )
 
 
