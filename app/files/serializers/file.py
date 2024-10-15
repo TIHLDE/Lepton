@@ -1,3 +1,5 @@
+from rest_framework import serializers
+
 from app.common.azure_file_handler import AzureFileHandler
 from app.common.serializers import BaseModelSerializer
 from app.files.models import File
@@ -32,13 +34,29 @@ class CreateFileSerializer(BaseModelSerializer):
         gallery = UserGallery.objects.filter(author=user).first()
 
         if not gallery:
-            raise Exception("No gallery found for user.")
+            raise serializers.ValidationError("No gallery found for user.")
+
+        if gallery.files.count() >= 50:
+            raise serializers.ValidationError("Gallery is full.")
 
         validated_data["gallery"] = gallery
 
         file_instance = super().create(validated_data)
 
         return file_instance
+
+
+class UpdateFileSerializer(BaseModelSerializer):
+    file = serializers.FileField(required=False)
+
+    class Meta:
+        model = File
+        fields = (
+            "title",
+            "url",
+            "description",
+            "file",
+        )
 
 
 class DeleteFileSerializer(BaseModelSerializer):

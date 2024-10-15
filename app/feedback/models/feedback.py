@@ -1,29 +1,32 @@
 from django.db import models
-from django.db.models import PROTECT
+
+from polymorphic.models import PolymorphicModel
 
 from app.common.enums import AdminGroup, Groups
 from app.common.permissions import BasePermissionModel, check_has_access
-from app.files.models.user_gallery import UserGallery
+from app.content.models.user import User
+from app.feedback.enums import Status
 from app.util.models import BaseModel
 
 
-class File(BaseModel, BasePermissionModel):
-    read_access = AdminGroup.admin()
-    write_access = AdminGroup.admin()
+class Feedback(BaseModel, BasePermissionModel, PolymorphicModel):
 
-    title = models.CharField(max_length=80)
+    read_access = (Groups.TIHLDE,)
+    write_access = (Groups.TIHLDE,)
 
-    url = models.URLField()
-    description = models.TextField(blank=True)
-    gallery = models.ForeignKey(
-        UserGallery, on_delete=PROTECT, related_name="files", blank=False
+    title = models.CharField(max_length=100)
+    description = models.TextField(default="", blank=True)
+
+    author = models.ForeignKey(
+        User, blank=True, null=True, default=None, on_delete=models.SET_NULL
     )
-
-    class Meta:
-        pass
+    status = models.CharField(Status.choices, default=Status.OPEN, max_length=20)
 
     def __str__(self):
-        return self.title
+        return f"{self.title} - {self.status}"
+
+    class Meta:
+        ordering = ("created_at",)
 
     @classmethod
     def has_read_permission(cls, request):
@@ -31,7 +34,7 @@ class File(BaseModel, BasePermissionModel):
 
     @classmethod
     def has_write_permission(cls, request):
-        return check_has_access(Groups.TIHLDE, request)
+        return super().has_write_permission(request)
 
     @classmethod
     def has_retrieve_permission(cls, request):
@@ -39,15 +42,15 @@ class File(BaseModel, BasePermissionModel):
 
     @classmethod
     def has_create_permission(cls, request):
-        return check_has_access(cls.write_access, request)
+        return cls.has_write_permission(request)
 
     @classmethod
     def has_update_permission(cls, request):
-        return check_has_access(cls.write_access, request)
+        return cls.has_write_permission(request)
 
     @classmethod
     def has_destroy_permission(cls, request):
-        return check_has_access(Groups.TIHLDE, request)
+        return cls.has_write_permission(request)
 
     @classmethod
     def has_list_permission(cls, request):
@@ -64,9 +67,10 @@ class File(BaseModel, BasePermissionModel):
 
     def has_object_update_permission(self, request):
         return (
-            check_has_access(self.write_access, request)
-            and self.gallery.author == request.user
+            check_has_access([AdminGroup.INDEX], request) or self.author == request.user
         )
 
     def has_object_destroy_permission(self, request):
-        return self.gallery.author == request.user
+        return (
+            check_has_access([AdminGroup.INDEX], request) or self.author == request.user
+        )

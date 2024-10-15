@@ -32,6 +32,8 @@ from app.emoji.factories.reaction_factory import (
     EventReactionFactory,
     NewsReactionFactory,
 )
+from app.feedback.factories import BugFactory, IdeaFactory
+from app.files.models.user_gallery import UserGallery
 from app.forms.tests.form_factories import FormFactory, SubmissionFactory
 from app.group.factories import GroupFactory, MembershipFactory
 from app.group.factories.fine_factory import FineFactory
@@ -311,3 +313,32 @@ def codex_event():
 @pytest.fixture()
 def codex_event_registration():
     return CodexEventRegistrationFactory()
+
+
+@pytest.fixture
+def user_gallery(member):
+    """Creates a gallery for the member."""
+    return UserGallery.objects.create(author=member)
+
+
+@pytest.fixture
+def admin_gallery(admin_user):
+    """Creates a gallery for the admin user."""
+    return UserGallery.objects.create(author=admin_user)
+
+
+@pytest.fixture()
+def new_admin_user():
+    admin = UserFactory()
+    add_user_to_group_with_name(admin, AdminGroup.HS)
+    return admin
+
+
+@pytest.fixture()
+def feedback_bug():
+    return BugFactory()
+
+
+@pytest.fixture()
+def feedback_idea():
+    return IdeaFactory()
