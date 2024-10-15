@@ -42,7 +42,7 @@ def upload(request):
 
 @api_view(["DELETE"])
 @permission_classes([IsMember])
-def delete(request, container_name, blob_name):
+def delete(_request, container_name, blob_name):
     """Method for deleting files from Azure Blob Storage, only allowed for members"""
     try:
         handler = AzureFileHandler()

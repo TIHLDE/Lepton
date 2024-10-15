@@ -2,7 +2,6 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.status import HTTP_201_CREATED
 
 from app.common.mixins import ActionMixin
 from app.common.permissions import BasicViewPermission
@@ -73,7 +72,7 @@ class GroupViewSet(APIGroupErrorsMixin, BaseViewSet, ActionMixin):
         if serializer.is_valid():
             group = super().perform_create(serializer)
             return_serializer = SimpleGroupSerializer(group)
-            return Response(data=return_serializer.data, status=HTTP_201_CREATED)
+            return Response(data=return_serializer.data, status=status.HTTP_201_CREATED)
         return Response(
             {"detail": serializer.errors},
             status=status.HTTP_400_BAD_REQUEST,
