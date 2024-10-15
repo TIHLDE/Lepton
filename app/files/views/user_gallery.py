@@ -23,3 +23,24 @@ class UserGalleryViewSet(BaseViewSet):
                 {"detail": "Galleriet finnes ikke"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+    def create(self, request, *args, **kwargs):
+        """Create a gallery for the current user"""
+        if UserGallery.has_gallery(request.user):
+            return Response(
+                {"detail": "User already has a gallery."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        serializer = UserGallerySerializer(
+            data=request.data, context={"request": request}
+        )
+
+        if serializer.is_valid():
+            user_gallery = super().perform_create(serializer)
+            return_serializer = UserGallerySerializer(user_gallery)
+            return Response(return_serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(
+            {"detail": serializer.errors},
+            status=status.HTTP_400_BAD_REQUEST,
+        )

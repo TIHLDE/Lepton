@@ -1,3 +1,4 @@
+from django.core.exceptions import ObjectDoesNotExist
 from django.db.transaction import atomic
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
@@ -6,7 +7,6 @@ from app.common.enums import AdminGroup
 from app.common.enums import NativeGroupType as GroupType
 from app.common.enums import NativeMembershipType as MembershipType
 from app.group.models import Group, Membership
-from django.core.exceptions import ObjectDoesNotExist
 
 
 def get_api_client(user=None, group_name=None):
@@ -36,6 +36,7 @@ def add_user_to_group_with_name(
     )
     return group
 
+
 @atomic
 def remove_user_from_group_with_name(user, group_name, group_type=None):
     """
@@ -47,13 +48,17 @@ def remove_user_from_group_with_name(user, group_name, group_type=None):
     try:
         group = Group.objects.get(name=group_name, type=group_type)
     except Group.DoesNotExist:
-        raise ObjectDoesNotExist(f"Group with name '{group_name}' and type '{group_type}' does not exist.")
+        raise ObjectDoesNotExist(
+            f"Group with name '{group_name}' and type '{group_type}' does not exist."
+        )
 
     try:
         membership = Membership.objects.get(group=group, user=user)
         membership.delete()
     except Membership.DoesNotExist:
-        raise ObjectDoesNotExist(f"User '{user}' is not a member of the group '{group_name}'.")
+        raise ObjectDoesNotExist(
+            f"User '{user}' is not a member of the group '{group_name}'."
+        )
 
     if not Membership.objects.filter(group=group).exists():
         group.delete()

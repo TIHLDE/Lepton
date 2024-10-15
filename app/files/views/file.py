@@ -58,8 +58,8 @@ class FileViewSet(BaseViewSet):
             data=request.data, context={"request": request}
         )
         if serializer.is_valid():
-            group = super().perform_create(serializer)
-            return_serializer = CreateFileSerializer(group)
+            file = super().perform_create(serializer)
+            return_serializer = CreateFileSerializer(file)
             return Response(data=return_serializer.data, status=status.HTTP_201_CREATED)
         return Response(
             {"detail": serializer.errors},

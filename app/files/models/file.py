@@ -69,6 +69,4 @@ class File(BaseModel, BasePermissionModel):
         )
 
     def has_object_destroy_permission(self, request):
-        return (
-            self.gallery.author == request.user
-        )
+        return self.gallery.author == request.user
