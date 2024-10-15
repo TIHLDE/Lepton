@@ -6,6 +6,8 @@ import pytest
 
 from app.common.enums import AdminGroup
 from app.common.enums import NativeGroupType as GroupType
+from app.common.enums import NativeUserStudy as StudyType
+from app.common.enums import NativeUserClass as StudyYear
 from app.common.enums import NativeMembershipType as MembershipType
 from app.content.factories import EventFactory, RegistrationFactory, UserFactory
 from app.content.factories.priority_pool_factory import PriorityPoolFactory
@@ -1070,4 +1072,65 @@ def test_delete_registration_with_paid_order_as_self(
     url = _get_registration_detail_url(registration)
     response = client.delete(url)
 
+    assert response.status_code == status_code
+
+@pytest.mark.django_db
+def test_member_cannot_filter_participants(member, event):
+    RegistrationFactory(user=member, event=event)
+    client = get_api_client(user=member)
+
+    # TODO: Blir det forbidden når member prøver å filterere eller blir det ok, men ingen filtrering blir gjort?
+    url = _get_registration_url(event) + "?allergy=True"
+    print(url)
+    response = client.get(url)
+    print(response.data['count'])
+
+    assert response.status_code == ""
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    ("filter_parameter", "filter_value", "participant_count", "status_code"),
+    [
+        ("has_allergy", True, 1, status.HTTP_200_OK),
+        # ("year", 1, status.HTTP_200_OK),
+        # ("study", 1, status.HTTP_200_OK),
+        # # not sure if this is correct
+        # ("study", 0, status.HTTP_401_UNAUTHORIZED),
+    ],
+)
+def test_filter_participants(
+    new_admin_user, member, event, filter_parameter, filter_value, participant_count, status_code
+):
+    """
+    An admin should be able to filter the participants of an event
+    """
+
+    add_user_to_group_with_name(
+        member, StudyType.DATAING, MembershipType.MEMBER)
+    add_user_to_group_with_name(
+        member, StudyYear.FIRST, MembershipType.MEMBER)
+    member.allergy = "Pizza"
+    member.save()
+    print(member.memberships)
+
+    RegistrationFactory(user=member, event=event)
+    RegistrationFactory(user=new_admin_user, event=event)
+    client = get_api_client(user=new_admin_user)
+
+    # TODO:
+    # ---
+    # Test filter by each parameter
+    # Test member cannot filter
+    # Test search for member (maybe separate test)
+    # ---
+    # *** Url needs to have query param for filtering - assert list size
+
+    # registration = RegistrationFactory(user=member, event=event)
+    url = _get_registration_url(event) + "?" + \
+        filter_parameter + "=" + str(filter_value)
+    print(url)
+    response = client.get(url)
+    print(response.data['count'])
+
+    assert participant_count == response.data['count']
     assert response.status_code == status_code
