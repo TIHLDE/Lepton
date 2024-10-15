@@ -39,7 +39,7 @@ class File(BaseModel, BasePermissionModel):
 
     @classmethod
     def has_create_permission(cls, request):
-        return cls.has_write_permission(request)
+        return check_has_access(cls.write_access, request)
 
     @classmethod
     def has_update_permission(cls, request):

@@ -46,9 +46,9 @@ class FileViewSet(BaseViewSet):
                 {"detail": "Filen eksisterer ikke."},
                 status=status.HTTP_404_NOT_FOUND,
             )
-        except Exception as e:
+        except Exception:
             return Response(
-                {"detail": str(e)},
+                {"detail": serializer.errors},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -77,8 +77,8 @@ class FileViewSet(BaseViewSet):
                 {"detail": "Filen eksisterer ikke"},
                 status=status.HTTP_404_NOT_FOUND,
             )
-        except Exception as e:
+        except Exception:
             return Response(
-                {"detail": str(e)},
+                {"detail": "Kunne ikke slette filen"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
