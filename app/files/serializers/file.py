@@ -68,4 +68,3 @@ class DeleteFileSerializer(BaseModelSerializer):
         azure_handler.deleteBlob()
 
         return super().delete(instance)
-
