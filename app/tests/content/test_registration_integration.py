@@ -6,6 +6,7 @@ import pytest
 
 from app.common.enums import AdminGroup
 from app.common.enums import NativeGroupType as GroupType
+from app.common.enums import NativeUserStudy as StudyType
 from app.common.enums import NativeMembershipType as MembershipType
 from app.content.factories import EventFactory, RegistrationFactory, UserFactory
 from app.content.factories.priority_pool_factory import PriorityPoolFactory
@@ -1070,4 +1071,60 @@ def test_delete_registration_with_paid_order_as_self(
     url = _get_registration_detail_url(registration)
     response = client.delete(url)
 
+    assert response.status_code == status_code
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    ("filter_params", "participant_count", "status_code"),
+    [
+        ({"has_allergy": True}, 2, status.HTTP_200_OK),
+        ({"year": "2050"}, 1, status.HTTP_200_OK),
+        ({"year": "2051"}, 1, status.HTTP_200_OK),
+        ({"study": StudyType.DATAING}, 2, status.HTTP_200_OK),
+        ({"year": "2050", "study": StudyType.DATAING}, 1, status.HTTP_200_OK),
+        (
+            {"has_allergy": True, "year": "2051", "study": StudyType.DATAING},
+            1,
+            status.HTTP_200_OK,
+        ),
+        (
+            {"has_allergy": True, "year": "2050", "study": StudyType.DATAING},
+            1,
+            status.HTTP_200_OK,
+        ),
+    ],
+)
+def test_filter_participants(
+    new_admin_user, member, event, filter_params, participant_count, status_code
+):
+    """
+    An admin should be able to filter the participants of an event using multiple parameters
+    """
+
+    member.allergy = "Pizza"
+    member.save()
+
+    new_admin_user.allergy = "Fisk"
+    new_admin_user.save()
+
+    add_user_to_group_with_name(member, StudyType.DATAING, GroupType.STUDY)
+    add_user_to_group_with_name(member, "2050", GroupType.STUDYYEAR)
+
+    add_user_to_group_with_name(new_admin_user, "2051", GroupType.STUDYYEAR)
+    add_user_to_group_with_name(new_admin_user, StudyType.DATAING, GroupType.STUDY)
+
+    RegistrationFactory(user=member, event=event)
+    RegistrationFactory(user=new_admin_user, event=event)
+    client = get_api_client(user=new_admin_user)
+
+    # Build the query string with multiple filter parameters
+    url = (
+        _get_registration_url(event)
+        + "?"
+        + "&".join([f"{key}={value}" for key, value in filter_params.items()])
+    )
+    response = client.get(url)
+
+    assert participant_count == response.data["count"]
     assert response.status_code == status_code
