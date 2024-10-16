@@ -1,7 +1,7 @@
-from django_filters.rest_framework import FilterSet
 from django_filters import rest_framework as filters
-from app.common.enums import NativeGroupType as GroupType
+from django_filters.rest_framework import FilterSet
 
+from app.common.enums import NativeGroupType as GroupType
 from app.content.models.registration import Registration
 
 
