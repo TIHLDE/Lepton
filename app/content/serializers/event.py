@@ -263,6 +263,7 @@ class EventStatisticsSerializer(BaseModelSerializer):
     has_attended_count = serializers.SerializerMethodField()
     studyyears = serializers.SerializerMethodField()
     studies = serializers.SerializerMethodField()
+    has_allergy_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Event
@@ -272,10 +273,18 @@ class EventStatisticsSerializer(BaseModelSerializer):
             "waiting_list_count",
             "studyyears",
             "studies",
+            "has_allergy_count",
         )
 
     def get_has_attended_count(self, obj, *args, **kwargs):
         return obj.registrations.filter(is_on_wait=False, has_attended=True).count()
+
+    def get_has_allergy_count(self, obj, *args, **kwargs):
+        return (
+            obj.registrations.exclude(user__allergy__isnull=True)
+            .exclude(user__allergy__exact="")
+            .count()
+        )
 
     def get_studyyears(self, obj, *args, **kwargs):
         return filter(
