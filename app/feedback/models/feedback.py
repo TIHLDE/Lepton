@@ -26,7 +26,7 @@ class Feedback(BaseModel, BasePermissionModel, PolymorphicModel):
         return f"{self.title} - {self.status}"
 
     class Meta:
-        ordering = ("created_at",)
+        ordering = ("-created_at",)
 
     @classmethod
     def has_read_permission(cls, request):

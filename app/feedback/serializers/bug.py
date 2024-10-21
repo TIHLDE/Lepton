@@ -3,7 +3,7 @@ from app.content.serializers.user import SimpleUserSerializer
 from app.feedback.models.bug import Bug
 
 
-class BugListSerializer(BaseModelSerializer):
+class BugSerializer(BaseModelSerializer):
     author = SimpleUserSerializer(read_only=True)
 
     class Meta:
@@ -14,4 +14,50 @@ class BugListSerializer(BaseModelSerializer):
             "status",
             "created_at",
             "author",
+        )
+
+
+class BugCreateSerializer(BaseModelSerializer):
+    class Meta:
+        model = Bug
+        fields = (
+            "title",
+            "description",
+        )
+
+    def create(self, validated_data):
+        user = self.context["request"].user
+        validated_data["author"] = user
+
+        return super().create(validated_data)
+
+
+class BugUpdateSerializer(BaseModelSerializer):
+    class Meta:
+        model = Bug
+        fields = (
+            "title",
+            "description",
+            "status",
+        )
+
+        def update(self, instance, validated_data):
+            return super().update(instance, validated_data)
+
+
+class BugDetailSerializer(BaseModelSerializer):
+    author = SimpleUserSerializer(read_only=True)
+
+    class Meta:
+        model = Bug
+        fields = (
+            "id",
+            "title",
+            "description",
+            "status",
+            "created_at",
+            "author",
+            "url",
+            "platform",
+            "browser",
         )

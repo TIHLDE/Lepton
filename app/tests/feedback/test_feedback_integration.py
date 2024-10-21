@@ -2,6 +2,8 @@ from rest_framework import status
 
 import pytest
 
+from app.feedback.factories.bug_factory import BugFactory
+from app.feedback.factories.idea_factory import IdeaFactory
 from app.util.test_utils import get_api_client
 
 FEEDBACK_BASE_URL = "/feedbacks/"
@@ -172,3 +174,32 @@ def test_destroy_feedback_as_anonymous_user(default_client, type):
     response = default_client.delete(url, data=data)
 
     assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+@pytest.mark.django_db
+def test_retrieve_bug_as_member(member):
+    """A member should be able to retrieve a bug feedback"""
+    feedback_bug = BugFactory(author=member)
+
+    url = f"{FEEDBACK_BASE_URL}{feedback_bug.id}/"
+    client = get_api_client(member)
+    response = client.get(url)
+
+    assert response.data["feedback_type"] == "Bug"
+    assert response.data["url"] == feedback_bug.url
+    assert response.data["browser"] == feedback_bug.browser
+    assert response.data["platform"] == feedback_bug.platform
+    assert response.status_code == status.HTTP_200_OK
+
+
+@pytest.mark.django_db
+def test_retrieve_idea_as_member(member):
+    """A member should be able to retrieve an idea feedback"""
+    feedback_idea = IdeaFactory(author=member)
+
+    url = f"{FEEDBACK_BASE_URL}{feedback_idea.id}/"
+    client = get_api_client(member)
+    response = client.get(url)
+
+    assert response.data["feedback_type"] == "Idea"
+    assert response.status_code == status.HTTP_200_OK

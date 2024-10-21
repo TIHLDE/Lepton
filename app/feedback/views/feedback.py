@@ -5,7 +5,7 @@ from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission
 from app.common.viewsets import BaseViewSet
 from app.feedback.models.feedback import Feedback
-from app.feedback.serializers.feedback import (
+from app.feedback.serializers import (
     BugCreateSerializer,
     BugUpdateSerializer,
     FeedbackListPolymorphicSerializer,
