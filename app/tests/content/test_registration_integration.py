@@ -13,6 +13,7 @@ from app.content.factories.priority_pool_factory import PriorityPoolFactory
 from app.forms.enums import NativeEventFormType as EventFormType
 from app.forms.tests.form_factories import EventFormFactory, SubmissionFactory
 from app.group.factories import GroupFactory
+from app.payment.factories import OrderFactory
 from app.payment.enums import OrderStatus
 from app.util.test_utils import add_user_to_group_with_name, get_api_client
 from app.util.utils import now
@@ -1128,3 +1129,59 @@ def test_filter_participants(
 
     assert participant_count == response.data["count"]
     assert response.status_code == status_code
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    ("filter_params", "participant_count", "status_code"),
+    [
+        # ({"study": StudyType.DATAING}, 2, status.HTTP_200_OK),
+        ({"has_paid": True}, 2, status.HTTP_200_OK),
+        # ({"has_paid": False}, 1, status.HTTP_200_OK),
+    ],
+)
+def test_filter_participants_paid_event(
+    new_admin_user, member, event, paid_event, filter_params, participant_count, status_code
+):
+    """
+    An admin should be able to filter the participants of an event using multiple parameters
+    """
+
+    paid_event.event = event
+
+    paid_event.save()
+
+    member.allergy = "Pizza"
+    member.save()
+
+    new_admin_user.allergy = "Fisk"
+    new_admin_user.save()
+
+    new_user = UserFactory()
+
+    add_user_to_group_with_name(member, StudyType.DATAING, GroupType.STUDY)
+    add_user_to_group_with_name(member, "2050", GroupType.STUDYYEAR)
+
+    add_user_to_group_with_name(new_admin_user, "2051", GroupType.STUDYYEAR)
+    add_user_to_group_with_name(new_admin_user, StudyType.DATAING, GroupType.STUDY)
+
+    RegistrationFactory(user=member, event=event)
+    RegistrationFactory(user=new_admin_user, event=event)
+    RegistrationFactory(user=new_user, event=event)
+
+    OrderFactory(event=event, user=member, status=OrderStatus.SALE)
+    OrderFactory(event=event, user=new_admin_user, status=OrderStatus.SALE)
+    OrderFactory(event=event, user=new_user, status=OrderStatus.SALE)
+    
+    client = get_api_client(user=new_admin_user)
+
+    # Build the query string with multiple filter parameters
+    url = (
+        _get_registration_url(paid_event)
+        + "?"
+        + "&".join([f"{key}={value}" for key, value in filter_params.items()])
+    )
+    response = client.get(url)
+    assert participant_count == response.data["count"]
+    assert response.status_code == status_code
+
+

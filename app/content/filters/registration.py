@@ -3,6 +3,7 @@ from django_filters.rest_framework import FilterSet
 
 from app.common.enums import NativeGroupType as GroupType
 from app.content.models.registration import Registration
+from app.payment.enums import OrderStatus
 
 
 class RegistrationFilter(FilterSet):
@@ -18,15 +19,27 @@ class RegistrationFilter(FilterSet):
         field_name="user__allergy", method="filter_has_allergy"
     )
 
+    has_paid = filters.BooleanFilter(field_name="event__orders__status", method="filter_has_paid")
+
     class Meta:
         model = Registration
-        fields = ["has_attended", "is_on_wait", "study", "year", "has_allergy"]
+        fields = ["has_attended", "is_on_wait", "study", "year", "has_allergy", "allow_photo", "has_paid"]
 
     def filter_study(self, queryset, name, value):
         return queryset.filter(
             user__memberships__group__name__icontains=value,
             user__memberships__group__type=GroupType.STUDY,
         )
+    
+    def filter_has_paid(self, queryset, name, value):
+        if value:
+            return queryset.filter(
+                event__orders__status=OrderStatus.SALE
+            )
+        return queryset.exclude(
+            event__orders__status=OrderStatus.SALE
+        )
+
 
     def filter_year(self, queryset, name, value):
         return queryset.filter(

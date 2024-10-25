@@ -4,6 +4,7 @@ from dry_rest_permissions.generics import DRYPermissionsField
 from sentry_sdk import capture_exception
 
 from app.common.enums import NativeGroupType as GroupType
+from app.payment.enums import OrderStatus
 from app.common.serializers import BaseModelSerializer
 from app.content.models import Event, PriorityPool
 from app.content.serializers.category import SimpleCategorySerializer
@@ -264,6 +265,8 @@ class EventStatisticsSerializer(BaseModelSerializer):
     studyyears = serializers.SerializerMethodField()
     studies = serializers.SerializerMethodField()
     has_allergy_count = serializers.SerializerMethodField()
+    has_paid_count = serializers.SerializerMethodField()
+    allow_photo_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Event
@@ -274,6 +277,8 @@ class EventStatisticsSerializer(BaseModelSerializer):
             "studyyears",
             "studies",
             "has_allergy_count",
+            "has_paid_count",
+            "allow_photo_count"
         )
 
     def get_has_attended_count(self, obj, *args, **kwargs):
@@ -313,3 +318,12 @@ class EventStatisticsSerializer(BaseModelSerializer):
                 Group.objects.filter(type=GroupType.STUDY),
             ),
         )
+    
+    def get_allow_photo_count(self, obj, *args, **kwargs):
+        return obj.registrations.filter(allow_photo=False).count()
+    
+    def get_has_paid_count(self, obj, *args, **kwargs):
+        if obj.is_paid_event:
+            orders = obj.orders.filter(status=OrderStatus.SALE, event=obj).count()
+            return orders
+        return 0
