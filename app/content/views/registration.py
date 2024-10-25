@@ -1,5 +1,6 @@
 import uuid
 
+from django.db.transaction import atomic
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status
@@ -48,6 +49,7 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
     def _is_not_own_registration(self):
         return not self._is_own_registration()
 
+    @atomic
     def create(self, request, *args, **kwargs):
         """Register the current user for the given event."""
 
@@ -68,7 +70,7 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
         serializer.is_valid(raise_exception=True)
 
         event_id = self.kwargs.get("event_id", None)
-        event = Event.objects.get(pk=event_id)
+        event = Event.objects.select_for_update().get(pk=event_id)
 
         registration = super().perform_create(
             serializer, event=event, user=request.user

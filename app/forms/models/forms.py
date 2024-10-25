@@ -24,6 +24,7 @@ class Form(PolymorphicModel, BasePermissionModel):
     write_access = (*AdminGroup.admin(), AdminGroup.NOK)
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=400)
+    description = models.TextField(blank=True, default="")
     template = models.BooleanField(default=False)
 
     viewer_has_answered = None
