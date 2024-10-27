@@ -4,6 +4,8 @@ from django_filters.rest_framework import FilterSet
 from app.common.enums import NativeGroupType as GroupType
 from app.content.models.registration import Registration
 from app.payment.enums import OrderStatus
+from app.payment.models import Order
+from django.db.models import Exists, OuterRef
 
 
 class RegistrationFilter(FilterSet):
@@ -32,13 +34,16 @@ class RegistrationFilter(FilterSet):
         )
     
     def filter_has_paid(self, queryset, name, value):
-        if value:
-            return queryset.filter(
-                event__orders__status=OrderStatus.SALE
-            )
-        return queryset.exclude(
-            event__orders__status=OrderStatus.SALE
+        sale_order_exists = Order.objects.filter(
+            event=OuterRef('event_id'),
+            user=OuterRef('user_id'),
+            status=OrderStatus.SALE
         )
+        
+        if value:
+            return queryset.filter(Exists(sale_order_exists))
+        else:
+            return queryset.exclude(Exists(sale_order_exists))
 
 
     def filter_year(self, queryset, name, value):

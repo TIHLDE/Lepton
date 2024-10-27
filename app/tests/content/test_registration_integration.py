@@ -1134,9 +1134,13 @@ def test_filter_participants(
 @pytest.mark.parametrize(
     ("filter_params", "participant_count", "status_code"),
     [
-        # ({"study": StudyType.DATAING}, 2, status.HTTP_200_OK),
-        ({"has_paid": True}, 2, status.HTTP_200_OK),
-        # ({"has_paid": False}, 1, status.HTTP_200_OK),
+        ({"study": StudyType.DATAING, "has_paid": True}, 1, status.HTTP_200_OK),
+        ({"study": StudyType.DIGFOR, "has_paid": True}, 2, status.HTTP_200_OK),
+        ({"study": StudyType.DIGFOR, "has_paid": False}, 1, status.HTTP_200_OK),
+        ({"has_paid": True, "year": "2050"}, 1, status.HTTP_200_OK),
+        ({"has_paid": True, "year": "2051"}, 1, status.HTTP_200_OK),
+        ({"has_paid": True}, 4, status.HTTP_200_OK),
+        ({"has_paid": False}, 2, status.HTTP_200_OK),
     ],
 )
 def test_filter_participants_paid_event(
@@ -1157,20 +1161,31 @@ def test_filter_participants_paid_event(
     new_admin_user.save()
 
     new_user = UserFactory()
+    new_user2 = UserFactory()
+    new_user3 = UserFactory()
+    new_user4 = UserFactory()
 
     add_user_to_group_with_name(member, StudyType.DATAING, GroupType.STUDY)
     add_user_to_group_with_name(member, "2050", GroupType.STUDYYEAR)
 
     add_user_to_group_with_name(new_admin_user, "2051", GroupType.STUDYYEAR)
-    add_user_to_group_with_name(new_admin_user, StudyType.DATAING, GroupType.STUDY)
+    add_user_to_group_with_name(new_admin_user, StudyType.DIGFOR, GroupType.STUDY)
+    add_user_to_group_with_name(new_user2, StudyType.DIGFOR, GroupType.STUDY)
+    add_user_to_group_with_name(new_user3, StudyType.DIGFOR, GroupType.STUDY)
 
     RegistrationFactory(user=member, event=event)
     RegistrationFactory(user=new_admin_user, event=event)
     RegistrationFactory(user=new_user, event=event)
+    RegistrationFactory(user=new_user2, event=event)
+    RegistrationFactory(user=new_user3, event=event)
+    RegistrationFactory(user=new_user4, event=event)
 
     OrderFactory(event=event, user=member, status=OrderStatus.SALE)
     OrderFactory(event=event, user=new_admin_user, status=OrderStatus.SALE)
-    OrderFactory(event=event, user=new_user, status=OrderStatus.SALE)
+    OrderFactory(event=event, user=new_user4, status=OrderStatus.SALE)
+    OrderFactory(event=event, user=new_user2, status=OrderStatus.SALE)
+    OrderFactory(event=event, user=new_user, status=OrderStatus.CANCEL)
+    OrderFactory(event=event, user=new_user3, status=OrderStatus.CANCEL)
     
     client = get_api_client(user=new_admin_user)
 
