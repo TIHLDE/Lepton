@@ -6,15 +6,15 @@ import pytest
 
 from app.common.enums import AdminGroup
 from app.common.enums import NativeGroupType as GroupType
-from app.common.enums import NativeUserStudy as StudyType
 from app.common.enums import NativeMembershipType as MembershipType
+from app.common.enums import NativeUserStudy as StudyType
 from app.content.factories import EventFactory, RegistrationFactory, UserFactory
 from app.content.factories.priority_pool_factory import PriorityPoolFactory
 from app.forms.enums import NativeEventFormType as EventFormType
 from app.forms.tests.form_factories import EventFormFactory, SubmissionFactory
 from app.group.factories import GroupFactory
-from app.payment.factories import OrderFactory
 from app.payment.enums import OrderStatus
+from app.payment.factories import OrderFactory
 from app.util.test_utils import add_user_to_group_with_name, get_api_client
 from app.util.utils import now
 
@@ -1130,6 +1130,7 @@ def test_filter_participants(
     assert participant_count == response.data["count"]
     assert response.status_code == status_code
 
+
 @pytest.mark.django_db
 @pytest.mark.parametrize(
     ("filter_params", "participant_count", "status_code"),
@@ -1144,7 +1145,13 @@ def test_filter_participants(
     ],
 )
 def test_filter_participants_paid_event(
-    new_admin_user, member, event, paid_event, filter_params, participant_count, status_code
+    new_admin_user,
+    member,
+    event,
+    paid_event,
+    filter_params,
+    participant_count,
+    status_code,
 ):
     """
     An admin should be able to filter the participants of an event using multiple parameters
@@ -1186,7 +1193,7 @@ def test_filter_participants_paid_event(
     OrderFactory(event=event, user=new_user2, status=OrderStatus.SALE)
     OrderFactory(event=event, user=new_user, status=OrderStatus.CANCEL)
     OrderFactory(event=event, user=new_user3, status=OrderStatus.CANCEL)
-    
+
     client = get_api_client(user=new_admin_user)
 
     # Build the query string with multiple filter parameters
@@ -1198,5 +1205,3 @@ def test_filter_participants_paid_event(
     response = client.get(url)
     assert participant_count == response.data["count"]
     assert response.status_code == status_code
-
-
