@@ -1,3 +1,4 @@
+from django.db.models import Q
 from rest_framework import serializers
 
 from dry_rest_permissions.generics import DRYPermissionsField
@@ -265,7 +266,7 @@ class EventStatisticsSerializer(BaseModelSerializer):
     studyyears = serializers.SerializerMethodField()
     studies = serializers.SerializerMethodField()
     has_allergy_count = serializers.SerializerMethodField()
-    has_paid_count = serializers.SerializerMethodField()
+    has_not_paid_count = serializers.SerializerMethodField()
     allow_photo_count = serializers.SerializerMethodField()
 
     class Meta:
@@ -277,7 +278,7 @@ class EventStatisticsSerializer(BaseModelSerializer):
             "studyyears",
             "studies",
             "has_allergy_count",
-            "has_paid_count",
+            "has_not_paid_count",
             "allow_photo_count",
         )
 
@@ -287,6 +288,7 @@ class EventStatisticsSerializer(BaseModelSerializer):
     def get_has_allergy_count(self, obj, *args, **kwargs):
         return (
             obj.registrations.exclude(user__allergy__isnull=True)
+            .filter(is_on_wait=False)
             .exclude(user__allergy__exact="")
             .count()
         )
@@ -320,10 +322,10 @@ class EventStatisticsSerializer(BaseModelSerializer):
         )
 
     def get_allow_photo_count(self, obj, *args, **kwargs):
-        return obj.registrations.filter(allow_photo=False).count()
+        return obj.registrations.filter(allow_photo=False, is_on_wait=False).count()
 
-    def get_has_paid_count(self, obj, *args, **kwargs):
+    def get_has_not_paid_count(self, obj, *args, **kwargs):
         if obj.is_paid_event:
-            orders = obj.orders.filter(status=OrderStatus.SALE, event=obj).count()
+            orders = obj.orders.filter(~Q(status=OrderStatus.SALE), event=obj).count()
             return orders
         return 0
