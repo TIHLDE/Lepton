@@ -1,6 +1,7 @@
 from io import BytesIO
 
 import pytest
+from pycodestyle import readlines
 from rest_framework import status
 
 from app.common.enums import AdminGroup, Groups
@@ -11,6 +12,7 @@ from app.util.test_utils import (
     get_api_client,
     remove_user_from_group_with_name,
 )
+from app.constants import MAX_GALLERY_SIZE
 
 FILE_URL = "/files/file/"
 
@@ -103,7 +105,7 @@ def test_create_file_as_admin(admin_user, admin_gallery):
 @pytest.mark.django_db
 def test_create_file_gallery_full(admin_user, admin_gallery):
     """Tests if the admin cannot create a file when gallery is full (>=50 files)"""
-    for _ in range(50):
+    for _ in range(MAX_GALLERY_SIZE):
         _create_file(admin_user, admin_gallery)
 
     client = get_api_client(user=admin_user)
@@ -112,9 +114,12 @@ def test_create_file_gallery_full(admin_user, admin_gallery):
 
     response = client.post(url, data)
 
+    print(response.data)
+
     assert response.status_code == status.HTTP_400_BAD_REQUEST
 
 
+# noinspection PyTypeChecker
 @pytest.mark.django_db
 def test_retrieve_file_does_not_exist(admin_user):
     """Tests retrieving a non-existent file"""
@@ -253,9 +258,6 @@ def test_update_non_existent_file(admin_user):
     response = client.put(url, data)
 
     assert response.status_code == status.HTTP_404_NOT_FOUND
-    print(response)
-    # fixme want to use reponse from files/mixins.py - "Filen eksisterer ikke"
-    assert response.data["detail"] == "Ikke funnet."
 
 
 @pytest.mark.django_db

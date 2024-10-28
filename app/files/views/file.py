@@ -1,4 +1,3 @@
-from django.http import Http404
 from rest_framework import status
 from rest_framework.response import Response
 
@@ -16,7 +15,7 @@ from app.files.mixins import FileErrorMixin
 class FileViewSet(FileErrorMixin, BaseViewSet):
     serializer_class = FileSerializer
     permission_classes = [BasicViewPermission]
-    queryset = File.objects.all()
+    queryset = File.objects.select_related("gallery").all()
 
     def retrieve(self, request, *_args, **_kwargs):
         """Retrieves a specific file by id"""

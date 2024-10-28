@@ -1,4 +1,9 @@
-from app.files.exceptions import FileDoesNotExist, FileDoesNotExistException
+from app.files.exceptions import (
+    NoGalleryFoundForUser,
+    APINoGalleryFoundForUser,
+    GalleryIsFull,
+    APIGalleryIsFull
+)
 from app.util.mixins import APIErrorsMixin
 
 
@@ -7,5 +12,6 @@ class FileErrorMixin(APIErrorsMixin):
     def expected_exceptions(self):
         return {
             **super().expected_exceptions,
-            FileDoesNotExist: FileDoesNotExistException,
+            NoGalleryFoundForUser: APINoGalleryFoundForUser,
+            GalleryIsFull: APIGalleryIsFull,
         }
