@@ -1,4 +1,3 @@
-from django.db.models import Q
 from rest_framework import serializers
 
 from dry_rest_permissions.generics import DRYPermissionsField
