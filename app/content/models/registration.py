@@ -165,7 +165,7 @@ class Registration(BaseModel, BasePermissionModel):
             and not self.is_on_wait
             and self in self.event.get_waiting_list()
         ):
-            raise EventIsFullError
+            raise EventIsFullError()
 
         self.send_notification_and_mail()
         return super().save(*args, **kwargs)

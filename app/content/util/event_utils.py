@@ -91,4 +91,4 @@ def refund_vipps_order(order_id, event, transaction_text):
 
     except Exception as refund_error:
         capture_exception(refund_error)
-        raise RefundFailedError("Tilbakebetaling feilet")
+        raise RefundFailedError()
