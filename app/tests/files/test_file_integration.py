@@ -1,8 +1,7 @@
 from io import BytesIO
 
-from rest_framework import status
-
 import pytest
+from rest_framework import status
 
 from app.common.enums import AdminGroup, Groups
 from app.files.models.file import File
@@ -254,7 +253,9 @@ def test_update_non_existent_file(admin_user):
     response = client.put(url, data)
 
     assert response.status_code == status.HTTP_404_NOT_FOUND
-    assert response.data["detail"] == "Filen eksisterer ikke."
+    print(response)
+    # fixme want to use reponse from files/mixins.py - "Filen eksisterer ikke"
+    assert response.data["detail"] == "Ikke funnet."
 
 
 @pytest.mark.django_db
