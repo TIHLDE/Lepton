@@ -32,11 +32,10 @@ def upload(request):
             {"url": url},
             status=status.HTTP_200_OK,
         )
-
-    except ValueError as value_error:
+    except ValueError:
         return Response(
-            {"detail": str(value_error)},
-            status=status.HTTP_400_BAD_REQUEST,
+            {"detail": "En feil oppstod under behandlingen av forespørselen."},
+            status=status.HTTP_400_BAD_REQUEST
         )
 
 
@@ -54,9 +53,8 @@ def delete(_request, container_name, blob_name):
             {"detail": "Filen ble slettet"},
             status=status.HTTP_200_OK,
         )
-
-    except ValueError as value_error:
+    except ValueError:
         return Response(
-            {"detail": str(value_error)},
-            status=status.HTTP_400_BAD_REQUEST,
+            {"detail": "En feil oppstod under behandlingen av forespørselen."},
+            status=status.HTTP_400_BAD_REQUEST
         )

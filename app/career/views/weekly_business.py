@@ -12,7 +12,6 @@ from app.util import now, week_nr
 
 
 class WeeklyBusinessViewSet(BaseViewSet):
-
     queryset = WeeklyBusiness.objects.none()
     serializer_class = WeeklyBusinessSerializer
     permission_classes = [BasicViewPermission]
@@ -57,9 +56,10 @@ class WeeklyBusinessViewSet(BaseViewSet):
             return Response(
                 {"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST
             )
-        except ValueError as value_error:
+        except ValueError:
             return Response(
-                {"detail": str(value_error)}, status=status.HTTP_400_BAD_REQUEST
+                {"detail": "En feil oppstod under behandlingen av forespørselen."},
+                status=status.HTTP_400_BAD_REQUEST
             )
 
     def update(self, request, pk):
@@ -78,9 +78,10 @@ class WeeklyBusinessViewSet(BaseViewSet):
             return Response(
                 {"detail": serializer.errors}, status=status.HTTP_400_BAD_REQUEST
             )
-        except ValueError as value_error:
+        except ValueError:
             return Response(
-                {"detail": str(value_error)}, status=status.HTTP_400_BAD_REQUEST
+                {"detail": "En feil oppstod under behandlingen av forespørselen."},
+                status=status.HTTP_400_BAD_REQUEST
             )
 
     def destroy(self, request, *args, **kwargs):

@@ -7,12 +7,14 @@ import pytest
 from app.common.enums import AdminGroup
 from app.common.enums import NativeGroupType as GroupType
 from app.common.enums import NativeMembershipType as MembershipType
+from app.common.enums import NativeUserStudy as StudyType
 from app.content.factories import EventFactory, RegistrationFactory, UserFactory
 from app.content.factories.priority_pool_factory import PriorityPoolFactory
 from app.forms.enums import NativeEventFormType as EventFormType
 from app.forms.tests.form_factories import EventFormFactory, SubmissionFactory
 from app.group.factories import GroupFactory
 from app.payment.enums import OrderStatus
+from app.payment.factories import OrderFactory
 from app.util.test_utils import add_user_to_group_with_name, get_api_client
 from app.util.utils import now
 
@@ -1070,4 +1072,136 @@ def test_delete_registration_with_paid_order_as_self(
     url = _get_registration_detail_url(registration)
     response = client.delete(url)
 
+    assert response.status_code == status_code
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    ("filter_params", "participant_count", "status_code"),
+    [
+        ({"has_allergy": True}, 2, status.HTTP_200_OK),
+        ({"year": "2050"}, 1, status.HTTP_200_OK),
+        ({"year": "2051"}, 1, status.HTTP_200_OK),
+        ({"study": StudyType.DATAING}, 2, status.HTTP_200_OK),
+        ({"year": "2050", "study": StudyType.DATAING}, 1, status.HTTP_200_OK),
+        (
+            {"has_allergy": True, "year": "2051", "study": StudyType.DATAING},
+            1,
+            status.HTTP_200_OK,
+        ),
+        (
+            {"has_allergy": True, "year": "2050", "study": StudyType.DATAING},
+            1,
+            status.HTTP_200_OK,
+        ),
+    ],
+)
+def test_filter_participants(
+    new_admin_user, member, event, filter_params, participant_count, status_code
+):
+    """
+    An admin should be able to filter the participants of an event using multiple parameters
+    """
+
+    member.allergy = "Pizza"
+    member.save()
+
+    new_admin_user.allergy = "Fisk"
+    new_admin_user.save()
+
+    add_user_to_group_with_name(member, StudyType.DATAING, GroupType.STUDY)
+    add_user_to_group_with_name(member, "2050", GroupType.STUDYYEAR)
+
+    add_user_to_group_with_name(new_admin_user, "2051", GroupType.STUDYYEAR)
+    add_user_to_group_with_name(new_admin_user, StudyType.DATAING, GroupType.STUDY)
+
+    RegistrationFactory(user=member, event=event)
+    RegistrationFactory(user=new_admin_user, event=event)
+    client = get_api_client(user=new_admin_user)
+
+    # Build the query string with multiple filter parameters
+    url = (
+        _get_registration_url(event)
+        + "?"
+        + "&".join([f"{key}={value}" for key, value in filter_params.items()])
+    )
+    response = client.get(url)
+
+    assert participant_count == response.data["count"]
+    assert response.status_code == status_code
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    ("filter_params", "participant_count", "status_code"),
+    [
+        ({"study": StudyType.DATAING, "has_paid": True}, 1, status.HTTP_200_OK),
+        ({"study": StudyType.DIGFOR, "has_paid": True}, 2, status.HTTP_200_OK),
+        ({"study": StudyType.DIGFOR, "has_paid": False}, 1, status.HTTP_200_OK),
+        ({"has_paid": True, "year": "2050"}, 1, status.HTTP_200_OK),
+        ({"has_paid": True, "year": "2051"}, 1, status.HTTP_200_OK),
+        ({"has_paid": True}, 4, status.HTTP_200_OK),
+        ({"has_paid": False}, 2, status.HTTP_200_OK),
+    ],
+)
+def test_filter_participants_paid_event(
+    new_admin_user,
+    member,
+    event,
+    paid_event,
+    filter_params,
+    participant_count,
+    status_code,
+):
+    """
+    An admin should be able to filter the participants of an event using multiple parameters
+    """
+
+    paid_event.event = event
+
+    paid_event.save()
+
+    member.allergy = "Pizza"
+    member.save()
+
+    new_admin_user.allergy = "Fisk"
+    new_admin_user.save()
+
+    new_user = UserFactory()
+    new_user2 = UserFactory()
+    new_user3 = UserFactory()
+    new_user4 = UserFactory()
+
+    add_user_to_group_with_name(member, StudyType.DATAING, GroupType.STUDY)
+    add_user_to_group_with_name(member, "2050", GroupType.STUDYYEAR)
+
+    add_user_to_group_with_name(new_admin_user, "2051", GroupType.STUDYYEAR)
+    add_user_to_group_with_name(new_admin_user, StudyType.DIGFOR, GroupType.STUDY)
+    add_user_to_group_with_name(new_user2, StudyType.DIGFOR, GroupType.STUDY)
+    add_user_to_group_with_name(new_user3, StudyType.DIGFOR, GroupType.STUDY)
+
+    RegistrationFactory(user=member, event=event)
+    RegistrationFactory(user=new_admin_user, event=event)
+    RegistrationFactory(user=new_user, event=event)
+    RegistrationFactory(user=new_user2, event=event)
+    RegistrationFactory(user=new_user3, event=event)
+    RegistrationFactory(user=new_user4, event=event)
+
+    OrderFactory(event=event, user=member, status=OrderStatus.SALE)
+    OrderFactory(event=event, user=new_admin_user, status=OrderStatus.SALE)
+    OrderFactory(event=event, user=new_user4, status=OrderStatus.SALE)
+    OrderFactory(event=event, user=new_user2, status=OrderStatus.SALE)
+    OrderFactory(event=event, user=new_user, status=OrderStatus.CANCEL)
+    OrderFactory(event=event, user=new_user3, status=OrderStatus.CANCEL)
+
+    client = get_api_client(user=new_admin_user)
+
+    # Build the query string with multiple filter parameters
+    url = (
+        _get_registration_url(paid_event)
+        + "?"
+        + "&".join([f"{key}={value}" for key, value in filter_params.items()])
+    )
+    response = client.get(url)
+    assert participant_count == response.data["count"]
     assert response.status_code == status_code
