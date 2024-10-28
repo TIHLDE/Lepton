@@ -36,6 +36,6 @@ class NotificationViewSet(BaseViewSet):
                 status=status.HTTP_200_OK,
             )
         return Response(
-            {"detail": ("Kunne ikke oppdatere varslet")},
+            {"detail": "Kunne ikke oppdatere varslet"},
             status=status.HTTP_403_FORBIDDEN,
         )

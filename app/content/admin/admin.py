@@ -40,7 +40,7 @@ class StrikeAdmin(admin.ModelAdmin):
     )
 
 
-def admin_delete_registration(modeladmin, request, queryset):
+def admin_delete_registration(_modeladmin, _request, queryset):
     for registration in queryset:
         registration.admin_unregister()
 
