@@ -1,9 +1,8 @@
+from django.db.models import Q
 from rest_framework import serializers
 
 from dry_rest_permissions.generics import DRYPermissionsField
 from sentry_sdk import capture_exception
-
-from django.db.models import Q
 
 from app.common.enums import NativeGroupType as GroupType
 from app.common.serializers import BaseModelSerializer
