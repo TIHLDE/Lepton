@@ -4,6 +4,7 @@ from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status
 from rest_framework.decorators import action
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 
 from app.badge.models import Badge, UserBadge
@@ -43,20 +44,26 @@ from app.group.serializers.membership import (
 from app.kontres.models.reservation import Reservation
 from app.kontres.serializer.reservation_seralizer import ReservationSerializer
 from app.util.export_user_data import export_user_data
+from app.util.mixins import APIErrorsMixin
 from app.util.utils import CaseInsensitiveBooleanQueryParam
 
 
-class UserViewSet(BaseViewSet, ActionMixin):
+class UserViewSet(BaseViewSet, ActionMixin, APIErrorsMixin):
     """API endpoint to display one user"""
 
     serializer_class = UserSerializer
     permission_classes = [BasicViewPermission]
-    queryset = User.objects.all()
     pagination_class = BasePagination
 
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_class = UserFilter
     search_fields = ["user_id", "first_name", "last_name", "email"]
+
+    def get_queryset(self):
+        is_admin = is_admin_user(self.request)
+        if is_admin:
+            return User.objects.all()
+        return User.objects.filter(public_profile=True)
 
     def get_serializer_class(self):
         if hasattr(self, "action") and self.action == "list":
@@ -66,22 +73,21 @@ class UserViewSet(BaseViewSet, ActionMixin):
         return super().get_serializer_class()
 
     def retrieve(self, request, pk, *args, **kwargs):
-        try:
-            user = self._get_user(request, pk)
+        if pk == "me":
+            user = request.user
+            if not user:
+                raise PermissionDenied("Du må være logget inn for å se din egen bruker")
+        else:
+            user = get_object_or_404(User, user_id=pk)
 
-            self.check_object_permissions(self.request, user)
+        self.check_object_permissions(self.request, user)
 
-            serializer = DefaultUserSerializer(user)
+        serializer = DefaultUserSerializer(user)
 
-            if is_admin_user(self.request) or user == request.user:
-                serializer = UserSerializer(user, context={"request": self.request})
+        if is_admin_user(self.request) or user == request.user:
+            serializer = UserSerializer(user, context={"request": self.request})
 
-            return Response(serializer.data, status=status.HTTP_200_OK)
-
-        except Exception:
-            return Response(
-                {"message": "Error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def create(self, request, *args, **kwargs):
         serializer = UserCreateSerializer(data=self.request.data)
@@ -144,12 +150,21 @@ class UserViewSet(BaseViewSet, ActionMixin):
 
     def _get_user(self, request, pk):
         if pk == "me":
+            if not request.user:
+                raise PermissionDenied("Du må være logget inn for å se din egen bruker")
             return request.user
-        return get_object_or_404(User, user_id=pk)
+
+        user = get_object_or_404(User, user_id=pk)
+        if not user.public_profile and not is_admin_user(request):
+            raise PermissionDenied("Brukeren har ikke offentlig profil")
+        return user
 
     @action(detail=False, methods=["post"], url_path="me/slack")
     def connect_to_slack(self, request, *args, **kwargs):
         user = self.request.user
+        if not user:
+            raise PermissionDenied("Du må være logget inn for å koble til Slack")
+
         self.check_object_permissions(self.request, user)
 
         code = request.data.get("code", None)
@@ -172,6 +187,9 @@ class UserViewSet(BaseViewSet, ActionMixin):
 
     @action(detail=False, methods=["get"], url_path="me/permissions")
     def get_user_permissions(self, request, *args, **kwargs):
+        if not request.user:
+            raise PermissionDenied("Du må være logget inn for å se dine tillatelser")
+
         try:
             serializer = UserPermissionsSerializer(
                 request.user, context={"request": request}
@@ -290,6 +308,9 @@ class UserViewSet(BaseViewSet, ActionMixin):
 
     @action(detail=False, methods=["get"], url_path="me/strikes")
     def get_user_strikes(self, request, *args, **kwargs):
+        if not request.user:
+            raise PermissionDenied("Du må være logget inn for å se dine prikker")
+
         strikes = request.user.strikes.active()
         serializer = UserInfoStrikeSerializer(
             instance=strikes, many=True, context={"request": request}
@@ -307,6 +328,9 @@ class UserViewSet(BaseViewSet, ActionMixin):
 
     @action(detail=False, methods=["get"], url_path="me/events")
     def get_user_events(self, request, *args, **kwargs):
+        if not request.user:
+            raise PermissionDenied("Du må være logget inn for å se dine arrangementer")
+
         filter_field = self.request.query_params.get("expired")
         event_has_ended = CaseInsensitiveBooleanQueryParam(filter_field).value
 
@@ -327,6 +351,9 @@ class UserViewSet(BaseViewSet, ActionMixin):
 
     @action(detail=False, methods=["get"], url_path="me/forms")
     def get_user_forms(self, request, *args, **kwargs):
+        if not request.user:
+            raise PermissionDenied("Du må være logget inn for å se dine skjemaer")
+
         forms = request.user.forms
 
         filter_field = request.query_params.get("unanswered")
@@ -398,6 +425,9 @@ class UserViewSet(BaseViewSet, ActionMixin):
 
     @action(detail=False, methods=["get"], url_path="me/data")
     def export_user_data(self, request, *args, **kwargs):
+        if not request.user:
+            raise PermissionDenied("Du må være logget inn for å eksportere dine data")
+
         export_successfull = export_user_data(request, request.user)
 
         if export_successfull:
@@ -416,6 +446,9 @@ class UserViewSet(BaseViewSet, ActionMixin):
     @action(detail=False, methods=["get"], url_path="me/reservations")
     def get_user_reservations(self, request, *args, **kwargs):
         user = request.user
+        if not user:
+            raise PermissionDenied("Du må være logget inn for å se dine reservasjoner")
+
         reservations = Reservation.objects.filter(author=user).order_by("start_time")
         serializer = ReservationSerializer(
             reservations, many=True, context={"request": request}
