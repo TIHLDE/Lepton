@@ -1,14 +1,11 @@
-import os
-from datetime import datetime
-
 from sentry_sdk import capture_exception
 
 from app.content.exceptions import RefundFailedError
 from app.payment.tasks import check_if_has_paid
 from app.payment.util.payment_utils import (
-    get_new_access_token,
     initiate_payment,
     refund_payment,
+    check_access_token
 )
 
 
@@ -45,13 +42,7 @@ def create_vipps_order(order_id, event, transaction_text, fallback):
     Creates vipps order, and returns the url.
     """
 
-    access_token = os.environ.get("PAYMENT_ACCESS_TOKEN")
-    expires_at = os.environ.get("PAYMENT_ACCESS_TOKEN_EXPIRES_AT")
-
-    if not access_token or datetime.now() >= datetime.fromtimestamp(int(expires_at)):
-        (expires_at, access_token) = get_new_access_token()
-        os.environ.update({"PAYMENT_ACCESS_TOKEN": access_token})
-        os.environ.update({"PAYMENT_ACCESS_TOKEN_EXPIRES_AT": str(expires_at)})
+    access_token = check_access_token()
 
     event_price = int(event.paid_information.price * 100)
 
@@ -71,13 +62,7 @@ def refund_vipps_order(order_id, event, transaction_text):
     Refunds vipps order.
     """
 
-    access_token = os.environ.get("PAYMENT_ACCESS_TOKEN")
-    expires_at = os.environ.get("PAYMENT_ACCESS_TOKEN_EXPIRES_AT")
-
-    if not access_token or datetime.now() >= datetime.fromtimestamp(int(expires_at)):
-        (expires_at, access_token) = get_new_access_token()
-        os.environ.update({"PAYMENT_ACCESS_TOKEN": access_token})
-        os.environ.update({"PAYMENT_ACCESS_TOKEN_EXPIRES_AT": str(expires_at)})
+    access_token = check_access_token()
 
     event_price = int(event.paid_information.price) * 100
 

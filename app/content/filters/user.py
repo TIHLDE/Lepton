@@ -35,28 +35,28 @@ class UserFilter(FilterSet):
             "in_group",
         ]
 
-    def filter_is_in_study(self, queryset, name, value):
+    def filter_is_in_study(self, queryset, _name, value):
         return queryset.filter(
             memberships__group__slug=value, memberships__group__type=GroupType.STUDY
         )
 
-    def filter_is_in_studyyear(self, queryset, name, value):
+    def filter_is_in_studyyear(self, queryset, _name, value):
         return queryset.filter(
             memberships__group__slug=value, memberships__group__type=GroupType.STUDYYEAR
         )
 
-    def filter_is_in_group(self, queryset, name, value):
+    def filter_is_in_group(self, queryset, _name, value):
         return queryset.filter(memberships__group__slug=value)
 
-    def filter_is_TIHLDE_member(self, queryset, name, value):
+    def filter_is_TIHLDE_member(self, queryset, _name, value):
         if value is False:
             return queryset.exclude(memberships__group__slug=Groups.TIHLDE)
         return queryset.filter(memberships__group__slug=Groups.TIHLDE)
 
-    def filter_has_active_strikes(self, queryset, name, value):
+    def filter_has_active_strikes(self, queryset, _name, value):
         if value is False:
             return queryset.exclude(strikes__in=Strike.objects.active()).distinct()
         return queryset.filter(strikes__in=Strike.objects.active()).distinct()
 
-    def filter_has_allowed_photo(self, queryset, name, value):
+    def filter_has_allowed_photo(self, queryset, _name, value):
         return queryset.filter(allows_photo_by_default=value)
