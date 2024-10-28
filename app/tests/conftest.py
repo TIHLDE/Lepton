@@ -335,13 +335,6 @@ def new_admin_user():
 
 
 @pytest.fixture()
-def new_admin_user():
-    admin = UserFactory()
-    add_user_to_group_with_name(admin, AdminGroup.HS)
-    return admin
-
-
-@pytest.fixture()
 def feedback_bug():
     return BugFactory()
 
