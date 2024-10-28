@@ -3,13 +3,13 @@ from rest_framework.response import Response
 
 from app.common.permissions import BasicViewPermission
 from app.common.viewsets import BaseViewSet
+from app.files.mixins import FileErrorMixin
 from app.files.models.file import File
 from app.files.serializers.file import (
     CreateFileSerializer,
     FileSerializer,
     UpdateFileSerializer,
 )
-from app.files.mixins import FileErrorMixin
 
 
 class FileViewSet(FileErrorMixin, BaseViewSet):

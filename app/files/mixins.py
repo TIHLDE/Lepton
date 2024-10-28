@@ -1,8 +1,8 @@
 from app.files.exceptions import (
-    NoGalleryFoundForUser,
+    APIGalleryIsFull,
     APINoGalleryFoundForUser,
     GalleryIsFull,
-    APIGalleryIsFull
+    NoGalleryFoundForUser,
 )
 from app.util.mixins import APIErrorsMixin
 

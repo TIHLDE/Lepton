@@ -26,11 +26,6 @@ class UserGalleryViewSet(BaseViewSet):
 
     def create(self, request, *args, **kwargs):
         """Create a gallery for the current user"""
-        if UserGallery.has_gallery(request.user):
-            return Response(
-                {"detail": "User already has a gallery."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
         serializer = UserGallerySerializer(
             data=request.data, context={"request": request}
         )
