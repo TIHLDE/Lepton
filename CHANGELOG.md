@@ -14,9 +14,13 @@
 ---
 
 ## Neste versjon
-- ✨**Tilbakemelding-funksjon**. Man kan nå opprette tilbakemeldinger for bugs og idé.
-## Versjon 2024.09.25
+- ✨ **Filtrering**. Admin kan nå filtere deltakere av et arrangement på studie, studieår, om deltakere har allergier, (om deltakere godtar å bli tatt bilde av, om deltakere har ankommet), i tillegg til søk på fornavn og etternavn.
 
+## Versjon 2024.10.11
+- ✨ **Tilbakemelding-funksjon**. Man kan nå opprette tilbakemeldinger for bugs og idé.
+- 🦟 **Påmelding**. Det vil nå ikke være mulig med flere påmeldinger på et arrangement enn maksgrensen.
+
+## Versjon 2024.09.25
 - ✨**Codex arrangementer**. Det kan nå opprettes arrangementer på Codex, som medlemmer av Codex kan melde seg på.
 - ⚡**Betalingsordre**. Man kan nå se historikk over betalingsordre for en påmelding til et arrangement.
 - ✨**Gruppe**. HS kan nå opprette en ny gruppe.
