@@ -50,7 +50,7 @@ class UserNotificationSettingViewSet(
         )
 
     @action(detail=False, methods=["get"], url_path="choices")
-    def choices(self, request, *args, **kwargs):
+    def choices(self, _request, *_args, **_kwargs):
         return Response(
             list(
                 map(
