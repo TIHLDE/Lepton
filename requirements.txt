@@ -3,7 +3,7 @@ logzero
 aiohttp-cors
 wheel
 mysqlclient == 2.1.1
-sentry-sdk == 2.14.0
+sentry-sdk == 2.17.0
 celery == 5.4.0
 azure-storage-blob == 12.23.1
 python-dotenv ~= 1.0.1
