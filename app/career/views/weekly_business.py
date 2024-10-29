@@ -59,7 +59,7 @@ class WeeklyBusinessViewSet(BaseViewSet):
         except ValueError:
             return Response(
                 {"detail": "En feil oppstod under behandlingen av forespørselen."},
-                status=status.HTTP_400_BAD_REQUEST
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
     def update(self, request, pk):
@@ -81,7 +81,7 @@ class WeeklyBusinessViewSet(BaseViewSet):
         except ValueError:
             return Response(
                 {"detail": "En feil oppstod under behandlingen av forespørselen."},
-                status=status.HTTP_400_BAD_REQUEST
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
     def destroy(self, request, *args, **kwargs):
