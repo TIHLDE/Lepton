@@ -112,7 +112,6 @@ class Form(PolymorphicModel, BasePermissionModel):
 
 
 class EventForm(Form):
-
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name="forms")
     type = models.CharField(
         max_length=40, choices=EventFormType.choices, default=EventFormType.SURVEY
@@ -160,7 +159,6 @@ class EventForm(Form):
 
 
 class GroupForm(Form):
-
     read_access = [Groups.TIHLDE]
     email_receiver_on_submit = models.EmailField(max_length=200, null=True, blank=True)
     group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name="forms")
@@ -212,7 +210,6 @@ class GroupForm(Form):
 
 
 class Field(OrderedModel):
-
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=400)
     form = models.ForeignKey(Form, on_delete=models.CASCADE, related_name="fields")
@@ -234,7 +231,6 @@ class Field(OrderedModel):
 
 
 class Option(OrderedModel):
-
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=400, default="")
     field = models.ForeignKey(Field, on_delete=models.CASCADE, related_name="options")
@@ -298,7 +294,7 @@ class Submission(BaseModel, BasePermissionModel):
             elif isinstance(self.form, GroupForm):
                 self.check_group_form_can_submit_multiple()
             else:
-                raise DuplicateSubmission("Spørreskjemaet tillater kun én innsending")
+                raise DuplicateSubmission()
 
     def check_event_form_has_registration(self):
         user_has_registration = self.form.event.registrations.filter(
@@ -311,21 +307,17 @@ class Submission(BaseModel, BasePermissionModel):
 
     def check_group_form_can_submit_multiple(self):
         if not self.form.can_submit_multiple:
-            raise DuplicateSubmission("Spørreskjemaet tillater kun én innsending")
+            raise DuplicateSubmission()
 
     def check_group_form_open_for_submissions(self):
         if not self.form.is_open_for_submissions:
-            raise FormNotOpenForSubmission(
-                "Spørreskjemaet er ikke åpent for innsending"
-            )
+            raise FormNotOpenForSubmission()
 
     def check_group_form_only_for_members(self):
         if self.form.only_for_group_members and not self.user.is_member_of(
             self.form.group
         ):
-            raise GroupFormOnlyForMembers(
-                "Spørreskjemaet er kun åpent for medlemmer av gruppen"
-            )
+            raise GroupFormOnlyForMembers()
 
     @classmethod
     def _get_form_from_request(cls, request):
@@ -388,7 +380,6 @@ class Submission(BaseModel, BasePermissionModel):
 
 
 class Answer(BaseModel):
-
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     submission = models.ForeignKey(
         Submission, on_delete=models.CASCADE, related_name="answers"
