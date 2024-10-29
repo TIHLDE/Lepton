@@ -42,6 +42,7 @@ class FineViewSet(APIFineErrorsMixin, BaseViewSet, ActionMixin):
             group__slug=self.kwargs["slug"], group__fines_activated=True
         )
 
+    # noinspection PyShadowingNames
     def create(self, request, *args, **kwargs):
         context = {
             "group_slug": kwargs["slug"],
@@ -85,7 +86,7 @@ class FineViewSet(APIFineErrorsMixin, BaseViewSet, ActionMixin):
         return Response({"detail": ("Boten ble slettet")}, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=["get"], url_path=r"users/(?P<user_id>[^/.]+)")
-    def get_user_fines(self, request, *args, **kwargs):
+    def get_user_fines(self, _request, *_args, **kwargs):
         """Get the fines of a specific user in a group"""
 
         fines = (
@@ -96,7 +97,7 @@ class FineViewSet(APIFineErrorsMixin, BaseViewSet, ActionMixin):
         return self.paginate_response(data=fines, serializer=FineNoUserSerializer)
 
     @action(detail=False, methods=["get"], url_path="users")
-    def get_fine_users(self, request, *args, **kwargs):
+    def get_fine_users(self, _request, *_args, **_kwargs):
         """Get the users in a group which has fines and how many"""
         users = self.get_fine_filter_query()
         return self.paginate_response(data=users, serializer=UserFineSerializer)
@@ -119,7 +120,7 @@ class FineViewSet(APIFineErrorsMixin, BaseViewSet, ActionMixin):
         )
 
     @action(detail=False, methods=["put"], url_path="batch-update")
-    def batch_update_fines(self, request, *args, **kwargs):
+    def batch_update_fines(self, request, *_args, **_kwargs):
         """Update a batch of fines at once"""
         assert request.data["data"]
         fines = self.get_queryset().filter(id__in=request.data["fine_ids"])
@@ -140,7 +141,7 @@ class FineViewSet(APIFineErrorsMixin, BaseViewSet, ActionMixin):
         )
 
     @action(detail=False, methods=["put"], url_path=r"batch-update/(?P<user_id>[^/.]+)")
-    def batch_update_user_fines(self, request, *args, **kwargs):
+    def batch_update_user_fines(self, request, *_args, **kwargs):
         """Update all the fines of a user in a specific group"""
         fines = self.get_queryset().filter(user__user_id=kwargs["user_id"])
         serializer = FineUpdateCreateSerializer(
@@ -160,12 +161,12 @@ class FineViewSet(APIFineErrorsMixin, BaseViewSet, ActionMixin):
         )
 
     @action(detail=False, methods=["get"], url_path="statistics")
-    def get_group_fine_statistics(self, request, *args, **kwargs):
+    def get_group_fine_statistics(self, _request, *_args, **kwargs):
         group = Group.objects.get(slug=kwargs["slug"])
         return Response(FineStatisticsSerializer(group).data, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=["put"], url_path="defense")
-    def update_defense(self, request, *args, **kwargs):
+    def update_defense(self, request, *_args, **_kwargs):
         fine = self.get_object()
         serializer = FineUpdateDefenseSerializer(
             fine, data=request.data, context={"request": request}

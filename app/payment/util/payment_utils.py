@@ -26,7 +26,7 @@ def get_new_access_token():
 
     response = response.json()
 
-    return (response["expires_on"], response["access_token"])
+    return response["expires_on"], response["access_token"]
 
 
 def check_access_token():

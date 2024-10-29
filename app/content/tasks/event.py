@@ -19,7 +19,7 @@ from app.util.utils import datetime_format, midnight, now
 
 
 @app.task(bind=True, base=BaseTask)
-def run_sign_off_deadline_reminder(self, *args, **kwargs):
+def run_sign_off_deadline_reminder(self, *_args, **_kwargs):
     from app.content.models.event import Event
 
     try:
@@ -41,7 +41,7 @@ def run_sign_off_deadline_reminder(self, *args, **kwargs):
 
 
 @app.task(bind=True, base=BaseTask)
-def run_post_event_actions(self, *args, **kwargs):
+def run_post_event_actions(self, *_args, **_kwargs):
     from app.content.models.event import Event
 
     try:
@@ -61,7 +61,7 @@ def run_post_event_actions(self, *args, **kwargs):
 
 
 @app.task(bind=True, base=BaseTask)
-def run_sign_up_start_notifier(self, *args, **kwargs):
+def run_sign_up_start_notifier(self, *_args, **_kwargs):
     from app.content.models.event import Event
 
     try:
@@ -82,7 +82,7 @@ def run_sign_up_start_notifier(self, *args, **kwargs):
         capture_exception(e)
 
 
-def __sign_off_deadline_reminder(event, *args, **kwargs):
+def __sign_off_deadline_reminder(event, *_args, **_kwargs):
     from app.content.models import User
 
     users_not_on_wait = User.objects.filter(
@@ -117,7 +117,7 @@ def __sign_off_deadline_reminder(event, *args, **kwargs):
     event.save(update_fields=["runned_sign_off_deadline_reminder"])
 
 
-def __post_event_actions(event, *args, **kwargs):
+def __post_event_actions(event, *_args, **_kwargs):
     from app.content.models import User
 
     if event.can_cause_strikes:
@@ -149,7 +149,7 @@ def __post_event_actions(event, *args, **kwargs):
     event.save(update_fields=["runned_post_event_actions"])
 
 
-def __sign_up_start_notifier(event, *args, **kwargs):
+def __sign_up_start_notifier(event, *_args, **_kwargs):
     description = f'Påmelding til "{event.title}" har nå åpnet! 🏃 Arrangementet starter {datetime_format(event.start_date)} og har {event.limit} plasser. Påmeldingen er åpen frem til {datetime_format(event.end_registration_at)}, men husk at det kan bli fullt før det. ⏲️'
 
     CHANNEL_ID = (

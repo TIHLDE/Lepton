@@ -27,36 +27,34 @@ def upload(request):
 
         key = list(request.FILES.keys())[0]
         blob = request.FILES[key]
-        url = AzureFileHandler(blob).uploadBlob()
+        url = AzureFileHandler(blob).upload_blob()
         return Response(
             {"url": url},
             status=status.HTTP_200_OK,
         )
-
-    except ValueError as value_error:
+    except ValueError:
         return Response(
-            {"detail": str(value_error)},
-            status=status.HTTP_400_BAD_REQUEST,
+            {"detail": "En feil oppstod under behandlingen av forespørselen."},
+            status=status.HTTP_400_BAD_REQUEST
         )
 
 
 @api_view(["DELETE"])
 @permission_classes([IsMember])
-def delete(request, container_name, blob_name):
+def delete(_request, container_name, blob_name):
     """Method for deleting files from Azure Blob Storage, only allowed for members"""
     try:
         handler = AzureFileHandler()
         handler.blobName = blob_name
         handler.containerName = container_name
 
-        handler.deleteBlob()
+        handler.delete_blob()
         return Response(
             {"detail": "Filen ble slettet"},
             status=status.HTTP_200_OK,
         )
-
-    except ValueError as value_error:
+    except ValueError:
         return Response(
-            {"detail": str(value_error)},
-            status=status.HTTP_400_BAD_REQUEST,
+            {"detail": "En feil oppstod under behandlingen av forespørselen."},
+            status=status.HTTP_400_BAD_REQUEST
         )
