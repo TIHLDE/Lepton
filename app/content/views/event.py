@@ -170,7 +170,7 @@ class EventViewSet(BaseViewSet, ActionMixin):
 
         super().destroy(request, *args, **kwargs)
         return Response(
-            {"detail": ("Arrangementet ble slettet")}, status=status.HTTP_200_OK
+            {"detail": "Arrangementet ble slettet"}, status=status.HTTP_200_OK
         )
 
     @action(
@@ -179,7 +179,7 @@ class EventViewSet(BaseViewSet, ActionMixin):
         url_path="favorite",
         permission_classes=(IsMember,),
     )
-    def user_favorite(self, request, pk, *args, **kwargs):
+    def user_favorite(self, request, pk, *_args, **_kwargs):
         event = get_object_or_404(Event, id=pk)
 
         if request.method == "PUT":
@@ -202,7 +202,7 @@ class EventViewSet(BaseViewSet, ActionMixin):
         methods=["get"],
         url_path="public_registrations",
     )
-    def get_public_event_registrations(self, request, pk, *args, **kwargs):
+    def get_public_event_registrations(self, request, pk, *_args, **_kwargs):
         event = get_object_or_404(Event, id=pk)
         registrations = event.get_participants()
         return self.paginate_response(
@@ -216,7 +216,7 @@ class EventViewSet(BaseViewSet, ActionMixin):
         methods=["post"],
         url_path="notify",
     )
-    def notify_registered_users(self, request, *args, **kwargs):
+    def notify_registered_users(self, request, *_args, **_kwargs):
         try:
             title = request.data["title"]
             message = request.data["message"]
@@ -242,7 +242,7 @@ class EventViewSet(BaseViewSet, ActionMixin):
             )
 
     @action(detail=False, methods=["get"], url_path="admin")
-    def get_events_where_is_admin(self, request, *args, **kwargs):
+    def get_events_where_is_admin(self, request, *_args, **_kwargs):
         if not self.request.user:
             return Response(
                 {"detail": "Du har ikke tilgang til å opprette/redigere arrangementer"},
@@ -271,7 +271,7 @@ class EventViewSet(BaseViewSet, ActionMixin):
         )
 
     @action(detail=True, methods=["get"], url_path="statistics")
-    def statistics(self, request, *args, **kwargs):
+    def statistics(self, request, *_args, **_kwargs):
         event = self.get_object()
         serializer = EventStatisticsSerializer(event, context={"request": request})
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -285,7 +285,7 @@ class EventViewSet(BaseViewSet, ActionMixin):
             FormParser,
         ),
     )
-    def mail_gift_cards(self, request, *args, **kwargs):
+    def mail_gift_cards(self, request, *_args, **_kwargs):
 
         event = self.get_object()
         dispatcher = request.user
