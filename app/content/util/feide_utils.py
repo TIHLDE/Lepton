@@ -52,7 +52,7 @@ def get_feide_tokens(code: str) -> tuple[str, str]:
     if "access_token" not in json or "id_token" not in json:
         raise FeideTokenNotFoundError()
 
-    return (json["access_token"], json["id_token"])
+    return json["access_token"], json["id_token"]
 
 
 def get_feide_user_info_from_jwt(jwt_token: str) -> tuple[str, str]:
@@ -73,7 +73,7 @@ def get_feide_user_info_from_jwt(jwt_token: str) -> tuple[str, str]:
     if not feide_username:
         raise FeideUsernameNotFoundError()
 
-    return (user_info["name"], feide_username)
+    return user_info["name"], feide_username
 
 
 def get_feide_user_groups(access_token: str) -> list[str]:

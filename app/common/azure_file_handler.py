@@ -13,7 +13,7 @@ class AzureFileHandler(FileHandler):
         self.blob = blob
         self.url = url
         if url:
-            data = self.getContainerAndNameFromUrl()
+            data = self.get_container_and_name_from_url()
             self.containerName = data[0]
             self.blobName = data[1]
 
@@ -29,24 +29,24 @@ class AzureFileHandler(FileHandler):
         container = blob_service_client.create_container(name, public_access="blob")
         return container
 
-    def getContainerAndNameFromUrl(self):
+    def get_container_and_name_from_url(self):
         import urllib.parse
 
         url = urllib.parse.unquote(self.url)
         # fmt: off
-        return re.sub("\w+:\/{2}[\d\w-]+(\.[\d\w-]+)*/", "", url).split("/")  # noqa: W605
+        return re.sub("\w+:/{2}[\d\w-]+(\.[\d\w-]+)*/", "", url).split("/")  # noqa: W605
         # fmt: on
 
-    def uploadBlob(self):
-        "Uploads the given blob to Azure and returns a url to the blob"
+    def upload_blob(self):
+        """Uploads the given blob to Azure and returns a url to the blob"""
         if not self.blob:
             raise ValueError("Du må sende med en blob for som skal lastes opp")
 
-        self.checkBlobSize()
-        containerName = self.getContainerNameFromBlob()
-        container = self.get_or_create_container(containerName)
+        self.check_blob_size()
+        container_name = self.get_container_name_from_blob()
+        container = self.get_or_create_container(container_name)
 
-        blob_name = f"{uuid.uuid4()}{self.getBlobName()}"
+        blob_name = f"{uuid.uuid4()}{self.get_blob_name()}"
 
         content_settings = ContentSettings(
             content_type=self.blob.content_type if self.blob.content_type else None,
@@ -62,8 +62,8 @@ class AzureFileHandler(FileHandler):
             return blob_client.url
         raise ValueError("Noe gikk galt under filopplastningen")
 
-    def deleteBlob(self):
-        "Delete a blob by it's url"
+    def delete_blob(self):
+        """Delete a blob by it's url"""
         if not self.blobName and not self.containerName:
             raise ValueError("Du kan ikke slette en blob uten en url")
 
