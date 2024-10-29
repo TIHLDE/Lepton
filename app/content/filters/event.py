@@ -26,7 +26,7 @@ class EventFilter(FilterSet):
         model = Event
         fields = ["category", "organizer", "end_range", "start_range"]
 
-    def filter_open_for_sign_up(self, queryset, name, value):
+    def filter_open_for_sign_up(self, queryset, _name, value):
         if value:
             return queryset.filter(
                 sign_up=True,
@@ -35,7 +35,7 @@ class EventFilter(FilterSet):
             )
         return queryset
 
-    def filter_user_favorites(self, queryset, name, value):
+    def filter_user_favorites(self, queryset, _name, value):
         if value and self.request.user:
             return queryset.filter(favorite_users__user_id=self.request.user.user_id)
         return queryset
