@@ -1,9 +1,10 @@
-from rest_framework import status
+from rest_framework import filters, status
 from rest_framework.response import Response
 
 from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission
 from app.common.viewsets import BaseViewSet
+from app.feedback.filters.feedback import FeedbackFilter
 from app.feedback.models.feedback import Feedback
 from app.feedback.serializers import (
     BugCreateSerializer,
@@ -19,6 +20,13 @@ class FeedbackViewSet(BaseViewSet):
     queryset = Feedback.objects.select_related("author")
     pagination_class = BasePagination
     permission_classes = [BasicViewPermission]
+
+    filterset_class = FeedbackFilter
+    search_fields = [
+        "title",
+        "author__first_name",
+        "author__last_name",
+    ]
 
     def create(self, request, *_args, **_kwargs):
         data = request.data

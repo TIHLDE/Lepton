@@ -18,10 +18,11 @@ def get_data(type):
 
 
 @pytest.mark.django_db
-def test_list_feedback_with_both_bug_and_idea_as_member(
-    member, feedback_bug, feedback_idea
-):
+def test_list_feedback_with_both_bug_and_idea_as_member(member):
     """All members should be able to list all types of feedbacks."""
+
+    BugFactory(author=member)
+    IdeaFactory(author=member)
 
     url = FEEDBACK_BASE_URL
     client = get_api_client(member)
@@ -33,10 +34,10 @@ def test_list_feedback_with_both_bug_and_idea_as_member(
     idea_type = list(filter(lambda x: "Idea" == x["feedback_type"], results))
 
     assert response.status_code == status.HTTP_200_OK
-    assert data["count"] == 2
-    assert bug_type
-    assert idea_type
-
+    assert data["count"] == 2 
+    assert len(bug_type) == 1  
+    assert len(idea_type) == 1 
+ 
 
 @pytest.mark.django_db
 def test_list_feedback_as_anonymous_user(default_client):
@@ -206,7 +207,7 @@ def test_retrieve_details_idea_as_member(member):
 
 
 @pytest.mark.django_db
-def test_retrieve_details_bug_as_anonymous_user(default_client,member):
+def test_retrieve_details_bug_as_anonymous_user(default_client, member):
     """Non TIHLDE users should not be able to retrieve bug feedbacks"""
     feedback_bug = BugFactory(author=member)
 
@@ -217,7 +218,7 @@ def test_retrieve_details_bug_as_anonymous_user(default_client,member):
 
 
 @pytest.mark.django_db
-def test_retrieve_details_idea_as_anonymous_user(default_client,member):
+def test_retrieve_details_idea_as_anonymous_user(default_client, member):
     """Non TIHLDE users should not be able to retrieve idea feedbacks"""
     feedback_idea = IdeaFactory(author=member)
 
@@ -254,3 +255,43 @@ def test_retrieve_details_idea_as_index_user(index_member, member):
 
     assert response.data["feedback_type"] == "Idea"
     assert response.status_code == status.HTTP_200_OK
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("feedback_type", ["Bug", "Idea"])
+def test_filter_feedback_type_as_member(member, feedback_type):
+    """A member should be able to filter feedbacks by type"""
+
+    BugFactory()
+    IdeaFactory()
+
+    url = f"{FEEDBACK_BASE_URL}?feedback_type={feedback_type}"
+    client = get_api_client(member)
+    response = client.get(url)
+
+    data = response.data
+    results = data["results"]
+
+    assert response.status_code == status.HTTP_200_OK
+    assert data["count"] == 1
+    assert results[0]["feedback_type"] == feedback_type
+ 
+
+@pytest.mark.django_db
+def test_status_filter_as_member(member):    
+    """A member should be able to filter feedbacks by status"""
+
+    BugFactory(author=member)
+    IdeaFactory(author=member)
+
+    url = f"{FEEDBACK_BASE_URL}?status=1"
+    client = get_api_client(member)
+    response = client.get(url)
+
+    data = response.data
+    results = data["results"]
+
+    assert response.status_code == status.HTTP_200_OK
+    assert data["count"] == 2
+    assert results[0]["status"] == "OPEN"
+    assert results[1]["status"] == "OPEN"
