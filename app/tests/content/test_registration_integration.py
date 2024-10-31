@@ -4,7 +4,7 @@ from rest_framework import status
 
 import pytest
 
-from app.common.enums import AdminGroup
+from app.common.enums import AdminGroup, Groups
 from app.common.enums import NativeGroupType as GroupType
 from app.common.enums import NativeMembershipType as MembershipType
 from app.common.enums import NativeUserStudy as StudyType
@@ -1036,6 +1036,110 @@ def test_add_registration_to_event_as_member(member, event):
     response = client.post(url, data)
 
     assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "group_name",
+    [
+        Groups.JUBKOM,
+        Groups.REDAKSJONEN,
+        Groups.FONDET,
+        Groups.PLASK,
+        Groups.DRIFT,
+    ],
+)
+def test_add_registration_to_event_as_group_member(event, member, group_name):
+    """
+    A member of a specific group (not part of AdminGroup) should be able to add a
+    registration to an event if their group organized it.
+    """
+
+    member_group = add_user_to_group_with_name(
+        member, group_name, GroupType.SUBGROUP, MembershipType.MEMBER
+    )
+
+    event.organizer = member_group
+    event.save()
+
+    data = {"user": member.user_id, "event": event.id}
+    url = f"{_get_registration_url(event=event)}add/"
+
+    client = get_api_client(user=member)
+    response = client.post(url, data)
+
+    assert response.status_code == status.HTTP_201_CREATED
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "group_name",
+    [
+        Groups.JUBKOM,
+        Groups.REDAKSJONEN,
+        Groups.FONDET,
+        Groups.PLASK,
+        Groups.DRIFT,
+    ],
+)
+def test_add_registration_to_event_as_group_member_of_non_organizing_group(
+    event, member, group_name
+):
+    """
+    A member of a specific group (not part of AdminGroup) should NOT be able to add a
+    registration to an event if their group did not organize it.
+    """
+    add_user_to_group_with_name(
+        member, group_name, GroupType.SUBGROUP, MembershipType.MEMBER
+    )
+
+    event.organizer = GroupFactory(name="Different Organizer")
+    event.save()
+
+    data = {"user": member.user_id, "event": event.id}
+    url = f"{_get_registration_url(event=event)}add/"
+
+    client = get_api_client(user=member)
+    response = client.post(url, data)
+
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "group_name",
+    [
+        Groups.JUBKOM,
+        Groups.REDAKSJONEN,
+        Groups.FONDET,
+        Groups.PLASK,
+        Groups.DRIFT,
+    ],
+)
+def test_add_registration_when_event_is_full(event, member, group_name):
+    """
+    A member of the organizing group should be able to add a registration to an event
+    for another member even when the event is full, and the registration should be added to the waitlist.
+    """
+
+    member_group = add_user_to_group_with_name(
+        member, group_name, GroupType.SUBGROUP, MembershipType.MEMBER
+    )
+
+    event.organizer = member_group
+    event.limit = 1
+    event.save()
+
+    RegistrationFactory(event=event)
+
+    data = {"user": member.user_id, "event": event.id}
+    url = f"{_get_registration_url(event=event)}add/"
+
+    client = get_api_client(user=member)
+    response = client.post(url, data)
+
+    assert response.status_code == status.HTTP_201_CREATED
+    assert event.registrations.get(user=member).is_on_wait
 
 
 @pytest.mark.django_db
