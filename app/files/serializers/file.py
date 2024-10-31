@@ -1,5 +1,3 @@
-from rest_framework import serializers
-
 from app.common.azure_file_handler import AzureFileHandler
 from app.common.serializers import BaseModelSerializer
 from app.constants import MAX_GALLERY_SIZE

@@ -23,7 +23,7 @@ class UserCalendarEvents(ICalFeed):
             return JsonResponse(
                 {
                     "detail": "Denne brukeren har skrudd av offentlig deling av påmeldinger til arrangementer. "
-                              "Du kan derfor ikke hente ut brukerens arrangementer som .ics-fil"
+                    "Du kan derfor ikke hente ut brukerens arrangementer som .ics-fil"
                 },
                 status=status.HTTP_403_FORBIDDEN,
             )
