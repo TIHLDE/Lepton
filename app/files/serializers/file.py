@@ -14,8 +14,8 @@ class FileSerializer(BaseModelSerializer):
         fields = (
             "id",
             "title",
-            "url",
             "description",
+            "file",
             "created_at",
             "updated_at",
         )
@@ -26,8 +26,8 @@ class CreateFileSerializer(BaseModelSerializer):
         model = File
         fields = (
             "title",
-            "url",
             "description",
+            "file",
         )
 
     def create(self, validated_data):
@@ -49,13 +49,11 @@ class CreateFileSerializer(BaseModelSerializer):
 
 
 class UpdateFileSerializer(BaseModelSerializer):
-    file = serializers.FileField(required=False)
 
     class Meta:
         model = File
         fields = (
             "title",
-            "url",
             "description",
             "file",
         )

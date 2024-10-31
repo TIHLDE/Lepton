@@ -59,14 +59,10 @@ class UserGallery(BaseModel, BasePermissionModel):
         return self.has_object_read_permission(request)
 
     def has_object_update_permission(self, request):
-        return (
-            check_has_access(self.write_access, request) and self.author == request.user
-        )
+        return self.author == request.user
 
     def has_object_destroy_permission(self, request):
-        return (
-            check_has_access(self.write_access, request) and self.author == request.user
-        )
+        return self.author == request.user
 
     @classmethod
     def get_all_files(cls, user):

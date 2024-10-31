@@ -30,7 +30,7 @@ def _get_file_post_data():
 
 
 def _get_file_put_data(file):
-    return {"title": file.title, "url": file.url, "description": "Updated description."}
+    return {"title": file.title, "description": "Updated description."}
 
 
 def _create_file(user, gallery=None):
@@ -40,7 +40,6 @@ def _create_file(user, gallery=None):
 
     return File.objects.create(
         title="Sample File",
-        url="https://example.com/file.pdf",
         description="This is a sample file.",
         gallery=gallery,
     )
@@ -174,33 +173,7 @@ def test_delete_file_as_non_author(member, new_admin_user, admin_gallery):
 
 
 @pytest.mark.django_db
-def test_update_file_as_admin_with_file(admin_user, admin_gallery):
-    """Tests if an admin can update a file with a new file successfully."""
-    file = _create_file(admin_user, admin_gallery)
-    client = get_api_client(user=admin_user)
-    url = _get_file_url(file)
-
-    file_content = BytesIO(b"This is a test file content.")
-    file_content.name = "updated_file.pdf"
-
-    data = {
-        "title": "Updated Sample File",
-        "url": "https://example.com/updated_file.pdf",
-        "description": "This is an updated sample file.",
-        "file": file_content,
-    }
-
-    response = client.put(url, data, format="multipart")
-
-    assert response.status_code == status.HTTP_200_OK
-    file.refresh_from_db()
-    assert file.title == "Updated Sample File"
-    assert file.url == "https://example.com/updated_file.pdf"
-    assert file.description == "This is an updated sample file."
-
-
-@pytest.mark.django_db
-def test_update_file_as_admin_without_file(admin_user, admin_gallery):
+def test_update_file_as_admin(admin_user, admin_gallery):
     """Tests if an admin can update a file without providing a new file."""
     file = _create_file(admin_user, admin_gallery)
     client = get_api_client(user=admin_user)
@@ -208,7 +181,6 @@ def test_update_file_as_admin_without_file(admin_user, admin_gallery):
 
     data = {
         "title": "Updated Sample File",
-        "url": "https://example.com/updated_file.pdf",
         "description": "This is an updated sample file.",
     }
 
@@ -217,7 +189,6 @@ def test_update_file_as_admin_without_file(admin_user, admin_gallery):
     assert response.status_code == status.HTTP_200_OK
     file.refresh_from_db()
     assert file.title == "Updated Sample File"
-    assert file.url == "https://example.com/updated_file.pdf"
     assert file.description == "This is an updated sample file."
 
 
@@ -285,24 +256,6 @@ def test_partial_update_file(admin_user, admin_gallery):
     assert response.status_code == status.HTTP_200_OK
     file.refresh_from_db()
     assert file.description == "This is a partially updated description."
-
-
-@pytest.mark.django_db
-def test_update_file_with_new_file(admin_user, admin_gallery):
-    """Tests if an admin can update a file with a new file URL."""
-    file = _create_file(admin_user, admin_gallery)
-    client = get_api_client(user=admin_user)
-    url = _get_file_url(file)
-
-    data = {
-        "url": "https://example.com/newfile.pdf",
-    }
-
-    response = client.put(url, data)
-
-    assert response.status_code == status.HTTP_200_OK
-    file.refresh_from_db()
-    assert file.url == "https://example.com/newfile.pdf"
 
 
 @pytest.mark.django_db
