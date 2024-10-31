@@ -14,6 +14,7 @@
 ---
 
 ## Neste versjon
+- 🎨**Overordnet**. Endret variabel og funksjonsnavn til å følge konvensjoner og andre små endringer.
 - ✨ **Filtrering**. Admin kan nå filtere deltakere av et arrangement på studie, studieår, om deltakere har allergier, (om deltakere godtar å bli tatt bilde av, om deltakere har ankommet), i tillegg til søk på fornavn og etternavn.
 
 - ✨ **Filopplasting**. Det er nå mulig for admin brukere å laste opp- og slette filer.

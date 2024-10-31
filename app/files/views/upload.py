@@ -27,15 +27,14 @@ def upload(request):
 
         key = list(request.FILES.keys())[0]
         blob = request.FILES[key]
-        url = AzureFileHandler(blob).uploadBlob()
+        url = AzureFileHandler(blob).upload_blob()
         return Response(
             {"url": url},
             status=status.HTTP_200_OK,
         )
-
-    except ValueError as value_error:
+    except ValueError:
         return Response(
-            {"detail": str(value_error)},
+            {"detail": "En feil oppstod under behandlingen av forespørselen."},
             status=status.HTTP_400_BAD_REQUEST,
         )
 
@@ -49,14 +48,13 @@ def delete(_request, container_name, blob_name):
         handler.blobName = blob_name
         handler.containerName = container_name
 
-        handler.deleteBlob()
+        handler.delete_blob()
         return Response(
             {"detail": "Filen ble slettet"},
             status=status.HTTP_200_OK,
         )
-
-    except ValueError as value_error:
+    except ValueError:
         return Response(
-            {"detail": str(value_error)},
+            {"detail": "En feil oppstod under behandlingen av forespørselen."},
             status=status.HTTP_400_BAD_REQUEST,
         )

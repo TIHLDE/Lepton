@@ -66,5 +66,5 @@ class Banner(BaseModel, OptionalImage, BasePermissionModel, APIBannerErrorsMixin
         return self.visible_from <= now() <= self.visible_until
 
     @classmethod
-    def has_visible_permission(cls, request):
+    def has_visible_permission(cls, _request):
         return True

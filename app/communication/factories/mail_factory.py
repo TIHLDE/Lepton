@@ -12,7 +12,7 @@ class MailFactory(DjangoModelFactory):
     body = factory.Faker("paragraph", nb_sentences=10)
 
     @factory.post_generation
-    def users(self, create, extracted, **kwargs):
+    def users(self, create, extracted, **_kwargs):
         """Add users to the mail: `MailFactory.create(users=(user1, user2, user3))`"""
         if not create or not extracted:
             # Simple build, or nothing to add, do nothing.

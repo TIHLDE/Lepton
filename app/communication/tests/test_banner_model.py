@@ -7,7 +7,7 @@ from app.communication.exceptions import (
     DatesMixedError,
 )
 from app.communication.factories.banner_factory import BannerFactory
-from app.util.utils import getTimezone, now
+from app.util.utils import get_timezone, now
 
 
 @pytest.mark.parametrize(
@@ -27,8 +27,8 @@ def test_two_banners_can_not_be_visible_simultaneously_in_any_period(
     This test uses timedelta and parameterize to switch visible_from
     and visible_until between 5 days earlier or later."""
     existing_banner = BannerFactory(
-        visible_from=datetime(2020, 1, 1, tzinfo=getTimezone()),
-        visible_until=datetime(2021, 1, 1, tzinfo=getTimezone()),
+        visible_from=datetime(2020, 1, 1, tzinfo=get_timezone()),
+        visible_until=datetime(2021, 1, 1, tzinfo=get_timezone()),
     )
 
     with pytest.raises(AnotherVisibleBannerError):

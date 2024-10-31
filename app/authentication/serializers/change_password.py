@@ -11,6 +11,7 @@ class ChangePasswordSerializer(serializers.Serializer):
     set_password_form_class = SetPasswordForm
 
     def __init__(self, *args, **kwargs):
+        self.set_password_form = None
         self.old_password_field_enabled = getattr(
             settings, "OLD_PASSWORD_FIELD_ENABLED", True
         )

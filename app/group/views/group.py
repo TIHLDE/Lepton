@@ -79,7 +79,7 @@ class GroupViewSet(APIGroupErrorsMixin, BaseViewSet, ActionMixin):
         )
 
     @action(detail=True, methods=["get"], url_path="statistics")
-    def statistics(self, request, *args, **kwargs):
+    def statistics(self, request, *_args, **_kwargs):
         group = self.get_object()
         serializer = GroupStatisticsSerializer(group, context={"request": request})
         return Response(serializer.data, status=status.HTTP_200_OK)
