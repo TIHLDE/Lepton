@@ -15,6 +15,10 @@
 
 ## Neste versjon
 
+## Versjon 2024.11.04
+- 🎨**Overordnet**. Endret variabel og funksjonsnavn til å følge konvensjoner og andre små endringer.
+- ✨ **Filtrering**. Admin kan nå filtere deltakere av et arrangement på studie, studieår, om deltakere har allergier, (om deltakere godtar å bli tatt bilde av, om deltakere har ankommet), i tillegg til søk på fornavn og etternavn.
+
 ## Versjon 2024.10.11
 - ✨ **Tilbakemelding-funksjon**. Man kan nå opprette tilbakemeldinger for bugs og idé.
 - 🦟 **Påmelding**. Det vil nå ikke være mulig med flere påmeldinger på et arrangement enn maksgrensen.

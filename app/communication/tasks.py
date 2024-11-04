@@ -5,7 +5,7 @@ from app.util.tasks import BaseTask
 
 
 @app.task(bind=True, base=BaseTask)
-def send_due_mails(self, *args, **kwargs):
+def send_due_mails(self, *_args, **_kwargs):
     from django.core.mail import get_connection
 
     from app.communication.models.mail import Mail

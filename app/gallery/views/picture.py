@@ -36,7 +36,7 @@ class PictureViewSet(BaseViewSet):
         errors = 0
         for file in files:
             try:
-                url = AzureFileHandler(file).uploadBlob()
+                url = AzureFileHandler(file).upload_blob()
                 Picture.objects.create(image=url, album=album)
             except Exception:
                 errors += 1

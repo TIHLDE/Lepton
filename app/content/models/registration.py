@@ -50,7 +50,7 @@ class Registration(BaseModel, BasePermissionModel):
         verbose_name_plural = "Registrations"
 
     @classmethod
-    def has_retrieve_permission(cls, request):
+    def has_retrieve_permission(cls, _request):
         return True
 
     @classmethod
@@ -165,7 +165,7 @@ class Registration(BaseModel, BasePermissionModel):
             and not self.is_on_wait
             and self in self.event.get_waiting_list()
         ):
-            raise EventIsFullError
+            raise EventIsFullError()
 
         self.send_notification_and_mail()
         return super().save(*args, **kwargs)
@@ -415,6 +415,7 @@ class Registration(BaseModel, BasePermissionModel):
         if self.event.end_registration_at < now():
             raise ValidationError("Påmeldingsfristen har passert")
 
+    # noinspection PyShadowingBuiltins
     def get_submissions(self, type=None):
         from app.forms.models import EventForm, Submission
 

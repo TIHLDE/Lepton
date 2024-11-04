@@ -17,8 +17,12 @@ class APICodexEventEndRegistrationDateBeforeStartRegistrationDate(APIException):
 
 
 class CodexEventEndRegistrationDateAfterStartDate(ValueError):
-    pass
+    default_detail = (
+        "Sluttdatoen for påmelding kan ikke være etter startdatoen for kurset"
+    )
 
 
 class CodexEventEndRegistrationDateBeforeStartRegistrationDate(ValueError):
-    pass
+    default_detail = (
+        "Sluttdatoen for påmelding kan ikke være før startdatoen for påmelding"
+    )
