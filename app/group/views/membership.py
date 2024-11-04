@@ -58,13 +58,13 @@ class MembershipViewSet(BaseViewSet):
                     UserNotificationSettingType.GROUP_MEMBERSHIP,
                 ).add_paragraph(f"Hei, {membership.user.first_name}!").add_paragraph(
                     f'Du har blitt gjort til leder i gruppen "{membership.group.name}". Som leder får du tilgang til '
-                    f'diverse funksjonalitet på nettsiden. Du kan finne administrasjonspanelene du har tilgang til '
+                    f"diverse funksjonalitet på nettsiden. Du kan finne administrasjonspanelene du har tilgang til "
                     f'under "Admin" i din profil.'
                 ).add_paragraph(
                     f'Som leder har du også fått administratorrettigheter i "{membership.group.name}". Det innebærer '
-                    f'at du kan legge til og fjerne medlemmer, endre tidligere medlemskap og administrere gruppens '
-                    f'spørreskjemaer. I gruppens innstillinger kan du endre gruppens beskrivelse og logo, samt '
-                    f'aktivere botsystemet og velge en botsjef.'
+                    f"at du kan legge til og fjerne medlemmer, endre tidligere medlemskap og administrere gruppens "
+                    f"spørreskjemaer. I gruppens innstillinger kan du endre gruppens beskrivelse og logo, samt "
+                    f"aktivere botsystemet og velge en botsjef."
                 ).add_paragraph(
                     "Gratulerer så mye og lykke til med ledervervet!"
                 ).add_link(
@@ -92,9 +92,11 @@ class MembershipViewSet(BaseViewSet):
 
             admin_text = " "
             if group.type in [GroupType.BOARD, GroupType.SUBGROUP]:
-                admin_text = (f'Som medlem av "{group.name}" har du også fått tilgang til diverse funksjonalitet på '
-                              f'nettsiden. Du kan finne administrasjonspanelene du har tilgang til under "Admin" '
-                              f'i din profil. ')
+                admin_text = (
+                    f'Som medlem av "{group.name}" har du også fått tilgang til diverse funksjonalitet på '
+                    f'nettsiden. Du kan finne administrasjonspanelene du har tilgang til under "Admin" '
+                    f"i din profil. "
+                )
 
             Notify(
                 [membership.user],

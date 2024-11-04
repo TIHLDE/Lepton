@@ -19,6 +19,9 @@
 - 🎨**Overordnet**. Endret variabel og funksjonsnavn til å følge konvensjoner og andre små endringer.
 - ✨ **Filtrering**. Admin kan nå filtere deltakere av et arrangement på studie, studieår, om deltakere har allergier, (om deltakere godtar å bli tatt bilde av, om deltakere har ankommet), i tillegg til søk på fornavn og etternavn.
 
+- ✨ **Filopplasting**. Det er nå mulig for admin brukere å laste opp- og slette filer.
+- ✨ **Mail endepunkt**. Det er nå laget et endepunkt for å sende mailer.
+
 ## Versjon 2024.10.11
 - ✨ **Tilbakemelding-funksjon**. Man kan nå opprette tilbakemeldinger for bugs og idé.
 - 🦟 **Påmelding**. Det vil nå ikke være mulig med flere påmeldinger på et arrangement enn maksgrensen.
