@@ -1,4 +1,3 @@
-from django.db.models import Q
 from rest_framework import serializers
 
 from dry_rest_permissions.generics import DRYPermissionsField
@@ -326,6 +325,7 @@ class EventStatisticsSerializer(BaseModelSerializer):
 
     def get_has_not_paid_count(self, obj, *args, **kwargs):
         if obj.is_paid_event:
-            orders = obj.orders.filter(~Q(status=OrderStatus.SALE), event=obj).count()
-            return orders
+            registrations = obj.registrations.filter(is_on_wait=False).count()
+            orders = obj.orders.filter(status=OrderStatus.SALE, event=obj).count()
+            return registrations - orders
         return 0
