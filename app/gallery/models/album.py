@@ -18,6 +18,9 @@ class Album(BaseModel, BasePermissionModel, OptionalImage):
     slug = models.SlugField(max_length=50, primary_key=False)
     write_access = AdminGroup.all()
 
+    class Meta:
+        ordering = ["-created_at"]
+
     def __str__(self):
         return self.title
 
