@@ -15,6 +15,7 @@ from app.content.serializers.user import DefaultUserSerializer
 from app.emoji.serializers.reaction import ReactionSerializer
 from app.group.models.group import Group
 from app.group.serializers.group import SimpleGroupSerializer
+from app.payment.enums import OrderStatus
 from app.payment.models.paid_event import PaidEvent
 from app.payment.serializers.paid_event import PaidEventCreateSerializer
 
@@ -263,6 +264,9 @@ class EventStatisticsSerializer(BaseModelSerializer):
     has_attended_count = serializers.SerializerMethodField()
     studyyears = serializers.SerializerMethodField()
     studies = serializers.SerializerMethodField()
+    has_allergy_count = serializers.SerializerMethodField()
+    has_not_paid_count = serializers.SerializerMethodField()
+    allow_photo_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Event
@@ -272,10 +276,21 @@ class EventStatisticsSerializer(BaseModelSerializer):
             "waiting_list_count",
             "studyyears",
             "studies",
+            "has_allergy_count",
+            "has_not_paid_count",
+            "allow_photo_count",
         )
 
-    def get_has_attended_count(self, obj, *args, **kwargs):
+    def get_has_attended_count(self, obj, *_args, **_kwargs):
         return obj.registrations.filter(is_on_wait=False, has_attended=True).count()
+
+    def get_has_allergy_count(self, obj, *args, **kwargs):
+        return (
+            obj.registrations.exclude(user__allergy__isnull=True)
+            .filter(is_on_wait=False)
+            .exclude(user__allergy__exact="")
+            .count()
+        )
 
     def get_studyyears(self, obj, *args, **kwargs):
         return filter(
@@ -291,7 +306,7 @@ class EventStatisticsSerializer(BaseModelSerializer):
             ),
         )
 
-    def get_studies(self, obj, *args, **kwargs):
+    def get_studies(self, obj, *_args, **_kwargs):
         return filter(
             lambda study: study["amount"] > 0,
             map(
@@ -304,3 +319,13 @@ class EventStatisticsSerializer(BaseModelSerializer):
                 Group.objects.filter(type=GroupType.STUDY),
             ),
         )
+
+    def get_allow_photo_count(self, obj, *args, **kwargs):
+        return obj.registrations.filter(allow_photo=False, is_on_wait=False).count()
+
+    def get_has_not_paid_count(self, obj, *args, **kwargs):
+        if obj.is_paid_event:
+            registrations = obj.registrations.filter(is_on_wait=False).count()
+            orders = obj.orders.filter(status=OrderStatus.SALE, event=obj).count()
+            return registrations - orders
+        return 0

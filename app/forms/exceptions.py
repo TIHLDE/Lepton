@@ -8,7 +8,7 @@ class APIDuplicateSubmissionException(APIException):
 
 
 class DuplicateSubmission(ValueError):
-    pass
+    default_detail = "Spørreskjemaet tillater kun én innsending"
 
 
 class APIFormNotOpenForSubmissionException(APIException):
@@ -17,7 +17,7 @@ class APIFormNotOpenForSubmissionException(APIException):
 
 
 class FormNotOpenForSubmission(ValueError):
-    pass
+    default_detail = "Spørreskjemaet er ikke åpent for innsending"
 
 
 class APIGroupFormOnlyForMembersException(APIException):
@@ -26,4 +26,4 @@ class APIGroupFormOnlyForMembersException(APIException):
 
 
 class GroupFormOnlyForMembers(ValueError):
-    pass
+    default_detail = "Spørreskjemaet er kun åpent for medlemmer av gruppen"

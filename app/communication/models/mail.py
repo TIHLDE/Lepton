@@ -27,7 +27,7 @@ class Mail(BaseModel):
     def send(self, connection):
         from app.communication.notifier import send_html_email
 
-        emails = (user.email for user in self.users.all())
+        emails = [user.email for user in self.users.all()]
         is_success = send_html_email(
             to_mails=emails,
             html=self.body,
@@ -40,4 +40,7 @@ class Mail(BaseModel):
         return is_success
 
     def __str__(self):
-        return f"\"{self.subject}\", to {self.users.all()[0] if self.users.count() == 1 else f'{self.users.count()} users'}, {'sent' if self.sent else 'eta'} {self.eta}"
+        return (
+            f"\"{self.subject}\", to {self.users.all()[0] if self.users.count() == 1 else f'{self.users.count()} users'}, "
+            f"{'sent' if self.sent else 'eta'} {self.eta}"
+        )
