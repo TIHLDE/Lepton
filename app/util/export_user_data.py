@@ -104,8 +104,6 @@ def export_user_data(request, user):
         mails = MailGDPRSerializer(user.emails, many=True, context={"request": request})
         data["eposter"] = mails.data
 
-        is_success = False
-
         with tempfile.NamedTemporaryFile() as tmp:
             with zipfile.ZipFile(tmp, "w", zipfile.ZIP_DEFLATED) as archive:
                 for model, json in data.items():

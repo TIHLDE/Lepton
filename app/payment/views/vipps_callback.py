@@ -19,4 +19,4 @@ def force_payment(order_id):
     res = requests.post(url, headers=headers)
     status_code = res.status_code
     json = res.json()
-    return (json, status_code)
+    return json, status_code

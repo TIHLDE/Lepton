@@ -14,22 +14,22 @@ class FileHandler(ABC):
     def get_or_create_container(self, name="default"):
         pass
 
-    def getBlobName(self):
+    def get_blob_name(self):
         return self.blob.name if self.blob.name else ""
 
-    def getContainerNameFromBlob(self):
+    def get_container_name_from_blob(self):
         return (
             "".join(e for e in self.blob.content_type if e.isalnum())
             if self.blob.content_type
             else "default"
         )
 
-    def checkBlobSize(self):
+    def check_blob_size(self):
         if self.blob.size > self.SIZE_50_MB:
             raise ValueError("Filen kan ikke være større enn 50 MB")
 
     @abstractmethod
-    def uploadBlob(self):
+    def upload_blob(self):
         pass
 
 
@@ -43,6 +43,6 @@ def replace_file(instance_image, validated_data_image):
     if instance_image and instance_image != validated_data_image:
         if settings.AZURE_BLOB_STORAGE_NAME in instance_image:
             try:
-                AzureFileHandler(url=instance_image).deleteBlob()
+                AzureFileHandler(url=instance_image).delete_blob()
             except Exception as e:
                 capture_exception(e)

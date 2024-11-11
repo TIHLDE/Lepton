@@ -148,7 +148,7 @@ class UserViewSet(BaseViewSet, ActionMixin):
         return get_object_or_404(User, user_id=pk)
 
     @action(detail=False, methods=["post"], url_path="me/slack")
-    def connect_to_slack(self, request, *args, **kwargs):
+    def connect_to_slack(self, request, *_args, **_kwargs):
         user = self.request.user
         self.check_object_permissions(self.request, user)
 
@@ -171,7 +171,7 @@ class UserViewSet(BaseViewSet, ActionMixin):
         )
 
     @action(detail=False, methods=["get"], url_path="me/permissions")
-    def get_user_permissions(self, request, *args, **kwargs):
+    def get_user_permissions(self, request, *_args, **_kwargs):
         try:
             serializer = UserPermissionsSerializer(
                 request.user, context={"request": request}
@@ -184,7 +184,7 @@ class UserViewSet(BaseViewSet, ActionMixin):
             )
 
     @action(detail=True, methods=["get"], url_path="memberships")
-    def get_user_memberships(self, request, pk, *args, **kwargs):
+    def get_user_memberships(self, request, pk, *_args, **_kwargs):
         user = self._get_user(request, pk)
         self.check_object_permissions(self.request, user)
 
@@ -198,7 +198,7 @@ class UserViewSet(BaseViewSet, ActionMixin):
         )
 
     @action(detail=True, methods=["get"], url_path="memberships-with-fines")
-    def get_user_memberships_with_fines(self, request, pk, *args, **kwargs):
+    def get_user_memberships_with_fines(self, request, pk, *_args, **_kwargs):
         user = self._get_user(request, pk)
         self.check_object_permissions(self.request, user)
 
@@ -212,7 +212,7 @@ class UserViewSet(BaseViewSet, ActionMixin):
         )
 
     @action(detail=True, methods=["get"], url_path="membership-histories")
-    def get_user_membership_histories(self, request, pk, *args, **kwargs):
+    def get_user_membership_histories(self, request, pk, *_args, **_kwargs):
         user = self._get_user(request, pk)
         self.check_object_permissions(self.request, user)
 
@@ -225,7 +225,7 @@ class UserViewSet(BaseViewSet, ActionMixin):
             context={"request": request},
         )
 
-    def post_user_badges(self, request, *args, **kwargs):
+    def post_user_badges(self, request, *_args, **_kwargs):
         import uuid
 
         user = self.request.user
@@ -265,7 +265,7 @@ class UserViewSet(BaseViewSet, ActionMixin):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-    def get_user_detail_badges(self, request, *args, **kwargs):
+    def get_user_detail_badges(self, request, *_args, **kwargs):
         user = self._get_user(request, kwargs["pk"])
         user_badges = user.user_badges.order_by("-created_at")
         badges = [
@@ -289,7 +289,7 @@ class UserViewSet(BaseViewSet, ActionMixin):
             return self.post_user_badges(request, *args, **kwargs)
 
     @action(detail=False, methods=["get"], url_path="me/strikes")
-    def get_user_strikes(self, request, *args, **kwargs):
+    def get_user_strikes(self, request, *_args, **_kwargs):
         strikes = request.user.strikes.active()
         serializer = UserInfoStrikeSerializer(
             instance=strikes, many=True, context={"request": request}
@@ -297,7 +297,7 @@ class UserViewSet(BaseViewSet, ActionMixin):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=["get"], url_path="strikes")
-    def get_user_detail_strikes(self, request, *args, **kwargs):
+    def get_user_detail_strikes(self, request, *_args, **_kwargs):
         user = self.get_object()
         strikes = user.strikes.active()
         serializer = UserInfoStrikeSerializer(
@@ -306,7 +306,7 @@ class UserViewSet(BaseViewSet, ActionMixin):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=["get"], url_path="me/events")
-    def get_user_events(self, request, *args, **kwargs):
+    def get_user_events(self, request, *_args, **_kwargs):
         filter_field = self.request.query_params.get("expired")
         event_has_ended = CaseInsensitiveBooleanQueryParam(filter_field).value
 
@@ -326,7 +326,7 @@ class UserViewSet(BaseViewSet, ActionMixin):
         )
 
     @action(detail=False, methods=["get"], url_path="me/forms")
-    def get_user_forms(self, request, *args, **kwargs):
+    def get_user_forms(self, request, *_args, **_kwargs):
         forms = request.user.forms
 
         filter_field = request.query_params.get("unanswered")
@@ -347,7 +347,7 @@ class UserViewSet(BaseViewSet, ActionMixin):
         url_path="activate",
         permission_classes=(IsHS | IsDev,),
     )
-    def makeTIHLDEMember(self, request, *args, **kwargs):
+    def makeTIHLDEMember(self, request, *_args, **_kwargs):
         TIHLDE = Group.objects.get(slug=Groups.TIHLDE)
         user_id = request.data["user_id"]
         user = get_object_or_404(User, user_id=user_id)
@@ -372,7 +372,7 @@ class UserViewSet(BaseViewSet, ActionMixin):
         url_path="decline",
         permission_classes=(IsHS | IsDev,),
     )
-    def declineTIHLDEMember(self, request, *args, **kwargs):
+    def declineTIHLDEMember(self, request, *_args, **_kwargs):
         user_id = request.data["user_id"]
         try:
             reason = request.data["reason"]
@@ -397,7 +397,7 @@ class UserViewSet(BaseViewSet, ActionMixin):
         )
 
     @action(detail=False, methods=["get"], url_path="me/data")
-    def export_user_data(self, request, *args, **kwargs):
+    def export_user_data(self, request, *_args, **_kwargs):
         export_successfull = export_user_data(request, request.user)
 
         if export_successfull:
@@ -414,7 +414,7 @@ class UserViewSet(BaseViewSet, ActionMixin):
         )
 
     @action(detail=False, methods=["get"], url_path="me/reservations")
-    def get_user_reservations(self, request, *args, **kwargs):
+    def get_user_reservations(self, request, *_args, **_kwargs):
         user = request.user
         reservations = Reservation.objects.filter(author=user).order_by("start_time")
         serializer = ReservationSerializer(

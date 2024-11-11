@@ -23,7 +23,11 @@ def accept_form(request):
             if len(types) == 1 and types[0].lower() == "annonse"
             else MAIL_NOK_LEADER
         )
-        title = f"{body['info']['bedrift']} vil ha {', '.join(types[:-1])}{' og ' if len(types) > 1 else ''}{', '.join(types[-1:])}, {', '.join(times[:-1])}{' og ' if len(times) > 1 else ''}{', '.join(times[-1:])}"
+        title = (
+            f"{body['info']['bedrift']} vil ha {', '.join(types[:-1])}"
+            f"{' og ' if len(types) > 1 else ''}{', '.join(types[-1:])}, "
+            f"{', '.join(times[:-1])}{' og ' if len(times) > 1 else ''}{', '.join(times[-1:])}"
+        )
 
         is_success = send_html_email(
             to_mails=[to_mail],

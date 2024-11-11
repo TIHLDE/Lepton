@@ -8,7 +8,7 @@ class APIUserIsNotInGroupException(APIException):
 
 
 class UserIsNotInGroup(ValidationError):
-    pass
+    default_detail = "En av brukerne er ikke medlem av gruppen"
 
 
 class APIGroupTypeNotInPublicGroupsException(APIException):
@@ -17,4 +17,4 @@ class APIGroupTypeNotInPublicGroupsException(APIException):
 
 
 class GroupTypeNotInPublicGroups(ValueError):
-    pass
+    default_detail = "Ikke gylde gruppetype"

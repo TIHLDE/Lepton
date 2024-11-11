@@ -209,7 +209,7 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
         )
 
     @classmethod
-    def has_create_permission(cls, request):
+    def has_create_permission(cls, _request):
         return True
 
     def has_object_write_permission(self, request):
@@ -234,9 +234,10 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
         )
 
 
+# noinspection PyUnusedLocal
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 @disable_for_loaddata
-def create_auth_token(sender, instance=None, created=False, **kwargs):
+def create_auth_token(sender, instance=None, created=False, **_kwargs):
     """Generate token at creation of user"""
     if created:
         Token.objects.create(user=instance)

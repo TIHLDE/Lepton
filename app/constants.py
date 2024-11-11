@@ -20,4 +20,6 @@ MAIL_NOK_ADS = (
 SLACK_BEDPRES_OG_KURS_CHANNEL_ID = "C01DCSJ8X2Q"
 SLACK_ARRANGEMENTER_CHANNEL_ID = "C01LFEFJFV3"
 
+MAX_GALLERY_SIZE = 50
+
 # TODO: Create api-urls as constants which then can be used in for example tests and urls.py files
