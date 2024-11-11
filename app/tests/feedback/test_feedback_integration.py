@@ -5,6 +5,7 @@ import pytest
 from app.feedback.factories.bug_factory import BugFactory
 from app.feedback.factories.idea_factory import IdeaFactory
 from app.util.test_utils import get_api_client
+from app.feedback.enums import Status
 
 FEEDBACK_BASE_URL = "/feedbacks/"
 
@@ -150,9 +151,6 @@ def test_destroy_your_own_feedback_as_member(member, type):
 
     initial_response = client.post(url, data=data)
 
-    print(initial_response.data)
-    print(f"Author: {initial_response.data['author']}")
-
     feedback_id = initial_response.data["id"]
 
     url = f"{FEEDBACK_BASE_URL}{feedback_id}/"
@@ -281,17 +279,20 @@ def test_filter_feedback_type_as_member(member, feedback_type):
 def test_status_filter_as_member(member):    
     """A member should be able to filter feedbacks by status"""
 
-    BugFactory(author=member)
-    IdeaFactory(author=member)
+    BugFactory(author=member, status=Status.OPEN)
+    IdeaFactory(author=member, status=Status.OPEN)
 
-    url = f"{FEEDBACK_BASE_URL}?status=1"
+    url = f"{FEEDBACK_BASE_URL}?status={Status.OPEN}"
     client = get_api_client(member)
     response = client.get(url)
 
     data = response.data
+
+    print(data)
+
     results = data["results"]
 
     assert response.status_code == status.HTTP_200_OK
     assert data["count"] == 2
-    assert results[0]["status"] == "OPEN"
-    assert results[1]["status"] == "OPEN"
+    assert results[0]["status"] == Status.OPEN
+    assert results[1]["status"] == Status.OPEN

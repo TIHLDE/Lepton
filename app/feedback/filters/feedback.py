@@ -10,7 +10,7 @@ from app.feedback.models.idea import Idea
 class FeedbackFilter(filters.FilterSet):
 
     feedback_type = filters.CharFilter(
-        method="fiter_feedback_type", label="List of feedback type"
+        method="filter_feedback_type", label="List of feedback type"
     )
 
     status = filters.ModelChoiceFilter(
@@ -27,7 +27,7 @@ class FeedbackFilter(filters.FilterSet):
         )
     )
 
-    def fiter_feedback_type(self, queryset, _name, feedback_type):
+    def filter_feedback_type(self, queryset, _name, feedback_type):
 
         if feedback_type == "Idea":
             return queryset.filter(Q(instance_of=Idea))

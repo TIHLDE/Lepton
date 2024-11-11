@@ -1,5 +1,6 @@
 from rest_framework import filters, status
 from rest_framework.response import Response
+from django_filters.rest_framework import DjangoFilterBackend
 
 from app.common.pagination import BasePagination
 from app.common.permissions import BasicViewPermission
@@ -21,6 +22,7 @@ class FeedbackViewSet(BaseViewSet):
     pagination_class = BasePagination
     permission_classes = [BasicViewPermission]
 
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_class = FeedbackFilter
     search_fields = [
         "title",
