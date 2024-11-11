@@ -1,3 +1,4 @@
+from django.core.exceptions import ObjectDoesNotExist
 from django.db.transaction import atomic
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
@@ -24,12 +25,44 @@ def get_api_client(user=None, group_name=None):
 def add_user_to_group_with_name(
     user, group_name, group_type=None, membership_type=MembershipType.MEMBER
 ):
+    """
+    Adds a user to a group with the given name.
+    """
     if not group_type:
         group_type = get_group_type_from_group_name(group_name)
     group = Group.objects.get_or_create(name=group_name, type=group_type)[0]
     Membership.objects.get_or_create(
         group=group, user=user, membership_type=membership_type
     )
+    return group
+
+
+@atomic
+def remove_user_from_group_with_name(user, group_name, group_type=None):
+    """
+    Removes a user from a group with the given name.
+    """
+    if not group_type:
+        group_type = get_group_type_from_group_name(group_name)
+
+    try:
+        group = Group.objects.get(name=group_name, type=group_type)
+    except Group.DoesNotExist:
+        raise ObjectDoesNotExist(
+            f"Group with name '{group_name}' and type '{group_type}' does not exist."
+        )
+
+    try:
+        membership = Membership.objects.get(group=group, user=user)
+        membership.delete()
+    except Membership.DoesNotExist:
+        raise ObjectDoesNotExist(
+            f"User '{user}' is not a member of the group '{group_name}'."
+        )
+
+    if not Membership.objects.filter(group=group).exists():
+        group.delete()
+
     return group
 
 
