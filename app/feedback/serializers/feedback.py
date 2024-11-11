@@ -21,6 +21,7 @@ class FeedbackListPolymorphicSerializer(PolymorphicSerializer, BaseModelSerializ
             "status",
             "created_at",
             "author",
+            "description",
         )
 
 
