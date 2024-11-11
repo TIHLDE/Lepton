@@ -14,4 +14,5 @@ class IdeaListSerializer(BaseModelSerializer):
             "status",
             "created_at",
             "author",
+            "description",
         )

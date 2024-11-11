@@ -14,4 +14,5 @@ class BugListSerializer(BaseModelSerializer):
             "status",
             "created_at",
             "author",
+            "description",
         )
