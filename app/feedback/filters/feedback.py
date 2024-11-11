@@ -13,11 +13,9 @@ class FeedbackFilter(filters.FilterSet):
         method="filter_feedback_type", label="List of feedback type"
     )
 
-    status = filters.ModelChoiceFilter(
+    status = filters.CharFilter(
         method="filter_status",
-        field_name="status",
         label="List of feedback status",
-        queryset=Feedback.objects.all(),
     )
 
     ordering = OrderingFilter(

@@ -280,7 +280,7 @@ def test_status_filter_as_member(member):
     """A member should be able to filter feedbacks by status"""
 
     BugFactory(author=member, status=Status.OPEN)
-    IdeaFactory(author=member, status=Status.OPEN)
+    IdeaFactory(author=member, status=Status.CLOSED)
 
     url = f"{FEEDBACK_BASE_URL}?status={Status.OPEN}"
     client = get_api_client(member)
@@ -288,11 +288,8 @@ def test_status_filter_as_member(member):
 
     data = response.data
 
-    print(data)
-
     results = data["results"]
 
     assert response.status_code == status.HTTP_200_OK
-    assert data["count"] == 2
+    assert data["count"] == 1
     assert results[0]["status"] == Status.OPEN
-    assert results[1]["status"] == Status.OPEN
