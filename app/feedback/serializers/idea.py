@@ -14,6 +14,7 @@ class IdeaSerializer(BaseModelSerializer):
             "status",
             "created_at",
             "author",
+            "description",
         )
 
 
