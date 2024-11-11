@@ -40,5 +40,7 @@ class Mail(BaseModel):
         return is_success
 
     def __str__(self):
-        return (f"\"{self.subject}\", to {self.users.all()[0] if self.users.count() == 1 else f'{self.users.count()} users'}, "
-                f"{'sent' if self.sent else 'eta'} {self.eta}")
+        return (
+            f"\"{self.subject}\", to {self.users.all()[0] if self.users.count() == 1 else f'{self.users.count()} users'}, "
+            f"{'sent' if self.sent else 'eta'} {self.eta}"
+        )

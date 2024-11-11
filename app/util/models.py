@@ -17,3 +17,12 @@ class OptionalImage(models.Model):
 
     class Meta:
         abstract = True
+
+
+class OptionalFile(models.Model):
+    """Abstract model for models containing a file"""
+
+    file = models.URLField(max_length=600, null=True, blank=True)
+
+    class Meta:
+        abstract = True
