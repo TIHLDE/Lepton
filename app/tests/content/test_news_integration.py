@@ -329,3 +329,35 @@ def test_create_news_as_leader_of_committee(member):
     )
 
     assert response.status_code == status.HTTP_201_CREATED
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    ("field", "value", "expected_status_code", "expected_count"),
+    [
+        ("title", "title1", status.HTTP_200_OK, 1),
+        ("search", "title", status.HTTP_200_OK, 3),
+        ("search", "ne", status.HTTP_200_OK, 1),
+        ("search", "body", status.HTTP_200_OK, 4),
+        ("search", "header", status.HTTP_200_OK, 4),
+        ("search", "News", status.HTTP_200_OK, 1),
+        ("search", "header1", status.HTTP_200_OK, 1),
+    ],
+)
+def test_news_filter_works_as_expected(
+    member, field, value, expected_status_code, expected_count
+):
+    """A leader of a committee should be able to create news."""
+
+    news1 = NewsFactory(title="title1", header="header1", body="body1")
+    news2 = NewsFactory(title="title2", header="header2", body="body2")
+    news3 = NewsFactory(title="title3", header="header3", body="body3")
+    news4 = NewsFactory(title="News", header="header4", body="body4")
+
+    client = get_api_client(user=member)
+
+    url = _get_news_url() + "?" + field + "=" + value
+    response = client.get(url)
+
+    assert response.data["count"] == expected_count
+    assert response.status_code == expected_status_code
