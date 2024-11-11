@@ -2,10 +2,10 @@ from rest_framework import status
 
 import pytest
 
+from app.feedback.enums import Status
 from app.feedback.factories.bug_factory import BugFactory
 from app.feedback.factories.idea_factory import IdeaFactory
 from app.util.test_utils import get_api_client
-from app.feedback.enums import Status
 
 FEEDBACK_BASE_URL = "/feedbacks/"
 
@@ -35,10 +35,10 @@ def test_list_feedback_with_both_bug_and_idea_as_member(member):
     idea_type = list(filter(lambda x: "Idea" == x["feedback_type"], results))
 
     assert response.status_code == status.HTTP_200_OK
-    assert data["count"] == 2 
-    assert len(bug_type) == 1  
-    assert len(idea_type) == 1 
- 
+    assert data["count"] == 2
+    assert len(bug_type) == 1
+    assert len(idea_type) == 1
+
 
 @pytest.mark.django_db
 def test_list_feedback_as_anonymous_user(default_client):
@@ -273,10 +273,10 @@ def test_filter_feedback_type_as_member(member, feedback_type):
     assert response.status_code == status.HTTP_200_OK
     assert data["count"] == 1
     assert results[0]["feedback_type"] == feedback_type
- 
+
 
 @pytest.mark.django_db
-def test_status_filter_as_member(member):    
+def test_status_filter_as_member(member):
     """A member should be able to filter feedbacks by status"""
 
     BugFactory(author=member, status=Status.OPEN)
