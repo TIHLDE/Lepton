@@ -11,3 +11,7 @@ class BugFactory(DjangoModelFactory):
 
     title = factory.Sequence(lambda n: f"Bug{n}")
     author = factory.SubFactory(UserFactory)
+    description = factory.Faker("text")
+    url = factory.Faker("url")
+    platform = factory.Faker("word")
+    browser = factory.Faker("word")

@@ -11,3 +11,4 @@ class IdeaFactory(DjangoModelFactory):
 
     title = factory.Sequence(lambda n: f"Idea{n}")
     author = factory.SubFactory(UserFactory)
+    description = factory.Faker("text")
