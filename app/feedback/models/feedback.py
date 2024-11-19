@@ -1,12 +1,14 @@
 from django.db import models
 
 from polymorphic.models import PolymorphicModel
+from django.contrib.contenttypes.fields import GenericRelation
 
 from app.common.enums import AdminGroup, Groups
 from app.common.permissions import BasePermissionModel, check_has_access
 from app.content.models.user import User
 from app.feedback.enums import Status
 from app.util.models import BaseModel
+from app.emoji.models.reaction import Reaction
 
 
 class Feedback(BaseModel, BasePermissionModel, PolymorphicModel):
@@ -21,6 +23,8 @@ class Feedback(BaseModel, BasePermissionModel, PolymorphicModel):
         User, blank=True, null=True, default=None, on_delete=models.SET_NULL
     )
     status = models.CharField(Status.choices, default=Status.OPEN, max_length=20)
+
+    reactions = GenericRelation(Reaction)
 
     def __str__(self):
         return f"{self.title} - {self.status}"

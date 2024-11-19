@@ -1,10 +1,13 @@
 from app.common.serializers import BaseModelSerializer
 from app.content.serializers.user import SimpleUserSerializer
 from app.feedback.models.idea import Idea
+from app.emoji.serializers.reaction import ReactionSerializer
 
 
 class IdeaSerializer(BaseModelSerializer):
     author = SimpleUserSerializer(read_only=True)
+
+    reactions = ReactionSerializer(read_only=True, many=True)
 
     class Meta:
         model = Idea
@@ -15,6 +18,7 @@ class IdeaSerializer(BaseModelSerializer):
             "created_at",
             "author",
             "description",
+            "reactions"
         )
 
 

@@ -13,6 +13,7 @@ from app.emoji.exception import (
     APIReactionNotAllowedException,
 )
 from app.emoji.models.reaction import Reaction
+from app.feedback.models import Bug, Idea
 
 
 class SimpleReactionUserSerializer(serializers.ModelSerializer):
@@ -31,10 +32,11 @@ class ReactionSerializer(BaseModelSerializer):
 
 class ReactionCreateSerializer(serializers.ModelSerializer):
     content_type = serializers.CharField()
+    feedback_type = serializers.CharField(allow_blank=True)
 
     class Meta:
         model = Reaction
-        fields = ("reaction_id", "emoji", "content_type", "object_id")
+        fields = ("reaction_id", "emoji", "content_type", "object_id", "feedback_type")
 
     def create(self, validated_data, **kwargs):
         user = self.context["request"].user
@@ -48,6 +50,16 @@ class ReactionCreateSerializer(serializers.ModelSerializer):
             object = News.objects.get(id=int(object_id))
         elif content_type.model.lower() == ContentTypes.EVENT:
             object = Event.objects.get(id=int(object_id))
+        elif content_type.model.lower() == ContentTypes.FEEDBACK:
+            feedback_type = validated_data.pop("feedback_type")
+            
+            if not feedback_type:
+                # TODO: Add new error
+                raise EOFError()
+            if feedback_type == "Idea":
+                object = Idea.objects.get(id=int(object_id))
+            if feedback_type == "Bug":
+                object = Bug.objects.get(id=int(object_id))
 
         if not object:
             raise APIContentTypeNotSupportedException()
