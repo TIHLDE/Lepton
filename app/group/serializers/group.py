@@ -44,6 +44,7 @@ class GroupListSerializer(SimpleGroupSerializer):
         fields = SimpleGroupSerializer.Meta.fields + (
             "contact_email",
             "leader",
+            "description",
         )
 
     def get_leader(self, obj):
@@ -67,7 +68,6 @@ class GroupSerializer(GroupListSerializer):
 
         lookup_field = GroupListSerializer.Meta.lookup_field
         fields = GroupListSerializer.Meta.fields + (
-            "description",
             "permissions",
             "fines_admin",
             "fines_activated",
