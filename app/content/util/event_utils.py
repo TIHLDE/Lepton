@@ -6,7 +6,6 @@ from app.payment.util.payment_utils import (
     check_access_token,
     initiate_payment,
     refund_payment,
-    check_access_token
 )
 
 
