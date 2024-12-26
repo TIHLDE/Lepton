@@ -13,6 +13,7 @@ from sentry_sdk import capture_exception
 from app.common.pagination import BasePagination
 from app.common.permissions import (
     BasicViewPermission,
+    check_has_access,
     is_admin_group_user,
     is_admin_user,
 )
@@ -157,19 +158,28 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
     def add_registration(self, request, *_args, **_kwargs):
         """Add registration to event for admins"""
 
-        if not is_admin_group_user(request):
+        event_id = self.kwargs.get("event_id", None)
+        user_id = request.data["user"]
+
+        event = get_object_or_404(Event, id=event_id)
+        user = get_object_or_404(User, user_id=user_id)
+
+        organizing_group = event.organizer
+
+        is_member_or_leader_of_organizing_group = check_has_access(
+            [organizing_group], request
+        )
+
+        if (
+            not is_admin_group_user(request)
+            and not is_member_or_leader_of_organizing_group
+        ):
             return Response(
                 {
                     "detail": "Du har ikke tillatelse til å opprette en påmelding på dette arrangementet"
                 },
                 status=status.HTTP_403_FORBIDDEN,
             )
-
-        event_id = self.kwargs.get("event_id", None)
-        user_id = request.data["user"]
-
-        event = get_object_or_404(Event, id=event_id)
-        user = get_object_or_404(User, user_id=user_id)
 
         if not user.accepts_event_rules:
             return Response(

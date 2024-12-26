@@ -19,7 +19,7 @@ class Group(OptionalImage, BaseModel, BasePermissionModel):
 
     name = models.CharField(max_length=50)
     slug = models.SlugField(max_length=50, primary_key=True)
-    description = models.TextField(max_length=1000, null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
     contact_email = models.EmailField(max_length=200, null=True, blank=True)
     fine_info = models.TextField(default="", blank=True)
     type = models.CharField(

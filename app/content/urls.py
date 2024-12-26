@@ -18,11 +18,10 @@ from app.content.views import (
     UserCalendarEvents,
     UserViewSet,
     accept_form,
-    delete,
     register_with_feide,
     send_email,
-    upload,
 )
+from app.files.views.upload import delete, upload
 
 router = routers.DefaultRouter()
 
@@ -54,8 +53,8 @@ urlpatterns = [
     re_path(r"", include(router.urls)),
     path("accept-form/", accept_form),
     path("upload/", upload),
-    path("send-email/", send_email),
     path("delete-file/<str:container_name>/<str:blob_name>/", delete),
+    path("send-email/", send_email),
     path("feide/", register_with_feide),
     re_path(r"users/(?P<user_id>[^/.]+)/events.ics", UserCalendarEvents()),
 ]
