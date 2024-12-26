@@ -14,6 +14,7 @@
 ---
 
 ## Neste versjon
+## Versjon 2024.12.26
 
 ## Versjon 2024.12.26
 - ✨ **Filopplasting**. Det er nå mulig for admin brukere å laste opp- og slette filer.
