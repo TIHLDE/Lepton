@@ -43,6 +43,11 @@ class OrderUpdateSerializer(BaseModelSerializer):
         fields = ("status",)
 
 
+class CheckPaymentSerializer(BaseModelSerializer):
+    class Meta:
+        fields = ("event_id", "user_id")
+
+
 class OrderCreateSerializer(BaseModelSerializer):
     class Meta:
         model = Order
