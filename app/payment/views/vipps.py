@@ -69,7 +69,6 @@ class VippsViewSet(BaseViewSet):
                 order.status = order_status
                 order.save()
 
-            if has_changed(order):
+        if has_changed(order):
                 return Response({"is_paid": True}, status=status.HTTP_200_OK)
-
         return Response({"is_paid": False}, status=status.HTTP_200_OK)
