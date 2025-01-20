@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from app.payment.serializers import CheckPaymentStatusSerializer
+from app.payment.serializers import CheckPaymentSerializer
 from app.payment.util.payment_utils import get_payment_order_status
 
 
@@ -10,7 +10,7 @@ from app.payment.util.payment_utils import get_payment_order_status
 def check_vipps_payment(self, request, *args, **kwargs):
     has_changed = False
 
-    serializer = CheckPaymentStatusSerializer(data=request.data)
+    serializer = CheckPaymentSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
 
     event_id = serializer.validated_data["event_id"]
