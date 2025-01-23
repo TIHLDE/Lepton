@@ -7,9 +7,11 @@ from app.common.permissions import (
     BasePermissionModel,
     check_has_access,
     is_admin_user,
+    is_index_user,
 )
 from app.content.models.event import Event
 from app.content.models.user import User
+from app.group.models.membership import Membership
 from app.payment.enums import OrderStatus
 from app.util.models import BaseModel
 
@@ -40,12 +42,36 @@ class Order(BaseModel, BasePermissionModel):
         return f"{self.user} - {self.event.title if self.event else ['slettet']} - {self.status} - {self.created_at}"
 
     @classmethod
-    def has_update_permission(cls, request, order):
+    def has_update_permission(cls, request):
         if check_has_access(cls.update_access, request):
             return True
 
-        if order.event and order.event.organizer:
-            return request.user.groups.filter(id=order.event.organizer.id).exists()
+        order_id = request.parser_context.get("kwargs", {}).get("pk")
+        print(f"Order ID: {order_id}")
+
+        if order_id:
+            try:
+                order = Order.objects.get(order_id=order_id)
+                print(f"Order: {order}")
+
+                if order.event.organizer and order.event.organizer.slug:
+                    is_member = Membership.objects.filter(
+                        user=request.user,
+                        group=order.event.organizer,
+                    ).exists()
+
+                    if is_member:
+                        print(
+                            f"User is a member of the organizer group: {order.event.organizer}"
+                        )
+                        return True
+                    else:
+                        print(
+                            f"User is not a member of the organizer group: {order.event.organizer}"
+                        )
+                        return False
+            except Order.DoesNotExist:
+                return False
 
         return False
 

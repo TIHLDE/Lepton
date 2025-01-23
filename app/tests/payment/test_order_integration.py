@@ -3,7 +3,9 @@ from rest_framework import status
 import pytest
 
 from app.common.enums import AdminGroup
-from app.group.factories import GroupFactory
+from app.common.enums import NativeMembershipType as MembershipType
+from app.content.models import User
+from app.group.factories import GroupFactory, MembershipFactory
 from app.group.models import Group
 from app.payment.enums import OrderStatus
 from app.payment.factories import OrderFactory
@@ -117,14 +119,33 @@ def test_update_order_as_member(member, order):
 
 
 @pytest.mark.django_db
-@pytest.mark.parametrize("group_name", [*AdminGroup.admin()])
+@pytest.mark.parametrize("group_name", [AdminGroup.INDEX])
 def test_update_order_as_admin_user(member, order, group_name):
-    """An index and HS user should not be able to update an order."""
+    """An index user should be able to update an order."""
     add_user_to_group_with_name(member, group_name)
     client = get_api_client(user=member)
     data = {"status": OrderStatus.SALE}
     response = client.put(get_orders_url_detail(order.order_id), data=data)
-    assert response.status_code == status.HTTP_403_FORBIDDEN
+    assert response.status_code == status.HTTP_200_OK
+
+
+@pytest.mark.django_db
+def test_update_order_as_organizer(member, event, order):
+    """Test that members of the organizing group (e.g., SOSIALEN) can update an order."""
+    organizer_group = GroupFactory(name=AdminGroup.SOSIALEN)
+    add_user_to_group_with_name(member, organizer_group.name)
+
+    event.organizer = organizer_group
+    event.save()
+
+    order.event = event
+    order.save()
+
+    data = {"status": OrderStatus.SALE}
+    client = get_api_client(user=member)
+
+    response = client.put(get_orders_url_detail(order.order_id), data=data)
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db

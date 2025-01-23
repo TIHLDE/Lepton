@@ -2,6 +2,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
+from app.payment.models import Order
 from app.payment.serializers import CheckPaymentSerializer
 from app.payment.util.payment_utils import get_payment_order_status
 
@@ -24,9 +25,7 @@ def check_vipps_payment(self, request, *args, **kwargs):
             status=status.HTTP_404_NOT_FOUND,
         )
 
-    order = orders.first()
-
-    if not order.has_object_update_permission(request):
+    if not Order.has_update_permission(self.request):
         return Response(
             {"detail": "Du har ikke tilgang til å oppdatere denne ordren."},
             status=status.HTTP_403_FORBIDDEN,
