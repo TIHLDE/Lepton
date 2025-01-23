@@ -7,7 +7,6 @@ from app.common.permissions import (
     BasePermissionModel,
     check_has_access,
     is_admin_user,
-    is_index_user,
 )
 from app.content.models.event import Event
 from app.content.models.user import User
@@ -47,29 +46,15 @@ class Order(BaseModel, BasePermissionModel):
             return True
 
         order_id = request.parser_context.get("kwargs", {}).get("pk")
-        print(f"Order ID: {order_id}")
 
         if order_id:
             try:
                 order = Order.objects.get(order_id=order_id)
-                print(f"Order: {order}")
 
                 if order.event.organizer and order.event.organizer.slug:
-                    is_member = Membership.objects.filter(
-                        user=request.user,
-                        group=order.event.organizer,
+                    return Membership.objects.filter(
+                        user=request.user, group=order.event.organizer
                     ).exists()
-
-                    if is_member:
-                        print(
-                            f"User is a member of the organizer group: {order.event.organizer}"
-                        )
-                        return True
-                    else:
-                        print(
-                            f"User is not a member of the organizer group: {order.event.organizer}"
-                        )
-                        return False
             except Order.DoesNotExist:
                 return False
 

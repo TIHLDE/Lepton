@@ -3,9 +3,7 @@ from rest_framework import status
 import pytest
 
 from app.common.enums import AdminGroup
-from app.common.enums import NativeMembershipType as MembershipType
-from app.content.models import User
-from app.group.factories import GroupFactory, MembershipFactory
+from app.group.factories import GroupFactory
 from app.group.models import Group
 from app.payment.enums import OrderStatus
 from app.payment.factories import OrderFactory
