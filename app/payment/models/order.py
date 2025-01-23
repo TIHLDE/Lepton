@@ -2,7 +2,7 @@ import uuid
 
 from django.db import models
 
-from app.common.enums import Groups
+from app.common.enums import AdminGroup, Groups
 from app.common.permissions import (
     BasePermissionModel,
     check_has_access,
@@ -16,6 +16,7 @@ from app.util.models import BaseModel
 
 class Order(BaseModel, BasePermissionModel):
     read_access = (Groups.TIHLDE,)
+    update_access = (AdminGroup.Index,)
 
     order_id = models.UUIDField(
         auto_created=True, default=uuid.uuid4, primary_key=True, serialize=False
@@ -39,7 +40,13 @@ class Order(BaseModel, BasePermissionModel):
         return f"{self.user} - {self.event.title if self.event else ['slettet']} - {self.status} - {self.created_at}"
 
     @classmethod
-    def has_update_permission(cls, request):
+    def has_update_permission(cls, request, order):
+        if check_has_access(cls.update_access, request):
+            return True
+
+        if order.event and order.event.organizer:
+            return request.user.groups.filter(id=order.event.organizer.id).exists()
+
         return False
 
     @classmethod
@@ -75,8 +82,8 @@ class Order(BaseModel, BasePermissionModel):
     def has_read_all_permission(cls, request):
         return is_admin_user(request)
 
-    def has_object_update_permission(self, _request):
-        return False
+    def has_object_update_permission(self, request):
+        return self.has_update_permission(request)
 
     def has_object_destroy_permission(self, _request):
         return False

@@ -14,5 +14,5 @@ router.register(
 
 urlpatterns = [
     re_path(r"", include(router.urls)),
-    path("check-vipps-payment", check_vipps_payment),
+    path("check-payment/", check_vipps_payment),
 ]

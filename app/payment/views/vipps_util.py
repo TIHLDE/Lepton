@@ -17,10 +17,19 @@ def check_vipps_payment(self, request, *args, **kwargs):
     user_id = serializer.validated_data["user_id"]
 
     orders = self.queryset.filter(user_id=user_id, event_id=event_id)
+
     if not orders.exists():
         return Response(
-            {"message": "No orders found for the user in this event."},
+            {"detail": "Ingen ordre funnet for bruker og arrangement."},
             status=status.HTTP_404_NOT_FOUND,
+        )
+
+    order = orders.first()
+
+    if not order.has_object_update_permission(request):
+        return Response(
+            {"detail": "Du har ikke tilgang til å oppdatere denne ordren."},
+            status=status.HTTP_403_FORBIDDEN,
         )
 
     for order in orders:
