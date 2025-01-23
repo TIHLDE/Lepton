@@ -16,7 +16,7 @@ from app.util.models import BaseModel
 
 class Order(BaseModel, BasePermissionModel):
     read_access = (Groups.TIHLDE,)
-    update_access = (AdminGroup.Index,)
+    update_access = (AdminGroup.INDEX,)
 
     order_id = models.UUIDField(
         auto_created=True, default=uuid.uuid4, primary_key=True, serialize=False
