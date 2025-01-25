@@ -39,5 +39,11 @@ def check_vipps_payment(self, request, *args, **kwargs):
             order.save()
 
     if has_changed(order):
-        return Response({"is_paid": True}, status=status.HTTP_200_OK)
-    return Response({"is_paid": False}, status=status.HTTP_200_OK)
+        return Response(
+            {"detail": "Ordrestatusen var feil har blitt endret."},
+            status=status.HTTP_200_OK,
+        )
+    return Response(
+        {"detail": "Ordrestatusen er korrekt og har ikke blitt endret."},
+        status=status.HTTP_200_OK,
+    )
