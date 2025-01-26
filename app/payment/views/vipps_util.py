@@ -40,7 +40,7 @@ def check_vipps_payment(self, request, *args, **kwargs):
 
     if has_changed(order):
         return Response(
-            {"detail": "Ordrestatusen var feil har blitt endret."},
+            {"detail": "Ordrestatusen var feil og har blitt endret."},
             status=status.HTTP_200_OK,
         )
     return Response(
