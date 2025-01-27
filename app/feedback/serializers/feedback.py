@@ -29,4 +29,5 @@ class FeedbackListPolymorphicSerializer(PolymorphicSerializer, BaseModelSerializ
             "assignees",
             "image",
             "image_alt",
+            "reactions",
         )

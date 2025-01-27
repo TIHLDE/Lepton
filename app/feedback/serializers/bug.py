@@ -1,10 +1,13 @@
 from app.common.serializers import BaseModelSerializer
 from app.content.serializers.user import SimpleUserSerializer
+from app.emoji.serializers.reaction import ReactionSerializer
 from app.feedback.models.bug import Bug
 
 
 class BugSerializer(BaseModelSerializer):
     author = SimpleUserSerializer(read_only=True)
+
+    reactions = ReactionSerializer(read_only=True, many=True)
 
     class Meta:
         model = Bug
@@ -17,6 +20,7 @@ class BugSerializer(BaseModelSerializer):
             "description",
             "image",
             "image_alt",
+            "reactions",
         )
 
 
@@ -55,6 +59,8 @@ class BugUpdateSerializer(BaseModelSerializer):
 class BugDetailSerializer(BaseModelSerializer):
     author = SimpleUserSerializer(read_only=True)
 
+    reactions = ReactionSerializer(read_only=True, many=True)
+
     class Meta:
         model = Bug
         fields = (
@@ -69,4 +75,5 @@ class BugDetailSerializer(BaseModelSerializer):
             "browser",
             "image",
             "image_alt",
+            "reactions",
         )
