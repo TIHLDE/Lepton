@@ -34,6 +34,8 @@ class Feedback(BaseModel, BasePermissionModel, PolymorphicModel, OptionalImage):
         through_fields=("feedback", "user"),
         blank=True,
         default=None,
+        verbose_name="assigned users",
+        related_name="assigned_feedbacks",
     )
 
     def __str__(self):
