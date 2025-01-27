@@ -15,6 +15,8 @@ class BugSerializer(BaseModelSerializer):
             "created_at",
             "author",
             "description",
+            "image",
+            "image_alt",
         )
 
 
@@ -24,6 +26,8 @@ class BugCreateSerializer(BaseModelSerializer):
         fields = (
             "title",
             "description",
+            "image",
+            "image_alt",
         )
 
     def create(self, validated_data):
@@ -40,6 +44,8 @@ class BugUpdateSerializer(BaseModelSerializer):
             "title",
             "description",
             "status",
+            "image",
+            "image_alt",
         )
 
         def update(self, instance, validated_data):
@@ -61,4 +67,6 @@ class BugDetailSerializer(BaseModelSerializer):
             "url",
             "platform",
             "browser",
+            "image",
+            "image_alt",
         )

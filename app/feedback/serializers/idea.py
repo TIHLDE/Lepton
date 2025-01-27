@@ -15,6 +15,8 @@ class IdeaSerializer(BaseModelSerializer):
             "created_at",
             "author",
             "description",
+            "image",
+            "image_alt",
         )
 
 
@@ -24,6 +26,8 @@ class IdeaCreateSerializer(BaseModelSerializer):
         fields = (
             "title",
             "description",
+            "image",
+            "image_alt",
         )
 
     def create(self, validated_data):
@@ -40,6 +44,8 @@ class IdeaUpdateSerializer(BaseModelSerializer):
             "title",
             "description",
             "status",
+            "image",
+            "image_alt",
         )
 
         def update(self, instance, validated_data):
@@ -58,4 +64,6 @@ class IdeaDetailSerializer(BaseModelSerializer):
             "status",
             "created_at",
             "author",
+            "image",
+            "image_alt",
         )
