@@ -26,6 +26,7 @@ class FeedbackListPolymorphicSerializer(PolymorphicSerializer, BaseModelSerializ
             "author",
             "description",
             "emojis_allowed",
+            "assignees",
             "image",
             "image_alt",
         )

@@ -28,6 +28,14 @@ class Feedback(BaseModel, BasePermissionModel, PolymorphicModel, OptionalImage):
 
     reactions = GenericRelation(Reaction)
 
+    assignees = models.ManyToManyField(
+        User,
+        through="Assignee",
+        through_fields=("feedback", "user"),
+        blank=True,
+        default=None,
+    )
+
     def __str__(self):
         return f"{self.title} - {self.status}"
 
