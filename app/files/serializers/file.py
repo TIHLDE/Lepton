@@ -47,7 +47,6 @@ class CreateFileSerializer(BaseModelSerializer):
 
 
 class UpdateFileSerializer(BaseModelSerializer):
-
     class Meta:
         model = File
         fields = (
