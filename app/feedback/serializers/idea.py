@@ -18,7 +18,8 @@ class IdeaSerializer(BaseModelSerializer):
             "created_at",
             "author",
             "description",
-            "reactions"
+            "reactions",
+            "image",
         )
 
 
@@ -62,4 +63,5 @@ class IdeaDetailSerializer(BaseModelSerializer):
             "status",
             "created_at",
             "author",
+            "image",
         )

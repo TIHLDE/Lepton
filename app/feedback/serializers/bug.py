@@ -18,7 +18,8 @@ class BugSerializer(BaseModelSerializer):
             "created_at",
             "author",
             "description",
-            "reactions"
+            "reactions",
+            "image",
         )
 
 
@@ -65,4 +66,5 @@ class BugDetailSerializer(BaseModelSerializer):
             "url",
             "platform",
             "browser",
+            "image",
         )

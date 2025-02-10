@@ -25,5 +25,6 @@ class FeedbackListPolymorphicSerializer(PolymorphicSerializer, BaseModelSerializ
             "created_at",
             "author",
             "description",
-            "reactions"
+            "reactions",
+            "image",
         )
