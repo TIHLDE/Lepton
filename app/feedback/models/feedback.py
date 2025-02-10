@@ -7,11 +7,11 @@ from app.common.enums import AdminGroup, Groups
 from app.common.permissions import BasePermissionModel, check_has_access
 from app.content.models.user import User
 from app.feedback.enums import Status
-from app.util.models import BaseModel, OptianalImage
+from app.util.models import BaseModel, OptionalImage
 from app.emoji.models.reaction import Reaction
 
 
-class Feedback(BaseModel, BasePermissionModel, PolymorphicModel, OptianalImage):
+class Feedback(BaseModel, BasePermissionModel, PolymorphicModel, OptionalImage):
 
     read_access = (Groups.TIHLDE,)
     write_access = (Groups.TIHLDE,)
