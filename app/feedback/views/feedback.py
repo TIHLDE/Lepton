@@ -92,6 +92,7 @@ class FeedbackViewSet(BaseViewSet):
             status=status.HTTP_200_OK,
         )
 
+    @action(detail=False, methods=["get"])
     def votes(self, request):
         feedback_votes = Feedback.objects.annotate(
             upvotes=Count("reactions", filter=Q(reactions__emoji=":thumbs-up:")),
