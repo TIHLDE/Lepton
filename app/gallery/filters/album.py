@@ -30,5 +30,3 @@ class AlbumFilter(FilterSet):
             else:
                 return queryset.order_by("-created_at")
         return queryset
-
-
