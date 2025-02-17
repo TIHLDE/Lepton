@@ -92,11 +92,16 @@ class FeedbackViewSet(BaseViewSet):
             status=status.HTTP_200_OK,
         )
 
-    @action(detail=False, methods=["get"])
     def votes(self, request):
         feedback_votes = Feedback.objects.annotate(
             upvotes=Count("reactions", filter=Q(reactions__emoji=":thumbs-up:")),
             downvotes=Count("reactions", filter=Q(reactions__emoji=":thumbs-down:")),
-        ).values("id", "title", "upvotes", "downvotes")
+        )
 
-        return Response(feedback_votes, status=status.HTTP_200_OK)
+        serializer = FeedbackListPolymorphicSerializer(feedback_votes, many=True)
+
+        for feedback, data in zip(feedback_votes, serializer.data):
+            data["upvotes"] = feedback.upvotes
+            data["downvotes"] = feedback.downvotes
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
