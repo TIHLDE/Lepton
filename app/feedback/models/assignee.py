@@ -65,7 +65,11 @@ class Assignee(BaseModel, BasePermissionModel):
         return self.has_object_read_permission(request)
 
     def has_object_update_permission(self, request):
-        return check_has_access([AdminGroup.INDEX], request)
+        return (
+            check_has_access([AdminGroup.INDEX], request) and self.user == request.user
+        )
 
     def has_object_destroy_permission(self, request):
-        return check_has_access([AdminGroup.INDEX], request)
+        return (
+            check_has_access([AdminGroup.INDEX], request) and self.user == request.user
+        )
