@@ -71,3 +71,11 @@ class SubmissionViewSet(APIFormErrorsMixin, BaseViewSet):
     def download(self, _request, *_args, **_kwargs):
         """To return the response as csv, include header 'Accept: text/csv."""
         return SubmissionsCsvWriter(self.get_queryset()).write_csv()
+
+
+    @action(detail=True, methods=["delete"])
+    def destroy_with_reason(self, request, *args, **kwargs):
+        submission = self.get_object()
+        reason = request.data.get("reason", "No reason provided")
+        submission.destroy(reason)
+        return Response({"detail": "Submission deleted and user notified"}, status=status.HTTP_200_OK)
