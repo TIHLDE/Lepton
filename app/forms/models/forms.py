@@ -18,6 +18,7 @@ from app.forms.exceptions import (
 )
 from app.group.models import Group
 from app.util.models import BaseModel
+from django.core.mail import send_mail
 
 
 class Form(PolymorphicModel, BasePermissionModel):
