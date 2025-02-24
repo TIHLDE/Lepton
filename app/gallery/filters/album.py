@@ -8,10 +8,9 @@ class AlbumFilter(FilterSet):
 
     ordering = OrderingFilter(
         fields=(
-        "created_at",
-        "updated_at",
-        "event",
-        "-created_at",
+            "created_at",
+            "updated_at",
+            "event__title",
         )
     )
 
@@ -19,14 +18,4 @@ class AlbumFilter(FilterSet):
         model = Album
         fields = [
             "event",
-            "-created_at",
         ]
-
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        order = self.request.query_params.get("order", "desc")
-            if order == "asc":
-                return queryset.order_by("created_at")
-            else:
-                return queryset.order_by("-created_at")
-        return queryset
