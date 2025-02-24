@@ -1,5 +1,6 @@
 import uuid
 
+from django.core.mail import send_mail
 from django.db import models, transaction
 
 from ordered_model.models import OrderedModel
@@ -18,7 +19,6 @@ from app.forms.exceptions import (
 )
 from app.group.models import Group
 from app.util.models import BaseModel
-from django.core.mail import send_mail
 
 
 class Form(PolymorphicModel, BasePermissionModel):
@@ -379,13 +379,12 @@ class Submission(BaseModel, BasePermissionModel):
     def has_download_permission(cls, request):
         return cls.has_list_permission(request)
 
-
     def destroy_submission(self, reason):
         send_mail(
-            subject = "Ditt svar på spørreskjemaet har blitt slettet",
-            message = f"Ditt svar på spørreskjemaet {self.form.title} har blitt slettet av en administrator. Grunnen er: {reason}",
-            from_email = settings.DEFAULT_FROM_EMAIL,
-            recipient_list = [self.user.email],
+            subject="Ditt svar på spørreskjemaet har blitt slettet",
+            message=f"Ditt svar på spørreskjemaet {self.form.title} har blitt slettet av en administrator. Grunnen er: {reason}",
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[self.user.email],
         )
         self.delete()
 
