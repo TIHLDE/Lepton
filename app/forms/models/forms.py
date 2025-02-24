@@ -379,6 +379,16 @@ class Submission(BaseModel, BasePermissionModel):
         return cls.has_list_permission(request)
 
 
+    def destroy_submission(self, reason):
+        send_mail(
+            subject = "Ditt svar på spørreskjemaet har blitt slettet",
+            message = f"Ditt svar på spørreskjemaet {self.form.title} har blitt slettet av en administrator. Grunnen er: {reason}",
+            from_email = settings.DEFAULT_FROM_EMAIL,
+            recipient_list = [self.user.email],
+        )
+        self.delete()
+
+
 class Answer(BaseModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     submission = models.ForeignKey(
