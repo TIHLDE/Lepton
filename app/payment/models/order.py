@@ -93,6 +93,10 @@ class Order(BaseModel, BasePermissionModel):
     def has_read_all_permission(cls, request):
         return is_admin_user(request)
 
+    @classmethod
+    def has_write_all_permission(cls, request):
+        return is_admin_user(request)
+
     def has_object_update_permission(self, request):
         return self.has_update_permission(request)
 
