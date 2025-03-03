@@ -1,7 +1,6 @@
 from django.db.models import Count, Q
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status
-from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from app.common.pagination import BasePagination
@@ -91,18 +90,3 @@ class FeedbackViewSet(BaseViewSet):
             {"detail": "Tilbakemeldingen ble slettet"},
             status=status.HTTP_200_OK,
         )
-
-    @action(detail=False, methods=["get"])
-    def votes(self, request):
-        feedback_votes = Feedback.objects.annotate(
-            upvotes=Count("reactions", filter=Q(reactions__emoji=":thumbs-up:")),
-            downvotes=Count("reactions", filter=Q(reactions__emoji=":thumbs-down:")),
-        )
-
-        serializer = FeedbackListPolymorphicSerializer(feedback_votes, many=True)
-
-        for feedback, data in zip(feedback_votes, serializer.data):
-            data["upvotes"] = feedback.upvotes
-            data["downvotes"] = feedback.downvotes
-
-        return Response(serializer.data, status=status.HTTP_200_OK)
