@@ -75,9 +75,23 @@ class SubmissionViewSet(APIFormErrorsMixin, BaseViewSet):
     @action(detail=True, methods=["delete"])
     def destroy_with_reason(self, request, *args, **kwargs):
         submission = self.get_object()
-        reason = request.data.get("reason", "No reason provided")
-        submission.destroy(reason)
+        serializer = SubmissionDestroySerializer(data=request.data)
+
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        reason = serializer.validated_data.get("reason", "Ingen grunn oppgitt.")
+
+        send_mail(
+            subject="Ditt svar på spørreskjemaet har blitt slettet",
+            message=f"Ditt svar på spørreskjemaet {submission.form.title} har blitt slettet av en administrator. Grunnen er: {reason}",
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[submission.user.email],
+        )
+
+        submission.delete()
+
         return Response(
-            {"detail": "Submission deleted and user notified"},
+            {"detail": "Skjemaet er slettet og brukeren er varslet."},
             status=status.HTTP_200_OK,
         )
