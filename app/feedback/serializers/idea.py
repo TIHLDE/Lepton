@@ -1,9 +1,9 @@
+from rest_framework import serializers
+
 from app.common.serializers import BaseModelSerializer
 from app.content.serializers.user import SimpleUserSerializer
 from app.emoji.serializers.reaction import ReactionSerializer
 from app.feedback.models.idea import Idea
-
-from rest_framework import serializers
 
 
 class IdeaSerializer(BaseModelSerializer):
@@ -63,8 +63,8 @@ class IdeaDetailSerializer(BaseModelSerializer):
 
     reactions = ReactionSerializer(read_only=True, many=True)
 
-    upvotes = serializers.IntegerField(read_only=True)
-    downvotes = serializers.IntegerField(read_only=True)
+    upvotes = serializers.SerializerMethodField()
+    downvotes = serializers.SerializerMethodField()
 
     class Meta:
         model = Idea
@@ -81,3 +81,9 @@ class IdeaDetailSerializer(BaseModelSerializer):
             "upvotes",
             "downvotes",
         )
+
+    def get_upvotes(self, obj):
+        return obj.reactions.filter(emoji=":thumbs-up:").count()
+
+    def get_downvotes(self, obj):
+        return obj.reactions.filter(emoji=":thumbs-down:").count()

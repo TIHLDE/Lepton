@@ -32,22 +32,6 @@ class FeedbackViewSet(BaseViewSet):
         "author__last_name",
     ]
 
-    def get_queryset(self):
-        return Feedback.objects.select_related("author").annotate(
-            upvotes=Count("reactions", filter=Q(reactions__emoji=":thumbs-up:")),
-            downvotes=Count("reactions", filter=Q(reactions__emoji=":thumbs-down:")),
-        )
-
-    def retrieve(self, request, *_args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance)
-        data = serializer.data
-
-        data["upvotes"] = instance.upvotes
-        data["downvotes"] = instance.downvotes
-
-        return Response(data, status=status.HTTP_200_OK)  
-
     def create(self, request, *_args, **_kwargs):
         data = request.data
 
