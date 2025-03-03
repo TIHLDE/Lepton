@@ -13,8 +13,9 @@ from app.forms.csv_writer import SubmissionsCsvWriter
 from app.forms.enums import NativeEventFormType as EventFormType
 from app.forms.mixins import APIFormErrorsMixin
 from app.forms.models.forms import EventForm, Form, Submission
-from app.forms.serializers.submission import SubmissionSerializer
-
+from app.forms.serializers.submission import SubmissionSerializer, SubmissionDestroySerializer
+from django.core.mail import send_mail
+from django.conf import settings
 
 class SubmissionViewSet(APIFormErrorsMixin, BaseViewSet):
     serializer_class = SubmissionSerializer
