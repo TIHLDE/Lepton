@@ -1,3 +1,5 @@
+from django.conf import settings
+from django.core.mail import send_mail
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
@@ -13,9 +15,11 @@ from app.forms.csv_writer import SubmissionsCsvWriter
 from app.forms.enums import NativeEventFormType as EventFormType
 from app.forms.mixins import APIFormErrorsMixin
 from app.forms.models.forms import EventForm, Form, Submission
-from app.forms.serializers.submission import SubmissionSerializer, SubmissionDestroySerializer
-from django.core.mail import send_mail
-from django.conf import settings
+from app.forms.serializers.submission import (
+    SubmissionDestroySerializer,
+    SubmissionSerializer,
+)
+
 
 class SubmissionViewSet(APIFormErrorsMixin, BaseViewSet):
     serializer_class = SubmissionSerializer
