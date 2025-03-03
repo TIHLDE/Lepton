@@ -3,6 +3,7 @@ from app.content.serializers.user import SimpleUserSerializer
 from app.emoji.serializers.reaction import ReactionSerializer
 from app.feedback.models.bug import Bug
 
+from rest_framework import serializers
 
 class BugSerializer(BaseModelSerializer):
     author = SimpleUserSerializer(read_only=True)
@@ -61,6 +62,9 @@ class BugDetailSerializer(BaseModelSerializer):
 
     reactions = ReactionSerializer(read_only=True, many=True)
 
+    upvotes = serializers.IntegerField(read_only=True)
+    downvotes = serializers.IntegerField(read_only=True)
+
     class Meta:
         model = Bug
         fields = (
@@ -76,4 +80,6 @@ class BugDetailSerializer(BaseModelSerializer):
             "image",
             "image_alt",
             "reactions",
+            "upvotes",
+            "downvotes",
         )

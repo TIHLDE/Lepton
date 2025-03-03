@@ -3,6 +3,8 @@ from app.content.serializers.user import SimpleUserSerializer
 from app.emoji.serializers.reaction import ReactionSerializer
 from app.feedback.models.idea import Idea
 
+from rest_framework import serializers
+
 
 class IdeaSerializer(BaseModelSerializer):
     author = SimpleUserSerializer(read_only=True)
@@ -61,6 +63,9 @@ class IdeaDetailSerializer(BaseModelSerializer):
 
     reactions = ReactionSerializer(read_only=True, many=True)
 
+    upvotes = serializers.IntegerField(read_only=True)
+    downvotes = serializers.IntegerField(read_only=True)
+
     class Meta:
         model = Idea
         fields = (
@@ -73,4 +78,6 @@ class IdeaDetailSerializer(BaseModelSerializer):
             "image",
             "image_alt",
             "reactions",
+            "upvotes",
+            "downvotes",
         )

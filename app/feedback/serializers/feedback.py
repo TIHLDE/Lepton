@@ -1,4 +1,5 @@
 from rest_polymorphic.serializers import PolymorphicSerializer
+from rest_framework import serializers
 
 from app.common.serializers import BaseModelSerializer
 from app.emoji.serializers.reaction import ReactionSerializer
@@ -16,6 +17,9 @@ class FeedbackListPolymorphicSerializer(PolymorphicSerializer, BaseModelSerializ
 
     reactions = ReactionSerializer(read_only=True, many=True)
 
+    upvotes = serializers.IntegerField(read_only=True)
+    downvotes = serializers.IntegerField(read_only=True)
+
     class Meta:
         model = Feedback
         fields = (
@@ -30,4 +34,6 @@ class FeedbackListPolymorphicSerializer(PolymorphicSerializer, BaseModelSerializ
             "image",
             "image_alt",
             "reactions",
+            "upvotes",
+            "downvotes",
         )
