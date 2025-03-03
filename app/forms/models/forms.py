@@ -1,6 +1,5 @@
 import uuid
 
-from django.core.mail import send_mail
 from django.db import models, transaction
 
 from ordered_model.models import OrderedModel
