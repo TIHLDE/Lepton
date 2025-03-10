@@ -2,7 +2,7 @@ import uuid
 
 from django.db import models
 
-from app.common.enums import Groups
+from app.common.enums import AdminGroup, Groups
 from app.common.permissions import (
     BasePermissionModel,
     check_has_access,
@@ -10,12 +10,14 @@ from app.common.permissions import (
 )
 from app.content.models.event import Event
 from app.content.models.user import User
+from app.group.models.membership import Membership
 from app.payment.enums import OrderStatus
 from app.util.models import BaseModel
 
 
 class Order(BaseModel, BasePermissionModel):
     read_access = (Groups.TIHLDE,)
+    update_access = (AdminGroup.INDEX,)
 
     order_id = models.UUIDField(
         auto_created=True, default=uuid.uuid4, primary_key=True, serialize=False
@@ -40,6 +42,22 @@ class Order(BaseModel, BasePermissionModel):
 
     @classmethod
     def has_update_permission(cls, request):
+        if check_has_access(cls.update_access, request):
+            return True
+
+        order_id = request.parser_context.get("kwargs", {}).get("pk")
+
+        if order_id:
+            try:
+                order = Order.objects.get(order_id=order_id)
+
+                if order.event.organizer and order.event.organizer.slug:
+                    return Membership.objects.filter(
+                        user=request.user, group=order.event.organizer
+                    ).exists()
+            except Order.DoesNotExist:
+                return False
+
         return False
 
     @classmethod
@@ -75,8 +93,12 @@ class Order(BaseModel, BasePermissionModel):
     def has_read_all_permission(cls, request):
         return is_admin_user(request)
 
-    def has_object_update_permission(self, _request):
-        return False
+    @classmethod
+    def has_write_all_permission(cls, request):
+        return is_admin_user(request)
+
+    def has_object_update_permission(self, request):
+        return self.has_update_permission(request)
 
     def has_object_destroy_permission(self, _request):
         return False
