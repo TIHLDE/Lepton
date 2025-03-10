@@ -34,6 +34,7 @@ from app.content.serializers import (
     UserSerializer,
 )
 from app.content.serializers.strike import UserInfoStrikeSerializer
+from app.forms.models.forms import Form
 from app.forms.serializers import FormPolymorphicSerializer
 from app.group.models import Group, Membership
 from app.group.serializers.membership import (
@@ -327,13 +328,13 @@ class UserViewSet(BaseViewSet, ActionMixin):
 
     @action(detail=False, methods=["get"], url_path="me/forms")
     def get_user_forms(self, request, *_args, **_kwargs):
-        forms = request.user.forms
-
         filter_field = request.query_params.get("unanswered")
         filter_unanswered = CaseInsensitiveBooleanQueryParam(filter_field)
 
         if filter_unanswered:
             forms = request.user.get_unanswered_evaluations()
+        else:
+            forms = Form.objects.filter(user=request.user)
 
         return self.paginate_response(
             data=forms,

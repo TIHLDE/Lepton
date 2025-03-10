@@ -14,7 +14,11 @@ from app.content.factories.strike_factory import StrikeFactory
 from app.content.factories.user_factory import UserFactory
 from app.content.models import User
 from app.forms.enums import NativeEventFormType as EventFormType
-from app.forms.tests.form_factories import EventFormFactory, SubmissionFactory
+from app.forms.tests.form_factories import (
+    EventFormFactory,
+    GroupFormFactory,
+    SubmissionFactory,
+)
 from app.group.models import Group
 from app.util.test_utils import add_user_to_group_with_name
 
@@ -145,6 +149,31 @@ def test_list_user_forms_filter_on_answered_returns_all_answered_forms(
 
     actual_form_id = results[0].get("id")
     expected_form_id = str(submission.form.id)
+
+    assert actual_form_id == expected_form_id
+
+
+def test_list_all_user_form_filter_on_answered_returns_all_answered_forms(
+    api_client, member, form
+):
+    """Should return all answered evaluations for attended events and group submission."""
+    submission = SubmissionFactory(form=form, user=member)
+
+    event_form = EventFormFactory(type=EventFormType.EVALUATION)
+    SubmissionFactory(form=event_form, user=member)
+
+    group_form = GroupFormFactory(type=EventFormType.SURVEY)
+    SubmissionFactory(form=group_form, user=member)
+
+    url = f"{_get_user_forms_url()}?unanswered=false"
+    client = api_client(user=member)
+    response = client.get(url).json()
+    results = response.get("results")
+
+    assert len(results) == 3
+
+    actual_form_id = [result.get("id") for result in results]
+    expected_form_id = [str(submission.form.id), str(event_form.id), str(group_form.id)]
 
     assert actual_form_id == expected_form_id
 
