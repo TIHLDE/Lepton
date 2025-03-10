@@ -5,7 +5,7 @@ from django.http.response import HttpResponse
 
 
 class SubmissionsCsvWriter:
-    field_names = [
+    base_field_names = [
         "first_name",
         "last_name",
         "full_name",
@@ -18,6 +18,7 @@ class SubmissionsCsvWriter:
         if queryset is None:
             queryset = []
         self.queryset = queryset
+        self.field_names = self.base_field_names.copy()
 
     def write_csv(self):
         response = HttpResponse(content_type="text/csv")
@@ -64,9 +65,9 @@ class SubmissionsCsvWriter:
             )
             return ", ".join(answer_text)
 
-        return answer.answer_text
+        return answer.answer_text.replace('\n', ' ').replace('\r', ' ')
 
     def write_rows(self, response, result):
-        writer = csv.DictWriter(response, fieldnames=self.field_names)
+        writer = csv.DictWriter(response, fieldnames=self.field_names, quoting=csv.QUOTE_ALL)
         writer.writeheader()
         writer.writerows(result)
