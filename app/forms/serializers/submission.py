@@ -89,3 +89,17 @@ class SubmissionGDPRSerializer(SubmissionInRegistrationSerializer):
     class Meta:
         model = SubmissionInRegistrationSerializer.Meta.model
         fields = SubmissionInRegistrationSerializer.Meta.fields
+
+
+class SubmissionDestroySerializer(serializers.Serializer):
+    reason = serializers.CharField(required=True, allow_blank=False)
+
+    class Meta:
+        fields = ["reason"]
+
+    def validate_reason(self, value):
+        if not value.strip():
+            raise serializers.ValidationError(
+                "Grunnen kan ikke være tom eller kun inneholde mellomrom."
+            )
+        return value
