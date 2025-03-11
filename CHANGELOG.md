@@ -14,6 +14,7 @@
 ---
 
 ## Neste versjon
+## Versjon 2024.12.26
 
 ## Versjon 2025.03.10
 - 🦟 **CSV spørreskjema svar**. Nedlasting av spørreskjema svar er nå fikset.
