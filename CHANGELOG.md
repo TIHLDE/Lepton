@@ -14,6 +14,7 @@
 ---
 
 ## Neste versjon
+- ✨ **API-nøkler**. API-nøkler kan nå opprettes og brukes til å autentisere forespørseler for å laste opp filer og sende eposter.
 
 ## Versjon 2025.03.10
 - 🦟 **CSV spørreskjema svar**. Nedlasting av spørreskjema svar er nå fikset.

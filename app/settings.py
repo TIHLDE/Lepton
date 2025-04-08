@@ -109,6 +109,7 @@ INSTALLED_APPS = [
     "app.feedback",
     "app.codex",
     "app.files",
+    "app.apikey",
 ]
 
 # Django rest framework
