@@ -1,2 +1,2 @@
 from app.apikey.views.file import upload
-from app.apikey.views.email import send_email
+from app.apikey.views.email import send

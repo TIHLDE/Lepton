@@ -2,37 +2,23 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from app.apikey.models.key import ApiKey
-from app.apikey.util import is_valid_uuid
+from app.apikey.util import check_api_key
 from app.common.azure_file_handler import AzureFileHandler
 
 
 @api_view(["POST"])
+@check_api_key
 def upload(request):
-    """Method for uploading files to Azure Blob Storage, only allowed with a valid API key"""
+    """Method for uploading files to Azure Blob Storage, only allowed with a valid API key.
+
+    Body should contain:
+    - 'container_name': The name of the container to upload the file to.
+    - 'FILES': The file to upload.
+
+    The header should contain:
+    - 'x-api_key': A key for validating access.
+    """
     try:
-        api_key = request.headers.get("x-api-key")
-        if not api_key:
-            return Response(
-                {"detail": "API nøkkel mangler"},
-                status=status.HTTP_403_FORBIDDEN,
-            )
-
-        is_valid_api_key = is_valid_uuid(api_key)
-        if not is_valid_api_key:
-            return Response(
-                {"detail": "API nøkkel er ikke riktig format. Den må være UUID"},
-                status=status.HTTP_403_FORBIDDEN,
-            )
-
-        valid_api_key = ApiKey.objects.filter(key=api_key).first()
-
-        if not valid_api_key:
-            return Response(
-                {"detail": "Ugyldig API nøkkel"},
-                status=status.HTTP_403_FORBIDDEN,
-            )
-
         has_multiple_files = len(request.FILES) > 1
         if has_multiple_files:
             return Response(
