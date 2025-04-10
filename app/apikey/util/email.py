@@ -57,6 +57,8 @@ def struct_attachments(attachments: list[str]) -> list[tuple[str, bytes, str]]:
     email_attachments = []
     for attachment in attachments if attachments else []:
         try:
+            if ".blob.core.windows.net" not in attachment:
+                continue
             response = requests.get(attachment)
             response.raise_for_status()
             email_attachments.append(
