@@ -65,9 +65,11 @@ class SubmissionsCsvWriter:
             )
             return ", ".join(answer_text)
 
-        return answer.answer_text.replace('\n', ' ').replace('\r', ' ')
+        return answer.answer_text.replace("\n", " ").replace("\r", " ")
 
     def write_rows(self, response, result):
-        writer = csv.DictWriter(response, fieldnames=self.field_names, quoting=csv.QUOTE_ALL)
+        writer = csv.DictWriter(
+            response, fieldnames=self.field_names, quoting=csv.QUOTE_ALL
+        )
         writer.writeheader()
         writer.writerows(result)
