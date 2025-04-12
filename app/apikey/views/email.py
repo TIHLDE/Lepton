@@ -32,7 +32,7 @@ def send(request):
     try:
         emails = request.data.get("emails")
         paragraphs = request.data.get("paragraphs")
-        buttons = request.data.get("buttons")
+        buttons = request.data.get("buttons") if request.data.get("buttons") else []
         title = request.data.get("title")
         notification_type = request.data.get("notification_type")
         attachments = request.data.get("attachments")
