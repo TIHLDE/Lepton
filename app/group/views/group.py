@@ -25,6 +25,11 @@ class GroupViewSet(APIGroupErrorsMixin, BaseViewSet, ActionMixin):
     queryset = Group.objects.filter(is_private=False)
     lookup_field = "slug"
 
+    def get_queryset(self):
+        if hasattr(self, "action") and self.action == "list":
+            return Group.objects.filter(is_private=False)
+        return super().get_queryset()
+
     def get_serializer_class(self):
         if hasattr(self, "action") and self.action == "list":
             return GroupListSerializer
