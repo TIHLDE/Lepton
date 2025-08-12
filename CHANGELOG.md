@@ -14,6 +14,7 @@
 ---
 
 ## Neste versjon
+## Versjon 2025.08.12
 
 ## Versjon 2025.04.10
 - ✨ **API-nøkler**. API-nøkler kan nå opprettes og brukes til å autentisere forespørseler for å laste opp filer og sende eposter.
