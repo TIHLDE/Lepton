@@ -22,7 +22,7 @@ class GroupViewSet(APIGroupErrorsMixin, BaseViewSet, ActionMixin):
     permission_classes = [BasicViewPermission]
     filter_backends = [DjangoFilterBackend]
     filterset_class = GroupFilter
-    queryset = Group.objects.all()
+    queryset = Group.objects.filter(is_private=False)
     lookup_field = "slug"
 
     def get_serializer_class(self):
@@ -34,6 +34,7 @@ class GroupViewSet(APIGroupErrorsMixin, BaseViewSet, ActionMixin):
         """Returns a specific group by slug"""
         try:
             group = self.get_object()
+
             serializer = GroupSerializer(
                 group, context={"request": request}, many=False
             )
