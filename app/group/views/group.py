@@ -23,7 +23,7 @@ class GroupViewSet(APIGroupErrorsMixin, BaseViewSet, ActionMixin):
     permission_classes = [BasicViewPermission]
     filter_backends = [DjangoFilterBackend]
     filterset_class = GroupFilter
-    queryset = Group.objects.filter(is_private=False)
+    queryset = Group.objects.all()
     lookup_field = "slug"
 
     def get_queryset(self):

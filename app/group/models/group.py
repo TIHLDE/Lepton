@@ -52,7 +52,6 @@ class Group(OptionalImage, BaseModel, BasePermissionModel):
         blank=True,
         default=None,
     )
-    is_private = models.BooleanField(default=False)
 
     class Meta:
         verbose_name_plural = "Groups"
