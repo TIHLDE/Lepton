@@ -189,7 +189,7 @@ class UserViewSet(BaseViewSet, ActionMixin):
         self.check_object_permissions(self.request, user)
 
         memberships = user.memberships.filter(
-            group__type__in=GroupType.public_groups()
+            group__type__in=[*GroupType.public_groups(), GroupType.PRIVATE]
         ).order_by("-created_at")
         return self.paginate_response(
             data=memberships,
@@ -203,7 +203,8 @@ class UserViewSet(BaseViewSet, ActionMixin):
         self.check_object_permissions(self.request, user)
 
         memberships = user.memberships.filter(
-            group__type__in=GroupType.public_groups(), group__fines_activated=True
+            group__type__in=[*GroupType.public_groups(), GroupType.PRIVATE],
+            group__fines_activated=True,
         ).order_by("-created_at")
         return self.paginate_response(
             data=memberships,
@@ -217,7 +218,7 @@ class UserViewSet(BaseViewSet, ActionMixin):
         self.check_object_permissions(self.request, user)
 
         memberships = user.membership_histories.filter(
-            group__type__in=GroupType.public_groups()
+            group__type__in=[*GroupType.public_groups(), GroupType.PRIVATE]
         )
         return self.paginate_response(
             data=memberships,

@@ -52,7 +52,6 @@ class Group(OptionalImage, BaseModel, BasePermissionModel):
         blank=True,
         default=None,
     )
-    is_private = models.BooleanField(default=False)
 
     class Meta:
         verbose_name_plural = "Groups"
@@ -115,6 +114,17 @@ class Group(OptionalImage, BaseModel, BasePermissionModel):
         return len(membership) == 1 and membership[0].is_leader()
 
     @classmethod
+    def check_request_user_is_member(cls, request):
+        if request.id is None:
+            set_user_id(request)
+        group_slug = request.parser_context["kwargs"]["slug"]
+        group = cls.objects.get(slug=group_slug)
+        membership = group.memberships.filter(
+            group__slug=group_slug, user__user_id=request.id
+        )
+        return len(membership) == 1
+
+    @classmethod
     def check_user_is_fine_master(cls, request):
         group = cls.get_group_from_permission_context(request)
         return (
@@ -164,3 +174,12 @@ class Group(OptionalImage, BaseModel, BasePermissionModel):
             ).exists()
             or super().has_write_permission(request)
         )
+
+    @classmethod
+    def has_retrieve_permission(cls, request):
+        return cls.has_read_permission(request)
+
+    def has_object_retrieve_permission(self, request):
+        if self.type == GroupType.PRIVATE:
+            return self.check_request_user_is_member(request)
+        return self.has_read_permission(request)
