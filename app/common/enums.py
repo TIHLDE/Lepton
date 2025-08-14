@@ -127,6 +127,7 @@ class NativeGroupType(models.TextChoices):
     STUDY = "STUDY", "Studie"
     INTERESTGROUP = "INTERESTGROUP", "Interesse Gruppe"
     OTHER = "OTHER", "Annet"
+    PRIVATE = "PRIVATE", "Privat"
 
     @classmethod
     def public_groups(cls):

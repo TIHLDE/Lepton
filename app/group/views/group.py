@@ -3,6 +3,7 @@ from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
+from app.common.enums import NativeGroupType as GroupType
 from app.common.mixins import ActionMixin
 from app.common.permissions import BasicViewPermission
 from app.common.viewsets import BaseViewSet
@@ -22,12 +23,12 @@ class GroupViewSet(APIGroupErrorsMixin, BaseViewSet, ActionMixin):
     permission_classes = [BasicViewPermission]
     filter_backends = [DjangoFilterBackend]
     filterset_class = GroupFilter
-    queryset = Group.objects.filter(is_private=False)
+    queryset = Group.objects.all()
     lookup_field = "slug"
 
     def get_queryset(self):
         if hasattr(self, "action") and self.action == "list":
-            return Group.objects.filter(is_private=False)
+            return Group.objects.exclude(type=GroupType.PRIVATE)
         return super().get_queryset()
 
     def get_serializer_class(self):
