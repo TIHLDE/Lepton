@@ -3,6 +3,7 @@ from rest_polymorphic.serializers import PolymorphicSerializer
 from app.common.serializers import BaseModelSerializer
 from app.feedback.models import Bug, Feedback, Idea
 from app.feedback.serializers import BugDetailSerializer, IdeaDetailSerializer
+from app.emoji.serializers.reaction import ReactionSerializer
 
 
 class FeedbackListPolymorphicSerializer(PolymorphicSerializer, BaseModelSerializer):
@@ -13,6 +14,8 @@ class FeedbackListPolymorphicSerializer(PolymorphicSerializer, BaseModelSerializ
         Idea: IdeaDetailSerializer,
     }
 
+    reactions = ReactionSerializer(read_only=True, many=True)
+
     class Meta:
         model = Feedback
         fields = (
@@ -22,4 +25,6 @@ class FeedbackListPolymorphicSerializer(PolymorphicSerializer, BaseModelSerializ
             "created_at",
             "author",
             "description",
+            "reactions",
+            "image",
         )
