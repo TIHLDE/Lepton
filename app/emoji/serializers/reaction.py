@@ -13,6 +13,7 @@ from app.emoji.exception import (
     APIReactionNotAllowedException,
 )
 from app.emoji.models.reaction import Reaction
+from app.feedback.models.feedback import Feedback
 
 
 class SimpleReactionUserSerializer(serializers.ModelSerializer):
@@ -48,6 +49,8 @@ class ReactionCreateSerializer(serializers.ModelSerializer):
             object = News.objects.get(id=int(object_id))
         elif content_type.model.lower() == ContentTypes.EVENT:
             object = Event.objects.get(id=int(object_id))
+        elif content_type.model.lower() == ContentTypes.FEEDBACK:
+            object = Feedback.objects.get(id=int(object_id))
 
         if not object:
             raise APIContentTypeNotSupportedException()

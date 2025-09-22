@@ -1,48 +1,31 @@
-from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
-
-from polymorphic.models import PolymorphicModel
 
 from app.common.enums import AdminGroup, Groups
 from app.common.permissions import BasePermissionModel, check_has_access
 from app.content.models.user import User
-from app.emoji.models.reaction import Reaction
-from app.feedback.enums import Status
-from app.util.models import BaseModel, OptionalImage
+from app.feedback.models.feedback import Feedback
+from app.util.models import BaseModel
 
 
-class Feedback(BaseModel, BasePermissionModel, PolymorphicModel, OptionalImage):
-
+class Assignee(BaseModel, BasePermissionModel):
+    write_access = (AdminGroup.INDEX,)
     read_access = (Groups.TIHLDE,)
-    write_access = (Groups.TIHLDE,)
 
-    title = models.CharField(max_length=100)
-    description = models.TextField(default="", blank=True)
+    assignee_id = models.AutoField(primary_key=True)
 
-    author = models.ForeignKey(
-        User, blank=True, null=True, default=None, on_delete=models.SET_NULL
-    )
-    status = models.CharField(Status.choices, default=Status.OPEN, max_length=20)
-
-    emojis_allowed = models.BooleanField(default=True)
-
-    reactions = GenericRelation(Reaction)
-
-    assignees = models.ManyToManyField(
-        User,
-        through="Assignee",
-        through_fields=("feedback", "user"),
-        blank=True,
-        default=None,
-        verbose_name="assigned users",
-        related_name="assigned_feedbacks",
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="assignees")
+    feedback = models.ForeignKey(
+        Feedback, on_delete=models.CASCADE, related_name="assignee_feedbacks"
     )
 
     def __str__(self):
-        return f"{self.title} - {self.status}"
+        return f"{self.user.first_name} - {self.feedback.title}"
 
     class Meta:
-        ordering = ("-created_at",)
+        ordering = ("feedback", "created_at")
+        unique_together = ("user", "feedback")
+        verbose_name = "Assignee"
+        verbose_name_plural = "Assignees"
 
     @classmethod
     def has_read_permission(cls, request):
@@ -83,10 +66,10 @@ class Feedback(BaseModel, BasePermissionModel, PolymorphicModel, OptionalImage):
 
     def has_object_update_permission(self, request):
         return (
-            check_has_access([AdminGroup.INDEX], request) or self.author == request.user
+            check_has_access([AdminGroup.INDEX], request) and self.user == request.user
         )
 
     def has_object_destroy_permission(self, request):
         return (
-            check_has_access([AdminGroup.INDEX], request) or self.author == request.user
+            check_has_access([AdminGroup.INDEX], request) and self.user == request.user
         )

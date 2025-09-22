@@ -1,10 +1,15 @@
+from rest_framework import serializers
+
 from app.common.serializers import BaseModelSerializer
 from app.content.serializers.user import SimpleUserSerializer
+from app.emoji.serializers.reaction import ReactionSerializer
 from app.feedback.models.bug import Bug
 
 
 class BugSerializer(BaseModelSerializer):
     author = SimpleUserSerializer(read_only=True)
+
+    reactions = ReactionSerializer(read_only=True, many=True)
 
     class Meta:
         model = Bug
@@ -15,6 +20,9 @@ class BugSerializer(BaseModelSerializer):
             "created_at",
             "author",
             "description",
+            "image",
+            "image_alt",
+            "reactions",
         )
 
 
@@ -24,6 +32,8 @@ class BugCreateSerializer(BaseModelSerializer):
         fields = (
             "title",
             "description",
+            "image",
+            "image_alt",
         )
 
     def create(self, validated_data):
@@ -40,6 +50,8 @@ class BugUpdateSerializer(BaseModelSerializer):
             "title",
             "description",
             "status",
+            "image",
+            "image_alt",
         )
 
         def update(self, instance, validated_data):
@@ -48,6 +60,11 @@ class BugUpdateSerializer(BaseModelSerializer):
 
 class BugDetailSerializer(BaseModelSerializer):
     author = SimpleUserSerializer(read_only=True)
+
+    reactions = ReactionSerializer(read_only=True, many=True)
+
+    upvotes = serializers.SerializerMethodField()
+    downvotes = serializers.SerializerMethodField()
 
     class Meta:
         model = Bug
@@ -61,4 +78,15 @@ class BugDetailSerializer(BaseModelSerializer):
             "url",
             "platform",
             "browser",
+            "image",
+            "image_alt",
+            "reactions",
+            "upvotes",
+            "downvotes",
         )
+
+    def get_upvotes(self, obj):
+        return obj.reactions.filter(emoji=":thumbs-up:").count()
+
+    def get_downvotes(self, obj):
+        return obj.reactions.filter(emoji=":thumbs-down:").count()
