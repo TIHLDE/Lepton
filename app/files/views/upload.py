@@ -9,7 +9,7 @@ from app.common.permissions import IsMember
 @api_view(["POST"])
 @permission_classes([IsMember])
 def upload(request):
-    """Method for uploading files til Azure Blob Storage, only allowed for members"""
+    """Method for uploading files to Azure Blob Storage, only allowed for members"""
     try:
         has_multiple_files = len(request.FILES) > 1
         if has_multiple_files:

@@ -1,3 +1,5 @@
+from django.conf import settings
+from django.core.mail import send_mail
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
@@ -13,7 +15,10 @@ from app.forms.csv_writer import SubmissionsCsvWriter
 from app.forms.enums import NativeEventFormType as EventFormType
 from app.forms.mixins import APIFormErrorsMixin
 from app.forms.models.forms import EventForm, Form, Submission
-from app.forms.serializers.submission import SubmissionSerializer
+from app.forms.serializers.submission import (
+    SubmissionDestroySerializer,
+    SubmissionSerializer,
+)
 
 
 class SubmissionViewSet(APIFormErrorsMixin, BaseViewSet):
@@ -71,3 +76,27 @@ class SubmissionViewSet(APIFormErrorsMixin, BaseViewSet):
     def download(self, _request, *_args, **_kwargs):
         """To return the response as csv, include header 'Accept: text/csv."""
         return SubmissionsCsvWriter(self.get_queryset()).write_csv()
+
+    @action(detail=True, methods=["delete"])
+    def destroy_with_reason(self, request, *args, **kwargs):
+        submission = self.get_object()
+        serializer = SubmissionDestroySerializer(data=request.data)
+
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        reason = serializer.validated_data.get("reason", "Ingen grunn oppgitt.")
+
+        send_mail(
+            subject="Ditt svar på spørreskjemaet har blitt slettet",
+            message=f"Ditt svar på spørreskjemaet {submission.form.title} har blitt slettet av en administrator. Grunnen er: {reason}",
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[submission.user.email],
+        )
+
+        submission.delete()
+
+        return Response(
+            {"detail": "Skjemaet er slettet og brukeren er varslet."},
+            status=status.HTTP_200_OK,
+        )

@@ -57,4 +57,5 @@ urlpatterns = [
     path("emojis/", include("app.emoji.urls")),
     path("codex/", include("app.codex.urls")),
     path("", include("app.feedback.urls")),
+    path("apikeys/", include("app.apikey.urls")),
 ]

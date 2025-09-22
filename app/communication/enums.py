@@ -20,6 +20,7 @@ class UserNotificationSettingType(models.TextChoices):
     RESERVATION_CANCELLED = "RESERVATION CANCELLED", "Avslått reservasjon"
     KONTRES = "KONTRES", "Kontres"
     BLITZED = "BLITZED", "Blitzed"
+    UTLEGG = "UTLEGG", "Utlegg"
 
     @classmethod
     def get_kontres_and_blitzed(cls):

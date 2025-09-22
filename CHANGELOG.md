@@ -15,6 +15,21 @@
 
 ## Neste versjon
 
+## Versjon 2025.04.10
+- ✨ **API-nøkler**. API-nøkler kan nå opprettes og brukes til å autentisere forespørseler for å laste opp filer og sende eposter.
+
+## Versjon 2025.03.10
+- 🦟 **CSV spørreskjema svar**. Nedlasting av spørreskjema svar er nå fikset.
+- ⚡ **Sletting av spørreskjema svar for admin**. Admin kan nå slette svar på spørreskjema.
+- ⚡ **Sortering av galleri**. Man kan nå sortere gallerier etter oppretelsesdato og siste arrangement.
+- ✨ **Statussjekk av Vipps**. Man kan nå sjekke statusen til en Vipps betaling og oppdatere den automatisk.
+
+## Versjon 2025.03.10
+- 🦟 **CSV spørreskjema svar**. Nedlasting av spørreskjema svar er nå fikset.
+- ⚡ **Sletting av spørreskjema svar for admin**. Admin kan nå slette svar på spørreskjema.
+- ⚡ **Sortering av galleri**. Man kan nå sortere gallerier etter oppretelsesdato og siste arrangement.
+- ✨ **Statussjekk av Vipps**. Man kan nå sjekke statusen til en Vipps betaling og oppdatere den automatisk.
+
 ## Versjon 2024.12.26
 - ✨ **Filopplasting**. Det er nå mulig for admin brukere å laste opp- og slette filer.
 - ✨ **Mail endepunkt**. Det er nå laget et endepunkt for å sende mailer.

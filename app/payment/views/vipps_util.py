@@ -2,6 +2,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
+from app.payment.models import Order
 from app.payment.serializers import CheckPaymentSerializer
 from app.payment.util.payment_utils import get_payment_order_status
 
@@ -17,10 +18,17 @@ def check_vipps_payment(self, request, *args, **kwargs):
     user_id = serializer.validated_data["user_id"]
 
     orders = self.queryset.filter(user_id=user_id, event_id=event_id)
+
     if not orders.exists():
         return Response(
-            {"message": "No orders found for the user in this event."},
+            {"detail": "Ingen ordre funnet for bruker og arrangement."},
             status=status.HTTP_404_NOT_FOUND,
+        )
+
+    if not Order.has_update_permission(self.request):
+        return Response(
+            {"detail": "Du har ikke tilgang til å oppdatere denne ordren."},
+            status=status.HTTP_403_FORBIDDEN,
         )
 
     for order in orders:
@@ -31,5 +39,11 @@ def check_vipps_payment(self, request, *args, **kwargs):
             order.save()
 
     if has_changed(order):
-        return Response({"is_paid": True}, status=status.HTTP_200_OK)
-    return Response({"is_paid": False}, status=status.HTTP_200_OK)
+        return Response(
+            {"detail": "Ordrestatusen var feil og har blitt endret."},
+            status=status.HTTP_200_OK,
+        )
+    return Response(
+        {"detail": "Ordrestatusen er korrekt og har ikke blitt endret."},
+        status=status.HTTP_200_OK,
+    )
