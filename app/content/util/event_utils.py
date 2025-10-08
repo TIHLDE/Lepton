@@ -40,8 +40,6 @@ def get_cached_registration_start_time(event_id):
 
     cache_key = f"event:{event_id}:registration_open_time"
 
-    print(f"Getting cache key {cache_key}")
-
     cached_time = cache.get(cache_key)
     if cached_time is None:
         return None
