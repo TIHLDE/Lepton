@@ -5,7 +5,6 @@
     </a>
 </p>
 
-
 <h1 align="center">Lepton</h1>
 
 <h4 align="center">
@@ -32,11 +31,9 @@
 </p>
 <br/>
 
-
 ## 🚀 Getting started
 
 Lepton requires Docker and Docker Compose.
-
 
 ```
 # Setup a local repository
@@ -54,8 +51,8 @@ From now on it's enough to run `make start` to run the application.
 We use [GNU Make](https://www.gnu.org/software/make/) to simplify common commands.
 Have a look at the `makefile` to find out more about how to run the project without it.
 
-
 #### ⚙ Configuration
+
 No configuration is required to get started, but if you would like to
 configure further or override existing ones, put the following environment variables
 in a _.env_ file in the repository root.
@@ -68,6 +65,9 @@ DATABASE_PASSWORD= PASSWORD
 DATABASE_PORT= PORT (normally 3306)
 DATABASE_USER= USERNAME
 
+# Cache (Optional) ("cache" is the name of the docker-container)
+REDIS_LOCATION=redis://cache:6379/1
+
 # Optional for using mailing
 EMAIL_HOST= HOST_URL
 EMAIL_PORT= PORT (normally 587)
@@ -79,17 +79,20 @@ AZURE_STORAGE_CONNECTION_STRING= CONNECTION_STRING
 ```
 
 ## ✅ Test the application
+
 The tests can be run with pytest by running `make test`.
 
 To run with test coverage, run `make test args="--cov"`.
 
 ## ❤ Contributing
+
 The Lepton backend is an open source project built on voluntary work.
 We are committed to a fully transparent development process, and highly appreciate any contributions.
 Whether you are helping us by fixing bugs, proposing new feature, improving our documentation,
 or simply spreading the word - **we would love to have you as part of our community**.
 
-## 🤝  Found a bug? Missing a specific feature?
+## 🤝 Found a bug? Missing a specific feature?
+
 Feel free to file a new issue with a respective title and description
 in the [TIHLDE/Lepton](https://github.com/TIHLDE/Lepton/issues) repository.
 If you have already found a solution to your problem, we would love to review your pull request!
@@ -97,7 +100,9 @@ We enforce the PEP-8 style guide with isort, black and flake8.
 Have a look at `setup.cfg` to find out more about our coding standards.
 
 ## 📫 Contact
+
 Feel free to send us a message on our official [slack channel](https://tihlde.slack.com/archives/C01CJ0EQCFM), or email us at index@tihlde.org.
 
 ## 📘 License
+
 The code in this repository is licensed under the [MIT license](LICENSE.md).

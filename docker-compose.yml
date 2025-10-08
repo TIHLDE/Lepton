@@ -24,6 +24,21 @@ services:
       PMA_HOST: db
       MYSQL_ROOT_PASSWORD: password
 
+  cache:
+    image: redis:8.2.0
+    container_name: cache
+    ports:
+      - "6379:6379"
+    restart: always
+
+  redisinsight:
+    depends_on:
+      - cache
+    image: redis/redisinsight:latest
+    restart: always
+    ports:
+      - "5540:5540"
+
   web: &web
     build:
       context: .
@@ -41,6 +56,7 @@ services:
       - "8000:8000"
     depends_on:
       - db
+      - cache
 
   celery:
     <<: *web

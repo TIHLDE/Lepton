@@ -1,3 +1,7 @@
+import logging
+
+from django.core.cache import cache
+
 from sentry_sdk import capture_exception
 
 from app.content.exceptions import RefundFailedError
@@ -7,6 +11,43 @@ from app.payment.util.payment_utils import (
     initiate_payment,
     refund_payment,
 )
+
+logger = logging.getLogger(__name__)
+
+
+def cache_registration_start_time(event_id, open_time: int, expires_in: int = 120):
+    """
+    Caches the registration start time for an event.
+    If the time is not a number, it will not be cached.
+
+    expires_in is the number of seconds to cache the time before it expires (default is 120 seconds)
+    """
+    cache_key = f"event:{event_id}:registration_open_time"
+    try:
+        cache.set(cache_key, open_time, timeout=expires_in)
+        logger.debug(f"Cached registration time {open_time} for event {event_id}")
+    except Exception as e:
+        logger.error(f"Failed to cache registration start time for event {event_id}")
+        capture_exception(e)
+
+
+def get_cached_registration_start_time(event_id):
+    """
+    Gets the cached registration start time
+
+    Returns None if no time is cached, or if the time is not a number
+    """
+
+    cache_key = f"event:{event_id}:registration_open_time"
+
+    cached_time = cache.get(cache_key)
+    if cached_time is None:
+        return None
+
+    try:
+        return int(cached_time)
+    except ValueError:
+        return None
 
 
 def start_payment_countdown(event, registration, from_wait_list=False):
