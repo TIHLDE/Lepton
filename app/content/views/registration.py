@@ -1,5 +1,5 @@
-from datetime import datetime
 import uuid
+from datetime import datetime
 
 from django.db import transaction
 from django.shortcuts import get_object_or_404
@@ -24,7 +24,11 @@ from app.content.filters.registration import RegistrationFilter
 from app.content.mixins import APIRegistrationErrorsMixin
 from app.content.models import Event, Registration, User
 from app.content.serializers import RegistrationSerializer
-from app.content.util.event_utils import start_payment_countdown, get_cached_registration_start_time, cache_registration_start_time
+from app.content.util.event_utils import (
+    cache_registration_start_time,
+    get_cached_registration_start_time,
+    start_payment_countdown,
+)
 from app.payment.enums import OrderStatus
 from app.payment.models.order import Order
 from app.payment.util.order_utils import has_paid_order
@@ -78,16 +82,16 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
         if cached_start_time is not None:
             if cached_start_time > int(now().timestamp()):
                 return Response(
-                    {
-                        "detail": "Påmeldingen har ikke åpnet enda"
-                    },
+                    {"detail": "Påmeldingen har ikke åpnet enda"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
         with transaction.atomic():
             event = Event.objects.select_for_update().get(pk=event_id)
-            
+
             # Only cache the start time if it is a datetime object
-            if event.start_registration_at is not None and isinstance(event.start_registration_at, datetime):
+            if event.start_registration_at is not None and isinstance(
+                event.start_registration_at, datetime
+            ):
                 value = int(event.start_registration_at.timestamp())
                 if value != cached_start_time:
                     cache_registration_start_time(event_id, value)
