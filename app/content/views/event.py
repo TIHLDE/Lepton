@@ -32,6 +32,8 @@ from app.content.serializers import (
 from app.group.models.group import Group
 from app.payment.models.paid_event import PaidEvent
 from app.util.utils import midday, now, yesterday
+from datetime import datetime
+from app.content.util.event_utils import cache_registration_start_time
 
 
 class EventViewSet(BaseViewSet, ActionMixin):
@@ -108,6 +110,9 @@ class EventViewSet(BaseViewSet, ActionMixin):
             serializer = EventSerializer(
                 event, context={"request": request}, many=False
             )
+            # Only cache the start time if it is a datetime object
+            if event.start_registration_at is not None and isinstance(event.start_registration_at, datetime):
+                cache_registration_start_time(event.id, int(event.start_registration_at.timestamp()))
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Event.DoesNotExist as event_not_exist:
             capture_exception(event_not_exist)
