@@ -71,6 +71,11 @@ class FineUpdateDefenseSerializer(BaseModelSerializer):
         model = Fine
         fields = ("defense",)
 
+class FineUpdateStarredSerializer(BaseModelSerializer):
+    class Meta:
+        model = Fine
+        fields = ("starred",)
+
 
 class FineSerializer(BaseModelSerializer):
     user = DefaultUserSerializer(read_only=True)
@@ -90,6 +95,7 @@ class FineSerializer(BaseModelSerializer):
             "image",
             "created_by",
             "created_at",
+            "starred"
         )
 
         read_only_fields = (
