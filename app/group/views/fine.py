@@ -22,6 +22,7 @@ from app.group.serializers.fine import (
     FineStatisticsSerializer,
     FineUpdateCreateSerializer,
     FineUpdateDefenseSerializer,
+    FineUpdateStarredSerializer,
     UserFineSerializer,
 )
 
@@ -171,6 +172,21 @@ class FineViewSet(APIFineErrorsMixin, BaseViewSet, ActionMixin):
         serializer = FineUpdateDefenseSerializer(
             fine, data=request.data, context={"request": request}
         )
+        if serializer.is_valid():
+            fine = super().perform_update(serializer)
+            return Response(FineSerializer(fine).data, status=status.HTTP_200_OK)
+        return Response(
+            {"detail": serializer.errors},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    @action(detail=True, methods=["put"], url_path="starred")
+    def update_starred(self, request, *_args, **_kwargs):
+        fine = self.get_object()
+        serializer = FineUpdateStarredSerializer(
+            fine, data=request.data, context={"request": request}
+        )
+
         if serializer.is_valid():
             fine = super().perform_update(serializer)
             return Response(FineSerializer(fine).data, status=status.HTTP_200_OK)
