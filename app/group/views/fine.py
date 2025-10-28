@@ -179,7 +179,7 @@ class FineViewSet(APIFineErrorsMixin, BaseViewSet, ActionMixin):
             {"detail": serializer.errors},
             status=status.HTTP_400_BAD_REQUEST,
         )
-    
+
     @action(detail=True, methods=["put"], url_path="starred")
     def update_starred(self, request, *_args, **_kwargs):
         fine = self.get_object()
