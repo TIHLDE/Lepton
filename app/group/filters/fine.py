@@ -6,4 +6,4 @@ from app.group.models import Fine
 class FineFilter(FilterSet):
     class Meta:
         model = Fine
-        fields = ["payed", "approved"]
+        fields = ["payed", "approved", "starred"]
