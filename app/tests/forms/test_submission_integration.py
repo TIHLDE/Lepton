@@ -5,6 +5,7 @@ import pytest
 from app.common.enums import NativeMembershipType as MembershipType
 from app.content.factories import RegistrationFactory
 from app.forms.enums import NativeEventFormType as EventFormType
+from app.forms.models import Answer, Submission
 from app.forms.tests.form_factories import (
     AnswerFactory,
     EventFormFactory,
@@ -23,6 +24,10 @@ def _get_submission_url(form):
 
 def _get_submission_detail_url(form, submission):
     return f"/forms/{form.id}/submissions/{submission.id}/"
+
+
+def _get_delete_all_submissions_url(form):
+    return f"/forms/{form.id}/submissions/delete-all/"
 
 
 def _create_submission_data(field, **kwargs):
@@ -196,6 +201,44 @@ def test_submission_detail_illegal_methods_are_forbidden(
     response = member_client.generic(method, url)
 
     assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+def test_admin_can_delete_all_submissions_for_form(api_client, admin_user):
+    form = EventFormFactory()
+    other_form = EventFormFactory()
+
+    first_submission = SubmissionFactory(form=form)
+    second_submission = SubmissionFactory(form=form)
+    third_submission = SubmissionFactory(form=other_form)
+
+    AnswerFactory(submission=first_submission, field=form.fields.first())
+    AnswerFactory(submission=second_submission, field=form.fields.first())
+    AnswerFactory(submission=third_submission, field=other_form.fields.first())
+
+    client = api_client(user=admin_user)
+    response = client.delete(_get_delete_all_submissions_url(form))
+
+    assert response.status_code == status.HTTP_200_OK
+    assert Submission.objects.filter(form=form).count() == 0
+    assert Answer.objects.filter(submission__form=form).count() == 0
+    assert Submission.objects.filter(form=other_form).count() == 1
+    assert Answer.objects.filter(submission__form=other_form).count() == 1
+
+
+def test_member_cannot_delete_all_submissions_for_form(member_client, event_form):
+    response = member_client.delete(_get_delete_all_submissions_url(event_form))
+
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+def test_delete_all_submissions_returns_404_for_invalid_form_id(api_client, admin_user):
+    client = api_client(user=admin_user)
+
+    url = "/forms/999999/submissions/delete-all/"
+
+    response = client.delete(url)
+
+    assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
 @pytest.mark.parametrize(
