@@ -112,6 +112,7 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel, OptionalImage):
                 & (
                     Q(group__type=GroupType.COMMITTEE)
                     | Q(group__type=GroupType.INTERESTGROUP)
+                    | Q(group__type=GroupType.SPORTSTEAM)
                 )
             )
             | Q(group__type=GroupType.SUBGROUP)

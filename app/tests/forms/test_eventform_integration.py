@@ -50,8 +50,12 @@ permission_params = pytest.mark.parametrize(
         ["Pythons", GroupType.INTERESTGROUP, MembershipType.LEADER, 201, 200, None],
         ["KontKom", GroupType.COMMITTEE, MembershipType.LEADER, 403, 403, "other"],
         ["Pythons", GroupType.INTERESTGROUP, MembershipType.LEADER, 403, 403, "other"],
+        ["Sportsteam", GroupType.SPORTSTEAM, MembershipType.LEADER, 201, 200, "same"],
+        ["Sportsteam", GroupType.SPORTSTEAM, MembershipType.LEADER, 201, 200, None],
+        ["Sportsteam", GroupType.SPORTSTEAM, MembershipType.LEADER, 403, 403, "other"],
         ["KontKom", GroupType.COMMITTEE, MembershipType.MEMBER, 403, 403, "same"],
         ["Pythons", GroupType.INTERESTGROUP, MembershipType.MEMBER, 403, 403, "same"],
+        ["Sportsteam", GroupType.SPORTSTEAM, MembershipType.MEMBER, 403, 403, "same"],
     ),
 )
 

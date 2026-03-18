@@ -123,6 +123,7 @@ class NativeGroupType(models.TextChoices):
     BOARD = "BOARD", "Styre"
     SUBGROUP = "SUBGROUP", "Undergruppe"
     COMMITTEE = "COMMITTEE", "Komité"
+    SPORTSTEAM = "SPORTSTEAM", "Idrettslag"
     STUDYYEAR = "STUDYYEAR", "Studieår"
     STUDY = "STUDY", "Studie"
     INTERESTGROUP = "INTERESTGROUP", "Interesse Gruppe"
@@ -131,7 +132,13 @@ class NativeGroupType(models.TextChoices):
 
     @classmethod
     def public_groups(cls):
-        return [cls.BOARD, cls.SUBGROUP, cls.COMMITTEE, cls.INTERESTGROUP]
+        return [
+            cls.BOARD,
+            cls.SUBGROUP,
+            cls.COMMITTEE,
+            cls.INTERESTGROUP,
+            cls.SPORTSTEAM,
+        ]
 
     @classmethod
     def non_public_groups(cls):
