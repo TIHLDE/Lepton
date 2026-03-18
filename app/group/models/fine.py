@@ -31,6 +31,7 @@ class Fine(BaseModel, OptionalImage, BasePermissionModel):
     description = models.CharField(default="", blank=True, max_length=100)
     reason = models.TextField(default="", blank=True)
     defense = models.TextField(default="", blank=True)
+    starred = models.BooleanField(default=False)
 
     class Meta:
         verbose_name_plural = "Fines"
