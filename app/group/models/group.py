@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.text import slugify
 
@@ -63,9 +64,23 @@ class Group(OptionalImage, BaseModel, BasePermissionModel):
 
     class Meta:
         verbose_name_plural = "Groups"
+        constraints = [
+            models.CheckConstraint(
+                check=models.Q(subtype__isnull=True)
+                | models.Q(type=GroupType.INTERESTGROUP),
+                name="group_subtype_only_for_interest_groups",
+            )
+        ]
 
     def __str__(self):
         return f"{self.name}"
+
+    def clean(self):
+        if self.subtype and self.type != GroupType.INTERESTGROUP:
+            raise ValidationError(
+                {"subtype": "Subtype can only be set for interest groups."}
+            )
+        super().clean()
 
     def notify_fines_admin(self):
         from app.communication.notifier import Notify
@@ -99,7 +114,7 @@ class Group(OptionalImage, BaseModel, BasePermissionModel):
             self.slug = slugify(self.name)
         else:
             self.slug = slugify(self.slug)
-
+        self.full_clean()
         super().save(*args, **kwargs)
 
     @classmethod
