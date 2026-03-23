@@ -18,3 +18,12 @@ class APIGroupTypeNotInPublicGroupsException(APIException):
 
 class GroupTypeNotInPublicGroups(ValueError):
     default_detail = "Ikke gylde gruppetype"
+
+
+class APISubtypeNotAllowedException(APIException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_detail = "Undertype er kun tillatt for interessegrupper"
+
+
+class SubtypeNotAllowed(ValueError):
+    default_detail = "Undertype er kun tillatt for interessegrupper"

@@ -138,7 +138,14 @@ permission_params = pytest.mark.parametrize(
         # Leaders of committees and interest-organizers don't have access if not has access of new organizer
         ("Kont", MembershipType.LEADER, GroupType.COMMITTEE, "same", "other", 403),
         ("Py", MembershipType.LEADER, GroupType.INTERESTGROUP, "same", "other", 403),
-        ("Sportsteam", MembershipType.LEADER, GroupType.SPORTSTEAM, "same", "other", 403),
+        (
+            "Sportsteam",
+            MembershipType.LEADER,
+            GroupType.SPORTSTEAM,
+            "same",
+            "other",
+            403,
+        ),
         # Members of committees and interest-organizers don't have access even if member of event.organizer
         ("Kont", MembershipType.MEMBER, GroupType.COMMITTEE, None, None, 403),
         ("Py", MembershipType.MEMBER, GroupType.INTERESTGROUP, None, None, 403),
