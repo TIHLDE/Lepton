@@ -86,9 +86,12 @@ class GroupSerializer(GroupListSerializer):
     def update(self, instance, validated_data):
         group_type = validated_data.get("type", instance.type)
         subtype = validated_data.get("subtype", instance.subtype)
-        if subtype and group_type != GroupType.INTERESTGROUP:
+        if subtype == "":
+            subtype = None
+        if subtype is not None and group_type != GroupType.INTERESTGROUP:
             raise SubtypeNotAllowed()
 
+        validated_data["subtype"] = subtype
         instance.fines_admin = self.get_fine_admin_user()
         return super().update(instance, validated_data)
 
@@ -149,7 +152,10 @@ class GroupCreateSerializer(
             raise GroupTypeNotInPublicGroups()
 
         subtype = validated_data.get("subtype")
-        if subtype and group_type != GroupType.INTERESTGROUP:
+        if subtype == "":
+            subtype = None
+        if subtype is not None and group_type != GroupType.INTERESTGROUP:
             raise SubtypeNotAllowed()
 
+        validated_data["subtype"] = subtype
         return super().create(validated_data)

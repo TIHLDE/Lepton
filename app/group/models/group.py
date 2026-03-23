@@ -76,7 +76,12 @@ class Group(OptionalImage, BaseModel, BasePermissionModel):
         return f"{self.name}"
 
     def clean(self):
-        if self.subtype and self.type != GroupType.INTERESTGROUP:
+        # DRF/forms may submit "" for an optional CharField; normalize to NULL
+        # so the DB-level constraint and our validation stay consistent.
+        if self.subtype == "":
+            self.subtype = None
+
+        if self.subtype is not None and self.type != GroupType.INTERESTGROUP:
             raise ValidationError(
                 {"subtype": "Subtype can only be set for interest groups."}
             )
@@ -108,13 +113,13 @@ class Group(OptionalImage, BaseModel, BasePermissionModel):
         )
 
     def save(self, *args, **kwargs):
-        if self.check_fine_admin():
-            self.notify_fines_admin()
         if self.slug == "":
             self.slug = slugify(self.name)
         else:
             self.slug = slugify(self.slug)
         self.full_clean()
+        if self.check_fine_admin():
+            self.notify_fines_admin()
         super().save(*args, **kwargs)
 
     @classmethod

@@ -71,4 +71,3 @@ def test_save_raises_validation_error_if_subtype_set_for_non_interest_group():
     )
     with pytest.raises(ValidationError):
         group.save()
-
