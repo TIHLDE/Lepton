@@ -3,6 +3,7 @@ from django.utils.text import slugify
 
 from app.common.enums import AdminGroup
 from app.common.enums import NativeGroupType as GroupType
+from app.common.enums import NativeInterestGroupType as InterestGroupType
 from app.common.permissions import (
     BasePermissionModel,
     check_has_access,
@@ -24,6 +25,13 @@ class Group(OptionalImage, BaseModel, BasePermissionModel):
     fine_info = models.TextField(default="", blank=True)
     type = models.CharField(
         max_length=50, choices=GroupType.choices, default=GroupType.OTHER
+    )
+    subtype = models.CharField(
+        max_length=50,
+        choices=InterestGroupType.choices,
+        null=True,
+        blank=True,
+        default=None,
     )
     fines_activated = models.BooleanField(default=False)
     members = models.ManyToManyField(
