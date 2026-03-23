@@ -145,6 +145,11 @@ class NativeGroupType(models.TextChoices):
         return [cls.TIHLDE, cls.STUDYYEAR, cls.STUDY, cls.OTHER]
 
 
+class NativeInterestGroupType(models.TextChoices):
+    IDRETTSGRUPPE = "IDRETTSGRUPPE", "Idrettsgruppe"
+    GRUPPE = "GRUPPE", "Gruppe"
+
+
 class EnvironmentOptions(Enum):
     LOCAL = "LOCAL"
     DEVELOPMENT = "DEVELOPMENT"
