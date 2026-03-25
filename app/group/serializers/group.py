@@ -7,7 +7,7 @@ from app.common.enums import NativeMembershipType as MembershipType
 from app.common.serializers import BaseModelSerializer
 from app.content.models.user import User
 from app.content.serializers.user import DefaultUserSerializer
-from app.group.exceptions import GroupTypeNotInPublicGroups
+from app.group.exceptions import GroupTypeNotInPublicGroups, SubtypeNotAllowed
 from app.group.models import Group, Membership
 
 
@@ -21,6 +21,7 @@ class SimpleGroupSerializer(BaseModelSerializer):
             "name",
             "slug",
             "type",
+            "subtype",
             "viewer_is_member",
             "image",
             "image_alt",
@@ -83,6 +84,14 @@ class GroupSerializer(GroupListSerializer):
         return fines_admin
 
     def update(self, instance, validated_data):
+        group_type = validated_data.get("type", instance.type)
+        subtype = validated_data.get("subtype", instance.subtype)
+        if subtype == "":
+            subtype = None
+        if subtype is not None and group_type != GroupType.INTERESTGROUP:
+            raise SubtypeNotAllowed()
+
+        validated_data["subtype"] = subtype
         instance.fines_admin = self.get_fine_admin_user()
         return super().update(instance, validated_data)
 
@@ -133,6 +142,7 @@ class GroupCreateSerializer(
             "name",
             "slug",
             "type",
+            "subtype",
         )
 
     def create(self, validated_data):
@@ -141,4 +151,11 @@ class GroupCreateSerializer(
         if group_type not in GroupType.public_groups():
             raise GroupTypeNotInPublicGroups()
 
+        subtype = validated_data.get("subtype")
+        if subtype == "":
+            subtype = None
+        if subtype is not None and group_type != GroupType.INTERESTGROUP:
+            raise SubtypeNotAllowed()
+
+        validated_data["subtype"] = subtype
         return super().create(validated_data)

@@ -126,18 +126,30 @@ permission_params = pytest.mark.parametrize(
         # Leaders of committees and interest-organizers have access if event.organizer is None
         ("Kont", MembershipType.LEADER, GroupType.COMMITTEE, None, None, 200),
         ("Py", MembershipType.LEADER, GroupType.INTERESTGROUP, None, None, 200),
+        ("Sportsteam", MembershipType.LEADER, GroupType.SPORTSTEAM, None, None, 200),
         # Leaders of committees and interest-organizers have access if has access of the event.organizer
         ("Kont", MembershipType.LEADER, GroupType.COMMITTEE, "same", None, 200),
         ("Py", MembershipType.LEADER, GroupType.INTERESTGROUP, "same", None, 200),
+        ("Sportsteam", MembershipType.LEADER, GroupType.SPORTSTEAM, "same", None, 200),
         # Leaders of committees and interest-organizers don't have access if not has access of the event.organizer
         ("Kont", MembershipType.LEADER, GroupType.COMMITTEE, "other", None, 403),
         ("Py", MembershipType.LEADER, GroupType.INTERESTGROUP, "other", None, 403),
+        ("Sportsteam", MembershipType.LEADER, GroupType.SPORTSTEAM, "other", None, 403),
         # Leaders of committees and interest-organizers don't have access if not has access of new organizer
         ("Kont", MembershipType.LEADER, GroupType.COMMITTEE, "same", "other", 403),
         ("Py", MembershipType.LEADER, GroupType.INTERESTGROUP, "same", "other", 403),
+        (
+            "Sportsteam",
+            MembershipType.LEADER,
+            GroupType.SPORTSTEAM,
+            "same",
+            "other",
+            403,
+        ),
         # Members of committees and interest-organizers don't have access even if member of event.organizer
         ("Kont", MembershipType.MEMBER, GroupType.COMMITTEE, None, None, 403),
         ("Py", MembershipType.MEMBER, GroupType.INTERESTGROUP, None, None, 403),
+        ("Sportsteam", MembershipType.MEMBER, GroupType.SPORTSTEAM, None, None, 403),
     ),
 )
 

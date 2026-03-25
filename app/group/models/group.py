@@ -1,8 +1,10 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.text import slugify
 
 from app.common.enums import AdminGroup
 from app.common.enums import NativeGroupType as GroupType
+from app.common.enums import NativeInterestGroupType as InterestGroupType
 from app.common.permissions import (
     BasePermissionModel,
     check_has_access,
@@ -24,6 +26,13 @@ class Group(OptionalImage, BaseModel, BasePermissionModel):
     fine_info = models.TextField(default="", blank=True)
     type = models.CharField(
         max_length=50, choices=GroupType.choices, default=GroupType.OTHER
+    )
+    subtype = models.CharField(
+        max_length=50,
+        choices=InterestGroupType.choices,
+        null=True,
+        blank=True,
+        default=None,
     )
     fines_activated = models.BooleanField(default=False)
     members = models.ManyToManyField(
@@ -55,9 +64,28 @@ class Group(OptionalImage, BaseModel, BasePermissionModel):
 
     class Meta:
         verbose_name_plural = "Groups"
+        constraints = [
+            models.CheckConstraint(
+                check=models.Q(subtype__isnull=True)
+                | models.Q(type=GroupType.INTERESTGROUP),
+                name="group_subtype_only_for_interest_groups",
+            )
+        ]
 
     def __str__(self):
         return f"{self.name}"
+
+    def clean(self):
+        # DRF/forms may submit "" for an optional CharField; normalize to NULL
+        # so the DB-level constraint and our validation stay consistent.
+        if self.subtype == "":
+            self.subtype = None
+
+        if self.subtype is not None and self.type != GroupType.INTERESTGROUP:
+            raise ValidationError(
+                {"subtype": "Subtype can only be set for interest groups."}
+            )
+        super().clean()
 
     def notify_fines_admin(self):
         from app.communication.notifier import Notify
@@ -85,13 +113,13 @@ class Group(OptionalImage, BaseModel, BasePermissionModel):
         )
 
     def save(self, *args, **kwargs):
-        if self.check_fine_admin():
-            self.notify_fines_admin()
         if self.slug == "":
             self.slug = slugify(self.name)
         else:
             self.slug = slugify(self.slug)
-
+        self.full_clean()
+        if self.check_fine_admin():
+            self.notify_fines_admin()
         super().save(*args, **kwargs)
 
     @classmethod
