@@ -83,7 +83,7 @@ class Group(OptionalImage, BaseModel, BasePermissionModel):
 
         if self.subtype is not None and self.type != GroupType.INTERESTGROUP:
             raise ValidationError(
-                {"subtype": "Subtype can only be set for interest groups."}
+                {"subtype": "Undertype kan bare bli satt for interessegrupper."}
             )
         super().clean()
 

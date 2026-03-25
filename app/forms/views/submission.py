@@ -77,6 +77,18 @@ class SubmissionViewSet(APIFormErrorsMixin, BaseViewSet):
         """To return the response as csv, include header 'Accept: text/csv."""
         return SubmissionsCsvWriter(self.get_queryset()).write_csv()
 
+    @action(detail=False, methods=["delete"], url_path="delete-all")
+    def delete_all(self, _request, *args, **kwargs):
+        get_object_or_404(Form, id=kwargs.get("form_id"))
+        queryset = self.get_queryset()
+        deleted_submissions = queryset.count()
+        queryset.delete()
+
+        return Response(
+            {"detail": f"Slettet {deleted_submissions} innsendinger."},
+            status=status.HTTP_200_OK,
+        )
+
     @action(detail=True, methods=["delete"])
     def destroy_with_reason(self, request, *args, **kwargs):
         submission = self.get_object()
