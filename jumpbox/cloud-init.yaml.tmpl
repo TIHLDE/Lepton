@@ -1,0 +1,60 @@
+#cloud-config
+package_update: true
+packages:
+  - mysql-client
+  - nginx-full
+  - htop
+  - jq
+  - curl
+  - net-tools
+
+write_files:
+  - path: /etc/nginx/nginx.conf
+    permissions: "0644"
+    content: |
+      user www-data;
+      worker_processes auto;
+      pid /run/nginx.pid;
+      include /etc/nginx/modules-enabled/*.conf;
+
+      events {
+        worker_connections 1024;
+      }
+
+      # TCP proxy (stream) for MySQL
+      stream {
+        # # Azure DNS i VNet (trenger for å resolve privatelink-FQDN)
+        # resolver 168.63.129.16 valid=30s;
+        # resolver_timeout 5s;
+
+        server {
+          listen 3306;
+          proxy_pass ${db_host}:3306;
+          proxy_timeout 60s;
+          proxy_connect_timeout 5s;
+        }
+      }
+
+      http {
+        sendfile on;
+        tcp_nopush on;
+        types_hash_max_size 4096;
+
+        include /etc/nginx/mime.types;
+        default_type application/octet-stream;
+
+        access_log /var/log/nginx/access.log;
+        error_log  /var/log/nginx/error.log;
+
+        keepalive_timeout 65;
+        gzip on;
+
+        include /etc/nginx/conf.d/*.conf;
+        include /etc/nginx/sites-enabled/*;
+      }
+
+runcmd:
+  - timedatectl set-timezone ${timezone} || true
+  - nginx -t
+  - systemctl enable --now nginx
+  - systemctl reload nginx || nginx -s reload
