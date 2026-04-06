@@ -85,9 +85,9 @@ def initiate_payment(amount, order_id, access_token, transaction_text, fallback)
                 "transactionText": transaction_text,
                 "orderId": order_id,
                 "skipLandingPage": False,
-                "scope": "name phoneNumber",
             },
-        }
+        },
+        ensure_ascii=False,
     )
     headers = {
         "Content-Type": "application/json",
