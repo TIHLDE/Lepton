@@ -3,10 +3,9 @@ from django.utils import timezone
 import pytest
 
 from app.content.factories import EventFactory, RegistrationFactory
-from app.content.models import Registration
 from app.payment.enums import OrderStatus
 from app.payment.factories import OrderFactory
-from app.payment.tasks import check_if_has_paid
+from app.payment.tasks import check_if_has_paid, sweep_expired_unpaid_registrations
 from app.payment.util.order_utils import check_if_order_is_paid, is_expired
 
 
@@ -21,21 +20,20 @@ def registration(event):
 
 
 @pytest.mark.django_db
-def test_delete_registration_if_no_orders(event, registration):
-    """Should delete registration if user has no orders."""
+def test_move_registration_to_waitlist_if_no_orders(event, registration):
+    """Should move registration to waiting list if user has no orders."""
 
     check_if_has_paid(event.id, registration.registration_id)
 
-    registration = Registration.objects.filter(
-        registration_id=registration.registration_id
-    ).first()
+    registration.refresh_from_db()
 
-    assert not registration
+    assert registration.is_on_wait
+    assert registration.payment_expiredate is None
 
 
 @pytest.mark.django_db
-def test_delete_registration_if_no_paid_orders(event, registration):
-    """Should delete registration if user has no paid orders."""
+def test_move_registration_to_waitlist_if_no_paid_orders(event, registration):
+    """Should move registration to waiting list if user has no paid orders."""
 
     first_order = OrderFactory(event=event, user=registration.user)
     second_order = OrderFactory(event=event, user=registration.user)
@@ -53,11 +51,37 @@ def test_delete_registration_if_no_paid_orders(event, registration):
 
     check_if_has_paid(event.id, registration.registration_id)
 
-    registration = Registration.objects.filter(
-        registration_id=registration.registration_id
-    ).first()
+    registration.refresh_from_db()
 
-    assert not registration
+    assert registration.is_on_wait
+    assert registration.payment_expiredate is None
+
+
+@pytest.mark.django_db
+def test_skip_registration_already_on_waitlist(event):
+    """Should not modify registration that is already on the waiting list."""
+
+    registration = RegistrationFactory(event=event, is_on_wait=True)
+
+    check_if_has_paid(event.id, registration.registration_id)
+
+    registration.refresh_from_db()
+
+    assert registration.is_on_wait
+
+
+@pytest.mark.django_db
+def test_move_to_waitlist_sets_created_at_to_now(event, registration):
+    """Should update created_at to now so user goes to bottom of waiting list."""
+
+    original_created_at = registration.created_at
+
+    check_if_has_paid(event.id, registration.registration_id)
+
+    registration.refresh_from_db()
+
+    assert registration.is_on_wait
+    assert registration.created_at > original_created_at
 
 
 @pytest.mark.django_db
@@ -80,6 +104,7 @@ def test_keep_registration_if_has_paid_order(event, registration):
     registration.refresh_from_db()
 
     assert registration
+    assert not registration.is_on_wait
 
 
 @pytest.mark.django_db
@@ -102,6 +127,7 @@ def test_keep_registration_if_has_reserved_order(event, registration):
     registration.refresh_from_db()
 
     assert registration
+    assert not registration.is_on_wait
 
 
 @pytest.mark.django_db
@@ -124,6 +150,7 @@ def test_keep_registration_if_has_captured_order(event, registration):
     registration.refresh_from_db()
 
     assert registration
+    assert not registration.is_on_wait
 
 
 @pytest.mark.django_db
@@ -180,3 +207,53 @@ def test_if_registration_payment_date_is_not_expired(registration):
     registration.save()
 
     assert not is_expired(registration.payment_expiredate)
+
+
+@pytest.mark.django_db
+def test_sweep_moves_expired_unpaid_registrations_to_waitlist(event):
+    """Sweep task should move expired unpaid registrations to waiting list."""
+
+    registration = RegistrationFactory(event=event, is_on_wait=False)
+    registration.payment_expiredate = timezone.now() - timezone.timedelta(hours=1)
+    registration.save()
+
+    sweep_expired_unpaid_registrations()
+
+    registration.refresh_from_db()
+
+    assert registration.is_on_wait
+    assert registration.payment_expiredate is None
+
+
+@pytest.mark.django_db
+def test_sweep_keeps_paid_registrations(event):
+    """Sweep task should not move registrations with paid orders."""
+
+    registration = RegistrationFactory(event=event, is_on_wait=False)
+    registration.payment_expiredate = timezone.now() - timezone.timedelta(hours=1)
+    registration.save()
+
+    order = OrderFactory(event=event, user=registration.user)
+    order.status = OrderStatus.SALE
+    order.save()
+
+    sweep_expired_unpaid_registrations()
+
+    registration.refresh_from_db()
+
+    assert not registration.is_on_wait
+
+
+@pytest.mark.django_db
+def test_sweep_ignores_registrations_with_future_expiry(event):
+    """Sweep task should not touch registrations whose payment window is still open."""
+
+    registration = RegistrationFactory(event=event, is_on_wait=False)
+    registration.payment_expiredate = timezone.now() + timezone.timedelta(hours=1)
+    registration.save()
+
+    sweep_expired_unpaid_registrations()
+
+    registration.refresh_from_db()
+
+    assert not registration.is_on_wait

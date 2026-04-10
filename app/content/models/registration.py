@@ -146,6 +146,8 @@ class Registration(BaseModel, BasePermissionModel):
         return registration
 
     def admin_unregister(self, *args, **kwargs):
+        from app.content.util.event_utils import start_payment_countdown
+
         moved_registration = self.move_from_waiting_list_to_queue()
         self.delete_submission_if_exists()
         self.send_unregistered_notification_and_mail()
@@ -154,6 +156,60 @@ class Registration(BaseModel, BasePermissionModel):
 
         if moved_registration:
             moved_registration.save()
+
+            if moved_registration.event.is_paid_event:
+                try:
+                    start_payment_countdown(
+                        moved_registration.event,
+                        moved_registration,
+                        from_wait_list=True,
+                    )
+                except Exception as countdown_error:
+                    capture_exception(countdown_error)
+                    moved_registration.delete()
+
+    def move_to_waiting_list_for_nonpayment(self):
+        """Move this registration back to the waiting list due to non-payment,
+        and promote the next eligible wait-list user."""
+        from app.content.util.event_utils import start_payment_countdown
+
+        if self.is_on_wait:
+            return
+
+        # Get next person to promote BEFORE moving self to wait list
+        moved_registration = self.move_from_waiting_list_to_queue()
+
+        # Move self back to waiting list (bottom, by resetting created_at)
+        self.is_on_wait = True
+        self.payment_expiredate = None
+        self.created_at = now()
+        self.save()
+
+        # Notify user about non-payment
+        Notify(
+            [self.user],
+            f'Betalingsfristen for "{self.event.title}" har utløpt',
+            UserNotificationSettingType.REGISTRATION,
+        ).add_paragraph(f"Hei, {self.user.first_name}!").add_paragraph(
+            "Betalingsfristen for arrangementet har utløpt uten at vi har registrert betaling. "
+            "Du har derfor blitt flyttet tilbake til ventelisten."
+        ).add_paragraph(
+            "Dersom du mener dette er feil, vennligst kontakt arrangøren."
+        ).add_event_link(self.event.pk).send()
+
+        # Promote the next person and start their payment countdown
+        if moved_registration:
+            moved_registration.save()
+            if self.event.is_paid_event:
+                try:
+                    start_payment_countdown(
+                        self.event,
+                        moved_registration,
+                        from_wait_list=True,
+                    )
+                except Exception as countdown_error:
+                    capture_exception(countdown_error)
+                    moved_registration.delete()
 
     def save(self, *args, **kwargs):
 

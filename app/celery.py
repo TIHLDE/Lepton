@@ -49,6 +49,11 @@ schedule = {
         # 12:00 every day
         "schedule": crontab(hour="12", minute="0"),
     },
+    "sweep_expired_unpaid_registrations": {
+        "task": "app.payment.tasks.sweep_expired_unpaid_registrations",
+        # Every 5th minute
+        "schedule": crontab(minute="*/5"),
+    },
 }
 
 app.conf.update(
