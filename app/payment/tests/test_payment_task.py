@@ -3,7 +3,6 @@ from django.utils import timezone
 import pytest
 
 from app.content.factories import EventFactory, RegistrationFactory
-from app.content.models import Registration
 from app.payment.enums import OrderStatus
 from app.payment.factories import OrderFactory
 from app.payment.tasks import check_if_has_paid, sweep_expired_unpaid_registrations
