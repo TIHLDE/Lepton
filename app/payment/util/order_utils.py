@@ -1,6 +1,9 @@
 from django.utils import timezone
 
+from sentry_sdk import capture_exception
+
 from app.payment.enums import OrderStatus
+from app.payment.util.payment_utils import get_payment_order_status
 
 
 def has_paid_order(orders):
@@ -23,6 +26,32 @@ def check_if_order_is_paid(order):
         return True
 
     return False
+
+
+def reconcile_orders_from_vipps(orders):
+    """For each non-final order, fetch the authoritative status from Vipps
+    and persist it. Returns True if any order is now paid.
+
+    Final states (SALE, CAPTURE, RESERVED, REFUND, CANCEL, VOID) are left
+    untouched so a stale Vipps response can never overwrite a settled order.
+    Per-order failures are sent to Sentry and the loop continues, so a Vipps
+    outage degrades to the local view rather than breaking the caller.
+    """
+    if not orders:
+        return False
+
+    for order in orders:
+        if order.status != OrderStatus.INITIATE:
+            continue
+        try:
+            vipps_status = get_payment_order_status(order.order_id)
+            if vipps_status and vipps_status != order.status:
+                order.status = vipps_status
+                order.save()
+        except Exception as e:
+            capture_exception(e)
+
+    return has_paid_order(orders)
 
 
 def is_expired(expire_date):

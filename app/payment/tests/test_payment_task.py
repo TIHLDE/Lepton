@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 from django.utils import timezone
 
 import pytest
@@ -7,6 +9,17 @@ from app.payment.enums import OrderStatus
 from app.payment.factories import OrderFactory
 from app.payment.tasks import check_if_has_paid, sweep_expired_unpaid_registrations
 from app.payment.util.order_utils import check_if_order_is_paid, is_expired
+
+
+@pytest.fixture(autouse=True)
+def mock_vipps_status():
+    """Default to Vipps reporting INITIATE so reconciliation is a no-op
+    unless a test overrides the return value."""
+    with patch(
+        "app.payment.util.order_utils.get_payment_order_status",
+        return_value=OrderStatus.INITIATE,
+    ) as m:
+        yield m
 
 
 @pytest.fixture()
@@ -257,3 +270,96 @@ def test_sweep_ignores_registrations_with_future_expiry(event):
     registration.refresh_from_db()
 
     assert not registration.is_on_wait
+
+
+@pytest.mark.django_db
+def test_sweep_reconciles_paid_order_from_vipps(event, mock_vipps_status):
+    """If Vipps reports the INITIATE order as SALE, the sweep should update
+    the order and keep the registration off the waiting list."""
+
+    registration = RegistrationFactory(event=event, is_on_wait=False)
+    registration.payment_expiredate = timezone.now() - timezone.timedelta(hours=1)
+    registration.save()
+
+    order = OrderFactory(event=event, user=registration.user)
+    assert order.status == OrderStatus.INITIATE
+
+    mock_vipps_status.return_value = OrderStatus.SALE
+
+    sweep_expired_unpaid_registrations()
+
+    registration.refresh_from_db()
+    order.refresh_from_db()
+
+    assert order.status == OrderStatus.SALE
+    assert not registration.is_on_wait
+
+
+@pytest.mark.django_db
+def test_sweep_waitlists_when_vipps_confirms_unpaid(event, mock_vipps_status):
+    """If Vipps confirms the order is still INITIATE, the sweep should
+    waitlist the registration as before."""
+
+    registration = RegistrationFactory(event=event, is_on_wait=False)
+    registration.payment_expiredate = timezone.now() - timezone.timedelta(hours=1)
+    registration.save()
+
+    OrderFactory(event=event, user=registration.user)
+
+    mock_vipps_status.return_value = OrderStatus.INITIATE
+
+    sweep_expired_unpaid_registrations()
+
+    registration.refresh_from_db()
+
+    assert registration.is_on_wait
+
+
+@pytest.mark.django_db
+def test_check_if_has_paid_reconciles_from_vipps(event, registration, mock_vipps_status):
+    """check_if_has_paid should pull authoritative status from Vipps before
+    waitlisting and keep the registration if Vipps reports paid."""
+
+    order = OrderFactory(event=event, user=registration.user)
+    mock_vipps_status.return_value = OrderStatus.SALE
+
+    check_if_has_paid(event.id, registration.registration_id)
+
+    registration.refresh_from_db()
+    order.refresh_from_db()
+
+    assert order.status == OrderStatus.SALE
+    assert not registration.is_on_wait
+
+
+@pytest.mark.django_db
+def test_sweep_swallows_vipps_errors(event, mock_vipps_status):
+    """A failing Vipps call should not break the sweep; the registration
+    falls back to the local view (waitlisted, since the local order is
+    still INITIATE)."""
+
+    registration = RegistrationFactory(event=event, is_on_wait=False)
+    registration.payment_expiredate = timezone.now() - timezone.timedelta(hours=1)
+    registration.save()
+
+    OrderFactory(event=event, user=registration.user)
+    mock_vipps_status.side_effect = Exception("Vipps unavailable")
+
+    sweep_expired_unpaid_registrations()
+
+    registration.refresh_from_db()
+
+    assert registration.is_on_wait
+
+
+@pytest.mark.django_db
+def test_reconcile_skips_final_state_orders(event, registration, mock_vipps_status):
+    """Orders already in a final state should not be re-queried against Vipps."""
+
+    order = OrderFactory(event=event, user=registration.user)
+    order.status = OrderStatus.CANCEL
+    order.save()
+
+    check_if_has_paid(event.id, registration.registration_id)
+
+    mock_vipps_status.assert_not_called()

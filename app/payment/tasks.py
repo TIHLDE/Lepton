@@ -6,7 +6,7 @@ from app.celery import app
 from app.content.models.event import Event
 from app.content.models.registration import Registration
 from app.payment.models.order import Order
-from app.payment.util.order_utils import has_paid_order
+from app.payment.util.order_utils import has_paid_order, reconcile_orders_from_vipps
 from app.util.tasks import BaseTask
 
 
@@ -22,6 +22,9 @@ def check_if_has_paid(_self, event_id, registration_id):
         return
 
     user_orders = Order.objects.filter(event=event, user=registration.user)
+
+    if user_orders and reconcile_orders_from_vipps(user_orders):
+        return
 
     if not user_orders or not has_paid_order(user_orders):
         registration.move_to_waiting_list_for_nonpayment()
@@ -42,6 +45,8 @@ def sweep_expired_unpaid_registrations(_self):
         user_orders = Order.objects.filter(
             event=registration.event, user=registration.user
         )
+        if reconcile_orders_from_vipps(user_orders):
+            continue
         if not has_paid_order(user_orders):
             try:
                 registration.move_to_waiting_list_for_nonpayment()
