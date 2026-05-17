@@ -9,6 +9,7 @@ from app.common.enums import NativeGroupType as GroupType
 from app.common.enums import NativeMembershipType as MembershipType
 from app.common.enums import NativeUserStudy as StudyType
 from app.content.factories import EventFactory, RegistrationFactory, UserFactory
+from app.content.models.registration import Registration
 from app.content.factories.priority_pool_factory import PriorityPoolFactory
 from app.forms.enums import NativeEventFormType as EventFormType
 from app.forms.tests.form_factories import EventFormFactory, SubmissionFactory
@@ -1309,3 +1310,56 @@ def test_filter_participants_paid_event(
     response = client.get(url)
     assert participant_count == response.data["count"]
     assert response.status_code == status_code
+
+
+@pytest.mark.django_db
+def test_filter_has_suspicious_payment(new_admin_user, event, paid_event):
+    """has_suspicious_payment surfaces registrations that are double-paid or
+    that have no usable Vipps payment link, and excludes normal cases."""
+    paid_event.event = event
+    paid_event.save()
+
+    double_payer = UserFactory()
+    paid_normally = UserFactory()
+    no_order = UserFactory()
+    only_cancelled = UserFactory()
+    has_usable_link = UserFactory()
+
+    RegistrationFactory(user=double_payer, event=event)
+    RegistrationFactory(user=paid_normally, event=event)
+    RegistrationFactory(user=no_order, event=event)
+    RegistrationFactory(user=only_cancelled, event=event)
+    RegistrationFactory(user=has_usable_link, event=event)
+
+    OrderFactory(event=event, user=double_payer, status=OrderStatus.SALE)
+    OrderFactory(event=event, user=double_payer, status=OrderStatus.SALE)
+    OrderFactory(event=event, user=paid_normally, status=OrderStatus.SALE)
+    OrderFactory(event=event, user=only_cancelled, status=OrderStatus.CANCEL)
+    OrderFactory(
+        event=event,
+        user=has_usable_link,
+        status=OrderStatus.INITIATE,
+        payment_link="https://pay.example/abc",
+    )
+
+    client = get_api_client(user=new_admin_user)
+
+    suspicious_url = _get_registration_url(paid_event) + "?has_suspicious_payment=true"
+    suspicious_ids = {
+        r["registration_id"] for r in client.get(suspicious_url).data["results"]
+    }
+    expected_suspicious = set(
+        Registration.objects.filter(
+            user__in=[double_payer, no_order, only_cancelled]
+        ).values_list("registration_id", flat=True)
+    )
+    assert suspicious_ids == expected_suspicious
+
+    clean_url = _get_registration_url(paid_event) + "?has_suspicious_payment=false"
+    clean_ids = {r["registration_id"] for r in client.get(clean_url).data["results"]}
+    expected_clean = set(
+        Registration.objects.filter(
+            user__in=[paid_normally, has_usable_link]
+        ).values_list("registration_id", flat=True)
+    )
+    assert clean_ids == expected_clean

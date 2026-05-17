@@ -267,6 +267,7 @@ class EventStatisticsSerializer(BaseModelSerializer):
     has_allergy_count = serializers.SerializerMethodField()
     has_not_paid_count = serializers.SerializerMethodField()
     allow_photo_count = serializers.SerializerMethodField()
+    suspicious_payment_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Event
@@ -279,6 +280,7 @@ class EventStatisticsSerializer(BaseModelSerializer):
             "has_allergy_count",
             "has_not_paid_count",
             "allow_photo_count",
+            "suspicious_payment_count",
         )
 
     def get_has_attended_count(self, obj, *_args, **_kwargs):
@@ -329,3 +331,14 @@ class EventStatisticsSerializer(BaseModelSerializer):
             orders = obj.orders.filter(status=OrderStatus.SALE, event=obj).count()
             return registrations - orders
         return 0
+
+    def get_suspicious_payment_count(self, obj, *args, **kwargs):
+        if not obj.is_paid_event:
+            return 0
+        from app.payment.util.order_utils import is_suspicious_registration
+
+        return sum(
+            1
+            for registration in obj.registrations.filter(is_on_wait=False)
+            if is_suspicious_registration(registration)
+        )
