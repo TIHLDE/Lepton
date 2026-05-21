@@ -84,7 +84,7 @@ class RegistrationFilter(FilterSet):
         )
 
         annotated = queryset.filter(
-            event__is_paid_event=True, is_on_wait=False
+            event__paid_information__isnull=False, is_on_wait=False
         ).annotate(
             _double_paid=Exists(double_paid_pairs),
             _has_paid=Exists(paid_orders),
