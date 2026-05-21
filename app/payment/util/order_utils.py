@@ -5,6 +5,8 @@ from sentry_sdk import capture_exception
 from app.payment.enums import OrderStatus
 from app.payment.util.payment_utils import get_payment_order_status
 
+PAID_ORDER_STATUSES = (OrderStatus.SALE, OrderStatus.CAPTURE, OrderStatus.RESERVED)
+
 
 def has_paid_order(orders):
     if not orders:
@@ -15,6 +17,31 @@ def has_paid_order(orders):
             return True
 
     return False
+
+
+def is_suspicious_registration(registration):
+    """A registration is suspicious when its event is paid, the user is not on
+    the waiting list, and one of:
+      (A) two or more paid orders exist for (user, event) — double-pay, or
+      (B) no paid order exists and no usable INITIATE order with a payment_link
+          exists — the Vipps button will never appear.
+    """
+    event = registration.event
+    if not event or not getattr(event, "is_paid_event", False):
+        return False
+    if registration.is_on_wait:
+        return False
+
+    orders = list(event.orders.filter(user=registration.user))
+    paid_orders = [o for o in orders if o.status in PAID_ORDER_STATUSES]
+    if len(paid_orders) >= 2:
+        return True
+    if paid_orders:
+        return False
+    has_usable_link = any(
+        o.status == OrderStatus.INITIATE and o.payment_link for o in orders
+    )
+    return not has_usable_link
 
 
 def check_if_order_is_paid(order):
