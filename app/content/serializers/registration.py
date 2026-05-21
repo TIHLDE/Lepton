@@ -11,7 +11,7 @@ from app.forms.enums import NativeEventFormType as EventFormType
 from app.forms.serializers.submission import SubmissionInRegistrationSerializer
 from app.payment.enums import OrderStatus
 from app.payment.serializers.order import OrderEventRegistrationSerializer
-from app.payment.util.order_utils import has_paid_order
+from app.payment.util.order_utils import has_paid_order, is_suspicious_registration
 from app.payment.util.payment_utils import get_payment_order_status
 
 
@@ -20,6 +20,7 @@ class RegistrationSerializer(BaseModelSerializer):
     survey_submission = serializers.SerializerMethodField()
     has_unanswered_evaluation = serializers.SerializerMethodField()
     has_paid_order = serializers.SerializerMethodField(required=False)
+    has_suspicious_payment = serializers.SerializerMethodField(required=False)
     wait_queue_number = serializers.SerializerMethodField(required=False)
     payment_orders = serializers.SerializerMethodField(required=False)
 
@@ -36,6 +37,7 @@ class RegistrationSerializer(BaseModelSerializer):
             "has_unanswered_evaluation",
             "payment_expiredate",
             "has_paid_order",
+            "has_suspicious_payment",
             "wait_queue_number",
             "created_by_admin",
             "payment_orders",
@@ -57,6 +59,9 @@ class RegistrationSerializer(BaseModelSerializer):
             order.save()
 
         return has_paid_order(orders)
+
+    def get_has_suspicious_payment(self, obj):
+        return is_suspicious_registration(obj)
 
     def get_payment_orders(self, obj):
         orders = obj.event.orders.filter(user=obj.user)
