@@ -1313,9 +1313,15 @@ def test_filter_participants_paid_event(
 
 
 @pytest.mark.django_db
-def test_filter_has_suspicious_payment(new_admin_user, event, paid_event):
+def test_filter_has_suspicious_payment(
+    new_admin_user, event, paid_event, monkeypatch
+):
     """has_suspicious_payment surfaces registrations that are double-paid or
     that have no usable Vipps payment link, and excludes normal cases."""
+    monkeypatch.setattr(
+        "app.content.serializers.registration.get_payment_order_status",
+        lambda order_id: OrderStatus.INITIATE,
+    )
     paid_event.event = event
     paid_event.save()
 
