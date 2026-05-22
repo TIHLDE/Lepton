@@ -276,6 +276,41 @@ def test_create_when_event_has_waiting_list(
     assert new_registration.is_on_wait
 
 
+def test_move_to_waiting_list_for_nonpayment_is_idempotent_with_stale_instance():
+    event = EventFactory(limit=1)
+    registration = RegistrationFactory(event=event)
+    stale_registration = type(registration).objects.get(pk=registration.pk)
+    first_waitlist_registration = RegistrationFactory(event=event)
+    second_waitlist_registration = RegistrationFactory(event=event)
+
+    registration.move_to_waiting_list_for_nonpayment()
+    stale_registration.move_to_waiting_list_for_nonpayment()
+
+    registration.refresh_from_db()
+    first_waitlist_registration.refresh_from_db()
+    second_waitlist_registration.refresh_from_db()
+
+    assert registration.is_on_wait
+    assert not first_waitlist_registration.is_on_wait
+    assert second_waitlist_registration.is_on_wait
+    assert event.get_participants().count() == 1
+
+
+def test_move_to_waiting_list_for_nonpayment_does_not_send_generic_waitlist_notice():
+    event = EventFactory()
+    registration = RegistrationFactory(event=event)
+
+    with patch(
+        "app.content.models.registration.Registration.send_notification_and_mail"
+    ) as mock_generic_notification, patch(
+        "app.content.models.registration.Notify"
+    ) as mock_notify:
+        registration.move_to_waiting_list_for_nonpayment()
+
+    mock_generic_notification.assert_not_called()
+    mock_notify.assert_called_once()
+
+
 def test_registration_in_queue_is_deleted_priority_in_waiting_list_is_moved_to_queue(
     event_with_priority_pool,
     registration_in_priority_pool,

@@ -1,7 +1,7 @@
 from datetime import timedelta
 
 from django.core.exceptions import ValidationError
-from django.db import models
+from django.db import models, transaction
 from django.db.models import Q
 
 from sentry_sdk import capture_exception
@@ -173,37 +173,77 @@ class Registration(BaseModel, BasePermissionModel):
         and promote the next eligible wait-list user."""
         from app.content.util.event_utils import start_payment_countdown
 
-        if self.is_on_wait:
-            return
+        with transaction.atomic():
+            event = Event.objects.select_for_update().get(pk=self.event_id)
+            registration = (
+                Registration.objects.select_for_update()
+                .select_related("user")
+                .get(pk=self.pk)
+            )
+            registration.event = event
 
-        # Get next person to promote BEFORE moving self to wait list
-        moved_registration = self.move_from_waiting_list_to_queue()
+            if registration.is_on_wait:
+                return
 
-        # Move self back to waiting list (bottom, by resetting created_at)
-        self.is_on_wait = True
-        self.payment_expiredate = None
-        self.created_at = now()
-        self.save()
+            waiting_list = list(
+                Registration.objects.select_for_update()
+                .filter(event=event, is_on_wait=True)
+                .select_related("event", "user")
+                .order_by("created_at")
+            )
+            moved_registration = None
+            if waiting_list:
+                moved_registration = next(
+                    (
+                        waitlist_registration
+                        for waitlist_registration in waiting_list
+                        if waitlist_registration.is_prioritized
+                    ),
+                    waiting_list[0],
+                )
+                moved_registration.is_on_wait = False
+                if event.is_paid_event:
+                    moved_registration.payment_expiredate = get_payment_expiredate()
+
+            # Bypass Registration.save() here; that method sends the generic
+            # waitlist notification, while this path sends a payment-specific one.
+            registration.is_on_wait = True
+            registration.payment_expiredate = None
+            registration.created_at = now()
+            super(Registration, registration).save(
+                update_fields=[
+                    "is_on_wait",
+                    "payment_expiredate",
+                    "created_at",
+                    "updated_at",
+                ]
+            )
+
+            if moved_registration:
+                moved_registration.save()
+
+            self.is_on_wait = registration.is_on_wait
+            self.payment_expiredate = registration.payment_expiredate
+            self.created_at = registration.created_at
 
         # Notify user about non-payment
         Notify(
-            [self.user],
-            f'Betalingsfristen for "{self.event.title}" har utløpt',
+            [registration.user],
+            f'Betalingsfristen for "{event.title}" har utløpt',
             UserNotificationSettingType.REGISTRATION,
-        ).add_paragraph(f"Hei, {self.user.first_name}!").add_paragraph(
+        ).add_paragraph(f"Hei, {registration.user.first_name}!").add_paragraph(
             "Betalingsfristen for arrangementet har utløpt uten at vi har registrert betaling. "
             "Du har derfor blitt flyttet tilbake til ventelisten."
         ).add_paragraph(
             "Dersom du mener dette er feil, vennligst kontakt arrangøren."
-        ).add_event_link(self.event.pk).send()
+        ).add_event_link(event.pk).send()
 
         # Promote the next person and start their payment countdown
         if moved_registration:
-            moved_registration.save()
-            if self.event.is_paid_event:
+            if event.is_paid_event:
                 try:
                     start_payment_countdown(
-                        self.event,
+                        event,
                         moved_registration,
                         from_wait_list=True,
                     )

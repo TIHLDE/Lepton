@@ -122,6 +122,7 @@ class FineNoUserSerializer(BaseModelSerializer):
             "image",
             "created_by",
             "created_at",
+            "starred",
         )
 
         read_only_fields = (

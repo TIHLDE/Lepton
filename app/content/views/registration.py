@@ -31,7 +31,7 @@ from app.content.util.event_utils import (
 )
 from app.payment.enums import OrderStatus
 from app.payment.models.order import Order
-from app.payment.util.order_utils import has_paid_order
+from app.payment.util.order_utils import annotate_suspicious_payment, has_paid_order
 from app.util.utils import now
 
 
@@ -47,7 +47,11 @@ class RegistrationViewSet(APIRegistrationErrorsMixin, BaseViewSet):
 
     def get_queryset(self):
         event_id = self.kwargs.get("event_id", None)
-        return Registration.objects.filter(event__pk=event_id).select_related("user")
+        return annotate_suspicious_payment(
+            Registration.objects.filter(event__pk=event_id).select_related(
+                "event", "user"
+            )
+        )
 
     def _is_own_registration(self):
         user_id = self.kwargs.get("user_id", None)

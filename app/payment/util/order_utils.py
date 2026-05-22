@@ -1,3 +1,13 @@
+from django.db.models import (
+    BooleanField,
+    Case,
+    Count,
+    Exists,
+    OuterRef,
+    Q,
+    Value,
+    When,
+)
 from django.utils import timezone
 
 from sentry_sdk import capture_exception
@@ -6,6 +16,50 @@ from app.payment.enums import OrderStatus
 from app.payment.util.payment_utils import get_payment_order_status
 
 PAID_ORDER_STATUSES = (OrderStatus.SALE, OrderStatus.CAPTURE, OrderStatus.RESERVED)
+
+
+def annotate_suspicious_payment(queryset):
+    from app.payment.models import Order
+
+    paid_orders = Order.objects.filter(
+        event=OuterRef("event_id"),
+        user=OuterRef("user_id"),
+        status__in=PAID_ORDER_STATUSES,
+    )
+    usable_link = Order.objects.filter(
+        event=OuterRef("event_id"),
+        user=OuterRef("user_id"),
+        status=OrderStatus.INITIATE,
+    ).exclude(payment_link="")
+    double_paid_pairs = (
+        Order.objects.filter(status__in=PAID_ORDER_STATUSES)
+        .values("event", "user")
+        .annotate(c=Count("order_id"))
+        .filter(
+            c__gte=2,
+            event=OuterRef("event_id"),
+            user=OuterRef("user_id"),
+        )
+    )
+    missing_payment = Q(_has_paid=False) & Q(_has_link=False)
+    suspicious_payment = Q(_double_paid=True) | missing_payment
+
+    return queryset.annotate(
+        _double_paid=Exists(double_paid_pairs),
+        _has_paid=Exists(paid_orders),
+        _has_link=Exists(usable_link),
+    ).annotate(
+        _has_suspicious_payment=Case(
+            When(
+                Q(event__paid_information__isnull=False)
+                & Q(is_on_wait=False)
+                & suspicious_payment,
+                then=Value(True),
+            ),
+            default=Value(False),
+            output_field=BooleanField(),
+        )
+    )
 
 
 def has_paid_order(orders):

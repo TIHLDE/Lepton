@@ -335,10 +335,10 @@ class EventStatisticsSerializer(BaseModelSerializer):
     def get_suspicious_payment_count(self, obj, *args, **kwargs):
         if not obj.is_paid_event:
             return 0
-        from app.payment.util.order_utils import is_suspicious_registration
+        from app.payment.util.order_utils import annotate_suspicious_payment
 
-        return sum(
-            1
-            for registration in obj.registrations.filter(is_on_wait=False)
-            if is_suspicious_registration(registration)
+        return (
+            annotate_suspicious_payment(obj.registrations.filter(is_on_wait=False))
+            .filter(_has_suspicious_payment=True)
+            .count()
         )

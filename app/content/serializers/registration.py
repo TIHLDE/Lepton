@@ -61,6 +61,8 @@ class RegistrationSerializer(BaseModelSerializer):
         return has_paid_order(orders)
 
     def get_has_suspicious_payment(self, obj):
+        if hasattr(obj, "_has_suspicious_payment"):
+            return obj._has_suspicious_payment
         return is_suspicious_registration(obj)
 
     def get_payment_orders(self, obj):
