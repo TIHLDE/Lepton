@@ -7,6 +7,10 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.RemoveField(
+            model_name="codexevent",
+            name="registrations",
+        ),
         migrations.DeleteModel(
             name="CodexEventRegistration",
         ),
