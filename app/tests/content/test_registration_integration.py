@@ -9,8 +9,8 @@ from app.common.enums import NativeGroupType as GroupType
 from app.common.enums import NativeMembershipType as MembershipType
 from app.common.enums import NativeUserStudy as StudyType
 from app.content.factories import EventFactory, RegistrationFactory, UserFactory
-from app.content.models.registration import Registration
 from app.content.factories.priority_pool_factory import PriorityPoolFactory
+from app.content.models.registration import Registration
 from app.forms.enums import NativeEventFormType as EventFormType
 from app.forms.tests.form_factories import EventFormFactory, SubmissionFactory
 from app.group.factories import GroupFactory
@@ -1313,9 +1313,7 @@ def test_filter_participants_paid_event(
 
 
 @pytest.mark.django_db
-def test_filter_has_suspicious_payment(
-    new_admin_user, event, paid_event, monkeypatch
-):
+def test_filter_has_suspicious_payment(new_admin_user, event, paid_event, monkeypatch):
     """has_suspicious_payment surfaces registrations that are double-paid or
     that have no usable Vipps payment link, and excludes normal cases."""
     monkeypatch.setattr(

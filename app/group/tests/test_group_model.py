@@ -1,5 +1,6 @@
-import pytest
 from django.core.exceptions import ValidationError
+
+import pytest
 
 from app.common.enums import NativeGroupType as GroupType
 from app.common.enums import NativeInterestGroupType as InterestGroupType

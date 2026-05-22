@@ -5,7 +5,6 @@ from app.communication.views import (
     BannerViewSet,
     NotificationViewSet,
     UserNotificationSettingViewSet,
-    WarningViewSet,
 )
 
 router = routers.DefaultRouter()
@@ -17,7 +16,6 @@ router.register(
     UserNotificationSettingViewSet,
     basename="notification-setting",
 )
-router.register("warnings", WarningViewSet, basename="warning")
 
 
 urlpatterns = [re_path(r"", include(router.urls))]

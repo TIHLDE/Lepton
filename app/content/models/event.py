@@ -120,9 +120,9 @@ class Event(BaseModel, OptionalImage, BasePermissionModel):
 
     def move_users_from_waiting_list_to_queue(self, count):
         """Moves the first x users from waiting list to queue"""
-        from app.content.util.event_utils import start_payment_countdown
-
         from sentry_sdk import capture_exception
+
+        from app.content.util.event_utils import start_payment_countdown
 
         waiting_list = self.get_waiting_list().order_by("created_at")
         for registration in waiting_list[:count]:

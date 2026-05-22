@@ -32,9 +32,3 @@ from app.content.serializers.user import (
     UserPermissionsSerializer,
     FeideUserCreateSerializer,
 )
-from app.content.serializers.minute import (
-    MinuteCreateSerializer,
-    MinuteSerializer,
-    MinuteUpdateSerializer,
-    MinuteListSerializer,
-)

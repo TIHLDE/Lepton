@@ -61,7 +61,9 @@ class OrderCreateSerializer(BaseModelSerializer):
         payment_url = create_vipps_order(
             order_id=order_id,
             event=event,
-            transaction_text=f"{user.first_name} {user.last_name} - {event.title}"[:100],
+            transaction_text=f"{user.first_name} {user.last_name} - {event.title}"[
+                :100
+            ],
             fallback=f"/arrangementer/{event.id}",
         )
 
