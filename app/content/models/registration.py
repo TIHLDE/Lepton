@@ -236,7 +236,9 @@ class Registration(BaseModel, BasePermissionModel):
             "Du har derfor blitt flyttet tilbake til ventelisten."
         ).add_paragraph(
             "Dersom du mener dette er feil, vennligst kontakt arrangøren."
-        ).add_event_link(event.pk).send()
+        ).add_event_link(
+            event.pk
+        ).send()
 
         # Promote the next person and start their payment countdown
         if moved_registration:

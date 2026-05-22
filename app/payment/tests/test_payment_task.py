@@ -7,7 +7,10 @@ import pytest
 from app.content.factories import EventFactory, RegistrationFactory
 from app.payment.enums import OrderStatus
 from app.payment.factories import OrderFactory
-from app.payment.tasks import check_if_has_paid, sweep_expired_unpaid_registrations
+from app.payment.tasks import (
+    check_if_has_paid,
+    sweep_expired_unpaid_registrations,
+)
 from app.payment.util.order_utils import check_if_order_is_paid, is_expired
 
 
@@ -316,7 +319,9 @@ def test_sweep_waitlists_when_vipps_confirms_unpaid(event, mock_vipps_status):
 
 
 @pytest.mark.django_db
-def test_check_if_has_paid_reconciles_from_vipps(event, registration, mock_vipps_status):
+def test_check_if_has_paid_reconciles_from_vipps(
+    event, registration, mock_vipps_status
+):
     """check_if_has_paid should pull authoritative status from Vipps before
     waitlisting and keep the registration if Vipps reports paid."""
 
