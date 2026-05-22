@@ -5,8 +5,6 @@ from app.content.views import (
     CategoryViewSet,
     CheatsheetViewSet,
     EventViewSet,
-    LogEntryViewSet,
-    MinuteViewSet,
     NewsViewSet,
     PageViewSet,
     QRCodeViewSet,
@@ -46,8 +44,6 @@ router.register(
 )
 router.register("pages", PageViewSet)
 router.register("strikes", StrikeViewSet, basename="strikes")
-router.register("log-entries", LogEntryViewSet, basename="log-entries")
-router.register("minutes", MinuteViewSet, basename="minutes")
 
 urlpatterns = [
     re_path(r"", include(router.urls)),

@@ -4,8 +4,6 @@ from rest_framework.test import APIRequestFactory
 import pytest
 
 from app.badge.factories import BadgeFactory, UserBadgeFactory
-from app.career.factories import WeeklyBusinessFactory
-from app.codex.factories import CodexEventFactory, CodexEventRegistrationFactory
 from app.common.enums import AdminGroup, Groups
 from app.common.enums import NativeMembershipType as MembershipType
 from app.communication.factories import (
@@ -16,7 +14,6 @@ from app.communication.factories import (
 from app.content.factories import (
     CheatsheetFactory,
     EventFactory,
-    MinuteFactory,
     NewsFactory,
     PageFactory,
     ParentPageFactory,
@@ -38,7 +35,6 @@ from app.forms.tests.form_factories import FormFactory, SubmissionFactory
 from app.group.factories import GroupFactory, MembershipFactory
 from app.group.factories.fine_factory import FineFactory
 from app.group.factories.membership_factory import MembershipHistoryFactory
-from app.kontres.factories import BookableItemFactory, ReservationFactory
 from app.payment.factories.order_factory import OrderFactory
 from app.payment.factories.paid_event_factory import PaidEventFactory
 from app.util.test_utils import add_user_to_group_with_name, get_api_client
@@ -237,11 +233,6 @@ def user_notification_setting():
 
 
 @pytest.fixture()
-def weekly_business():
-    return WeeklyBusinessFactory()
-
-
-@pytest.fixture()
 def fine():
     return FineFactory()
 
@@ -254,16 +245,6 @@ def banner():
 @pytest.fixture()
 def toddel():
     return ToddelFactory()
-
-
-@pytest.fixture()
-def bookable_item():
-    return BookableItemFactory()
-
-
-@pytest.fixture()
-def reservation():
-    return ReservationFactory()
 
 
 @pytest.fixture()
@@ -298,21 +279,6 @@ def event_with_priority_pool(priority_group):
 @pytest.fixture()
 def user_bio():
     return UserBioFactory()
-
-
-@pytest.fixture()
-def minute(user):
-    return MinuteFactory(author=user)
-
-
-@pytest.fixture()
-def codex_event():
-    return CodexEventFactory()
-
-
-@pytest.fixture()
-def codex_event_registration():
-    return CodexEventRegistrationFactory()
 
 
 @pytest.fixture

@@ -5,7 +5,6 @@ from app.communication.models import (
     Mail,
     Notification,
     UserNotificationSetting,
-    Warning,
 )
 
 
@@ -29,5 +28,4 @@ class UserNotificationSettingAdmin(admin.ModelAdmin):
 admin.site.register(Mail, MailAdmin)
 admin.site.register(Notification)
 admin.site.register(UserNotificationSetting, UserNotificationSettingAdmin)
-admin.site.register(Warning)
 admin.site.register(Banner)
