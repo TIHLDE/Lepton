@@ -1,0 +1,11 @@
+# Ignorer secrets-filer
+*.auto.pkrvars.hcl
+
+# Terraform state og credentials
+*.tfstate
+*.tfstate.*
+*.tfvars
+*.lock.hcl
+
+# Terraform cache
+.terraform/
