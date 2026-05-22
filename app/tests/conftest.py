@@ -30,7 +30,6 @@ from app.emoji.factories.reaction_factory import (
     NewsReactionFactory,
 )
 from app.feedback.factories import BugFactory, IdeaFactory
-from app.files.models.user_gallery import UserGallery
 from app.forms.tests.form_factories import FormFactory, SubmissionFactory
 from app.group.factories import GroupFactory, MembershipFactory
 from app.group.factories.fine_factory import FineFactory
@@ -279,18 +278,6 @@ def event_with_priority_pool(priority_group):
 @pytest.fixture()
 def user_bio():
     return UserBioFactory()
-
-
-@pytest.fixture
-def user_gallery(member):
-    """Creates a gallery for the member."""
-    return UserGallery.objects.create(author=member)
-
-
-@pytest.fixture
-def admin_gallery(admin_user):
-    """Creates a gallery for the admin user."""
-    return UserGallery.objects.create(author=admin_user)
 
 
 @pytest.fixture()
