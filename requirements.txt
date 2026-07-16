@@ -17,7 +17,7 @@ redis == 6.4.0
 
 # Django
 # ------------------------------------------------------------------------------
-Django == 5.1.1
+Django == 6.0.7
 django-enumchoicefield == 3.0.1
 django-filter == 24.3
 django-ordered-model ~= 3.7.4
