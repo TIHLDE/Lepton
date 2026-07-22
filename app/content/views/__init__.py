@@ -13,5 +13,6 @@ from app.content.views.toddel import ToddelViewSet
 from app.content.views.qr_code import QRCodeViewSet
 from app.content.views.user_bio import UserBioViewset
 from app.content.views.feide import register_with_feide
+from app.content.views.photon_table_export import photon_table_export
 from app.content.views.photon_user_export import photon_user_export
 from app.content.views.send_email import send_email

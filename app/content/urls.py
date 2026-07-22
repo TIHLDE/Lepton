@@ -16,6 +16,7 @@ from app.content.views import (
     UserCalendarEvents,
     UserViewSet,
     accept_form,
+    photon_table_export,
     photon_user_export,
     register_with_feide,
     send_email,
@@ -57,5 +58,6 @@ urlpatterns = [
     # One-time bulk user export for the Photon migration. Superuser-gated;
     # remove once the migration is complete.
     path("migration/photon-user-export/", photon_user_export),
+    path("migration/photon-table-export/", photon_table_export),
     re_path(r"users/(?P<user_id>[^/.]+)/events.ics", UserCalendarEvents()),
 ]
