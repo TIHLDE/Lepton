@@ -107,8 +107,12 @@ def photon_table_export(request):
             status=status.HTTP_403_FORBIDDEN,
         )
 
-    table = request.query_params.get("table", "")
-    if table not in ALLOWED_TABLES:
+    # The name interpolated into SQL is the allowlist's own element, not the
+    # request string — the request only selects which hardcoded name to use,
+    # so no user-controlled value ever reaches the query.
+    requested = request.query_params.get("table", "")
+    table = next((name for name in ALLOWED_TABLES if name == requested), None)
+    if table is None:
         return Response(
             {"detail": f"Ukjent tabell. Gyldige: {sorted(ALLOWED_TABLES)}"},
             status=status.HTTP_400_BAD_REQUEST,
