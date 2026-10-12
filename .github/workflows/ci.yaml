@@ -12,7 +12,7 @@ on:
       - master
 jobs:
   lint:
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-2vcpu-ubuntu-2404
     steps:
 
       - name: Checkout Code Repository
@@ -31,7 +31,7 @@ jobs:
       - name: Lint with flake8
         run: flake8 app
   test:
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-2vcpu-ubuntu-2404
     steps:
 
       - name: Checkout Code Repository
@@ -59,7 +59,7 @@ jobs:
         run:  docker compose down
 
   check-migrations:
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-2vcpu-ubuntu-2404
     steps:
 
       - name: Checkout Code Repository
@@ -78,7 +78,7 @@ jobs:
         run:  docker compose down
   
   swagger:
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-2vcpu-ubuntu-2404
     steps:
 
       - name: Checkout Code Repository
